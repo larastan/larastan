@@ -12,7 +12,7 @@
 
 ## About Laravel Code Analyse
 
-Laravel Code Analyse was created by, and is maintained by [Nuno Maduro](https://github.com/nunomaduro), and is a [](https://github.com/phpstan/phpstan) wrapper for Laravel.
+Laravel Code Analyse was created by, and is maintained by [Nuno Maduro](https://github.com/nunomaduro), and is a [phpstan/phpstan](https://github.com/phpstan/phpstan) wrapper for Laravel.
 
 ## Installation & Usage
 
