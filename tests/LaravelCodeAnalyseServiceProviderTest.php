@@ -2,14 +2,11 @@
 
 namespace Tests;
 
-use function in_array;
 use function get_class;
-use function collection;
-use NunoMaduro\LaravelCodeAnalyse\Console\CodeAnalyseCommand;
 use Orchestra\Testbench\TestCase;
-use Illuminate\Container\Container;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Artisan;
+use NunoMaduro\LaravelCodeAnalyse\Console\CodeAnalyseCommand;
 use NunoMaduro\LaravelCodeAnalyse\LaravelCodeAnalyseServiceProvider;
 
 class LaravelCodeAnalyseServiceProviderTest extends TestCase
@@ -38,7 +35,6 @@ class LaravelCodeAnalyseServiceProviderTest extends TestCase
         $this->assertNotContains(CodeAnalyseCommand::class, $this->getCommandClasses());
     }
 
-
     public function testCommandNotAddedInTests(): void
     {
         $app = $this->createMockApplication();
@@ -50,8 +46,6 @@ class LaravelCodeAnalyseServiceProviderTest extends TestCase
 
         $this->assertNotContains(CodeAnalyseCommand::class, $this->getCommandClasses());
     }
-
-
 
     /**
      * Creates a new instance of Laravel Application.
