@@ -1,14 +1,14 @@
 <p align="center">
-    <img src="https://raw.githubusercontent.com/laravel-code-analyse/master/docs/example.png" alt="Laravel Code Analyse Example" height="300">
+    <img src="https://raw.githubusercontent.com/nunomaduro/laravel-code-analyse/master/docs/example.png" alt="Laravel Code Analyse Example" height="300">
 </p>
 
 <p align="center">
-  <a href="https://travis-ci.org/laravel-code-analyse"><img src="https://img.shields.io/travis/laravel-code-analyse/master.svg" alt="Build Status"></img></a>
-  <a href="https://scrutinizer-ci.com/g/laravel-code-analyse"><img src="https://img.shields.io/scrutinizer/g/laravel-code-analyse.svg" alt="Quality Score"></img></a>
-  <a href="https://scrutinizer-ci.com/g/laravel-code-analyse"><img src="https://img.shields.io/scrutinizer/coverage/g/laravel-code-analyse.svg" alt="Coverage"></img></a>
-  <a href="https://packagist.org/packages/laravel-code-analyse"><img src="https://poser.pugx.org/laravel-code-analyse/d/total.svg" alt="Total Downloads"></a>
-  <a href="https://packagist.org/packages/laravel-code-analyse"><img src="https://poser.pugx.org/laravel-code-analyse/v/stable.svg" alt="Latest Version"></a>
-  <a href="https://packagist.org/packages/laravel-code-analyse"><img src="https://poser.pugx.org/laravel-code-analyse/license.svg" alt="License"></a>
+  <a href="https://travis-ci.org/nunomaduro/laravel-code-analyse"><img src="https://img.shields.io/travis/nunomaduro/laravel-code-analyse/master.svg" alt="Build Status"></img></a>
+  <a href="https://scrutinizer-ci.com/g/nunomaduro/laravel-code-analyse"><img src="https://img.shields.io/scrutinizer/g/nunomaduro/laravel-code-analyse.svg" alt="Quality Score"></img></a>
+  <a href="https://scrutinizer-ci.com/g/nunomaduro/laravel-code-analyse"><img src="https://img.shields.io/scrutinizer/coverage/g/nunomaduro/laravel-code-analyse.svg" alt="Coverage"></img></a>
+  <a href="https://packagist.org/packages/nunomaduro/laravel-code-analyse"><img src="https://poser.pugx.org/nunomaduro/laravel-code-analyse/d/total.svg" alt="Total Downloads"></a>
+  <a href="https://packagist.org/packages/nunomaduro/laravel-code-analyse"><img src="https://poser.pugx.org/nunomaduro/laravel-code-analyse/v/stable.svg" alt="Latest Version"></a>
+  <a href="https://packagist.org/packages/nunomaduro/laravel-code-analyse"><img src="https://poser.pugx.org/nunomaduro/laravel-code-analyse/license.svg" alt="License"></a>
 </p>
 
 ## About Laravel Code Analyse
