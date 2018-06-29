@@ -5,7 +5,6 @@
 <p align="center">
   <a href="https://travis-ci.org/nunomaduro/laravel-code-analyse"><img src="https://img.shields.io/travis/nunomaduro/laravel-code-analyse/master.svg" alt="Build Status"></img></a>
   <a href="https://scrutinizer-ci.com/g/nunomaduro/laravel-code-analyse"><img src="https://img.shields.io/scrutinizer/g/nunomaduro/laravel-code-analyse.svg" alt="Quality Score"></img></a>
-  <a href="https://scrutinizer-ci.com/g/nunomaduro/laravel-code-analyse"><img src="https://img.shields.io/scrutinizer/coverage/g/nunomaduro/laravel-code-analyse.svg" alt="Coverage"></img></a>
   <a href="https://packagist.org/packages/nunomaduro/laravel-code-analyse"><img src="https://poser.pugx.org/nunomaduro/laravel-code-analyse/d/total.svg" alt="Total Downloads"></a>
   <a href="https://packagist.org/packages/nunomaduro/laravel-code-analyse"><img src="https://poser.pugx.org/nunomaduro/laravel-code-analyse/v/stable.svg" alt="Latest Version"></a>
   <a href="https://packagist.org/packages/nunomaduro/laravel-code-analyse"><img src="https://poser.pugx.org/nunomaduro/laravel-code-analyse/license.svg" alt="License"></a>
