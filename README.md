@@ -1,5 +1,6 @@
+**THIS PACKAGE IS STILL IN DEVELOPMENT**
+
 <p align="center">
-    **THIS PACKAGE IS STILL IN DEVELOPMENT**
     <img src="https://raw.githubusercontent.com/nunomaduro/laravel-code-analyse/master/docs/example.png" alt="Laravel Code Analyse Example" height="300">
 </p>
 
