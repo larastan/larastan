@@ -43,7 +43,7 @@ final class CodeAnalyseCommand extends Command
             'analyse',
             '--level='. (string) $this->argument('level'),
             '--autoload-file='.$this->laravel->basePath('vendor/autoload.php'),
-            '--configuration='.$this->laravel->basePath('vendor/weebly/phpstan-laravel/extension.neon'),
+            '--configuration='.$this->laravel->basePath('vendor/nunomaduro/phpstan-laravel/extension.neon'),
             $this->laravel['path'],
         ];
 
