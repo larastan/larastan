@@ -48,7 +48,11 @@ final class CodeAnalyseCommand extends Command
         ];
 
         $process = new Process(implode(' ', $params), $this->laravel->basePath('vendor/bin'));
-        $process->setTty(true);
+
+        if (Process::isTtySupported()) {
+            $process->setTty(true);
+        }
+
         $process->start();
 
         foreach ($process as $type => $data) {
