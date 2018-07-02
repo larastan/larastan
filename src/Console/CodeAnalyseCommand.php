@@ -53,6 +53,8 @@ final class CodeAnalyseCommand extends Command
             $process->setTty(true);
         }
 
+        $process->setTimeout(null);
+
         $process->start();
 
         foreach ($process as $type => $data) {
