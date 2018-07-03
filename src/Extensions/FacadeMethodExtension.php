@@ -47,7 +47,7 @@ final class FacadeMethodExtension implements MethodsClassReflectionExtension, Br
                 ->getName();
 
             if ($concrete = $facadeClass::getFacadeRoot()) {
-                return $this->broker->getClass($concrete)
+                return $this->broker->getClass(get_class($concrete))
                     ->hasNativeMethod($methodName);
             }
         }
@@ -63,7 +63,7 @@ final class FacadeMethodExtension implements MethodsClassReflectionExtension, Br
         $facadeClass = $classReflection->getNativeReflection()
             ->getName();
 
-        return $this->broker->getClass($facadeClass::getFacadeRoot())
+        return $this->broker->getClass(get_class($facadeClass::getFacadeRoot()))
             ->getNativeMethod($methodName);
     }
 }
