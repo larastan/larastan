@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\LaravelCodeAnalyse;
 
+use Mockery;
 use PHPStan\Broker\Broker;
 use Illuminate\Database\Eloquent\Model;
 use PHPStan\Reflection\ClassReflection;
@@ -59,7 +60,7 @@ abstract class AbstractBuilderMethodExtension implements MethodsClassReflectionE
         $methodReflection = $this->broker->getClass($this->getBuilderClass())
             ->getNativeMethod($methodName);
 
-        $mock = \Mockery::mock($methodReflection);
+        $mock = Mockery::mock($methodReflection);
         $mock->shouldReceive('isStatic')
             ->andReturn(true);
 
