@@ -11,29 +11,22 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\LaravelCodeAnalyse;
+namespace NunoMaduro\LaravelCodeAnalyse\Extensions;
 
-use Mockery;
 use PHPStan\Broker\Broker;
 use Illuminate\Database\Eloquent\Model;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-abstract class AbstractBuilderMethodExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
+final class BelongsToManyMethodExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
 {
     /**
      * @var \PHPStan\Broker\Broker
      */
     private $broker;
-
-    /**
-     * Returns the builder class.
-     *
-     * @return string
-     */
-    abstract public function getBuilderClass(): string;
 
     /**
      * @param \PHPStan\Broker\Broker $broker
@@ -48,7 +41,7 @@ abstract class AbstractBuilderMethodExtension implements MethodsClassReflectionE
      */
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        return ($classReflection->isSubclassOf(Model::class) || $classReflection->getName() === Model::class) && $this->broker->getClass($this->getBuilderClass())
+        return $classReflection->isSubclassOf(BelongsToMany::class) && $this->broker->getClass(BelongsToMany::class)
                 ->hasNativeMethod($methodName);
     }
 
@@ -57,13 +50,7 @@ abstract class AbstractBuilderMethodExtension implements MethodsClassReflectionE
      */
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
-        $methodReflection = $this->broker->getClass($this->getBuilderClass())
+        return $this->broker->getClass(BelongsToMany::class)
             ->getNativeMethod($methodName);
-
-        $mock = Mockery::mock($methodReflection);
-        $mock->shouldReceive('isStatic')
-            ->andReturn(true);
-
-        return $mock;
     }
 }

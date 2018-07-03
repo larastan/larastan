@@ -11,17 +11,17 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\LaravelCodeAnalyse;
+namespace NunoMaduro\LaravelCodeAnalyse\Extensions;
 
+use Mockery;
 use PHPStan\Broker\Broker;
 use Illuminate\Database\Eloquent\Model;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-final class BelongsToManyMethodExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
+abstract class AbstractBuilderMethodExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
 {
     /**
      * @var \PHPStan\Broker\Broker
@@ -37,11 +37,18 @@ final class BelongsToManyMethodExtension implements MethodsClassReflectionExtens
     }
 
     /**
+     * Returns the builder class.
+     *
+     * @return string
+     */
+    abstract public function getBuilderClass(): string;
+
+    /**
      * {@inheritdoc}
      */
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        return ($classReflection->isSubclassOf(BelongsToMany::class) || $classReflection->getName() === BelongsToMany::class) && $this->broker->getClass(BelongsToMany::class)
+        return $classReflection->isSubclassOf(Model::class) && $this->broker->getClass($this->getBuilderClass())
                 ->hasNativeMethod($methodName);
     }
 
@@ -50,7 +57,13 @@ final class BelongsToManyMethodExtension implements MethodsClassReflectionExtens
      */
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
-        return $this->broker->getClass(BelongsToMany::class)
+        $methodReflection = $this->broker->getClass($this->getBuilderClass())
             ->getNativeMethod($methodName);
+
+        $mock = Mockery::mock($methodReflection);
+        $mock->shouldReceive('isStatic')
+            ->andReturn(true);
+
+        return $mock;
     }
 }
