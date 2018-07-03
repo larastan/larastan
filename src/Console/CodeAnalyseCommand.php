@@ -15,6 +15,7 @@ namespace NunoMaduro\LaravelCodeAnalyse\Console;
 
 use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
+use Illuminate\Support\Facades\Artisan;
 
 final class CodeAnalyseCommand extends Command
 {
@@ -39,11 +40,11 @@ final class CodeAnalyseCommand extends Command
     public function handle(): void
     {
         $params = [
-            './phpstan',
+            'php phpstan',
             'analyse',
             '--level='. (string) $this->argument('level'),
             '--autoload-file='.$this->laravel->basePath('vendor/autoload.php'),
-            '--configuration='.$this->laravel->basePath('vendor/nunomaduro/phpstan-laravel/extension.neon'),
+            '--configuration='. __DIR__ . '/../../extension.neon',
             $this->laravel['path'],
         ];
 

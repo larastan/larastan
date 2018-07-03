@@ -1,0 +1,23 @@
+parameters:
+    universalObjectCratesClasses:
+        - Illuminate\Database\Eloquent\Model
+        - Illuminate\Http\Resources\Json\JsonResource
+        - Illuminate\Http\Request
+
+services:
+    -
+        class: NunoMaduro\LaravelCodeAnalyse\EloquentBuilderMethodExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+
+    -
+        class: NunoMaduro\LaravelCodeAnalyse\QueryBuilderMethodExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+
+    -
+        class: NunoMaduro\LaravelCodeAnalyse\BelongsToManyMethodExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+
+

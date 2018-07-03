@@ -13,8 +13,7 @@
         "php": "^7.1.3",
         "phpstan/phpstan": "^0.10",
         "symfony/process": "^4.1",
-        "laravel/framework": "5.6.*",
-        "nunomaduro/phpstan-laravel": "dev-master"
+        "laravel/framework": "5.6.*"
     },
     "require-dev": {
         "orchestra/testbench": "^3.6",
