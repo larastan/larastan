@@ -39,12 +39,14 @@ final class CodeAnalyseCommand extends Command
      */
     public function handle(): void
     {
+        $level = is_string($this->argument('level')) ? $this->argument('level') : 'max';
+
         $params = [
             'php phpstan',
             'analyse',
-            '--level='. (string) $this->argument('level'),
+            '--level='.$level,
             '--autoload-file='.$this->laravel->basePath('vendor/autoload.php'),
-            '--configuration='. __DIR__ . '/../../extension.neon',
+            '--configuration='.__DIR__.'/../../extension.neon',
             $this->laravel['path'],
         ];
 
