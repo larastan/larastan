@@ -23,4 +23,8 @@ services:
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 
+    -
+        class: NunoMaduro\LaravelCodeAnalyse\Extensions\FacadeMethodExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
 
