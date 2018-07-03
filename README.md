@@ -20,9 +20,9 @@ Laravel Code Analyse was created by, and is maintained by [Nuno Maduro](https://
 
 > **Requires [PHP 7.1.3+](https://php.net/releases/)**
 
-You may use [Composer](https://getcomposer.org) to install Laravel Code Analyse into your Laravel project:
+You may use [Composer](https://getcomposer.org) to install Laravel Code Analyse as a development dependency into your Laravel project:
 ```bash
-composer require nunomaduro/laravel-code-analyse
+composer require --dev nunomaduro/laravel-code-analyse
 ```
 
 Once you have installed Laravel Code Analyse, you may start analyzing your code using the `code:analyse` Artisan command.
