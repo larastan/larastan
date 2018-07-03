@@ -6,6 +6,8 @@
 .scrutinizer.yml   export-ignore
 .travis.yml        export-ignore
 .styleci.yml       export-ignore
-phpunit.xml        export-ignore
+phpunit.xml.dist   export-ignore
 CHANGELOG.md       export-ignore
 CONTRIBUTING.md    export-ignore
+LICENSE.md         export-ignore
+README.md          export-ignore
