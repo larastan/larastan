@@ -3,6 +3,8 @@ parameters:
         - Illuminate\Database\Eloquent\Model
         - Illuminate\Http\Resources\Json\JsonResource
         - Illuminate\Http\Request
+    excludes_analyse:
+        - *.blade.php
 
 services:
     -
