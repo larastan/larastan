@@ -30,6 +30,12 @@ Once you have installed Laravel Code Analyse, you may start analyzing your code 
 php artisan code:analyse
 ```
 
+Or include it in your project's phpstan.neon:
+```
+includes:
+  - vendor/nunomaduro/laravel-code-analyse/extension.neon
+```
+
 ## Contributing
 
 Thank you for considering to contribute to Laravel Code Analyse. All the contribution guidelines are mentioned [here](CONTRIBUTING.md).
