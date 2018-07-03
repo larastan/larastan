@@ -5,6 +5,7 @@ parameters:
         - Illuminate\Http\Request
     excludes_analyse:
         - *.blade.php
+    bootstrap: %rootDir%/../../nunomaduro/laravel-code-analyse/bootstrap.php
 
 services:
     -
