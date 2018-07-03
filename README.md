@@ -48,6 +48,10 @@ You can have a look at the [CHANGELOG](CHANGELOG.md) for constant updates & deta
 - PayPal: [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=66BYDWAT92N6L)
 - Patreon: [Donate](https://www.patreon.com/nunomaduro)
 
+## Credits
+
+- [weebly/phpstan-laravel](https://github.com/weebly/phpstan-laravel) - Some code was inspired on this package.
+
 ## License
 
 Laravel Code Analyse is an open-sourced software licensed under the [MIT license](LICENSE.md).
