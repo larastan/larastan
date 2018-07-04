@@ -17,7 +17,10 @@ use Mockery;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 
-final class ModelScopeMethodExtension extends ModelMethodExtension
+/**
+ * @internal
+ */
+class ModelScopeMethodExtension extends ModelMethodExtension
 {
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {

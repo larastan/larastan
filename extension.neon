@@ -34,8 +34,16 @@ services:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: NunoMaduro\LaravelCodeAnalyse\Support\Facades\FacadeMethodExtension
+        class: NunoMaduro\LaravelCodeAnalyse\Http\Resources\Json\ResourceMethodExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 
+    -
+        class: NunoMaduro\LaravelCodeAnalyse\Http\Resources\Json\ResourceScopeMethodExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
 
+    -
+        class: NunoMaduro\LaravelCodeAnalyse\Support\Facades\FacadeMethodExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
