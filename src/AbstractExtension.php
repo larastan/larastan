@@ -45,18 +45,13 @@ abstract class AbstractExtension implements MethodsClassReflectionExtension, Bro
     {
         $hasMethod = false;
 
-        if ($classReflection->getName() === $this->subject() || $classReflection->isSubclassOf($this->subject())) {
+        if ($this->subjectInstanceOf($classReflection)) {
             foreach ($this->searchIn($classReflection) as $toBeSearchClass) {
                 $hasMethod = $this->broker->getClass($toBeSearchClass)
                     ->hasNativeMethod($methodName);
 
                 if ($hasMethod) {
-
-                    if (! array_key_exists($classReflection->getName(), $this->cache)) {
-                        $this->cache[$classReflection->getName()] = [];
-                    }
-
-                    $this->cache[$classReflection->getName()][$methodName] = $toBeSearchClass;
+                    $this->pushToCache($classReflection, $methodName, $toBeSearchClass);
                     break;
                 }
             }
@@ -80,6 +75,30 @@ abstract class AbstractExtension implements MethodsClassReflectionExtension, Bro
         }
 
         return $methodReflection;
+    }
+
+    /**
+     * @param \PHPStan\Reflection\ClassReflection $classReflection
+     *
+     * @return bool
+     */
+    protected function subjectInstanceOf(ClassReflection $classReflection): bool
+    {
+        return $classReflection->getName() === $this->subject() || $classReflection->isSubclassOf($this->subject());
+    }
+
+    /**
+     * @param \PHPStan\Reflection\ClassReflection $classReflection
+     * @param string $methodName
+     * @param string $toBeSearchClass
+     */
+    protected function pushToCache(ClassReflection $classReflection, string $methodName, string $toBeSearchClass): void
+    {
+        if (! array_key_exists($classReflection->getName(), $this->cache)) {
+            $this->cache[$classReflection->getName()] = [];
+        }
+
+        $this->cache[$classReflection->getName()][$methodName] = $toBeSearchClass;
     }
 
     /**
