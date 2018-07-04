@@ -11,15 +11,14 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\LaravelCodeAnalyse\Extensions;
+namespace NunoMaduro\LaravelCodeAnalyse\Database\Eloquent;
 
 use PHPStan\Reflection\ClassReflection;
-use Illuminate\Database\Eloquent\Model;
+use NunoMaduro\LaravelCodeAnalyse\AbstractExtension;
 use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
-final class ModelMethodExtension extends AbstractExtension
+final class BuilderMethodExtension extends AbstractExtension
 {
     /**
      * {@inheritdoc}
@@ -31,7 +30,7 @@ final class ModelMethodExtension extends AbstractExtension
      */
     protected function subject(): string
     {
-        return Model::class;
+        return EloquentBuilder::class;
     }
 
     /**
@@ -40,9 +39,7 @@ final class ModelMethodExtension extends AbstractExtension
     protected function searchIn(ClassReflection $classReflection): array
     {
         return [
-            EloquentBuilder::class,
             QueryBuilder::class,
-            BelongsToMany::class,
         ];
     }
 }

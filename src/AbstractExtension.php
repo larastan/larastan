@@ -11,9 +11,8 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\LaravelCodeAnalyse\Extensions;
+namespace NunoMaduro\LaravelCodeAnalyse;
 
-use Illuminate\Support\Facades\Facade;
 use Mockery;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;

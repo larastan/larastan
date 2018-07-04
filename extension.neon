@@ -9,17 +9,17 @@ parameters:
 
 services:
     -
-        class: NunoMaduro\LaravelCodeAnalyse\Extensions\EloquentBuilderMethodExtension
+        class: NunoMaduro\LaravelCodeAnalyse\Database\Eloquent\BuilderMethodExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: NunoMaduro\LaravelCodeAnalyse\Extensions\ModelMethodExtension
+        class: NunoMaduro\LaravelCodeAnalyse\Database\Eloquent\ModelMethodExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: NunoMaduro\LaravelCodeAnalyse\Extensions\FacadeMethodExtension
+        class: NunoMaduro\LaravelCodeAnalyse\Support\Facades\FacadeMethodExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 

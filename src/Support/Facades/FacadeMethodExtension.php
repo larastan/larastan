@@ -11,11 +11,12 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\LaravelCodeAnalyse\Extensions;
+namespace NunoMaduro\LaravelCodeAnalyse\Support\Facades;
 
 use function get_class;
 use Illuminate\Support\Facades\Facade;
 use PHPStan\Reflection\ClassReflection;
+use NunoMaduro\LaravelCodeAnalyse\AbstractExtension;
 use NunoMaduro\LaravelCodeAnalyse\FacadeConcreteClassResolver;
 
 final class FacadeMethodExtension extends AbstractExtension
