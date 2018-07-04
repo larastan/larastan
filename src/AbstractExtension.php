@@ -27,22 +27,6 @@ abstract class AbstractExtension implements MethodsClassReflectionExtension, Bro
     use Concerns\HasBroker;
 
     /**
-     * Returns the class under analyse.
-     *
-     * @return string
-     */
-    abstract protected function subject(): string;
-
-    /**
-     * Returns the classes where the native method should be search for.
-     *
-     * @param \PHPStan\Reflection\ClassReflection $classReflection
-     *
-     * @return array
-     */
-    abstract protected function searchIn(ClassReflection $classReflection): array;
-
-    /**
      * Whether the methods can be accessed statically
      */
     protected $staticAccess = false;
@@ -97,4 +81,20 @@ abstract class AbstractExtension implements MethodsClassReflectionExtension, Bro
 
         return $methodReflection;
     }
+
+    /**
+     * Returns the class under analyse.
+     *
+     * @return string
+     */
+    abstract protected function subject(): string;
+
+    /**
+     * Returns the classes where the native method should be search for.
+     *
+     * @param \PHPStan\Reflection\ClassReflection $classReflection
+     *
+     * @return array
+     */
+    abstract protected function searchIn(ClassReflection $classReflection): array;
 }
