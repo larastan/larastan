@@ -20,7 +20,10 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
-final class ModelMethodExtension extends AbstractExtension
+/**
+ * @internal
+ */
+class ModelMethodExtension extends AbstractExtension
 {
     /**
      * {@inheritdoc}
