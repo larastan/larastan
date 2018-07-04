@@ -19,8 +19,26 @@ use PHPStan\Reflection\ClassReflection;
 use Illuminate\Http\Resources\Json\Resource;
 use NunoMaduro\LaravelCodeAnalyse\AbstractExtension;
 
-final class ResourceMethodExtension extends AbstractExtension
+/**
+ * @internal
+ */
+class ResourceMethodExtension extends AbstractExtension
 {
+    /**
+     * {@inheritdoc}
+     */
+    protected $staticAccess = true;
+
+    /**
+     * Returns the class under analyse.
+     *
+     * @return string
+     */
+    protected function subject(): string
+    {
+        return Resource::class;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -33,15 +51,5 @@ final class ResourceMethodExtension extends AbstractExtension
                 }
             )
             ->toArray();
-    }
-
-    /**
-     * Returns the class under analyse.
-     *
-     * @return string
-     */
-    protected function subject(): string
-    {
-        return Resource::class;
     }
 }

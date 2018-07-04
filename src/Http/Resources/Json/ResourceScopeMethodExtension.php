@@ -13,35 +13,9 @@ declare(strict_types=1);
 
 namespace NunoMaduro\LaravelCodeAnalyse\Http\Resources\Json;
 
-use ReflectionClass;
-use Illuminate\Database\Eloquent\Model;
-use PHPStan\Reflection\ClassReflection;
-use Illuminate\Http\Resources\Json\Resource;
-use NunoMaduro\LaravelCodeAnalyse\Database\Eloquent\ModelScopeMethodExtension;
+use NunoMaduro\LaravelCodeAnalyse\Concerns\HasScope;
 
-final class ResourceScopeMethodExtension extends ModelScopeMethodExtension
+final class ResourceScopeMethodExtension extends ResourceMethodExtension
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function searchIn(ClassReflection $classReflection): array
-    {
-        return collect(get_declared_classes())
-            ->filter(
-                function ($item) {
-                    return (new ReflectionClass($item))->isSubclassOf(Model::class);
-                }
-            )
-            ->toArray();
-    }
-
-    /**
-     * Returns the class under analyse.
-     *
-     * @return string
-     */
-    protected function subject(): string
-    {
-        return Resource::class;
-    }
+    use HasScope;
 }

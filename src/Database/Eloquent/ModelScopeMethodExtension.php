@@ -13,42 +13,15 @@ declare(strict_types=1);
 
 namespace NunoMaduro\LaravelCodeAnalyse\Database\Eloquent;
 
-use Mockery;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\MethodReflection;
+use NunoMaduro\LaravelCodeAnalyse\Concerns\HasScope;
 
 /**
  * @internal
  */
 class ModelScopeMethodExtension extends ModelMethodExtension
 {
-    public function hasMethod(ClassReflection $classReflection, string $methodName): bool
-    {
-        $scopeMethodName = 'scope'.ucfirst($methodName);
-
-        return parent::hasMethod($classReflection, $scopeMethodName);
-    }
-
-    public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
-    {
-        $scopeMethodName = 'scope'.ucfirst($methodName);
-
-        $methodReflection = parent::getMethod($classReflection, $scopeMethodName);
-
-        /** @var \PHPStan\Reflection\FunctionVariantWithPhpDocs $variant */
-        $variant = $methodReflection->getVariants()[0];
-        $parameters = $variant->getParameters();
-        unset($parameters[0]); // The query argument.
-
-        $variant = Mockery::mock($variant);
-        $variant->shouldReceive('getParameters')
-            ->andReturn($parameters);
-
-        $methodReflection->shouldReceive('getVariants')
-            ->andReturn([$variant]);
-
-        return $methodReflection;
-    }
+    use HasScope;
 
     /**
      * {@inheritdoc}
