@@ -19,7 +19,6 @@ use Illuminate\Support\Manager;
 use Illuminate\Support\Facades\Facade;
 use PHPStan\Reflection\ClassReflection;
 use NunoMaduro\LaravelCodeAnalyse\AbstractExtension;
-use NunoMaduro\LaravelCodeAnalyse\FacadeConcreteClassResolver;
 
 final class FacadeMethodExtension extends AbstractExtension
 {
@@ -44,11 +43,9 @@ final class FacadeMethodExtension extends AbstractExtension
         $facadeClass = $classReflection->getName();
 
         if ($concrete = $facadeClass::getFacadeRoot()) {
-
             $classes = [get_class($concrete)];
 
             if ($concrete instanceof Manager) {
-
                 $driver = null;
 
                 try {

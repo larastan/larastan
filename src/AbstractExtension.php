@@ -27,7 +27,7 @@ abstract class AbstractExtension implements MethodsClassReflectionExtension, Bro
     use Concerns\HasBroker;
 
     /**
-     * Whether the methods can be accessed statically
+     * Whether the methods can be accessed statically.
      */
     protected $staticAccess = false;
 
