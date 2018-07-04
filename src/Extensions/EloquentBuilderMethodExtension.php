@@ -13,16 +13,29 @@ declare(strict_types=1);
 
 namespace NunoMaduro\LaravelCodeAnalyse\Extensions;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 
-final class EloquentBuilderMethodExtension extends AbstractBuilderMethodExtension
+final class EloquentBuilderMethodExtension extends AbstractExtension
 {
     /**
      * {@inheritdoc}
      */
-    public function getBuilderClass(): string
+    protected $staticAccess = true;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function subject(): string
+    {
+        return Model::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function searchIn(): string
     {
         return Builder::class;
     }
 }
-

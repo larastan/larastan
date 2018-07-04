@@ -14,14 +14,38 @@ declare(strict_types=1);
 namespace NunoMaduro\LaravelCodeAnalyse\Extensions;
 
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Model;
 
-final class QueryBuilderMethodExtension extends AbstractBuilderMethodExtension
+final class QueryBuilderMethodExtension extends AbstractExtension
 {
     /**
      * {@inheritdoc}
      */
-    public function getBuilderClass(): string
+    protected $staticAccess = true;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function subject(): string
+    {
+        return Model::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function searchIn(): string
     {
         return Builder::class;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function staticAccess(): bool
+    {
+        return true;
+    }
 }
+
+

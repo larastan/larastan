@@ -11,9 +11,11 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-define('LARAVEL_START', microtime(true));
+namespace NunoMaduro\LaravelCodeAnalyse\Extensions;
 
-$app = require __DIR__.'/../../../bootstrap/app.php';
-
-$app->make(\Illuminate\Contracts\Console\Kernel::class)
-    ->bootstrap();
+/**
+ * @internal
+ */
+final class NullConcreteClass
+{
+}

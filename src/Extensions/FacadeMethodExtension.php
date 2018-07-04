@@ -13,57 +13,37 @@ declare(strict_types=1);
 
 namespace NunoMaduro\LaravelCodeAnalyse\Extensions;
 
-use PHPStan\Broker\Broker;
+use function get_class;
 use Illuminate\Support\Facades\Facade;
-use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\BrokerAwareExtension;
-use PHPStan\Reflection\MethodsClassReflectionExtension;
 use NunoMaduro\LaravelCodeAnalyse\FacadeConcreteClassResolver;
 
-final class FacadeMethodExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
+final class FacadeMethodExtension extends AbstractExtension
 {
+    /**
+     * {@inheritdoc}
+     */
+    protected $staticAccess = true;
 
     /**
-     * @var \PHPStan\Broker\Broker
+     * {@inheritdoc}
      */
-    private $broker;
-
-    /**
-     * @param \PHPStan\Broker\Broker $broker
-     */
-    public function setBroker(Broker $broker): void
+    protected function subject(): string
     {
-        $this->broker = $broker;
+        return Facade::class;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function hasMethod(ClassReflection $classReflection, string $methodName): bool
+    protected function searchIn(): string
     {
-        if ($classReflection->isSubclassOf(Facade::class)) {
-            $facadeClass = $classReflection->getNativeReflection()
-                ->getName();
-
-            if ($concrete = $facadeClass::getFacadeRoot()) {
-                return $this->broker->getClass(get_class($concrete))
-                    ->hasNativeMethod($methodName);
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
-    {
-        $facadeClass = $classReflection->getNativeReflection()
+        $facadeClass = $this->classReflection->getNativeReflection()
             ->getName();
 
-        return $this->broker->getClass(get_class($facadeClass::getFacadeRoot()))
-            ->getNativeMethod($methodName);
+        if ($concrete = $facadeClass::getFacadeRoot()) {
+            return get_class($concrete);
+        }
+
+        return NullConcreteClass::class;
     }
 }

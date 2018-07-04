@@ -13,44 +13,29 @@ declare(strict_types=1);
 
 namespace NunoMaduro\LaravelCodeAnalyse\Extensions;
 
-use PHPStan\Broker\Broker;
 use Illuminate\Database\Eloquent\Model;
-use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\BrokerAwareExtension;
-use PHPStan\Reflection\MethodsClassReflectionExtension;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-final class BelongsToManyMethodExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
+final class BelongsToManyMethodExtension extends AbstractExtension
 {
     /**
-     * @var \PHPStan\Broker\Broker
+     * {@inheritdoc}
      */
-    private $broker;
+    protected $staticAccess = true;
 
     /**
-     * @param \PHPStan\Broker\Broker $broker
+     * {@inheritdoc}
      */
-    public function setBroker(Broker $broker): void
+    protected function subject(): string
     {
-        $this->broker = $broker;
+        return Model::class;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function hasMethod(ClassReflection $classReflection, string $methodName): bool
+    protected function searchIn(): string
     {
-        return $classReflection->isSubclassOf(BelongsToMany::class) && $this->broker->getClass(BelongsToMany::class)
-                ->hasNativeMethod($methodName);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
-    {
-        return $this->broker->getClass(BelongsToMany::class)
-            ->getNativeMethod($methodName);
+        return BelongsToMany::class;
     }
 }
