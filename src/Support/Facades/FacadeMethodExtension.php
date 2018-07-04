@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace NunoMaduro\LaravelCodeAnalyse\Support\Facades;
 
 use function get_class;
+use InvalidArgumentException;
+use Illuminate\Support\Manager;
 use Illuminate\Support\Facades\Facade;
 use PHPStan\Reflection\ClassReflection;
 use NunoMaduro\LaravelCodeAnalyse\AbstractExtension;
@@ -42,7 +44,25 @@ final class FacadeMethodExtension extends AbstractExtension
         $facadeClass = $classReflection->getName();
 
         if ($concrete = $facadeClass::getFacadeRoot()) {
-            return [get_class($concrete)];
+
+            $classes = [get_class($concrete)];
+
+            if ($concrete instanceof Manager) {
+
+                $driver = null;
+
+                try {
+                    $driver = $concrete->driver();
+                } catch (InvalidArgumentException $exception) {
+                    // ..
+                }
+
+                if ($driver !== null) {
+                    $classes[] = get_class($driver);
+                }
+            }
+
+            return $classes;
         }
 
         return [NullConcreteClass::class];
