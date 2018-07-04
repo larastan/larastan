@@ -15,6 +15,7 @@ namespace NunoMaduro\LaravelCodeAnalyse\Extensions;
 
 use function get_class;
 use Illuminate\Support\Facades\Facade;
+use PHPStan\Reflection\ClassReflection;
 use NunoMaduro\LaravelCodeAnalyse\FacadeConcreteClassResolver;
 
 final class FacadeMethodExtension extends AbstractExtension
@@ -35,15 +36,14 @@ final class FacadeMethodExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    protected function searchIn(): string
+    protected function searchIn(ClassReflection $classReflection): array
     {
-        $facadeClass = $this->classReflection->getNativeReflection()
-            ->getName();
+        $facadeClass = $classReflection->getName();
 
         if ($concrete = $facadeClass::getFacadeRoot()) {
-            return get_class($concrete);
+            return [get_class($concrete)];
         }
 
-        return NullConcreteClass::class;
+        return [NullConcreteClass::class];
     }
 }

@@ -14,12 +14,7 @@ services:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: NunoMaduro\LaravelCodeAnalyse\Extensions\QueryBuilderMethodExtension
-        tags:
-            - phpstan.broker.methodsClassReflectionExtension
-
-    -
-        class: NunoMaduro\LaravelCodeAnalyse\Extensions\BelongsToManyMethodExtension
+        class: NunoMaduro\LaravelCodeAnalyse\Extensions\ModelMethodExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 

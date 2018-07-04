@@ -13,10 +13,13 @@ declare(strict_types=1);
 
 namespace NunoMaduro\LaravelCodeAnalyse\Extensions;
 
+use PHPStan\Reflection\ClassReflection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
-final class BelongsToManyMethodExtension extends AbstractExtension
+final class ModelMethodExtension extends AbstractExtension
 {
     /**
      * {@inheritdoc}
@@ -34,8 +37,12 @@ final class BelongsToManyMethodExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    protected function searchIn(): string
+    protected function searchIn(ClassReflection $classReflection): array
     {
-        return BelongsToMany::class;
+        return [
+            EloquentBuilder::class,
+            QueryBuilder::class,
+            BelongsToMany::class,
+        ];
     }
 }

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\LaravelCodeAnalyse\Extensions;
 
+use Illuminate\Support\Facades\Facade;
 use Mockery;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
@@ -27,13 +28,6 @@ abstract class AbstractExtension implements MethodsClassReflectionExtension, Bro
     use Concerns\HasBroker;
 
     /**
-     * Contains the Class Reflection.
-     *
-     * @var \PHPStan\Reflection\ClassReflection
-     */
-    protected $classReflection;
-
-    /**
      * Returns the class under analyse.
      *
      * @return string
@@ -41,11 +35,13 @@ abstract class AbstractExtension implements MethodsClassReflectionExtension, Bro
     abstract protected function subject(): string;
 
     /**
-     * Returns the class where the native method should be search for.
+     * Returns the classes where the native method should be search for.
      *
-     * @return string
+     * @param \PHPStan\Reflection\ClassReflection $classReflection
+     *
+     * @return array
      */
-    abstract protected function searchIn(): string;
+    abstract protected function searchIn(ClassReflection $classReflection): array;
 
     /**
      * Whether the methods can be accessed statically
@@ -53,14 +49,37 @@ abstract class AbstractExtension implements MethodsClassReflectionExtension, Bro
     protected $staticAccess = false;
 
     /**
+     * Holds already discovered methods.
+     *
+     * @var array
+     */
+    private $cache = [];
+
+    /**
      * {@inheritdoc}
      */
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        $this->classReflection = $classReflection;
+        $hasMethod = false;
 
-        return $classReflection->isSubclassOf($this->subject()) && $this->broker->getClass($this->searchIn())
-                ->hasNativeMethod($methodName);
+        if ($classReflection->getName() === $this->subject() || $classReflection->isSubclassOf($this->subject())) {
+            foreach ($this->searchIn($classReflection) as $toBeSearchClass) {
+                $hasMethod = $this->broker->getClass($toBeSearchClass)
+                    ->hasNativeMethod($methodName);
+
+                if ($hasMethod) {
+
+                    if (! array_key_exists($classReflection->getName(), $this->cache)) {
+                        $this->cache[$classReflection->getName()] = [];
+                    }
+
+                    $this->cache[$classReflection->getName()][$methodName] = $toBeSearchClass;
+                    break;
+                }
+            }
+        }
+
+        return $hasMethod;
     }
 
     /**
@@ -68,9 +87,7 @@ abstract class AbstractExtension implements MethodsClassReflectionExtension, Bro
      */
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
-        $this->classReflection = $classReflection;
-
-        $methodReflection = $this->broker->getClass($this->searchIn())
+        $methodReflection = $this->broker->getClass($this->cache[$classReflection->getName()][$methodName])
             ->getNativeMethod($methodName);
 
         if ($this->staticAccess) {

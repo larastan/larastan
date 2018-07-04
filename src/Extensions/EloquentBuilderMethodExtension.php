@@ -13,8 +13,9 @@ declare(strict_types=1);
 
 namespace NunoMaduro\LaravelCodeAnalyse\Extensions;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
+use PHPStan\Reflection\ClassReflection;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 final class EloquentBuilderMethodExtension extends AbstractExtension
 {
@@ -28,14 +29,16 @@ final class EloquentBuilderMethodExtension extends AbstractExtension
      */
     protected function subject(): string
     {
-        return Model::class;
+        return EloquentBuilder::class;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function searchIn(): string
+    protected function searchIn(ClassReflection $classReflection): array
     {
-        return Builder::class;
+        return [
+            QueryBuilder::class,
+        ];
     }
 }
