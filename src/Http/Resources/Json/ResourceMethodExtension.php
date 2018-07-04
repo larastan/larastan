@@ -13,13 +13,11 @@ declare(strict_types=1);
 
 namespace NunoMaduro\LaravelCodeAnalyse\Http\Resources\Json;
 
+use ReflectionClass;
 use Illuminate\Database\Eloquent\Model;
-use Mockery;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\MethodReflection;
 use Illuminate\Http\Resources\Json\Resource;
 use NunoMaduro\LaravelCodeAnalyse\AbstractExtension;
-use ReflectionClass;
 
 final class ResourceMethodExtension extends AbstractExtension
 {
