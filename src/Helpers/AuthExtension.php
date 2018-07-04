@@ -18,7 +18,7 @@ use NunoMaduro\LaravelCodeAnalyse\AbstractExtension;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
-final class BuilderMethodExtension extends AbstractExtension
+final class AuthExtension extends AbstractExtension
 {
     /**
      * {@inheritdoc}

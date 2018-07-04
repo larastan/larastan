@@ -15,7 +15,6 @@ namespace NunoMaduro\LaravelCodeAnalyse\Console;
 
 use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
-use Illuminate\Support\Facades\Artisan;
 
 final class CodeAnalyseCommand extends Command
 {
