@@ -37,7 +37,7 @@ trait HasScope
     {
         $methodReflection = parent::getMethod($classReflection, $this->getScopeMethodName($methodName));
 
-        return $this->getScopeMethodReflection($methodReflection, $methodName);
+        return $this->getScopeMethodReflection($methodReflection);
     }
 
     /**
@@ -66,6 +66,7 @@ trait HasScope
         $variant->shouldReceive('getParameters')
             ->andReturn($parameters);
 
+        /** @var \Mockery\MockInterface $methodReflection */
         $methodReflection->shouldReceive('getVariants')
             ->andReturn([$variant]);
 
