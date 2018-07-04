@@ -9,6 +9,16 @@ parameters:
 
 services:
     -
+        class: NunoMaduro\LaravelCodeAnalyse\Auth\AuthManagerExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+
+    -
+        class: NunoMaduro\LaravelCodeAnalyse\Contracts\Auth\AuthenticatableExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+
+    -
         class: NunoMaduro\LaravelCodeAnalyse\Database\Eloquent\BuilderMethodExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
@@ -19,7 +29,13 @@ services:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
+        class: NunoMaduro\LaravelCodeAnalyse\Database\Eloquent\ModelScopeMethodExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+
+    -
         class: NunoMaduro\LaravelCodeAnalyse\Support\Facades\FacadeMethodExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
+
 
