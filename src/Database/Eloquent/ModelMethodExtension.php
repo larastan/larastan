@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace NunoMaduro\LaravelCodeAnalyse\Database\Eloquent;
 
-use PHPStan\Reflection\ClassReflection;
 use Illuminate\Database\Eloquent\Model;
+use PHPStan\Reflection\ClassReflection;
 use NunoMaduro\LaravelCodeAnalyse\AbstractExtension;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

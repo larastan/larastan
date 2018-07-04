@@ -53,6 +53,6 @@ final class AuthenticatableExtension extends AbstractExtension
 
         $userModel = $config->get('auth.providers.users.model');
 
-        return [$userModel,];
+        return [$userModel];
     }
 }
