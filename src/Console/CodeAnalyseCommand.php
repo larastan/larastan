@@ -26,7 +26,7 @@ final class CodeAnalyseCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected $signature = 'code:analyse {level=max}';
+    protected $signature = 'code:analyse {--level=1}';
 
     /**
      * {@inheritdoc}
@@ -38,7 +38,7 @@ final class CodeAnalyseCommand extends Command
      */
     public function handle(): void
     {
-        $level = is_string($this->argument('level')) ? $this->argument('level') : 'max';
+        $level = is_string($this->option('level')) ? $this->option('level') : 'max';
 
         $params = [
             'php phpstan',
