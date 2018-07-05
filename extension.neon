@@ -37,6 +37,12 @@ services:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
+        class: NunoMaduro\LaravelCodeAnalyse\Database\Eloquent\RelationMethodExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+
+
+    -
         class: NunoMaduro\LaravelCodeAnalyse\Http\Resources\Json\ResourceMethodExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
