@@ -13,8 +13,12 @@ declare(strict_types=1);
 
 namespace NunoMaduro\LaravelCodeAnalyse\Console;
 
+use function substr;
+use function implode;
+use function strtoupper;
 use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
+use Illuminate\Console\Application as Artisan;
 
 final class CodeAnalyseCommand extends Command
 {
@@ -41,7 +45,7 @@ final class CodeAnalyseCommand extends Command
         $level = is_string($this->option('level')) ? $this->option('level') : 'max';
 
         $params = [
-            'php phpstan',
+            static::phpstanBinary(),
             'analyse',
             '--level='.$level,
             '--autoload-file='.$this->laravel->basePath('vendor/autoload.php'),
@@ -62,5 +66,13 @@ final class CodeAnalyseCommand extends Command
         foreach ($process as $type => $data) {
             $this->output->writeln($data);
         }
+    }
+
+    /**
+     * @return string
+     */
+    private static function phpstanBinary(): string
+    {
+        return sprintf('%s %s', Artisan::phpBinary(), 'phpstan');
     }
 }
