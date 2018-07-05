@@ -5,9 +5,10 @@ parameters:
         - Illuminate\Http\Request
     excludes_analyse:
         - *.blade.php
-	ignoreErrors:
-		- '#Result of function abort (void) is used#'
+    ignoreErrors:
+        - '#Result of function abort \(void\) is used#'
     bootstrap: %rootDir%/../../nunomaduro/laravel-code-analyse/bootstrap.php
+    reportUnmatchedIgnoredErrors: false
 
 services:
     -
