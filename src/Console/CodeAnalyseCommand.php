@@ -13,9 +13,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\LaravelCodeAnalyse\Console;
 
-use function substr;
 use function implode;
-use function strtoupper;
 use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
 use Illuminate\Console\Application as Artisan;
@@ -57,14 +55,14 @@ final class CodeAnalyseCommand extends Command
         $params = [
             static::phpstanBinary(),
             'analyse',
-            '--level=' . $level,
-            '--autoload-file=' . $this->laravel->basePath('vendor/autoload.php'),
-            '--configuration=' . __DIR__ . '/../../extension.neon',
+            '--level='.$level,
+            '--autoload-file='.$this->laravel->basePath('vendor/autoload.php'),
+            '--configuration='.__DIR__.'/../../extension.neon',
             $path,
         ];
 
         if ($this->hasOption('memory-limit') && $this->option('memory-limit')) {
-            $params[] = '--memory-limit=' . $this->option('memory-limit');
+            $params[] = '--memory-limit='.$this->option('memory-limit');
         }
 
         $process = new Process(implode(' ', $params), $this->laravel->basePath('vendor/bin'));
