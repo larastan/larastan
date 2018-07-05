@@ -13,9 +13,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\LaravelCodeAnalyse\Console;
 
-use function substr;
 use function implode;
-use function strtoupper;
 use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
 use Illuminate\Console\Application as Artisan;
@@ -30,7 +28,11 @@ final class CodeAnalyseCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected $signature = 'code:analyse {--level=1}';
+    protected $signature = 'code:analyse 
+            {--level=1} 
+            {--path= : Path to directory which need to analyse}
+            {--memory-limit= : Memory limit}
+    ';
 
     /**
      * {@inheritdoc}
@@ -44,14 +46,24 @@ final class CodeAnalyseCommand extends Command
     {
         $level = is_string($this->option('level')) ? $this->option('level') : 'max';
 
+        $path = $this->laravel['path'];
+
+        if ($this->hasOption('path') && $this->option('path')) {
+            $path = base_path($this->option('path'));
+        }
+
         $params = [
             static::phpstanBinary(),
             'analyse',
             '--level='.$level,
             '--autoload-file='.$this->laravel->basePath('vendor/autoload.php'),
             '--configuration='.__DIR__.'/../../extension.neon',
-            $this->laravel['path'],
+            $path,
         ];
+
+        if ($this->hasOption('memory-limit') && $this->option('memory-limit')) {
+            $params[] = '--memory-limit='.$this->option('memory-limit');
+        }
 
         $process = new Process(implode(' ', $params), $this->laravel->basePath('vendor/bin'));
 
