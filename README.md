@@ -30,10 +30,12 @@ Once you have installed Laravel Code Analyse, you may start analyzing your code 
 php artisan code:analyse
 ```
 
-Or include it in your project's phpstan.neon:
-```
-includes:
-  - vendor/nunomaduro/laravel-code-analyse/extension.neon
+## Rule levels
+
+You can choose from currently 8 levels: (0 is the loosest and 7 is the strictest) by passing `--level` to `analyse` command. Default level is `1`. You can also use `--level max` as an alias for the highest level.
+
+```bash
+php artisan code:analyse --level=max
 ```
 
 ## Contributing
