@@ -19,6 +19,9 @@ use PHPStan\Reflection\ClassReflection;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use NunoMaduro\LaravelCodeAnalyse\AbstractExtension;
 
+/**
+ * @internal
+ */
 final class AuthManagerExtension extends AbstractExtension
 {
     /**

@@ -15,6 +15,9 @@ namespace NunoMaduro\LaravelCodeAnalyse\Http\Resources\Json;
 
 use NunoMaduro\LaravelCodeAnalyse\Concerns\HasScope;
 
+/**
+ * @internal
+ */
 final class ResourceScopeMethodExtension extends ResourceMethodExtension
 {
     use HasScope;

@@ -13,24 +13,21 @@ declare(strict_types=1);
 
 namespace NunoMaduro\LaravelCodeAnalyse\Console;
 
-use function substr;
 use function implode;
-use function strtoupper;
+use function is_string;
 use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
 use Illuminate\Console\Application as Artisan;
 
+/**
+ * @internal
+ */
 final class CodeAnalyseCommand extends Command
 {
     /**
-     * @var \Illuminate\Foundation\Application
-     */
-    protected $laravel;
-
-    /**
      * {@inheritdoc}
      */
-    protected $signature = 'code:analyse {--level=1}';
+    protected $signature = 'code:analyse';
 
     /**
      * {@inheritdoc}
@@ -38,22 +35,36 @@ final class CodeAnalyseCommand extends Command
     protected $description = 'Analyses source code';
 
     /**
+     * @var \NunoMaduro\LaravelCodeAnalyse\Console\OptionsResolver
+     */
+    private $optionsResolver;
+
+    /**
+     * CodeAnalyseCommand constructor.
+     *
+     * @param \NunoMaduro\LaravelCodeAnalyse\Console\OptionsResolver $optionsResolver
+     */
+    public function __construct(OptionsResolver $optionsResolver)
+    {
+        $this->optionsResolver = $optionsResolver;
+
+        parent::__construct();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function configure(): void
+    {
+        $this->setDefinition($this->optionsResolver->getDefinition());
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function handle(): void
     {
-        $level = is_string($this->option('level')) ? $this->option('level') : 'max';
-
-        $params = [
-            static::phpstanBinary(),
-            'analyse',
-            '--level='.$level,
-            '--autoload-file='.$this->laravel->basePath('vendor/autoload.php'),
-            '--configuration='.__DIR__.'/../../extension.neon',
-            $this->laravel['path'],
-        ];
-
-        $process = new Process(implode(' ', $params), $this->laravel->basePath('vendor/bin'));
+        $process = new Process($this->cmd(), $this->laravel->basePath('vendor/bin'));
 
         if (Process::isTtySupported()) {
             $process->setTty(true);
@@ -71,8 +82,49 @@ final class CodeAnalyseCommand extends Command
     /**
      * @return string
      */
-    private static function phpstanBinary(): string
+    private function cmd(): string
     {
-        return sprintf('%s %s', Artisan::phpBinary(), 'phpstan');
+        $options = '';
+        foreach ($this->optionsResolver->getDefinition()
+                     ->getOptions() as $option) {
+
+            if ($option->getName() === 'paths') {
+                continue;
+            }
+
+            $this->input->getOption('memory-limit');
+
+            $value = $this->option($name = $option->getName());
+
+            if ($option->acceptValue()) {
+                $options .= " --$name=$value";
+            } else {
+                if ($this->option($name)) {
+                    $options .= " --$name";
+                }
+            }
+        }
+
+        $params = [
+            $this->command(),
+            $this->option('paths'),
+            $options,
+        ];
+
+        return implode(' ', $params);
+    }
+
+    /**
+     * @return string
+     */
+    private function command(): string
+    {
+        $command = '';
+
+        if (strncasecmp(PHP_OS, 'WIN', 3) !== 0) {
+            $command .= Artisan::phpBinary();
+        }
+
+        return "$command phpstan analyse";
     }
 }

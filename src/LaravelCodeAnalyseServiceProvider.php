@@ -16,6 +16,9 @@ namespace NunoMaduro\LaravelCodeAnalyse;
 use Illuminate\Support\ServiceProvider;
 use NunoMaduro\LaravelCodeAnalyse\Console\CodeAnalyseCommand;
 
+/**
+ * @internal
+ */
 final class LaravelCodeAnalyseServiceProvider extends ServiceProvider
 {
     /**

@@ -19,6 +19,9 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use NunoMaduro\LaravelCodeAnalyse\AbstractExtension;
 use Illuminate\Contracts\Container\Container as ContainerContract;
 
+/**
+ * @internal
+ */
 final class AuthenticatableExtension extends AbstractExtension
 {
     /**

@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\Facade;
 use PHPStan\Reflection\ClassReflection;
 use NunoMaduro\LaravelCodeAnalyse\AbstractExtension;
 
+/**
+ * @internal
+ */
 final class FacadeMethodExtension extends AbstractExtension
 {
     /**
