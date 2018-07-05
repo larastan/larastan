@@ -1,7 +1,7 @@
 {
-    "name": "nunomaduro/laravel-code-analyse",
-    "description": "Laravel Code Analyse - Discover bugs in your code without running it. A phpstan/phpstan wrapper for Laravel",
-    "keywords": ["laravel", "php", "package", "static analysis", "code analysis", "code analyse"],
+    "name": "nunomaduro/larastan",
+    "description": "Larastan - Discover bugs in your code without running it. A phpstan/phpstan wrapper for Laravel",
+    "keywords": ["laravel", "larastan", "phpstan", "php", "package", "static analysis", "code analysis", "code analyse"],
     "license": "MIT",
     "authors": [
         {
@@ -29,7 +29,7 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
-            "NunoMaduro\\LaravelCodeAnalyse\\": "src/"
+            "NunoMaduro\\Larastan\\": "src/"
         }
     },
     "config": {
@@ -39,7 +39,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "NunoMaduro\\LaravelCodeAnalyse\\LaravelCodeAnalyseServiceProvider"
+                "NunoMaduro\\Larastan\\LarastanServiceProvider"
             ]
         }
     }

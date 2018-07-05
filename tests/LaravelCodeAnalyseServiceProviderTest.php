@@ -6,10 +6,10 @@ use function get_class;
 use Orchestra\Testbench\TestCase;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Artisan;
-use NunoMaduro\LaravelCodeAnalyse\Console\CodeAnalyseCommand;
-use NunoMaduro\LaravelCodeAnalyse\LaravelCodeAnalyseServiceProvider;
+use NunoMaduro\Larastan\Console\CodeAnalyseCommand;
+use NunoMaduro\Larastan\LarastanServiceProvider;
 
-class LaravelCodeAnalyseServiceProviderTest extends TestCase
+class LarastanServiceProviderTest extends TestCase
 {
     public function testCommandAddedOnConsole(): void
     {
@@ -18,7 +18,7 @@ class LaravelCodeAnalyseServiceProviderTest extends TestCase
             ->willReturn(true);
         $app->method('runningUnitTests')
             ->willReturn(false);
-        (new LaravelCodeAnalyseServiceProvider($app))->register();
+        (new LarastanServiceProvider($app))->register();
 
         $this->assertContains(CodeAnalyseCommand::class, $this->getCommandClasses());
     }
@@ -30,7 +30,7 @@ class LaravelCodeAnalyseServiceProviderTest extends TestCase
             ->willReturn(false);
         $app->method('runningUnitTests')
             ->willReturn(false);
-        (new LaravelCodeAnalyseServiceProvider($app))->register();
+        (new LarastanServiceProvider($app))->register();
 
         $this->assertNotContains(CodeAnalyseCommand::class, $this->getCommandClasses());
     }
@@ -42,7 +42,7 @@ class LaravelCodeAnalyseServiceProviderTest extends TestCase
             ->willReturn(true);
         $app->method('runningUnitTests')
             ->willReturn(true);
-        (new LaravelCodeAnalyseServiceProvider($app))->register();
+        (new LarastanServiceProvider($app))->register();
 
         $this->assertNotContains(CodeAnalyseCommand::class, $this->getCommandClasses());
     }

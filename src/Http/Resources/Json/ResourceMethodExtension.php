@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * This file is part of Laravel Code Analyse.
+ * This file is part of Larastan.
  *
  * (c) Nuno Maduro <enunomaduro@gmail.com>
  *
@@ -11,13 +11,13 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\LaravelCodeAnalyse\Http\Resources\Json;
+namespace NunoMaduro\Larastan\Http\Resources\Json;
 
 use ReflectionClass;
 use Illuminate\Database\Eloquent\Model;
 use PHPStan\Reflection\ClassReflection;
 use Illuminate\Http\Resources\Json\Resource;
-use NunoMaduro\LaravelCodeAnalyse\AbstractExtension;
+use NunoMaduro\Larastan\AbstractExtension;
 
 /**
  * @internal

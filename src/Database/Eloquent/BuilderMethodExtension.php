@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * This file is part of Laravel Code Analyse.
+ * This file is part of Larastan.
  *
  * (c) Nuno Maduro <enunomaduro@gmail.com>
  *
@@ -11,10 +11,10 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\LaravelCodeAnalyse\Database\Eloquent;
+namespace NunoMaduro\Larastan\Database\Eloquent;
 
 use PHPStan\Reflection\ClassReflection;
-use NunoMaduro\LaravelCodeAnalyse\AbstractExtension;
+use NunoMaduro\Larastan\AbstractExtension;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 

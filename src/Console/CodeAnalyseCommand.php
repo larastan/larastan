@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * This file is part of Laravel Code Analyse.
+ * This file is part of Larastan.
  *
  * (c) Nuno Maduro <enunomaduro@gmail.com>
  *
@@ -11,7 +11,7 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\LaravelCodeAnalyse\Console;
+namespace NunoMaduro\Larastan\Console;
 
 use function implode;
 use function is_string;
@@ -35,14 +35,14 @@ final class CodeAnalyseCommand extends Command
     protected $description = 'Analyses source code';
 
     /**
-     * @var \NunoMaduro\LaravelCodeAnalyse\Console\OptionsResolver
+     * @var \NunoMaduro\Larastan\Console\OptionsResolver
      */
     private $optionsResolver;
 
     /**
      * CodeAnalyseCommand constructor.
      *
-     * @param \NunoMaduro\LaravelCodeAnalyse\Console\OptionsResolver $optionsResolver
+     * @param \NunoMaduro\Larastan\Console\OptionsResolver $optionsResolver
      */
     public function __construct(OptionsResolver $optionsResolver)
     {

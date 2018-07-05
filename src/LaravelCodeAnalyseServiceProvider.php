@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * This file is part of Laravel Code Analyse.
+ * This file is part of Larastan.
  *
  * (c) Nuno Maduro <enunomaduro@gmail.com>
  *
@@ -11,15 +11,15 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\LaravelCodeAnalyse;
+namespace NunoMaduro\Larastan;
 
 use Illuminate\Support\ServiceProvider;
-use NunoMaduro\LaravelCodeAnalyse\Console\CodeAnalyseCommand;
+use NunoMaduro\Larastan\Console\CodeAnalyseCommand;
 
 /**
  * @internal
  */
-final class LaravelCodeAnalyseServiceProvider extends ServiceProvider
+final class LarastanServiceProvider extends ServiceProvider
 {
     /**
      * {@inheritdoc}

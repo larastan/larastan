@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-/*
- * This file is part of Laravel Code Analyse.
+/**
+ * This file is part of Larastan.
  *
  * (c) Nuno Maduro <enunomaduro@gmail.com>
  *

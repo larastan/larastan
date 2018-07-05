@@ -7,52 +7,52 @@ parameters:
         - *.blade.php
     ignoreErrors:
         - '#Result of function abort \(void\) is used#'
-    bootstrap: %rootDir%/../../nunomaduro/laravel-code-analyse/bootstrap.php
+    bootstrap: %rootDir%/../../nunomaduro/larastan/bootstrap.php
     reportUnmatchedIgnoredErrors: false
 
 services:
     -
-        class: NunoMaduro\LaravelCodeAnalyse\Auth\AuthManagerExtension
+        class: NunoMaduro\Larastan\Auth\AuthManagerExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: NunoMaduro\LaravelCodeAnalyse\Contracts\Auth\AuthenticatableExtension
+        class: NunoMaduro\Larastan\Contracts\Auth\AuthenticatableExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: NunoMaduro\LaravelCodeAnalyse\Database\Eloquent\BuilderMethodExtension
+        class: NunoMaduro\Larastan\Database\Eloquent\BuilderMethodExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: NunoMaduro\LaravelCodeAnalyse\Database\Eloquent\ModelMethodExtension
+        class: NunoMaduro\Larastan\Database\Eloquent\ModelMethodExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: NunoMaduro\LaravelCodeAnalyse\Database\Eloquent\ModelScopeMethodExtension
+        class: NunoMaduro\Larastan\Database\Eloquent\ModelScopeMethodExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: NunoMaduro\LaravelCodeAnalyse\Database\Eloquent\RelationMethodExtension
+        class: NunoMaduro\Larastan\Database\Eloquent\RelationMethodExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 
 
     -
-        class: NunoMaduro\LaravelCodeAnalyse\Http\Resources\Json\ResourceMethodExtension
+        class: NunoMaduro\Larastan\Http\Resources\Json\ResourceMethodExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: NunoMaduro\LaravelCodeAnalyse\Http\Resources\Json\ResourceScopeMethodExtension
+        class: NunoMaduro\Larastan\Http\Resources\Json\ResourceScopeMethodExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: NunoMaduro\LaravelCodeAnalyse\Support\Facades\FacadeMethodExtension
+        class: NunoMaduro\Larastan\Support\Facades\FacadeMethodExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
