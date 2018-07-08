@@ -61,11 +61,22 @@ final class MacroableMethodExtension implements MethodsClassReflectionExtension,
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
         if ($classReflection->isInterface()) {
-            $concrete = ($this->container ?? Container::getInstance())->make($classReflection->getName());
 
-            $className = get_class($concrete);
-            $haveTrait = $this->broker->getClass($className)
-                ->hasTraitUse(Macroable::class);
+            $concrete = null;
+            $className = null;
+            try {
+                $concrete = ($this->container ?? Container::getInstance())->make($classReflection->getName());
+            } catch (BindingResolutionException $exception) {
+                // ..
+            }
+
+            if ($concrete !== null) {
+                $className = get_class($concrete);
+                $haveTrait = $this->broker->getClass($className)
+                    ->hasTraitUse(Macroable::class);
+            } else {
+                $haveTrait = false;
+            }
         } else {
             /** @var \Illuminate\Support\Traits\Macroable $macroable */
             $className = $classReflection->getName();
