@@ -22,7 +22,7 @@ use NunoMaduro\Larastan\AbstractExtension;
 /**
  * @internal
  */
-final class AuthManagerExtension extends AbstractExtension
+final class AuthManagerMethodExtension extends AbstractExtension
 {
     /**
      * {@inheritdoc}

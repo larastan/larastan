@@ -14,7 +14,7 @@ parameters:
 
 services:
     -
-        class: NunoMaduro\Larastan\Auth\AuthManagerExtension
+        class: NunoMaduro\Larastan\Auth\AuthManagerMethodExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 
