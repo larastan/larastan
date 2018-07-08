@@ -19,12 +19,7 @@ services:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: NunoMaduro\Larastan\Contracts\Auth\AuthenticatableMethodExtension
-        tags:
-            - phpstan.broker.methodsClassReflectionExtension
-
-    -
-        class: NunoMaduro\Larastan\Database\Eloquent\BuilderMethodExtension
+        class: NunoMaduro\Larastan\Contracts\UserContractsMethodExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 
@@ -42,11 +37,6 @@ services:
     	class: NunoMaduro\Larastan\Database\Eloquent\ModelStaticReturnTypeExtension
     	tags:
     		- phpstan.broker.dynamicStaticMethodReturnTypeExtension
-
-    -
-        class: NunoMaduro\Larastan\Database\Eloquent\RelationMethodExtension
-        tags:
-            - phpstan.broker.methodsClassReflectionExtension
 
     -
         class: NunoMaduro\Larastan\Http\Resources\Json\ResourceMethodExtension

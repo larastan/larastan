@@ -16,6 +16,7 @@ namespace NunoMaduro\Larastan\Database\Eloquent;
 use Illuminate\Database\Eloquent\Model;
 use PHPStan\Reflection\ClassReflection;
 use NunoMaduro\Larastan\AbstractExtension;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
@@ -28,14 +29,14 @@ class ModelMethodExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    protected $staticAccess = true;
+    protected $static = true;
 
     /**
      * {@inheritdoc}
      */
     protected function subjects(ClassReflection $classReflection, string $methodName): array
     {
-        return [Model::class];
+        return [Model::class, Relation::class, EloquentBuilder::class];
     }
 
     /**
@@ -43,10 +44,6 @@ class ModelMethodExtension extends AbstractExtension
      */
     protected function mixins(ClassReflection $classReflection, string $methodName): array
     {
-        return [
-            EloquentBuilder::class,
-            QueryBuilder::class,
-            BelongsToMany::class,
-        ];
+        return [EloquentBuilder::class, QueryBuilder::class, BelongsToMany::class,];
     }
 }

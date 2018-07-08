@@ -28,7 +28,7 @@ final class FacadeMethodExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    protected $staticAccess = true;
+    protected $static = true;
 
     /**
      * {@inheritdoc}
@@ -45,8 +45,10 @@ final class FacadeMethodExtension extends AbstractExtension
     {
         $facadeClass = $classReflection->getName();
 
+        $mixins = [];
+
         if ($concrete = $facadeClass::getFacadeRoot()) {
-            $classes = [get_class($concrete)];
+            $mixins[] = get_class($concrete);
 
             if ($concrete instanceof Manager) {
                 $driver = null;
@@ -58,13 +60,11 @@ final class FacadeMethodExtension extends AbstractExtension
                 }
 
                 if ($driver !== null) {
-                    $classes[] = get_class($driver);
+                    $mixins[] = get_class($driver);
                 }
             }
-
-            return $classes;
         }
 
-        return [NullConcreteClass::class];
+        return $mixins;
     }
 }

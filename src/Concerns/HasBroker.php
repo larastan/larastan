@@ -32,4 +32,14 @@ trait HasBroker
     {
         $this->broker = $broker;
     }
+
+    /**
+     * Returns the current broker.
+     *
+     * @return \PHPStan\Broker\Broker
+     */
+    public function getBroker(): Broker
+    {
+        return $this->broker;
+    }
 }

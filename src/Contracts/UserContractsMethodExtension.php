@@ -11,29 +11,26 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\Larastan\Database\Eloquent;
+namespace NunoMaduro\Larastan\Contracts;
 
+use Illuminate\Container\Container;
 use PHPStan\Reflection\ClassReflection;
 use NunoMaduro\Larastan\AbstractExtension;
-use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\CanResetPassword;
+use Illuminate\Contracts\Auth\Access\Authorizable;
 
 /**
  * @internal
  */
-final class BuilderMethodExtension extends AbstractExtension
+final class UserContractsMethodExtension extends AbstractExtension
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected $staticAccess = true;
-
     /**
      * {@inheritdoc}
      */
     protected function subjects(ClassReflection $classReflection, string $methodName): array
     {
-        return [EloquentBuilder::class];
+        return [Authenticatable::class, CanResetPassword::class, Authorizable::class];
     }
 
     /**
@@ -41,8 +38,10 @@ final class BuilderMethodExtension extends AbstractExtension
      */
     protected function mixins(ClassReflection $classReflection, string $methodName): array
     {
-        return [
-            QueryBuilder::class,
-        ];
+        $config = ($this->container ?? Container::getInstance())->get('config');
+
+        $userModel = $config->get('auth.providers.users.model');
+
+        return [$userModel];
     }
 }

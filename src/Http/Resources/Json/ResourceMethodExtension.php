@@ -27,7 +27,7 @@ class ResourceMethodExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    protected $staticAccess = true;
+    protected $static = true;
 
     /**
      * {@inheritdoc}

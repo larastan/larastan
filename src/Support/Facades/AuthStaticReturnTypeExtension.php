@@ -18,31 +18,17 @@ use PHPStan\Type\UnionType;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\ObjectType;
 use PhpParser\Node\Expr\StaticCall;
-use Illuminate\Container\Container;
 use Illuminate\Support\Facades\Auth;
 use PHPStan\Reflection\MethodReflection;
+use NunoMaduro\Larastan\Concerns\HasContainer;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
-use Illuminate\Contracts\Container\Container as ContainerContract;
 
 /**
  * @internal
  */
 final class AuthStaticReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
 {
-    /**
-     * @var \Illuminate\Contracts\Container\Container
-     */
-    private $container;
-
-    /**
-     * AuthenticatableExtension constructor.
-     *
-     * @param \Illuminate\Contracts\Container\Container|null $container
-     */
-    public function __construct(ContainerContract $container = null)
-    {
-        $this->container = $container;
-    }
+    use HasContainer;
 
     /**
      * {@inheritdoc}
@@ -68,7 +54,7 @@ final class AuthStaticReturnTypeExtension implements DynamicStaticMethodReturnTy
         StaticCall $methodCall,
         Scope $scope
     ): Type {
-        $config = ($this->container ?? Container::getInstance())->get('config');
+        $config = $this->getContainer()->get('config');
 
         $userModel = $config->get('auth.providers.users.model');
 

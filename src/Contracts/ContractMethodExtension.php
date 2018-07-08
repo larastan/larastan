@@ -26,21 +26,6 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 final class ContractMethodExtension extends AbstractExtension
 {
     /**
-     * @var \Illuminate\Contracts\Container\Container
-     */
-    private $container;
-
-    /**
-     * AuthenticatableExtension constructor.
-     *
-     * @param \Illuminate\Contracts\Container\Container|null $container
-     */
-    public function __construct(ContainerContract $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
      * {@inheritdoc}
      */
     protected function subjects(ClassReflection $classReflection, string $methodName): array
@@ -63,12 +48,7 @@ final class ContractMethodExtension extends AbstractExtension
     private function getConcrete(ClassReflection $classReflection): array
     {
         if ($classReflection->isInterface()) {
-            $concrete = null;
-            try {
-                $concrete = ($this->container ?? Container::getInstance())->make($classReflection->getName());
-            } catch (BindingResolutionException $exception) {
-                // ..
-            }
+            $concrete = $this->resolve($classReflection->getName());
 
             if ($concrete !== null) {
                 return [get_class($concrete)];

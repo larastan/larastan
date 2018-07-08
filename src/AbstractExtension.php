@@ -13,24 +13,24 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan;
 
-use Illuminate\Database\Eloquent\Model;
 use Mockery;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
+use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
 
 /**
  * @internal
  */
 abstract class AbstractExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
 {
-    use Concerns\HasBroker;
+    use Concerns\HasBroker, Concerns\HasContainer;
 
     /**
-     * Whether the methods can be accessed statically.
+     * @var \PHPStan\Reflection\Php\PhpMethodReflectionFactory
      */
-    protected $staticAccess = false;
+    protected $methodReflectionFactory;
 
     /**
      * Holds already discovered methods.
@@ -38,6 +38,21 @@ abstract class AbstractExtension implements MethodsClassReflectionExtension, Bro
      * @var array
      */
     private $cache = [];
+
+    /**
+     * Whether the methods can be accessed statically.
+     */
+    protected $static = false;
+
+    /**
+     * AbstractExtension constructor.
+     *
+     * @param \PHPStan\Reflection\Php\PhpMethodReflectionFactory $methodReflectionFactory
+     */
+    public function __construct(PhpMethodReflectionFactory $methodReflectionFactory)
+    {
+        $this->methodReflectionFactory = $methodReflectionFactory;
+    }
 
     /**
      * {@inheritdoc}
@@ -69,7 +84,7 @@ abstract class AbstractExtension implements MethodsClassReflectionExtension, Bro
         $methodReflection = $this->broker->getClass($this->cache[$classReflection->getName()][$methodName])
             ->getNativeMethod($methodName);
 
-        if ($this->staticAccess) {
+        if ($this->static) {
             $methodReflection = Mockery::mock($methodReflection);
             $methodReflection->shouldReceive('isStatic')
                 ->andReturn(true);
@@ -87,7 +102,9 @@ abstract class AbstractExtension implements MethodsClassReflectionExtension, Bro
     protected function subjectInstanceOf(ClassReflection $classReflection, string $methodName): bool
     {
         foreach ($this->subjects($classReflection, $methodName) as $subject) {
-            return $classReflection->getName() === $subject || $classReflection->isSubclassOf($subject);
+            if ($classReflection->getName() === $subject || $classReflection->isSubclassOf($subject)) {
+                return true;
+            }
         }
 
         return false;
