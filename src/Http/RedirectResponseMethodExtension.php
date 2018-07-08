@@ -37,9 +37,7 @@ final class RedirectResponseMethodExtension extends AbstractExtension
      */
     protected function searchIn(ClassReflection $classReflection, string $methodName): array
     {
-        return [
-            RedirectResponse::class,
-        ];
+        return [RedirectResponse::class,];
     }
 
     /**
@@ -47,7 +45,11 @@ final class RedirectResponseMethodExtension extends AbstractExtension
      */
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        return parent::hasMethod($classReflection, $this->getScopeMethodName($methodName));
+        if (strlen($methodName) > 4 && substr($methodName, 0, 4) === 'with') {
+            return parent::hasMethod($classReflection, 'with');
+        }
+
+        return false;
     }
 
     /**
@@ -55,18 +57,8 @@ final class RedirectResponseMethodExtension extends AbstractExtension
      */
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
-        $methodReflection = parent::getMethod($classReflection, $this->getScopeMethodName($methodName));
+        $methodReflection = parent::getMethod($classReflection, 'with');
 
         return $methodReflection;
-    }
-
-    /**
-     * @param  string $originalMethod
-     *
-     * @return string
-     */
-    public function getScopeMethodName(string $originalMethod): string
-    {
-        return 'with';
     }
 }
