@@ -22,6 +22,7 @@ use NunoMaduro\Larastan\Concerns\HasBroker;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Container\Container as ContainerContract;
 
 /**

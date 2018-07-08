@@ -15,10 +15,10 @@ namespace NunoMaduro\Larastan\Contracts;
 
 use function get_class;
 use Illuminate\Container\Container;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use PHPStan\Reflection\ClassReflection;
 use NunoMaduro\Larastan\AbstractExtension;
 use Illuminate\Contracts\Container\Container as ContainerContract;
+use Illuminate\Contracts\Container\BindingResolutionException;
 
 /**
  * @internal
