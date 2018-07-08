@@ -30,7 +30,7 @@ use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 /**
  * @internal
  */
-final class ModelReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
+final class ModelStaticReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
 {
     /**
      * {@inheritdoc}

@@ -11,25 +11,23 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\Larastan\Auth;
+namespace NunoMaduro\Larastan\Support\Facades;
 
-use function get_class;
-use PHPStan\Reflection\FunctionVariantWithPhpDocs;
 use PHPStan\Type\Type;
+use PHPStan\Type\UnionType;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\ObjectType;
+use PhpParser\Node\Expr\StaticCall;
 use Illuminate\Container\Container;
-use PhpParser\Node\Expr\MethodCall;
-use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Support\Facades\Auth;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Type\DynamicMethodReturnTypeExtension;
+use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use Illuminate\Contracts\Container\Container as ContainerContract;
-use PHPStan\Type\UnionType;
 
 /**
  * @internal
  */
-final class AuthReturnTypeExtension implements DynamicMethodReturnTypeExtension
+final class AuthStaticReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
 {
     /**
      * @var \Illuminate\Contracts\Container\Container
@@ -51,13 +49,13 @@ final class AuthReturnTypeExtension implements DynamicMethodReturnTypeExtension
      */
     public function getClass(): string
     {
-        return Guard::class;
+        return Auth::class;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function isMethodSupported(MethodReflection $methodReflection): bool
+    public function isStaticMethodSupported(MethodReflection $methodReflection): bool
     {
         return $methodReflection->getName() === 'user';
     }
@@ -65,16 +63,17 @@ final class AuthReturnTypeExtension implements DynamicMethodReturnTypeExtension
     /**
      * {@inheritdoc}
      */
-    public function getTypeFromMethodCall(
+    public function getTypeFromStaticMethodCall(
         MethodReflection $methodReflection,
-        MethodCall $methodCall,
+        StaticCall $methodCall,
         Scope $scope
     ): Type {
         $config = ($this->container ?? Container::getInstance())->get('config');
 
         $userModel = $config->get('auth.providers.users.model');
 
-        $types = $methodReflection->getVariants()[0]->getReturnType()->getTypes();
+        $types = $methodReflection->getVariants()[0]->getReturnType()
+            ->getTypes();
 
         array_push($types, new ObjectType($userModel));
 

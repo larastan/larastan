@@ -19,11 +19,6 @@ services:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: NunoMaduro\Larastan\Auth\AuthReturnTypeExtension
-        tags:
-            - phpstan.broker.dynamicMethodReturnTypeExtension
-
-    -
         class: NunoMaduro\Larastan\Contracts\ContractMethodExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
@@ -49,7 +44,7 @@ services:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-    	class: NunoMaduro\Larastan\Database\Eloquent\ModelReturnTypeExtension
+    	class: NunoMaduro\Larastan\Database\Eloquent\ModelStaticReturnTypeExtension
     	tags:
     		- phpstan.broker.dynamicStaticMethodReturnTypeExtension
 
@@ -77,6 +72,11 @@ services:
         class: NunoMaduro\Larastan\Support\Facades\FacadeMethodExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
+
+    -
+        class: NunoMaduro\Larastan\Support\Facades\AuthStaticReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicStaticMethodReturnTypeExtension
 
     -
         class: NunoMaduro\Larastan\Support\Traits\MacroableMethodExtension
