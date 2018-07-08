@@ -36,7 +36,7 @@ final class Macro extends \ReflectionMethod
      */
     public function __construct(string $className, string $methodName, \ReflectionFunction $reflectionFunction)
     {
-        parent::__construct($className, $methodName);
+        // parent::__construct($className, $methodName);
 
         $this->className = $className;
         $this->methodName = $methodName;
