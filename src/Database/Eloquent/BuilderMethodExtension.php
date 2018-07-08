@@ -31,15 +31,15 @@ final class BuilderMethodExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    protected function subject(): string
+    protected function subject(ClassReflection $classReflection, string $methodName): array
     {
-        return EloquentBuilder::class;
+        return [EloquentBuilder::class];
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function searchIn(ClassReflection $classReflection): array
+    protected function searchIn(ClassReflection $classReflection, string $methodName): array
     {
         return [
             QueryBuilder::class,

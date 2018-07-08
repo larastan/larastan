@@ -3,10 +3,12 @@ parameters:
         - Illuminate\Database\Eloquent\Model
         - Illuminate\Http\Resources\Json\JsonResource
         - Illuminate\Http\Request
+        - Illuminate\Contracts\Auth\Authenticatable
     excludes_analyse:
         - *.blade.php
     ignoreErrors:
         - '#Result of function abort \(void\) is used#'
+        - '#Call to an undefined method Illuminate\\Support\\HigherOrder#'
     bootstrap: %rootDir%/../../nunomaduro/larastan/bootstrap.php
     reportUnmatchedIgnoredErrors: false
 
@@ -17,7 +19,12 @@ services:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: NunoMaduro\Larastan\Contracts\Auth\AuthenticatableExtension
+        class: NunoMaduro\Larastan\Contracts\ContractMethodExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+
+    -
+        class: NunoMaduro\Larastan\Contracts\Auth\AuthenticatableMethodExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 
@@ -37,10 +44,14 @@ services:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
+    	class: NunoMaduro\Larastan\Database\Eloquent\ModelReturnTypeExtension
+    	tags:
+    		- phpstan.broker.dynamicStaticMethodReturnTypeExtension
+
+    -
         class: NunoMaduro\Larastan\Database\Eloquent\RelationMethodExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
-
 
     -
         class: NunoMaduro\Larastan\Http\Resources\Json\ResourceMethodExtension
@@ -53,6 +64,16 @@ services:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
+        class: NunoMaduro\Larastan\Http\RedirectResponseMethodExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+
+    -
         class: NunoMaduro\Larastan\Support\Facades\FacadeMethodExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+
+    -
+        class: NunoMaduro\Larastan\Support\Traits\MacroableMethodExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension

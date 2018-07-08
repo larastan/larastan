@@ -33,15 +33,15 @@ class ModelMethodExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    protected function subject(): string
+    protected function subject(ClassReflection $classReflection, string $methodName): array
     {
-        return Model::class;
+        return [Model::class];
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function searchIn(ClassReflection $classReflection): array
+    protected function searchIn(ClassReflection $classReflection, string $methodName): array
     {
         return [
             EloquentBuilder::class,

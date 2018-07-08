@@ -26,7 +26,7 @@ class ModelScopeMethodExtension extends ModelMethodExtension
     /**
      * {@inheritdoc}
      */
-    protected function searchIn(ClassReflection $classReflection): array
+    protected function searchIn(ClassReflection $classReflection, string $methodName): array
     {
         return [$classReflection->getName()];
     }

@@ -11,17 +11,37 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\Larastan\Concerns;
+namespace NunoMaduro\Larastan\Http;
 
 use Mockery;
+use Illuminate\Http\RedirectResponse;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
+use NunoMaduro\Larastan\AbstractExtension;
 
 /**
  * @internal
  */
-trait HasScope
+final class RedirectResponseMethodExtension extends AbstractExtension
 {
+    /**
+     * {@inheritdoc}
+     */
+    protected function subject(ClassReflection $classReflection, string $methodName): array
+    {
+        return [RedirectResponse::class];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function searchIn(ClassReflection $classReflection, string $methodName): array
+    {
+        return [
+            RedirectResponse::class,
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -37,7 +57,7 @@ trait HasScope
     {
         $methodReflection = parent::getMethod($classReflection, $this->getScopeMethodName($methodName));
 
-        return $this->getScopeMethodReflection($methodReflection);
+        return $methodReflection;
     }
 
     /**
@@ -47,29 +67,6 @@ trait HasScope
      */
     public function getScopeMethodName(string $originalMethod): string
     {
-        return 'scope'.ucfirst($originalMethod);;
-    }
-
-    /**
-     * @param  \PHPStan\Reflection\MethodReflection $methodReflection
-     *
-     * @return \PHPStan\Reflection\MethodReflection
-     */
-    private function getScopeMethodReflection(MethodReflection $methodReflection): MethodReflection
-    {
-        /** @var \PHPStan\Reflection\FunctionVariantWithPhpDocs $variant */
-        $variant = $methodReflection->getVariants()[0];
-        $parameters = $variant->getParameters();
-        unset($parameters[0]); // The query argument.
-
-        $variant = Mockery::mock($variant);
-        $variant->shouldReceive('getParameters')
-            ->andReturn($parameters);
-
-        /** @var \Mockery\MockInterface $methodReflection */
-        $methodReflection->shouldReceive('getVariants')
-            ->andReturn([$variant]);
-
-        return $methodReflection;
+        return 'with';
     }
 }

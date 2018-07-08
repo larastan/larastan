@@ -30,19 +30,17 @@ class ResourceMethodExtension extends AbstractExtension
     protected $staticAccess = true;
 
     /**
-     * Returns the class under analyse.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    protected function subject(): string
+    protected function subject(ClassReflection $classReflection, string $methodName): array
     {
-        return Resource::class;
+        return [Resource::class];
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function searchIn(ClassReflection $classReflection): array
+    protected function searchIn(ClassReflection $classReflection, string $methodName): array
     {
         return collect(get_declared_classes())
             ->filter(

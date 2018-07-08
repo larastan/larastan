@@ -11,18 +11,18 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\Larastan\Contracts\Auth;
+namespace NunoMaduro\Larastan\Contracts;
 
+use function get_class;
 use Illuminate\Container\Container;
 use PHPStan\Reflection\ClassReflection;
-use Illuminate\Contracts\Auth\Authenticatable;
 use NunoMaduro\Larastan\AbstractExtension;
 use Illuminate\Contracts\Container\Container as ContainerContract;
 
 /**
  * @internal
  */
-final class AuthenticatableExtension extends AbstractExtension
+final class ContractMethodExtension extends AbstractExtension
 {
     /**
      * @var \Illuminate\Contracts\Container\Container
@@ -42,20 +42,33 @@ final class AuthenticatableExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    protected function subject(): string
+    protected function subject(ClassReflection $classReflection, string $methodName): array
     {
-        return Authenticatable::class;
+        return $this->getConcrete($classReflection);
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function searchIn(ClassReflection $classReflection): array
+    protected function searchIn(ClassReflection $classReflection, string $methodName): array
     {
-        $config = ($this->container ?? Container::getInstance())->get('config');
+        return $this->getConcrete($classReflection);
+    }
 
-        $userModel = $config->get('auth.providers.users.model');
+    /**
+     * @param \PHPStan\Reflection\ClassReflection $classReflection
+     * @return array
+     */
+    private function getConcrete(ClassReflection $classReflection): array
+    {
+        if ($classReflection->isInterface()) {
+            $concrete = ($this->container ?? Container::getInstance())->make($classReflection->getName());
 
-        return [$userModel];
+            if ($concrete !== null) {
+                return [get_class($concrete)];
+            }
+        }
+
+        return [];
     }
 }

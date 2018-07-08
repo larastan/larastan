@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan;
 
+use Illuminate\Database\Eloquent\Model;
 use Mockery;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
@@ -45,8 +46,8 @@ abstract class AbstractExtension implements MethodsClassReflectionExtension, Bro
     {
         $hasMethod = false;
 
-        if ($this->subjectInstanceOf($classReflection)) {
-            foreach ($this->searchIn($classReflection) as $toBeSearchClass) {
+        if ($this->subjectInstanceOf($classReflection, $methodName)) {
+            foreach ($this->searchIn($classReflection, $methodName) as $toBeSearchClass) {
                 $hasMethod = $this->broker->getClass($toBeSearchClass)
                     ->hasNativeMethod($methodName);
 
@@ -79,12 +80,17 @@ abstract class AbstractExtension implements MethodsClassReflectionExtension, Bro
 
     /**
      * @param \PHPStan\Reflection\ClassReflection $classReflection
+     * @param string $methodName
      *
      * @return bool
      */
-    protected function subjectInstanceOf(ClassReflection $classReflection): bool
+    protected function subjectInstanceOf(ClassReflection $classReflection, string $methodName): bool
     {
-        return $classReflection->getName() === $this->subject() || $classReflection->isSubclassOf($this->subject());
+        foreach ($this->subject($classReflection, $methodName) as $subject) {
+            return $classReflection->getName() === $subject || $classReflection->isSubclassOf($subject);
+        }
+
+        return false;
     }
 
     /**
@@ -104,16 +110,20 @@ abstract class AbstractExtension implements MethodsClassReflectionExtension, Bro
     /**
      * Returns the class under analyse.
      *
-     * @return string
+     * @param  \PHPStan\Reflection\ClassReflection $classReflection
+     * @param  string $methodName
+     *
+     * @return array
      */
-    abstract protected function subject(): string;
+    abstract protected function subject(ClassReflection $classReflection, string $methodName): array;
 
     /**
      * Returns the classes where the native method should be search for.
      *
      * @param \PHPStan\Reflection\ClassReflection $classReflection
+     * @param string $methodName
      *
      * @return array
      */
-    abstract protected function searchIn(ClassReflection $classReflection): array;
+    abstract protected function searchIn(ClassReflection $classReflection, string $methodName): array;
 }
