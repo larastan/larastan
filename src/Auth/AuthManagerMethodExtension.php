@@ -16,8 +16,8 @@ namespace NunoMaduro\Larastan\Auth;
 use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Guard;
 use PHPStan\Reflection\ClassReflection;
-use Illuminate\Contracts\Auth\StatefulGuard;
 use NunoMaduro\Larastan\AbstractExtension;
+use Illuminate\Contracts\Auth\StatefulGuard;
 
 /**
  * @internal
