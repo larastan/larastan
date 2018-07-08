@@ -69,7 +69,7 @@ final class ModelReturnTypeExtension implements DynamicStaticMethodReturnTypeExt
          */
         if ($variants[0] instanceof FunctionVariantWithPhpDocs) {
 
-            $className = class_exists($methodCall->class->toString());
+            $className = $methodCall->class->toString();
 
             if (class_exists($className) && (new \ReflectionClass($className))->isSubclassOf(Model::class)) {
                 $types = method_exists($returnType, 'getTypes') ? $returnType->getTypes() : [$returnType];
