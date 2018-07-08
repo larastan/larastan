@@ -15,6 +15,7 @@ namespace NunoMaduro\Larastan\Contracts;
 
 use function get_class;
 use Illuminate\Container\Container;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use PHPStan\Reflection\ClassReflection;
 use NunoMaduro\Larastan\AbstractExtension;
 use Illuminate\Contracts\Container\Container as ContainerContract;
@@ -62,7 +63,12 @@ final class ContractMethodExtension extends AbstractExtension
     private function getConcrete(ClassReflection $classReflection): array
     {
         if ($classReflection->isInterface()) {
-            $concrete = ($this->container ?? Container::getInstance())->make($classReflection->getName());
+            $concrete = null;
+            try {
+                $concrete = ($this->container ?? Container::getInstance())->make($classReflection->getName());
+            } catch (BindingResolutionException $exception) {
+                // ..
+            }
 
             if ($concrete !== null) {
                 return [get_class($concrete)];
