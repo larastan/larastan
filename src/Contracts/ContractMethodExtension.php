@@ -43,7 +43,7 @@ final class ContractMethodExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    protected function subject(ClassReflection $classReflection, string $methodName): array
+    protected function subjects(ClassReflection $classReflection, string $methodName): array
     {
         return $this->getConcrete($classReflection);
     }
@@ -51,7 +51,7 @@ final class ContractMethodExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    protected function searchIn(ClassReflection $classReflection, string $methodName): array
+    protected function mixins(ClassReflection $classReflection, string $methodName): array
     {
         return $this->getConcrete($classReflection);
     }

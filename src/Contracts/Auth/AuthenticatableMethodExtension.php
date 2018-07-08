@@ -42,7 +42,7 @@ final class AuthenticatableMethodExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    protected function subject(ClassReflection $classReflection, string $methodName): array
+    protected function subjects(ClassReflection $classReflection, string $methodName): array
     {
         return [Authenticatable::class];
     }
@@ -50,7 +50,7 @@ final class AuthenticatableMethodExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    protected function searchIn(ClassReflection $classReflection, string $methodName): array
+    protected function mixins(ClassReflection $classReflection, string $methodName): array
     {
         $config = ($this->container ?? Container::getInstance())->get('config');
 

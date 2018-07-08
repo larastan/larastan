@@ -33,7 +33,7 @@ final class FacadeMethodExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    protected function subject(ClassReflection $classReflection, string $methodName): array
+    protected function subjects(ClassReflection $classReflection, string $methodName): array
     {
         return [Facade::class];
     }
@@ -41,7 +41,7 @@ final class FacadeMethodExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    protected function searchIn(ClassReflection $classReflection, string $methodName): array
+    protected function mixins(ClassReflection $classReflection, string $methodName): array
     {
         $facadeClass = $classReflection->getName();
 

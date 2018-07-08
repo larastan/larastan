@@ -27,7 +27,7 @@ final class AuthManagerMethodExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    protected function subject(ClassReflection $classReflection, string $methodName): array
+    protected function subjects(ClassReflection $classReflection, string $methodName): array
     {
         return [AuthManager::class];
     }
@@ -35,7 +35,7 @@ final class AuthManagerMethodExtension extends AbstractExtension
     /**
      * {@inheritdoc}
      */
-    protected function searchIn(ClassReflection $classReflection, string $methodName): array
+    protected function mixins(ClassReflection $classReflection, string $methodName): array
     {
         return [
             Guard::class,

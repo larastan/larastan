@@ -47,7 +47,7 @@ abstract class AbstractExtension implements MethodsClassReflectionExtension, Bro
         $hasMethod = false;
 
         if ($this->subjectInstanceOf($classReflection, $methodName)) {
-            foreach ($this->searchIn($classReflection, $methodName) as $toBeSearchClass) {
+            foreach ($this->mixins($classReflection, $methodName) as $toBeSearchClass) {
                 $hasMethod = $this->broker->getClass($toBeSearchClass)
                     ->hasNativeMethod($methodName);
 
@@ -86,7 +86,7 @@ abstract class AbstractExtension implements MethodsClassReflectionExtension, Bro
      */
     protected function subjectInstanceOf(ClassReflection $classReflection, string $methodName): bool
     {
-        foreach ($this->subject($classReflection, $methodName) as $subject) {
+        foreach ($this->subjects($classReflection, $methodName) as $subject) {
             return $classReflection->getName() === $subject || $classReflection->isSubclassOf($subject);
         }
 
@@ -115,7 +115,7 @@ abstract class AbstractExtension implements MethodsClassReflectionExtension, Bro
      *
      * @return array
      */
-    abstract protected function subject(ClassReflection $classReflection, string $methodName): array;
+    abstract protected function subjects(ClassReflection $classReflection, string $methodName): array;
 
     /**
      * Returns the classes where the native method should be search for.
@@ -125,5 +125,5 @@ abstract class AbstractExtension implements MethodsClassReflectionExtension, Bro
      *
      * @return array
      */
-    abstract protected function searchIn(ClassReflection $classReflection, string $methodName): array;
+    abstract protected function mixins(ClassReflection $classReflection, string $methodName): array;
 }
