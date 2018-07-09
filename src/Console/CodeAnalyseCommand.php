@@ -105,9 +105,16 @@ final class CodeAnalyseCommand extends Command
             }
         }
 
+        $paths = array_map(
+            function ($path) {
+                return starts_with($path, DIRECTORY_SEPARATOR) ? $path : $this->laravel->basePath($path);
+            },
+            explode(',', $this->option('paths'))
+        );
+
         $params = [
             $this->command(),
-            $this->option('paths'),
+            implode(' ', $paths),
             $options,
         ];
 
