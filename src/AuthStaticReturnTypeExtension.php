@@ -11,7 +11,7 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\Larastan\Support\Facades;
+namespace NunoMaduro\Larastan;
 
 use PHPStan\Type\Type;
 use PHPStan\Type\UnionType;
@@ -54,7 +54,8 @@ final class AuthStaticReturnTypeExtension implements DynamicStaticMethodReturnTy
         StaticCall $methodCall,
         Scope $scope
     ): Type {
-        $config = $this->getContainer()->get('config');
+        $config = $this->getContainer()
+            ->get('config');
 
         $userModel = $config->get('auth.providers.users.model');
 

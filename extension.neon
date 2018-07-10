@@ -14,12 +14,7 @@ parameters:
 
 services:
     -
-        class: NunoMaduro\Larastan\Contracts\ContractMethodExtension
-        tags:
-            - phpstan.broker.methodsClassReflectionExtension
-
-    -
-        class: NunoMaduro\Larastan\Contracts\UserContractsMethodExtension
+        class: NunoMaduro\Larastan\Extension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 
@@ -54,16 +49,7 @@ services:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: NunoMaduro\Larastan\Support\Facades\FacadeMethodExtension
-        tags:
-            - phpstan.broker.methodsClassReflectionExtension
-
-    -
-        class: NunoMaduro\Larastan\Support\Facades\AuthStaticReturnTypeExtension
+        class: NunoMaduro\Larastan\AuthStaticReturnTypeExtension
         tags:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
 
-    -
-        class: NunoMaduro\Larastan\Support\Traits\MacroableMethodExtension
-        tags:
-            - phpstan.broker.methodsClassReflectionExtension
