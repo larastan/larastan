@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan;
 
 use PHPStan\Type\Type;
-use PHPStan\Type\UnionType;
 use PHPStan\Analyser\Scope;
+use PHPStan\Type\UnionType;
 use PHPStan\Type\ObjectType;
 use PhpParser\Node\Expr\StaticCall;
 use Illuminate\Support\Facades\Auth;

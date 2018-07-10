@@ -13,13 +13,12 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan;
 
+use PHPStan\Broker\Broker;
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Container\Container;
-use PHPStan\Broker\Broker;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\MethodReflection;
-use Illuminate\Contracts\Container\Container as ContainerContract;
 use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
+use Illuminate\Contracts\Container\Container as ContainerContract;
 
 /**
  * @internal

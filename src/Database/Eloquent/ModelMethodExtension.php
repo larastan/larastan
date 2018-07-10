@@ -44,6 +44,6 @@ class ModelMethodExtension extends AbstractExtension
      */
     protected function mixins(ClassReflection $classReflection, string $methodName): array
     {
-        return [EloquentBuilder::class, QueryBuilder::class, BelongsToMany::class,];
+        return [EloquentBuilder::class, QueryBuilder::class, BelongsToMany::class];
     }
 }

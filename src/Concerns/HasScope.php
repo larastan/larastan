@@ -47,7 +47,7 @@ trait HasScope
      */
     public function getScopeMethodName(string $originalMethod): string
     {
-        return 'scope'.ucfirst($originalMethod);;
+        return 'scope'.ucfirst($originalMethod);
     }
 
     /**
@@ -66,7 +66,7 @@ trait HasScope
         $variant->shouldReceive('getParameters')
             ->andReturn($parameters);
 
-        /** @var \Mockery\MockInterface $methodReflection */
+        /* @var \Mockery\MockInterface $methodReflection */
         $methodReflection->shouldReceive('getVariants')
             ->andReturn([$variant]);
 

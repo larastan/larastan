@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Console;
 
 use function implode;
-use function is_string;
 use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
 use Illuminate\Console\Application as Artisan;
@@ -87,7 +86,6 @@ final class CodeAnalyseCommand extends Command
         $options = '';
         foreach ($this->optionsResolver->getDefinition()
                      ->getOptions() as $option) {
-
             if ($option->getName() === 'paths') {
                 continue;
             }

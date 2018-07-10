@@ -15,7 +15,6 @@ namespace NunoMaduro\Larastan\Middlewares;
 
 use Closure;
 use NunoMaduro\Larastan\Passable;
-use PHPStan\Reflection\MethodReflection;
 
 /**
  * @internal

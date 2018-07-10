@@ -16,8 +16,8 @@ namespace NunoMaduro\Larastan\Http\Resources\Json;
 use ReflectionClass;
 use Illuminate\Database\Eloquent\Model;
 use PHPStan\Reflection\ClassReflection;
-use Illuminate\Http\Resources\Json\Resource;
 use NunoMaduro\Larastan\AbstractExtension;
+use Illuminate\Http\Resources\Json\Resource;
 
 /**
  * @internal

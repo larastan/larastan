@@ -13,13 +13,12 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan;
 
-use Illuminate\Contracts\Pipeline\Pipeline;
-use LogicException;
 use Mockery;
+use LogicException;
 use PHPStan\Broker\Broker;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\Php\PhpMethodReflection;
+use Illuminate\Contracts\Pipeline\Pipeline;
 use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
 
 /**
@@ -174,7 +173,6 @@ final class Passable
             );
 
         if ($result = $passable->hasFound()) {
-
             $methodReflection = $passable->getMethodReflection();
 
             if ($static) {
