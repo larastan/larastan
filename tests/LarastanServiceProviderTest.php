@@ -6,8 +6,8 @@ use function get_class;
 use Orchestra\Testbench\TestCase;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Artisan;
-use NunoMaduro\Larastan\Console\CodeAnalyseCommand;
 use NunoMaduro\Larastan\LarastanServiceProvider;
+use NunoMaduro\Larastan\Console\CodeAnalyseCommand;
 
 class LarastanServiceProviderTest extends TestCase
 {

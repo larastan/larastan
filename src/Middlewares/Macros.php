@@ -14,9 +14,9 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Middlewares;
 
 use Closure;
-use Illuminate\Support\Traits\Macroable;
-use NunoMaduro\Larastan\Passable;
 use NunoMaduro\Larastan\Macro;
+use NunoMaduro\Larastan\Passable;
+use Illuminate\Support\Traits\Macroable;
 use NunoMaduro\Larastan\Concerns\HasContainer;
 
 /**
@@ -40,7 +40,6 @@ final class Macros
         $found = false;
 
         if ($classReflection->isInterface()) {
-
             $concrete = $this->resolve($classReflection->getName());
 
             if ($concrete !== null) {

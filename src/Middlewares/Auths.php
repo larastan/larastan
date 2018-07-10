@@ -15,8 +15,8 @@ namespace NunoMaduro\Larastan\Middlewares;
 
 use Closure;
 use NunoMaduro\Larastan\Passable;
-use NunoMaduro\Larastan\Concerns\HasContainer;
 use Illuminate\Contracts\Auth\Authenticatable;
+use NunoMaduro\Larastan\Concerns\HasContainer;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\Access\Authorizable;
 

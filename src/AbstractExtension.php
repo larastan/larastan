@@ -17,8 +17,8 @@ use Mockery;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\BrokerAwareExtension;
-use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
+use PHPStan\Reflection\MethodsClassReflectionExtension;
 
 /**
  * @internal

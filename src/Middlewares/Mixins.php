@@ -14,10 +14,9 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Middlewares;
 
 use Closure;
-use NunoMaduro\Larastan\Passable;
 use PHPStan\Broker\Broker;
+use NunoMaduro\Larastan\Passable;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\MethodReflection;
 
 /**
  * @internal

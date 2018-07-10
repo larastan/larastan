@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Http;
 
-use Mockery;
 use Illuminate\Http\RedirectResponse;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
@@ -37,7 +36,7 @@ final class RedirectResponseMethodExtension extends AbstractExtension
      */
     protected function mixins(ClassReflection $classReflection, string $methodName): array
     {
-        return [RedirectResponse::class,];
+        return [RedirectResponse::class];
     }
 
     /**

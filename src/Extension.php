@@ -13,12 +13,11 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan;
 
-use PHPStan\Broker\Broker;
-use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\MethodsClassReflectionExtension;
+use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
+use PHPStan\Reflection\MethodsClassReflectionExtension;
 
 /**
  * @internal

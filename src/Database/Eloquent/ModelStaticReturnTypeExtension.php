@@ -17,8 +17,8 @@ use function count;
 use PHPStan\Type\Type;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\UnionType;
-use PHPStan\Type\StaticType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\StaticType;
 use PHPStan\Type\IterableType;
 use PHPStan\Type\IntersectionType;
 use PhpParser\Node\Expr\StaticCall;
@@ -63,12 +63,11 @@ final class ModelStaticReturnTypeExtension implements DynamicStaticMethodReturnT
         $returnType = $method->getVariants()[0]->getReturnType();
         $variants = $method->getVariants();
 
-        /**
+        /*
          * If the method returns a static type, we instruct phpstan that
          * "static" points to the concrete class model.
          */
         if ($variants[0] instanceof FunctionVariantWithPhpDocs) {
-
             $className = $methodCall->class->toString();
 
             if (class_exists($className) && (new \ReflectionClass($className))->isSubclassOf(Model::class)) {
@@ -91,7 +90,6 @@ final class ModelStaticReturnTypeExtension implements DynamicStaticMethodReturnT
     private function replaceStaticType(array $types, string $staticType): array
     {
         foreach ($types as $key => $type) {
-
             if ($type instanceof ObjectType && $type->getClassName() === Model::class) {
                 unset($types[$key]);
             }

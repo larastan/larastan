@@ -15,11 +15,7 @@ namespace NunoMaduro\Larastan\Middlewares;
 
 use Closure;
 use Illuminate\Support\Manager;
-use Illuminate\Support\Traits\Macroable;
 use NunoMaduro\Larastan\Passable;
-use NunoMaduro\Larastan\Support\Traits\Macro;
-use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\MethodReflection;
 use NunoMaduro\Larastan\Concerns\HasContainer;
 
 /**
