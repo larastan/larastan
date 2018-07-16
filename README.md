@@ -1,5 +1,3 @@
-**THIS PACKAGE IS STILL IN DEVELOPMENT**
-
 <p align="center">
     <img src="https://raw.githubusercontent.com/nunomaduro/larastan/master/docs/example.png" alt="Larastan Example" height="300">
 </p>
@@ -14,7 +12,10 @@
 
 ## About Larastan
 
-Larastan was created by, and is maintained by [Nuno Maduro](https://github.com/nunomaduro), and is a [phpstan/phpstan](https://github.com/phpstan/phpstan) wrapper for Laravel.
+Larastan was created by, and is maintained by [Nuno Maduro](https://github.com/nunomaduro), and is a [phpstan/phpstan](https://github.com/phpstan/phpstan) wrapper for Laravel. Larastan focuses on **finding errors in your code** without actually running it. It catches whole classes of bugs even **before you write tests** for the code.
+
+- Supports [Laravel](https://laravel.com)'s **beautiful magic**.
+- This package is still in development. Please report false positives using github [issues](https://github.com/nunomaduro/larastan).
 
 ## Installation & Usage
 
@@ -30,12 +31,20 @@ Once you have installed Larastan, you may start analyzing your code using the `c
 php artisan code:analyse
 ```
 
-## Rule levels
+### Rule levels
 
 You can choose from currently 8 levels: (0 is the loosest and 7 is the strictest) by passing `--level` to `analyse` command. Default level is `1`. You can also use `--level max` as an alias for the highest level.
 
 ```bash
 php artisan code:analyse --level=max
+```
+
+### Paths
+
+You can choose which directories you want to analyze, by default, the analyzed directory will be the `app`.
+
+```bash
+php artisan code:analyse --paths="modules,app,domain"
 ```
 
 ## Contributing
