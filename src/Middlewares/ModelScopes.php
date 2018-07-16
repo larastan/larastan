@@ -14,11 +14,9 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Middlewares;
 
 use Closure;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Manager;
 use Mockery;
 use NunoMaduro\Larastan\Passable;
-use NunoMaduro\Larastan\Concerns\HasContainer;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @internal
