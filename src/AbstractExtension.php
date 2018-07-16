@@ -25,7 +25,7 @@ use PHPStan\Reflection\MethodsClassReflectionExtension;
  */
 abstract class AbstractExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
 {
-    use Concerns\HasBroker, Concerns\HasContainer;
+    use Concerns\HasBroker;
 
     /**
      * @var \PHPStan\Reflection\Php\PhpMethodReflectionFactory

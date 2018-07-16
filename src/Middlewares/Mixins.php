@@ -23,6 +23,13 @@ use PHPStan\Reflection\ClassReflection;
  */
 final class Mixins
 {
+    private $config;
+
+    public function __construct(array $config = null)
+    {
+        $this->config = $config ?? require __DIR__.'/../../config/mixins.php';
+    }
+
     /**
      * @param \NunoMaduro\Larastan\Passable $passable
      * @param \Closure $next
@@ -36,7 +43,7 @@ final class Mixins
         $found = false;
 
         foreach ($mixins as $mixin) {
-            if ($found = $passable->inception($mixin)) {
+            if ($found = $passable->sendToPipeline($mixin)) {
                 break;
             }
         }
@@ -51,37 +58,17 @@ final class Mixins
      * @param \PHPStan\Reflection\ClassReflection $classReflection
      * @return array
      */
-    private function getMixinsFromClass(Broker $broker, ClassReflection $classReflection): array
+    public function getMixinsFromClass(Broker $broker, ClassReflection $classReflection): array
     {
-        preg_match_all(
-            '/{@mixin\s+([\w\\\\]+)/',
-            (string) $classReflection->getNativeReflection()
-                ->getDocComment(),
-            $mixins
-        );
+        $phpdocs = (string) $classReflection->getNativeReflection()
+            ->getDocComment();
 
-        $mixins = array_map(
-            function ($mixin) {
-                return preg_replace('#^\\\\#', '', $mixin);
-            },
-            $mixins[1]
+        $mixins = array_merge(
+            $this->getMixinsFromPhpDocs($phpdocs, '/@mixin\s+([\w\\\\]+)/'),
+            $this->getMixinsFromPhpDocs($phpdocs, '/@see\s+([\w\\\\]+)/'),
+            $classReflection->getParentClassesNames(),
+            $this->config[$classReflection->getName()] ?? []
         );
-
-        preg_match_all(
-            '/{@see\s+([\w\\\\]+)/',
-            (string) $classReflection->getNativeReflection()
-                ->getDocComment(),
-            $sees
-        );
-
-        $sees = array_map(
-            function ($see) {
-                return preg_replace('#^\\\\#', '', $see);
-            },
-            $sees[1]
-        );
-
-        $mixins = array_merge($mixins, $sees);
 
         if (! empty($mixins)) {
             foreach ($mixins as $mixin) {
@@ -89,6 +76,28 @@ final class Mixins
             }
         }
 
-        return $mixins;
+        return array_unique($mixins);
+    }
+
+    /**
+     * @param  string $phpdocs
+     * @param  string $pattern
+     *
+     * @return array
+     */
+    private function getMixinsFromPhpDocs(string $phpdocs, string $pattern): array
+    {
+        preg_match_all(
+            $pattern,
+            (string) $phpdocs,
+            $mixins
+        );
+
+        return array_map(
+            function ($mixin) {
+                return preg_replace('#^\\\\#', '', $mixin);
+            },
+            $mixins[1]
+        );
     }
 }

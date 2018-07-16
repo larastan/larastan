@@ -54,7 +54,7 @@ final class Auths
 
             $userModel = $config->get('auth.providers.users.model');
 
-            $found = $passable->inception($userModel);
+            $found = $passable->sendToPipeline($userModel);
         }
 
         if (! $found) {

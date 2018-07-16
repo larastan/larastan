@@ -13,12 +13,15 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Facade;
 use Mockery;
 use LogicException;
 use PHPStan\Broker\Broker;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use Illuminate\Contracts\Pipeline\Pipeline;
+use PHPStan\Reflection\Php\PhpMethodReflection;
 use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
 
 /**
@@ -57,6 +60,16 @@ final class Passable
     private $methodReflection;
 
     /**
+     * @var bool
+     */
+    private $staticAllowed = false;
+
+    /**
+     * @var array
+     */
+    private $staticClasses;
+
+    /**
      * Method constructor.
      *
      * @param \PHPStan\Reflection\Php\PhpMethodReflectionFactory $methodReflectionFactory
@@ -77,12 +90,14 @@ final class Passable
         $this->pipeline = $pipeline;
         $this->classReflection = $classReflection;
         $this->methodName = $methodName;
+
+        $this->staticClasses = require __DIR__.'/../config/statics.php';
     }
 
     /**
      * @return \PHPStan\Reflection\ClassReflection
      */
-    public function getClassReflection(): \PHPStan\Reflection\ClassReflection
+    public function getClassReflection(): ClassReflection
     {
         return $this->classReflection;
     }
@@ -156,28 +171,65 @@ final class Passable
     }
 
     /**
-     * @param string $class
-     * @param bool $static
+     * Declares that the provided method can be called statically.
+     *
+     * @param $staticAllowed
+     *
+     * @return void
+     */
+    public function setStaticAllowed($staticAllowed): void
+    {
+        $this->staticAllowed = $staticAllowed;
+    }
+
+    /**
+     * Returns whether the method can be called statically
      *
      * @return bool
      */
-    public function inception(string $class, $static = false): bool
+    public function isStaticAllowed(): bool
+    {
+        return $this->staticAllowed;
+    }
+
+    /**
+     * @param string $class
+     * @param bool $staticAllowed
+     *
+     * @return bool
+     */
+    public function sendToPipeline(string $class, $staticAllowed = false): bool
     {
         $classReflection = $this->broker->getClass($class);
 
-        $this->pipeline->send(($passable = clone $this)->setClassReflection($classReflection))
+        if (! $this->staticAllowed && $staticAllowed === false) {
+            foreach ($this->staticClasses as $staticClass) {
+                if ($staticClass === $class || $classReflection->isSubclassOf($staticClass)) {
+                    $staticAllowed = true;
+                    break;
+                }
+            }
+        }
+
+        $this->setStaticAllowed($this->staticAllowed ?: $staticAllowed);
+
+        $originalClassReflection = $this->classReflection;
+        $this->pipeline->send($this->setClassReflection($classReflection))
             ->then(
-                function (Passable $method) {
-                    return $method;
+                function (Passable $passable) use ($originalClassReflection) {
+                    if ($passable->hasFound()) {
+                        $this->setMethodReflection($passable->getMethodReflection());
+                        $this->setStaticAllowed($passable->isStaticAllowed());
+                    }
+
+                    $this->setClassReflection($originalClassReflection);
                 }
             );
 
-        if ($result = $passable->hasFound()) {
-            $methodReflection = $passable->getMethodReflection();
-
-            if ($static) {
+        if ($result = $this->hasFound()) {
+            $methodReflection = $this->getMethodReflection();
+            if (get_class($methodReflection) === PhpMethodReflection::class) {
                 $methodReflection = Mockery::mock($methodReflection);
-
                 $methodReflection->shouldReceive('isStatic')
                     ->andReturn(true);
             }

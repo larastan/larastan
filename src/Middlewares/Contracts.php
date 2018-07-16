@@ -36,7 +36,7 @@ final class Contracts
         $found = false;
 
         foreach ($this->concretes($passable->getClassReflection()) as $concrete) {
-            if ($found = $passable->inception($concrete)) {
+            if ($found = $passable->sendToPipeline($concrete)) {
                 break;
             }
         }

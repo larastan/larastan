@@ -19,34 +19,9 @@ services:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: NunoMaduro\Larastan\Database\Eloquent\ModelMethodExtension
-        tags:
-            - phpstan.broker.methodsClassReflectionExtension
-
-    -
-        class: NunoMaduro\Larastan\Database\Eloquent\ModelScopeMethodExtension
-        tags:
-            - phpstan.broker.methodsClassReflectionExtension
-
-    -
-    	class: NunoMaduro\Larastan\Database\Eloquent\ModelStaticReturnTypeExtension
+    	class: NunoMaduro\Larastan\ModelStaticReturnTypeExtension
     	tags:
     		- phpstan.broker.dynamicStaticMethodReturnTypeExtension
-
-    -
-        class: NunoMaduro\Larastan\Http\Resources\Json\ResourceMethodExtension
-        tags:
-            - phpstan.broker.methodsClassReflectionExtension
-
-    -
-        class: NunoMaduro\Larastan\Http\Resources\Json\ResourceScopeMethodExtension
-        tags:
-            - phpstan.broker.methodsClassReflectionExtension
-
-    -
-        class: NunoMaduro\Larastan\Http\RedirectResponseMethodExtension
-        tags:
-            - phpstan.broker.methodsClassReflectionExtension
 
     -
         class: NunoMaduro\Larastan\AuthStaticReturnTypeExtension

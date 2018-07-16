@@ -65,18 +65,19 @@ final class Kernel
         $pipeline->send($passable)
             ->through(
                 [
-                    Middlewares\This::class,
+                    Middlewares\SelfClass::class,
                     Middlewares\Macros::class,
                     Middlewares\Mixins::class,
                     Middlewares\Contracts::class,
                     Middlewares\Facades::class,
                     Middlewares\Managers::class,
                     Middlewares\Auths::class,
+                    Middlewares\ModelScopes::class,
+                    Middlewares\RedirectResponseWiths::class,
                 ]
             )
             ->then(
                 function ($method) {
-                    // ..
                 }
             );
 

@@ -19,7 +19,7 @@ use NunoMaduro\Larastan\Passable;
 /**
  * @internal
  */
-final class This
+final class SelfClass
 {
     /**
      * @param \NunoMaduro\Larastan\Passable $passable

@@ -38,7 +38,7 @@ final class Facades
             $facadeClass = $classReflection->getName();
 
             if ($concrete = $facadeClass::getFacadeRoot()) {
-                $found = $passable->inception(get_class($concrete), true);
+                $found = $passable->sendToPipeline(get_class($concrete), true);
             }
         }
 

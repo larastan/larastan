@@ -14,17 +14,14 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Middlewares;
 
 use Closure;
-use Illuminate\Support\Manager;
 use NunoMaduro\Larastan\Passable;
-use NunoMaduro\Larastan\Concerns\HasContainer;
+use Illuminate\Http\RedirectResponse;
 
 /**
  * @internal
  */
-final class Managers
+final class RedirectResponseWiths
 {
-    use HasContainer;
-
     /**
      * @param \NunoMaduro\Larastan\Passable $passable
      * @param \Closure $next
@@ -34,25 +31,19 @@ final class Managers
     public function handle(Passable $passable, Closure $next): void
     {
         $classReflection = $passable->getClassReflection();
+        $methodName = $passable->getMethodName();
 
         $found = false;
 
-        if ($classReflection->isSubclassOf(Manager::class)) {
-            $driver = null;
+        $instanceOfRedirectResponse = $classReflection->getName() === RedirectResponse::class;
 
-            $concrete = $this->resolve(
-                $classReflection->getName()
-            );
-
-            try {
-                $driver = $concrete->driver();
-            } catch (InvalidArgumentException $exception) {
-                // ..
-            }
-
-            if ($driver !== null) {
-                $found = $passable->sendToPipeline(get_class($driver));
-            }
+        if ($instanceOfRedirectResponse && strlen($methodName) > 4 && substr(
+                $methodName,
+                0,
+                4
+            ) === 'with' && $classReflection->hasNativeMethod('with')) {
+            $passable->setMethodReflection($methodReflection = $classReflection->getNativeMethod('with'));
+            $found = true;
         }
 
         if (! $found) {
