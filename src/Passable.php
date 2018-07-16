@@ -13,8 +13,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Facade;
 use Mockery;
 use LogicException;
 use PHPStan\Broker\Broker;
@@ -183,7 +181,7 @@ final class Passable
     }
 
     /**
-     * Returns whether the method can be called statically
+     * Returns whether the method can be called statically.
      *
      * @return bool
      */
