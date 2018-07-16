@@ -15,7 +15,7 @@
 Larastan was created by, and is maintained by [Nuno Maduro](https://github.com/nunomaduro), and is a [phpstan/phpstan](https://github.com/phpstan/phpstan) wrapper for Laravel. Larastan focuses on **finding errors in your code** without actually running it. It catches whole classes of bugs even **before you write tests** for the code.
 
 - Supports [Laravel](https://laravel.com)'s **beautiful magic**.
-- This package is still in development. Please report false positives using github [issues](https://github.com/nunomaduro/larastan).
+- This package is still in development. Please report false positives using github [issues](https://github.com/nunomaduro/larastan/issues).
 
 ## Installation & Usage
 
