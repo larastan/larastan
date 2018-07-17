@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 define('LARAVEL_START', microtime(true));
 
-$app = require __DIR__.'/../../Temp/laravel-blog/bootstrap/app.php';
+$app = require __DIR__.'/../../../bootstrap/app.php';
 
 $app->make(\Illuminate\Contracts\Console\Kernel::class)
     ->bootstrap();
