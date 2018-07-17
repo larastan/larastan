@@ -63,7 +63,8 @@ final class Mixins
             $this->getMixinsFromPhpDocs($phpdocs, '/@mixin\s+([\w\\\\]+)/'),
             $this->getMixinsFromPhpDocs($phpdocs, '/@see\s+([\w\\\\]+)/'),
             $classReflection->getParentClassesNames(),
-            $this->resolve('config')->get('larastan.mixins')[$classReflection->getName()] ?? []
+            $this->resolve('config')
+                ->get('larastan.mixins')[$classReflection->getName()] ?? []
         );
 
         if (! empty($mixins)) {

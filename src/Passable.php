@@ -197,7 +197,8 @@ final class Passable
 
         if (! $this->staticAllowed && $staticAllowed === false) {
 
-            $statics = $this->resolve('config')->get('larastan.statics');
+            $statics = $this->resolve('config')
+                ->get('larastan.statics');
             foreach ($statics as $staticClass) {
                 if ($staticClass === $class || $classReflection->isSubclassOf($staticClass)) {
                     $staticAllowed = true;

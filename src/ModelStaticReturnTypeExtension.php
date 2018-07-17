@@ -95,7 +95,10 @@ final class ModelStaticReturnTypeExtension implements DynamicStaticMethodReturnT
 
                 $classReflection = new ReflectionClass($className);
                 $isValidInstance = false;
-                foreach ($this->mixins->getMixinsFromClass($this->broker, $this->broker->getClass(Collection::class)) as $mixin) {
+                foreach ($this->mixins->getMixinsFromClass(
+                    $this->broker,
+                    $this->broker->getClass(Collection::class)
+                ) as $mixin) {
                     if ($isValidInstance = $classReflection->isSubclassOf($mixin)) {
                         break;
                     }
