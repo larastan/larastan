@@ -31,7 +31,7 @@ final class OptionsResolver
     /**
      * The default memory limit.
      */
-    private const DEFAULT_MEMORY_LIMIT = '1024M';
+    private const DEFAULT_MEMORY_LIMIT = '2048M';
 
     /**
      * @var \Illuminate\Contracts\Foundation\Application
