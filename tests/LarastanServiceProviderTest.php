@@ -62,10 +62,12 @@ class LarastanServiceProviderTest extends TestCase
      */
     private function getCommandClasses(): array
     {
-        return collect(Artisan::all())->map(
-            function ($command) {
-                return get_class($command);
-            }
-        )->toArray();
+        return collect(Artisan::all())
+            ->map(
+                function ($command) {
+                    return get_class($command);
+                }
+            )
+            ->toArray();
     }
 }
