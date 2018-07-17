@@ -13,7 +13,12 @@ declare(strict_types=1);
 
 define('LARAVEL_START', microtime(true));
 
-$app = require __DIR__.'/../../../bootstrap/app.php';
+$app = require __DIR__.'/../../Temp/laravel-blog/bootstrap/app.php';
 
 $app->make(\Illuminate\Contracts\Console\Kernel::class)
     ->bootstrap();
+
+$app->make('config')
+    ->set('larastan.mixins', require __DIR__.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'mixins.php');
+$app->make('config')
+    ->set('larastan.statics', require __DIR__.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'statics.php');

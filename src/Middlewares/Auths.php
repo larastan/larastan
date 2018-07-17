@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Middlewares;
 
 use Closure;
+use function in_array;
 use NunoMaduro\Larastan\Passable;
 use Illuminate\Contracts\Auth\Authenticatable;
 use NunoMaduro\Larastan\Concerns\HasContainer;
@@ -49,7 +50,7 @@ final class Auths
 
         $found = false;
 
-        if (in_array($classReflectionName, $this->classes)) {
+        if (in_array($classReflectionName, $this->classes, true)) {
             $config = $this->resolve('config');
 
             $userModel = $config->get('auth.providers.users.model');

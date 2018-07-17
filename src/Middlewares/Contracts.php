@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Middlewares;
 
 use Closure;
+use function get_class;
 use NunoMaduro\Larastan\Passable;
 use PHPStan\Reflection\ClassReflection;
 use NunoMaduro\Larastan\Concerns\HasContainer;

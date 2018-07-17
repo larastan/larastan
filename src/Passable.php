@@ -27,6 +27,8 @@ use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
  */
 final class Passable
 {
+    use Concerns\HasContainer;
+
     /**
      * @var \PHPStan\Reflection\Php\PhpMethodReflectionFactory
      */
@@ -63,11 +65,6 @@ final class Passable
     private $staticAllowed = false;
 
     /**
-     * @var array
-     */
-    private $staticClasses;
-
-    /**
      * Method constructor.
      *
      * @param \PHPStan\Reflection\Php\PhpMethodReflectionFactory $methodReflectionFactory
@@ -88,8 +85,6 @@ final class Passable
         $this->pipeline = $pipeline;
         $this->classReflection = $classReflection;
         $this->methodName = $methodName;
-
-        $this->staticClasses = require __DIR__.'/../config/statics.php';
     }
 
     /**
@@ -201,7 +196,9 @@ final class Passable
         $classReflection = $this->broker->getClass($class);
 
         if (! $this->staticAllowed && $staticAllowed === false) {
-            foreach ($this->staticClasses as $staticClass) {
+
+            $statics = $this->resolve('config')->get('larastan.statics');
+            foreach ($statics as $staticClass) {
                 if ($staticClass === $class || $classReflection->isSubclassOf($staticClass)) {
                     $staticAllowed = true;
                     break;

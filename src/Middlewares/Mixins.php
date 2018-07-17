@@ -17,18 +17,14 @@ use Closure;
 use PHPStan\Broker\Broker;
 use NunoMaduro\Larastan\Passable;
 use PHPStan\Reflection\ClassReflection;
+use NunoMaduro\Larastan\Concerns\HasContainer;
 
 /**
  * @internal
  */
 final class Mixins
 {
-    private $config;
-
-    public function __construct(array $config = null)
-    {
-        $this->config = $config ?? require __DIR__.'/../../config/mixins.php';
-    }
+    use HasContainer;
 
     /**
      * @param \NunoMaduro\Larastan\Passable $passable
@@ -67,7 +63,7 @@ final class Mixins
             $this->getMixinsFromPhpDocs($phpdocs, '/@mixin\s+([\w\\\\]+)/'),
             $this->getMixinsFromPhpDocs($phpdocs, '/@see\s+([\w\\\\]+)/'),
             $classReflection->getParentClassesNames(),
-            $this->config[$classReflection->getName()] ?? []
+            $this->resolve('config')->get('larastan.mixins')[$classReflection->getName()] ?? []
         );
 
         if (! empty($mixins)) {
