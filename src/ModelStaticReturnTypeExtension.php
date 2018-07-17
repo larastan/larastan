@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan;
 
 use function count;
+use ReflectionClass;
 use PHPStan\Type\Type;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\UnionType;
@@ -24,14 +25,34 @@ use PHPStan\Type\IntersectionType;
 use PhpParser\Node\Expr\StaticCall;
 use Illuminate\Database\Eloquent\Model;
 use PHPStan\Reflection\MethodReflection;
+use NunoMaduro\Larastan\Middlewares\Mixins;
+use Illuminate\Database\Eloquent\Collection;
+use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\FunctionVariantWithPhpDocs;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 
 /**
  * @internal
  */
-final class ModelStaticReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
+final class ModelStaticReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension, BrokerAwareExtension
 {
+    use Concerns\HasBroker;
+
+    /**
+     * @var \NunoMaduro\Larastan\Middlewares\Mixins
+     */
+    private $mixins;
+
+    /**
+     * @param \NunoMaduro\Larastan\Middlewares\Mixins $mixins
+     *
+     * @return void
+     */
+    public function __construct(Mixins $mixins = null)
+    {
+        $this->mixins = $mixins ?? new Mixins();
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -70,10 +91,21 @@ final class ModelStaticReturnTypeExtension implements DynamicStaticMethodReturnT
         if ($variants[0] instanceof FunctionVariantWithPhpDocs) {
             $className = $methodCall->class->toString();
 
-            if (class_exists($className) && (new \ReflectionClass($className))->isSubclassOf(Model::class)) {
-                $types = method_exists($returnType, 'getTypes') ? $returnType->getTypes() : [$returnType];
-                $types = $this->replaceStaticType($types, $methodCall->class->toString());
-                $returnType = count($types) > 1 ? new UnionType($types) : current($types);
+            if (class_exists($className)) {
+
+                $classReflection = new ReflectionClass($className);
+                $isValidInstance = false;
+                foreach ($this->mixins->getMixinsFromClass($this->broker, $this->broker->getClass(Collection::class)) as $mixin) {
+                    if ($isValidInstance = $classReflection->isSubclassOf($mixin)) {
+                        break;
+                    }
+                }
+
+                if ($isValidInstance) {
+                    $types = method_exists($returnType, 'getTypes') ? $returnType->getTypes() : [$returnType];
+                    $types = $this->replaceStaticType($types, $methodCall->class->toString());
+                    $returnType = count($types) > 1 ? new UnionType($types) : current($types);
+                }
             }
         }
 

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 return [
@@ -26,6 +27,11 @@ return [
     Model::class => [
         Builder::class,
     ],
+
+    Collection::class => [
+        Model::class,
+    ],
+
     JsonResource::class => collect(get_declared_classes())
         ->filter(
             function ($item) {
