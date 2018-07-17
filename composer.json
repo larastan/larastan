@@ -14,7 +14,7 @@
         "phpstan/phpstan": "^0.10",
         "symfony/process": "^4.1",
         "laravel/framework": "5.6.*",
-        "mockery/mockery": "^1.0"
+        "mockery/mockery": "^1.0|0.9.*"
     },
     "require-dev": {
         "orchestra/testbench": "^3.6",
