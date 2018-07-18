@@ -67,6 +67,10 @@ final class Mixins
                 ->get('larastan.mixins')[$classReflection->getName()] ?? []
         );
 
+        $mixins = array_filter($mixins, function ($mixin) use ($classReflection) {
+            return (new \ReflectionClass($mixin))->getName() !== $classReflection->getName();
+        });
+
         if (! empty($mixins)) {
             foreach ($mixins as $mixin) {
                 $mixins = array_merge($mixins, $this->getMixinsFromClass($broker, $broker->getClass($mixin)));
