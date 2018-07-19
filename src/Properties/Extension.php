@@ -35,6 +35,9 @@ final class Extension implements PropertiesClassReflectionExtension, BrokerAware
     {
         $hasProperty = false;
 
+        /**
+         * @todo Consider apply this rule only for Illuminate\Contracts.
+         */
         if ($classReflection->isInterface()) {
             $concrete = $this->resolve($classReflection->getName());
 
