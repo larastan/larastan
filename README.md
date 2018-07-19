@@ -21,7 +21,9 @@ Larastan was created by, and is maintained by [Nuno Maduro](https://github.com/n
 
 ## Installation & Usage
 
-> **Requires [PHP 7.1.3+](https://php.net/releases/)**
+> **Requires:**
+- **[PHP 7.1.3+](https://php.net/releases/)**
+- **[Laravel 5.6+](https://github.com/laravel/laravel)**
 
 You may use [Composer](https://getcomposer.org) to install Larastan as a development dependency into your Laravel project:
 ```bash
