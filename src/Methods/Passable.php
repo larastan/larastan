@@ -11,11 +11,12 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\Larastan;
+namespace NunoMaduro\Larastan\Methods;
 
 use Mockery;
 use LogicException;
 use PHPStan\Broker\Broker;
+use NunoMaduro\Larastan\Concerns;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use Illuminate\Contracts\Pipeline\Pipeline;
@@ -98,7 +99,7 @@ final class Passable
     /**
      * @param \PHPStan\Reflection\ClassReflection $classReflection
      *
-     * @return \NunoMaduro\Larastan\Passable
+     * @return \NunoMaduro\Larastan\Methods\Passable
      */
     public function setClassReflection(ClassReflection $classReflection): Passable
     {
@@ -166,11 +167,11 @@ final class Passable
     /**
      * Declares that the provided method can be called statically.
      *
-     * @param $staticAllowed
+     * @param bool $staticAllowed
      *
      * @return void
      */
-    public function setStaticAllowed($staticAllowed): void
+    public function setStaticAllowed(bool $staticAllowed): void
     {
         $this->staticAllowed = $staticAllowed;
     }

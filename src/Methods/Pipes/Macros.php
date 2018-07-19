@@ -11,23 +11,23 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\Larastan\Middlewares;
+namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
-use NunoMaduro\Larastan\Macro;
-use NunoMaduro\Larastan\Passable;
+use NunoMaduro\Larastan\Concerns;
+use NunoMaduro\Larastan\Methods\Macro;
 use Illuminate\Support\Traits\Macroable;
-use NunoMaduro\Larastan\Concerns\HasContainer;
+use NunoMaduro\Larastan\Methods\Passable;
 
 /**
  * @internal
  */
 final class Macros
 {
-    use HasContainer;
+    use Concerns\HasContainer;
 
     /**
-     * @param \NunoMaduro\Larastan\Passable $passable
+     * @param \NunoMaduro\Larastan\Methods\Passable $passable
      * @param \Closure $next
      *
      * @return void
@@ -61,6 +61,8 @@ final class Macros
             $refObject = new \ReflectionClass($className);
             $refProperty = $refObject->getProperty('macros');
             $refProperty->setAccessible(true);
+
+            $className = (string) $className;
 
             if ($found = $className::hasMacro($passable->getMethodName())) {
                 $reflectionFunction = new \ReflectionFunction($refProperty->getValue()[$passable->getMethodName()]);

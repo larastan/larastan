@@ -11,12 +11,12 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\Larastan\Middlewares;
+namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
 use Mockery;
-use NunoMaduro\Larastan\Passable;
 use Illuminate\Database\Eloquent\Model;
+use NunoMaduro\Larastan\Methods\Passable;
 
 /**
  * @internal
@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Model;
 final class ModelScopes
 {
     /**
-     * @param \NunoMaduro\Larastan\Passable $passable
+     * @param \NunoMaduro\Larastan\Methods\Passable $passable
      * @param \Closure $next
      *
      * @return void

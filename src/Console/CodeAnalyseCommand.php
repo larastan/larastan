@@ -94,6 +94,8 @@ final class CodeAnalyseCommand extends Command
 
             $value = $this->option($name = $option->getName());
 
+            $value = is_array($value) ? implode(',', $value) : $value;
+
             if ($option->acceptValue()) {
                 $options .= " --$name=$value";
             } else {
@@ -109,7 +111,7 @@ final class CodeAnalyseCommand extends Command
                     trim($path)
                 );
             },
-            explode(',', $this->option('paths'))
+            explode(',', (string) $this->option('paths'))
         );
 
         $params = [

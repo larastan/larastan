@@ -11,10 +11,10 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\Larastan\Middlewares;
+namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
-use NunoMaduro\Larastan\Passable;
+use NunoMaduro\Larastan\Methods\Passable;
 
 /**
  * @internal
@@ -22,7 +22,7 @@ use NunoMaduro\Larastan\Passable;
 final class SelfClass
 {
     /**
-     * @param \NunoMaduro\Larastan\Passable $passable
+     * @param \NunoMaduro\Larastan\Methods\Passable $passable
      * @param \Closure $next
      *
      * @return void

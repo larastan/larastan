@@ -28,7 +28,9 @@ trait HasContainer
     protected $container;
 
     /**
-     * @param \Illuminate\Contracts\Container\Container
+     * @param \Illuminate\Contracts\Container\Container $container
+     *
+     * @return void
      */
     public function setContainer(ContainerContract $container): void
     {

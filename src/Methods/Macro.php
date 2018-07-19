@@ -11,7 +11,7 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\Larastan;
+namespace NunoMaduro\Larastan\Methods;
 
 final class Macro extends \ReflectionMethod
 {

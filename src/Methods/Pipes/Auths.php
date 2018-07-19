@@ -11,13 +11,13 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\Larastan\Middlewares;
+namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
 use function in_array;
-use NunoMaduro\Larastan\Passable;
+use NunoMaduro\Larastan\Concerns;
+use NunoMaduro\Larastan\Methods\Passable;
 use Illuminate\Contracts\Auth\Authenticatable;
-use NunoMaduro\Larastan\Concerns\HasContainer;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\Access\Authorizable;
 
@@ -26,10 +26,10 @@ use Illuminate\Contracts\Auth\Access\Authorizable;
  */
 final class Auths
 {
-    use HasContainer;
+    use Concerns\HasContainer;
 
     /**
-     * @var []string
+     * @var string[]
      */
     private $classes = [
         Authenticatable::class,
@@ -38,7 +38,7 @@ final class Auths
     ];
 
     /**
-     * @param \NunoMaduro\Larastan\Passable $passable
+     * @param \NunoMaduro\Larastan\Methods\Passable $passable
      * @param \Closure $next
      *
      * @return void

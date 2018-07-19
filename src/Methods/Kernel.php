@@ -11,7 +11,7 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\Larastan;
+namespace NunoMaduro\Larastan\Methods;
 
 use PHPStan\Broker\Broker;
 use Illuminate\Pipeline\Pipeline;
@@ -54,7 +54,7 @@ final class Kernel
      * @param \PHPStan\Reflection\ClassReflection $classReflection
      * @param string $methodName
      *
-     * @return \NunoMaduro\Larastan\Passable
+     * @return \NunoMaduro\Larastan\Methods\Passable
      */
     public function handle(Broker $broker, ClassReflection $classReflection, string $methodName): Passable
     {
@@ -65,15 +65,15 @@ final class Kernel
         $pipeline->send($passable)
             ->through(
                 [
-                    Middlewares\SelfClass::class,
-                    Middlewares\Macros::class,
-                    Middlewares\Mixins::class,
-                    Middlewares\Contracts::class,
-                    Middlewares\Facades::class,
-                    Middlewares\Managers::class,
-                    Middlewares\Auths::class,
-                    Middlewares\ModelScopes::class,
-                    Middlewares\RedirectResponseWiths::class,
+                    Pipes\SelfClass::class,
+                    Pipes\Macros::class,
+                    Pipes\Mixins::class,
+                    Pipes\Contracts::class,
+                    Pipes\Facades::class,
+                    Pipes\Managers::class,
+                    Pipes\Auths::class,
+                    Pipes\ModelScopes::class,
+                    Pipes\RedirectResponseWiths::class,
                 ]
             )
             ->then(

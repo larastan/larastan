@@ -14,17 +14,22 @@ parameters:
 
 services:
     -
-        class: NunoMaduro\Larastan\Extension
+        class: NunoMaduro\Larastan\Methods\Extension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-    	class: NunoMaduro\Larastan\ModelStaticReturnTypeExtension
+        class: NunoMaduro\Larastan\Properties\Extension
+        tags:
+            - phpstan.broker.propertiesClassReflectionExtension
+
+    -
+    	class: NunoMaduro\Larastan\ReturnTypes\ModelExtension
     	tags:
     		- phpstan.broker.dynamicStaticMethodReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\AuthStaticReturnTypeExtension
+        class: NunoMaduro\Larastan\ReturnTypes\AuthExtension
         tags:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
 

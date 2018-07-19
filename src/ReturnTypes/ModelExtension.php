@@ -11,7 +11,7 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\Larastan;
+namespace NunoMaduro\Larastan\ReturnTypes;
 
 use function count;
 use ReflectionClass;
@@ -21,11 +21,12 @@ use PHPStan\Type\UnionType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StaticType;
 use PHPStan\Type\IterableType;
+use NunoMaduro\Larastan\Concerns;
 use PHPStan\Type\IntersectionType;
 use PhpParser\Node\Expr\StaticCall;
 use Illuminate\Database\Eloquent\Model;
 use PHPStan\Reflection\MethodReflection;
-use NunoMaduro\Larastan\Middlewares\Mixins;
+use NunoMaduro\Larastan\Methods\Pipes\Mixins;
 use Illuminate\Database\Eloquent\Collection;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\FunctionVariantWithPhpDocs;
@@ -34,17 +35,17 @@ use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 /**
  * @internal
  */
-final class ModelStaticReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension, BrokerAwareExtension
+final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, BrokerAwareExtension
 {
     use Concerns\HasBroker;
 
     /**
-     * @var \NunoMaduro\Larastan\Middlewares\Mixins
+     * @var \NunoMaduro\Larastan\Methods\Pipes\Mixins
      */
     private $mixins;
 
     /**
-     * @param \NunoMaduro\Larastan\Middlewares\Mixins $mixins
+     * @param \NunoMaduro\Larastan\Methods\Pipes\Mixins $mixins
      *
      * @return void
      */

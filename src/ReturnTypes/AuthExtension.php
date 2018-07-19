@@ -11,24 +11,24 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\Larastan;
+namespace NunoMaduro\Larastan\ReturnTypes;
 
 use PHPStan\Type\Type;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\UnionType;
 use PHPStan\Type\ObjectType;
+use NunoMaduro\Larastan\Concerns;
 use PhpParser\Node\Expr\StaticCall;
 use Illuminate\Support\Facades\Auth;
 use PHPStan\Reflection\MethodReflection;
-use NunoMaduro\Larastan\Concerns\HasContainer;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 
 /**
  * @internal
  */
-final class AuthStaticReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
+final class AuthExtension implements DynamicStaticMethodReturnTypeExtension
 {
-    use HasContainer;
+    use Concerns\HasContainer;
 
     /**
      * {@inheritdoc}

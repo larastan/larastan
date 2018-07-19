@@ -11,8 +11,9 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\Larastan;
+namespace NunoMaduro\Larastan\Methods;
 
+use NunoMaduro\Larastan\Concerns;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\BrokerAwareExtension;
@@ -27,12 +28,7 @@ final class Extension implements MethodsClassReflectionExtension, BrokerAwareExt
     use Concerns\HasBroker;
 
     /**
-     * @var \PHPStan\Reflection\Php\PhpMethodReflectionFactory
-     */
-    private $methodReflectionFactory;
-
-    /**
-     * @var \NunoMaduro\Larastan\Kernel
+     * @var \NunoMaduro\Larastan\Methods\Kernel
      */
     private $kernel;
 
@@ -40,7 +36,7 @@ final class Extension implements MethodsClassReflectionExtension, BrokerAwareExt
      * Extension constructor.
      *
      * @param \PHPStan\Reflection\Php\PhpMethodReflectionFactory $methodReflectionFactory
-     * @param \NunoMaduro\Larastan\Kernel|null $kernel
+     * @param \NunoMaduro\Larastan\Methods\Kernel|null $kernel
      */
     public function __construct(PhpMethodReflectionFactory $methodReflectionFactory, Kernel $kernel = null)
     {
