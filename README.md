@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://raw.githubusercontent.com/caneco/larastan/master/docs/logo.png" alt="Larastan Logo" width="300">
+    <img src="https://raw.githubusercontent.com/nunomaduro/larastan/master/docs/logo.png" alt="Larastan Logo" width="300">
     <br><br>
     <img src="https://raw.githubusercontent.com/nunomaduro/larastan/master/docs/example.png" alt="Larastan Example" height="300">
 </p>
@@ -68,12 +68,8 @@ You can have a look at the [CHANGELOG](CHANGELOG.md) for constant updates & deta
 ## Credits
 
 - [weebly/phpstan-laravel](https://github.com/weebly/phpstan-laravel) - Some code was inspired on this package.
+- [@Caneco](http://github.com/caneco) - For making the logo.
 
 ## License
 
 Larastan is an open-sourced software licensed under the [MIT license](LICENSE.md).
-
----
-
-#### Thanks…
-- to [@Caneco](http://github.com/caneco) for the official logo.
