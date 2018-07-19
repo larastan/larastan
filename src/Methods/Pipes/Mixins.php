@@ -16,8 +16,8 @@ namespace NunoMaduro\Larastan\Methods\Pipes;
 use Closure;
 use PHPStan\Broker\Broker;
 use NunoMaduro\Larastan\Concerns;
-use NunoMaduro\Larastan\Methods\Passable;
 use PHPStan\Reflection\ClassReflection;
+use NunoMaduro\Larastan\Methods\Passable;
 
 /**
  * @internal

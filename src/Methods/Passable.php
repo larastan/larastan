@@ -197,7 +197,6 @@ final class Passable
         $classReflection = $this->broker->getClass($class);
 
         if (! $this->staticAllowed && $staticAllowed === false) {
-
             $statics = $this->resolve('config')
                 ->get('larastan.statics');
             foreach ($statics as $staticClass) {
