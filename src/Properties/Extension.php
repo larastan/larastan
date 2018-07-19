@@ -40,7 +40,7 @@ final class Extension implements PropertiesClassReflectionExtension, BrokerAware
 
             if ($concrete !== null) {
 
-                /**
+                /*
                  * @todo Consider refactor
                  */
                 switch ($concrete) {

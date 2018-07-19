@@ -26,9 +26,9 @@ use PHPStan\Type\IntersectionType;
 use PhpParser\Node\Expr\StaticCall;
 use Illuminate\Database\Eloquent\Model;
 use PHPStan\Reflection\MethodReflection;
-use NunoMaduro\Larastan\Methods\Pipes\Mixins;
 use Illuminate\Database\Eloquent\Collection;
 use PHPStan\Reflection\BrokerAwareExtension;
+use NunoMaduro\Larastan\Methods\Pipes\Mixins;
 use PHPStan\Reflection\FunctionVariantWithPhpDocs;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 
@@ -93,7 +93,6 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, Br
             $className = $methodCall->class->toString();
 
             if (class_exists($className)) {
-
                 $classReflection = new ReflectionClass($className);
                 $isValidInstance = false;
                 foreach ($this->mixins->getMixinsFromClass(

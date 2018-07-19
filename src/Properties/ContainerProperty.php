@@ -15,8 +15,8 @@ namespace NunoMaduro\Larastan\Properties;
 
 use function gettype;
 use PHPStan\Type\Type;
-use function is_object;
 use function get_class;
+use function is_object;
 use PHPStan\Type\TypehintHelper;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertyReflection;
