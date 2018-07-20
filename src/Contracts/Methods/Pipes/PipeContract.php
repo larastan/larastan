@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
-use NunoMaduro\Larastan\Methods\PassableContract;
+use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 
 /**
  * @internal
@@ -22,7 +22,7 @@ use NunoMaduro\Larastan\Methods\PassableContract;
 interface PipeContract
 {
     /**
-     * @param \NunoMaduro\Larastan\Methods\PassableContract $passable
+     * @param \NunoMaduro\Larastan\Contracts\Methods\PassableContract $passable
      * @param \Closure $next
      *
      * @return void
