@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.1.3] - 2018-07-20
+### Fixes
+- Usage on Windows + Laravel Homestead ([#55](https://github.com/nunomaduro/larastan/pull/55))
+
 ## [0.1.2] - 2018-07-20
 ### Adds
 - `Illuminate\Contracts` property extension
