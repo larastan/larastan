@@ -63,7 +63,7 @@ final class CodeAnalyseCommand extends Command
      */
     public function handle(): void
     {
-        $process = new Process($this->cmd(), $this->laravel->basePath('vendor/bin'));
+        $process = new Process($this->cmd(), $this->laravel->basePath('vendor/phpstan/phpstan/bin'));
 
         if (Process::isTtySupported()) {
             $process->setTty(true);
