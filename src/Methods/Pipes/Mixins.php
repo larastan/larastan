@@ -17,22 +17,19 @@ use Closure;
 use PHPStan\Broker\Broker;
 use NunoMaduro\Larastan\Concerns;
 use PHPStan\Reflection\ClassReflection;
-use NunoMaduro\Larastan\Methods\Passable;
+use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 
 /**
  * @internal
  */
-final class Mixins
+final class Mixins implements PipeContract
 {
     use Concerns\HasContainer;
 
     /**
-     * @param \NunoMaduro\Larastan\Methods\Passable $passable
-     * @param \Closure $next
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function handle(Passable $passable, Closure $next): void
+    public function handle(PassableContract $passable, Closure $next): void
     {
         $mixins = $this->getMixinsFromClass($passable->getBroker(), $passable->getClassReflection());
 

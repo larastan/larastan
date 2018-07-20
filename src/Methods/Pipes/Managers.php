@@ -17,22 +17,19 @@ use Closure;
 use InvalidArgumentException;
 use Illuminate\Support\Manager;
 use NunoMaduro\Larastan\Concerns;
-use NunoMaduro\Larastan\Methods\Passable;
+use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 
 /**
  * @internal
  */
-final class Managers
+final class Managers implements PipeContract
 {
     use Concerns\HasContainer;
 
     /**
-     * @param \NunoMaduro\Larastan\Methods\Passable $passable
-     * @param \Closure $next
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function handle(Passable $passable, Closure $next): void
+    public function handle(PassableContract $passable, Closure $next): void
     {
         $classReflection = $passable->getClassReflection();
 

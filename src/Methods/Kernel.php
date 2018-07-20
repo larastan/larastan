@@ -14,39 +14,33 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods;
 
 use PHPStan\Broker\Broker;
+use NunoMaduro\Larastan\Concerns;
 use Illuminate\Pipeline\Pipeline;
-use Illuminate\Container\Container;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
-use Illuminate\Contracts\Container\Container as ContainerContract;
+use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 
 /**
  * @internal
  */
 final class Kernel
 {
+    use Concerns\HasContainer;
+
     /**
      * @var \PHPStan\Reflection\Php\PhpMethodReflectionFactory
      */
     private $methodReflectionFactory;
 
     /**
-     * @var \Illuminate\Contracts\Container\Container|null
-     */
-    private $container;
-
-    /**
      * Kernel constructor.
      *
      * @param \PHPStan\Reflection\Php\PhpMethodReflectionFactory $methodReflectionFactory
-     * @param \Illuminate\Contracts\Container\Container|null $container
      */
     public function __construct(
-        PhpMethodReflectionFactory $methodReflectionFactory,
-        ContainerContract $container = null
+        PhpMethodReflectionFactory $methodReflectionFactory
     ) {
         $this->methodReflectionFactory = $methodReflectionFactory;
-        $this->container = $container ?? Container::getInstance();
     }
 
     /**
@@ -54,11 +48,11 @@ final class Kernel
      * @param \PHPStan\Reflection\ClassReflection $classReflection
      * @param string $methodName
      *
-     * @return \NunoMaduro\Larastan\Methods\Passable
+     * @return \NunoMaduro\Larastan\Contracts\Methods\PassableContract
      */
-    public function handle(Broker $broker, ClassReflection $classReflection, string $methodName): Passable
+    public function handle(Broker $broker, ClassReflection $classReflection, string $methodName): PassableContract
     {
-        $pipeline = new Pipeline($this->container);
+        $pipeline = new Pipeline($this->getContainer());
 
         $passable = new Passable($this->methodReflectionFactory, $broker, $pipeline, $classReflection, $methodName);
 

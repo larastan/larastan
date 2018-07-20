@@ -15,20 +15,17 @@ namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
 use Illuminate\Support\Facades\Facade;
-use NunoMaduro\Larastan\Methods\Passable;
+use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 
 /**
  * @internal
  */
-final class Facades
+final class Facades implements PipeContract
 {
     /**
-     * @param \NunoMaduro\Larastan\Methods\Passable $passable
-     * @param \Closure $next
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function handle(Passable $passable, Closure $next): void
+    public function handle(PassableContract $passable, Closure $next): void
     {
         $classReflection = $passable->getClassReflection();
 

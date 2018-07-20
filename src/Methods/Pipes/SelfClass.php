@@ -14,20 +14,17 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
-use NunoMaduro\Larastan\Methods\Passable;
+use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 
 /**
  * @internal
  */
-final class SelfClass
+final class SelfClass implements PipeContract
 {
     /**
-     * @param \NunoMaduro\Larastan\Methods\Passable $passable
-     * @param \Closure $next
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function handle(Passable $passable, Closure $next): void
+    public function handle(PassableContract $passable, Closure $next): void
     {
         $className = $passable->getClassReflection()
             ->getName();

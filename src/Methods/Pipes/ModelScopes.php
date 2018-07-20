@@ -16,20 +16,17 @@ namespace NunoMaduro\Larastan\Methods\Pipes;
 use Closure;
 use Mockery;
 use Illuminate\Database\Eloquent\Model;
-use NunoMaduro\Larastan\Methods\Passable;
+use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 
 /**
  * @internal
  */
-final class ModelScopes
+final class ModelScopes implements PipeContract
 {
     /**
-     * @param \NunoMaduro\Larastan\Methods\Passable $passable
-     * @param \Closure $next
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function handle(Passable $passable, Closure $next): void
+    public function handle(PassableContract $passable, Closure $next): void
     {
         $classReflection = $passable->getClassReflection();
 

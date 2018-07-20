@@ -17,22 +17,19 @@ use Closure;
 use function get_class;
 use NunoMaduro\Larastan\Concerns;
 use PHPStan\Reflection\ClassReflection;
-use NunoMaduro\Larastan\Methods\Passable;
+use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 
 /**
  * @internal
  */
-final class Contracts
+final class Contracts implements PipeContract
 {
     use Concerns\HasContainer;
 
     /**
-     * @param \NunoMaduro\Larastan\Methods\Passable $passable
-     * @param \Closure $next
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function handle(Passable $passable, Closure $next): void
+    public function handle(PassableContract $passable, Closure $next): void
     {
         $found = false;
 
