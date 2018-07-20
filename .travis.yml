@@ -21,4 +21,5 @@ before_script:
 
 script:
   - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
+  - export -f travis_retry
   - tests/laravel-test.sh
