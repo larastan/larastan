@@ -3,7 +3,7 @@
 set -e
 
 # Prevent shallow repository error
-git fetch
+git fetch --unshallow
 
 # Install Laravel
 composer create-project --quiet --prefer-dist "laravel/laravel" laravel
