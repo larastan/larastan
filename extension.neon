@@ -1,4 +1,5 @@
 parameters:
+    scopeClass: NunoMaduro\Larastan\Analyser\Scope
     universalObjectCratesClasses:
         - Illuminate\Database\Eloquent\Model
         - Illuminate\Http\Resources\Json\JsonResource
