@@ -10,11 +10,11 @@
 
 namespace NunoMaduro\Larastan\Contracts\Methods;
 
-use Illuminate\Contracts\Container\Container as ContainerContract;
 use PHPStan\Broker\Broker;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
+use Illuminate\Contracts\Container\Container as ContainerContract;
 
 /**
  * @internal

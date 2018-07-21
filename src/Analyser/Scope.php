@@ -13,19 +13,18 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Analyser;
 
-use NunoMaduro\Larastan\Properties\ReflectionTypeContainer;
-use PHPStan\TrinaryLogic;
+use ReflectionClass;
+use function gettype;
 use PHPStan\Type\Type;
 use function get_class;
 use function is_object;
-use function gettype;
 use PhpParser\Node\Expr;
-use PHPStan\Type\ObjectType;
+use PHPStan\TrinaryLogic;
+use PHPStan\Type\TypehintHelper;
 use NunoMaduro\Larastan\Concerns;
 use PHPStan\Analyser\Scope as BaseScope;
 use Illuminate\Contracts\Container\Container;
-use PHPStan\Type\TypehintHelper;
-use ReflectionClass;
+use NunoMaduro\Larastan\Properties\ReflectionTypeContainer;
 
 /**
  * @internal
@@ -59,9 +58,7 @@ class Scope extends BaseScope
         Type $offsetType,
         Type $offsetAccessibleType
     ): Type {
-
         if ($this->isContainer($offsetAccessibleType)) {
-
             $concrete = $this->resolve($arrayDimFetch->dim->value);
 
             $type = is_object($concrete) ? get_class($concrete) : gettype($concrete);
