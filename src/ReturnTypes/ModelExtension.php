@@ -112,6 +112,8 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, Br
             }
         }
 
+        dd($returnType);
+
         return $returnType;
     }
 
@@ -126,7 +128,7 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, Br
     {
         foreach ($types as $key => $type) {
             if ($type instanceof ObjectType && $type->getClassName() === Model::class) {
-                unset($types[$key]);
+                $types[$key] = new StaticType($staticType);
             }
 
             if ($type instanceof StaticType) {
