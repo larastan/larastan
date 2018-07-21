@@ -112,8 +112,6 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, Br
             }
         }
 
-        dd($returnType);
-
         return $returnType;
     }
 
