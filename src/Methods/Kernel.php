@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods;
 
 use PHPStan\Broker\Broker;
-use NunoMaduro\Larastan\Concerns;
 use Illuminate\Pipeline\Pipeline;
+use NunoMaduro\Larastan\Concerns;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
