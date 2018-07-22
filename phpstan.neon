@@ -1,0 +1,4 @@
+parameters:
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        - '#Method Illuminate\\Contracts\\Foundation\\Application::basePath\(\) invoked with 1 parameter, 0 required.#'
