@@ -34,11 +34,6 @@ final class OptionsResolver
     private const DEFAULT_MEMORY_LIMIT = '2048M';
 
     /**
-     * @var \Illuminate\Contracts\Foundation\Application
-     */
-    private $application;
-
-    /**
      * @var \PHPStan\Command\AnalyseCommand
      */
     private $command;
@@ -51,12 +46,10 @@ final class OptionsResolver
     /**
      * OptionsResolver constructor.
      *
-     * @param \Illuminate\Contracts\Foundation\Application $application
      * @param \PHPStan\Command\AnalyseCommand $command
      */
-    public function __construct(Application $application, AnalyseCommand $command)
+    public function __construct(AnalyseCommand $command)
     {
-        $this->application = $application;
         $this->command = $command;
     }
 
@@ -72,7 +65,7 @@ final class OptionsResolver
             ->setDefault(self::DEFAULT_LEVEL);
 
         $definition->getOption('autoload-file')
-            ->setDefault($this->application->basePath('vendor/autoload.php'));
+            ->setDefault(base_path('vendor/autoload.php'));
 
         $definition->getOption('configuration')
             ->setDefault(__DIR__.'/../../extension.neon');
@@ -82,11 +75,7 @@ final class OptionsResolver
 
         $definition->addOption(
             new InputOption(
-                'paths',
-                'p',
-                InputOption::VALUE_REQUIRED,
-                'Paths with source code to run analysis on',
-                $this->application->make('path')
+                'paths', 'p', InputOption::VALUE_REQUIRED, 'Paths with source code to run analysis on', base_path('app')
             )
         );
 
