@@ -21,4 +21,4 @@ echo "Test Laravel"
 php artisan code:analyse --level=max
 
 echo "Test ourselves"
-php vendor/bin/phpstan analyze --level=7 vendor/nunomaduro/larastan/src/
+php vendor/bin/phpstan analyze --level=max vendor/nunomaduro/larastan/src/
