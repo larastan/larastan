@@ -13,7 +13,10 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
-final class Macro extends \ReflectionMethod
+use PHPStan\Reflection\Php\BuiltinMethodReflection;
+use ReflectionClass;
+
+final class Macro implements BuiltinMethodReflection
 {
     /**
      * The class name.
@@ -45,8 +48,6 @@ final class Macro extends \ReflectionMethod
      */
     public function __construct(string $className, string $methodName, \ReflectionFunction $reflectionFunction)
     {
-        // parent::__construct($className, $methodName);
-
         $this->className = $className;
         $this->methodName = $methodName;
         $this->reflectionFunction = $reflectionFunction;
@@ -55,23 +56,15 @@ final class Macro extends \ReflectionMethod
     /**
      * {@inheritdoc}
      */
-    public function getDeclaringClass()
+    public function getDeclaringClass(): ReflectionClass
     {
-        return new \ReflectionClass($this->className);
+        return new ReflectionClass($this->className);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function isAbstract()
-    {
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isConstructor()
+    public function isPrivate(): bool
     {
         return false;
     }
@@ -79,39 +72,7 @@ final class Macro extends \ReflectionMethod
     /**
      * {@inheritdoc}
      */
-    public function isDestructor()
-    {
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isFinal()
-    {
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isPrivate()
-    {
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isProtected()
-    {
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isPublic()
+    public function isPublic(): bool
     {
         return true;
     }
@@ -119,33 +80,9 @@ final class Macro extends \ReflectionMethod
     /**
      * {@inheritdoc}
      */
-    public function isStatic()
+    public function isStatic(): bool
     {
         return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setAccessible($accessible)
-    {
-        //
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getClosureScopeClass()
-    {
-        return $this->reflectionFunction->getClosureScopeClass();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getClosureThis()
-    {
-        return $this->reflectionFunction->getClosureThis();
     }
 
     /**
@@ -159,30 +96,6 @@ final class Macro extends \ReflectionMethod
     /**
      * {@inheritdoc}
      */
-    public function getEndLine()
-    {
-        return $this->reflectionFunction->getEndLine();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getExtension()
-    {
-        return $this->reflectionFunction->getExtension();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getExtensionName()
-    {
-        return $this->reflectionFunction->getExtensionName();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function getFileName()
     {
         return $this->reflectionFunction->getFileName();
@@ -191,7 +104,7 @@ final class Macro extends \ReflectionMethod
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->methodName;
     }
@@ -199,31 +112,7 @@ final class Macro extends \ReflectionMethod
     /**
      * {@inheritdoc}
      */
-    public function getNamespaceName()
-    {
-        return (new \ReflectionClass($this->className))->getNamespaceName();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getNumberOfParameters()
-    {
-        return $this->reflectionFunction->getNumberOfParameters();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getNumberOfRequiredParameters()
-    {
-        return $this->reflectionFunction->getNumberOfRequiredParameters();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getParameters()
+    public function getParameters(): array
     {
         return $this->reflectionFunction->getParameters();
     }
@@ -231,17 +120,9 @@ final class Macro extends \ReflectionMethod
     /**
      * {@inheritdoc}
      */
-    public function getReturnType()
+    public function getReturnType(): ?\ReflectionType
     {
         return $this->reflectionFunction->getReturnType();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getShortName()
-    {
-        return $this->getName();
     }
 
     /**
@@ -255,39 +136,7 @@ final class Macro extends \ReflectionMethod
     /**
      * {@inheritdoc}
      */
-    public function getStaticVariables()
-    {
-        return $this->reflectionFunction->getStaticVariables();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function hasReturnType()
-    {
-        return $this->reflectionFunction->hasReturnType();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function inNamespace()
-    {
-        return (new \ReflectionClass($this->className))->inNamespace();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isClosure()
-    {
-        return false;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isDeprecated()
+    public function isDeprecated(): bool
     {
         return $this->reflectionFunction->isDeprecated();
     }
@@ -295,31 +144,7 @@ final class Macro extends \ReflectionMethod
     /**
      * {@inheritdoc}
      */
-    public function isGenerator()
-    {
-        return $this->reflectionFunction->isGenerator();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isInternal()
-    {
-        return $this->reflectionFunction->isInternal();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isUserDefined()
-    {
-        return $this->reflectionFunction->isUserDefined();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isVariadic()
+    public function isVariadic(): bool
     {
         return $this->reflectionFunction->isVariadic();
     }
@@ -327,8 +152,8 @@ final class Macro extends \ReflectionMethod
     /**
      * {@inheritdoc}
      */
-    public function returnsReference()
+    public function getPrototype(): BuiltinMethodReflection
     {
-        return $this->reflectionFunction->returnsReference();
+        return $this;
     }
 }
