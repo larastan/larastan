@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Analyser;
 
 use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\ObjectType;
 use ReflectionClass;
 use function gettype;
 use PHPStan\Type\Type;
@@ -112,12 +113,6 @@ class Scope extends BaseScope
      */
     private function isContainer(Type $type): bool
     {
-        foreach ($type->getReferencedClasses() as $referencedClass) {
-            if ((new ReflectionClass($referencedClass))->implementsInterface(Container::class)) {
-                return true;
-            }
-        }
-
-        return false;
+        return !(new ObjectType(Container::class))->isSuperTypeOf($type)->no();
     }
 }
