@@ -67,6 +67,7 @@ final class Kernel
                     Pipes\Managers::class,
                     Pipes\Auths::class,
                     Pipes\ModelScopes::class,
+                    Pipes\BuilderDynamicWheres::class,
                     Pipes\RedirectResponseWiths::class,
                 ]
             )
