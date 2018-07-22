@@ -48,19 +48,23 @@ class Scope extends BaseScope
         /*
          * @todo Consider refactoring the code bellow.
          */
-        if ($this->isContainer($type)) {
+        if ($this->isContainer($type) && get_class($type) === Container::class) {
             $type = \Mockery::mock($type);
-
             $type->shouldReceive('isOffsetAccessible')
                 ->andReturn(TrinaryLogic::createYes());
         }
 
         if ($type instanceof UnionType) {
-            foreach ($type->getTypes() as $type) {
+
+            $types = $type->getTypes();
+            foreach ($types as $key => $type) {
                 if ($type instanceof ObjectWithoutClassType) {
-                    return new MixedType();
+                    $types[$key] = new MixedType();
                 }
             }
+
+            $type = new UnionType($types);
+
         }
 
         if ($type instanceof ObjectWithoutClassType) {
@@ -78,15 +82,14 @@ class Scope extends BaseScope
         Type $offsetType,
         Type $offsetAccessibleType
     ): Type {
-        if ($arrayDimFetch->dim === null) {
-            throw new \PHPStan\ShouldNotHappenException();
-        }
+
         $parentType = parent::getTypeFromArrayDimFetch($arrayDimFetch, $offsetType, $offsetAccessibleType);
         if ($this->isContainer($offsetAccessibleType)) {
             $dimType = $this->getType($arrayDimFetch->dim);
-            if (!$dimType instanceof ConstantStringType) {
+            if (! $dimType instanceof ConstantStringType) {
                 return $parentType;
             }
+
             $concrete = $this->resolve($dimType->getValue());
 
             $type = is_object($concrete) ? get_class($concrete) : gettype($concrete);
@@ -113,6 +116,7 @@ class Scope extends BaseScope
      */
     private function isContainer(Type $type): bool
     {
-        return !(new ObjectType(Container::class))->isSuperTypeOf($type)->no();
+        return ! (new ObjectType(Container::class))->isSuperTypeOf($type)
+            ->no();
     }
 }
