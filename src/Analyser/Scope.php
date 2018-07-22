@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Analyser;
 
+use PHPStan\Type\Constant\ConstantStringType;
 use ReflectionClass;
 use function gettype;
 use PHPStan\Type\Type;
@@ -76,8 +77,16 @@ class Scope extends BaseScope
         Type $offsetType,
         Type $offsetAccessibleType
     ): Type {
+        if ($arrayDimFetch->dim === null) {
+            throw new \PHPStan\ShouldNotHappenException();
+        }
+        $parentType = parent::getTypeFromArrayDimFetch($arrayDimFetch, $offsetType, $offsetAccessibleType);
         if ($this->isContainer($offsetAccessibleType)) {
-            $concrete = $this->resolve($arrayDimFetch->dim->value);
+            $dimType = $this->getType($arrayDimFetch->dim);
+            if (!$dimType instanceof ConstantStringType) {
+                return $parentType;
+            }
+            $concrete = $this->resolve($dimType->getValue());
 
             $type = is_object($concrete) ? get_class($concrete) : gettype($concrete);
 
@@ -90,7 +99,7 @@ class Scope extends BaseScope
             );
         }
 
-        return parent::getTypeFromArrayDimFetch($arrayDimFetch, $offsetType, $offsetAccessibleType);
+        return $parentType;
     }
 
     /**
