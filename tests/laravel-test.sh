@@ -19,3 +19,6 @@ sed -e 's|@return \\Illuminate\\Http\\Response$|@return \\Symfony\\Component\\Ht
 
 echo "Test Laravel"
 php artisan code:analyse --level=max
+
+echo "Test ourselves"
+php vendor/bin/phpstan analyze --level=7 vendor/nunomaduro/larastan/src/
