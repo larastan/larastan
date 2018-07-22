@@ -89,7 +89,7 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, Br
          * If the method returns a static type, we instruct phpstan that
          * "static" points to the concrete class model.
          */
-        if ($variants[0] instanceof FunctionVariantWithPhpDocs) {
+        if ($methodCall->class instanceof \PhpParser\Node\Name && $variants[0] instanceof FunctionVariantWithPhpDocs) {
             $className = $methodCall->class->toString();
 
             if (class_exists($className)) {

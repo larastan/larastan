@@ -64,6 +64,9 @@ final class Macros implements PipeContract
 
             if ($found = $className::hasMacro($passable->getMethodName())) {
                 $reflectionFunction = new \ReflectionFunction($refProperty->getValue()[$passable->getMethodName()]);
+                /** @var \PHPStan\Type\Type[] $parameters */
+                $parameters = $reflectionFunction->getParameters();
+
                 $passable->setMethodReflection(
                     $passable->getMethodReflectionFactory()
                         ->create(
@@ -72,7 +75,7 @@ final class Macros implements PipeContract
                             new Macro(
                                 $classReflection->getName(), $passable->getMethodName(), $reflectionFunction
                             ),
-                            $reflectionFunction->getParameters(),
+                            $parameters,
                             null,
                             null,
                             false,

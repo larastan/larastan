@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Console;
 
 use function implode;
+use function is_array;
 use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
 use Illuminate\Console\Application as Artisan;
@@ -105,13 +106,18 @@ final class CodeAnalyseCommand extends Command
             }
         }
 
+        $pathsValue = $this->option('paths');
+        if (is_array($pathsValue)) {
+            $pathsValue = current($pathsValue);
+        }
+
         $paths = array_map(
             function ($path) {
                 return starts_with($path, DIRECTORY_SEPARATOR) || empty($path) ? $path : $this->laravel->basePath(
                     trim($path)
                 );
             },
-            explode(',', (string) $this->option('paths'))
+            explode(',', $pathsValue)
         );
 
         $params = [

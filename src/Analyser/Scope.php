@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Analyser;
 
+use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\ObjectType;
 use ReflectionClass;
@@ -64,7 +65,6 @@ class Scope extends BaseScope
             }
 
             $type = new UnionType($types);
-
         }
 
         if ($type instanceof ObjectWithoutClassType) {
@@ -82,6 +82,10 @@ class Scope extends BaseScope
         Type $offsetType,
         Type $offsetAccessibleType
     ): Type {
+
+        if ($arrayDimFetch->dim === null) {
+            throw new ShouldNotHappenException();
+        }
 
         $parentType = parent::getTypeFromArrayDimFetch($arrayDimFetch, $offsetType, $offsetAccessibleType);
         if ($this->isContainer($offsetAccessibleType)) {
