@@ -54,15 +54,11 @@ class Scope extends BaseScope
         }
 
         if ($type instanceof UnionType) {
-            $types = $type->getTypes();
-
-            foreach ($types as $key => $type) {
+            foreach ($type->getTypes() as $type) {
                 if ($type instanceof ObjectWithoutClassType) {
-                    $types[$key] = new MixedType();
+                    return new MixedType();
                 }
             }
-
-            $type = new UnionType($types);
         }
 
         if ($type instanceof ObjectWithoutClassType) {
