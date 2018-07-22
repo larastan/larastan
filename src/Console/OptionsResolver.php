@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Console;
 
 use PHPStan\Command\AnalyseCommand;
-use Illuminate\Contracts\Foundation\Application;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputDefinition;
 
