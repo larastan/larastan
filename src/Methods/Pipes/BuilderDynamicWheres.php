@@ -18,6 +18,7 @@ use Mockery;
 use Illuminate\Database\Query\Builder;
 use PHPStan\Reflection\FunctionVariantWithPhpDocs;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
+use PHPStan\Reflection\ParametersAcceptorSelector;
 
 /**
  * @internal
@@ -36,10 +37,10 @@ final class BuilderDynamicWheres implements PipeContract
             );
 
         if ($isInstanceOfBuilder && starts_with($passable->getMethodName(), 'where')) {
-            /** @var \PHPStan\Reflection\FunctionVariantWithPhpDocs $variant */
             $methodReflection = $classReflection->getNativeMethod('dynamicWhere');
 
-            $originalDynamicWhereVariant = $methodReflection->getVariants()[0];
+            /** @var \PHPStan\Reflection\FunctionVariantWithPhpDocs $originalDynamicWhereVariant */
+            $originalDynamicWhereVariant = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
 
             $variant = new FunctionVariantWithPhpDocs(
                 [$originalDynamicWhereVariant->getParameters()[1]],
