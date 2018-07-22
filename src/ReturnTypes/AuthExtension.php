@@ -13,16 +13,15 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes;
 
-use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\Type;
 use PHPStan\Analyser\Scope;
-use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\UnionType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\TypeCombinator;
 use NunoMaduro\Larastan\Concerns;
 use PhpParser\Node\Expr\StaticCall;
 use Illuminate\Support\Facades\Auth;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 
 /**

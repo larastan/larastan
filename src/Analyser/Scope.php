@@ -13,10 +13,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Analyser;
 
-use PHPStan\ShouldNotHappenException;
-use PHPStan\Type\Constant\ConstantStringType;
-use PHPStan\Type\ObjectType;
-use ReflectionClass;
 use function gettype;
 use PHPStan\Type\Type;
 use function get_class;
@@ -25,11 +21,14 @@ use PhpParser\Node\Expr;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\UnionType;
+use PHPStan\Type\ObjectType;
 use PHPStan\Type\TypehintHelper;
 use NunoMaduro\Larastan\Concerns;
+use PHPStan\ShouldNotHappenException;
 use PHPStan\Analyser\Scope as BaseScope;
 use PHPStan\Type\ObjectWithoutClassType;
 use Illuminate\Contracts\Container\Container;
+use PHPStan\Type\Constant\ConstantStringType;
 use NunoMaduro\Larastan\Properties\ReflectionTypeContainer;
 
 /**
@@ -56,7 +55,6 @@ class Scope extends BaseScope
         }
 
         if ($type instanceof UnionType) {
-
             $types = $type->getTypes();
             foreach ($types as $key => $type) {
                 if ($type instanceof ObjectWithoutClassType) {
@@ -82,7 +80,6 @@ class Scope extends BaseScope
         Type $offsetType,
         Type $offsetAccessibleType
     ): Type {
-
         if ($arrayDimFetch->dim === null) {
             throw new ShouldNotHappenException();
         }

@@ -15,10 +15,10 @@ namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
 use NunoMaduro\Larastan\Concerns;
-use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 use NunoMaduro\Larastan\Methods\Macro;
 use Illuminate\Support\Traits\Macroable;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
+use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 
 /**
  * @internal
