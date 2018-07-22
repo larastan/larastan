@@ -76,7 +76,7 @@ final class Extension implements PropertiesClassReflectionExtension, BrokerAware
                 break;
             default:
                 $property = $this->broker->getClass(get_class($concrete))
-                    ->getProperty($propertyName);
+                    ->getNativeProperty($propertyName);
         }
 
         return $property;
