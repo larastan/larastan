@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
-use PHPStan\Reflection\Php\BuiltinMethodReflection;
 use ReflectionClass;
+use PHPStan\Reflection\Php\BuiltinMethodReflection;
 
 final class Macro implements BuiltinMethodReflection
 {

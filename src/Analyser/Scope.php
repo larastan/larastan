@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Analyser;
 
-use PHPStan\Type\UnionType;
 use ReflectionClass;
 use function gettype;
 use PHPStan\Type\Type;
@@ -22,10 +21,11 @@ use function is_object;
 use PhpParser\Node\Expr;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\MixedType;
+use PHPStan\Type\UnionType;
 use PHPStan\Type\TypehintHelper;
 use NunoMaduro\Larastan\Concerns;
-use PHPStan\Type\ObjectWithoutClassType;
 use PHPStan\Analyser\Scope as BaseScope;
+use PHPStan\Type\ObjectWithoutClassType;
 use Illuminate\Contracts\Container\Container;
 use NunoMaduro\Larastan\Properties\ReflectionTypeContainer;
 
@@ -43,7 +43,7 @@ class Scope extends BaseScope
     {
         $type = parent::getType($node);
 
-        /**
+        /*
          * @todo Consider refactoring the code bellow.
          */
         if ($this->isContainer($type)) {
