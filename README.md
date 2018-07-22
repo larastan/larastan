@@ -29,7 +29,7 @@ Larastan was created by, and is maintained by [Nuno Maduro](https://github.com/n
 
 You may use [Composer](https://getcomposer.org) to install Larastan as a development dependency into your Laravel project:
 ```bash
-composer require --dev nunomaduro/larastan
+composer require nunomaduro/larastan
 ```
 
 Once you have installed Larastan, you may start analyzing your code using the `code:analyse` Artisan command.
