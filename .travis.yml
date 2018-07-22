@@ -21,6 +21,6 @@ before_script:
 
 script:
   - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
-  - vendor/bin/phpstan analyze --level=7 src/
+  - vendor/bin/phpstan analyze --level=max src/
   - export -f travis_retry
   - tests/laravel-test.sh
