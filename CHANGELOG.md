@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.1.5] - 2018-07-22
+### Fixes
+- Removes unused `dd`
+
 ## [0.1.4] - 2018-07-22
 ### Fixes
 - Issue when `static` is missing was return type hint on Illuminate Model mixins
