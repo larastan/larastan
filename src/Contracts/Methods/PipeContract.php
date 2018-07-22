@@ -11,7 +11,7 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-namespace NunoMaduro\Larastan\Methods\Pipes;
+namespace NunoMaduro\Larastan\Contracts\Methods\Pipes;
 
 use Closure;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;

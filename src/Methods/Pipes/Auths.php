@@ -20,6 +20,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\Access\Authorizable;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
+use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 
 /**
  * @internal

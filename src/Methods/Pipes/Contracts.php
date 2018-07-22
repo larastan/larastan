@@ -16,6 +16,7 @@ namespace NunoMaduro\Larastan\Methods\Pipes;
 use Closure;
 use function get_class;
 use NunoMaduro\Larastan\Concerns;
+use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 use PHPStan\Reflection\ClassReflection;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 

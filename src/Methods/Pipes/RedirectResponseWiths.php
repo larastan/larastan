@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
+use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 use function substr;
 use Illuminate\Http\RedirectResponse;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;

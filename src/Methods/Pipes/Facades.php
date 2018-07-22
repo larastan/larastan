@@ -16,6 +16,7 @@ namespace NunoMaduro\Larastan\Methods\Pipes;
 use Closure;
 use Illuminate\Support\Facades\Facade;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
+use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 
 /**
  * @internal

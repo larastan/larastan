@@ -18,6 +18,7 @@ use InvalidArgumentException;
 use Illuminate\Support\Manager;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
+use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 
 /**
  * @internal

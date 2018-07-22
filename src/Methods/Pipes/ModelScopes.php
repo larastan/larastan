@@ -17,6 +17,7 @@ use Closure;
 use Mockery;
 use Illuminate\Database\Eloquent\Model;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
+use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 
 /**
  * @internal

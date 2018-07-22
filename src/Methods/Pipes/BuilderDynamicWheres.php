@@ -16,6 +16,7 @@ namespace NunoMaduro\Larastan\Methods\Pipes;
 use Closure;
 use Mockery;
 use Illuminate\Database\Query\Builder;
+use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 use PHPStan\Reflection\FunctionVariantWithPhpDocs;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use PHPStan\Reflection\ParametersAcceptorSelector;
