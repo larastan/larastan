@@ -90,8 +90,12 @@ class Scope extends BaseScope
             if (! $dimType instanceof ConstantStringType) {
                 return $parentType;
             }
-
+            
             $concrete = $this->resolve($dimType->getValue());
+
+            if ($concrete === null) {
+                return new \PHPStan\Type\NullType();
+            }
 
             $type = is_object($concrete) ? get_class($concrete) : gettype($concrete);
 
@@ -118,7 +122,8 @@ class Scope extends BaseScope
     private function isContainer(Type $type): bool
     {
         foreach ($type->getReferencedClasses() as $referencedClass) {
-            if ((new ReflectionClass($referencedClass))->implementsInterface(Container::class)) {
+            $isClassOrInterface = class_exists($referencedClass) || interface_exists($referencedClass);
+            if ($isClassOrInterface && (new ReflectionClass($referencedClass))->implementsInterface(Container::class)) {
                 return true;
             }
         }
