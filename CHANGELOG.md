@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.2.3] - 2018-07-23
+### Fixes
+- Common laravel false positives on trusted proxies and app exception handler
+
 ## [0.2.2] - 2018-07-23
 ### Fixes
 - Resolved null type from container
