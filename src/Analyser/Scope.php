@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Analyser;
 
+use ReflectionClass;
 use function gettype;
 use PHPStan\Type\Type;
 use function get_class;
@@ -21,7 +22,6 @@ use PhpParser\Node\Expr;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\UnionType;
-use PHPStan\Type\ObjectType;
 use PHPStan\Type\TypehintHelper;
 use NunoMaduro\Larastan\Concerns;
 use PHPStan\ShouldNotHappenException;
@@ -48,7 +48,7 @@ class Scope extends BaseScope
         /*
          * @todo Consider refactoring the code bellow.
          */
-        if ($this->isContainer($type) && get_class($type) === Container::class) {
+        if ($this->isContainer($type)) {
             $type = \Mockery::mock($type);
             $type->shouldReceive('isOffsetAccessible')
                 ->andReturn(TrinaryLogic::createYes());
@@ -117,7 +117,12 @@ class Scope extends BaseScope
      */
     private function isContainer(Type $type): bool
     {
-        return ! (new ObjectType(Container::class))->isSuperTypeOf($type)
-            ->no();
+        foreach ($type->getReferencedClasses() as $referencedClass) {
+            if ((new ReflectionClass($referencedClass))->implementsInterface(Container::class)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
