@@ -90,7 +90,7 @@ class Scope extends BaseScope
             if (! $dimType instanceof ConstantStringType) {
                 return $parentType;
             }
-            
+
             $concrete = $this->resolve($dimType->getValue());
 
             if ($concrete === null) {
