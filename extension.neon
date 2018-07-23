@@ -10,6 +10,7 @@ parameters:
     ignoreErrors:
         - '#Result of function abort \(void\) is used#'
         - '#Call to an undefined method Illuminate\\Support\\HigherOrder#'
+        - '#Method App\\Exceptions\\Handler::render\(\) should return Illuminate\\Http\\Response but returns Symfony\\Component\\HttpFoundation\\Response#'
     bootstrap: %rootDir%/../../nunomaduro/larastan/bootstrap.php
     reportUnmatchedIgnoredErrors: false
 
