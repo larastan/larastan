@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.2.1] - 2018-07-23
 ### Fixes
-- Issues while using Lumen
+- Error - "internal error: * product does not exist".
 
 ## [0.2.0] - 2018-07-22
 ### Fixes
