@@ -15,7 +15,6 @@ namespace NunoMaduro\Larastan\Concerns;
 
 use Illuminate\Container\Container;
 use Psr\Container\NotFoundExceptionInterface;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Container\Container as ContainerContract;
 
 /**
