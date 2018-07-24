@@ -13,11 +13,10 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Types;
 
-use NunoMaduro\Larastan\Types\Pipes\DynamicType;
-use NunoMaduro\Larastan\Types\Pipes\ObjectType;
 use PHPStan\Type\Type;
 use Illuminate\Pipeline\Pipeline;
 use NunoMaduro\Larastan\Concerns;
+use NunoMaduro\Larastan\Types\Pipes\ObjectType;
 
 /**
  * @internal
