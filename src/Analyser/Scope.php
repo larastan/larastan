@@ -27,6 +27,7 @@ use NunoMaduro\Larastan\Concerns;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Analyser\Scope as BaseScope;
 use PHPStan\Type\ObjectWithoutClassType;
+use NunoMaduro\Larastan\Types\TypeResolver;
 use Illuminate\Contracts\Container\Container;
 use PHPStan\Type\Constant\ConstantStringType;
 use NunoMaduro\Larastan\Properties\ReflectionTypeContainer;
@@ -45,31 +46,15 @@ class Scope extends BaseScope
     {
         $type = parent::getType($node);
 
-        /*
-         * @todo Consider refactoring the code bellow.
-         */
         if ($this->isContainer($type)) {
             $type = \Mockery::mock($type);
             $type->shouldReceive('isOffsetAccessible')
                 ->andReturn(TrinaryLogic::createYes());
         }
 
-        if ($type instanceof UnionType) {
-            $types = $type->getTypes();
-            foreach ($types as $key => $type) {
-                if ($type instanceof ObjectWithoutClassType) {
-                    $types[$key] = new MixedType();
-                }
-            }
-
-            $type = new UnionType($types);
-        }
-
-        if ($type instanceof ObjectWithoutClassType) {
-            $type = new MixedType();
-        }
-
-        return $type;
+        return $this->getContainer()
+            ->make(TypeResolver::class)
+            ->resolveFrom($type);
     }
 
     /**
