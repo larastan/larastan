@@ -14,11 +14,11 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Types\Pipes;
 
 use Closure;
+use PHPStan\Type\MixedType;
+use PHPStan\Type\UnionType;
+use PHPStan\Type\ObjectWithoutClassType;
 use NunoMaduro\Larastan\Contracts\Types\PassableContract;
 use NunoMaduro\Larastan\Contracts\Types\Pipes\PipeContract;
-use PHPStan\Type\MixedType;
-use PHPStan\Type\ObjectWithoutClassType;
-use PHPStan\Type\UnionType;
 
 /**
  * @internal
