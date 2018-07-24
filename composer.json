@@ -10,9 +10,9 @@
         }
     ],
     "require": {
-        "php": "^7.0",
+        "php": "^7.1",
         "phpstan/phpstan": "^0.10",
-        "symfony/process": "^4.1",
+        "symfony/process": "~3.3|~4.0",
         "laravel/framework": "5.5.*",
         "mockery/mockery": "^1.0|0.9.*"
     },
