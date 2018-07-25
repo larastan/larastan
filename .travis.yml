@@ -7,9 +7,9 @@ php:
   - 7.2
   - nightly
 
-cache:
-  directories:
-    - "$HOME/.composer/cache/files"
+#cache:
+#  directories:
+#    - "$HOME/.composer/cache/files"
 
 env:
   matrix:
