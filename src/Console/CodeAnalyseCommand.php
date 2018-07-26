@@ -65,9 +65,7 @@ final class CodeAnalyseCommand extends Command
     {
         $process = new Process($this->cmd(), $this->laravel->basePath('vendor/bin'));
 
-        if (Process::isTtySupported()) {
-            $process->setTty(true);
-        }
+        $process->setTty(true);
 
         $process->setTimeout(null);
 
