@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Concerns;
 
+use ReflectionException;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Container\Container as ContainerContract;
@@ -60,7 +61,9 @@ trait HasContainer
 
         try {
             $concrete = $this->getContainer()
-                ->make($abstract);
+                ->get($abstract);
+        } catch (ReflectionException $exception) {
+            // ..
         } catch (BindingResolutionException $exception) {
             // ..
         }

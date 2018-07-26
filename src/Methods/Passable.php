@@ -22,11 +22,12 @@ use PHPStan\Reflection\MethodReflection;
 use Illuminate\Contracts\Pipeline\Pipeline;
 use PHPStan\Reflection\Php\PhpMethodReflection;
 use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
+use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 
 /**
  * @internal
  */
-final class Passable
+final class Passable implements PassableContract
 {
     use Concerns\HasContainer;
 
@@ -89,7 +90,7 @@ final class Passable
     }
 
     /**
-     * @return \PHPStan\Reflection\ClassReflection
+     * {@inheritdoc}
      */
     public function getClassReflection(): ClassReflection
     {
@@ -97,11 +98,9 @@ final class Passable
     }
 
     /**
-     * @param \PHPStan\Reflection\ClassReflection $classReflection
-     *
-     * @return \NunoMaduro\Larastan\Methods\Passable
+     * {@inheritdoc}
      */
-    public function setClassReflection(ClassReflection $classReflection): Passable
+    public function setClassReflection(ClassReflection $classReflection): PassableContract
     {
         $this->classReflection = $classReflection;
 
@@ -109,7 +108,7 @@ final class Passable
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getMethodName(): string
     {
@@ -117,7 +116,7 @@ final class Passable
     }
 
     /**
-     * @return bool
+     * {@inheritdoc}
      */
     public function hasFound(): bool
     {
@@ -125,9 +124,7 @@ final class Passable
     }
 
     /**
-     * @param  string $class
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function searchOn(string $class): bool
     {
@@ -143,9 +140,7 @@ final class Passable
     }
 
     /**
-     * @return \PHPStan\Reflection\MethodReflection
-     *
-     * @throws \LogicException
+     * {@inheritdoc}
      */
     public function getMethodReflection(): MethodReflection
     {
@@ -157,7 +152,7 @@ final class Passable
     }
 
     /**
-     * @param \PHPStan\Reflection\MethodReflection $methodReflection
+     * {@inheritdoc}
      */
     public function setMethodReflection(MethodReflection $methodReflection): void
     {
@@ -165,11 +160,7 @@ final class Passable
     }
 
     /**
-     * Declares that the provided method can be called statically.
-     *
-     * @param bool $staticAllowed
-     *
-     * @return void
+     * {@inheritdoc}
      */
     public function setStaticAllowed(bool $staticAllowed): void
     {
@@ -177,9 +168,7 @@ final class Passable
     }
 
     /**
-     * Returns whether the method can be called statically.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function isStaticAllowed(): bool
     {
@@ -187,10 +176,7 @@ final class Passable
     }
 
     /**
-     * @param string $class
-     * @param bool $staticAllowed
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function sendToPipeline(string $class, $staticAllowed = false): bool
     {
@@ -212,7 +198,7 @@ final class Passable
         $originalClassReflection = $this->classReflection;
         $this->pipeline->send($this->setClassReflection($classReflection))
             ->then(
-                function (Passable $passable) use ($originalClassReflection) {
+                function (PassableContract $passable) use ($originalClassReflection) {
                     if ($passable->hasFound()) {
                         $this->setMethodReflection($passable->getMethodReflection());
                         $this->setStaticAllowed($passable->isStaticAllowed());
@@ -237,7 +223,7 @@ final class Passable
     }
 
     /**
-     * @return \PHPStan\Broker\Broker
+     * {@inheritdoc}
      */
     public function getBroker(): Broker
     {
@@ -245,7 +231,7 @@ final class Passable
     }
 
     /**
-     * @return \PHPStan\Reflection\Php\PhpMethodReflectionFactory
+     * {@inheritdoc}
      */
     public function getMethodReflectionFactory(): PhpMethodReflectionFactory
     {

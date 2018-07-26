@@ -17,22 +17,20 @@ use Closure;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Methods\Macro;
 use Illuminate\Support\Traits\Macroable;
-use NunoMaduro\Larastan\Methods\Passable;
+use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
+use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 
 /**
  * @internal
  */
-final class Macros
+final class Macros implements PipeContract
 {
     use Concerns\HasContainer;
 
     /**
-     * @param \NunoMaduro\Larastan\Methods\Passable $passable
-     * @param \Closure $next
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function handle(Passable $passable, Closure $next): void
+    public function handle(PassableContract $passable, Closure $next): void
     {
         $classReflection = $passable->getClassReflection();
 
@@ -66,6 +64,9 @@ final class Macros
 
             if ($found = $className::hasMacro($passable->getMethodName())) {
                 $reflectionFunction = new \ReflectionFunction($refProperty->getValue()[$passable->getMethodName()]);
+                /** @var \PHPStan\Type\Type[] $parameters */
+                $parameters = $reflectionFunction->getParameters();
+
                 $passable->setMethodReflection(
                     $passable->getMethodReflectionFactory()
                         ->create(
@@ -74,7 +75,7 @@ final class Macros
                             new Macro(
                                 $classReflection->getName(), $passable->getMethodName(), $reflectionFunction
                             ),
-                            $reflectionFunction->getParameters(),
+                            $parameters,
                             null,
                             null,
                             false,

@@ -16,15 +16,16 @@ namespace NunoMaduro\Larastan\Methods\Pipes;
 use Closure;
 use function in_array;
 use NunoMaduro\Larastan\Concerns;
-use NunoMaduro\Larastan\Methods\Passable;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\Access\Authorizable;
+use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
+use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 
 /**
  * @internal
  */
-final class Auths
+final class Auths implements PipeContract
 {
     use Concerns\HasContainer;
 
@@ -38,12 +39,9 @@ final class Auths
     ];
 
     /**
-     * @param \NunoMaduro\Larastan\Methods\Passable $passable
-     * @param \Closure $next
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function handle(Passable $passable, Closure $next): void
+    public function handle(PassableContract $passable, Closure $next): void
     {
         $classReflectionName = $passable->getClassReflection()
             ->getName();

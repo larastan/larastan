@@ -15,12 +15,13 @@ namespace NunoMaduro\Larastan\ReturnTypes;
 
 use PHPStan\Type\Type;
 use PHPStan\Analyser\Scope;
-use PHPStan\Type\UnionType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\TypeCombinator;
 use NunoMaduro\Larastan\Concerns;
 use PhpParser\Node\Expr\StaticCall;
 use Illuminate\Support\Facades\Auth;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 
 /**
@@ -59,11 +60,8 @@ final class AuthExtension implements DynamicStaticMethodReturnTypeExtension
 
         $userModel = $config->get('auth.providers.users.model');
 
-        $types = $methodReflection->getVariants()[0]->getReturnType()
-            ->getTypes();
+        $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
 
-        array_push($types, new ObjectType($userModel));
-
-        return new UnionType($types);
+        return TypeCombinator::union($returnType, new ObjectType($userModel));
     }
 }
