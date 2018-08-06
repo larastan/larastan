@@ -26,7 +26,7 @@ final class LarastanServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        if ($this->app->runningInConsole() && ! $this->app->runningUnitTests()) {
+        if ($this->app->runningInConsole()) {
             $this->commands(CodeAnalyseCommand::class);
         }
     }
