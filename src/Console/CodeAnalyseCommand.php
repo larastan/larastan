@@ -62,7 +62,7 @@ final class CodeAnalyseCommand extends Command
     /**
      * {@inheritdoc}
      */
-    public function handle(): void
+    public function handle(): int
     {
         $process = new Process($this->cmd(), $this->laravel->basePath('vendor/phpstan/phpstan/bin'));
 
@@ -78,9 +78,7 @@ final class CodeAnalyseCommand extends Command
             $this->output->writeln($data);
         }
 
-        if (! $process->isSuccessful()) {
-            exit($process->getExitCode());
-        }
+        return $process->getExitCode();
     }
 
     /**
