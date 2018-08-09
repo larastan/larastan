@@ -77,6 +77,10 @@ final class CodeAnalyseCommand extends Command
         foreach ($process as $type => $data) {
             $this->output->writeln($data);
         }
+
+        if (!$process->isSuccessful()) {
+            exit($process->getExitCode());
+        }
     }
 
     /**
