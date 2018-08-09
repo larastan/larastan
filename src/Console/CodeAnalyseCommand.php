@@ -78,7 +78,7 @@ final class CodeAnalyseCommand extends Command
             $this->output->writeln($data);
         }
 
-        if (!$process->isSuccessful()) {
+        if (! $process->isSuccessful()) {
             exit($process->getExitCode());
         }
     }
