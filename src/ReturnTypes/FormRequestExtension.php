@@ -50,4 +50,3 @@ final class FormRequestExtension implements DynamicMethodReturnTypeExtension
         return new MixedType;
     }
 }
-
