@@ -36,3 +36,8 @@ services:
         tags:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
 
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\FormRequestExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
