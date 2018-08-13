@@ -97,7 +97,7 @@ final class CodeAnalyseCommand extends Command
 
             $value = is_array($value) ? implode(',', $value) : $value;
 
-            if ($option->acceptValue()) {
+            if ($option->acceptValue() && $value !== null) {
                 $options .= " --$name=$value";
             } else {
                 if ($this->option($name)) {
