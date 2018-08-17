@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.2.5] - 2018-08-17
+### Fixes
+- Issue with option `errorFormat` ([#121](https://github.com/nunomaduro/larastan/pull/121))
+
 ## [0.2.4] - 2018-07-24
 ### Fixes
 - Issue while resolving implementations that don't exist on the container
