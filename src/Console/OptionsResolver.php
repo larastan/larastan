@@ -74,7 +74,7 @@ final class OptionsResolver
 
         $definition->addOption(
             new InputOption(
-                'paths', 'p', InputOption::VALUE_REQUIRED, 'Paths with source code to run analysis on', base_path('app')
+                'paths', 'p', InputOption::VALUE_REQUIRED, 'Paths with source code to run analysis on', 'app'
             )
         );
 
