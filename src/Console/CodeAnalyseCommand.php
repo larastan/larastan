@@ -17,7 +17,6 @@ use function implode;
 use function is_array;
 use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
-use Illuminate\Console\Application as Artisan;
 
 /**
  * @internal
@@ -64,7 +63,7 @@ final class CodeAnalyseCommand extends Command
      */
     public function handle(): void
     {
-        $process = new Process($this->cmd(), $this->laravel->basePath('vendor/phpstan/phpstan/bin'));
+        $process = new Process($this->cmd());
 
         if (Process::isTtySupported()) {
             $process->setTty(true);
@@ -121,25 +120,12 @@ final class CodeAnalyseCommand extends Command
         );
 
         $params = [
-            $this->command(),
+            $this->laravel->basePath('vendor/bin/phpstan'),
+            'analyse',
             implode(' ', $paths),
             $options,
         ];
 
         return implode(' ', $params);
-    }
-
-    /**
-     * @return string
-     */
-    private function command(): string
-    {
-        $command = '';
-
-        if (strncasecmp(PHP_OS, 'WIN', 3) !== 0) {
-            $command .= Artisan::phpBinary();
-        }
-
-        return "$command phpstan analyse";
     }
 }
