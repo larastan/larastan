@@ -17,7 +17,6 @@ use function implode;
 use function is_array;
 use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
-use Illuminate\Console\Application as Artisan;
 
 /**
  * @internal
