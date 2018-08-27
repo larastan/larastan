@@ -27,9 +27,9 @@ services:
             - phpstan.broker.propertiesClassReflectionExtension
 
     -
-    	class: NunoMaduro\Larastan\ReturnTypes\ModelExtension
-    	tags:
-    		- phpstan.broker.dynamicStaticMethodReturnTypeExtension
+        class: NunoMaduro\Larastan\ReturnTypes\ModelExtension
+        tags:
+            - phpstan.broker.dynamicStaticMethodReturnTypeExtension
 
     -
         class: NunoMaduro\Larastan\ReturnTypes\AuthExtension
