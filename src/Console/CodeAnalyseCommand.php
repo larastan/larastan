@@ -123,25 +123,13 @@ final class CodeAnalyseCommand extends Command
         );
 
         $params = [
-            $this->command(),
+            Artisan::phpBinary(),
+            'phpstan',
+            'analyse',
             implode(' ', $paths),
             $options,
         ];
 
         return implode(' ', $params);
-    }
-
-    /**
-     * @return string
-     */
-    private function command(): string
-    {
-        $command = '';
-
-        if (strncasecmp(PHP_OS, 'WIN', 3) !== 0) {
-            $command .= Artisan::phpBinary();
-        }
-
-        return "$command phpstan analyse";
     }
 }
