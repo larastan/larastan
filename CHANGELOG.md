@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.2.7] - 2018-08-27
+### Fixes
+- Issue on Windows with the default path param ([#128](https://github.com/nunomaduro/larastan/pull/128))
+- Issue with exit code ([#115](https://github.com/nunomaduro/larastan/pull/115))
+- While running Larastan on CI envs ([#113](https://github.com/nunomaduro/larastan/pull/113))
+
 ## [0.2.6] - 2018-08-27
 ### Added
 - Support to Laravel 5.7
