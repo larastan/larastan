@@ -35,7 +35,7 @@ class LarastanServiceProviderTest extends TestCase
         $this->assertNotContains(CodeAnalyseCommand::class, $this->getCommandClasses());
     }
 
-    public function testCommandNotAddedInTests(): void
+    public function testCommandAddedInTests(): void
     {
         $app = $this->createMockApplication();
         $app->method('runningInConsole')
@@ -44,7 +44,7 @@ class LarastanServiceProviderTest extends TestCase
             ->willReturn(true);
         (new LarastanServiceProvider($app))->register();
 
-        $this->assertNotContains(CodeAnalyseCommand::class, $this->getCommandClasses());
+        $this->assertContains(CodeAnalyseCommand::class, $this->getCommandClasses());
     }
 
     /**
