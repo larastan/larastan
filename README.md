@@ -55,7 +55,9 @@ php artisan code:analyse --paths="modules,app,domain"
 
 ### Error formats
 
-You can choose by `checkstyle, raw, table, json, prettyJson` in which error format the output of your results should appear.
+By default, Larastan outputs found errors into tables grouped by files to be easily human-readable. To change the output, you can use the --error-format CLI option.
+
+The available options are: `checkstyle`, `raw`, `table`, `json`, `prettyJson`.
 
 ```bash
 php artisan code:analyse --error-format table
