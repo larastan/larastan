@@ -53,6 +53,14 @@ You can choose which directories you want to analyze, by default, the analyzed d
 php artisan code:analyse --paths="modules,app,domain"
 ```
 
+### Error formats
+
+You can choose by `checkstyle, raw, table, json, prettyJson` in which error format the output of your results should appear.
+
+```bash
+php artisan code:analyse --error-format table
+```
+
 ## Contributing
 
 Thank you for considering to contribute to Larastan. All the contribution guidelines are mentioned [here](CONTRIBUTING.md).
