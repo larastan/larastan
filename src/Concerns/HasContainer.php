@@ -15,6 +15,7 @@ namespace NunoMaduro\Larastan\Concerns;
 
 use ReflectionException;
 use Illuminate\Container\Container;
+use Psr\Container\NotFoundExceptionInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Container\Container as ContainerContract;
 
@@ -65,6 +66,8 @@ trait HasContainer
         } catch (ReflectionException $exception) {
             // ..
         } catch (BindingResolutionException $exception) {
+            // ..
+        } catch (NotFoundExceptionInterface $exception) {
             // ..
         }
 
