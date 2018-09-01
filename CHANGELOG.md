@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.2.8] - 2018-09-01
+### Fixes
+- Issue while resolving implementations from container
+
 ## [0.2.7] - 2018-08-27
 ### Fixes
 - Issue on Windows with the default path param ([#128](https://github.com/nunomaduro/larastan/pull/128))
