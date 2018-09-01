@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.2.9] - 2018-09-01
+### Fixes
+- Usage of spaces with the option `--paths`
+
 ## [0.2.8] - 2018-09-01
 ### Fixes
 - Issue while resolving implementations from container
