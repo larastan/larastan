@@ -68,7 +68,11 @@ final class Mixins implements PipeContract
         $mixins = array_filter(
             $mixins,
             function ($mixin) use ($classReflection) {
-                return (new \ReflectionClass($mixin))->getName() !== $classReflection->getName();
+                try {
+                    return (new \ReflectionClass($mixin))->getName() !== $classReflection->getName();
+                } catch (\ReflectionException $e) {
+                    return false;
+                }
             }
         );
 
