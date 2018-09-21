@@ -86,7 +86,7 @@ final class Mixins implements PipeContract
                      * Marks as resolved.
                      */
                     self::$resolved[$mixin] = [];
-                    
+
                     self::$resolved[$mixin] = $this->getMixinsFromClass($broker, $broker->getClass($mixin));
                 }
                 $mixins = array_merge($mixins, self::$resolved[$mixin]);
