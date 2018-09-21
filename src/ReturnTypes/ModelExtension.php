@@ -15,6 +15,7 @@ namespace NunoMaduro\Larastan\ReturnTypes;
 
 use function count;
 use ReflectionClass;
+use function in_array;
 use PHPStan\Type\Type;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\UnionType;
@@ -124,8 +125,13 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, Br
      */
     private function replaceStaticType(array $types, string $staticType): array
     {
+         $mixins = array_merge(
+            [Model::class],
+            $this->mixins->getMixinsFromClass($this->broker, $this->broker->getClass(Model::class))
+        );
+
         foreach ($types as $key => $type) {
-            if ($type instanceof ObjectType && $type->getClassName() === Model::class) {
+            if ($type instanceof ObjectType && in_array($type->getClassName(), $mixins, true)) {
                 $types[$key] = new StaticType($staticType);
             }
 
