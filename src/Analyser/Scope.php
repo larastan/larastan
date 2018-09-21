@@ -43,7 +43,7 @@ class Scope extends BaseScope
     {
         $type = parent::getType($node);
 
-        if ($this->isContainer($type)) {
+        if (substr(get_class($type), 0, 7) !== 'Mockery' && $this->isContainer($type)) {
             $type = \Mockery::mock($type);
             $type->shouldReceive('isOffsetAccessible')
                 ->andReturn(TrinaryLogic::createYes());
