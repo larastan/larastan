@@ -82,7 +82,7 @@ final class Mixins implements PipeContract
         if (! empty($mixins)) {
             foreach ($mixins as $mixin) {
                 if (! array_key_exists($mixin, self::$resolved)) {
-                    /**
+                    /*
                      * Marks as resolved.
                      */
                     self::$resolved[$mixin] = [];

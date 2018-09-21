@@ -125,7 +125,7 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, Br
      */
     private function replaceStaticType(array $types, string $staticType): array
     {
-         $mixins = array_merge(
+        $mixins = array_merge(
             [Model::class],
             $this->mixins->getMixinsFromClass($this->broker, $this->broker->getClass(Model::class))
         );
