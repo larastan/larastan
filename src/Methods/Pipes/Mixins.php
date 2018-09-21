@@ -28,6 +28,13 @@ final class Mixins implements PipeContract
     use Concerns\HasContainer;
 
     /**
+     * Already resolved mixins.
+     *
+     * @var array
+     */
+    private static $resolved = [];
+
+    /**
      * {@inheritdoc}
      */
     public function handle(PassableContract $passable, Closure $next): void
@@ -54,8 +61,7 @@ final class Mixins implements PipeContract
      */
     public function getMixinsFromClass(Broker $broker, ClassReflection $classReflection): array
     {
-        $phpdocs = (string) $classReflection->getNativeReflection()
-            ->getDocComment();
+        $phpdocs = (string) $classReflection->getNativeReflection()->getDocComment();
 
         $mixins = array_merge(
             $this->getMixinsFromPhpDocs($phpdocs, '/@mixin\s+([\w\\\\]+)/'),
@@ -65,20 +71,25 @@ final class Mixins implements PipeContract
                 ->get('larastan.mixins')[$classReflection->getName()] ?? []
         );
 
-        $mixins = array_filter(
-            $mixins,
-            function ($mixin) use ($classReflection) {
-                try {
-                    return (new \ReflectionClass($mixin))->getName() !== $classReflection->getName();
-                } catch (\ReflectionException $e) {
-                    return false;
-                }
+        $mixins = array_filter($mixins, function ($mixin) use ($classReflection) {
+            try {
+                return (new \ReflectionClass($mixin))->getName() !== $classReflection->getName();
+            } catch (\ReflectionException $e) {
+                return false;
             }
-        );
+        });
 
         if (! empty($mixins)) {
             foreach ($mixins as $mixin) {
-                $mixins = array_merge($mixins, $this->getMixinsFromClass($broker, $broker->getClass($mixin)));
+                if (! array_key_exists($mixin, self::$resolved)) {
+                    /**
+                     * Marks as resolved.
+                     */
+                    self::$resolved[$mixin] = [];
+                    
+                    self::$resolved[$mixin] = $this->getMixinsFromClass($broker, $broker->getClass($mixin));
+                }
+                $mixins = array_merge($mixins, self::$resolved[$mixin]);
             }
         }
 
@@ -93,17 +104,10 @@ final class Mixins implements PipeContract
      */
     private function getMixinsFromPhpDocs(string $phpdocs, string $pattern): array
     {
-        preg_match_all(
-            $pattern,
-            $phpdocs,
-            $mixins
-        );
+        preg_match_all($pattern, $phpdocs, $mixins);
 
-        return array_map(
-            function ($mixin) {
-                return preg_replace('#^\\\\#', '', $mixin);
-            },
-            $mixins[1]
-        );
+        return array_map(function ($mixin) {
+            return preg_replace('#^\\\\#', '', $mixin);
+        }, $mixins[1]);
     }
 }
