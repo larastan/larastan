@@ -51,7 +51,7 @@ final class RequestExtension implements DynamicFunctionReturnTypeExtension
         }
 
         if (isset($functionCall->args[0]->value) && $functionCall->args[0]->value instanceof Array_) {
-            return new ArrayType(new MixedType(), new MixedType());
+            return new ArrayType();
         }
 
         return new MixedType();
