@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.2.12] - 2018-09-27
+### Adds
+- Support to return type of `request` helper ([#145](https://github.com/nunomaduro/larastan/pull/145))
+
 ## [0.2.11] - 2018-09-21
 ### Adds
 - Support to return type of `response` helper
@@ -12,7 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixes
 - False positives when performing long Eloquent queries
 - Issue when there is recursive mixins
-- When container got used twice using the `ArrayAccess` interface.
+- When container got used twice using the `ArrayAccess` interface
 
 ## [0.2.10] - 2018-09-12
 ### Fixes
