@@ -34,8 +34,12 @@ final class ApplicationResolver
     {
         $app = (new self)->createApplication();
 
-        $serviceProviders = array_values(array_filter(self::getProjectClasses(), function (string $class) {
-            return self::isServiceProvider($class);
+        $namespace = key(json_decode(file_get_contents(getcwd().DIRECTORY_SEPARATOR.'composer.json'), true)['autoload']['psr-4']);
+
+        $serviceProviders = array_values(array_filter(self::getProjectClasses(), function (string $class) use (
+            $namespace
+        ) {
+            return substr($class, 0, strlen($namespace)) === $namespace && self::isServiceProvider($class);
         }));
 
         foreach ($serviceProviders as $serviceProvider) {
