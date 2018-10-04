@@ -11,16 +11,21 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
+use NunoMaduro\Larastan\ApplicationResolver;
+
 define('LARAVEL_START', microtime(true));
 
-$app = require __DIR__.'/../../../bootstrap/app.php';
+$applicationPath = __DIR__.'/../../../bootstrap/app.php';
 
-if ($app instanceof \Illuminate\Contracts\Foundation\Application) {
-    $app->make(\Illuminate\Contracts\Console\Kernel::class)
-        ->bootstrap();
+if (file_exists($applicationPath)) {
+    $app = require $applicationPath;
+} else {
+    $app = ApplicationResolver::resolve();
 }
 
-$app->make('config')
-    ->set('larastan.mixins', require __DIR__.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'mixins.php');
-$app->make('config')
-    ->set('larastan.statics', require __DIR__.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'statics.php');
+if ($app instanceof \Illuminate\Contracts\Foundation\Application) {
+    $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+}
+
+$app->make('config')->set('larastan.mixins', require __DIR__.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'mixins.php');
+$app->make('config')->set('larastan.statics', require __DIR__.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'statics.php');
