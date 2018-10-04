@@ -62,7 +62,7 @@ trait HasContainer
 
         try {
             $concrete = $this->getContainer()
-                ->get($abstract);
+                ->make($abstract);
         } catch (ReflectionException $exception) {
             // ..
         } catch (BindingResolutionException $exception) {
