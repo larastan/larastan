@@ -39,9 +39,9 @@ Once you have installed Larastan, you may start analyzing your code using the `c
 php artisan code:analyse
 ```
 
-### Usage in Laravel Packages
+### Usage in Packages for Laravel
 
-1. Create a file with the following content `phpstan.neon.dist `:
+Once you have installed Larastan, create a file `phpstan.neon.dist` on the root of your package with the content:
 ```
 includes:
     - ./vendor/nunomaduro/larastan/extension.neon
@@ -51,9 +51,9 @@ parameters:
         - src
 ```
 
-1. Launch phpstan:
+Start analyzing your code using the `analyse` Phpstan command.
 ```bash
-./vendor/bin/phpstan
+./vendor/bin/phpstan analyse
 ```
 
 
