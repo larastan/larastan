@@ -32,10 +32,30 @@ You may use [Composer](https://getcomposer.org) to install Larastan as a develop
 composer require --dev nunomaduro/larastan
 ```
 
+### Usage in Laravel Applications
+
 Once you have installed Larastan, you may start analyzing your code using the `code:analyse` Artisan command.
 ```bash
 php artisan code:analyse
 ```
+
+### Usage in Laravel Packages
+
+1. Create a file with the following content `phpstan.neon.dist `:
+```
+includes:
+    - ./vendor/nunomaduro/larastan/extension.neon
+parameters:
+    level: 5
+    paths:
+        - src
+```
+
+1. Launch phpstan:
+```bash
+./vendor/bin/phpstan
+```
+
 
 ### Rule levels
 
