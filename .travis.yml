@@ -17,7 +17,7 @@ env:
     - COMPOSER_FLAGS=""
 
 before_script:
-  - travis_retry composer update ${COMPOSER_FLAGS} --no-interaction
+  - travis_retry composer update --no-interaction --no-suggest ${COMPOSER_FLAGS}
 
 script:
   - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
