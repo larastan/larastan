@@ -34,7 +34,7 @@ final class ApplicationResolver
     {
         $app = (new self)->createApplication();
 
-        $namespace = key(json_decode(file_get_contents(getcwd().DIRECTORY_SEPARATOR.'composer.json'), true)['autoload']['psr-4']);
+        $namespace = (string) key(json_decode((string) file_get_contents(getcwd().DIRECTORY_SEPARATOR.'composer.json'), true)['autoload']['psr-4']);
 
         $serviceProviders = array_values(array_filter(self::getProjectClasses(), function (string $class) use (
             $namespace
