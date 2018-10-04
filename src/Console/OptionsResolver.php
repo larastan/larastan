@@ -61,7 +61,7 @@ final class OptionsResolver
         $definition->setArguments([]);
 
         $definition->getOption('level')
-            ->setDefault(self::DEFAULT_LEVEL);
+            ->setDefault((string)self::DEFAULT_LEVEL);
 
         $definition->getOption('autoload-file')
             ->setDefault(base_path('vendor/autoload.php'));
