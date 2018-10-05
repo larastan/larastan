@@ -50,3 +50,8 @@ services:
         class: NunoMaduro\Larastan\ReturnTypes\Helpers\RequestExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
+
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\Helpers\RedirectExtension
+        tags:
+            - phpstan.broker.dynamicFunctionReturnTypeExtension
