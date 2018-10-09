@@ -15,11 +15,11 @@ use NunoMaduro\Larastan\ApplicationResolver;
 
 define('LARAVEL_START', microtime(true));
 
-$applicationPath = __DIR__.'/../../../bootstrap/app.php';
-
-if (file_exists($applicationPath)) {
+if (file_exists($applicationPath = __DIR__.'/../../../bootstrap/app.php')) { // Applications
     $app = require $applicationPath;
-} else {
+} else if (file_exists($applicationPath = getcwd().'/../../../../bootstrap/app.php')) { // Local Dev
+    $app = require $applicationPath;
+} else { // Packages
     $app = ApplicationResolver::resolve();
 }
 
