@@ -47,6 +47,13 @@ final class Macro implements BuiltinMethodReflection
     private $parameters;
 
     /**
+     * The is static.
+     *
+     * @var bool
+     */
+    private $isStatic = false;
+
+    /**
      * Macro constructor.
      *
      * @param string $className
@@ -54,12 +61,13 @@ final class Macro implements BuiltinMethodReflection
      * @param \ReflectionFunction $reflectionFunction
      * @param array|null $parameters
      */
-    public function __construct(string $className, string $methodName, \ReflectionFunction $reflectionFunction, array $parameters = null)
+    public function __construct(string $className, string $methodName, \ReflectionFunction $reflectionFunction)
     {
         $this->className = $className;
         $this->methodName = $methodName;
         $this->reflectionFunction = $reflectionFunction;
-        $this->parameters = $parameters ?? $this->reflectionFunction->getParameters();
+        $this->parameters = $this->reflectionFunction->getParameters();
+        $this->isStatic = false;
     }
 
     /**
@@ -91,7 +99,19 @@ final class Macro implements BuiltinMethodReflection
      */
     public function isStatic(): bool
     {
-        return false;
+        return $this->isStatic;
+    }
+
+    /**
+     * Set the is static value.
+     *
+     * @param bool
+     *
+     * @return void
+     */
+    public function setIsStatic(bool $isStatic): void
+    {
+        $this->isStatic = $isStatic;
     }
 
     /**
@@ -124,6 +144,18 @@ final class Macro implements BuiltinMethodReflection
     public function getParameters(): array
     {
         return $this->parameters;
+    }
+
+    /**
+     * Set the parameters value.
+     *
+     * @param array $parameters
+     *
+     * @return void
+     */
+    public function setParameters(array $parameters): void
+    {
+        $this->parameters = $parameters;
     }
 
     /**
