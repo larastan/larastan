@@ -59,7 +59,6 @@ final class Macro implements BuiltinMethodReflection
      * @param string $className
      * @param string $methodName
      * @param \ReflectionFunction $reflectionFunction
-     * @param array|null $parameters
      */
     public function __construct(string $className, string $methodName, \ReflectionFunction $reflectionFunction)
     {
@@ -105,7 +104,7 @@ final class Macro implements BuiltinMethodReflection
     /**
      * Set the is static value.
      *
-     * @param bool
+     * @param bool $isStatic
      *
      * @return void
      */
