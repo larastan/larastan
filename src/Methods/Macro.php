@@ -40,17 +40,26 @@ final class Macro implements BuiltinMethodReflection
     private $reflectionFunction;
 
     /**
+     * The parameters.
+     *
+     * @var array
+     */
+    private $parameters;
+
+    /**
      * Macro constructor.
      *
      * @param string $className
      * @param string $methodName
      * @param \ReflectionFunction $reflectionFunction
+     * @param array|null $parameters
      */
-    public function __construct(string $className, string $methodName, \ReflectionFunction $reflectionFunction)
+    public function __construct(string $className, string $methodName, \ReflectionFunction $reflectionFunction, array $parameters = null)
     {
         $this->className = $className;
         $this->methodName = $methodName;
         $this->reflectionFunction = $reflectionFunction;
+        $this->parameters = $parameters ?? $this->reflectionFunction->getParameters();
     }
 
     /**
@@ -114,7 +123,7 @@ final class Macro implements BuiltinMethodReflection
      */
     public function getParameters(): array
     {
-        return $this->reflectionFunction->getParameters();
+        return $this->parameters;
     }
 
     /**
