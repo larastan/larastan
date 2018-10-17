@@ -16,7 +16,11 @@ env:
     - COMPOSER_FLAGS="--prefer-lowest"
     - COMPOSER_FLAGS=""
 
-before_script:
+before_install:
+  # Must be before any additional files are created
+  - test "$(find . -type f -not -path "./.git/*" -not -perm 0644)" == ./tests/laravel-test.sh
+
+install:
   - travis_retry composer update --no-interaction --no-suggest ${COMPOSER_FLAGS}
 
 script:
