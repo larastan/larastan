@@ -53,7 +53,9 @@ final class Auths implements PipeContract
 
             $userModel = $config->get('auth.providers.users.model');
 
-            $found = $passable->sendToPipeline($userModel);
+            if ($userModel) {
+                $found = $passable->sendToPipeline($userModel);
+            }
         }
 
         if (! $found) {
