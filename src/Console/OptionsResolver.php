@@ -67,7 +67,7 @@ final class OptionsResolver
             ->setDefault(base_path('vendor/autoload.php'));
 
         $definition->getOption('configuration')
-            ->setDefault(__DIR__.'/../../extension.neon');
+            ->setDefault($this->defaultConfiguration());
 
         $definition->getOption('memory-limit')
             ->setDefault(self::DEFAULT_MEMORY_LIMIT);
@@ -79,5 +79,20 @@ final class OptionsResolver
         );
 
         return $this->definition = $definition;
+    }
+
+    /**
+     * Determines the default configuration.
+     *
+     * @return string
+     */
+    private function defaultConfiguration() : string
+    {
+        $configPath = config('larastan.configuration');
+        if (!$configPath) {
+            $configPath = __DIR__ . '/../../extension.neon';
+        }
+
+        return $configPath;
     }
 }

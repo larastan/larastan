@@ -32,6 +32,11 @@ You may use [Composer](https://getcomposer.org) to install Larastan as a develop
 composer require --dev nunomaduro/larastan
 ```
 
+Publish the configuration file:
+```bash
+php artisan vendor:publish --tag=larastan-config
+```
+
 ### Usage in Laravel Applications
 
 Once you have installed Larastan, you may start analyzing your code using the `code:analyse` Artisan command.
