@@ -89,8 +89,8 @@ final class OptionsResolver
     private function defaultConfiguration() : string
     {
         $configPath = config('larastan.configuration');
-        if (!$configPath) {
-            $configPath = __DIR__ . '/../../extension.neon';
+        if (! $configPath) {
+            $configPath = __DIR__.'/../../extension.neon';
         }
 
         return $configPath;
