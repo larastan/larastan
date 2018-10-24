@@ -6,12 +6,12 @@ echo "Prevent shallow repository error"
 git fetch --unshallow
 
 echo "Install Laravel"
-travis_retry composer create-project --quiet --prefer-dist "laravel/laravel" laravel
+travis_retry composer create-project --quiet --prefer-dist --no-dev "laravel/laravel" laravel
 cd laravel/
 
 echo "Add package from source"
 sed -e 's|"type": "project",|&\n"repositories": [ { "type": "vcs", "url": "../" } ],|' -i composer.json
-travis_retry composer require --dev "nunomaduro/larastan:dev-master#${TRAVIS_COMMIT}"
+travis_retry composer require --no-update "nunomaduro/larastan:dev-master#${TRAVIS_COMMIT}"
 
 echo "Fix https://github.com/laravel/framework/pull/23825"
 sed -e 's|@return \\Illuminate\\Http\\Response$|@return \\Symfony\\Component\\HttpFoundation\\Response|' \
