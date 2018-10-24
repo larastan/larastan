@@ -11,7 +11,7 @@ cd laravel/
 
 echo "Add package from source"
 sed -e 's|"type": "project",|&\n"repositories": [ { "type": "vcs", "url": "../" } ],|' -i composer.json
-travis_retry composer require --no-update "nunomaduro/larastan:dev-master#${TRAVIS_COMMIT}"
+travis_retry composer require --update-no-dev "nunomaduro/larastan:dev-master#${TRAVIS_COMMIT}"
 
 echo "Fix https://github.com/laravel/framework/pull/23825"
 sed -e 's|@return \\Illuminate\\Http\\Response$|@return \\Symfony\\Component\\HttpFoundation\\Response|' \
