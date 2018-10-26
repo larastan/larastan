@@ -1,0 +1,1 @@
+23:Method App\TestFiles\ReturnTypes\Helpers\ResponseExtension::testFail() should return Illuminate\View\View but returns Illuminate\Http\Response.

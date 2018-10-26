@@ -17,7 +17,9 @@ define('LARAVEL_START', microtime(true));
 
 if (file_exists($applicationPath = __DIR__.'/../../../bootstrap/app.php')) { // Applications
     $app = require $applicationPath;
-} else if (file_exists($applicationPath = getcwd().'/../../../../bootstrap/app.php')) { // Local Dev
+} elseif (file_exists($applicationPath = getcwd().'/../../../../bootstrap/app.php')) { // Local Dev
+    $app = require $applicationPath;
+} elseif (file_exists($applicationPath = getcwd().'/../../tests/testApp/bootstrap/app.php')) { // Testing
     $app = require $applicationPath;
 } else { // Packages
     $app = ApplicationResolver::resolve();

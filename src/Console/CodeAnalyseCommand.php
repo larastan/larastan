@@ -64,10 +64,15 @@ final class CodeAnalyseCommand extends Command
      */
     public function handle(): ?int
     {
-        $process = new Process($this->cmd(), $this->laravel->basePath('vendor/phpstan/phpstan/bin'));
+        $cwd = $this->option('bin-path');
+        if ($cwd === null || ! is_string($cwd)) {
+            $cwd = $this->laravel->basePath('vendor/phpstan/phpstan/bin');
+        }
+
+        $process = new Process($this->cmd(), $cwd);
 
         if (Process::isTtySupported()) {
-            $process->setTty(true);
+            $process->setTty(! $this->option('no-tty'));
         }
 
         $process->setTimeout(null);
@@ -89,7 +94,7 @@ final class CodeAnalyseCommand extends Command
         $options = '';
         foreach ($this->optionsResolver->getDefinition()
                      ->getOptions() as $option) {
-            if ($option->getName() === 'paths') {
+            if (in_array($option->getName(), ['paths', 'bin-path', 'no-tty'], true)) {
                 continue;
             }
 
