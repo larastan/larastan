@@ -4,9 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.3.5] - 2018-10-29
+### Fixed
+- Internal error caused by non-existing provider name ([#170](https://github.com/nunomaduro/larastan/pull/170))
+- Issue when project name have spaces ([#186](https://github.com/nunomaduro/larastan/pull/186))
+
 ## [0.3.4] - 2018-10-09
 ### Fixed
-- Issue while calling soft deletes macros staticly.
+- Issue while calling soft deletes macros staticly
 
 ## [0.3.3] - 2018-10-09
 ### Adds
