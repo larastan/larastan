@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Features\Methods;
 
-use Illuminate\Http\Response;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Routing\ResponseFactory;
 
 class ModelExtension
 {
@@ -33,5 +31,4 @@ class ModelExtension
 
 class Thread extends Model
 {
-
 }
