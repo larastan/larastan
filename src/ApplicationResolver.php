@@ -79,7 +79,11 @@ final class ApplicationResolver
         $files = Finder::create()->files()->name('*.php')->in(getcwd().DIRECTORY_SEPARATOR.'src');
 
         foreach ($files->files() as $file) {
-            require_once $file;
+            try {
+                require_once $file;
+            } catch (\Throwable $e) {
+                // ..
+            }
         }
 
         return get_declared_classes();
