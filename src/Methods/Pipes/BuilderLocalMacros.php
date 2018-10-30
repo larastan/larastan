@@ -14,7 +14,6 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
-use Illuminate\Database\Eloquent\Builder;
 use ReflectionClass;
 use function in_array;
 use ReflectionFunction;
@@ -22,6 +21,7 @@ use PHPStan\Type\ObjectType;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Methods\Macro;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
@@ -44,9 +44,7 @@ final class BuilderLocalMacros implements PipeContract
 
         if ($classReflection->isSubclassOf(Model::class) && in_array(SoftDeletes::class,
                 trait_uses_recursive($classReflection->getName()), true)) {
-
-            $model = new class extends Model
-            {
+            $model = new class extends Model {
             };
 
             (new SoftDeletingScope)->extend($builder = $model->newQuery());
@@ -57,7 +55,6 @@ final class BuilderLocalMacros implements PipeContract
             $localMacros = $refProperty->getValue($builder);
 
             if (array_key_exists($passable->getMethodName(), $localMacros)) {
-
                 $reflectionFunction = new ReflectionFunction($localMacros[$passable->getMethodName()]);
                 $parameters = $reflectionFunction->getParameters();
                 unset($parameters[0]); // The query argument.
