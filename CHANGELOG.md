@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.3.6] - 2018-10-30
+### Added
+- Support to return type of `url` helper ([#179](https://github.com/nunomaduro/larastan/pull/179))
+
 ## [0.3.5] - 2018-10-29
 ### Fixed
 - Internal error caused by non-existing provider name ([#170](https://github.com/nunomaduro/larastan/pull/170))
