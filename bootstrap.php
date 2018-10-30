@@ -19,8 +19,6 @@ if (file_exists($applicationPath = __DIR__.'/../../../bootstrap/app.php')) { // 
     $app = require $applicationPath;
 } elseif (file_exists($applicationPath = getcwd().'/../../../../bootstrap/app.php')) { // Local Dev
     $app = require $applicationPath;
-} elseif (file_exists($applicationPath = getcwd().'/../../tests/testApp/bootstrap/app.php')) { // Testing
-    $app = require $applicationPath;
 } else { // Packages
     $app = ApplicationResolver::resolve();
 }
