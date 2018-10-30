@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.3.7] - 2018-10-31
+### Fixed
+- Fixes while resolving applicaiton with invalid php files
+
 ## [0.3.6] - 2018-10-30
 ### Added
 - Support to return type of `url` helper ([#179](https://github.com/nunomaduro/larastan/pull/179))
