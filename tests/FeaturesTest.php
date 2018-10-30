@@ -9,6 +9,7 @@ use Orchestra\Testbench\TestCase;
 use Symfony\Component\Finder\Finder;
 use Illuminate\Contracts\Console\Kernel;
 use NunoMaduro\Larastan\LarastanServiceProvider;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 class FeaturesTest extends TestCase
 {
@@ -45,23 +46,27 @@ class FeaturesTest extends TestCase
      */
     public function testFeatures(string $file): void
     {
-        if ($this->analyze($file) !== 0) {
-            $msg = sprintf('Larastan detected errors in: %s', $file);
-            $this->fail($msg);
+        if ($this->analyze($file) === 0) {
+            $this->assertTrue(true);
         }
-
-        $this->assertTrue(true);
     }
 
     private function analyze(string $file): int
     {
-        return $this->kernel->call('code:analyse', [
+        $result = $this->kernel->call('code:analyse', [
             '--level' => 'max',
             '--paths' => $file,
             '--bin-path' => __DIR__.'/../vendor/bin',
             '--autoload-file' => __DIR__.'/../vendor/autoload.php',
-            '--no-tty' => true,
             '--error-format' => 'raw',
-        ]);
+            '--no-tty' => true,
+            '--no-progress' => true,
+        ], $output = new BufferedOutput);
+
+        if ($result !== 0) {
+            $this->fail($output->fetch());
+        }
+
+        return $result;
     }
 }

@@ -9,12 +9,12 @@ use Illuminate\Contracts\View\Factory;
 
 class ViewExtension
 {
-    public function testSimpleView(): View
+    public function testView(): View
     {
-        return view('test');
+        return view('foo');
     }
 
-    public function testFactory(): Factory
+    public function testViewFactory(): Factory
     {
         return view();
     }

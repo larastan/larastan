@@ -9,12 +9,12 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 
 class ResponseExtension
 {
-    public function testSimpleView(): Response
+    public function testResponse(): Response
     {
-        return response();
+        return response('foo');
     }
 
-    public function testFactory(): ResponseFactory
+    public function testResponseFactory(): ResponseFactory
     {
         return response();
     }
