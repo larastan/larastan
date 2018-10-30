@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use Illuminate\Support\Str;
 use Orchestra\Testbench\TestCase;
+use Illuminate\Support\Facades\File;
 use Symfony\Component\Finder\Finder;
 use Illuminate\Contracts\Console\Kernel;
 use NunoMaduro\Larastan\LarastanServiceProvider;
@@ -22,6 +22,12 @@ class FeaturesTest extends TestCase
         (new LarastanServiceProvider($app))->register();
 
         $this->kernel = $app->make(Kernel::class);
+
+        @File::makeDirectory(__DIR__.'/../vendor/nunomaduro/larastan', 0755, true);
+        @File::makeDirectory(__DIR__.'/../vendor/nunomaduro/larastan/config', 0755, true);
+        @File::copy(__DIR__.'/../bootstrap.php', __DIR__.'/../vendor/nunomaduro/larastan/bootstrap.php');
+        @File::copy(__DIR__.'/../config/mixins.php', __DIR__.'/../vendor/nunomaduro/larastan/config/mixins.php');
+        @File::copy(__DIR__.'/../config/statics.php', __DIR__.'/../vendor/nunomaduro/larastan/config/statics.php');
     }
 
     public function getFeatures(): array
