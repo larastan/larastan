@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.3.7] - 2018-10-31
 ### Fixed
-- Fixes while resolving applicaiton with invalid php files
+- Fixes while resolving application with invalid php files ([7dd69ad](https://github.com/nunomaduro/larastan/commit/7dd69ad4feb7fe58676c2e4fd8dfe8f91d9af9d9))
 
 ## [0.3.6] - 2018-10-30
 ### Added
