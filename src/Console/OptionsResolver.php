@@ -78,6 +78,18 @@ final class OptionsResolver
             )
         );
 
+        $definition->addOption(
+            new InputOption(
+                'bin-path', null, InputOption::VALUE_REQUIRED, 'Folder where the PHPStan binary is located'
+            )
+        );
+
+        $definition->addOption(
+            new InputOption(
+                'no-tty', null, InputOption::VALUE_NONE, 'Force disabling TTY'
+            )
+        );
+
         return $this->definition = $definition;
     }
 }
