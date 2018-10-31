@@ -34,16 +34,20 @@ final class ApplicationResolver
     {
         $app = (new self)->createApplication();
 
-        $namespace = (string) key(json_decode((string) file_get_contents(getcwd().DIRECTORY_SEPARATOR.'composer.json'), true)['autoload']['psr-4']);
+        $composerFile = getcwd().DIRECTORY_SEPARATOR.'composer.json';
 
-        $serviceProviders = array_values(array_filter(self::getProjectClasses(), function (string $class) use (
-            $namespace
-        ) {
-            return substr($class, 0, strlen($namespace)) === $namespace && self::isServiceProvider($class);
-        }));
+        if (file_exists($composerFile)) {
+            $namespace = (string) key(json_decode((string) file_get_contents($composerFile), true)['autoload']['psr-4']);
 
-        foreach ($serviceProviders as $serviceProvider) {
-            $app->register($serviceProvider);
+            $serviceProviders = array_values(array_filter(self::getProjectClasses(), function (string $class) use (
+                $namespace
+            ) {
+                return substr($class, 0, strlen($namespace)) === $namespace && self::isServiceProvider($class);
+            }));
+
+            foreach ($serviceProviders as $serviceProvider) {
+                $app->register($serviceProvider);
+            }
         }
 
         return $app;
@@ -75,7 +79,11 @@ final class ApplicationResolver
         $files = Finder::create()->files()->name('*.php')->in(getcwd().DIRECTORY_SEPARATOR.'src');
 
         foreach ($files->files() as $file) {
-            require_once $file;
+            try {
+                require_once $file;
+            } catch (\Throwable $e) {
+                // ..
+            }
         }
 
         return get_declared_classes();

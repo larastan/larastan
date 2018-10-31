@@ -4,9 +4,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+## [0.3.7] - 2018-10-31
+### Fixed
+- Fixes while resolving application with invalid php files ([7dd69ad](https://github.com/nunomaduro/larastan/commit/7dd69ad4feb7fe58676c2e4fd8dfe8f91d9af9d9))
+
+## [0.3.6] - 2018-10-30
+### Added
+- Support to return type of `url` helper ([#179](https://github.com/nunomaduro/larastan/pull/179))
+
+## [0.3.5] - 2018-10-29
+### Fixed
+- Internal error caused by non-existing provider name ([#170](https://github.com/nunomaduro/larastan/pull/170))
+- Issue when project name have spaces ([#186](https://github.com/nunomaduro/larastan/pull/186))
+
 ## [0.3.4] - 2018-10-09
 ### Fixed
-- Issue while calling soft deletes macros staticly.
+- Issue while calling soft deletes macros staticly
 
 ## [0.3.3] - 2018-10-09
 ### Adds
@@ -123,6 +138,38 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixes
 - Infinite recursion in mixins middleware ([b5a4317](https://github.com/nunomaduro/larastan/commit/b5a4317ef7c19b9008e4efff7ef50d2649b00151))
 
-## [0.1.0] - 2018-07-17
+## 0.1.0 - 2018-07-17
 ### Added
 - Adds first alpha version
+
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.3.7...HEAD
+[0.3.7]: https://github.com/nunomaduro/larastan/compare/v0.3.6...v0.3.7
+[0.3.6]: https://github.com/nunomaduro/larastan/compare/v0.3.5...v0.3.6
+[0.3.5]: https://github.com/nunomaduro/larastan/compare/v0.3.4...v0.3.5
+[0.3.4]: https://github.com/nunomaduro/larastan/compare/v0.3.3...v0.3.4
+[0.3.3]: https://github.com/nunomaduro/larastan/compare/v0.3.2...v0.3.3
+[0.3.2]: https://github.com/nunomaduro/larastan/compare/v0.3.1...v0.3.2
+[0.3.1]: https://github.com/nunomaduro/larastan/compare/v0.3.0...v0.3.1
+[0.3.0]: https://github.com/nunomaduro/larastan/compare/v0.2.12...v0.3.0
+[0.2.12]: https://github.com/nunomaduro/larastan/compare/v0.2.11...v0.2.12
+[0.2.11]: https://github.com/nunomaduro/larastan/compare/v0.2.10...v0.2.11
+[0.2.10]: https://github.com/nunomaduro/larastan/compare/v0.2.9...v0.2.10
+[0.2.9]: https://github.com/nunomaduro/larastan/compare/v0.2.8...v0.2.9
+[0.2.8]: https://github.com/nunomaduro/larastan/compare/v0.2.7...v0.2.8
+[0.2.7]: https://github.com/nunomaduro/larastan/compare/v0.2.6...v0.2.7
+[0.2.6]: https://github.com/nunomaduro/larastan/compare/v0.2.5...v0.2.6
+[0.2.5]: https://github.com/nunomaduro/larastan/compare/v0.2.4...v0.2.5
+[0.2.4]: https://github.com/nunomaduro/larastan/compare/v0.2.3...v0.2.4
+[0.2.3]: https://github.com/nunomaduro/larastan/compare/v0.2.2...v0.2.3
+[0.2.2]: https://github.com/nunomaduro/larastan/compare/v0.2.1...v0.2.2
+[0.2.1]: https://github.com/nunomaduro/larastan/compare/v0.2.0...v0.2.1
+[0.2.0]: https://github.com/nunomaduro/larastan/compare/v0.1.9...v0.2.0
+[0.1.9]: https://github.com/nunomaduro/larastan/compare/v0.1.8...v0.1.9
+[0.1.8]: https://github.com/nunomaduro/larastan/compare/v0.1.7...v0.1.8
+[0.1.7]: https://github.com/nunomaduro/larastan/compare/v0.1.6...v0.1.7
+[0.1.6]: https://github.com/nunomaduro/larastan/compare/v0.1.5...v0.1.6
+[0.1.5]: https://github.com/nunomaduro/larastan/compare/v0.1.4...v0.1.5
+[0.1.4]: https://github.com/nunomaduro/larastan/compare/v0.1.3...v0.1.4
+[0.1.3]: https://github.com/nunomaduro/larastan/compare/v0.1.2...v0.1.3
+[0.1.2]: https://github.com/nunomaduro/larastan/compare/v0.1.1...v0.1.2
+[0.1.1]: https://github.com/nunomaduro/larastan/compare/v0.1.0...v0.1.1
