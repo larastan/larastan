@@ -24,16 +24,6 @@ final class LarastanServiceProvider extends ServiceProvider
     /**
      * {@inheritdoc}
      */
-    public function boot(): void
-    {
-        $this->publishes([
-            __DIR__.'/../config-laravel/larastan.php' => config_path('larastan.php'),
-        ], 'larastan-config');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     public function register(): void
     {
         if ($this->app->runningInConsole()) {
