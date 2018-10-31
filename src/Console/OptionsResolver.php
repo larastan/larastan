@@ -100,11 +100,19 @@ final class OptionsResolver
      */
     private function defaultConfiguration() : string
     {
-        $configPath = config('larastan.configuration');
-        if (! $configPath) {
-            $configPath = __DIR__.'/../../extension.neon';
+        $supportedFiles = [
+            'phpstan.neon',
+            'phpstan.neon.dist',
+        ];
+
+        foreach ($supportedFiles as $file) {
+            $filePath = base_path($file);
+
+            if (file_exists($filePath)) {
+                return $filePath;
+            }
         }
 
-        return $configPath;
+        return __DIR__ . '/../../extension.neon';
     }
 }
