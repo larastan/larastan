@@ -113,6 +113,6 @@ final class OptionsResolver
             }
         }
 
-        return __DIR__ . '/../../extension.neon';
+        return __DIR__.'/../../extension.neon';
     }
 }
