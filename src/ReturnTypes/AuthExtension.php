@@ -62,6 +62,10 @@ final class AuthExtension implements DynamicStaticMethodReturnTypeExtension
 
         $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
 
-        return TypeCombinator::union($returnType, new ObjectType($userModel));
+        if ($userModel) {
+            return TypeCombinator::union($returnType, new ObjectType($userModel));
+        }
+        return $returnType;
+
     }
 }
