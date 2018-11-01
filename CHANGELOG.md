@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.8] - 2018-11-01
+### Added
+- Auto detects configuration `phpstan.neon` ([#194](https://github.com/nunomaduro/larastan/pull/194))
+
 ## [0.3.7] - 2018-10-31
 ### Fixed
 - Fixes while resolving application with invalid php files ([7dd69ad](https://github.com/nunomaduro/larastan/commit/7dd69ad4feb7fe58676c2e4fd8dfe8f91d9af9d9))
