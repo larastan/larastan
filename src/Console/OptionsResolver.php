@@ -67,7 +67,7 @@ final class OptionsResolver
             ->setDefault(base_path('vendor/autoload.php'));
 
         $definition->getOption('configuration')
-            ->setDefault(__DIR__.'/../../extension.neon');
+            ->setDefault($this->defaultConfiguration());
 
         $definition->getOption('memory-limit')
             ->setDefault(self::DEFAULT_MEMORY_LIMIT);
@@ -91,5 +91,28 @@ final class OptionsResolver
         );
 
         return $this->definition = $definition;
+    }
+
+    /**
+     * Determines the default configuration.
+     *
+     * @return string
+     */
+    private function defaultConfiguration() : string
+    {
+        $supportedFiles = [
+            'phpstan.neon',
+            'phpstan.neon.dist',
+        ];
+
+        foreach ($supportedFiles as $file) {
+            $filePath = base_path($file);
+
+            if (file_exists($filePath)) {
+                return $filePath;
+            }
+        }
+
+        return __DIR__.'/../../extension.neon';
     }
 }
