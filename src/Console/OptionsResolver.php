@@ -101,6 +101,7 @@ final class OptionsResolver
     private function defaultConfiguration() : string
     {
         $supportedFiles = [
+            'larastan.neon',
             'phpstan.neon',
             'phpstan.neon.dist',
         ];
