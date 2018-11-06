@@ -48,7 +48,7 @@ parameters:
     level: 5
     ignoreErrors:
         - '#Access to an undefined property App\\Demo\\[a-zA-Z0-9\\_]+::\$[a-zA-Z0-9\\_]+.#'
-        - '#Call to an undefined method App\\Http\\Resources\\DemoResource::DemoMethod().#'
+        - '#Call to an undefined method App\\Http\\Resources\\DemoResource::DemoMethod\(\).#'
     excludes_analyse:
         - /*/*/FileToBeExcluded.php
 ```
