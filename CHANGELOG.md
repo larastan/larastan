@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.9] - 2018-11-21
+### Added
+- Support to return type of `Auth::user()`
+
 ## [0.3.8] - 2018-11-01
 ### Added
 - Auto detects configuration `phpstan.neon` ([#194](https://github.com/nunomaduro/larastan/pull/194))
@@ -146,7 +150,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.3.8...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.3.9...HEAD
+[0.3.9]: https://github.com/nunomaduro/larastan/compare/v0.3.8...v0.3.9
 [0.3.8]: https://github.com/nunomaduro/larastan/compare/v0.3.7...v0.3.8
 [0.3.7]: https://github.com/nunomaduro/larastan/compare/v0.3.6...v0.3.7
 [0.3.6]: https://github.com/nunomaduro/larastan/compare/v0.3.5...v0.3.6
