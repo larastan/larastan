@@ -18,7 +18,9 @@ class FeaturesTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+
         $app = $this->createApplication();
+
         (new LarastanServiceProvider($app))->register();
 
         $this->kernel = $app->make(Kernel::class);
