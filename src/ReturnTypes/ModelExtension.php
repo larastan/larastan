@@ -17,6 +17,7 @@ use function count;
 use ReflectionClass;
 use function in_array;
 use PHPStan\Type\Type;
+use PHPStan\Type\ThisType;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\UnionType;
 use PHPStan\Type\ObjectType;
@@ -92,7 +93,6 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, Br
          */
         if ($methodCall->class instanceof \PhpParser\Node\Name && $variants[0] instanceof FunctionVariantWithPhpDocs) {
             $className = $methodCall->class->toString();
-
             if (class_exists($className)) {
                 $classReflection = new ReflectionClass($className);
                 $isValidInstance = false;
@@ -131,12 +131,13 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, Br
         );
 
         foreach ($types as $key => $type) {
+
             if ($type instanceof ObjectType && in_array($type->getClassName(), $mixins, true)) {
                 $types[$key] = new StaticType($staticType);
             }
 
             if ($type instanceof StaticType) {
-                $types[$key] = $type->changeBaseClass($staticType);
+                $types[$key] = new StaticType($staticType);
             }
 
             if ($type instanceof IterableType) {
