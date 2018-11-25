@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthExtension
 {
-    public function testUser(): User
+    public function testUser(): ?User
     {
         return Auth::user();
     }
