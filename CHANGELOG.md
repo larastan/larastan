@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.11] - 2018-11-26
+### Fixed
+- Null return type in `Auth::user()` ([#211](https://github.com/nunomaduro/larastan/pull/211))
+
 ## [0.3.10] - 2018-11-22
 ### Added
 - Support to return type of `$this` from Eloquent builder
@@ -154,7 +158,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.3.10...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.3.11...HEAD
+[0.3.11]: https://github.com/nunomaduro/larastan/compare/v0.3.10...v0.3.11
 [0.3.10]: https://github.com/nunomaduro/larastan/compare/v0.3.9...v0.3.10
 [0.3.9]: https://github.com/nunomaduro/larastan/compare/v0.3.8...v0.3.9
 [0.3.8]: https://github.com/nunomaduro/larastan/compare/v0.3.7...v0.3.8
