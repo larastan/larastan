@@ -10,3 +10,5 @@ phpunit.xml.dist   export-ignore
 CHANGELOG.md       export-ignore
 CONTRIBUTING.md    export-ignore
 README.md          export-ignore
+*.neon             linguist-language=YAML
+*.neon.dist        linguist-language=YAML
