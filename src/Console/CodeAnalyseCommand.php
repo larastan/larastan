@@ -87,9 +87,9 @@ final class CodeAnalyseCommand extends Command
     }
 
     /**
-     * @return string
+     * @return array
      */
-    private function cmd(): string
+    private function cmd(): array
     {
         $options = '';
         foreach ($this->optionsResolver->getDefinition()
@@ -135,6 +135,6 @@ final class CodeAnalyseCommand extends Command
             $options,
         ];
 
-        return implode(' ', $params);
+        return $params;
     }
 }
