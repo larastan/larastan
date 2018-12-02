@@ -69,7 +69,7 @@ final class CodeAnalyseCommand extends Command
             $cwd = $this->laravel->basePath('vendor/phpstan/phpstan/bin');
         }
 
-        $process = new Process($this->cmd(), $cwd);
+        $process = Process::fromShellCommandline($this->cmd(), $cwd);
 
         if (Process::isTtySupported()) {
             $process->setTty(! $this->option('no-tty'));
@@ -87,9 +87,9 @@ final class CodeAnalyseCommand extends Command
     }
 
     /**
-     * @return array
+     * @return string
      */
-    private function cmd(): array
+    private function cmd(): string
     {
         $options = '';
         foreach ($this->optionsResolver->getDefinition()
@@ -135,6 +135,6 @@ final class CodeAnalyseCommand extends Command
             $options,
         ];
 
-        return $params;
+        return implode(' ', $params);
     }
 }
