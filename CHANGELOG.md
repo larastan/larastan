@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.12] - 2018-12-03
+### Added
+- Support to paginators ([c29af44](https://github.com/nunomaduro/larastan/commit/c29af44b318d57c8625db7dab1aa6d138e2bf48b))
+
 ## [0.3.11] - 2018-11-26
 ### Fixed
 - Null return type in `Auth::user()` ([#211](https://github.com/nunomaduro/larastan/pull/211))
