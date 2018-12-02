@@ -11,10 +11,14 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
+use Illuminate\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Contracts\Pagination\Paginator as PaginatorContract;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator as LengthAwarePaginatorContract;
 
 return [
 
@@ -26,6 +30,16 @@ return [
 
     Model::class => [
         Builder::class,
+    ],
+
+    LengthAwarePaginatorContract::class => [
+        LengthAwarePaginator::class,
+        Collection::class,
+    ],
+
+    PaginatorContract::class => [
+        Collection::class,
+        Paginator::class,
     ],
 
     Collection::class => [
