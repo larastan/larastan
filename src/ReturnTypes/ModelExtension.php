@@ -17,7 +17,6 @@ use function count;
 use ReflectionClass;
 use function in_array;
 use PHPStan\Type\Type;
-use PHPStan\Type\ThisType;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\UnionType;
 use PHPStan\Type\ObjectType;
