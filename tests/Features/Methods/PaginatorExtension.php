@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tests\Features\Methods;
 
 use App\User;
-use Illuminate\Database\Eloquent\Model;
 
 class PaginatorExtension
 {
