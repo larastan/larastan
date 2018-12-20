@@ -70,3 +70,8 @@ services:
         class: NunoMaduro\Larastan\ReturnTypes\Helpers\ViewExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
+
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\Helpers\TransExtension
+        tags:
+            - phpstan.broker.dynamicFunctionReturnTypeExtension
