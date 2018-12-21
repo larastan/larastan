@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.13] - 2018-12-21
+### Added
+- Support to `trans` helper ([#220](https://github.com/nunomaduro/larastan/pull/220))
+
 ## [0.3.12] - 2018-12-03
 ### Added
 - Support to paginators ([c29af44](https://github.com/nunomaduro/larastan/commit/c29af44b318d57c8625db7dab1aa6d138e2bf48b))
