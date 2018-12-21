@@ -18,7 +18,8 @@ env:
 
 before_install:
   # Must be before any additional files are created
-  - test "$(find . -type f -not -path "./.git/*" -not -perm 0644)" == ./tests/laravel-test.sh
+  # TODO TravisCI moved to GCE, see https://travis-ci.community/t/file-permissions-just-gone-up-to-664/1547?u=szepeviktor
+  - test "$(find . -type f -not -path "./.git/*" -not -perm 0664)" == ./tests/laravel-test.sh
 
 install:
   - travis_retry composer update --no-interaction --no-suggest ${COMPOSER_FLAGS}
