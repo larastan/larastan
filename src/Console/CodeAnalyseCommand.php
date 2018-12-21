@@ -32,7 +32,7 @@ final class CodeAnalyseCommand extends Command
     /**
      * {@inheritdoc}
      */
-    protected $description = 'Analyses source code';
+    protected $description = 'Analyzes source code';
 
     /**
      * @var \NunoMaduro\Larastan\Console\OptionsResolver
