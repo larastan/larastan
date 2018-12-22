@@ -130,7 +130,6 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, Br
         );
 
         foreach ($types as $key => $type) {
-
             if ($type instanceof ObjectType && in_array($type->getClassName(), $mixins, true)) {
                 $types[$key] = new StaticType($staticType);
             }
