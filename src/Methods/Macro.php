@@ -176,6 +176,14 @@ final class Macro implements BuiltinMethodReflection
     /**
      * {@inheritdoc}
      */
+    public function getEndLine()
+    {
+        return $this->reflectionFunction->getEndLine();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isDeprecated(): bool
     {
         return $this->reflectionFunction->isDeprecated();
