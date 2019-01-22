@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.14] - 2019-01-22
+### Changed
+- Bumps PHPStan version to > 0.11.1 ([#229](https://github.com/nunomaduro/larastan/pull/229))
+
 ## [0.3.13] - 2018-12-21
 ### Added
 - Support to `trans` helper ([#220](https://github.com/nunomaduro/larastan/pull/220))
