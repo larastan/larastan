@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.14] - 2019-01-22
+### Changed
+- Bumps PHPStan version to > 0.11.1 ([#229](https://github.com/nunomaduro/larastan/pull/229))
+
 ## [0.3.13] - 2018-12-21
 ### Added
 - Support to `trans` helper ([#220](https://github.com/nunomaduro/larastan/pull/220))
@@ -166,7 +170,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.3.11...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.3.14...HEAD
+[0.3.14]: https://github.com/nunomaduro/larastan/compare/v0.3.13...v0.3.14
+[0.3.13]: https://github.com/nunomaduro/larastan/compare/v0.3.12...v0.3.13
+[0.3.12]: https://github.com/nunomaduro/larastan/compare/v0.3.11...v0.3.12
 [0.3.11]: https://github.com/nunomaduro/larastan/compare/v0.3.10...v0.3.11
 [0.3.10]: https://github.com/nunomaduro/larastan/compare/v0.3.9...v0.3.10
 [0.3.9]: https://github.com/nunomaduro/larastan/compare/v0.3.8...v0.3.9
