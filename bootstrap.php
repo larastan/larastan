@@ -25,6 +25,8 @@ if (file_exists($applicationPath = __DIR__.'/../../../bootstrap/app.php')) { // 
 
 if ($app instanceof \Illuminate\Contracts\Foundation\Application) {
     $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
+} elseif ($app instanceof \Laravel\Lumen\Application) {
+    $app->boot();
 }
 
 $app->make('config')->set('larastan.mixins', require __DIR__.DIRECTORY_SEPARATOR.'config'.DIRECTORY_SEPARATOR.'mixins.php');
