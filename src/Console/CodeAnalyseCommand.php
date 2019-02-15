@@ -104,7 +104,7 @@ final class CodeAnalyseCommand extends Command
 
             $value = is_array($value) ? implode(',', $value) : $value;
 
-            if ($option->acceptValue() && $value !== null) {
+            if ($option->acceptValue() && is_string($value)) {
                 $options .= " --$name=".escapeshellarg($value);
             } else {
                 if ($this->option($name)) {
