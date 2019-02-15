@@ -30,7 +30,7 @@ sed -e 's|"type": "project",|&\n"repositories": [ { "type": "vcs", "url": "../" 
 travis_retry composer require --dev "nunomaduro/larastan:dev-master#${TRAVIS_COMMIT}"
 
 echo "Add Larastan to Lumen"
-cat <<"EOF" | patch
+cat <<"EOF" | patch -p 0
 --- bootstrap/app.php     2019-02-15 12:31:48.469773495 +0000
 +++ bootstrap/app.php     2019-02-15 12:27:43.358369317 +0000
 @@ -23,6 +23,8 @@
