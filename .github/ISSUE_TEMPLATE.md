@@ -1,6 +1,12 @@
 - Larastan Version: #.#.#
 - `--level` used:
 
-### Description:
+### Description
 
-### Laravel code where the issue was found:
+
+
+### Laravel code where the issue was found
+
+```php
+
+```
