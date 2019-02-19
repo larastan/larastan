@@ -42,6 +42,11 @@ services:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
+        class: NunoMaduro\Larastan\ReturnTypes\RequestFileExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
         class: NunoMaduro\Larastan\ReturnTypes\Helpers\CookieExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
