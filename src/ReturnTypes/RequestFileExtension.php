@@ -13,6 +13,10 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes;
 
+use PHPStan\Type\ArrayType;
+use PHPStan\Type\IntegerType;
+use PHPStan\Type\NullType;
+use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\MixedType;
@@ -50,6 +54,10 @@ final class RequestFileExtension implements DynamicMethodReturnTypeExtension
         MethodCall $methodCall,
         Scope $scope
     ): Type {
-        return new MixedType;
+        if (count($methodCall->args) === 0) {
+            return new ArrayType(new IntegerType(), new ObjectType(\Illuminate\Http\UploadedFile::class));
+        }
+
+        return new ObjectType(\Illuminate\Http\UploadedFile::class);
     }
 }
