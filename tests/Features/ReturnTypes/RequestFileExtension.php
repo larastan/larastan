@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace Tests\Features\ReturnTypes;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 
 class RequestFileExtension
 {
     public function testRequestFileStore()
     {
         $request = new Request();
-        $request->file('image')->store('/path');
+        $request->file('image', new UploadedFile('', ''))->store('/path');
     }
 
     public function testRequestFileArrayStore()

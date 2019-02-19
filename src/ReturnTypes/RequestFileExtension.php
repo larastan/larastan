@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes;
 
+use PHPStan\Type\NullType;
 use PHPStan\Type\Type;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\ArrayType;
@@ -23,6 +24,7 @@ use Illuminate\Http\UploadedFile;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
+use PHPStan\Type\TypeCombinator;
 
 /**
  * @internal
@@ -56,7 +58,11 @@ final class RequestFileExtension implements DynamicMethodReturnTypeExtension
         if (count($methodCall->args) === 0) {
             return new ArrayType(new IntegerType(), new ObjectType(UploadedFile::class));
         }
+        $defaultType = new NullType();
+        if(isset($methodCall->args[1])) {
+            $defaultType = $scope->getType($methodCall->args[1]->value);
+        }
 
-        return new ObjectType(UploadedFile::class);
+        return TypeCombinator::union(new ObjectType(UploadedFile::class), $defaultType);
     }
 }
