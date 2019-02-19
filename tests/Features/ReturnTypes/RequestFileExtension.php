@@ -13,4 +13,10 @@ class RequestFileExtension
         $request = new Request();
         $request->file('image')->store('/path');
     }
+
+    public function testRequestFileArrayStore()
+    {
+        $request = new Request();
+        $request->file()[0]->store('/path');
+    }
 }
