@@ -13,16 +13,16 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes;
 
+use PHPStan\Type\Type;
+use PHPStan\Analyser\Scope;
+use PHPStan\Type\ArrayType;
 use Illuminate\Http\Request;
+use PHPStan\Type\ObjectType;
+use PHPStan\Type\IntegerType;
 use Illuminate\Http\UploadedFile;
 use PhpParser\Node\Expr\MethodCall;
-use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Type\ArrayType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
-use PHPStan\Type\IntegerType;
-use PHPStan\Type\ObjectType;
-use PHPStan\Type\Type;
 
 /**
  * @internal
