@@ -17,10 +17,8 @@ use Illuminate\Http\Request;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Type\ArrayType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\IntegerType;
-use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
 /**
