@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class RequestFileExtension
 {
-
     public function testRequestFileStore()
     {
         $request = new Request();
