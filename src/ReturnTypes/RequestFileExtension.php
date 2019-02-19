@@ -59,7 +59,7 @@ final class RequestFileExtension implements DynamicMethodReturnTypeExtension
             return new ArrayType(new IntegerType(), new ObjectType(UploadedFile::class));
         }
         $defaultType = new NullType();
-        if(isset($methodCall->args[1])) {
+        if (isset($methodCall->args[1])) {
             $defaultType = $scope->getType($methodCall->args[1]->value);
         }
 
