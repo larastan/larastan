@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes\Helpers;
 
-use PhpParser\Node\Expr\FuncCall;
+use PHPStan\Type\Type;
 use PHPStan\Analyser\Scope;
+use PHPStan\Type\ObjectType;
+use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
-use PHPStan\Type\ObjectType;
-use PHPStan\Type\Type;
 
 /**
  * @internal
