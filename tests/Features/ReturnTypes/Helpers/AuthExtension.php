@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Features\ReturnTypes\Helpers;
 
-use Illuminate\Contracts\Auth\Factory;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Contracts\Auth\Factory;
 
 class AuthExtension
 {
