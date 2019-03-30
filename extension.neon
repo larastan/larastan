@@ -13,7 +13,7 @@ parameters:
         - '#Method App\\Exceptions\\Handler::render\(\) should return Illuminate\\Http\\Response but returns Symfony\\Component\\HttpFoundation\\Response#'
         - '#Property App\\Http\\Middleware\\TrustProxies::\$headers \(string\) does not accept default value of type int#'
         # Ignore error from issue #244
-        - '#Cannot call method viaRequest\(\) on Illuminate\\Auth\AuthManager\|null\.#'
+        - '#Cannot call method viaRequest\(\) on Illuminate\\Auth\\AuthManager\|null\.#'
     bootstrap: %rootDir%/../../nunomaduro/larastan/bootstrap.php
     reportUnmatchedIgnoredErrors: false
 
