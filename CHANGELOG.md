@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.16] - 2019-03-30
+### Added
+- Support to Lumen (Put commit here)
+
+### Fixes
+- Void return type on Models (Put commit here)
+
 ## [0.3.15] - 2019-01-23
 ### Added
 - Support to Laravel 5.8 ([0949fa5](https://github.com/nunomaduro/larastan/commit/0949fa59dea711c462c2d7a3a26b4a4a6cbafbf1))
