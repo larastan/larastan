@@ -68,8 +68,11 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, Br
      */
     public function isStaticMethodSupported(MethodReflection $methodReflection): bool
     {
-        return $methodReflection->getDeclaringClass()
-            ->hasNativeMethod($methodReflection->getName());
+        $name = $methodReflection->getName();
+        if ($name === '__construct') {
+            return false;
+        }
+        return $methodReflection->getDeclaringClass()->hasNativeMethod($name);
     }
 
     /**
