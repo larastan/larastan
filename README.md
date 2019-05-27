@@ -39,16 +39,6 @@ Once you have installed Larastan, you may start analyzing your code using the `c
 php artisan code:analyse
 ```
 
-### Usage in Lumen Applications
-Add the following lines into your app/Providers/AppServiceProvider:
-```
-public function register()
-{
-    $this->app->register(\NunoMaduro\Larastan\LarastanServiceProvider::class);
-    $this->app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');
-    $this->app->instance('path.config', app()->basePath() . DIRECTORY_SEPARATOR . 'config');
-}
-```
 #### Custom configuration
 If you would like to provide your own configuration, you can create a `phpstan.neon` or `phpstan.neon.dist` file in the root of your application. It might look like this:
 ```
@@ -64,6 +54,17 @@ parameters:
 ```
 
 For all available options, please take a look at the [PHPStan documentation](https://github.com/phpstan/phpstan).
+
+### Lumen installation
+Add the following lines into your app/Providers/AppServiceProvider:
+```
+public function register()
+{
+    $this->app->register(\NunoMaduro\Larastan\LarastanServiceProvider::class);
+    $this->app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');
+    $this->app->instance('path.config', app()->basePath() . DIRECTORY_SEPARATOR . 'config');
+}
+```
 
 ### Usage in Packages for Laravel
 
