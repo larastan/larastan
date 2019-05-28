@@ -55,6 +55,17 @@ parameters:
 
 For all available options, please take a look at the [PHPStan documentation](https://github.com/phpstan/phpstan).
 
+### Lumen installation
+Add the following lines into your app/Providers/AppServiceProvider:
+```
+public function register()
+{
+    $this->app->register(\NunoMaduro\Larastan\LarastanServiceProvider::class);
+    $this->app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');
+    $this->app->instance('path.config', app()->basePath() . DIRECTORY_SEPARATOR . 'config');
+}
+```
+
 ### Usage in Packages for Laravel
 
 Once you have installed Larastan, create a file `phpstan.neon.dist` on the root of your package with the content:
