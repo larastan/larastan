@@ -65,7 +65,7 @@ final class BuilderLocalMacros implements PipeContract
                 $macro->setIsStatic(true);
 
                 $passable->setMethodReflection($passable->getMethodReflectionFactory()->create($classReflection, null,
-                    $macro, $parameters, new ObjectType($classReflection->getName()), null, false, false,
+                    $macro, $parameters, new ObjectType($classReflection->getName()), null, null, false, false,
                     false));
                 $found = true;
             }

@@ -78,6 +78,7 @@ final class Macros implements PipeContract
                             $parameters,
                             null,
                             null,
+                            null,
                             false,
                             false,
                             false
