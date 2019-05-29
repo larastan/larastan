@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.17] - 2019-05-29
+### Fixes
+- Issue with PHPStan 0.11.8 because of MethodReflectionFactory signature change ([#270](https://github.com/nunomaduro/larastan/pull/270))
+
 ## [0.3.16] - 2019-03-30
 ### Added
 - Support to Lumen (Put commit here)
