@@ -40,12 +40,12 @@ class ModelExtension
 
     public function testDynamicWhere(): Thread
     {
-        return (new Thread)->whereFoo('bar');
+        return (new Thread)->whereFoo(['bar']);
     }
 
     public function testStaticDynamicWhere(): Thread
     {
-        return Thread::whereFoo('bar');
+        return Thread::whereFoo(['bar']);
     }
 }
 
