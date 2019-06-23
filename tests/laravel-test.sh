@@ -2,16 +2,13 @@
 
 set -e
 
-echo "Prevent shallow repository error"
-git fetch --unshallow
-
 echo "Install Laravel"
-travis_retry composer create-project --quiet --prefer-dist "laravel/laravel" laravel
-cd laravel/
+travis_retry composer create-project --quiet --prefer-dist "laravel/laravel" ../laravel
+cd ../laravel/
 
 echo "Add package from source"
-sed -e 's|"type": "project",|&\n"repositories": [ { "type": "vcs", "url": "../" } ],|' -i composer.json
-travis_retry composer require --dev "nunomaduro/larastan:dev-master#${TRAVIS_COMMIT}"
+sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan" } ],|' -i composer.json
+travis_retry composer require --dev "nunomaduro/larastan:*"
 
 echo "Fix https://github.com/laravel/framework/pull/23825"
 sed -e 's|@return \\Illuminate\\Http\\Response$|@return \\Symfony\\Component\\HttpFoundation\\Response|' \
@@ -22,12 +19,12 @@ php artisan code:analyse --level=max
 cd -
 
 echo "Install Lumen"
-travis_retry composer create-project --quiet --prefer-dist "laravel/lumen" lumen
-cd lumen/
+travis_retry composer create-project --quiet --prefer-dist "laravel/lumen" ../lumen
+cd ../lumen/
 
 echo "Add package from source"
-sed -e 's|"type": "project",|&\n"repositories": [ { "type": "vcs", "url": "../" } ],|' -i composer.json
-travis_retry composer require --dev "nunomaduro/larastan:dev-master#${TRAVIS_COMMIT}"
+sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan" } ],|' -i composer.json
+travis_retry composer require --dev "nunomaduro/larastan:*"
 
 echo "Add Larastan to Lumen"
 cat <<"EOF" | patch -p 0
