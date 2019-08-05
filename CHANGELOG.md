@@ -189,7 +189,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.3.14...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.3.18...HEAD
+[0.3.18]: https://github.com/nunomaduro/larastan/compare/v0.3.17...v0.3.18
+[0.3.17]: https://github.com/nunomaduro/larastan/compare/v0.3.16...v0.3.17
+[0.3.16]: https://github.com/nunomaduro/larastan/compare/v0.3.15...v0.3.16
+[0.3.15]: https://github.com/nunomaduro/larastan/compare/v0.3.14...v0.3.15
 [0.3.14]: https://github.com/nunomaduro/larastan/compare/v0.3.13...v0.3.14
 [0.3.13]: https://github.com/nunomaduro/larastan/compare/v0.3.12...v0.3.13
 [0.3.12]: https://github.com/nunomaduro/larastan/compare/v0.3.11...v0.3.12
