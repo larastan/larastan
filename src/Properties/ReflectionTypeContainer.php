@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Properties;
 
-use ReflectionType;
+use ReflectionNamedType;
 
 /**
  * @internal
  */
-final class ReflectionTypeContainer extends ReflectionType
+final class ReflectionTypeContainer extends ReflectionNamedType
 {
     /**
      * @var string
