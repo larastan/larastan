@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.19] - 2019-08-16
+### Added
+- Partial support to `auth` helper ([#254](https://github.com/nunomaduro/larastan/pull/254))
+
+### Fixed
+- Compatibility with PHPStan 0.11.13 ([#294](https://github.com/nunomaduro/larastan/pull/294))
+
 ## [0.3.18] - 2019-08-04
 ### Added
 - Support to Laravel 6 ([2be403c](https://github.com/nunomaduro/larastan/commit/2be403c784d0f4b84449b1b4f91b5c6ace3585a1))
@@ -189,7 +196,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.3.18...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.3.19...HEAD
+[0.3.19]: https://github.com/nunomaduro/larastan/compare/v0.3.18...v0.3.19
 [0.3.18]: https://github.com/nunomaduro/larastan/compare/v0.3.17...v0.3.18
 [0.3.17]: https://github.com/nunomaduro/larastan/compare/v0.3.16...v0.3.17
 [0.3.16]: https://github.com/nunomaduro/larastan/compare/v0.3.15...v0.3.16
