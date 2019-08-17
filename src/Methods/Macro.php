@@ -13,17 +13,20 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
-use ReflectionClass;
-use PHPStan\Reflection\Php\BuiltinMethodReflection;
+use PHPStan\Type\Type;
+use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\FunctionVariant;
+use PHPStan\Reflection\MethodReflection;
+use PHPStan\Reflection\ClassMemberReflection;
 
-final class Macro implements BuiltinMethodReflection
+final class Macro implements MethodReflection
 {
     /**
      * The class name.
      *
-     * @var string
+     * @var ClassReflection
      */
-    private $className;
+    private $declaringClass;
 
     /**
      * The method name.
@@ -33,48 +36,53 @@ final class Macro implements BuiltinMethodReflection
     private $methodName;
 
     /**
-     * The reflection function.
-     *
-     * @var \ReflectionFunction
-     */
-    private $reflectionFunction;
-
-    /**
-     * The parameters.
-     *
-     * @var array
+     * @var \PHPStan\Reflection\ParameterReflection[]
      */
     private $parameters;
+
+    /**
+     * @var bool
+     */
+    private $isVariadic;
+
+    /**
+     * @var \PHPStan\Type\Type
+     */
+    private $returnType;
 
     /**
      * The is static.
      *
      * @var bool
      */
-    private $isStatic = false;
+    private $isStatic;
 
     /**
      * Macro constructor.
      *
-     * @param string $className
+     * @param \PHPStan\Reflection\ClassReflection $declaringClass
      * @param string $methodName
-     * @param \ReflectionFunction $reflectionFunction
+     * @param \PHPStan\Reflection\ParameterReflection[] $parameters
+     * @param bool $isVariadic
+     * @param \PHPStan\Type\Type $returnType
+     * @param bool $isStatic
      */
-    public function __construct(string $className, string $methodName, \ReflectionFunction $reflectionFunction)
+    public function __construct(ClassReflection $declaringClass, string $methodName, array $parameters, bool $isVariadic, Type $returnType, bool $isStatic)
     {
-        $this->className = $className;
+        $this->declaringClass = $declaringClass;
         $this->methodName = $methodName;
-        $this->reflectionFunction = $reflectionFunction;
-        $this->parameters = $this->reflectionFunction->getParameters();
-        $this->isStatic = false;
+        $this->parameters = $parameters;
+        $this->isVariadic = $isVariadic;
+        $this->returnType = $returnType;
+        $this->isStatic = $isStatic;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getDeclaringClass(): ReflectionClass
+    public function getDeclaringClass(): ClassReflection
     {
-        return new ReflectionClass($this->className);
+        return $this->declaringClass;
     }
 
     /**
@@ -102,34 +110,6 @@ final class Macro implements BuiltinMethodReflection
     }
 
     /**
-     * Set the is static value.
-     *
-     * @param bool $isStatic
-     *
-     * @return void
-     */
-    public function setIsStatic(bool $isStatic): void
-    {
-        $this->isStatic = $isStatic;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDocComment()
-    {
-        return $this->reflectionFunction->getDocComment();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getFileName()
-    {
-        return $this->reflectionFunction->getFileName();
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getName(): string
@@ -137,70 +117,17 @@ final class Macro implements BuiltinMethodReflection
         return $this->methodName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getParameters(): array
+    public function getVariants(): array
     {
-        return $this->parameters;
-    }
-
-    /**
-     * Set the parameters value.
-     *
-     * @param array $parameters
-     *
-     * @return void
-     */
-    public function setParameters(array $parameters): void
-    {
-        $this->parameters = $parameters;
+        return [
+            new FunctionVariant($this->parameters, $this->isVariadic, $this->returnType),
+        ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getReturnType(): ?\ReflectionType
-    {
-        return $this->reflectionFunction->getReturnType();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getStartLine()
-    {
-        return $this->reflectionFunction->getStartLine();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getEndLine()
-    {
-        return $this->reflectionFunction->getEndLine();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isDeprecated(): bool
-    {
-        return $this->reflectionFunction->isDeprecated();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function isVariadic(): bool
-    {
-        return $this->reflectionFunction->isVariadic();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPrototype(): BuiltinMethodReflection
+    public function getPrototype(): ClassMemberReflection
     {
         return $this;
     }

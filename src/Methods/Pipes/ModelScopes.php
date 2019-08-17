@@ -15,6 +15,7 @@ namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
 use Mockery;
+use function array_values;
 use Illuminate\Database\Eloquent\Model;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
@@ -42,6 +43,7 @@ final class ModelScopes implements PipeContract
             $variant = $methodReflection->getVariants()[0];
             $parameters = $variant->getParameters();
             unset($parameters[0]); // The query argument.
+            $parameters = array_values($parameters);
 
             $variant = Mockery::mock($variant);
             $variant->shouldReceive('getParameters')

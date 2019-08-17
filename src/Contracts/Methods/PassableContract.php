@@ -13,7 +13,6 @@ namespace NunoMaduro\Larastan\Contracts\Methods;
 use PHPStan\Broker\Broker;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
 use Illuminate\Contracts\Container\Container as ContainerContract;
 
 /**
@@ -97,9 +96,4 @@ interface PassableContract
      * @return \PHPStan\Broker\Broker
      */
     public function getBroker(): Broker;
-
-    /**
-     * @return \PHPStan\Reflection\Php\PhpMethodReflectionFactory
-     */
-    public function getMethodReflectionFactory(): PhpMethodReflectionFactory;
 }
