@@ -14,9 +14,11 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
+use PhpParser\Node\Name;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Methods\Macro;
 use Illuminate\Support\Traits\Macroable;
+use PHPStan\Reflection\ParametersAcceptorSelector;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 
@@ -63,27 +65,22 @@ final class Macros implements PipeContract
             $className = (string) $className;
 
             if ($found = $className::hasMacro($passable->getMethodName())) {
-                $reflectionFunction = new \ReflectionFunction($refProperty->getValue()[$passable->getMethodName()]);
-                /** @var \PHPStan\Type\Type[] $parameters */
-                $parameters = $reflectionFunction->getParameters();
-
-                $passable->setMethodReflection(
-                    $passable->getMethodReflectionFactory()
-                        ->create(
+                $functionName = new Name($refProperty->getValue()[$passable->getMethodName()]);
+                $broker = $passable->getBroker();
+                if ($broker->hasFunction($functionName, null)) {
+                    $functionReflection = $broker->getFunction($functionName, null);
+                    $functionVariant = ParametersAcceptorSelector::selectSingle($functionReflection->getVariants());
+                    $passable->setMethodReflection(
+                        new Macro(
                             $classReflection,
-                            null,
-                            new Macro(
-                                $classReflection->getName(), $passable->getMethodName(), $reflectionFunction
-                            ),
-                            $parameters,
-                            null,
-                            null,
-                            null,
-                            false,
-                            false,
+                            $passable->getMethodName(),
+                            $functionVariant->getParameters(),
+                            $functionVariant->isVariadic(),
+                            $functionVariant->getReturnType(),
                             false
                         )
-                );
+                    );
+                }
             }
         }
 

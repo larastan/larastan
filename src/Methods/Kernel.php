@@ -17,7 +17,6 @@ use PHPStan\Broker\Broker;
 use Illuminate\Pipeline\Pipeline;
 use NunoMaduro\Larastan\Concerns;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 
 /**
@@ -26,22 +25,6 @@ use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 final class Kernel
 {
     use Concerns\HasContainer;
-
-    /**
-     * @var \PHPStan\Reflection\Php\PhpMethodReflectionFactory
-     */
-    private $methodReflectionFactory;
-
-    /**
-     * Kernel constructor.
-     *
-     * @param \PHPStan\Reflection\Php\PhpMethodReflectionFactory $methodReflectionFactory
-     */
-    public function __construct(
-        PhpMethodReflectionFactory $methodReflectionFactory
-    ) {
-        $this->methodReflectionFactory = $methodReflectionFactory;
-    }
 
     /**
      * @param \PHPStan\Broker\Broker $broker
@@ -54,7 +37,7 @@ final class Kernel
     {
         $pipeline = new Pipeline($this->getContainer());
 
-        $passable = new Passable($this->methodReflectionFactory, $broker, $pipeline, $classReflection, $methodName);
+        $passable = new Passable($broker, $pipeline, $classReflection, $methodName);
 
         $pipeline->send($passable)
             ->through(
