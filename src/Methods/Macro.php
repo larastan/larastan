@@ -93,6 +93,21 @@ final class Macro implements BuiltinMethodReflection
         return true;
     }
 
+    public function isFinal(): bool
+    {
+        return false;
+    }
+
+    public function isInternal(): bool
+    {
+        return false;
+    }
+
+    public function isAbstract(): bool
+    {
+        return false;
+    }
+
     /**
      * {@inheritdoc}
      */
