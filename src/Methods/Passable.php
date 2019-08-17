@@ -21,6 +21,7 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use Illuminate\Contracts\Pipeline\Pipeline;
 use PHPStan\Reflection\Php\PhpMethodReflection;
+use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 
 /**
@@ -29,6 +30,11 @@ use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 final class Passable implements PassableContract
 {
     use Concerns\HasContainer;
+
+    /**
+     * @var \PHPStan\Reflection\Php\PhpMethodReflectionFactory
+     */
+    private $methodReflectionFactory;
 
     /**
      * @var \PHPStan\Broker\Broker
@@ -63,17 +69,20 @@ final class Passable implements PassableContract
     /**
      * Method constructor.
      *
+     * @param \PHPStan\Reflection\Php\PhpMethodReflectionFactory $methodReflectionFactory
      * @param \PHPStan\Broker\Broker $broker
      * @param \Illuminate\Contracts\Pipeline\Pipeline $pipeline
      * @param \PHPStan\Reflection\ClassReflection $classReflection
      * @param string $methodName
      */
     public function __construct(
+        PhpMethodReflectionFactory $methodReflectionFactory,
         Broker $broker,
         Pipeline $pipeline,
         ClassReflection $classReflection,
         string $methodName
     ) {
+        $this->methodReflectionFactory = $methodReflectionFactory;
         $this->broker = $broker;
         $this->pipeline = $pipeline;
         $this->classReflection = $classReflection;
@@ -219,5 +228,13 @@ final class Passable implements PassableContract
     public function getBroker(): Broker
     {
         return $this->broker;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMethodReflectionFactory(): PhpMethodReflectionFactory
+    {
+        return $this->methodReflectionFactory;
     }
 }

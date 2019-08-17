@@ -17,6 +17,7 @@ use NunoMaduro\Larastan\Concerns;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\BrokerAwareExtension;
+use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 
 /**
@@ -34,11 +35,12 @@ final class Extension implements MethodsClassReflectionExtension, BrokerAwareExt
     /**
      * Extension constructor.
      *
+     * @param \PHPStan\Reflection\Php\PhpMethodReflectionFactory $methodReflectionFactory
      * @param \NunoMaduro\Larastan\Methods\Kernel|null $kernel
      */
-    public function __construct(Kernel $kernel = null)
+    public function __construct(PhpMethodReflectionFactory $methodReflectionFactory, Kernel $kernel = null)
     {
-        $this->kernel = $kernel ?? new Kernel();
+        $this->kernel = $kernel ?? new Kernel($methodReflectionFactory);
     }
 
     /**
