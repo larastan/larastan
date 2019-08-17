@@ -58,6 +58,7 @@ final class BuilderLocalMacros implements PipeContract
                 $reflectionFunction = new ReflectionFunction($localMacros[$passable->getMethodName()]);
                 $parameters = $reflectionFunction->getParameters();
                 unset($parameters[0]); // The query argument.
+                $parameters = array_values($parameters);
 
                 $macro = new Macro($classReflection->getName(), $passable->getMethodName(), $reflectionFunction);
 
