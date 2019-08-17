@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.20] - 2019-08-17
+### Fixed
+- Macro method detector class implements MethodReflection instead of BuiltinMethodReflection ([#298](https://github.com/nunomaduro/larastan/pull/298))
+
 ## [0.3.19] - 2019-08-16
 ### Added
 - Partial support to `auth` helper ([#254](https://github.com/nunomaduro/larastan/pull/254))
