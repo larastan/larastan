@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.3.21] - 2019-08-17
+### Fixed
+- Macro method detector class implements MethodReflection instead of BuiltinMethodReflection ([#299](https://github.com/nunomaduro/larastan/pull/299))
+
 ## [0.3.20] - 2019-08-17
 ### Fixed
 - Macro method detector class implements MethodReflection instead of BuiltinMethodReflection ([#298](https://github.com/nunomaduro/larastan/pull/298))
