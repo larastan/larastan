@@ -16,14 +16,13 @@ namespace NunoMaduro\Larastan\Methods\Pipes;
 use Closure;
 use ReflectionClass;
 use function in_array;
-use PhpParser\Node\Name;
-use function array_values;
+use ReflectionFunction;
+use PHPStan\Type\ObjectType;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Methods\Macro;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use PHPStan\Reflection\ParametersAcceptorSelector;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
@@ -55,22 +54,21 @@ final class BuilderLocalMacros implements PipeContract
             $refProperty->setAccessible(true);
             $localMacros = $refProperty->getValue($builder);
 
-            $broker = $passable->getBroker();
-
             if (array_key_exists($passable->getMethodName(), $localMacros)) {
-                $functionName = new Name($localMacros[$passable->getMethodName()]);
-                if ($broker->hasFunction($functionName, null)) {
-                    $functionReflection = $broker->getFunction($functionName, null);
-                    $functionVariant = ParametersAcceptorSelector::selectSingle($functionReflection->getVariants());
-                    $parameters = $functionVariant->getParameters();
-                    unset($parameters[0]); // The query argument.
-                    $parameters = array_values($parameters);
+                $reflectionFunction = new ReflectionFunction($localMacros[$passable->getMethodName()]);
+                $parameters = $reflectionFunction->getParameters();
+                unset($parameters[0]); // The query argument.
+                $parameters = array_values($parameters);
 
-                    $macro = new Macro($classReflection, $passable->getMethodName(), $parameters, $functionVariant->isVariadic(), $functionVariant->getReturnType(), true);
+                $macro = new Macro($classReflection->getName(), $passable->getMethodName(), $reflectionFunction);
 
-                    $passable->setMethodReflection($macro);
-                    $found = true;
-                }
+                $macro->setParameters($parameters);
+                $macro->setIsStatic(true);
+
+                $passable->setMethodReflection($passable->getMethodReflectionFactory()->create($classReflection, null,
+                    $macro, $parameters, new ObjectType($classReflection->getName()), null, null, false, false,
+                    false));
+                $found = true;
             }
         }
 
