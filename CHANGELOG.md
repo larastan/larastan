@@ -26,14 +26,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Support to Laravel 6 ([2be403c](https://github.com/nunomaduro/larastan/commit/2be403c784d0f4b84449b1b4f91b5c6ace3585a1))
 
 ## [0.3.17] - 2019-05-29
-### Fixes
+### Fixed
 - Issue with PHPStan 0.11.8 because of MethodReflectionFactory signature change ([#270](https://github.com/nunomaduro/larastan/pull/270))
 
 ## [0.3.16] - 2019-03-30
 ### Added
 - Support to Lumen (Put commit here)
 
-### Fixes
+### Fixed
 - Void return type on Models (Put commit here)
 
 ## [0.3.15] - 2019-01-23
@@ -204,7 +204,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.3.19...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.3.21...HEAD
+[0.3.21]: https://github.com/nunomaduro/larastan/compare/v0.3.20...v0.3.21
+[0.3.20]: https://github.com/nunomaduro/larastan/compare/v0.3.19...v0.3.20
 [0.3.19]: https://github.com/nunomaduro/larastan/compare/v0.3.18...v0.3.19
 [0.3.18]: https://github.com/nunomaduro/larastan/compare/v0.3.17...v0.3.18
 [0.3.17]: https://github.com/nunomaduro/larastan/compare/v0.3.16...v0.3.17
