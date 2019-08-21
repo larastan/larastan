@@ -120,7 +120,7 @@ final class CodeAnalyseCommand extends Command
 
         $paths = array_map(
             function ($path) {
-                return escapeshellarg(starts_with($path, DIRECTORY_SEPARATOR) || empty($path) ? $path : $this->laravel->basePath(
+                return escapeshellarg(starts_with($path, DIRECTORY_SEPARATOR) || preg_match('/^[A-Z]:\\\\/', $path) || empty($path) ? $path : $this->laravel->basePath(
                     trim($path)
                 ));
             },
