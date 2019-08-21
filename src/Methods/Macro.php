@@ -15,6 +15,7 @@ namespace NunoMaduro\Larastan\Methods;
 
 use Closure;
 use stdClass;
+use ErrorException;
 use ReflectionClass;
 use ReflectionFunction;
 use PHPStan\Reflection\Php\BuiltinMethodReflection;
@@ -69,7 +70,17 @@ final class Macro implements BuiltinMethodReflection
         $this->methodName = $methodName;
         $this->reflectionFunction = $reflectionFunction;
         $this->parameters = $this->reflectionFunction->getParameters();
-        $this->isStatic = $this->reflectionFunction->isClosure() && !@Closure::bind($this->reflectionFunction->getClosure(), new stdClass);
+        $this->isStatic = false;
+
+        if ($this->reflectionFunction->isClosure()) {
+            try {
+                Closure::bind($this->reflectionFunction->getClosure(), new stdClass);
+                // The closure can be bound so it was not explicitly marked as static
+            } catch (ErrorException $e) {
+                // The closure was explicitly marked as static
+                $this->isStatic = true;
+            }
+        }
     }
 
     /**
