@@ -13,7 +13,10 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
+use Closure;
+use stdClass;
 use ReflectionClass;
+use ReflectionFunction;
 use PHPStan\Reflection\Php\BuiltinMethodReflection;
 
 final class Macro implements BuiltinMethodReflection
@@ -35,7 +38,7 @@ final class Macro implements BuiltinMethodReflection
     /**
      * The reflection function.
      *
-     * @var \ReflectionFunction
+     * @var ReflectionFunction
      */
     private $reflectionFunction;
 
@@ -58,15 +61,15 @@ final class Macro implements BuiltinMethodReflection
      *
      * @param string $className
      * @param string $methodName
-     * @param \ReflectionFunction $reflectionFunction
+     * @param ReflectionFunction $reflectionFunction
      */
-    public function __construct(string $className, string $methodName, \ReflectionFunction $reflectionFunction)
+    public function __construct(string $className, string $methodName, ReflectionFunction $reflectionFunction)
     {
         $this->className = $className;
         $this->methodName = $methodName;
         $this->reflectionFunction = $reflectionFunction;
         $this->parameters = $this->reflectionFunction->getParameters();
-        $this->isStatic = false;
+        $this->isStatic = $this->reflectionFunction->isClosure() && !@Closure::bind($this->reflectionFunction->getClosure(), new stdClass);
     }
 
     /**

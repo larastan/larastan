@@ -12,8 +12,13 @@ Carbon::macro('foo', static function (): string {
 
 class CarbonExtension
 {
-    public function testCarbonMacro(): string
+    public function testCarbonMacroCalledStatically(): string
     {
-        return Carbon::foo().Carbon::now()->foo();
+        return Carbon::foo();
+    }
+
+    public function testCarbonMacroCalledDynamically(): string
+    {
+        return Carbon::now()->foo();
     }
 }
