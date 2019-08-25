@@ -21,6 +21,7 @@ before_install:
 
 install:
   - travis_retry composer update --no-interaction --no-suggest ${COMPOSER_FLAGS}
+  - travis_retry composer require --no-interaction --no-suggest "orchestra/testbench:^3.6"
 
 script:
   - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
