@@ -70,7 +70,14 @@ public function register()
 
 ### Usage in Packages for Laravel
 
-Once you have installed Larastan, also install `orchestra/testbench`
+> **Requires:**
+- **[orchestra/testbench 3.6+](https://github.com/orchestral/testbench)**
+
+Once you have installed Larastan, also install `orchestra/testbench`:
+
+```sh
+composer require --dev orchestra/testbench
+```
 
 Then create a file named `phpstan.neon.dist` in the root of your package with the content:
 ```
