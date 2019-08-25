@@ -40,6 +40,7 @@ php artisan code:analyse
 ```
 
 #### Custom configuration
+
 If you would like to provide your own configuration, you can create a `phpstan.neon` or `phpstan.neon.dist` file in the root of your application. It might look like this:
 ```
 includes:
@@ -56,6 +57,7 @@ parameters:
 For all available options, please take a look at the [PHPStan documentation](https://github.com/phpstan/phpstan).
 
 ### Lumen installation
+
 Add the following lines into your app/Providers/AppServiceProvider:
 ```
 public function register()
@@ -68,7 +70,16 @@ public function register()
 
 ### Usage in Packages for Laravel
 
-Once you have installed Larastan, create a file `phpstan.neon.dist` on the root of your package with the content:
+> **Requires:**
+- **[orchestra/testbench 3.6+](https://github.com/orchestral/testbench)**
+
+Once you have installed Larastan, also install `orchestra/testbench`:
+
+```sh
+composer require --dev orchestra/testbench
+```
+
+Then create a file named `phpstan.neon.dist` in the root of your package with the content:
 ```
 includes:
     - ./vendor/nunomaduro/larastan/extension.neon
@@ -117,6 +128,7 @@ Thank you for considering to contribute to Larastan. All the contribution guidel
 You can have a look at the [CHANGELOG](CHANGELOG.md) for constant updates & detailed information about the changes. You can also follow the Twitter account for latest announcements or just come say hi!: [@enunomaduro](https://twitter.com/enunomaduro).
 
 ## Support the development
+
 **Do you like this project? Support it by donating**
 
 - PayPal: [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=66BYDWAT92N6L)

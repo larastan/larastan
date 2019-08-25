@@ -9,6 +9,9 @@ filter:
 
 build:
     tests:
+        before:
+            -
+                command: 'composer require --no-interaction --no-suggest "orchestra/testbench:^3.6"'
         override:
             - php-scrutinizer-run
             -
