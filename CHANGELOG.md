@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.4.0] - 2019-08-28
+### Added
+- Support to `Carbon` macros ([#301](https://github.com/nunomaduro/larastan/pull/301))
+
+### Fixed
+- Support to `laravel/framework:^6.0` without `laravel/helpers` package ([#311](https://github.com/nunomaduro/larastan/pull/311))
+
+### Removed
+- Dependency of `orchestra/testbench` in Laravel projects ([#305](https://github.com/nunomaduro/larastan/pull/305))
+
 ## [0.3.21] - 2019-08-17
 ### Fixed
 - Macro method detector class implements MethodReflection instead of BuiltinMethodReflection ([#299](https://github.com/nunomaduro/larastan/pull/299))
