@@ -30,11 +30,12 @@ echo "Add Larastan to Lumen"
 cat <<"EOF" | patch -p 0
 --- bootstrap/app.php     2019-02-15 12:31:48.469773495 +0000
 +++ bootstrap/app.php     2019-02-15 12:27:43.358369317 +0000
-@@ -23,6 +23,8 @@
+@@ -23,6 +23,9 @@
      dirname(__DIR__)
  );
 
 +$app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');
++$app->configure('view');
 +
  // $app->withFacades();
 
