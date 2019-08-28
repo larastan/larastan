@@ -16,6 +16,8 @@ namespace NunoMaduro\Larastan\Methods\Pipes;
 use Closure;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Methods\Macro;
+use Carbon\Traits\Macro as CarbonMacro;
+use PHPStan\Reflection\ClassReflection;
 use Illuminate\Support\Traits\Macroable;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
@@ -27,6 +29,17 @@ final class Macros implements PipeContract
 {
     use Concerns\HasContainer;
 
+    private function hasIndirectTraitUse(ClassReflection $class, string $traitName): bool
+    {
+        foreach ($class->getTraits() as $trait) {
+            if ($this->hasIndirectTraitUse($trait, $traitName)) {
+                return true;
+            }
+        }
+
+        return $class->hasTraitUse($traitName);
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -36,28 +49,33 @@ final class Macros implements PipeContract
 
         $className = null;
         $found = false;
+        $macroTraitProperty = null;
 
         if ($classReflection->isInterface()) {
             $concrete = $this->resolve($classReflection->getName());
 
             if ($concrete !== null) {
                 $className = get_class($concrete);
-                $haveTrait = $passable->getBroker()
+
+                if ($passable->getBroker()
                     ->getClass($className)
-                    ->hasTraitUse(Macroable::class);
-            } else {
-                $className = null;
-                $haveTrait = false;
+                    ->hasTraitUse(Macroable::class)) {
+                    $macroTraitProperty = 'macros';
+                }
             }
-        } else {
+        } elseif ($classReflection->hasTraitUse(Macroable::class)) {
             /** @var \Illuminate\Support\Traits\Macroable $macroable */
             $className = $classReflection->getName();
-            $haveTrait = $classReflection->hasTraitUse(Macroable::class);
+            $macroTraitProperty = 'macros';
+        } elseif ($this->hasIndirectTraitUse($classReflection, CarbonMacro::class)) {
+            /** @var \Illuminate\Support\Traits\Macroable $macroable */
+            $className = $classReflection->getName();
+            $macroTraitProperty = 'globalMacros';
         }
 
-        if ($haveTrait) {
+        if ($macroTraitProperty) {
             $refObject = new \ReflectionClass($className);
-            $refProperty = $refObject->getProperty('macros');
+            $refProperty = $refObject->getProperty($macroTraitProperty);
             $refProperty->setAccessible(true);
 
             $className = (string) $className;

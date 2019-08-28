@@ -15,6 +15,7 @@ namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
 use Mockery;
+use Illuminate\Support\Str;
 use Illuminate\Database\Query\Builder;
 use PHPStan\Reflection\FunctionVariantWithPhpDocs;
 use PHPStan\Reflection\ParametersAcceptorSelector;
@@ -37,7 +38,7 @@ final class BuilderDynamicWheres implements PipeContract
                 Builder::class
             );
 
-        if ($isInstanceOfBuilder && starts_with($passable->getMethodName(), 'where')) {
+        if ($isInstanceOfBuilder && Str::startsWith($passable->getMethodName(), 'where')) {
             $methodReflection = $classReflection->getNativeMethod('dynamicWhere');
 
             /** @var \PHPStan\Reflection\FunctionVariantWithPhpDocs $originalDynamicWhereVariant */
