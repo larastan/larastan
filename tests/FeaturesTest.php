@@ -35,14 +35,14 @@ class FeaturesTest extends TestCase
     public function getFeatures(): array
     {
         $calls = [];
-        $baseDir = __DIR__.'/Features/';
+        $baseDir = __DIR__.DIRECTORY_SEPARATOR.'Features'.DIRECTORY_SEPARATOR;
 
         /** @var \Symfony\Component\Finder\SplFileInfo $file */
         foreach ((new Finder())->in($baseDir)->files() as $file) {
             if ($file->getExtension() !== 'php') {
                 continue;
             }
-            $fullPath = (string) $file;
+            $fullPath = realpath((string) $file);
             $calls[str_replace($baseDir, '', $fullPath)] = [$fullPath];
         }
 
@@ -64,7 +64,7 @@ class FeaturesTest extends TestCase
         $result = $this->kernel->call('code:analyse', [
             '--level' => 'max',
             '--paths' => $file,
-            '--bin-path' => __DIR__.'/../vendor/bin',
+            '--bin-path' => __DIR__.'/../vendor/phpstan/phpstan/bin',
             '--autoload-file' => __DIR__.'/../vendor/autoload.php',
             '--error-format' => 'raw',
             '--no-tty' => true,

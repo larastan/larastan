@@ -6,14 +6,19 @@ namespace Tests\Features\Methods;
 
 use Carbon\Carbon;
 
+Carbon::macro('foo', static function (): string {
+    return 'foo';
+});
+
 class CarbonExtension
 {
-    public function testCarbonMacro(): string
+    public function testCarbonMacroCalledStatically(): string
     {
-        Carbon::macro('foo', function (): string {
-            return 'foo';
-        });
+        return Carbon::foo();
+    }
 
-        return Carbon::foo().Carbon::now()->foo();
+    public function testCarbonMacroCalledDynamically(): string
+    {
+        return Carbon::now()->foo();
     }
 }
