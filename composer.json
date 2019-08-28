@@ -24,7 +24,7 @@
     },
     "require-dev": {
         "orchestra/testbench": "^3.8",
-        "phpunit/phpunit": "^8.2"
+        "phpunit/phpunit": "^7.3 || ^8.2"
     },
     "suggest": {
         "orchestra/testbench": "^3.6"
