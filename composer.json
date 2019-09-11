@@ -1,5 +1,6 @@
 {
     "name": "nunomaduro/larastan",
+    "type": "phpstan-extension",
     "description": "Larastan - Discover bugs in your code without running it. A phpstan/phpstan wrapper for Laravel",
     "keywords": ["laravel", "larastan", "phpstan", "php", "package", "static analysis", "code analysis", "code analyse"],
     "license": "MIT",
@@ -50,6 +51,11 @@
         "laravel": {
             "providers": [
                 "NunoMaduro\\Larastan\\LarastanServiceProvider"
+            ]
+        },
+        "phpstan": {
+            "includes": [
+                "extension.neon"
             ]
         }
     },
