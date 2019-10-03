@@ -13,4 +13,14 @@ class AuthExtension
     {
         return Auth::user();
     }
+
+    public function testCheck(): bool
+    {
+        return Auth::check();
+    }
+
+    public function testId(): ?int
+    {
+        return Auth::id();
+    }
 }

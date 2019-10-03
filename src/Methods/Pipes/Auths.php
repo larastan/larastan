@@ -14,13 +14,14 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
-use function in_array;
-use NunoMaduro\Larastan\Concerns;
+use Illuminate\Contracts\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
-use Illuminate\Contracts\Auth\Access\Authorizable;
+use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
+use PHPStan\Reflection\Native\NativeMethodReflection;
+use function in_array;
 
 /**
  * @internal
@@ -56,6 +57,10 @@ final class Auths implements PipeContract
             if ($userModel) {
                 $found = $passable->sendToPipeline($userModel);
             }
+        } else if ($classReflectionName === \Illuminate\Contracts\Auth\Factory::class || $classReflectionName === \Illuminate\Auth\AuthManager::class) {
+            $found = $passable->searchOn(
+                get_class($this->resolve(\Illuminate\Contracts\Auth\Guard::class))
+            );
         }
 
         if (! $found) {
