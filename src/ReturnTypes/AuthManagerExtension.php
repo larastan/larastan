@@ -2,17 +2,16 @@
 
 namespace NunoMaduro\Larastan\ReturnTypes;
 
+use PHPStan\Type\Type;
+use PHPStan\Analyser\Scope;
+use PHPStan\Type\ObjectType;
 use Illuminate\Auth\AuthManager;
-use Illuminate\Contracts\Auth\Guard;
+use PHPStan\Type\TypeCombinator;
 use NunoMaduro\Larastan\Concerns;
 use PhpParser\Node\Expr\MethodCall;
-use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
-use PHPStan\Type\ObjectType;
-use PHPStan\Type\Type;
-use PHPStan\Type\TypeCombinator;
 
 final class AuthManagerExtension implements DynamicMethodReturnTypeExtension
 {
