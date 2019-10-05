@@ -95,11 +95,16 @@ final class ApplicationResolver
      * @param string $namespace
      *
      * @return string[]
+     * @throws \ReflectionException
      */
     private static function getProjectSearchDirs(string $namespace): array
     {
-        $file = getcwd().DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'composer'
-                .DIRECTORY_SEPARATOR.'autoload_psr4.php';
+        $reflection = new \ReflectionClass(\Composer\Autoload\ClassLoader::class);
+        /** @var string $filename */
+        $filename = $reflection->getFileName();
+        $vendorDir = dirname(dirname($filename));
+
+        $file = $vendorDir.DIRECTORY_SEPARATOR.'composer'.DIRECTORY_SEPARATOR.'autoload_psr4.php';
         $raw = require_once $file;
 
         return $raw[$namespace];
