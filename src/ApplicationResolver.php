@@ -29,6 +29,7 @@ final class ApplicationResolver
      * Creates an application and registers service providers found.
      *
      * @return \Illuminate\Contracts\Foundation\Application
+     * @throws \ReflectionException
      */
     public static function resolve(): Application
     {
@@ -75,6 +76,7 @@ final class ApplicationResolver
      * @param string $namespace
      *
      * @return array
+     * @throws \ReflectionException
      */
     private static function getProjectClasses(string $namespace): array
     {
