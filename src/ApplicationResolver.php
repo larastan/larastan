@@ -39,7 +39,7 @@ final class ApplicationResolver
         if (file_exists($composerFile)) {
             $namespace = (string) key(json_decode((string) file_get_contents($composerFile), true)['autoload']['psr-4']);
 
-            $serviceProviders = array_values(array_filter(self::getProjectClasses(), function (string $class) use (
+            $serviceProviders = array_values(array_filter(self::getProjectClasses($namespace), function (string $class) use (
                 $namespace
             ) {
                 return substr($class, 0, strlen($namespace)) === $namespace && self::isServiceProvider($class);
@@ -72,11 +72,13 @@ final class ApplicationResolver
     }
 
     /**
+     * @param string $namespace
+     *
      * @return array
      */
-    private static function getProjectClasses(): array
+    private static function getProjectClasses(string $namespace): array
     {
-        $files = Finder::create()->files()->name('*.php')->in(self::getProjectSearchDirs());
+        $files = Finder::create()->files()->name('*.php')->in(self::getProjectSearchDirs($namespace));
 
         foreach ($files->files() as $file) {
             try {
@@ -90,9 +92,11 @@ final class ApplicationResolver
     }
 
     /**
+     * @param string $namespace
+     *
      * @return string[]
      */
-    private static function getProjectSearchDirs(): array
+    private static function getProjectSearchDirs(string $namespace): array
     {
         return [getcwd() . DIRECTORY_SEPARATOR . 'src'];
     }
