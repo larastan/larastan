@@ -90,10 +90,10 @@ final class ApplicationResolver
     }
 
     /**
-     * @return string
+     * @return string[]
      */
-    private static function getProjectSearchDirs(): string
+    private static function getProjectSearchDirs(): array
     {
-        return getcwd() . DIRECTORY_SEPARATOR . 'src';
+        return [getcwd() . DIRECTORY_SEPARATOR . 'src'];
     }
 }
