@@ -16,6 +16,7 @@ namespace NunoMaduro\Larastan\ReturnTypes\Helpers;
 use PHPStan\Type\Type;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\ObjectType;
+use NunoMaduro\Larastan\Concerns;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
@@ -25,6 +26,8 @@ use PHPStan\Type\DynamicFunctionReturnTypeExtension;
  */
 final class AuthExtension implements DynamicFunctionReturnTypeExtension
 {
+    use Concerns\HasContainer;
+
     /**
      * {@inheritdoc}
      */
@@ -42,7 +45,7 @@ final class AuthExtension implements DynamicFunctionReturnTypeExtension
         Scope $scope
     ): Type {
         if (! isset($functionCall->args[0]->value) || (isset($functionCall->args[0]->value) && $functionCall->args[0]->value === null)) {
-            return new ObjectType(\Illuminate\Contracts\Auth\Factory::class);
+            return new ObjectType(get_class($this->resolve(\Illuminate\Contracts\Auth\Factory::class)));
         }
 
         return new ObjectType(\Illuminate\Contracts\Auth\Guard::class);
