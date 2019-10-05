@@ -2,9 +2,9 @@
 
 namespace Tests;
 
+use Orchestra\Testbench\TestCase;
 use NunoMaduro\Larastan\ApplicationResolver;
 use NunoMaduro\Larastan\LarastanServiceProvider;
-use Orchestra\Testbench\TestCase;
 
 class ApplicationResolverTest extends TestCase
 {
@@ -14,7 +14,7 @@ class ApplicationResolverTest extends TestCase
         $resolve = $result->getProviders(LarastanServiceProvider::class);
         $this->assertTrue(
             is_array($resolve) && 0 < count($resolve),
-            "LarastanServiceProvider not loaded by ApplicationResolver"
+            'LarastanServiceProvider not loaded by ApplicationResolver'
         );
     }
 }
