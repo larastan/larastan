@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan;
 
+use Composer\Autoload\ClassLoader;
 use function in_array;
 use Symfony\Component\Finder\Finder;
 use Illuminate\Contracts\Foundation\Application;
@@ -98,6 +99,9 @@ final class ApplicationResolver
      */
     private static function getProjectSearchDirs(string $namespace): array
     {
-        return [getcwd() . DIRECTORY_SEPARATOR . 'src'];
+        $file = getcwd() . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'composer'
+                . DIRECTORY_SEPARATOR . 'autoload_psr4.php';
+        $raw = require_once $file;
+        return $raw[$namespace];
     }
 }
