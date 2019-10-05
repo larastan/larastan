@@ -76,7 +76,7 @@ final class ApplicationResolver
      */
     private static function getProjectClasses(): array
     {
-        $files = Finder::create()->files()->name('*.php')->in(getcwd().DIRECTORY_SEPARATOR.'src');
+        $files = Finder::create()->files()->name('*.php')->in(self::getProjectSearchDirs());
 
         foreach ($files->files() as $file) {
             try {
@@ -87,5 +87,13 @@ final class ApplicationResolver
         }
 
         return get_declared_classes();
+    }
+
+    /**
+     * @return string
+     */
+    private static function getProjectSearchDirs(): string
+    {
+        return getcwd() . DIRECTORY_SEPARATOR . 'src';
     }
 }
