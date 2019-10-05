@@ -70,6 +70,7 @@ final class Kernel
                     Pipes\BuilderLocalMacros::class,
                     Pipes\BuilderDynamicWheres::class,
                     Pipes\RedirectResponseWiths::class,
+                    Pipes\ModelScopeAfterRelations::class,
                 ]
             )
             ->then(
