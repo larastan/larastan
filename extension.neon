@@ -39,6 +39,11 @@ services:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
 
     -
+        class: NunoMaduro\Larastan\ReturnTypes\AuthManagerExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
         class: NunoMaduro\Larastan\ReturnTypes\RequestExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
