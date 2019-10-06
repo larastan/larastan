@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan;
 
 use function in_array;
-use Symfony\Component\Finder\Finder;
+use Composer\Autoload\ClassMapGenerator;
 use Illuminate\Contracts\Foundation\Application;
 use Orchestra\Testbench\Concerns\CreatesApplication;
 
@@ -80,14 +80,18 @@ final class ApplicationResolver
      */
     private static function getProjectClasses(string $namespace): array
     {
-        $files = Finder::create()->files()->name('*.php')->in(self::getProjectSearchDirs($namespace));
+        $projectDirs = self::getProjectSearchDirs($namespace);
+        /** @var string[] $maps */
+        $maps = [];
+        // Use composer's ClassMapGenerator to pull the class list out of each project search directory
+        foreach ($projectDirs as $dir) {
+            $maps = array_merge($maps, ClassMapGenerator::createMap($dir));
+        }
 
-        foreach ($files->files() as $file) {
-            try {
-                require_once $file;
-            } catch (\Throwable $e) {
-                // ..
-            }
+        // now class list of maps are assembled, use class_exists calls to explicitly autoload them,
+        // while not running them
+        foreach ($maps as $class => $file) {
+            class_exists($class, true);
         }
 
         return get_declared_classes();
