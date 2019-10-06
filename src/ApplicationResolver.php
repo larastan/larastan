@@ -104,10 +104,10 @@ final class ApplicationResolver
         $reflection = new \ReflectionClass(\Composer\Autoload\ClassLoader::class);
         /** @var string $filename */
         $filename = $reflection->getFileName();
-        $vendorDir = dirname(dirname($filename));
+        $composerDir = dirname($filename);
 
-        $file = $vendorDir.DIRECTORY_SEPARATOR.'composer'.DIRECTORY_SEPARATOR.'autoload_psr4.php';
-        $raw = require_once $file;
+        $file = $composerDir.DIRECTORY_SEPARATOR.'autoload_psr4.php';
+        $raw = include $file;
 
         return $raw[$namespace];
     }
