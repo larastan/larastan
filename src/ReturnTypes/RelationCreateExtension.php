@@ -13,23 +13,23 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Collection;
-use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\Variable;
-use PhpParser\Node\Identifier;
-use PHPStan\Analyser\Scope;
+use PHPStan\Type\Type;
 use PHPStan\Broker\Broker;
-use PHPStan\Reflection\Annotations\AnnotationsPropertiesClassReflectionExtension;
-use PHPStan\Reflection\BrokerAwareExtension;
-use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\MethodReflection;
-use PHPStan\Type\DynamicMethodReturnTypeExtension;
-use PHPStan\Type\IntersectionType;
+use PHPStan\Analyser\Scope;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
-use PHPStan\Type\Type;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Expr\Variable;
+use Illuminate\Support\Collection;
+use PHPStan\Type\IntersectionType;
+use PhpParser\Node\Expr\MethodCall;
+use Illuminate\Database\Eloquent\Model;
+use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\MethodReflection;
+use PHPStan\Reflection\BrokerAwareExtension;
+use PHPStan\Type\DynamicMethodReturnTypeExtension;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use PHPStan\Reflection\Annotations\AnnotationsPropertiesClassReflectionExtension;
 
 class RelationCreateExtension implements DynamicMethodReturnTypeExtension, BrokerAwareExtension
 {
@@ -105,7 +105,7 @@ class RelationCreateExtension implements DynamicMethodReturnTypeExtension, Broke
     private function determineCallingClass(Scope $scope, string $context) : ClassReflection
     {
         /** @var string $className */
-        $className = current(array_filter($scope->debug(), function (string $key) use($context) {
+        $className = current(array_filter($scope->debug(), function (string $key) use ($context) {
             return mb_strpos($key, $context) !== false;
         }, ARRAY_FILTER_USE_KEY));
 

@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Features\ReturnTypes;
 
-use App\Account;
 use App\User;
-use Exception;
+use App\Account;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Collection;
 
 class ModelExtension
 {
