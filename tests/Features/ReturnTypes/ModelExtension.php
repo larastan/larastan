@@ -48,3 +48,14 @@ class ModelWithoutPropertyAnnotation extends Model
         return $this->relation()->create([]);
     }
 }
+
+class TestRelationCreateOnExistingModel
+{
+    /** @var User */
+    private $user;
+
+    public function testRelationCreateOnExistingModel() : Account
+    {
+        return $this->user->accounts()->create();
+    }
+}
