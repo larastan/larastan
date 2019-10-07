@@ -17,7 +17,6 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\MethodReflection;
-use Illuminate\Database\Eloquent\Builder;
 use PHPStan\Reflection\ClassMemberReflection;
 
 final class ModelScopeMethodReflection implements MethodReflection
@@ -32,10 +31,16 @@ final class ModelScopeMethodReflection implements MethodReflection
      */
     private $classReflection;
 
-    public function __construct(string $methodName, ClassReflection $classReflection)
+    /**
+     * @var ClassReflection
+     */
+    private $relation;
+
+    public function __construct(string $methodName, ClassReflection $classReflection, ClassReflection $relation)
     {
         $this->methodName = $methodName;
         $this->classReflection = $classReflection;
+        $this->relation = $relation;
     }
 
     public function getDeclaringClass(): ClassReflection
@@ -77,7 +82,7 @@ final class ModelScopeMethodReflection implements MethodReflection
             new FunctionVariant(
                 [],
                 false,
-                new ObjectType(Builder::class)
+                new ObjectType($this->relation->getName())
             ),
         ];
     }

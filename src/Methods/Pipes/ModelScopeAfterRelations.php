@@ -41,7 +41,8 @@ final class ModelScopeAfterRelations implements PipeContract
             $passable->setMethodReflection(
                 new ModelScopeMethodReflection(
                     $passable->getMethodName(),
-                    $passable->getBroker()->getClass(Model::class)
+                    $passable->getBroker()->getClass(Model::class),
+                    $classReflection
                 )
             );
 
