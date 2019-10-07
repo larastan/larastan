@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
@@ -24,7 +24,7 @@ use NunoMaduro\Larastan\Reflection\ModelScopeMethodReflection;
 final class ModelScopeAfterRelations implements PipeContract
 {
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function handle(PassableContract $passable, Closure $next): void
     {
