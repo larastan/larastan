@@ -13,8 +13,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes;
 
-use PhpParser\Node\Expr\PropertyFetch;
-use PHPStan\Broker\ClassNotFoundException;
 use PHPStan\Type\Type;
 use PHPStan\Broker\Broker;
 use PHPStan\Analyser\Scope;
@@ -25,9 +23,11 @@ use PhpParser\Node\Expr\Variable;
 use Illuminate\Support\Collection;
 use PHPStan\Type\IntersectionType;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\PropertyFetch;
 use Illuminate\Database\Eloquent\Model;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Broker\ClassNotFoundException;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use Illuminate\Database\Eloquent\Relations\Relation;
