@@ -17,7 +17,6 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\MethodReflection;
-use Illuminate\Database\Eloquent\Builder;
 use PHPStan\Reflection\ClassMemberReflection;
 
 final class ModelScopeMethodReflection implements MethodReflection
