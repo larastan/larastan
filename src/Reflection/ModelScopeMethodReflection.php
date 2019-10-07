@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Reflection;
 
-use Illuminate\Database\Eloquent\Builder;
-use PHPStan\Reflection\ClassMemberReflection;
+use PHPStan\Type\ObjectType;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Type\ObjectType;
+use Illuminate\Database\Eloquent\Builder;
+use PHPStan\Reflection\ClassMemberReflection;
 
 final class ModelScopeMethodReflection implements MethodReflection
 {
@@ -69,7 +69,7 @@ final class ModelScopeMethodReflection implements MethodReflection
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function getVariants(): array
     {
