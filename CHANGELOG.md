@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.4.1] - 2019-10-07
+### Added
+- Better return type inference in relation methods ([#319](https://github.com/nunomaduro/larastan/pull/319))
+- Better return type inference for auth guard method calls on auth helper and facade ([#317](https://github.com/nunomaduro/larastan/pull/317))
+- Support to phpstan extension plugin  ([#314](https://github.com/nunomaduro/larastan/pull/314))
+
 ## [0.4.0] - 2019-08-28
 ### Added
 - Support to `Carbon` macros ([#301](https://github.com/nunomaduro/larastan/pull/301))
