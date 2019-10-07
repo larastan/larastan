@@ -22,6 +22,10 @@ services:
         class: NunoMaduro\Larastan\Methods\Extension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
+    -
+        class: NunoMaduro\Larastan\Methods\ModelForwardsCallsExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
 
     -
         class: NunoMaduro\Larastan\Properties\Extension

@@ -47,6 +47,21 @@ class ModelExtension
     {
         return Thread::whereFoo(['bar']);
     }
+
+    public function testIncrement() : int
+    {
+        /** @var User $user */
+        $user = new User;
+        return $user->increment('counter');
+    }
+
+    public function testDecrement() : int
+    {
+        /** @var User $user */
+        $user = new User;
+
+        return $user->decrement('counter');
+    }
 }
 
 class Thread extends Model
