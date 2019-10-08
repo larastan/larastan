@@ -13,9 +13,12 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
-use PHPStan\Type\IntegerType;
+use PHPStan\Type\Type;
+use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\IntegerType;
 use NunoMaduro\Larastan\Concerns;
+use PHPStan\Type\IntersectionType;
 use Illuminate\Database\Eloquent\Model;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
@@ -31,6 +34,9 @@ use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
 final class ModelForwardsCallsExtension implements  MethodsClassReflectionExtension, BrokerAwareExtension
 {
     use Concerns\HasBroker;
+
+    /** @var string[] */
+    private $modelRetrievalMethods = ['find', 'findMany', 'findOrFail'];
 
     /**
      * @return ClassReflection
@@ -78,11 +84,36 @@ final class ModelForwardsCallsExtension implements  MethodsClassReflectionExtens
             );
         }
 
+        if (in_array($methodName, $this->modelRetrievalMethods, true)) {
+            $methodReflection = $this->getBuilderReflection()->getNativeMethod($methodName);
+
+            $returnType = $this->getReturnTypeOfModelRetrievalMethod($methodName, $classReflection->getName());
+
+            return new EloquentBuilderMethodReflection(
+                $methodName, $classReflection,
+                ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getParameters(),
+                true, $returnType
+            );
+        }
+
         $methodReflection = $this->getBuilderReflection()->getNativeMethod($methodName);
 
         return new EloquentBuilderMethodReflection(
             $methodName, $classReflection,
             ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getParameters()
         );
+    }
+
+    private function getReturnTypeOfModelRetrievalMethod(string $methodName, string $className) : Type
+    {
+        return [
+            'find' => new IntersectionType([
+                new ObjectType($className), new ObjectType(\Illuminate\Database\Eloquent\Collection::class), new NullType()
+            ]),
+            'findMany' => new ObjectType(\Illuminate\Database\Eloquent\Collection::class),
+            'findOrFail' => new IntersectionType([
+                new ObjectType($className), new ObjectType(\Illuminate\Database\Eloquent\Collection::class), new NullType()
+            ]),
+        ][$methodName];
     }
 }

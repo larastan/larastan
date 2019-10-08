@@ -48,7 +48,7 @@ final class EloquentBuilderMethodReflection implements MethodReflection
      */
     private $returnType;
 
-    public function __construct(string $methodName, ClassReflection $classReflection, array $parameters, bool $isPublic = true, Type $returnType = null)
+    public function __construct(string $methodName, ClassReflection $classReflection, array $parameters, bool $isPublic = true, ?Type $returnType = null)
     {
         $this->methodName = $methodName;
         $this->classReflection = $classReflection;

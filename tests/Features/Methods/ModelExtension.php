@@ -6,6 +6,7 @@ namespace Tests\Features\Methods;
 
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class ModelExtension
@@ -59,6 +60,44 @@ class ModelExtension
         $user = new User;
 
         return $user->decrement('counter');
+    }
+
+    public function testFind() : User
+    {
+        return User::find(1);
+    }
+
+    public function testFindCanReturnCollection() : Collection
+    {
+        /** @var Collection $users */
+        $users = User::find([1, 2, 3]);
+
+        return $users;
+    }
+
+    /** @return iterable<User>|null */
+    public function testFindCanReturnCollectionWithAnnotation()
+    {
+        return User::find([1, 2, 3]);
+    }
+
+    /** @return iterable<User> */
+    public function testFindMany()
+    {
+        return User::findMany([1, 2, 3]);
+    }
+
+    public function testFindOrFail() : User
+    {
+        return User::findOrFail(1);
+    }
+
+    public function testFindOrFailCanReturnCollection() : Collection
+    {
+        /** @var Collection $users */
+        $users = User::findOrFail([1, 2, 3]);
+
+        return $users;
     }
 }
 
