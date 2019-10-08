@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Model;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use PHPStan\Reflection\BrokerAwareExtension;
 use Illuminate\Contracts\Pagination\Paginator;
 use PHPStan\Reflection\ParametersAcceptorSelector;
@@ -37,6 +38,9 @@ final class ModelForwardsCallsExtension implements  MethodsClassReflectionExtens
 
     /** @var string[] */
     private $modelRetrievalMethods = ['find', 'findMany', 'findOrFail'];
+
+    /** @var string[] */
+    private $modelCreationMethods = ['create', 'forceCreate', 'findOrNew', 'firstOrNew', 'updateOrCreate'];
 
     /**
      * @return ClassReflection
@@ -78,10 +82,10 @@ final class ModelForwardsCallsExtension implements  MethodsClassReflectionExtens
             $returnType = new ObjectType($methodName === 'paginate' ? LengthAwarePaginator::class : Paginator::class);
         }
 
-        if (in_array($methodName, $this->modelRetrievalMethods, true)) {
+        if (in_array($methodName, array_merge($this->modelRetrievalMethods, $this->modelCreationMethods), true)) {
             $methodReflection = $this->getBuilderReflection()->getNativeMethod($methodName);
 
-            $returnType = $this->getReturnTypeOfModelRetrievalMethod($methodName, $classReflection->getName());
+            $returnType = $this->getReturnTypeFromMap($methodName, $classReflection->getName());
         }
 
         return new EloquentBuilderMethodReflection(
@@ -91,16 +95,21 @@ final class ModelForwardsCallsExtension implements  MethodsClassReflectionExtens
         );
     }
 
-    private function getReturnTypeOfModelRetrievalMethod(string $methodName, string $className) : Type
+    private function getReturnTypeFromMap(string $methodName, string $className) : Type
     {
         return [
             'find' => new IntersectionType([
-                new ObjectType($className), new ObjectType(\Illuminate\Database\Eloquent\Collection::class), new NullType()
+                new ObjectType($className), new ObjectType(Collection::class), new NullType()
             ]),
-            'findMany' => new ObjectType(\Illuminate\Database\Eloquent\Collection::class),
+            'findMany' => new ObjectType(Collection::class),
             'findOrFail' => new IntersectionType([
-                new ObjectType($className), new ObjectType(\Illuminate\Database\Eloquent\Collection::class), new NullType()
+                new ObjectType($className), new ObjectType(Collection::class), new NullType()
             ]),
+            'create' => new ObjectType($className),
+            'forceCreate' => new ObjectType($className),
+            'findOrNew' => new ObjectType($className),
+            'firstOrNew' => new ObjectType($className),
+            'updateOrCreate' => new ObjectType($className),
         ][$methodName];
     }
 }

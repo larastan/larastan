@@ -99,6 +99,31 @@ class ModelExtension
 
         return $users;
     }
+
+    public function testCreate() : User
+    {
+        return User::create([]);
+    }
+
+    public function testForceCreate() : User
+    {
+        return User::forceCreate([]);
+    }
+
+    public function testFindOrNew() : User
+    {
+        return User::findOrNew([]);
+    }
+
+    public function testFirstOrNew() : User
+    {
+        return User::firstOrNew([]);
+    }
+
+    public function testUpdateOrCreate() : User
+    {
+        return User::updateOrCreate([]);
+    }
 }
 
 class Thread extends Model
