@@ -62,45 +62,32 @@ final class ModelForwardsCallsExtension implements  MethodsClassReflectionExtens
 
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
+        $isPublic = true;
+        $returnType = new ObjectType(Builder::class);
+        $methodReflection = $this->getBuilderReflection()->getNativeMethod($methodName);
+
         if (in_array($methodName, ['increment', 'decrement'], true)) {
             $methodReflection = $this->broker->getClass(Model::class)->getNativeMethod($methodName);
 
-            return new EloquentBuilderMethodReflection(
-                $methodName, $classReflection,
-                ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getParameters(),
-                true, new IntegerType()
-            );
+            $returnType = new IntegerType();
         }
 
         if (in_array($methodName, ['paginate', 'simplePaginate'], true)) {
             $methodReflection = $this->broker->getClass(QueryBuilder::class)->getNativeMethod($methodName);
 
-            $returnClass = $methodName === 'paginate' ? LengthAwarePaginator::class : Paginator::class;
-
-            return new EloquentBuilderMethodReflection(
-                $methodName, $classReflection,
-                ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getParameters(),
-                true, new ObjectType($returnClass)
-            );
+            $returnType = new ObjectType($methodName === 'paginate' ? LengthAwarePaginator::class : Paginator::class);
         }
 
         if (in_array($methodName, $this->modelRetrievalMethods, true)) {
             $methodReflection = $this->getBuilderReflection()->getNativeMethod($methodName);
 
             $returnType = $this->getReturnTypeOfModelRetrievalMethod($methodName, $classReflection->getName());
-
-            return new EloquentBuilderMethodReflection(
-                $methodName, $classReflection,
-                ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getParameters(),
-                true, $returnType
-            );
         }
-
-        $methodReflection = $this->getBuilderReflection()->getNativeMethod($methodName);
 
         return new EloquentBuilderMethodReflection(
             $methodName, $classReflection,
-            ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getParameters()
+            ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getParameters(),
+            $isPublic, $returnType
         );
     }
 
