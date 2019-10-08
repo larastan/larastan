@@ -13,15 +13,22 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use PHPStan\Type\IntegerType;
+use PHPStan\Type\ObjectType;
 use NunoMaduro\Larastan\Concerns;
-use PHPStan\Reflection\BrokerAwareExtension;
+use Illuminate\Database\Eloquent\Model;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
+use Illuminate\Database\Eloquent\Builder;
+use PHPStan\Reflection\BrokerAwareExtension;
+use Illuminate\Contracts\Pagination\Paginator;
+use PHPStan\Reflection\ParametersAcceptorSelector;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
 
-final class ModelForwardsCallsExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
+final class ModelForwardsCallsExtension implements  MethodsClassReflectionExtension, BrokerAwareExtension
 {
     use Concerns\HasBroker;
 
@@ -36,23 +43,46 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        if ($classReflection->isSubclassOf(Model::class) && in_array($methodName, ['increment', 'decrement'])) {
-            return true;
-        }
-
         if (! $classReflection->isSubclassOf(Model::class)) {
             return false;
         }
 
-        return $this->getBuilderReflection()->hasMethod($methodName);
+        if (in_array($methodName, ['increment', 'decrement', 'paginate', 'simplePaginate'], true)) {
+            return true;
+        }
+
+        return $this->getBuilderReflection()->hasNativeMethod($methodName);
     }
 
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
-        if ($classReflection->isSubclassOf(Model::class) && in_array($methodName, ['increment', 'decrement'])) {
-            $this->broker->getClass(Model::class)->getNativeMethod($methodName);
+        if (in_array($methodName, ['increment', 'decrement'], true)) {
+            $methodReflection = $this->broker->getClass(Model::class)->getNativeMethod($methodName);
+
+            return new EloquentBuilderMethodReflection(
+                $methodName, $classReflection,
+                ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getParameters(),
+                true, new IntegerType()
+            );
         }
 
-        return $this->getBuilderReflection()->getNativeMethod($methodName);
+        if (in_array($methodName, ['paginate', 'simplePaginate'], true)) {
+            $methodReflection = $this->broker->getClass(QueryBuilder::class)->getNativeMethod($methodName);
+
+            $returnClass = $methodName === 'paginate' ? LengthAwarePaginator::class : Paginator::class;
+
+            return new EloquentBuilderMethodReflection(
+                $methodName, $classReflection,
+                ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getParameters(),
+                true, new ObjectType($returnClass)
+            );
+        }
+
+        $methodReflection = $this->getBuilderReflection()->getNativeMethod($methodName);
+
+        return new EloquentBuilderMethodReflection(
+            $methodName, $classReflection,
+            ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getParameters()
+        );
     }
 }
