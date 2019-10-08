@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Features\Methods;
 
 use App\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class ModelExtension
@@ -17,10 +18,7 @@ class ModelExtension
         return User::all();
     }
 
-    /**
-     * @return \App\User
-     */
-    public function testReturnThis(): User
+    public function testReturnThis(): Builder
     {
         $user = User::join('tickets.tickets', 'tickets.tickets.id', '=', 'tickets.sale_ticket.ticket_id')
             ->where(['foo' => 'bar']);
@@ -28,22 +26,22 @@ class ModelExtension
         return $user;
     }
 
-    public function testWhere(): Thread
+    public function testWhere(): Builder
     {
         return (new Thread)->where(['foo' => 'bar']);
     }
 
-    public function testStaticWhere(): Thread
+    public function testStaticWhere(): Builder
     {
         return Thread::where(['foo' => 'bar']);
     }
 
-    public function testDynamicWhere(): Thread
+    public function testDynamicWhere(): Builder
     {
         return (new Thread)->whereFoo(['bar']);
     }
 
-    public function testStaticDynamicWhere(): Thread
+    public function testStaticDynamicWhere(): Builder
     {
         return Thread::whereFoo(['bar']);
     }
