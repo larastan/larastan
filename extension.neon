@@ -19,11 +19,17 @@ parameters:
 
 services:
     -
-        class: NunoMaduro\Larastan\Methods\Extension
+        class: NunoMaduro\Larastan\Methods\ModelForwardsCallsExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
+
     -
-        class: NunoMaduro\Larastan\Methods\ModelForwardsCallsExtension
+        class: NunoMaduro\Larastan\Methods\EloquentBuilderForwardsCallsExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+
+    -
+        class: NunoMaduro\Larastan\Methods\Extension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 
