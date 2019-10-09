@@ -13,16 +13,15 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
-use Illuminate\Database\Query\Builder;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Database\Eloquent\Model;
 use NunoMaduro\Larastan\Concerns;
-use NunoMaduro\Larastan\Reflection\BuilderMethodReflection;
-use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
-use PHPStan\Reflection\BrokerAwareExtension;
+use Illuminate\Database\Query\Builder;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
+use PHPStan\Reflection\ParametersAcceptorSelector;
 
 final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
 {
@@ -49,7 +48,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        if ($classReflection->getName() !== EloquentBuilder::class  || ! $classReflection->isSubclassOf(EloquentBuilder::class)) {
+        if ($classReflection->getName() !== EloquentBuilder::class) {
             return false;
         }
 
@@ -61,7 +60,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             return true;
         }
 
-        return $this->getBuilderReflection()->hasMethod($methodName);
+        return $this->getBuilderReflection()->hasNativeMethod($methodName);
     }
 
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
@@ -74,6 +73,11 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             return $this->getBroker()->getClass(Builder::class)->getNativeMethod($methodName);
         }
 
-        return new EloquentBuilderMethodReflection($methodName, $classReflection, []);
+        $methodReflection = $this->getBuilderReflection()->getNativeMethod($methodName);
+
+        return new EloquentBuilderMethodReflection(
+            $methodName, $classReflection,
+            ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getParameters()
+        );
     }
 }
