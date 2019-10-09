@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Tests\Features\ReturnTypes;
 
 use App\User;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 
 class BuilderExtension
 {
@@ -32,7 +33,6 @@ class BuilderExtension
             ->get();
     }
 
-
     /** @return Collection|User[] */
     public function testCallingLongGetChainOnModelWithVariableQueryBuilder() : Collection
     {
@@ -54,6 +54,11 @@ class BuilderExtension
     public function testUsingCollectionMethodsAfterGet() : Collection
     {
         return User::whereIn('id', [1,2,3])->get()->mapWithKeys('key');
+    }
+
+    public function testCallingQueryBuilderMethodOnEloquentBuilderReturnsEloquentBuilder(Builder $builder) : Builder
+    {
+        return $builder->whereNotNull('test');
     }
 }
 
