@@ -21,7 +21,13 @@ use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
+use PHPStan\Reflection\Native\NativeParameterReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Reflection\PassedByReference;
+use PHPStan\Reflection\Php\PhpParameterReflection;
+use PHPStan\Type\CallableType;
+use PHPStan\Type\StringType;
+use ReflectionParameter;
 
 final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
 {
@@ -66,7 +72,10 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
         if ($methodName === 'macro') {
-            return new EloquentBuilderMethodReflection($methodName, $classReflection, []);
+            return new EloquentBuilderMethodReflection($methodName, $classReflection, [
+                new NativeParameterReflection('name', false, new StringType(), PassedByReference::createNo(), false),
+                new NativeParameterReflection('macro', false, new CallableType(), PassedByReference::createNo(), false),
+            ]);
         }
 
         if (in_array($methodName, $this->passthru)) {

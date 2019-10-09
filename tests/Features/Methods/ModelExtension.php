@@ -144,6 +144,11 @@ class ModelExtension
     {
         return Thread::valid();
     }
+
+    public function testMacro(Builder $query) : Builder
+    {
+        return $query->macro('customMacro', function () {});
+    }
 }
 
 class Thread extends Model
