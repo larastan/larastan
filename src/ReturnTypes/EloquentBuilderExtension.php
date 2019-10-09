@@ -46,18 +46,18 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
             $methodCall = $methodCall->var;
         }
 
-        $modelName = new MixedType();
+        $modelType = new MixedType();
 
         if ($methodCall->var instanceof StaticCall || $methodCall->var instanceof New_) {
             /** @var FullyQualified $fullQualifiedClass */
             $fullQualifiedClass = $methodCall->var->class;
-            $modelName = new ObjectType($fullQualifiedClass->toCodeString());
+            $modelType = new ObjectType($fullQualifiedClass->toCodeString());
         } elseif ($methodCall->var instanceof Variable) {
-            $modelName = $scope->getType($methodCall->var);
+            $modelType = $scope->getType($methodCall->var);
         }
 
         return new IntersectionType([
-            new IterableType(new IntegerType(), $modelName), new ObjectType(Collection::class)
+            new IterableType(new IntegerType(), $modelType), new ObjectType(Collection::class)
         ]);
     }
 }
