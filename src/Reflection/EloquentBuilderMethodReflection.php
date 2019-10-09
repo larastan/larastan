@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Reflection;
 
+use PHPStan\Type\Type;
 use PHPStan\Type\ObjectType;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\MethodReflection;
 use Illuminate\Database\Eloquent\Builder;
 use PHPStan\Reflection\ClassMemberReflection;
-use PHPStan\Type\Type;
+use PHPStan\Reflection\FunctionVariantWithPhpDocs;
 
 final class EloquentBuilderMethodReflection implements MethodReflection
 {
@@ -39,21 +39,15 @@ final class EloquentBuilderMethodReflection implements MethodReflection
     private $parameters;
 
     /**
-     * @var bool
-     */
-    private $isPublic;
-
-    /**
      * @var Type
      */
     private $returnType;
 
-    public function __construct(string $methodName, ClassReflection $classReflection, array $parameters, bool $isPublic = true, ?Type $returnType = null)
+    public function __construct(string $methodName, ClassReflection $classReflection, array $parameters, ?Type $returnType = null)
     {
         $this->methodName = $methodName;
         $this->classReflection = $classReflection;
         $this->parameters = $parameters;
-        $this->isPublic = $isPublic;
         $this->returnType = $returnType ?? new ObjectType(Builder::class);
     }
 
@@ -74,7 +68,7 @@ final class EloquentBuilderMethodReflection implements MethodReflection
 
     public function isPublic(): bool
     {
-        return $this->isPublic;
+        return true;
     }
 
     public function getName(): string
@@ -88,14 +82,16 @@ final class EloquentBuilderMethodReflection implements MethodReflection
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getVariants(): array
     {
         return [
-            new FunctionVariant(
+            new FunctionVariantWithPhpDocs(
                 $this->parameters,
                 false,
+                $this->returnType,
+                $this->returnType,
                 $this->returnType
             ),
         ];

@@ -47,6 +47,11 @@ class ModelExtension
         return Thread::whereFoo(['bar']);
     }
 
+    public function testWhereIn(): Builder
+    {
+        return (new Thread)->whereIn('id', [1, 2, 3]);
+    }
+
     public function testIncrement() : int
     {
         /** @var User $user */

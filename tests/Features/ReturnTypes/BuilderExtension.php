@@ -27,7 +27,7 @@ class BuilderExtension
     {
         return User::where('id', 1)
             ->whereNotNull('active')
-            ->whereHas(['relation'])
+            ->where('foo', 'bar')
             ->whereFoo(['bar'])
             ->get();
     }
@@ -37,7 +37,7 @@ class BuilderExtension
     public function testCallingLongGetChainOnModelWithVariableQueryBuilder() : Collection
     {
         return (new User)->whereNotNull('active')
-            ->whereHas(['relation'])
+            ->where('foo', 'bar')
             ->whereFoo(['bar'])
             ->get();
     }
@@ -48,6 +48,12 @@ class BuilderExtension
         $user = new User;
 
         return $user->where('test', 1)->get();
+    }
+
+    /** @return Collection|User[] */
+    public function testUsingCollectionMethodsAfterGet() : Collection
+    {
+        return User::whereIn('id', [1,2,3])->get()->mapWithKeys('key');
     }
 }
 

@@ -17,6 +17,7 @@ use PHPStan\Type\Type;
 use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\IntegerType;
+use PHPStan\Type\IterableType;
 use NunoMaduro\Larastan\Concerns;
 use PHPStan\Type\IntersectionType;
 use Illuminate\Database\Eloquent\Model;
@@ -61,37 +62,43 @@ final class ModelForwardsCallsExtension implements  MethodsClassReflectionExtens
             return true;
         }
 
-        return $this->getBuilderReflection()->hasNativeMethod($methodName);
+        return $this->getBuilderReflection()->hasNativeMethod($methodName) || $this->broker->getClass(QueryBuilder::class)->hasNativeMethod($methodName);
     }
 
-    public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
+    public function getMethod(ClassReflection $originalModelReflection, string $methodName): MethodReflection
     {
-        $isPublic = true;
-        $returnType = new ObjectType(Builder::class);
-        $methodReflection = $this->getBuilderReflection()->getNativeMethod($methodName);
+        $returnType = null;
+        $methodReflection = null;
+        $queryBuilderReflection = $this->broker->getClass(QueryBuilder::class);
 
         if (in_array($methodName, ['increment', 'decrement'], true)) {
-            $methodReflection = $this->broker->getClass(Model::class)->getNativeMethod($methodName);
-
-            $returnType = new IntegerType();
-        }
-
-        if (in_array($methodName, ['paginate', 'simplePaginate'], true)) {
-            $methodReflection = $this->broker->getClass(QueryBuilder::class)->getNativeMethod($methodName);
-
-            $returnType = new ObjectType($methodName === 'paginate' ? LengthAwarePaginator::class : Paginator::class);
-        }
-
-        if (in_array($methodName, array_merge($this->modelRetrievalMethods, $this->modelCreationMethods), true)) {
             $methodReflection = $this->getBuilderReflection()->getNativeMethod($methodName);
 
-            $returnType = $this->getReturnTypeFromMap($methodName, $classReflection->getName());
+            $returnType = new IntegerType();
+        } elseif (in_array($methodName, ['paginate', 'simplePaginate'], true)) {
+            $methodReflection = $queryBuilderReflection->getNativeMethod($methodName);
+
+            $returnType = new ObjectType($methodName === 'paginate' ? LengthAwarePaginator::class : Paginator::class);
+        } elseif (in_array($methodName, array_merge($this->modelRetrievalMethods, $this->modelCreationMethods), true)) {
+            $methodReflection = $this->getBuilderReflection()->getNativeMethod($methodName);
+
+            $returnType = $this->getReturnTypeFromMap($methodName, $originalModelReflection->getName());
+        }
+
+        if ($this->getBuilderReflection()->hasNativeMethod($methodName)) {
+            $methodReflection = $methodReflection === null ? $this->getBuilderReflection()->getNativeMethod($methodName) : $methodReflection;
+
+            return new EloquentBuilderMethodReflection(
+                $methodName, $originalModelReflection,
+                ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getParameters(),
+                $returnType
+            );
         }
 
         return new EloquentBuilderMethodReflection(
-            $methodName, $classReflection,
-            ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getParameters(),
-            $isPublic, $returnType
+            $methodName, $originalModelReflection,
+            ParametersAcceptorSelector::selectSingle($queryBuilderReflection->getNativeMethod($methodName)->getVariants())->getParameters(),
+            $returnType
         );
     }
 
@@ -99,11 +106,11 @@ final class ModelForwardsCallsExtension implements  MethodsClassReflectionExtens
     {
         return [
             'find' => new IntersectionType([
-                new ObjectType($className), new ObjectType(Collection::class), new NullType()
+                new IterableType(new IntegerType(), new ObjectType($className)), new ObjectType($className), new NullType()
             ]),
             'findMany' => new ObjectType(Collection::class),
             'findOrFail' => new IntersectionType([
-                new ObjectType($className), new ObjectType(Collection::class), new NullType()
+                new IterableType(new IntegerType(), new ObjectType($className)), new ObjectType($className)
             ]),
             'create' => new ObjectType($className),
             'forceCreate' => new ObjectType($className),

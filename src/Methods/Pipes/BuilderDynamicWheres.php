@@ -48,7 +48,7 @@ final class BuilderDynamicWheres implements PipeContract
             $returnMethodReflection = new EloquentBuilderMethodReflection(
                 $passable->getMethodName(), $classReflection,
                 [$originalDynamicWhereVariant->getParameters()[1]],
-                true, new ObjectType(EloquentBuilder::class)
+                new ObjectType(EloquentBuilder::class)
             );
 
             $passable->setMethodReflection($returnMethodReflection);

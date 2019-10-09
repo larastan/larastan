@@ -49,7 +49,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        if (! $classReflection->isSubclassOf(EloquentBuilder::class)) {
+        if ($classReflection->getName() !== EloquentBuilder::class  || ! $classReflection->isSubclassOf(EloquentBuilder::class)) {
             return false;
         }
 
