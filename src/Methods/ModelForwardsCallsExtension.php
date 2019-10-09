@@ -41,7 +41,7 @@ final class ModelForwardsCallsExtension implements  MethodsClassReflectionExtens
     private $modelRetrievalMethods = ['first', 'find', 'findMany', 'findOrFail'];
 
     /** @var string[] */
-    private $modelCreationMethods = ['make', 'create', 'forceCreate', 'findOrNew', 'firstOrNew', 'updateOrCreate'];
+    private $modelCreationMethods = ['make', 'create', 'forceCreate', 'findOrNew', 'firstOrNew', 'updateOrCreate', 'fromQuery'];
 
     /**
      * @return ClassReflection
@@ -126,6 +126,9 @@ final class ModelForwardsCallsExtension implements  MethodsClassReflectionExtens
             'findOrNew' => new ObjectType($className),
             'firstOrNew' => new ObjectType($className),
             'updateOrCreate' => new ObjectType($className),
+            'fromQuery' => new IntersectionType([
+                new IterableType(new IntegerType(), new ObjectType($className)), new ObjectType(Collection::class)
+            ]),
         ][$methodName];
     }
 }
