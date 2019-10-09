@@ -129,8 +129,17 @@ class ModelExtension
     {
         return User::updateOrCreate([]);
     }
+
+    public function testScope() : Builder
+    {
+        return Thread::valid();
+    }
 }
 
 class Thread extends Model
 {
+    public function scopeValid(Builder $query) : Builder
+    {
+        return $query->where('valid', true);
+    }
 }

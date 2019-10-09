@@ -62,6 +62,11 @@ final class ModelForwardsCallsExtension implements  MethodsClassReflectionExtens
             return true;
         }
 
+        if ($classReflection->hasNativeMethod('scope' . ucfirst($methodName))) {
+            // scopes handled later
+            return false;
+        }
+
         return $this->getBuilderReflection()->hasNativeMethod($methodName) || $this->broker->getClass(QueryBuilder::class)->hasNativeMethod($methodName);
     }
 
