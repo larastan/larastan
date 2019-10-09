@@ -38,7 +38,7 @@ final class ModelForwardsCallsExtension implements  MethodsClassReflectionExtens
     use Concerns\HasBroker;
 
     /** @var string[] */
-    private $modelRetrievalMethods = ['find', 'findMany', 'findOrFail'];
+    private $modelRetrievalMethods = ['first', 'find', 'findMany', 'findOrFail'];
 
     /** @var string[] */
     private $modelCreationMethods = ['make', 'create', 'forceCreate', 'findOrNew', 'firstOrNew', 'updateOrCreate'];
@@ -110,6 +110,9 @@ final class ModelForwardsCallsExtension implements  MethodsClassReflectionExtens
     private function getReturnTypeFromMap(string $methodName, string $className) : Type
     {
         return [
+            'first' => new IntersectionType([
+                new ObjectType($className), new NullType()
+            ]),
             'find' => new IntersectionType([
                 new IterableType(new IntegerType(), new ObjectType($className)), new ObjectType($className), new NullType()
             ]),
