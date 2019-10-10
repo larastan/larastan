@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Tests\Features\Methods;
 
 use App\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
 class ModelExtension
 {
@@ -56,6 +56,7 @@ class ModelExtension
     {
         /** @var User $user */
         $user = new User;
+
         return $user->increment('counter');
     }
 
@@ -147,7 +148,8 @@ class ModelExtension
 
     public function testMacro(Builder $query) : Builder
     {
-        return $query->macro('customMacro', function () {});
+        return $query->macro('customMacro', function () {
+        });
     }
 }
 

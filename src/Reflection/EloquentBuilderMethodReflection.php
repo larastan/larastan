@@ -82,7 +82,7 @@ final class EloquentBuilderMethodReflection implements MethodReflection
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getVariants(): array
     {

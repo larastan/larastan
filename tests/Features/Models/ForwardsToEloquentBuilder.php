@@ -11,6 +11,7 @@ class ForwardsToEloquentBuilder
 {
     public function testForwardsToEloquentBuilder() : Builder
     {
-        return (new User)->withGlobalScope('test', function () {});
+        return (new User)->withGlobalScope('test', function () {
+        });
     }
 }

@@ -33,7 +33,7 @@ use PHPStan\Reflection\MethodsClassReflectionExtension;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
 
-final class ModelForwardsCallsExtension implements  MethodsClassReflectionExtension, BrokerAwareExtension
+final class ModelForwardsCallsExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
 {
     use Concerns\HasBroker;
 
@@ -62,7 +62,7 @@ final class ModelForwardsCallsExtension implements  MethodsClassReflectionExtens
             return true;
         }
 
-        if ($classReflection->hasNativeMethod('scope' . ucfirst($methodName))) {
+        if ($classReflection->hasNativeMethod('scope'.ucfirst($methodName))) {
             // scopes handled later
             return false;
         }
@@ -111,14 +111,14 @@ final class ModelForwardsCallsExtension implements  MethodsClassReflectionExtens
     {
         return [
             'first' => new IntersectionType([
-                new ObjectType($className), new NullType()
+                new ObjectType($className), new NullType(),
             ]),
             'find' => new IntersectionType([
-                new IterableType(new IntegerType(), new ObjectType($className)), new ObjectType($className), new NullType()
+                new IterableType(new IntegerType(), new ObjectType($className)), new ObjectType($className), new NullType(),
             ]),
             'findMany' => new ObjectType(Collection::class),
             'findOrFail' => new IntersectionType([
-                new IterableType(new IntegerType(), new ObjectType($className)), new ObjectType($className)
+                new IterableType(new IntegerType(), new ObjectType($className)), new ObjectType($className),
             ]),
             'make' => new ObjectType($className),
             'create' => new ObjectType($className),
@@ -127,7 +127,7 @@ final class ModelForwardsCallsExtension implements  MethodsClassReflectionExtens
             'firstOrNew' => new ObjectType($className),
             'updateOrCreate' => new ObjectType($className),
             'fromQuery' => new IntersectionType([
-                new IterableType(new IntegerType(), new ObjectType($className)), new ObjectType(Collection::class)
+                new IterableType(new IntegerType(), new ObjectType($className)), new ObjectType(Collection::class),
             ]),
         ][$methodName];
     }

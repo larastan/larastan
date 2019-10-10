@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\ReturnTypes;
 
 use PHPStan\Type\Type;
+use Illuminate\Support\Str;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\MixedType;
-use Illuminate\Support\Str;
 use PHPStan\Type\ObjectType;
 use PhpParser\Node\Expr\New_;
 use PHPStan\Type\IntegerType;
@@ -46,7 +46,7 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
             return true;
         }
 
-       return $methodReflection->getName() === 'get';
+        return $methodReflection->getName() === 'get';
     }
 
     public function getTypeFromMethodCall(
@@ -70,7 +70,7 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
         }
 
         if ($methodReflection instanceof DummyMethodReflection && $modelType instanceof ObjectType) {
-            $scopeMethodName = 'scope' . ucfirst($methodReflection->getName());
+            $scopeMethodName = 'scope'.ucfirst($methodReflection->getName());
             $modelReflection = $this->getBroker()->getClass($modelType->getClassName());
 
             if ($modelReflection->hasNativeMethod($scopeMethodName)) {
@@ -79,7 +79,7 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
         }
 
         return new IntersectionType([
-            new IterableType(new IntegerType(), $modelType), new ObjectType(Collection::class)
+            new IterableType(new IntegerType(), $modelType), new ObjectType(Collection::class),
         ]);
     }
 }
