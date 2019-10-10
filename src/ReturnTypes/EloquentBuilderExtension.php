@@ -7,6 +7,7 @@ namespace NunoMaduro\Larastan\ReturnTypes;
 use PHPStan\Type\Type;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\MixedType;
+use Illuminate\Support\Str;
 use PHPStan\Type\ObjectType;
 use PhpParser\Node\Expr\New_;
 use PHPStan\Type\IntegerType;
@@ -16,12 +17,14 @@ use PhpParser\Node\Expr\Variable;
 use PHPStan\Type\IntersectionType;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Expr\PropertyFetch;
 use PhpParser\Node\Name\FullyQualified;
 use PHPStan\Reflection\MethodReflection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
+use PHPStan\Reflection\Dummy\DummyMethodReflection;
 
 final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension, BrokerAwareExtension
 {
@@ -34,7 +37,16 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-        return $methodReflection->getName() === 'get';
+        // Don't handle dynamic wheres
+        if (Str::startsWith($methodReflection->getName(), 'where')) {
+            return false;
+        }
+
+        if ($methodReflection instanceof DummyMethodReflection) {
+            return true;
+        }
+
+       return $methodReflection->getName() === 'get';
     }
 
     public function getTypeFromMethodCall(
@@ -52,8 +64,18 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
             /** @var FullyQualified $fullQualifiedClass */
             $fullQualifiedClass = $methodCall->var->class;
             $modelType = new ObjectType($fullQualifiedClass->toCodeString());
-        } elseif ($methodCall->var instanceof Variable) {
+        } elseif ($methodCall->var instanceof Variable || $methodCall->var instanceof PropertyFetch) {
+            /** @var ObjectType $modelType */
             $modelType = $scope->getType($methodCall->var);
+        }
+
+        if ($methodReflection instanceof DummyMethodReflection && $modelType instanceof ObjectType) {
+            $scopeMethodName = 'scope' . ucfirst($methodReflection->getName());
+            $modelReflection = $this->getBroker()->getClass($modelType->getClassName());
+
+            if ($modelReflection->hasNativeMethod($scopeMethodName)) {
+                return new ObjectType(Builder::class);
+            }
         }
 
         return new IntersectionType([

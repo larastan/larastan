@@ -12,18 +12,26 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Scopes extends Model
 {
-//    public function testScopeAfterRelation() : HasOne
-//    {
-//        return $this->hasOne(User::class)->active();
-//    }
-//
-//    public function testScopeAfterRelationWithHasMany() : HasMany
-//    {
-//        return $this->hasMany(User::class)->active();
-//    }
-
-    public function testScopeAfterQueryBuilder() : Builder
+    /** @var User */
+    private $user;
+    public function testScopeAfterRelation() : HasOne
     {
-        return User::where('foo', 'bar')->active();
+        return $this->hasOne(User::class)->active();
+    }
+
+    public function testScopeAfterRelationWithHasMany() : HasMany
+    {
+        return $this->hasMany(User::class)->active();
+    }
+
+    public function testScopeAfterQueryBuilderStaticCall() : Builder
+    {
+        return User::where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->active();
+    }
+
+    public function testScopeAfterQueryBuilderVariableCall() : Builder
+    {
+        $this->user = new User;
+        return $this->user->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->active();
     }
 }

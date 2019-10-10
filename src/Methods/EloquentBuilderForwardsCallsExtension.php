@@ -22,6 +22,7 @@ use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\PassedByReference;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Reflection\Dummy\DummyMethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\Native\NativeParameterReflection;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
@@ -64,7 +65,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             return true;
         }
 
-        return $this->getBuilderReflection()->hasNativeMethod($methodName);
+        return true;
     }
 
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
@@ -78,6 +79,11 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
 
         if (in_array($methodName, $this->passthru)) {
             return $this->getBroker()->getClass(Builder::class)->getNativeMethod($methodName);
+        }
+
+        // Could be a model scope
+        if (! $this->getBuilderReflection()->hasNativeMethod($methodName)) {
+            return new DummyMethodReflection($methodName);
         }
 
         $methodReflection = $this->getBuilderReflection()->getNativeMethod($methodName);
