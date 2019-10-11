@@ -47,7 +47,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
      * @return ClassReflection
      * @throws \PHPStan\Broker\ClassNotFoundException
      */
-    protected function getBuilderReflection(): ClassReflection
+    private function getBuilderReflection(): ClassReflection
     {
         return $this->broker->getClass(Builder::class);
     }
