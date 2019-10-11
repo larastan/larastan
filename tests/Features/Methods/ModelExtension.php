@@ -68,12 +68,12 @@ class ModelExtension
         return $user->decrement('counter');
     }
 
-    public function testFind() : User
+    public function testFind() : ?User
     {
         return User::find(1);
     }
 
-    public function testFindCanReturnCollection() : Collection
+    public function testFindCanReturnCollection() : ?Collection
     {
         /** @var Collection $users */
         $users = User::find([1, 2, 3]);

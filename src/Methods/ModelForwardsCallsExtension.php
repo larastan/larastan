@@ -15,11 +15,11 @@ namespace NunoMaduro\Larastan\Methods;
 
 use PHPStan\Type\Type;
 use PHPStan\Type\NullType;
+use PHPStan\Type\UnionType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\IterableType;
 use NunoMaduro\Larastan\Concerns;
-use PHPStan\Type\IntersectionType;
 use Illuminate\Database\Eloquent\Model;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
@@ -110,14 +110,14 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
     private function getReturnTypeFromMap(string $methodName, string $className) : Type
     {
         return [
-            'first' => new IntersectionType([
+            'first' => new UnionType([
                 new ObjectType($className), new NullType(),
             ]),
-            'find' => new IntersectionType([
+            'find' => new UnionType([
                 new IterableType(new IntegerType(), new ObjectType($className)), new ObjectType($className), new NullType(),
             ]),
             'findMany' => new ObjectType(Collection::class),
-            'findOrFail' => new IntersectionType([
+            'findOrFail' => new UnionType([
                 new IterableType(new IntegerType(), new ObjectType($className)), new ObjectType($className),
             ]),
             'make' => new ObjectType($className),
@@ -126,7 +126,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
             'findOrNew' => new ObjectType($className),
             'firstOrNew' => new ObjectType($className),
             'updateOrCreate' => new ObjectType($className),
-            'fromQuery' => new IntersectionType([
+            'fromQuery' => new UnionType([
                 new IterableType(new IntegerType(), new ObjectType($className)), new ObjectType(Collection::class),
             ]),
         ][$methodName];
