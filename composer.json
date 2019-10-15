@@ -22,7 +22,8 @@
         "illuminate/support": "5.6.*|5.7.*|5.8.*|^6.0",
         "mockery/mockery": "^1.0|0.9.*",
         "phpstan/phpstan": "^0.11.15",
-        "symfony/process": "^4.2"
+        "symfony/process": "^4.2",
+        "ext-json": "*"
     },
     "require-dev": {
         "orchestra/testbench": "^3.8",
