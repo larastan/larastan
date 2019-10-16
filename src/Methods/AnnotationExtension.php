@@ -25,10 +25,10 @@ use PHPStan\Reflection\Annotations\AnnotationsMethodsClassReflectionExtension;
 final class AnnotationExtension implements MethodsClassReflectionExtension
 {
     use Concerns\HasBroker;
-    
+
     /** @var AnnotationsMethodsClassReflectionExtension */
     private $annotationsMethodsClassReflectionExtension;
-    
+
     public function __construct(AnnotationsMethodsClassReflectionExtension $annotationsMethodsClassReflectionExtension)
     {
         $this->annotationsMethodsClassReflectionExtension = $annotationsMethodsClassReflectionExtension;
