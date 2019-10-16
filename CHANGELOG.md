@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.4.2] - 2019-10-16
+### Added
+- Support for determining correct return type for relation create method ([#320](https://github.com/nunomaduro/larastan/pull/320), [#323](https://github.com/nunomaduro/larastan/pull/323))
+
+### Fixed
+- `getProjectClasses` method to use Composer data to get the classes ([#318](https://github.com/nunomaduro/larastan/pull/318))
+- Return type of calling scope on relation ([#322](https://github.com/nunomaduro/larastan/pull/322))
+
 ## [0.4.1] - 2019-10-07
 ### Added
 - Better return type inference in relation methods ([#319](https://github.com/nunomaduro/larastan/pull/319))
@@ -220,7 +228,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.3.21...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.4.2...HEAD
+[0.4.2]: https://github.com/nunomaduro/larastan/compare/v0.4.1...v0.4.2
+[0.4.1]: https://github.com/nunomaduro/larastan/compare/v0.4.0...v0.4.1
+[0.4.0]: https://github.com/nunomaduro/larastan/compare/v0.3.21...v0.4.0
 [0.3.21]: https://github.com/nunomaduro/larastan/compare/v0.3.20...v0.3.21
 [0.3.20]: https://github.com/nunomaduro/larastan/compare/v0.3.19...v0.3.20
 [0.3.19]: https://github.com/nunomaduro/larastan/compare/v0.3.18...v0.3.19
