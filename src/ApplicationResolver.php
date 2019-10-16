@@ -14,7 +14,7 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan;
 
 use function in_array;
-use Symfony\Component\Finder\Finder;
+use Composer\Autoload\ClassMapGenerator;
 use Illuminate\Contracts\Foundation\Application;
 use Orchestra\Testbench\Concerns\CreatesApplication;
 
@@ -29,6 +29,7 @@ final class ApplicationResolver
      * Creates an application and registers service providers found.
      *
      * @return \Illuminate\Contracts\Foundation\Application
+     * @throws \ReflectionException
      */
     public static function resolve(): Application
     {
@@ -39,7 +40,7 @@ final class ApplicationResolver
         if (file_exists($composerFile)) {
             $namespace = (string) key(json_decode((string) file_get_contents($composerFile), true)['autoload']['psr-4']);
 
-            $serviceProviders = array_values(array_filter(self::getProjectClasses(), function (string $class) use (
+            $serviceProviders = array_values(array_filter(self::getProjectClasses($namespace), function (string $class) use (
                 $namespace
             ) {
                 return substr($class, 0, strlen($namespace)) === $namespace && self::isServiceProvider($class);
@@ -72,20 +73,46 @@ final class ApplicationResolver
     }
 
     /**
+     * @param string $namespace
+     *
      * @return array
+     * @throws \ReflectionException
      */
-    private static function getProjectClasses(): array
+    private static function getProjectClasses(string $namespace): array
     {
-        $files = Finder::create()->files()->name('*.php')->in(getcwd().DIRECTORY_SEPARATOR.'src');
+        $projectDirs = self::getProjectSearchDirs($namespace);
+        /** @var string[] $maps */
+        $maps = [];
+        // Use composer's ClassMapGenerator to pull the class list out of each project search directory
+        foreach ($projectDirs as $dir) {
+            $maps = array_merge($maps, ClassMapGenerator::createMap($dir));
+        }
 
-        foreach ($files->files() as $file) {
-            try {
-                require_once $file;
-            } catch (\Throwable $e) {
-                // ..
-            }
+        // now class list of maps are assembled, use class_exists calls to explicitly autoload them,
+        // while not running them
+        foreach ($maps as $class => $file) {
+            class_exists($class, true);
         }
 
         return get_declared_classes();
+    }
+
+    /**
+     * @param string $namespace
+     *
+     * @return string[]
+     * @throws \ReflectionException
+     */
+    private static function getProjectSearchDirs(string $namespace): array
+    {
+        $reflection = new \ReflectionClass(\Composer\Autoload\ClassLoader::class);
+        /** @var string $filename */
+        $filename = $reflection->getFileName();
+        $composerDir = dirname($filename);
+
+        $file = $composerDir.DIRECTORY_SEPARATOR.'autoload_psr4.php';
+        $raw = include $file;
+
+        return $raw[$namespace];
     }
 }
