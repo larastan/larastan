@@ -19,6 +19,11 @@ parameters:
 
 services:
     -
+        class: NunoMaduro\Larastan\Methods\AnnotationExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+
+    -
         class: NunoMaduro\Larastan\Methods\ModelForwardsCallsExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
