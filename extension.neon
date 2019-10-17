@@ -92,3 +92,8 @@ services:
         class: NunoMaduro\Larastan\ReturnTypes\Helpers\TransExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
+
+    -
+        class: NunoMaduro\Larastan\Types\AbortIfFunctionTypeSpecifyingExtension
+        tags:
+            - phpstan.typeSpecifier.functionTypeSpecifyingExtension
