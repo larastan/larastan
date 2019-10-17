@@ -41,6 +41,10 @@ final class AbortIfFunctionTypeSpecifyingExtension implements FunctionTypeSpecif
         Scope $scope,
         TypeSpecifierContext $context
     ): SpecifiedTypes {
+        if (count($node->args) < 2) {
+            return new SpecifiedTypes();
+        }
+
         return $this->typeSpecifier->specifyTypesInCondition($scope, $node->args[0]->value, TypeSpecifierContext::createFalsey());
     }
 
