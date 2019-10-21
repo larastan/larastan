@@ -19,6 +19,16 @@ parameters:
 
 services:
     -
+        class: NunoMaduro\Larastan\Methods\ModelForwardsCallsExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+
+    -
+        class: NunoMaduro\Larastan\Methods\EloquentBuilderForwardsCallsExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+
+    -
         class: NunoMaduro\Larastan\Methods\Extension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
@@ -39,6 +49,11 @@ services:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
 
     -
+        class: NunoMaduro\Larastan\ReturnTypes\ModelFindExtension
+        tags:
+            - phpstan.broker.dynamicStaticMethodReturnTypeExtension
+
+    -
         class: NunoMaduro\Larastan\ReturnTypes\AuthExtension
         tags:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
@@ -50,6 +65,11 @@ services:
 
     -
         class: NunoMaduro\Larastan\ReturnTypes\RequestExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\EloquentBuilderExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 

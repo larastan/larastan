@@ -14,13 +14,14 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
-use Mockery;
 use Illuminate\Support\Str;
+use PHPStan\Type\ObjectType;
 use Illuminate\Database\Query\Builder;
-use PHPStan\Reflection\FunctionVariantWithPhpDocs;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
+use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
 
 /**
  * @internal
@@ -44,23 +45,13 @@ final class BuilderDynamicWheres implements PipeContract
             /** @var \PHPStan\Reflection\FunctionVariantWithPhpDocs $originalDynamicWhereVariant */
             $originalDynamicWhereVariant = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
 
-            $variant = new FunctionVariantWithPhpDocs(
+            $returnMethodReflection = new EloquentBuilderMethodReflection(
+                $passable->getMethodName(), $classReflection,
                 [$originalDynamicWhereVariant->getParameters()[1]],
-                $originalDynamicWhereVariant->isVariadic(),
-                $originalDynamicWhereVariant->getReturnType(),
-                $originalDynamicWhereVariant->getPhpDocReturnType(),
-                $originalDynamicWhereVariant->getNativeReturnType()
+                new ObjectType(EloquentBuilder::class)
             );
 
-            $methodReflection = Mockery::mock($methodReflection);
-            /* @var \Mockery\MockInterface $methodReflection */
-            $methodReflection->shouldReceive('getVariants')
-                ->andReturn([$variant]);
-
-            $methodReflection->shouldReceive('isStatic')
-                ->andReturn(true);
-
-            $passable->setMethodReflection($methodReflection);
+            $passable->setMethodReflection($returnMethodReflection);
 
             $found = true;
         }

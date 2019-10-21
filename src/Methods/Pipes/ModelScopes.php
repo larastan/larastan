@@ -14,11 +14,12 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
-use Mockery;
 use function array_values;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
+use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
 
 /**
  * @internal
@@ -45,20 +46,11 @@ final class ModelScopes implements PipeContract
             unset($parameters[0]); // The query argument.
             $parameters = array_values($parameters);
 
-            $variant = Mockery::mock($variant);
-            $variant->shouldReceive('getParameters')
-                ->andReturn($parameters);
-
-            $methodReflection = Mockery::mock($methodReflection);
-
-            $methodReflection->shouldReceive('isStatic')
-                ->andReturn(true);
-
-            /* @var \Mockery\MockInterface $methodReflection */
-            $methodReflection->shouldReceive('getVariants')
-                ->andReturn([$variant]);
-
-            $passable->setMethodReflection($methodReflection);
+            $passable->setMethodReflection(new EloquentBuilderMethodReflection(
+                $scopeMethodName,
+                $passable->getBroker()->getClass(Builder::class),
+                $parameters)
+            );
 
             $found = true;
         }
