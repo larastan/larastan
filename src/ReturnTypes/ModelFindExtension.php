@@ -16,16 +16,18 @@ namespace NunoMaduro\Larastan\ReturnTypes;
 use PHPStan\Type\Type;
 use Illuminate\Support\Str;
 use PHPStan\Analyser\Scope;
+use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
-use PHPStan\Type\IntegerType;
 use PHPStan\Type\IterableType;
 use PhpParser\Node\Expr\Array_;
 use PHPStan\Type\TypeCombinator;
 use NunoMaduro\Larastan\Concerns;
 use PhpParser\Node\Scalar\LNumber;
+use PHPStan\Type\IntersectionType;
 use PhpParser\Node\Expr\StaticCall;
 use Illuminate\Database\Eloquent\Model;
 use PHPStan\Reflection\MethodReflection;
+use Illuminate\Database\Eloquent\Collection;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 
@@ -61,18 +63,19 @@ final class ModelFindExtension implements DynamicStaticMethodReturnTypeExtension
         Scope $scope
     ): Type {
         $modelName = $methodReflection->getDeclaringClass()->getName();
+        $returnType = $methodReflection->getVariants()[0]->getReturnType();
 
         if ($methodCall->args[0]->value instanceof Array_) {
-            return TypeCombinator::remove($methodReflection->getVariants()[0]->getReturnType(), new ObjectType($modelName));
+            return TypeCombinator::remove($returnType, new ObjectType($modelName));
         }
 
         if ($methodCall->args[0]->value instanceof LNumber) {
             return TypeCombinator::remove(
-                $methodReflection->getVariants()[0]->getReturnType(),
-                new IterableType(new IntegerType(), new ObjectType($modelName))
+                $returnType,
+                new IntersectionType([new ObjectType(Collection::class), new IterableType(new MixedType(), new ObjectType($modelName))])
             );
         }
 
-        return $methodReflection->getVariants()[0]->getReturnType();
+        return $returnType;
     }
 }

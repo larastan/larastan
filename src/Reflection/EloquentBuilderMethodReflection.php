@@ -16,10 +16,10 @@ namespace NunoMaduro\Larastan\Reflection;
 use PHPStan\Type\Type;
 use PHPStan\Type\ObjectType;
 use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\MethodReflection;
 use Illuminate\Database\Eloquent\Builder;
 use PHPStan\Reflection\ClassMemberReflection;
-use PHPStan\Reflection\FunctionVariantWithPhpDocs;
 
 final class EloquentBuilderMethodReflection implements MethodReflection
 {
@@ -87,11 +87,9 @@ final class EloquentBuilderMethodReflection implements MethodReflection
     public function getVariants(): array
     {
         return [
-            new FunctionVariantWithPhpDocs(
+            new FunctionVariant(
                 $this->parameters,
                 false,
-                $this->returnType,
-                $this->returnType,
                 $this->returnType
             ),
         ];

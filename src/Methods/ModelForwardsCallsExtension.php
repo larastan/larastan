@@ -13,18 +13,13 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
-use PHPStan\Type\Type;
-use PHPStan\Type\NullType;
-use PHPStan\Type\UnionType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\IntegerType;
-use PHPStan\Type\IterableType;
 use NunoMaduro\Larastan\Concerns;
 use Illuminate\Database\Eloquent\Model;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use PHPStan\Reflection\BrokerAwareExtension;
 use Illuminate\Contracts\Pagination\Paginator;
 use PHPStan\Reflection\ParametersAcceptorSelector;
@@ -70,6 +65,11 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
         return $this->getBuilderReflection()->hasNativeMethod($methodName) || $this->broker->getClass(QueryBuilder::class)->hasNativeMethod($methodName);
     }
 
+    /**
+     * @throws \PHPStan\Broker\ClassNotFoundException
+     * @throws \PHPStan\Reflection\MissingMethodFromReflectionException
+     * @throws \PHPStan\ShouldNotHappenException
+     */
     public function getMethod(ClassReflection $originalModelReflection, string $methodName): MethodReflection
     {
         $returnType = null;
@@ -87,11 +87,11 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
         } elseif (in_array($methodName, array_merge($this->modelRetrievalMethods, $this->modelCreationMethods), true)) {
             $methodReflection = $this->getBuilderReflection()->getNativeMethod($methodName);
 
-            $returnType = $this->getReturnTypeFromMap($methodName, $originalModelReflection->getName());
+            $returnType = ModelTypeHelper::replaceStaticTypeWithModel($methodReflection->getVariants()[0]->getReturnType(), $originalModelReflection->getName());
         }
 
         if ($this->getBuilderReflection()->hasNativeMethod($methodName)) {
-            $methodReflection = $methodReflection === null ? $this->getBuilderReflection()->getNativeMethod($methodName) : $methodReflection;
+            $methodReflection = $methodReflection ?? $this->getBuilderReflection()->getNativeMethod($methodName);
 
             return new EloquentBuilderMethodReflection(
                 $methodName, $originalModelReflection,
@@ -105,30 +105,5 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
             ParametersAcceptorSelector::selectSingle($queryBuilderReflection->getNativeMethod($methodName)->getVariants())->getParameters(),
             $returnType
         );
-    }
-
-    private function getReturnTypeFromMap(string $methodName, string $className) : Type
-    {
-        return [
-            'first' => new UnionType([
-                new ObjectType($className), new NullType(),
-            ]),
-            'find' => new UnionType([
-                new IterableType(new IntegerType(), new ObjectType($className)), new ObjectType($className), new NullType(),
-            ]),
-            'findMany' => new ObjectType(Collection::class),
-            'findOrFail' => new UnionType([
-                new IterableType(new IntegerType(), new ObjectType($className)), new ObjectType($className),
-            ]),
-            'make' => new ObjectType($className),
-            'create' => new ObjectType($className),
-            'forceCreate' => new ObjectType($className),
-            'findOrNew' => new ObjectType($className),
-            'firstOrNew' => new ObjectType($className),
-            'updateOrCreate' => new ObjectType($className),
-            'fromQuery' => new UnionType([
-                new IterableType(new IntegerType(), new ObjectType($className)), new ObjectType(Collection::class),
-            ]),
-        ][$methodName];
     }
 }

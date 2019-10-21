@@ -111,10 +111,10 @@ class ModelExtension
         return User::first();
     }
 
-    public function testMake() : User
-    {
-        return User::make([]);
-    }
+//    public function testMake() : User
+//    {
+//        return User::make([]);
+//    }
 
     public function testCreate() : User
     {
@@ -150,6 +150,11 @@ class ModelExtension
     {
         return $query->macro('customMacro', function () {
         });
+    }
+
+    public function testChainingCollectionMethodsOnModel() : Collection
+    {
+        return User::findOrFail([1, 2, 3])->makeHidden('foo');
     }
 }
 
