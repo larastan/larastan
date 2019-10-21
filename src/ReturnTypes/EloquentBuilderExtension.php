@@ -32,8 +32,10 @@ use PHPStan\Reflection\MethodReflection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use PHPStan\Reflection\BrokerAwareExtension;
+use NunoMaduro\Larastan\Methods\ModelTypeHelper;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Reflection\Dummy\DummyMethodReflection;
+use NunoMaduro\Larastan\Methods\ModelForwardsCallsExtension;
 
 final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension, BrokerAwareExtension
 {
@@ -52,6 +54,10 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
         }
 
         if ($methodReflection instanceof DummyMethodReflection) {
+            return true;
+        }
+
+        if (in_array($methodReflection->getName(), array_merge(ModelForwardsCallsExtension::MODEL_CREATION_METHODS, ModelForwardsCallsExtension::MODEL_RETRIEVAL_METHODS), true)) {
             return true;
         }
 
@@ -87,6 +93,11 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
             }
         }
 
+        if ($modelType instanceof ObjectType && in_array($methodReflection->getName(), array_merge(ModelForwardsCallsExtension::MODEL_CREATION_METHODS, ModelForwardsCallsExtension::MODEL_RETRIEVAL_METHODS), true)) {
+            return ModelTypeHelper::replaceStaticTypeWithModel($methodReflection->getVariants()[0]->getReturnType(), $modelType->getClassName());
+        }
+
+        // 'get' method return type
         return new IntersectionType([
             new IterableType(new IntegerType(), $modelType), new ObjectType(Collection::class),
         ]);

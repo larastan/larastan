@@ -156,6 +156,22 @@ class ModelExtension
     {
         return User::findOrFail([1, 2, 3])->makeHidden('foo');
     }
+
+    public function testFirstOrFailWithChain() : User
+    {
+        return User::with('foo')
+            ->where('foo', 'bar')
+            ->orWhere('bar', 'baz')
+            ->firstOrFail();
+    }
+
+    public function testFirstWithChain() : ?User
+    {
+        return User::with('foo')
+            ->where('foo', 'bar')
+            ->orWhere('bar', 'baz')
+            ->first();
+    }
 }
 
 class Thread extends Model
