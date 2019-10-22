@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.4.3] - 2019-10-22
+### Added
+- Support for `abort_if`. Fixes [#116](https://github.com/nunomaduro/larastan/issues/116) ([#330](https://github.com/nunomaduro/larastan/pull/330))
+
+### Fixed
+- Better return type inference in models and builders ([#325](https://github.com/nunomaduro/larastan/pull/325), [#336](https://github.com/nunomaduro/larastan/pull/336))
+
 ## [0.4.2] - 2019-10-16
 ### Added
 - Support for determining correct return type for relation create method ([#320](https://github.com/nunomaduro/larastan/pull/320), [#323](https://github.com/nunomaduro/larastan/pull/323))
@@ -228,7 +235,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.4.2...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.4.3...HEAD
+[0.4.3]: https://github.com/nunomaduro/larastan/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/nunomaduro/larastan/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/nunomaduro/larastan/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/nunomaduro/larastan/compare/v0.3.21...v0.4.0
