@@ -33,10 +33,10 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
     use Concerns\HasBroker;
 
     /** @var string[] */
-    private $modelRetrievalMethods = ['first', 'find', 'findMany', 'findOrFail'];
+    public const MODEL_RETRIEVAL_METHODS = ['first', 'find', 'findMany', 'findOrFail', 'firstOrFail'];
 
     /** @var string[] */
-    private $modelCreationMethods = ['make', 'create', 'forceCreate', 'findOrNew', 'firstOrNew', 'updateOrCreate', 'fromQuery'];
+    public const MODEL_CREATION_METHODS = ['make', 'create', 'forceCreate', 'findOrNew', 'firstOrNew', 'updateOrCreate', 'fromQuery'];
 
     /**
      * @return ClassReflection
@@ -84,7 +84,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
             $methodReflection = $queryBuilderReflection->getNativeMethod($methodName);
 
             $returnType = new ObjectType($methodName === 'paginate' ? LengthAwarePaginator::class : Paginator::class);
-        } elseif (in_array($methodName, array_merge($this->modelRetrievalMethods, $this->modelCreationMethods), true)) {
+        } elseif (in_array($methodName, array_merge(self::MODEL_CREATION_METHODS, self::MODEL_RETRIEVAL_METHODS), true)) {
             $methodReflection = $this->getBuilderReflection()->getNativeMethod($methodName);
 
             $returnType = ModelTypeHelper::replaceStaticTypeWithModel($methodReflection->getVariants()[0]->getReturnType(), $originalModelReflection->getName());
