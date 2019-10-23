@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\ReturnTypes;
 
 use PHPStan\Type\Type;
+use PhpParser\Node\Name;
 use Illuminate\Support\Str;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\MixedType;
@@ -80,6 +81,8 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
                 $modelType = $scope->getType($methodCall->var->class);
             } elseif ($methodCall->var->class instanceof FullyQualified) {
                 $modelType = new ObjectType($methodCall->var->class->toCodeString());
+            } elseif ($methodCall->var->class instanceof Name) {
+                $modelType = new ObjectType($scope->resolveName($methodCall->var->class));
             }
         } elseif ($methodCall->var instanceof Variable || $methodCall->var instanceof PropertyFetch) {
             /** @var ObjectType $modelType */

@@ -14,15 +14,28 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods;
 
 use PHPStan\Type\Type;
+use PHPStan\Type\UnionType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\StaticResolvableType;
 use Illuminate\Database\Eloquent\Model;
+use PHPStan\Type\ObjectWithoutClassType;
 
 final class ModelTypeHelper
 {
     public static function replaceStaticTypeWithModel(Type $type, string $modelClass) : Type
     {
+        if ($type instanceof UnionType) {
+            $types = $type->getTypes();
+            foreach ($types as $key => $innerType) {
+                if ($innerType instanceof ObjectWithoutClassType) {
+                    $types[$key] = new ObjectType($modelClass);
+                }
+            }
+    
+            $type = new UnionType($types);
+        }
+
         if ($type instanceof StaticResolvableType) {
             return TypeCombinator::remove($type->resolveStatic($modelClass), new ObjectType(Model::class, new ObjectType($modelClass)));
         }
