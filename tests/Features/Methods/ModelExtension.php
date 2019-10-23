@@ -172,7 +172,7 @@ class ModelExtension
             ->orWhere('bar', 'baz')
             ->first();
     }
-    
+
     public function testFindOnVariableClassName() : ?User
     {
         $class = foo();
@@ -188,5 +188,15 @@ class Thread extends Model
     public function scopeValid(Builder $query) : Builder
     {
         return $query->where('valid', true);
+    }
+    
+    public static function testFindOnStaticSelf() : ?Thread
+    {
+        return self::valid()->first();
+    }
+    
+    public static function testFindOnStatic() : ?Thread
+    {
+        return static::valid()->first();
     }
 }
