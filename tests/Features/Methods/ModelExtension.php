@@ -172,7 +172,16 @@ class ModelExtension
             ->orWhere('bar', 'baz')
             ->first();
     }
+    
+    public function testFindOnVariableClassName() : ?User
+    {
+        $class = foo();
+
+        return $class::query()->find(5);
+    }
 }
+
+function foo() : string {}
 
 class Thread extends Model
 {

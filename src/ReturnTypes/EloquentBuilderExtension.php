@@ -76,9 +76,11 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
         $modelType = new MixedType();
 
         if ($methodCall->var instanceof StaticCall || $methodCall->var instanceof New_) {
-            /** @var FullyQualified $fullQualifiedClass */
-            $fullQualifiedClass = $methodCall->var->class;
-            $modelType = new ObjectType($fullQualifiedClass->toCodeString());
+            if ($methodCall->var->class instanceof Variable) {
+                $modelType = $scope->getType($methodCall->var->class);
+            } elseif ($methodCall->var->class instanceof FullyQualified) {
+                $modelType = new ObjectType($methodCall->var->class->toCodeString());
+            }
         } elseif ($methodCall->var instanceof Variable || $methodCall->var instanceof PropertyFetch) {
             /** @var ObjectType $modelType */
             $modelType = $scope->getType($methodCall->var);
