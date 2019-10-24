@@ -30,7 +30,11 @@ class AuthExtension
         return auth()->check();
     }
 
-    public function testId(): ?int
+    /**
+     * @return int|string|null
+     * @throws \Illuminate\Contracts\Container\BindingResolutionException
+     */
+    public function testId()
     {
         return auth()->id();
     }
