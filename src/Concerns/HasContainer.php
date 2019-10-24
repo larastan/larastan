@@ -13,11 +13,9 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Concerns;
 
-use ReflectionException;
 use Illuminate\Container\Container;
-use Psr\Container\NotFoundExceptionInterface;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Container\Container as ContainerContract;
+use Throwable;
 
 /**
  * @internal
@@ -63,11 +61,7 @@ trait HasContainer
         try {
             $concrete = $this->getContainer()
                 ->make($abstract);
-        } catch (ReflectionException $exception) {
-            // ..
-        } catch (BindingResolutionException $exception) {
-            // ..
-        } catch (NotFoundExceptionInterface $exception) {
+        } catch (Throwable $exception) {
             // ..
         }
 
