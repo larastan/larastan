@@ -141,6 +141,11 @@ class ModelExtension
         return User::updateOrCreate([]);
     }
 
+    public function testFirstOrCreate(): User
+    {
+        return User::firstOrCreate([]);
+    }
+
     public function testScope() : Builder
     {
         return Thread::valid();
@@ -189,12 +194,12 @@ class Thread extends Model
     {
         return $query->where('valid', true);
     }
-    
+
     public static function testFindOnStaticSelf() : ?Thread
     {
         return self::valid()->first();
     }
-    
+
     public static function testFindOnStatic() : ?Thread
     {
         return static::valid()->first();
