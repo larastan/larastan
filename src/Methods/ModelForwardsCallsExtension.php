@@ -92,18 +92,23 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
 
         if ($this->getBuilderReflection()->hasNativeMethod($methodName)) {
             $methodReflection = $methodReflection ?? $this->getBuilderReflection()->getNativeMethod($methodName);
+            $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
 
             return new EloquentBuilderMethodReflection(
                 $methodName, $originalModelReflection,
-                ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getParameters(),
-                $returnType
+                $parametersAcceptor->getParameters(),
+                $returnType,
+                $parametersAcceptor->isVariadic()
             );
         }
 
+        $parametersAcceptor = ParametersAcceptorSelector::selectSingle($queryBuilderReflection->getNativeMethod($methodName)->getVariants());
+
         return new EloquentBuilderMethodReflection(
             $methodName, $originalModelReflection,
-            ParametersAcceptorSelector::selectSingle($queryBuilderReflection->getNativeMethod($methodName)->getVariants())->getParameters(),
-            $returnType
+            $parametersAcceptor->getParameters(),
+            $returnType,
+            $parametersAcceptor->isVariadic()
         );
     }
 }
