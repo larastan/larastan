@@ -19,6 +19,7 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\MethodReflection;
 use Illuminate\Database\Eloquent\Builder;
+use PHPStan\Reflection\ParameterReflection;
 use PHPStan\Reflection\ClassMemberReflection;
 
 final class EloquentBuilderMethodReflection implements MethodReflection
@@ -34,7 +35,7 @@ final class EloquentBuilderMethodReflection implements MethodReflection
     private $classReflection;
 
     /**
-     * @var array
+     * @var array<int, ParameterReflection>
      */
     private $parameters;
 
@@ -43,12 +44,18 @@ final class EloquentBuilderMethodReflection implements MethodReflection
      */
     private $returnType;
 
-    public function __construct(string $methodName, ClassReflection $classReflection, array $parameters, ?Type $returnType = null)
+    /**
+     * @var bool
+     */
+    private $isVariadic;
+
+    public function __construct(string $methodName, ClassReflection $classReflection, array $parameters, ?Type $returnType = null, bool $isVariadic = false)
     {
         $this->methodName = $methodName;
         $this->classReflection = $classReflection;
         $this->parameters = $parameters;
         $this->returnType = $returnType ?? new ObjectType(Builder::class);
+        $this->isVariadic = $isVariadic;
     }
 
     public function getDeclaringClass(): ClassReflection
@@ -89,7 +96,7 @@ final class EloquentBuilderMethodReflection implements MethodReflection
         return [
             new FunctionVariant(
                 $this->parameters,
-                false,
+                $this->isVariadic,
                 $this->returnType
             ),
         ];
