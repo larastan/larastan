@@ -184,6 +184,12 @@ class ModelExtension
 
         return $class::query()->find(5);
     }
+
+    /** @return iterable<Thread>&Collection */
+    public function testCustomMethodsStartingWithFind()
+    {
+        return Thread::findAllFooBarThreads();
+    }
 }
 
 function foo() : string {}
@@ -203,5 +209,11 @@ class Thread extends Model
     public static function testFindOnStatic() : ?Thread
     {
         return static::valid()->first();
+    }
+
+    /** @return iterable<Thread>&Collection */
+    public static function findAllFooBarThreads()
+    {
+        return self::query()->where('foo', 'bar')->get();
     }
 }
