@@ -27,8 +27,10 @@ use PHPStan\Type\IntersectionType;
 use PhpParser\Node\Expr\StaticCall;
 use Illuminate\Database\Eloquent\Model;
 use PHPStan\Reflection\MethodReflection;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use PHPStan\Reflection\BrokerAwareExtension;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 
 /**
@@ -51,7 +53,18 @@ final class ModelFindExtension implements DynamicStaticMethodReturnTypeExtension
      */
     public function isStaticMethodSupported(MethodReflection $methodReflection): bool
     {
-        return Str::startsWith($methodReflection->getName(), 'find');
+        $methodName = $methodReflection->getName();
+
+        if (! Str::startsWith($methodName, 'find')) {
+            return false;
+        }
+
+        if (! $this->getBroker()->getClass(Builder::class)->hasNativeMethod($methodName) &&
+            ! $this->getBroker()->getClass(QueryBuilder::class)->hasNativeMethod($methodName)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
