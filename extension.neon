@@ -1,7 +1,6 @@
 parameters:
     scopeClass: NunoMaduro\Larastan\Analyser\Scope
     universalObjectCratesClasses:
-        - Illuminate\Database\Eloquent\Model
         - Illuminate\Http\Resources\Json\JsonResource
         - Illuminate\Http\Request
         - Illuminate\Contracts\Auth\Authenticatable
@@ -37,6 +36,11 @@ services:
         class: NunoMaduro\Larastan\Methods\Extension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
+
+    -
+            class: NunoMaduro\Larastan\Properties\ModelRelationsExtension
+            tags:
+                - phpstan.broker.propertiesClassReflectionExtension
 
     -
         class: NunoMaduro\Larastan\Properties\Extension
