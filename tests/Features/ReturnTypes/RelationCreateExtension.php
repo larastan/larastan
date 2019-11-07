@@ -9,7 +9,7 @@ use App\Account;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class ModelExtension
+class RelationCreateExtension
 {
     public function testCreateWithRelation() : Account
     {

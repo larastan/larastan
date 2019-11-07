@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use Nette\Neon\Neon;
+use Illuminate\Support\Str;
 use Orchestra\Testbench\TestCase;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\Finder\Finder;
@@ -13,6 +15,8 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 class FeaturesTest extends TestCase
 {
+    use RegisteredExtensions;
+
     private $kernel;
 
     public function setUp(): void
@@ -30,6 +34,14 @@ class FeaturesTest extends TestCase
         @File::copy(__DIR__.'/../bootstrap.php', __DIR__.'/../vendor/nunomaduro/larastan/bootstrap.php');
         @File::copy(__DIR__.'/../config/mixins.php', __DIR__.'/../vendor/nunomaduro/larastan/config/mixins.php');
         @File::copy(__DIR__.'/../config/statics.php', __DIR__.'/../vendor/nunomaduro/larastan/config/statics.php');
+        @File::copy($this->extensionPath, __DIR__.'/../extension.neon.org');
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        @File::move(__DIR__.'/../extension.neon.org', $this->extensionPath);
     }
 
     public function getFeatures(): array
@@ -54,12 +66,18 @@ class FeaturesTest extends TestCase
      */
     public function testFeatures(string $file): void
     {
-        if ($this->analyze($file) === 0) {
-            $this->assertTrue(true);
+        $extension = $this->getExtensionFromFilePath($file);
+
+        $this->analyze($file, false);
+
+        if ($this->extensionIsRegistered($extension)) {
+            $this->disableExtension($extension);
+
+            $this->analyze($file, true);
         }
     }
 
-    private function analyze(string $file): int
+    private function analyze(string $file, bool $shouldFail = false)
     {
         $result = $this->kernel->call('code:analyse', [
             '--level' => 'max',
@@ -71,10 +89,42 @@ class FeaturesTest extends TestCase
             '--no-progress' => true,
         ], $output = new BufferedOutput);
 
-        if ($result !== 0) {
-            $this->fail($output->fetch());
+        if ($result != $shouldFail) {
+            $message = $shouldFail ? $output->fetch() : "Analysis fails, please check {$file}.";
+
+            $this->fail($message);
         }
 
-        return $result;
+        $this->assertTrue(true);
+    }
+
+    public function disableExtension(string $extensionClass): void
+    {
+        $extensionFileContent = file_get_contents($this->extensionPath);
+
+        $extension = Neon::decode($extensionFileContent);
+
+        foreach ($extension['services'] as $index => $service) {
+            if (Str::endsWith($service['class'], $extensionClass)) {
+                array_splice($extension['services'], $index, 1);
+
+                break;
+            }
+        }
+
+        file_put_contents($this->extensionPath, Neon::encode($extension, Neon::BLOCK));
+    }
+
+    private function extensionIsRegistered(string $extension)
+    {
+        return in_array('NunoMaduro\\Larastan\\'.$extension, $this->getRegisteredExtensions());
+    }
+
+    protected function getExtensionFromFilePath(string $file): string
+    {
+        $fileWithoutExtension = str_replace('.php', '', $file);
+        $extensionClassName = str_replace('/', '\\', $fileWithoutExtension);
+
+        return Str::afterLast($extensionClassName, 'tests\\Features\\');
     }
 }
