@@ -14,27 +14,20 @@ class TestCaseExtension extends TestCase
     {
         $testCase = new TestTestCase();
 
-        $testCase->testMock();
-        $testCase->testPartialMock();
-        $testCase->testSpy();
+        $testCase->testMockingMethod('mock');
+        $testCase->testMockingMethod('partialMock');
+        $testCase->testMockingMethod('spy');
     }
 }
 
 class TestTestCase extends \Illuminate\Foundation\Testing\TestCase
 {
-    public function testMock() {
-        $mock = $this->mock(User::class);
-        $mock->accounts();
-    }
-
-    public function testPartialMock() {
-        $mock = $this->partialMock(User::class);
-        $mock->accounts();
-    }
-
-    public function testSpy() {
-        $mock = $this->spy(User::class);
-        $mock->accounts();
+    public function testMockingMethod($method): void
+    {
+        if (method_exists($this, $method)) {
+            $mock = $this->{$method}(User::class);
+            $mock->accounts();
+        }
     }
 
     public function createApplication()

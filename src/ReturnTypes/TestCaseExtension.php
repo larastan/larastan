@@ -2,6 +2,15 @@
 
 declare(strict_types=1);
 
+/**
+ * This file is part of Larastan.
+ *
+ * (c) Nuno Maduro <enunomaduro@gmail.com>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ */
+
 namespace NunoMaduro\Larastan\ReturnTypes;
 
 use Illuminate\Foundation\Testing\TestCase;
@@ -14,6 +23,9 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
+/**
+ * @internal
+ */
 final class TestCaseExtension implements DynamicMethodReturnTypeExtension
 {
     public function getClass(): string
