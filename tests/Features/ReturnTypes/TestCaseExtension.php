@@ -6,26 +6,48 @@ namespace Tests\Features\ReturnTypes;
 
 use App\User;
 use Illuminate\Foundation\Application;
-use PHPStan\Testing\TestCase;
 
-class TestCaseExtension extends TestCase
+class TestCaseExtension
 {
-    public function testTestCaseExtension(): void
+    public function testMockMethod(): void
     {
-        $testCase = new TestTestCase();
+        (new TestTestCase())->testMockMethod();
+    }
 
-        $testCase->testMockingMethod('mock');
-        $testCase->testMockingMethod('partialMock');
-        $testCase->testMockingMethod('spy');
+    public function testPartialMockMethod(): void
+    {
+        (new TestTestCase())->testPartialMockMethod();
+    }
+
+    public function testSpyMethod(): void
+    {
+        (new TestTestCase())->testSpyMethod();
     }
 }
 
 class TestTestCase extends \Illuminate\Foundation\Testing\TestCase
 {
-    public function testMockingMethod($method): void
+    public function testMockMethod(): void
     {
-        if (method_exists($this, $method)) {
-            $mock = $this->{$method}(User::class);
+        if (method_exists($this, 'mock')) {
+            $bla = 'mock';
+            $mock = $this->{$bla}(User::class);
+            $mock->accounts();
+        }
+    }
+
+    public function testPartialMockMethod(): void
+    {
+        if (method_exists($this, 'partialMock')) {
+            $mock = $this->partialMock(User::class);
+            $mock->accounts();
+        }
+    }
+
+    public function testSpyMethod(): void
+    {
+        if (method_exists($this, 'spy')) {
+            $mock = $this->spy(User::class);
             $mock->accounts();
         }
     }
@@ -34,5 +56,4 @@ class TestTestCase extends \Illuminate\Foundation\Testing\TestCase
     {
         return new Application('');
     }
-
 }
