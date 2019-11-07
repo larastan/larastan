@@ -50,10 +50,6 @@ class FeaturesTest extends TestCase
             $calls[str_replace($baseDir, '', $fullPath)] = [$fullPath];
         }
 
-        return [
-            'ReturnTypes/Helpers/RequestExtension.php' => ['/Users/bertvanhoekelen/Code/opensource/larastan/tests/Features/ReturnTypes/Helpers/RequestExtension.php']
-        ];
-
         return $calls;
     }
 
