@@ -85,7 +85,7 @@ class FeaturesTest extends TestCase
         ], $output = new BufferedOutput);
 
         if ($result != $shouldFail) {
-            $message = $shouldFail ? $output->fetch() : "Analysis fails, please check {$file}.";
+            $message = 'Analysis fails, please check '.$file.'.'.PHP_EOL.PHP_EOL.$output->fetch();
 
             $this->fail($message);
         }
@@ -107,7 +107,7 @@ class FeaturesTest extends TestCase
             }
         }
 
-        $path = $this->extensionPath . Str::random(16);
+        $path = str_replace('.neon', Str::random(16).'.neon', $this->extensionPath);
         file_put_contents($path, Neon::encode($extension, Neon::BLOCK));
 
         return $path;
