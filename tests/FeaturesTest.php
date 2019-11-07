@@ -34,14 +34,6 @@ class FeaturesTest extends TestCase
         @File::copy(__DIR__.'/../bootstrap.php', __DIR__.'/../vendor/nunomaduro/larastan/bootstrap.php');
         @File::copy(__DIR__.'/../config/mixins.php', __DIR__.'/../vendor/nunomaduro/larastan/config/mixins.php');
         @File::copy(__DIR__.'/../config/statics.php', __DIR__.'/../vendor/nunomaduro/larastan/config/statics.php');
-        @File::copy($this->extensionPath, __DIR__.'/../extension.neon.org');
-    }
-
-    protected function tearDown(): void
-    {
-        parent::tearDown();
-
-        @File::move(__DIR__.'/../extension.neon.org', $this->extensionPath);
     }
 
     public function getFeatures(): array
@@ -58,6 +50,10 @@ class FeaturesTest extends TestCase
             $calls[str_replace($baseDir, '', $fullPath)] = [$fullPath];
         }
 
+        return [
+            'ReturnTypes/Helpers/RequestExtension.php' => ['/Users/bertvanhoekelen/Code/opensource/larastan/tests/Features/ReturnTypes/Helpers/RequestExtension.php']
+        ];
+
         return $calls;
     }
 
@@ -71,13 +67,15 @@ class FeaturesTest extends TestCase
         $this->analyze($file, false);
 
         if ($this->extensionIsRegistered($extension)) {
-            $this->disableExtension($extension);
+            $configurationPath = $this->disableExtension($extension);
 
-            $this->analyze($file, true);
+            $this->analyze($file, true, $configurationPath);
+
+            File::delete($configurationPath);
         }
     }
 
-    private function analyze(string $file, bool $shouldFail = false)
+    private function analyze(string $file, bool $shouldFail = false, $configurationPath = null)
     {
         $result = $this->kernel->call('code:analyse', [
             '--level' => 'max',
@@ -87,6 +85,7 @@ class FeaturesTest extends TestCase
             '--error-format' => 'raw',
             '--no-tty' => true,
             '--no-progress' => true,
+            '--configuration' => $configurationPath ?? $this->extensionPath
         ], $output = new BufferedOutput);
 
         if ($result != $shouldFail) {
@@ -98,7 +97,7 @@ class FeaturesTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function disableExtension(string $extensionClass): void
+    public function disableExtension(string $extensionClass): string
     {
         $extensionFileContent = file_get_contents($this->extensionPath);
 
@@ -112,7 +111,10 @@ class FeaturesTest extends TestCase
             }
         }
 
-        file_put_contents($this->extensionPath, Neon::encode($extension, Neon::BLOCK));
+        $path = $this->extensionPath . Str::random(16);
+        file_put_contents($path, Neon::encode($extension, Neon::BLOCK));
+
+        return $path;
     }
 
     private function extensionIsRegistered(string $extension)
@@ -125,6 +127,6 @@ class FeaturesTest extends TestCase
         $fileWithoutExtension = str_replace('.php', '', $file);
         $extensionClassName = str_replace('/', '\\', $fileWithoutExtension);
 
-        return Str::afterLast($extensionClassName, 'tests\\Features\\');
+        return array_reverse(explode('tests\\Features\\', $extensionClassName))[0];
     }
 }
