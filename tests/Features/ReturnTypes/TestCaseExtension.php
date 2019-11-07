@@ -30,8 +30,7 @@ class TestTestCase extends \Illuminate\Foundation\Testing\TestCase
     public function testMockMethod(): void
     {
         if (method_exists($this, 'mock')) {
-            $bla = 'mock';
-            $mock = $this->{$bla}(User::class);
+            $mock = $this->mock(User::class);
             $mock->accounts();
         }
     }
