@@ -66,8 +66,6 @@ class FeaturesTest extends TestCase
             $configurationPath = $this->disableExtension($extension);
 
             $this->analyze($file, true, $configurationPath);
-
-            File::delete($configurationPath);
         }
     }
 
@@ -83,6 +81,10 @@ class FeaturesTest extends TestCase
             '--no-progress' => true,
             '--configuration' => $configurationPath ?? $this->extensionPath
         ], $output = new BufferedOutput);
+
+        if ($configurationPath) {
+            File::delete($configurationPath);
+        }
 
         if ($result != $shouldFail) {
             $message = 'Analysis fails, please check '.$file.'.'.PHP_EOL.PHP_EOL.$output->fetch();
