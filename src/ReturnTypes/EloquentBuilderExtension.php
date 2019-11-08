@@ -107,7 +107,7 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
         }
 
         if ($modelType instanceof ObjectType && in_array($methodReflection->getName(), array_merge(ModelForwardsCallsExtension::MODEL_CREATION_METHODS, ModelForwardsCallsExtension::MODEL_RETRIEVAL_METHODS), true)) {
-            return ModelTypeHelper::replaceStaticTypeWithModel($methodReflection->getVariants()[0]->getReturnType(), $modelType->getClassName());
+            return $modelType;
         }
 
         // 'get' method return type
