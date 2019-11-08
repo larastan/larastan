@@ -6,23 +6,48 @@ namespace Tests\Features\ReturnTypes;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 class EloquentBuilderExtension
 {
     public function testModelScopeReturnsBuilder(): Builder
     {
-        return TestScopesModel::query()
+        return EloquentBuilderModel::query()
             ->foo('piet');
     }
 
     public function testCustomBuilderMethodReturnsBuilder(): CustomBuilder
     {
-        return TestScopesModel::query()
+        return EloquentBuilderModel::query()
             ->type('piet');
+    }
+
+    public function testAModelCreationMethodReturnsModel(): EloquentBuilderModel
+    {
+        return EloquentBuilderModel::query()
+            ->where(['foo' => 'bar'])
+            ->make();
+    }
+
+    public function testAModelRetrievalMethodReturnsModel(): EloquentBuilderModel
+    {
+        return EloquentBuilderModel::query()
+            ->where(['foo' => 'bar'])
+            ->firstOrFail();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<\Tests\Features\ReturnTypes\EloquentBuilderModel>
+     */
+    public function testGetMethodReturnType(): Collection
+    {
+        return EloquentBuilderModel::query()
+            ->where(['foo' => 'bar'])
+            ->get();
     }
 }
 
-class TestScopesModel extends Model
+class EloquentBuilderModel extends Model
 {
     public function scopeFoo(string $foo)
     {
