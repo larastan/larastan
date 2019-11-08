@@ -78,13 +78,11 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
 
         $phpDocs = $classReflection->getNativeReflection()->getDocComment();
 
-        if ($phpDocs) {
-            if ($this->hasNullableProperty($phpDocs, $relatedModel)) {
-                return new ModelRelationProperty($classReflection, new UnionType([
-                    new ObjectType($relatedModel),
-                    new NullType(),
-                ]));
-            }
+        if ($phpDocs && $this->hasNullableProperty($phpDocs, $relatedModel)) {
+            return new ModelRelationProperty($classReflection, new UnionType([
+                new ObjectType($relatedModel),
+                new NullType(),
+            ]));
         }
 
         return new ModelRelationProperty($classReflection, new ObjectType($relatedModel));
