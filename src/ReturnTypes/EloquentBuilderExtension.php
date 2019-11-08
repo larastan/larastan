@@ -96,6 +96,14 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
             if ($modelReflection->hasNativeMethod($scopeMethodName)) {
                 return new ObjectType(Builder::class);
             }
+
+            if ($modelReflection->hasNativeMethod('newEloquentBuilder')) {
+                $customBuilder = $modelReflection->getNativeMethod('newEloquentBuilder')->getVariants()[0]->getReturnType();
+
+                if ($customBuilder->hasMethod($methodReflection->getName())->yes()) {
+                    return $customBuilder;
+                }
+            }
         }
 
         if ($modelType instanceof ObjectType && in_array($methodReflection->getName(), array_merge(ModelForwardsCallsExtension::MODEL_CREATION_METHODS, ModelForwardsCallsExtension::MODEL_RETRIEVAL_METHODS), true)) {
