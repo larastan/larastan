@@ -70,6 +70,14 @@ class ModelRelationsExtension
 
         return $dummyModel->relationWithoutReturnType;
     }
+
+    public function testNullableProperty(): DummyModel
+    {
+        /** @var DummyModelWithDocBlock $dummyModel */
+        $dummyModel = DummyModelWithDocBlock::firstOrFail();
+
+        return $dummyModel->belongsToRelation ? $dummyModel->belongsToRelation : new DummyModel();
+    }
 }
 
 class DummyModel extends Model
@@ -100,5 +108,16 @@ class OtherDummyModel extends Model
     public function morphToRelation() : MorphTo
     {
         return $this->morphTo('foo');
+    }
+}
+
+/**
+ * @property \Tests\Features\Properties\DummyModel|null $belongsToRelation
+ */
+class DummyModelWithDocBlock extends Model
+{
+    public function belongsToRelation() : BelongsTo
+    {
+        return $this->belongsTo(DummyModel::class);
     }
 }

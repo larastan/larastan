@@ -15,6 +15,7 @@ namespace NunoMaduro\Larastan\Properties;
 
 use Illuminate\Support\Str;
 use PHPStan\Type\MixedType;
+use PHPStan\Type\NullType;
 use PHPStan\Type\UnionType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\IterableType;
@@ -75,6 +76,33 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
             ]));
         }
 
+        $phpDocs = $classReflection->getNativeReflection()->getDocComment();
+
+        if ($phpDocs) {
+            if ($this->hasNullableProperty($phpDocs, $relatedModel)) {
+                return new ModelRelationProperty($classReflection, new UnionType([
+                    new ObjectType($relatedModel),
+                    new NullType(),
+                ]));
+            }
+        }
+
         return new ModelRelationProperty($classReflection, new ObjectType($relatedModel));
     }
+
+    private function hasNullableProperty(string $phpDocs, string $relatedModel): bool
+    {
+        preg_match_all('/@property\s+([\w\\\\|]+)/', $phpDocs, $mixins);
+
+        $phpDocProperties =  array_map(function ($mixin) {
+            return explode('|', preg_replace('#^\\\\#', '', $mixin));
+        }, $mixins[1]);
+
+        $relatedNullableProperty = array_filter($phpDocProperties, function (array $property) use ($relatedModel) {
+            return in_array($relatedModel, $property) && in_array('null', $property);
+        });
+
+        return count($relatedNullableProperty) > 0;
+    }
+
 }
