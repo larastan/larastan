@@ -29,10 +29,8 @@ class TestTestCase extends \Illuminate\Foundation\Testing\TestCase
 {
     public function testMockMethod(): void
     {
-        if (method_exists($this, 'mock')) {
-            $mock = $this->mock(User::class);
-            $mock->accounts();
-        }
+        $mock = $this->mock(User::class);
+        $mock->accounts();
     }
 
     public function testPartialMockMethod(): void
@@ -45,10 +43,8 @@ class TestTestCase extends \Illuminate\Foundation\Testing\TestCase
 
     public function testSpyMethod(): void
     {
-        if (method_exists($this, 'spy')) {
-            $mock = $this->spy(User::class);
-            $mock->accounts();
-        }
+        $mock = $this->spy(User::class);
+        $mock->accounts();
     }
 
     public function createApplication()
