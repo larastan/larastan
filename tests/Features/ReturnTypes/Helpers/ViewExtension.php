@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Features\ReturnTypes\Helpers;
 
-use Illuminate\View\View;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\View\View;
 
 class ViewExtension
 {

@@ -2,9 +2,9 @@
 
 namespace Tests;
 
-use Orchestra\Testbench\TestCase;
 use NunoMaduro\Larastan\ApplicationResolver;
 use NunoMaduro\Larastan\LarastanServiceProvider;
+use Orchestra\Testbench\TestCase;
 
 class ApplicationResolverTest extends TestCase
 {

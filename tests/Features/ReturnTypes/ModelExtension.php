@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Features\ReturnTypes;
 
-use App\User;
 use App\Account;
+use App\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 

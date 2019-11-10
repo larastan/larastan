@@ -13,21 +13,21 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Analyser;
 
-use ReflectionClass;
-use function gettype;
-use PHPStan\Type\Type;
 use function get_class;
-use function is_object;
-use PhpParser\Node\Expr;
-use PHPStan\TrinaryLogic;
-use PHPStan\Type\TypehintHelper;
-use NunoMaduro\Larastan\Concerns;
-use PHPStan\ShouldNotHappenException;
-use PHPStan\Analyser\Scope as BaseScope;
-use NunoMaduro\Larastan\Types\TypeResolver;
+use function gettype;
 use Illuminate\Contracts\Container\Container;
-use PHPStan\Type\Constant\ConstantStringType;
+use function is_object;
+use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Properties\ReflectionTypeContainer;
+use NunoMaduro\Larastan\Types\TypeResolver;
+use PhpParser\Node\Expr;
+use PHPStan\Analyser\Scope as BaseScope;
+use PHPStan\ShouldNotHappenException;
+use PHPStan\TrinaryLogic;
+use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\Type;
+use PHPStan\Type\TypehintHelper;
+use ReflectionClass;
 
 /**
  * @internal

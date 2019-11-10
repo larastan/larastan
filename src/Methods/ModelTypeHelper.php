@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
-use PHPStan\Type\Type;
-use PHPStan\Type\UnionType;
-use PHPStan\Type\ObjectType;
-use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\StaticResolvableType;
 use Illuminate\Database\Eloquent\Model;
+use PHPStan\Type\ObjectType;
 use PHPStan\Type\ObjectWithoutClassType;
+use PHPStan\Type\StaticResolvableType;
+use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\UnionType;
 
 final class ModelTypeHelper
 {
@@ -32,7 +32,7 @@ final class ModelTypeHelper
                     $types[$key] = new ObjectType($modelClass);
                 }
             }
-    
+
             $type = new UnionType($types);
         }
 

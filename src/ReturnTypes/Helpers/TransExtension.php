@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes\Helpers;
 
-use PHPStan\Type\Type;
-use PHPStan\Analyser\Scope;
-use PHPStan\Type\MixedType;
-use PHPStan\Type\ObjectType;
 use PhpParser\Node\Expr\FuncCall;
+use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
+use PHPStan\Type\MixedType;
+use PHPStan\Type\ObjectType;
+use PHPStan\Type\Type;
 
 class TransExtension implements DynamicFunctionReturnTypeExtension
 {

@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Properties;
 
-use PHPStan\Type\Type;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertyReflection;
+use PHPStan\Type\Type;
 
 class ModelRelationProperty implements PropertyReflection
 {

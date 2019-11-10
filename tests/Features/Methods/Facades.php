@@ -12,12 +12,12 @@ class Facades
     {
         Event::assertDispatched('FooEvent');
     }
-    
+
     public function testEventAssertDispatchedTimes()
     {
         Event::assertDispatchedTimes('FooEvent', 5);
     }
-    
+
     public function testEventAssertNotDispatched()
     {
         Event::assertNotDispatched('FooEvent');

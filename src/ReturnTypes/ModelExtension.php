@@ -13,19 +13,19 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes;
 
-use ReflectionClass;
-use PHPStan\Type\Type;
-use PHPStan\Analyser\Scope;
-use NunoMaduro\Larastan\Concerns;
-use PhpParser\Node\Expr\StaticCall;
-use Illuminate\Database\Eloquent\Model;
-use PHPStan\Reflection\MethodReflection;
 use Illuminate\Database\Eloquent\Collection;
-use PHPStan\Reflection\BrokerAwareExtension;
-use NunoMaduro\Larastan\Methods\Pipes\Mixins;
+use Illuminate\Database\Eloquent\Model;
+use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Methods\ModelTypeHelper;
+use NunoMaduro\Larastan\Methods\Pipes\Mixins;
+use PhpParser\Node\Expr\StaticCall;
+use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\FunctionVariantWithPhpDocs;
+use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
+use PHPStan\Type\Type;
+use ReflectionClass;
 
 /**
  * @internal

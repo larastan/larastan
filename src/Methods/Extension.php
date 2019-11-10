@@ -14,11 +14,11 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods;
 
 use NunoMaduro\Larastan\Concerns;
+use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\BrokerAwareExtension;
-use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
+use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
 
 /**
  * @internal
