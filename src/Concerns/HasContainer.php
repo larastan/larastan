@@ -13,11 +13,11 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Concerns;
 
-use ReflectionException;
 use Illuminate\Container\Container;
-use Psr\Container\NotFoundExceptionInterface;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Container\Container as ContainerContract;
+use Psr\Container\NotFoundExceptionInterface;
+use ReflectionException;
 
 /**
  * @internal

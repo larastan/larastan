@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Types;
 
-use PHPStan\Type\Type;
 use NunoMaduro\Larastan\Contracts\Types\PassableContract;
+use PHPStan\Type\Type;
 
 /**
  * @internal

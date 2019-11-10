@@ -14,12 +14,12 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Properties;
 
 use function get_class;
-use NunoMaduro\Larastan\Concerns;
-use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\PropertyReflection;
-use PHPStan\Reflection\BrokerAwareExtension;
 use Illuminate\Contracts\Container\Container;
+use NunoMaduro\Larastan\Concerns;
+use PHPStan\Reflection\BrokerAwareExtension;
+use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
+use PHPStan\Reflection\PropertyReflection;
 
 /**
  * @internal

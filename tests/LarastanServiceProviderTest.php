@@ -3,11 +3,11 @@
 namespace Tests;
 
 use function get_class;
-use Orchestra\Testbench\TestCase;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Artisan;
-use NunoMaduro\Larastan\LarastanServiceProvider;
 use NunoMaduro\Larastan\Console\CodeAnalyseCommand;
+use NunoMaduro\Larastan\LarastanServiceProvider;
+use Orchestra\Testbench\TestCase;
 
 class LarastanServiceProviderTest extends TestCase
 {

@@ -13,30 +13,30 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes;
 
-use PHPStan\Type\Type;
-use PhpParser\Node\Name;
-use Illuminate\Support\Str;
-use PHPStan\Analyser\Scope;
-use PHPStan\Type\MixedType;
-use PHPStan\Type\ObjectType;
-use PhpParser\Node\Expr\New_;
-use PHPStan\Type\IntegerType;
-use PHPStan\Type\IterableType;
-use NunoMaduro\Larastan\Concerns;
-use PhpParser\Node\Expr\Variable;
-use PHPStan\Type\IntersectionType;
-use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Expr\PropertyFetch;
-use PhpParser\Node\Name\FullyQualified;
-use PHPStan\Reflection\MethodReflection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use PHPStan\Reflection\BrokerAwareExtension;
-use NunoMaduro\Larastan\Methods\ModelTypeHelper;
-use PHPStan\Type\DynamicMethodReturnTypeExtension;
-use PHPStan\Reflection\Dummy\DummyMethodReflection;
+use Illuminate\Support\Str;
+use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Methods\ModelForwardsCallsExtension;
+use NunoMaduro\Larastan\Methods\ModelTypeHelper;
+use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\New_;
+use PhpParser\Node\Expr\PropertyFetch;
+use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Name;
+use PhpParser\Node\Name\FullyQualified;
+use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\BrokerAwareExtension;
+use PHPStan\Reflection\Dummy\DummyMethodReflection;
+use PHPStan\Reflection\MethodReflection;
+use PHPStan\Type\DynamicMethodReturnTypeExtension;
+use PHPStan\Type\IntegerType;
+use PHPStan\Type\IntersectionType;
+use PHPStan\Type\IterableType;
+use PHPStan\Type\MixedType;
+use PHPStan\Type\ObjectType;
+use PHPStan\Type\Type;
 
 final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension, BrokerAwareExtension
 {

@@ -14,18 +14,18 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
-use ReflectionClass;
-use function in_array;
-use ReflectionFunction;
-use PHPStan\Type\ObjectType;
-use NunoMaduro\Larastan\Concerns;
-use NunoMaduro\Larastan\Methods\Macro;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use function in_array;
+use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
+use NunoMaduro\Larastan\Methods\Macro;
+use PHPStan\Type\ObjectType;
+use ReflectionClass;
+use ReflectionFunction;
 
 /**
  * @internal

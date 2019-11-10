@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Properties;
 
-use function gettype;
-use PHPStan\Type\Type;
 use function get_class;
+use function gettype;
 use function is_object;
-use PHPStan\Type\TypehintHelper;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertyReflection;
+use PHPStan\Type\Type;
+use PHPStan\Type\TypehintHelper;
 
 /**
  * @internal

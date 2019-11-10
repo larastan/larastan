@@ -13,13 +13,13 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes;
 
-use PHPStan\Type\Type;
-use PHPStan\Analyser\Scope;
-use PHPStan\Type\MixedType;
 use Illuminate\Http\Request;
 use PhpParser\Node\Expr\MethodCall;
+use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
+use PHPStan\Type\MixedType;
+use PHPStan\Type\Type;
 
 /**
  * @internal

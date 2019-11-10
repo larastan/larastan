@@ -14,14 +14,14 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
-use Illuminate\Support\Str;
-use PHPStan\Type\ObjectType;
-use Illuminate\Database\Query\Builder;
-use PHPStan\Reflection\ParametersAcceptorSelector;
-use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Str;
+use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
+use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Type\ObjectType;
 
 /**
  * @internal

@@ -13,16 +13,16 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
-use Mockery;
+use Illuminate\Contracts\Pipeline\Pipeline;
 use LogicException;
-use PHPStan\Broker\Broker;
+use Mockery;
 use NunoMaduro\Larastan\Concerns;
+use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
+use PHPStan\Broker\Broker;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
-use Illuminate\Contracts\Pipeline\Pipeline;
 use PHPStan\Reflection\Php\PhpMethodReflection;
 use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
-use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 
 /**
  * @internal

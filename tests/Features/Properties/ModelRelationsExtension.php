@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Tests\Features\Properties;
 
 use App\User;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Collection;
 
 class ModelRelationsExtension
 {
@@ -28,8 +28,8 @@ class ModelRelationsExtension
         /** @var DummyModel $dummyModel */
         $dummyModel = DummyModel::firstOrFail();
 
-        foreach($dummyModel->hasManyRelation as $related) {
-            if (random_int(0,1)) {
+        foreach ($dummyModel->hasManyRelation as $related) {
+            if (random_int(0, 1)) {
                 return $related;
             }
         }

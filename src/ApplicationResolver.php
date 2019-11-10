@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan;
 
-use function in_array;
 use Composer\Autoload\ClassMapGenerator;
 use Illuminate\Contracts\Foundation\Application;
+use function in_array;
 use Orchestra\Testbench\Concerns\CreatesApplication;
 
 /**

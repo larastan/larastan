@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use Orchestra\Testbench\TestCase;
-use Illuminate\Support\Facades\File;
-use Symfony\Component\Finder\Finder;
 use Illuminate\Contracts\Console\Kernel;
+use Illuminate\Support\Facades\File;
 use NunoMaduro\Larastan\LarastanServiceProvider;
+use Orchestra\Testbench\TestCase;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Finder\Finder;
 
 class FeaturesTest extends TestCase
 {
