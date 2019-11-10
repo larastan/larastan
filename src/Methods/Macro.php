@@ -14,11 +14,11 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods;
 
 use Closure;
-use stdClass;
 use ErrorException;
+use PHPStan\Reflection\Php\BuiltinMethodReflection;
 use ReflectionClass;
 use ReflectionFunction;
-use PHPStan\Reflection\Php\BuiltinMethodReflection;
+use stdClass;
 
 final class Macro implements BuiltinMethodReflection
 {

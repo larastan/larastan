@@ -13,14 +13,14 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Reflection;
 
-use PHPStan\Type\Type;
-use PHPStan\Type\ObjectType;
+use Illuminate\Database\Eloquent\Builder;
+use PHPStan\Reflection\ClassMemberReflection;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\MethodReflection;
-use Illuminate\Database\Eloquent\Builder;
 use PHPStan\Reflection\ParameterReflection;
-use PHPStan\Reflection\ClassMemberReflection;
+use PHPStan\Type\ObjectType;
+use PHPStan\Type\Type;
 
 final class EloquentBuilderMethodReflection implements MethodReflection
 {

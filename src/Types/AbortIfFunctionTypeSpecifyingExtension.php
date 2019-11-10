@@ -13,13 +13,13 @@ namespace NunoMaduro\Larastan\Types;
  *  file that was distributed with this source code.
  */
 
-use PHPStan\Analyser\Scope;
 use PhpParser\Node\Expr\FuncCall;
-use PHPStan\Analyser\TypeSpecifier;
+use PHPStan\Analyser\Scope;
 use PHPStan\Analyser\SpecifiedTypes;
+use PHPStan\Analyser\TypeSpecifier;
+use PHPStan\Analyser\TypeSpecifierAwareExtension;
 use PHPStan\Analyser\TypeSpecifierContext;
 use PHPStan\Reflection\FunctionReflection;
-use PHPStan\Analyser\TypeSpecifierAwareExtension;
 use PHPStan\Type\FunctionTypeSpecifyingExtension;
 
 final class AbortIfFunctionTypeSpecifyingExtension implements FunctionTypeSpecifyingExtension, TypeSpecifierAwareExtension

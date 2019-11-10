@@ -13,25 +13,25 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes;
 
-use PHPStan\Type\Type;
-use PHPStan\Broker\Broker;
-use PHPStan\Analyser\Scope;
-use PHPStan\Type\MixedType;
-use PHPStan\Type\ObjectType;
-use PhpParser\Node\Identifier;
-use PhpParser\Node\Expr\Variable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
-use PHPStan\Type\IntersectionType;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\PropertyFetch;
-use Illuminate\Database\Eloquent\Model;
+use PhpParser\Node\Expr\Variable;
+use PhpParser\Node\Identifier;
+use PHPStan\Analyser\Scope;
+use PHPStan\Broker\Broker;
+use PHPStan\Broker\ClassNotFoundException;
+use PHPStan\Reflection\Annotations\AnnotationsPropertiesClassReflectionExtension;
+use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Broker\ClassNotFoundException;
-use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use PHPStan\Reflection\Annotations\AnnotationsPropertiesClassReflectionExtension;
+use PHPStan\Type\IntersectionType;
+use PHPStan\Type\MixedType;
+use PHPStan\Type\ObjectType;
+use PHPStan\Type\Type;
 
 class RelationCreateExtension implements DynamicMethodReturnTypeExtension, BrokerAwareExtension
 {

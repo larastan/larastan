@@ -13,12 +13,12 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Console;
 
+use Illuminate\Console\Application as Artisan;
+use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 use function implode;
 use function is_array;
-use Illuminate\Support\Str;
-use Illuminate\Console\Command;
 use Symfony\Component\Process\Process;
-use Illuminate\Console\Application as Artisan;
 
 /**
  * @internal

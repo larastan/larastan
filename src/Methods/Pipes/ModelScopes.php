@@ -13,10 +13,10 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods\Pipes;
 
-use Closure;
 use function array_values;
-use Illuminate\Database\Eloquent\Model;
+use Closure;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;

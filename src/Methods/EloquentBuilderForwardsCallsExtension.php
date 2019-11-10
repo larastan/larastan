@@ -13,20 +13,20 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
-use PHPStan\Type\StringType;
-use PHPStan\Type\CallableType;
-use NunoMaduro\Larastan\Concerns;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
-use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\PassedByReference;
+use NunoMaduro\Larastan\Concerns;
+use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Reflection\BrokerAwareExtension;
-use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\Dummy\DummyMethodReflection;
+use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\Native\NativeParameterReflection;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
+use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Reflection\PassedByReference;
+use PHPStan\Type\CallableType;
+use PHPStan\Type\StringType;
 
 final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
 {

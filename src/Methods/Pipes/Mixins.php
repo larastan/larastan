@@ -14,11 +14,11 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
-use PHPStan\Broker\Broker;
 use NunoMaduro\Larastan\Concerns;
-use PHPStan\Reflection\ClassReflection;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
+use PHPStan\Broker\Broker;
+use PHPStan\Reflection\ClassReflection;
 
 /**
  * @internal

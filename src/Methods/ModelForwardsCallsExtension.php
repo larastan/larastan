@@ -13,20 +13,20 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
-use PHPStan\Type\ObjectType;
-use PHPStan\Type\IntegerType;
-use NunoMaduro\Larastan\Concerns;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use NunoMaduro\Larastan\Concerns;
+use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
+use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
-use Illuminate\Database\Eloquent\Builder;
-use PHPStan\Reflection\BrokerAwareExtension;
-use Illuminate\Contracts\Pagination\Paginator;
-use PHPStan\Reflection\ParametersAcceptorSelector;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
+use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Type\IntegerType;
+use PHPStan\Type\ObjectType;
 
 final class ModelForwardsCallsExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
 {

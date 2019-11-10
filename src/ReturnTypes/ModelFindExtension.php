@@ -13,25 +13,25 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes;
 
-use PHPStan\Type\Type;
-use Illuminate\Support\Str;
-use PHPStan\Analyser\Scope;
-use PHPStan\Type\MixedType;
-use PHPStan\Type\ObjectType;
-use PHPStan\Type\IterableType;
-use PhpParser\Node\Expr\Array_;
-use PHPStan\Type\TypeCombinator;
-use NunoMaduro\Larastan\Concerns;
-use PhpParser\Node\Scalar\LNumber;
-use PHPStan\Type\IntersectionType;
-use PhpParser\Node\Expr\StaticCall;
-use Illuminate\Database\Eloquent\Model;
-use PHPStan\Reflection\MethodReflection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use PHPStan\Reflection\BrokerAwareExtension;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Str;
+use NunoMaduro\Larastan\Concerns;
+use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Scalar\LNumber;
+use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\BrokerAwareExtension;
+use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
+use PHPStan\Type\IntersectionType;
+use PHPStan\Type\IterableType;
+use PHPStan\Type\MixedType;
+use PHPStan\Type\ObjectType;
+use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
 
 /**
  * @internal
