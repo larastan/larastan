@@ -26,6 +26,7 @@ use PHPStan\Reflection\PropertyReflection;
 use PHPStan\Type\IntersectionType;
 use PHPStan\Type\IterableType;
 use PHPStan\Type\MixedType;
+use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\UnionType;
 
@@ -75,6 +76,9 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
             ]));
         }
 
-        return new ModelRelationProperty($classReflection, new ObjectType($relatedModel));
+        return new ModelRelationProperty($classReflection, new UnionType([
+            new ObjectType($relatedModel),
+            new NullType(),
+        ]));
     }
 }

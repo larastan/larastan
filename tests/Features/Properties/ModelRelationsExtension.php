@@ -46,7 +46,7 @@ class ModelRelationsExtension
         return $dummyModel->hasManyThroughRelation;
     }
 
-    public function testBelongsTo() : DummyModel
+    public function testBelongsTo() : ?DummyModel
     {
         /** @var OtherDummyModel $otherDummyModel */
         $otherDummyModel = OtherDummyModel::firstOrFail();
