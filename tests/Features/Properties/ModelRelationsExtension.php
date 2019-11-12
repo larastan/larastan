@@ -71,7 +71,7 @@ class ModelRelationsExtension
         return $dummyModel->relationWithoutReturnType;
     }
 
-    public function testNullableProperty(): DummyModel
+    public function testDocBlockPropertyIsUsed(): DummyModel
     {
         /** @var DummyModelWithDocBlock $dummyModel */
         $dummyModel = DummyModelWithDocBlock::firstOrFail();

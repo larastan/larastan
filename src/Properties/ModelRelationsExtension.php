@@ -28,8 +28,6 @@ use PHPStan\Type\IterableType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\UnionType;
-use PHPStan\Type\NullType;
-
 
 /**
  * @internal
@@ -42,6 +40,10 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
     {
         if (! $classReflection->isSubclassOf(Model::class)) {
+            return false;
+        }
+
+        if ($this->hasClassProperty($classReflection, $propertyName)) {
             return false;
         }
 
@@ -77,31 +79,17 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
             ]));
         }
 
-        $phpDocs = $classReflection->getNativeReflection()->getDocComment();
-
-        if ($phpDocs && $this->hasNullableProperty($phpDocs, $relatedModel)) {
-            return new ModelRelationProperty($classReflection, new UnionType([
-                new ObjectType($relatedModel),
-                new NullType(),
-            ]));
-        }
-
         return new ModelRelationProperty($classReflection, new ObjectType($relatedModel));
     }
 
-    private function hasNullableProperty(string $phpDocs, string $relatedModel): bool
+    private function hasClassProperty(ClassReflection $classReflection, string $propertyName): bool
     {
-        preg_match_all('/@property\s+([\w\\\\|]+)/', $phpDocs, $mixins);
+        $phpDocs = $classReflection->getNativeReflection()->getDocComment();
 
-        $phpDocProperties =  array_map(function ($mixin) {
-            return explode('|', preg_replace('#^\\\\#', '', $mixin));
-        }, $mixins[1]);
+        if (! $phpDocs) {
+            return false;
+        }
 
-        $relatedNullableProperty = array_filter($phpDocProperties, function (array $property) use ($relatedModel) {
-            return in_array($relatedModel, $property) && in_array('null', $property);
-        });
-
-        return count($relatedNullableProperty) > 0;
+        return (bool) preg_match_all('/\$'.$propertyName.'/', $phpDocs);
     }
-
 }
