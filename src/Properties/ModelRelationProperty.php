@@ -15,6 +15,8 @@ namespace NunoMaduro\Larastan\Properties;
 
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertyReflection;
+use PHPStan\TrinaryLogic;
+use PHPStan\Type\NeverType;
 use PHPStan\Type\Type;
 
 class ModelRelationProperty implements PropertyReflection
@@ -61,11 +63,6 @@ class ModelRelationProperty implements PropertyReflection
         return true;
     }
 
-    public function getType(): Type
-    {
-        return $this->type;
-    }
-
     public function isReadable(): bool
     {
         return true;
@@ -74,5 +71,40 @@ class ModelRelationProperty implements PropertyReflection
     public function isWritable(): bool
     {
         return false;
+    }
+
+    public function getDocComment(): ?string
+    {
+        return null;
+    }
+
+    public function getReadableType(): Type
+    {
+        return $this->type;
+    }
+
+    public function getWritableType(): Type
+    {
+        return new NeverType();
+    }
+
+    public function canChangeTypeAfterAssignment(): bool
+    {
+        return false;
+    }
+
+    public function isDeprecated(): TrinaryLogic
+    {
+        return TrinaryLogic::createNo();
+    }
+
+    public function getDeprecatedDescription(): ?string
+    {
+        return null;
+    }
+
+    public function isInternal(): TrinaryLogic
+    {
+        return TrinaryLogic::createNo();
     }
 }

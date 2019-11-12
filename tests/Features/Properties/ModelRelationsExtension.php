@@ -54,7 +54,8 @@ class ModelRelationsExtension
         return $otherDummyModel->belongsToRelation;
     }
 
-    public function testMorphTo() : DummyModel
+    /** @return mixed */
+    public function testMorphTo()
     {
         /** @var OtherDummyModel $otherDummyModel */
         $otherDummyModel = OtherDummyModel::firstOrFail();
@@ -92,6 +93,7 @@ class DummyModel extends Model
         return $this->hasManyThrough(OtherDummyModel::class, User::class);
     }
 
+    /** @return mixed */
     public function relationWithoutReturnType()
     {
         return $this->hasMany(OtherDummyModel::class);

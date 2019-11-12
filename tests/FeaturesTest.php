@@ -64,7 +64,7 @@ class FeaturesTest extends TestCase
         $result = $this->kernel->call('code:analyse', [
             '--level' => 'max',
             '--paths' => $file,
-            '--bin-path' => __DIR__.'/../vendor/phpstan/phpstan/bin',
+            '--bin-path' => __DIR__.'/../vendor/bin',
             '--autoload-file' => __DIR__.'/../vendor/autoload.php',
             '--error-format' => 'raw',
             '--no-tty' => true,

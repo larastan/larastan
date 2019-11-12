@@ -1,5 +1,4 @@
 parameters:
-    scopeClass: NunoMaduro\Larastan\Analyser\Scope
     universalObjectCratesClasses:
         - Illuminate\Http\Resources\Json\JsonResource
         - Illuminate\Http\Request
