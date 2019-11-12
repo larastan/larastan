@@ -70,6 +70,14 @@ class ModelRelationsExtension
 
         return $dummyModel->relationWithoutReturnType;
     }
+
+    public function testModelCanOverwriteRelationPropertyWithAnnotation() : DummyModel
+    {
+        /** @var OtherDummyModel $otherDummyModel */
+        $otherDummyModel = OtherDummyModel::firstOrFail();
+
+        return $otherDummyModel->belongsToRelationWithoutNull;
+    }
 }
 
 class DummyModel extends Model
@@ -90,9 +98,15 @@ class DummyModel extends Model
     }
 }
 
+/** @property-read DummyModel $belongsToRelationWithoutNull */
 class OtherDummyModel extends Model
 {
     public function belongsToRelation() : BelongsTo
+    {
+        return $this->belongsTo(DummyModel::class);
+    }
+
+    public function belongsToRelationWithoutNull() : BelongsTo
     {
         return $this->belongsTo(DummyModel::class);
     }
