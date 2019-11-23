@@ -3,7 +3,6 @@ language: php
 sudo: false
 
 php:
-  - '7.1'
   - '7.2'
   - '7.3'
   - '7.4snapshot'
@@ -14,8 +13,6 @@ cache:
 
 env:
   matrix:
-    - LARAVEL=5.6.*
-    - LARAVEL=5.7.*
     - LARAVEL=5.8.*
     - LARAVEL=^6.0
     - LARAVEL=^7.0
