@@ -14,14 +14,21 @@ cache:
 
 env:
   matrix:
-    - COMPOSER_FLAGS=""
+    - LARAVEL=5.6.*
+    - LARAVEL=5.7.*
+    - LARAVEL=5.8.*
+    - LARAVEL=^6.0
+    - LARAVEL=^7.0
+
+matrix:
+  fast_finish: true
 
 before_install:
   # Must be before any additional files are created
   - test "$(find . -type f -not -path "./.git/*" -perm /111)" == ./tests/laravel-test.sh
 
 install:
-  - travis_retry composer update --no-interaction --no-suggest ${COMPOSER_FLAGS}
+  - travis_retry composer require "illuminate/contracts=${LARAVEL}" --dev --prefer-dist --no-interaction --no-suggest
 
 script:
   - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml

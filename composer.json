@@ -26,7 +26,7 @@
         "ext-json": "*"
     },
     "require-dev": {
-        "orchestra/testbench": "dev-master",
+        "orchestra/testbench": "^3.8|dev-master",
         "phpunit/phpunit": "^7.3 || ^8.2"
     },
     "suggest": {
