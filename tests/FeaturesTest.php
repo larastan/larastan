@@ -4,26 +4,15 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\File;
-use NunoMaduro\Larastan\LarastanServiceProvider;
 use Orchestra\Testbench\TestCase;
-use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Finder\Finder;
 
 class FeaturesTest extends TestCase
 {
-    private $kernel;
-
     public function setUp(): void
     {
         parent::setUp();
-
-        $app = $this->createApplication();
-
-        (new LarastanServiceProvider($app))->register();
-
-        $this->kernel = $app->make(Kernel::class);
 
         @File::makeDirectory(__DIR__.'/../vendor/nunomaduro/larastan', 0755, true);
         @File::makeDirectory(__DIR__.'/../vendor/nunomaduro/larastan/config', 0755, true);
@@ -61,20 +50,20 @@ class FeaturesTest extends TestCase
 
     private function analyze(string $file): int
     {
-        $result = $this->kernel->call('code:analyse', [
-            '--level' => 'max',
-            '--paths' => $file,
-            '--bin-path' => __DIR__.'/../vendor/bin',
-            '--autoload-file' => __DIR__.'/../vendor/autoload.php',
-            '--error-format' => 'raw',
-            '--no-tty' => true,
-            '--no-progress' => true,
-        ], $output = new BufferedOutput);
+        $configPath = __DIR__.'/../extension.neon';
+        $command = escapeshellcmd(__DIR__.'/../vendor/bin/phpstan');
 
-        if ($result !== 0) {
-            $this->fail($output->fetch());
+        exec(sprintf('%s %s analyse --no-progress  --level=8 --configuration %s --autoload-file %s %s',
+            escapeshellarg(PHP_BINARY), $command,
+            escapeshellarg($configPath),
+            escapeshellarg(__DIR__.'/../vendor/autoload.php'),
+            escapeshellarg($file)),
+            $outputLines);
+
+        if (count($outputLines) !== 3) {
+            $this->fail(implode("\n", $outputLines));
         }
 
-        return $result;
+        return 0;
     }
 }

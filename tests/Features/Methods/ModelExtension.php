@@ -12,7 +12,8 @@ use Illuminate\Database\Eloquent\Model;
 class ModelExtension
 {
     /**
-     * @return iterable<\App\User>|\Illuminate\Database\Eloquent\Collection<\App\User>
+     * @phpstan-return iterable<User>|\Illuminate\Database\Eloquent\Collection<User>
+     * @return iterable<User>|\Illuminate\Database\Eloquent\Collection
      */
     public function testAll()
     {
