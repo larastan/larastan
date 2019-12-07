@@ -50,11 +50,6 @@
         "preferred-install": "dist"
     },
     "extra": {
-        "laravel": {
-            "providers": [
-                "NunoMaduro\\Larastan\\LarastanServiceProvider"
-            ]
-        },
         "phpstan": {
             "includes": [
                 "extension.neon"
