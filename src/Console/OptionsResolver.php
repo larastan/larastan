@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Console;
 
-use PHPStan\Command\AnalyseCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
@@ -34,24 +33,9 @@ final class OptionsResolver
     private const DEFAULT_MEMORY_LIMIT = '2048M';
 
     /**
-     * @var AnalyseCommand
-     */
-    private $command;
-
-    /**
      * @var InputDefinition
      */
     private $definition;
-
-    /**
-     * OptionsResolver constructor.
-     *
-     * @param AnalyseCommand $command
-     */
-    public function __construct(AnalyseCommand $command)
-    {
-        $this->command = $command;
-    }
 
     /**
      * @return InputDefinition
