@@ -15,7 +15,7 @@ sed -e 's|@return \\Illuminate\\Http\\Response$|@return \\Symfony\\Component\\Ht
     -i app/Exceptions/Handler.php
 
 echo "Test Laravel"
-php artisan code:analyse --level=max
+php artisan code:analyse --level=5
 cd -
 
 echo "Install Lumen"
