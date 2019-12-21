@@ -22,6 +22,7 @@ use Symfony\Component\Process\Process;
 
 /**
  * @internal
+ * @deprecated
  */
 final class CodeAnalyseCommand extends Command
 {
