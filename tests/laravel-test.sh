@@ -55,4 +55,4 @@ cat <<"EOF" | patch -p 0
 EOF
 
 echo "Test Lumen"
-php artisan code:analyse --level=max
+php artisan code:analyse --level=5
