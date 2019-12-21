@@ -14,6 +14,9 @@ echo "Fix https://github.com/laravel/framework/pull/23825"
 sed -e 's|@return \\Illuminate\\Http\\Response$|@return \\Symfony\\Component\\HttpFoundation\\Response|' \
     -i app/Exceptions/Handler.php
 
+echo "Fix https://github.com/nunomaduro/larastan/pull/378#issuecomment-565706907"
+sed '0,/}/s/}/}\nreturn;/' -i app/Http/Middleware/Authenticate.php
+
 echo "Test Laravel"
 php artisan code:analyse --level=5
 cd -
