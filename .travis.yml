@@ -22,10 +22,10 @@ before_install:
 
 install:
   - travis_retry composer update --no-interaction --no-suggest ${COMPOSER_FLAGS}
+  - composer validate --strict
   - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.4" ]]; then composer require symfony/console:4.4.x-dev; fi
 
 script:
-  - composer validate --strict
   - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
   - vendor/bin/phpstan analyze
   - export -f travis_retry
