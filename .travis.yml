@@ -12,8 +12,8 @@ cache:
 
 env:
   matrix:
-    - LARAVEL=^6.0
-    - LARAVEL=^7.0
+    - LARAVEL_VERSION=^6.0
+    - LARAVEL_VERSION=^7.0
 
 matrix:
   fast_finish: true
@@ -24,7 +24,7 @@ before_install:
 
 install:
   - composer validate --strict
-  - travis_retry composer require "illuminate/contracts=${LARAVEL}" --dev --prefer-dist --no-interaction --no-suggest
+  - travis_retry composer require "illuminate/contracts:${LARAVEL_VERSION}" --dev --prefer-dist --no-interaction --no-suggest
 
 script:
   - composer test
