@@ -19,7 +19,7 @@ sed -e 's/string/string|void/' -i app/Http/Middleware/Authenticate.php
 sed '0,/}/s/}/}\nreturn;/' -i app/Http/Middleware/Authenticate.php
 
 echo "Test Laravel"
-php artisan code:analyse --level=5
+vendor/bin/phpstan analyse app --level=5 -c vendor/nunomaduro/larastan/extension.neon
 cd -
 
 echo "Install Lumen"
@@ -48,11 +48,11 @@ cat <<"EOF" | patch -p 0
  |
  */
 
-+$app->register(NunoMaduro\Larastan\LarastanServiceProvider::class);
++
  // $app->register(App\Providers\AppServiceProvider::class);
  // $app->register(App\Providers\AuthServiceProvider::class);
  // $app->register(App\Providers\EventServiceProvider::class);
 EOF
 
 echo "Test Lumen"
-php artisan code:analyse --level=5
+vendor/bin/phpstan analyse app --level=5 -c vendor/nunomaduro/larastan/extension.neon
