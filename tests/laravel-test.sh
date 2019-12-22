@@ -14,8 +14,12 @@ echo "Fix https://github.com/laravel/framework/pull/23825"
 sed -e 's|@return \\Illuminate\\Http\\Response$|@return \\Symfony\\Component\\HttpFoundation\\Response|' \
     -i app/Exceptions/Handler.php
 
+echo "Fix https://github.com/nunomaduro/larastan/pull/378#issuecomment-565706907"
+sed -e 's/string/string|void/' -i app/Http/Middleware/Authenticate.php
+sed '0,/}/s/}/}\nreturn;/' -i app/Http/Middleware/Authenticate.php
+
 echo "Test Laravel"
-php artisan code:analyse --level=max
+php artisan code:analyse --level=5
 cd -
 
 echo "Install Lumen"
@@ -51,4 +55,4 @@ cat <<"EOF" | patch -p 0
 EOF
 
 echo "Test Lumen"
-php artisan code:analyse --level=max
+php artisan code:analyse --level=5

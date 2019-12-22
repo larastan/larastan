@@ -19,6 +19,8 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParameterReflection;
+use PHPStan\TrinaryLogic;
+use PHPStan\Type\Generic\TemplateTypeMap;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
@@ -35,7 +37,7 @@ final class EloquentBuilderMethodReflection implements MethodReflection
     private $classReflection;
 
     /**
-     * @var array<int, ParameterReflection>
+     * @var ParameterReflection[]
      */
     private $parameters;
 
@@ -49,6 +51,13 @@ final class EloquentBuilderMethodReflection implements MethodReflection
      */
     private $isVariadic;
 
+    /**
+     * @param string                $methodName
+     * @param ClassReflection       $classReflection
+     * @param ParameterReflection[] $parameters
+     * @param Type|null             $returnType
+     * @param bool                  $isVariadic
+     */
     public function __construct(string $methodName, ClassReflection $classReflection, array $parameters, ?Type $returnType = null, bool $isVariadic = false)
     {
         $this->methodName = $methodName;
@@ -95,10 +104,47 @@ final class EloquentBuilderMethodReflection implements MethodReflection
     {
         return [
             new FunctionVariant(
+                TemplateTypeMap::createEmpty(),
+                null,
                 $this->parameters,
                 $this->isVariadic,
                 $this->returnType
             ),
         ];
+    }
+
+    public function getDocComment(): ?string
+    {
+        return null;
+    }
+
+    public function isDeprecated(): TrinaryLogic
+    {
+        return TrinaryLogic::createNo();
+    }
+
+    public function getDeprecatedDescription(): ?string
+    {
+        return null;
+    }
+
+    public function isFinal(): TrinaryLogic
+    {
+        return TrinaryLogic::createNo();
+    }
+
+    public function isInternal(): TrinaryLogic
+    {
+        return TrinaryLogic::createNo();
+    }
+
+    public function getThrowType(): ?Type
+    {
+        return null;
+    }
+
+    public function hasSideEffects(): TrinaryLogic
+    {
+        return TrinaryLogic::createMaybe();
     }
 }

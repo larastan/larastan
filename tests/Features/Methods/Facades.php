@@ -8,17 +8,17 @@ use Illuminate\Support\Facades\Event;
 
 class Facades
 {
-    public function testEventAssertDispatched()
+    public function testEventAssertDispatched(): void
     {
         Event::assertDispatched('FooEvent');
     }
 
-    public function testEventAssertDispatchedTimes()
+    public function testEventAssertDispatchedTimes(): void
     {
         Event::assertDispatchedTimes('FooEvent', 5);
     }
 
-    public function testEventAssertNotDispatched()
+    public function testEventAssertNotDispatched(): void
     {
         Event::assertNotDispatched('FooEvent');
     }

@@ -38,9 +38,9 @@ final class ModelScopes implements PipeContract
         $found = false;
 
         if ($classReflection->isSubclassOf(Model::class) && $classReflection->hasNativeMethod($scopeMethodName)) {
-            /** @var \PHPStan\Reflection\FunctionVariantWithPhpDocs $variant */
             $methodReflection = $classReflection->getNativeMethod($scopeMethodName);
 
+            /** @var \PHPStan\Reflection\FunctionVariantWithPhpDocs $variant */
             $variant = $methodReflection->getVariants()[0];
             $parameters = $variant->getParameters();
             unset($parameters[0]); // The query argument.

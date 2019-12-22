@@ -34,6 +34,8 @@ composer require --dev nunomaduro/larastan
 
 ### Usage in Laravel Applications
 
+_**Warning**: As of v0.4.4 `code:analyse` command is deprecated. And in the next version it'll be removed._
+
 Once you have installed Larastan, you may start analyzing your code using the `code:analyse` Artisan command.
 ```bash
 php artisan code:analyse

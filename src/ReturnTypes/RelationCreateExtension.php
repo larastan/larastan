@@ -73,7 +73,7 @@ class RelationCreateExtension implements DynamicMethodReturnTypeExtension, Broke
             $callingClass = $this->determineCallingClass($scope, $context);
 
             if ($this->annotationsPropertiesClassReflectionExtension->hasProperty($callingClass, $relationName)) {
-                $returnType = $this->annotationsPropertiesClassReflectionExtension->getProperty($callingClass, $relationName)->getType();
+                $returnType = $this->annotationsPropertiesClassReflectionExtension->getProperty($callingClass, $relationName)->getReadableType();
 
                 if ($returnType instanceof IntersectionType) {
                     return $this->determineReturnTypeFromIntersection($returnType);
@@ -96,12 +96,12 @@ class RelationCreateExtension implements DynamicMethodReturnTypeExtension, Broke
     }
 
     /**
-     * @param Scope $scope
+     * @param mixed $scope
      * @param string $context
      * @return ClassReflection
      * @throws ClassNotFoundException
      */
-    private function determineCallingClass(Scope $scope, string $context) : ClassReflection
+    private function determineCallingClass($scope, string $context) : ClassReflection
     {
         /** @var string $className */
         $className = current(array_filter($scope->debug(), function (string $key) use ($context) {
@@ -158,7 +158,7 @@ class RelationCreateExtension implements DynamicMethodReturnTypeExtension, Broke
 
     /**
      * @param MethodCall $methodCall
-     * @return array
+     * @return string[]
      */
     private function getContextFromMethodCall(MethodCall $methodCall) : array
     {
