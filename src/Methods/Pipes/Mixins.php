@@ -30,7 +30,7 @@ final class Mixins implements PipeContract
     /**
      * Already resolved mixins.
      *
-     * @var array
+     * @var array<array<string>>
      */
     private static $resolved = [];
 
@@ -55,9 +55,11 @@ final class Mixins implements PipeContract
     }
 
     /**
-     * @param \PHPStan\Broker\Broker $broker
+     * @param \PHPStan\Broker\Broker              $broker
      * @param \PHPStan\Reflection\ClassReflection $classReflection
-     * @return array
+     *
+     * @return string[]
+     * @throws \PHPStan\Broker\ClassNotFoundException
      */
     public function getMixinsFromClass(Broker $broker, ClassReflection $classReflection): array
     {
@@ -100,7 +102,7 @@ final class Mixins implements PipeContract
      * @param  string $phpdocs
      * @param  string $pattern
      *
-     * @return array
+     * @return string[]
      */
     private function getMixinsFromPhpDocs(string $phpdocs, string $pattern): array
     {

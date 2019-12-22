@@ -18,6 +18,7 @@ use function gettype;
 use function is_object;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertyReflection;
+use PHPStan\TrinaryLogic;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypehintHelper;
 
@@ -80,9 +81,6 @@ final class ContainerProperty implements PropertyReflection
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getType(): Type
     {
         $type = is_object($this->concrete) ? get_class($this->concrete) : gettype($this->concrete);
@@ -110,5 +108,40 @@ final class ContainerProperty implements PropertyReflection
     public function isWritable(): bool
     {
         return true;
+    }
+
+    public function getDocComment() : ?string
+    {
+        return null;
+    }
+
+    public function getReadableType(): \PHPStan\Type\Type
+    {
+        return $this->getType();
+    }
+
+    public function getWritableType(): \PHPStan\Type\Type
+    {
+        return $this->getType();
+    }
+
+    public function canChangeTypeAfterAssignment(): bool
+    {
+        return false;
+    }
+
+    public function isDeprecated(): \PHPStan\TrinaryLogic
+    {
+        return TrinaryLogic::createNo();
+    }
+
+    public function getDeprecatedDescription(): ?string
+    {
+        return null;
+    }
+
+    public function isInternal(): \PHPStan\TrinaryLogic
+    {
+        return TrinaryLogic::createNo();
     }
 }

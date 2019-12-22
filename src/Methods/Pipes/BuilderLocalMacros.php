@@ -23,9 +23,12 @@ use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 use NunoMaduro\Larastan\Methods\Macro;
+use PHPStan\Type\Generic\TemplateTypeMap;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\TypehintHelper;
 use ReflectionClass;
 use ReflectionFunction;
+use ReflectionParameter;
 
 /**
  * @internal
@@ -40,6 +43,9 @@ final class BuilderLocalMacros implements PipeContract
     public function handle(PassableContract $passable, Closure $next): void
     {
         $classReflection = $passable->getClassReflection();
+
+        /** @var class-string $className */
+        $className = $classReflection->getName();
         $found = false;
 
         if ($classReflection->isSubclassOf(Model::class) && in_array(SoftDeletes::class,
@@ -60,14 +66,20 @@ final class BuilderLocalMacros implements PipeContract
                 unset($parameters[0]); // The query argument.
                 $parameters = array_values($parameters);
 
-                $macro = new Macro($classReflection->getName(), $passable->getMethodName(), $reflectionFunction);
+                $macro = new Macro($className, $passable->getMethodName(), $reflectionFunction);
 
                 $macro->setParameters($parameters);
                 $macro->setIsStatic(true);
 
-                $passable->setMethodReflection($passable->getMethodReflectionFactory()->create($classReflection, null,
-                    $macro, $parameters, new ObjectType($classReflection->getName()), null, null, false, false,
-                    false));
+                $passable->setMethodReflection($passable->getMethodReflectionFactory()->create(
+                    $classReflection, null,
+                    $macro, TemplateTypeMap::createEmpty(),
+                    array_map(function (ReflectionParameter $parameter) {
+                        return TypehintHelper::decideTypeFromReflection($parameter->getType());
+                    }, $parameters), new ObjectType($classReflection->getName()),
+                    null, null,
+                    false, false,
+                    false, null));
                 $found = true;
             }
         }

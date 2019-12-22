@@ -21,6 +21,7 @@ use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 use NunoMaduro\Larastan\Methods\Macro;
 use PHPStan\Reflection\ClassReflection;
+use PHPStan\Type\Generic\TemplateTypeMap;
 
 /**
  * @internal
@@ -47,6 +48,7 @@ final class Macros implements PipeContract
     {
         $classReflection = $passable->getClassReflection();
 
+        /** @var class-string $className */
         $className = null;
         $found = false;
         $macroTraitProperty = null;
@@ -64,16 +66,14 @@ final class Macros implements PipeContract
                 }
             }
         } elseif ($classReflection->hasTraitUse(Macroable::class)) {
-            /** @var \Illuminate\Support\Traits\Macroable $macroable */
             $className = $classReflection->getName();
             $macroTraitProperty = 'macros';
         } elseif ($this->hasIndirectTraitUse($classReflection, CarbonMacro::class)) {
-            /** @var \Illuminate\Support\Traits\Macroable $macroable */
             $className = $classReflection->getName();
             $macroTraitProperty = 'globalMacros';
         }
 
-        if ($macroTraitProperty) {
+        if ($className !== null && $macroTraitProperty) {
             $refObject = new \ReflectionClass($className);
             $refProperty = $refObject->getProperty($macroTraitProperty);
             $refProperty->setAccessible(true);
@@ -84,22 +84,27 @@ final class Macros implements PipeContract
                 $reflectionFunction = new \ReflectionFunction($refProperty->getValue()[$passable->getMethodName()]);
                 /** @var \PHPStan\Type\Type[] $parameters */
                 $parameters = $reflectionFunction->getParameters();
+                $methodReflection = new Macro(
+                    $className, $passable->getMethodName(), $reflectionFunction
+                );
+
+                $methodReflection->setIsStatic(true);
 
                 $passable->setMethodReflection(
                     $passable->getMethodReflectionFactory()
                         ->create(
                             $classReflection,
                             null,
-                            new Macro(
-                                $classReflection->getName(), $passable->getMethodName(), $reflectionFunction
-                            ),
+                            $methodReflection,
+                            TemplateTypeMap::createEmpty(),
                             $parameters,
                             null,
                             null,
                             null,
                             false,
                             false,
-                            false
+                            false,
+                            null
                         )
                 );
             }

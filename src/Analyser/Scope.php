@@ -21,7 +21,7 @@ use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Properties\ReflectionTypeContainer;
 use NunoMaduro\Larastan\Types\TypeResolver;
 use PhpParser\Node\Expr;
-use PHPStan\Analyser\Scope as BaseScope;
+use PHPStan\Analyser\MutatingScope as BaseScope;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\Constant\ConstantStringType;
@@ -43,7 +43,7 @@ class Scope extends BaseScope
     {
         $type = parent::getType($node);
 
-        if (substr(get_class($type), 0, 7) !== 'Mockery' && $this->isContainer($type)) {
+        if ($this->isContainer($type) && strpos(get_class($type), 'Mockery') !== 0) {
             $type = \Mockery::mock($type);
             $type->shouldReceive('isOffsetAccessible')
                 ->andReturn(TrinaryLogic::createYes());
@@ -100,9 +100,11 @@ class Scope extends BaseScope
      * @param \PHPStan\Type\Type $type
      *
      * @return bool
+     * @throws \ReflectionException
      */
     private function isContainer(Type $type): bool
     {
+        /** @var class-string $referencedClass */
         foreach ($type->getReferencedClasses() as $referencedClass) {
             $isClassOrInterface = class_exists($referencedClass) || interface_exists($referencedClass);
             if ($isClassOrInterface && (new ReflectionClass($referencedClass))->implementsInterface(Container::class)) {

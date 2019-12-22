@@ -14,32 +14,37 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Model;
+use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\IntersectionType;
+use PHPStan\Type\IterableType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\ObjectWithoutClassType;
-use PHPStan\Type\StaticResolvableType;
+use PHPStan\Type\StaticType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\TypeTraverser;
 use PHPStan\Type\UnionType;
 
 final class ModelTypeHelper
 {
     public static function replaceStaticTypeWithModel(Type $type, string $modelClass) : Type
     {
-        if ($type instanceof UnionType) {
-            $types = $type->getTypes();
-            foreach ($types as $key => $innerType) {
-                if ($innerType instanceof ObjectWithoutClassType) {
-                    $types[$key] = new ObjectType($modelClass);
-                }
+        $type = TypeTraverser::map($type, static function (Type $type, callable $traverse) use ($modelClass): Type {
+            if ($type instanceof UnionType || $type instanceof IntersectionType) {
+                return $traverse($type);
             }
 
-            $type = new UnionType($types);
-        }
+            if ($type instanceof IterableType) {
+                return $traverse($type->getItemType());
+            }
 
-        if ($type instanceof StaticResolvableType) {
-            return TypeCombinator::remove($type->resolveStatic($modelClass), new ObjectType(Model::class, new ObjectType($modelClass)));
-        }
+            if ($type instanceof ObjectWithoutClassType || $type instanceof StaticType) {
+                return new GenericObjectType(Model::class, [new ObjectType($modelClass)]);
+            }
 
-        return $type;
+            return $type;
+        });
+
+        return TypeCombinator::remove($type, new ObjectType(Model::class, new ObjectType($modelClass)));
     }
 }
