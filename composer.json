@@ -62,11 +62,11 @@
         }
     },
     "scripts": {
-        "phpstan:test": "phpstan analyse --ansi",
-        "phpunit:test": "phpunit --colors=always",
+        "test:types": "phpstan analyse --ansi",
+        "test:unit": "phpunit --colors=always",
         "test": [
-            "@phpstan:test",
-            "@phpunit:test"
+            "@test:types",
+            "@test:unit"
         ]
     }
 }

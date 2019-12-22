@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added 
+- Support to PHPStan `0.12` [#378](https://github.com/nunomaduro/larastan/pull/378)
+- Support to Laravel 7 [#377](https://github.com/nunomaduro/larastan/pull/377)
 
 ## [0.4.3] - 2019-10-22
 ### Added
