@@ -12,7 +12,6 @@ cache:
 
 env:
   matrix:
-    - LARAVEL=^5.8
     - LARAVEL=^6.0
     - LARAVEL=^7.0
 
