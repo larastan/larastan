@@ -1,11 +1,10 @@
+dist: bionic
 language: php
 
-sudo: false
-
 php:
-  - '7.2'
-  - '7.3'
-  - '7.4snapshot'
+  - 7.2
+  - 7.3
+  - 7.4
 
 cache:
   directories:
@@ -13,7 +12,6 @@ cache:
 
 env:
   matrix:
-    - LARAVEL=5.8.*
     - LARAVEL=^6.0
     - LARAVEL=^7.0
 
@@ -29,8 +27,7 @@ install:
   - travis_retry composer require "illuminate/contracts=${LARAVEL}" --dev --prefer-dist --no-interaction --no-suggest
 
 script:
-  - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml
-  - vendor/bin/phpstan analyze
+  - composer test
   - export -f travis_retry
   - tests/laravel-test.sh
   # Check for copyright messages
