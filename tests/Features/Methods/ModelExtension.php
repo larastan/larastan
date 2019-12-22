@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 class ModelExtension
 {
     /**
-     * @return iterable<\App\User>|\Illuminate\Database\Eloquent\Collection
+     * @return iterable<\App\User>|\Illuminate\Database\Eloquent\Collection<\App\User>
      */
     public function testAll()
     {
@@ -73,9 +73,12 @@ class ModelExtension
         return User::find(1);
     }
 
+    /**
+     * @return Collection<\App\User>|null
+     */
     public function testFindCanReturnCollection() : ?Collection
     {
-        /** @var Collection $users */
+        /** @var Collection<\App\User> $users */
         $users = User::find([1, 2, 3]);
 
         return $users;
@@ -98,9 +101,12 @@ class ModelExtension
         return User::findOrFail(1);
     }
 
+    /**
+     * @return Collection<\App\User>
+     */
     public function testFindOrFailCanReturnCollection() : Collection
     {
-        /** @var Collection $users */
+        /** @var Collection<\App\User> $users */
         $users = User::findOrFail([1, 2, 3]);
 
         return $users;
@@ -157,6 +163,9 @@ class ModelExtension
         });
     }
 
+    /**
+     * @return Collection<\App\User>
+     */
     public function testChainingCollectionMethodsOnModel() : Collection
     {
         return User::findOrFail([1, 2, 3])->makeHidden('foo');
@@ -194,6 +203,7 @@ class ModelExtension
 
 function foo() : string
 {
+    return 'foo';
 }
 
 class Thread extends Model

@@ -24,12 +24,14 @@ class EloquentBuilderExtension
 
 class TestScopesModel extends Model
 {
-    public function scopeFoo(string $foo)
+    public function scopeFoo(string $foo) : Builder
     {
-        $this->where(['foo' => $foo]);
+        return $this->where(['foo' => $foo]);
     }
 
     /**
+     * @param \Illuminate\Database\Query\Builder $query
+     *
      * @return \Tests\Features\ReturnTypes\CustomBuilder
      */
     public function newEloquentBuilder($query)
@@ -40,7 +42,7 @@ class TestScopesModel extends Model
 
 class CustomBuilder extends Builder
 {
-    public function type(string $type)
+    public function type(string $type): void
     {
         $this->where(['type' => $type]);
     }

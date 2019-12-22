@@ -35,7 +35,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
     /**
      * The methods that should be returned from query builder.
      *
-     * @var array
+     * @var array<int, string>
      */
     protected $passthru = [
         'insert', 'insertOrIgnore', 'insertGetId', 'insertUsing', 'getBindings', 'toSql', 'dump', 'dd',
@@ -72,8 +72,8 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
     {
         if ($methodName === 'macro') {
             return new EloquentBuilderMethodReflection($methodName, $classReflection, [
-                new NativeParameterReflection('name', false, new StringType(), PassedByReference::createNo(), false),
-                new NativeParameterReflection('macro', false, new CallableType(), PassedByReference::createNo(), false),
+                new NativeParameterReflection('name', false, new StringType(), PassedByReference::createNo(), false, null),
+                new NativeParameterReflection('macro', false, new CallableType(), PassedByReference::createNo(), false, null),
             ]);
         }
 

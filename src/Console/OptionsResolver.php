@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Console;
 
-use PHPStan\Command\AnalyseCommand;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -33,31 +33,28 @@ final class OptionsResolver
     private const DEFAULT_MEMORY_LIMIT = '2048M';
 
     /**
-     * @var \PHPStan\Command\AnalyseCommand
-     */
-    private $command;
-
-    /**
-     * @var \Symfony\Component\Console\Input\InputDefinition
+     * @var InputDefinition
      */
     private $definition;
 
     /**
-     * OptionsResolver constructor.
-     *
-     * @param \PHPStan\Command\AnalyseCommand $command
-     */
-    public function __construct(AnalyseCommand $command)
-    {
-        $this->command = $command;
-    }
-
-    /**
-     * @return \Symfony\Component\Console\Input\InputDefinition
+     * @return InputDefinition
      */
     public function getDefinition(): InputDefinition
     {
-        $definition = clone $this->command->getDefinition();
+        $definition = new InputDefinition([
+            new InputArgument('paths', InputArgument::OPTIONAL | InputArgument::IS_ARRAY, 'Paths with source code to run analysis on'),
+            new InputOption('paths-file', null, InputOption::VALUE_REQUIRED, 'Path to a file with a list of paths to run analysis on'),
+            new InputOption('configuration', 'c', InputOption::VALUE_REQUIRED, 'Path to project configuration file'),
+            new InputOption('level', 'l', InputOption::VALUE_REQUIRED, 'Level of rule options - the higher the stricter'),
+            new InputOption('no-progress', null, InputOption::VALUE_NONE, 'Do not show progress bar, only results'),
+            new InputOption('debug', null, InputOption::VALUE_NONE, 'Show debug information - which file is analysed, do not catch internal errors'),
+            new InputOption('autoload-file', 'a', InputOption::VALUE_REQUIRED, 'Project\'s additional autoload file path'),
+            new InputOption('error-format', null, InputOption::VALUE_REQUIRED, 'Format in which to print the result of the analysis', 'table'),
+            new InputOption('memory-limit', null, InputOption::VALUE_REQUIRED, 'Memory limit for analysis'),
+            new InputOption('xdebug', null, InputOption::VALUE_NONE, 'Allow running with XDebug for debugging purposes'),
+        ]);
+
         $definition->setArguments([]);
 
         $definition->getOption('level')

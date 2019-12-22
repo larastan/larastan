@@ -21,6 +21,7 @@ class RequestExtension
         return \request('name');
     }
 
+    /** @return array<mixed, mixed> */
     public function testArrayMixed(): array
     {
         return \request(['a', 'b']);

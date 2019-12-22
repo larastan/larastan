@@ -3,7 +3,6 @@ language: php
 sudo: false
 
 php:
-  - '7.1'
   - '7.2'
   - '7.3'
   - '7.4snapshot'
@@ -14,16 +13,20 @@ cache:
 
 env:
   matrix:
-    - COMPOSER_FLAGS=""
+    - LARAVEL=5.8.*
+    - LARAVEL=^6.0
+    - LARAVEL=^7.0
+
+matrix:
+  fast_finish: true
 
 before_install:
   # Must be before any additional files are created
   - test "$(find . -type f -not -path "./.git/*" -perm /111)" == ./tests/laravel-test.sh
 
 install:
-  - travis_retry composer update --no-interaction --no-suggest ${COMPOSER_FLAGS}
   - composer validate --strict
-  - if [[ ${TRAVIS_PHP_VERSION:0:3} == "7.4" ]]; then composer require symfony/console:4.4.x-dev; fi
+  - travis_retry composer require "illuminate/contracts=${LARAVEL}" --dev --prefer-dist --no-interaction --no-suggest
 
 script:
   - vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml

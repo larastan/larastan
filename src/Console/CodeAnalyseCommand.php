@@ -22,6 +22,7 @@ use Symfony\Component\Process\Process;
 
 /**
  * @internal
+ * @deprecated
  */
 final class CodeAnalyseCommand extends Command
 {
@@ -67,7 +68,7 @@ final class CodeAnalyseCommand extends Command
     {
         $cwd = $this->option('bin-path');
         if ($cwd === null || ! is_string($cwd)) {
-            $cwd = $this->laravel->basePath('vendor/phpstan/phpstan/bin');
+            $cwd = $this->laravel->basePath('vendor/bin');
         }
 
         $process = Process::fromShellCommandline($this->cmd(), $cwd);

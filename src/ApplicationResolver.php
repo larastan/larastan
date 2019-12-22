@@ -57,7 +57,7 @@ final class ApplicationResolver
     /**
      * {@inheritdoc}
      */
-    protected function getEnvironmentSetUp($app): void
+    protected function getEnvironmentSetUp(\Illuminate\Foundation\Application $app): void
     {
         // ..
     }
@@ -75,7 +75,7 @@ final class ApplicationResolver
     /**
      * @param string $namespace
      *
-     * @return array
+     * @return string[]
      * @throws \ReflectionException
      */
     private static function getProjectClasses(string $namespace): array
