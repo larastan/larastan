@@ -13,133 +13,79 @@
 
 ------
 
-## About Larastan
+## ⚗️ About Larastan
 
-Larastan was created by [Nuno Maduro](https://github.com/nunomaduro), and is maintained by [Can Vural](https://github.com/canvural) and [Viktor Szépe](https://github.com/szepeviktor), and is a [phpstan/phpstan](https://github.com/phpstan/phpstan) wrapper for Laravel. Larastan focuses on **finding errors in your code** without actually running it. It catches whole classes of bugs even **before you write tests** for the code.
+Larastan was created by [Nuno Maduro](https://github.com/nunomaduro), got artwork designed by [@Caneco](http://github.com/caneco), is maintained by [Can Vural](https://github.com/canvural) and [Viktor Szépe](https://github.com/szepeviktor), and is a [phpstan/phpstan](https://github.com/phpstan/phpstan) wrapper for Laravel. Larastan focuses on **finding errors in your code** without actually running it. It catches whole classes of bugs even **before you write tests** for the code.
 
-- Supports [Laravel](https://laravel.com)'s **beautiful magic**.
-- This package is still in development. Please report false positives using GitHub [issues](https://github.com/nunomaduro/larastan/issues).
+- Adds static typing to Laravel to improve developer productivity and **code quality**
+- Supports most of [Laravel](https://laravel.com)'s **beautiful magic**
+- Discovers bugs in your code without running it
 
-## Installation & Usage
+## ✨ Get started
 
 > **Requires:**
 - **[PHP 7.1.3+](https://php.net/releases/)**
-- **[Laravel 5.6+](https://github.com/laravel/laravel)**
+- **[Laravel 6.0+](https://github.com/laravel/laravel)**
 
-You may use [Composer](https://getcomposer.org) to install Larastan as a development dependency into your Laravel project:
+First, you may use [Composer](https://getcomposer.org) to install Larastan as a development dependency into your Laravel project:
 ```bash
 composer require --dev nunomaduro/larastan
 ```
 
-### Usage in Laravel Applications
+> Using Larastan for analysing Laravel packages? You may need to install `orchestra/testbench`.
 
-_**Warning**: As of v0.4.4 `code:analyse` command is deprecated. And in the next version it'll be removed._
+Then, create a `phpstan.neon` or `phpstan.neon.dist` file in the root of your application. It might look like this:
 
-Once you have installed Larastan, you may start analyzing your code using the `code:analyse` Artisan command.
-```bash
-php artisan code:analyse
-```
-
-#### Custom configuration
-
-If you would like to provide your own configuration, you can create a `phpstan.neon` or `phpstan.neon.dist` file in the root of your application. It might look like this:
 ```
 includes:
     - ./vendor/nunomaduro/larastan/extension.neon
+
 parameters:
+
+    # You can choose which directories you want to analyze, 
+    # by default, the analyzed directory will be the app.
+    paths:
+        - app
+
+    # You can choose from currently 8 levels: 0 is the 
+    # loosest and 7 is the strictest. You can also
+    # use "max" as alias for the highest level.
     level: 5
+
+    # If some issue in your code base is not easy to fix or just simply 
+    # want to deal with it later, you can exclude error messages 
+    # from the analysis result with regular expressions:
     ignoreErrors:
         - '#Access to an undefined property App\\Demo\\[a-zA-Z0-9\\_]+::\$[a-zA-Z0-9\\_]+\.#'
         - '#Call to an undefined method App\\Http\\Resources\\DemoResource::DemoMethod\(\)\.#'
+
+    # To exclude an error in a specific directory
+    # or file, specify a path or paths along
+    # with the message:
     excludes_analyse:
         - /*/*/FileToBeExcluded.php
+
+    # For all available options, please take
+    # a look at the PHPStan documentation:
+    # https://github.com/phpstan/phpstan
+    checkMissingIterableValueType: false
 ```
 
-For all available options, please take a look at the [PHPStan documentation](https://github.com/phpstan/phpstan).
+Finally, you may start analyzing your code using the `./vendor/bin/phpstan analyse` command.
 
-### Lumen installation
+## 👊🏻 Contributing
 
-Add the following lines into your app/Providers/AppServiceProvider:
-```
-public function register()
-{
-    $this->app->register(\NunoMaduro\Larastan\LarastanServiceProvider::class);
-    $this->app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');
-    $this->app->instance('path.config', app()->basePath() . DIRECTORY_SEPARATOR . 'config');
-}
-```
+Thank you for considering contributing to Larastan. All the contribution guidelines are mentioned [here](CONTRIBUTING.md).
 
-### Usage in Packages for Laravel
+You can have a look at the [CHANGELOG](CHANGELOG.md) for constant updates & detailed information about the changes. You can also follow the Twitter account for the latest announcements or just come say hi!: [@enunomaduro](https://twitter.com/enunomaduro).
 
-> **Requires:**
-- **[orchestra/testbench 3.6+](https://github.com/orchestral/testbench)**
-
-Once you have installed Larastan, also install `orchestra/testbench`:
-
-```sh
-composer require --dev orchestra/testbench
-```
-
-Then create a file named `phpstan.neon.dist` in the root of your package with the content:
-```
-includes:
-    - ./vendor/nunomaduro/larastan/extension.neon
-parameters:
-    level: 5
-    paths:
-        - src
-```
-
-Start analyzing your code using the `analyse` PHPStan command.
-```bash
-./vendor/bin/phpstan analyse
-```
-
-
-### Rule levels
-
-You can choose from currently 8 levels: (0 is the loosest and 7 is the strictest) by passing `--level` to `analyse` command. Default level is `5`. You can also use `--level max` as an alias for the highest level.
-
-```bash
-php artisan code:analyse --level=max
-```
-
-### Paths
-
-You can choose which directories you want to analyze, by default, the analyzed directory will be the `app`.
-
-```bash
-php artisan code:analyse --paths="modules,app,domain"
-```
-
-### Error formats
-
-By default, Larastan outputs found errors into tables grouped by files to be easily human-readable. To change the output, you can use the --error-format CLI option.
-
-The available options are: `checkstyle`, `raw`, `table`, `json`, `prettyJson`.
-
-```bash
-php artisan code:analyse --error-format table
-```
-
-## Contributing
-
-Thank you for considering to contribute to Larastan. All the contribution guidelines are mentioned [here](CONTRIBUTING.md).
-
-You can have a look at the [CHANGELOG](CHANGELOG.md) for constant updates & detailed information about the changes. You can also follow the Twitter account for latest announcements or just come say hi!: [@enunomaduro](https://twitter.com/enunomaduro).
-
-## Support the development
+## ❤️ Support the development
 
 **Do you like this project? Support it by donating**
 
 - PayPal: [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=66BYDWAT92N6L)
 - Patreon: [Donate](https://www.patreon.com/nunomaduro)
 
-## Credits
-
-- [weebly/phpstan-laravel](https://github.com/weebly/phpstan-laravel) - Some code was inspired on this package.
-- [@Caneco](http://github.com/caneco) - For making the logo.
-
-## License
+## 📖 License
 
 Larastan is an open-sourced software licensed under the [MIT license](LICENSE.md).
