@@ -1,4 +1,4 @@
-# # Upgrade Guide
+# Upgrade Guide
 
 ## Upgrading To 0.5 From 0.4
 
