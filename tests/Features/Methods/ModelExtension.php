@@ -79,10 +79,7 @@ class ModelExtension
      */
     public function testFindCanReturnCollection() : ?Collection
     {
-        /** @var Collection<\App\User> $users */
-        $users = User::find([1, 2, 3]);
-
-        return $users;
+        return User::find([1, 2, 3]);
     }
 
     /** @return iterable<User>|null */
