@@ -21,20 +21,20 @@ Larastan was created by [Nuno Maduro](https://github.com/nunomaduro), got artwor
 - Supports most of [Laravel](https://laravel.com)'s **beautiful magic**
 - Discovers bugs in your code without running it
 
-## ✨ Get started
+## ✨ Getting Started in 3 Steps
 
 > **Requires:**
 - **[PHP 7.1.3+](https://php.net/releases/)**
 - **[Laravel 6.0+](https://github.com/laravel/laravel)**
 
-First, you may use [Composer](https://getcomposer.org) to install Larastan as a development dependency into your Laravel project:
+**1**: First, you may use [Composer](https://getcomposer.org) to install Larastan as a development dependency into your Laravel project:
 ```bash
 composer require --dev nunomaduro/larastan
 ```
 
 > Using Larastan for analysing Laravel packages? You may need to install `orchestra/testbench`.
 
-Then, create a `phpstan.neon` or `phpstan.neon.dist` file in the root of your application. It might look like this:
+**2**: Then, create a `phpstan.neon` or `phpstan.neon.dist` file in the root of your application. It might look like this:
 
 ```
 includes:
@@ -42,36 +42,30 @@ includes:
 
 parameters:
 
-    # You can choose which directories you want to analyze, 
-    # by default, the analyzed directory will be the app.
     paths:
         - app
 
-    # You can choose from currently 8 levels: 0 is the 
-    # loosest and 7 is the strictest. You can also
-    # use "max" as alias for the highest level.
+    # The level 7 is the highest level
     level: 5
 
-    # If some issue in your code base is not easy to fix or just simply 
-    # want to deal with it later, you can exclude error messages 
-    # from the analysis result with regular expressions:
     ignoreErrors:
         - '#Access to an undefined property App\\Demo\\[a-zA-Z0-9\\_]+::\$[a-zA-Z0-9\\_]+\.#'
         - '#Call to an undefined method App\\Http\\Resources\\DemoResource::DemoMethod\(\)\.#'
 
-    # To exclude an error in a specific directory
-    # or file, specify a path or paths along
-    # with the message:
+    # Exclude specific directory or file
     excludes_analyse:
         - /*/*/FileToBeExcluded.php
 
-    # For all available options, please take
-    # a look at the PHPStan documentation:
-    # https://github.com/phpstan/phpstan
     checkMissingIterableValueType: false
 ```
 
-Finally, you may start analyzing your code using the `./vendor/bin/phpstan analyse` command.
+For all available options, please take a look at the PHPStan documentation: **https://github.com/phpstan/phpstan**
+
+**3**: Finally, you may start analyzing your code using the phpstan console command:
+
+```bash
+./vendor/bin/phpstan analyse
+```
 
 ## 👊🏻 Contributing
 
