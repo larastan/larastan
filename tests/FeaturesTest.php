@@ -53,15 +53,18 @@ class FeaturesTest extends TestCase
         $configPath = __DIR__.'/../extension.neon';
         $command = escapeshellcmd(__DIR__.'/../vendor/bin/phpstan');
 
-        exec(sprintf('%s %s analyse --no-progress  --level=8 --configuration %s --autoload-file %s %s',
+        exec(sprintf('%s %s analyse --no-progress  --level=max --configuration %s --autoload-file %s %s --error-format=%s',
             escapeshellarg(PHP_BINARY), $command,
             escapeshellarg($configPath),
             escapeshellarg(__DIR__.'/../vendor/autoload.php'),
-            escapeshellarg($file)),
-            $outputLines);
+            escapeshellarg($file),
+            'json'),
+            $jsonResult);
 
-        if (count($outputLines) !== 3) {
-            $this->fail(implode("\n", $outputLines));
+        $result = json_decode($jsonResult[0], true);
+
+        if ($result['totals']['errors'] > 0 || $result['totals']['file_errors'] > 0) {
+            $this->fail($jsonResult[0]);
         }
 
         return 0;
