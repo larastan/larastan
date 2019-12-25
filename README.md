@@ -52,7 +52,7 @@ parameters:
         - '#Unsafe usage of new static#'
 
     excludes_analyse:
-        - /*/*/FileToBeExcluded.php
+        - ./*/*/FileToBeExcluded.php
 
     checkMissingIterableValueType: false
 ```
