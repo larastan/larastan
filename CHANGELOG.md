@@ -4,10 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## [0.5.0] - 2019-12-25
+
+Blogpost: [nunomaduro.com/larastan-0-5-is-out](https://nunomaduro.com/larastan-0-5-is-out)
+Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/UPGRADE.md)
+
 ### Added 
 - Support to PHPStan `0.12` [#378](https://github.com/nunomaduro/larastan/pull/378)
 - Support to Laravel 7 [#377](https://github.com/nunomaduro/larastan/pull/377)
+
+### Removed
+- The artisan `code:analyse` command. [391](https://github.com/nunomaduro/larastan/pull/391)
 
 ## [0.4.3] - 2019-10-22
 ### Added
