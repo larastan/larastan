@@ -12,6 +12,13 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added 
 - Support to PHPStan `0.12` [#378](https://github.com/nunomaduro/larastan/pull/378)
 - Support to Laravel 7 [#377](https://github.com/nunomaduro/larastan/pull/377)
+- Support for Facade fakes [#347](https://github.com/nunomaduro/larastan/pull/347)
+- Support for model relations accessed as properties [#361](https://github.com/nunomaduro/larastan/pull/361)
+- Support for custom Eloquent builders [#364](https://github.com/nunomaduro/larastan/pull/364)
+- Support for return types of `spy`, `mock` and `partialMock` methods of `TestCase` [#362](https://github.com/nunomaduro/larastan/pull/362)
+
+### Fixed
+- Fixed a bug about handling method calls that starts with `find` on model instances [#360](https://github.com/nunomaduro/larastan/pull/360)
 
 ### Removed
 - The artisan `code:analyse` command. [391](https://github.com/nunomaduro/larastan/pull/391)
