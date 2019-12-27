@@ -61,7 +61,7 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
         $relatedModel = get_class($this->getContainer()->make($classReflection->getName())->{$propertyName}()->getRelated());
 
         if (Str::contains($relationClass, 'Many')) {
-            return new ModelRelationProperty(
+            return new ModelProperty(
                 $classReflection,
                 new IntersectionType([
                     new ObjectType(Collection::class),
@@ -70,13 +70,13 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
         }
 
         if (Str::endsWith($relationClass, 'MorphTo')) {
-            return new ModelRelationProperty($classReflection, new UnionType([
+            return new ModelProperty($classReflection, new UnionType([
                 new ObjectType(Model::class),
                 new MixedType(),
             ]));
         }
 
-        return new ModelRelationProperty($classReflection, new UnionType([
+        return new ModelProperty($classReflection, new UnionType([
             new ObjectType($relatedModel),
             new NullType(),
         ]));

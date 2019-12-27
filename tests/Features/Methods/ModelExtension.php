@@ -197,6 +197,14 @@ class ModelExtension
     {
         return Thread::findAllFooBarThreads();
     }
+
+    public function testCustomAccessorOnModels() : string
+    {
+        /** @var Thread $thread */
+        $thread = Thread::findOrFail(5);
+
+        return $thread->custom_property;
+    }
 }
 
 function foo() : string
@@ -225,5 +233,10 @@ class Thread extends Model
     public static function findAllFooBarThreads()
     {
         return self::query()->where('foo', 'bar')->get();
+    }
+
+    public function getCustomPropertyAttribute() : string
+    {
+        return 'thread';
     }
 }
