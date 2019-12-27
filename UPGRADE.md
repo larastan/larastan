@@ -10,7 +10,18 @@ Update your `nunomaduro/larastan` dependency to `^0.5` in your `composer.json` f
 
 The artisan `code:analyse` command is no longer available. Therefore, you need to:
 
-1. Start using the command `./vendor/bin/phpstan analyse` to launch Larastan.
+1. Start using the phpstan command to launch Larastan.
+
+```bash
+./vendor/bin/phpstan analyse
+```
+
+If you are getting the error `Allowed memory size exhausted`, then you can use the `--memory-limit` option fix the problem:
+
+```bash
+./vendor/bin/phpstan analyse --memory-limit=2G
+```
+
 2. Create a `phpstan.neon` or `phpstan.neon.dist` file in the root of your application that might look like this:
 
 ```
