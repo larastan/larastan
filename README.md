@@ -65,6 +65,12 @@ For all available options, please take a look at the PHPStan documentation: **ht
 ./vendor/bin/phpstan analyse
 ```
 
+If you are getting the error `Allowed memory size exhausted`, then you can use the `--memory-limit` option fix the problem:
+
+```bash
+./vendor/bin/phpstan analyse --memory-limit=2G
+```
+
 ## 👊🏻 Contributing
 
 Thank you for considering contributing to Larastan. All the contribution guidelines are mentioned [here](CONTRIBUTING.md).
