@@ -19,7 +19,7 @@ use PHPStan\TrinaryLogic;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\Type;
 
-class ModelRelationProperty implements PropertyReflection
+class ModelProperty implements PropertyReflection
 {
     /**
      * @var ClassReflection
