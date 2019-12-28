@@ -8,6 +8,7 @@ use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Http\FormRequest;
 
 class ModelExtension
 {
@@ -185,17 +186,17 @@ class ModelExtension
             ->first();
     }
 
-    public function testFindOnVariableClassName() : ?User
+    /** @return Collection<User>|null */
+    public function testFindWithCastingToArray(FormRequest $request) : ?Collection
     {
-        $class = foo();
+        $requestData = $request->validated();
 
-        return $class::query()->find(5);
+        return User::find((array) $requestData['user_ids']);
     }
 
-    /** @return iterable<Thread>&Collection */
-    public function testCustomMethodsStartingWithFind()
+    public function testFindWithCastingToInt() : ?User
     {
-        return Thread::findAllFooBarThreads();
+        return User::find((int) '1');
     }
 
     public function testCustomAccessorOnModels() : string

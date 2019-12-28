@@ -19,9 +19,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Concerns;
-use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Scalar\LNumber;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\MethodReflection;
@@ -77,18 +75,19 @@ final class ModelFindExtension implements DynamicStaticMethodReturnTypeExtension
     ): Type {
         $modelName = $methodReflection->getDeclaringClass()->getName();
         $returnType = $methodReflection->getVariants()[0]->getReturnType();
+        $argType = $scope->getType($methodCall->args[0]->value);
 
-        if ($methodCall->args[0]->value instanceof Array_) {
+        if ($argType->isIterable()->yes()) {
             return TypeCombinator::remove($returnType, new ObjectType($modelName));
         }
 
-        if ($methodCall->args[0]->value instanceof LNumber) {
-            return TypeCombinator::remove(
-                $returnType,
-                new IntersectionType([new ObjectType(Collection::class), new IterableType(new MixedType(), new ObjectType($modelName))])
-            );
+        if ($argType instanceof MixedType) {
+            return $returnType;
         }
 
-        return $returnType;
+        return TypeCombinator::remove(
+            $returnType,
+            new IntersectionType([new ObjectType(Collection::class), new IterableType(new MixedType(), new ObjectType($modelName))])
+        );
     }
 }
