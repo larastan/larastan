@@ -32,7 +32,7 @@ Larastan was created by [Nuno Maduro](https://github.com/nunomaduro), got artwor
 composer require --dev nunomaduro/larastan
 ```
 
-> Using Larastan for analysing Laravel packages? You may need to install `orchestra/testbench`. Simiarly, if you have PHPStan and Larastan installed separetely, together, using `bamarni/composer-bin-plugin`.
+> Using Larastan for analysing Laravel packages? You may need to install `orchestra/testbench`. Similarly, if you have PHPStan and Larastan installed separetely, together, using `bamarni/composer-bin-plugin`.
 
 **2**: Then, create a `phpstan.neon` or `phpstan.neon.dist` file in the root of your application. It might look like this:
 
