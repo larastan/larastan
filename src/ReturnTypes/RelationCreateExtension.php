@@ -13,42 +13,30 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Collection;
+use NunoMaduro\Larastan\Concerns\HasContainer;
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\PropertyFetch;
-use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PHPStan\Analyser\Scope;
 use PHPStan\Broker\Broker;
 use PHPStan\Broker\ClassNotFoundException;
-use PHPStan\Reflection\Annotations\AnnotationsPropertiesClassReflectionExtension;
 use PHPStan\Reflection\BrokerAwareExtension;
-use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
-use PHPStan\Type\IntersectionType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\ThisType;
 use PHPStan\Type\Type;
 
 class RelationCreateExtension implements DynamicMethodReturnTypeExtension, BrokerAwareExtension
 {
-    /**
-     * @var Broker
-     */
+    use HasContainer;
+
+    /** @var Broker */
     private $broker;
-
-    /**
-     * @var AnnotationsPropertiesClassReflectionExtension
-     */
-    private $annotationsPropertiesClassReflectionExtension;
-
-    public function __construct(AnnotationsPropertiesClassReflectionExtension $annotationsPropertiesClassReflectionExtension)
-    {
-        $this->annotationsPropertiesClassReflectionExtension = $annotationsPropertiesClassReflectionExtension;
-    }
 
     public function getClass(): string
     {
@@ -60,128 +48,55 @@ class RelationCreateExtension implements DynamicMethodReturnTypeExtension, Broke
         return $methodReflection->getName() === 'create';
     }
 
+    /**
+     * @throws ShouldNotHappenException
+     * @throws BindingResolutionException
+     * @throws ClassNotFoundException
+     */
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,
         Scope $scope
     ): Type {
-        $returnType = new MixedType(true);
+        /** @var MethodCall $relationMethodCall */
+        $relationMethodCall = $methodCall->var;
 
-        try {
-            [$context, $relationName] = $this->getContextFromMethodCall($methodCall);
-
-            $callingClass = $this->determineCallingClass($scope, $context);
-
-            if ($this->annotationsPropertiesClassReflectionExtension->hasProperty($callingClass, $relationName)) {
-                $returnType = $this->annotationsPropertiesClassReflectionExtension->getProperty($callingClass, $relationName)->getReadableType();
-
-                if ($returnType instanceof IntersectionType) {
-                    return $this->determineReturnTypeFromIntersection($returnType);
-                }
-
-                if ($returnType instanceof ObjectType && $this->isModel($returnType->getClassName())) {
-                    return $returnType;
-                }
-            }
-        } catch (ClassNotFoundException $e) {
-            // Silently fail...
+        if (! $relationMethodCall instanceof MethodCall) {
+            return new MixedType(true);
         }
 
-        return $returnType;
+        /** @var Identifier $relationMethodIdentifier */
+        $relationMethodIdentifier = $relationMethodCall->name;
+
+        $propertyName = $relationMethodIdentifier->name;
+
+        /** @var ObjectType|ThisType $modelType */
+        $modelType = $scope->getType($relationMethodCall->var);
+
+        if ($modelType instanceof ObjectType) {
+            $modelClass = $modelType->getClassName();
+        } elseif ($modelType instanceof ThisType) {
+            $modelClass = $modelType->getBaseClass();
+        } else {
+            return new MixedType(true);
+        }
+
+        $modelReflection = $this->broker->getClass($modelClass);
+        if (! $modelReflection->isSubclassOf(Model::class)) {
+            throw new ShouldNotHappenException();
+        }
+
+        if (! $modelReflection->hasMethod($propertyName)) {
+            return new MixedType(true);
+        }
+
+        $relatedModel = get_class($this->getContainer()->make($modelClass)->{$propertyName}()->getRelated());
+
+        return new ObjectType($relatedModel);
     }
 
     public function setBroker(Broker $broker): void
     {
         $this->broker = $broker;
-    }
-
-    /**
-     * @param mixed $scope
-     * @param string $context
-     * @return ClassReflection
-     * @throws ClassNotFoundException
-     */
-    private function determineCallingClass($scope, string $context) : ClassReflection
-    {
-        /** @var string $className */
-        $className = current(array_filter($scope->debug(), function (string $key) use ($context) {
-            return mb_strpos($key, $context) !== false;
-        }, ARRAY_FILTER_USE_KEY));
-
-        if (mb_strpos($className, '$this') !== false) {
-            $className = $this->stripThisFromClassName($className);
-        }
-
-        return $this->broker->getClass($className);
-    }
-
-    /**
-     * @param string $className
-     * @return string
-     */
-    private function stripThisFromClassName(string $className) : string
-    {
-        preg_match('/\$this\((.*?)\)/', $className, $out);
-
-        return $out[1];
-    }
-
-    /**
-     * @param IntersectionType $returnType
-     * @return Type
-     * @throws ClassNotFoundException
-     */
-    private function determineReturnTypeFromIntersection(IntersectionType $returnType) : Type
-    {
-        [$collectionClass, $model] = $returnType->getReferencedClasses();
-
-        if ($collectionClass === Collection::class || $this->broker->getClass($collectionClass)->isSubclassOf(Collection::class)) {
-            if (! $this->isModel($model)) {
-                return new MixedType(true);
-            }
-
-            return new ObjectType($model);
-        }
-
-        return new MixedType(true);
-    }
-
-    /**
-     * @param string $className
-     * @return bool
-     * @throws ClassNotFoundException
-     */
-    private function isModel(string $className) : bool
-    {
-        return $this->broker->getClass($className)->isSubclassOf(Model::class);
-    }
-
-    /**
-     * @param MethodCall $methodCall
-     * @return string[]
-     */
-    private function getContextFromMethodCall(MethodCall $methodCall) : array
-    {
-        /** @var MethodCall $methodCallNode */
-        $methodCallNode = $methodCall->var;
-
-        /** @var Variable|PropertyFetch $methodCallVariable */
-        $methodCallVariable = $methodCallNode->var;
-
-        if (! $methodCallVariable instanceof Variable) {
-            /** @var Variable $methodCallVariable */
-            $methodCallVariable = $methodCallVariable->var;
-        }
-
-        /** @var string $context */
-        $context = $methodCallVariable->name;
-
-        /** @var Identifier $methodCallIdentifier */
-        $methodCallIdentifier = $methodCallNode->name;
-
-        /** @var string $relationName */
-        $relationName = $methodCallIdentifier->name;
-
-        return [$context, $relationName];
     }
 }
