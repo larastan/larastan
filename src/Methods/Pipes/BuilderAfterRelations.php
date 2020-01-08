@@ -15,9 +15,9 @@ namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
@@ -67,7 +67,7 @@ final class BuilderAfterRelations implements PipeContract
     {
         $eloquentBuilder = $passable->getBroker()->getClass($builderClass);
 
-        if (!$eloquentBuilder->hasNativeMethod($passable->getMethodName())) {
+        if (! $eloquentBuilder->hasNativeMethod($passable->getMethodName())) {
             return null;
         }
 
