@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Tests\Features\Methods;
 
 use App\User;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
@@ -21,7 +22,7 @@ class ModelExtension
         return User::all();
     }
 
-    public function testReturnThis(): Builder
+    public function testReturnThis(): EloquentBuilder
     {
         $user = User::join('tickets.tickets', 'tickets.tickets.id', '=', 'tickets.sale_ticket.ticket_id')
             ->where(['foo' => 'bar']);
@@ -29,29 +30,39 @@ class ModelExtension
         return $user;
     }
 
-    public function testWhere(): Builder
+    public function testWhere(): EloquentBuilder
     {
         return (new Thread)->where(['foo' => 'bar']);
     }
 
-    public function testStaticWhere(): Builder
+    public function testStaticWhere(): EloquentBuilder
     {
         return Thread::where(['foo' => 'bar']);
     }
 
-    public function testDynamicWhere(): Builder
+    public function testDynamicWhere(): EloquentBuilder
     {
         return (new Thread)->whereFoo(['bar']);
     }
 
-    public function testStaticDynamicWhere(): Builder
+    public function testStaticDynamicWhere(): EloquentBuilder
     {
         return Thread::whereFoo(['bar']);
     }
 
-    public function testWhereIn(): Builder
+    public function testWhereIn(): EloquentBuilder
     {
         return (new Thread)->whereIn('id', [1, 2, 3]);
+    }
+
+    public function testRelationWhere(): EloquentBuilder
+    {
+        return (new User())->accounts()->where('foo', 'bar');
+    }
+
+    public function testRelationWhereIn(): QueryBuilder
+    {
+        return (new User())->accounts()->whereIn('id', [1, 2, 3]);
     }
 
     public function testIncrement() : int
@@ -116,10 +127,10 @@ class ModelExtension
         return User::first();
     }
 
-//    public function testMake() : User
-//    {
-//        return User::make([]);
-//    }
+    public function testMake() : User
+    {
+        return User::make([]);
+    }
 
     public function testCreate() : User
     {
@@ -151,12 +162,12 @@ class ModelExtension
         return User::firstOrCreate([]);
     }
 
-    public function testScope() : Builder
+    public function testScope() : EloquentBuilder
     {
         return Thread::valid();
     }
 
-    public function testMacro(Builder $query) : Builder
+    public function testMacro(EloquentBuilder $query) : EloquentBuilder
     {
         return $query->macro('customMacro', function () {
         });
@@ -215,7 +226,7 @@ function foo() : string
 
 class Thread extends Model
 {
-    public function scopeValid(Builder $query) : Builder
+    public function scopeValid(EloquentBuilder $query) : EloquentBuilder
     {
         return $query->where('valid', true);
     }
