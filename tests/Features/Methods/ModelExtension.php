@@ -65,6 +65,11 @@ class ModelExtension
         return (new User())->accounts()->whereIn('id', [1, 2, 3]);
     }
 
+    public function testRelationDynamicWhere(): HasMany
+    {
+        return (new User())->accounts()->whereFoo(['bar']);
+    }
+
     public function testIncrement(): int
     {
         /** @var User $user */

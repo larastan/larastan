@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
+use NunoMaduro\Larastan\Methods\BuilderHelper;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
 use NunoMaduro\Larastan\Reflection\ModelScopeMethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
@@ -66,8 +67,14 @@ final class BuilderAfterRelations implements PipeContract
     private function getMethodReflectionForBuilder(PassableContract $passable, string $builderClass): ?EloquentBuilderMethodReflection
     {
         $eloquentBuilder = $passable->getBroker()->getClass($builderClass);
+        $builderHelper = new BuilderHelper();
+        $returnObject = new ObjectType($passable->getClassReflection()->getName());
 
         if (! $eloquentBuilder->hasNativeMethod($passable->getMethodName())) {
+            if ($returnMethodReflection = $builderHelper->dynamicWhere($eloquentBuilder, $passable->getMethodName(), $returnObject)) {
+                return $returnMethodReflection;
+            }
+
             return null;
         }
 
@@ -84,7 +91,7 @@ final class BuilderAfterRelations implements PipeContract
             $passable->getMethodName(),
             $eloquentBuilder,
             $originalWhereVariant->getParameters(),
-            new ObjectType($passable->getClassReflection()->getName())
+            $returnObject
         );
     }
 }
