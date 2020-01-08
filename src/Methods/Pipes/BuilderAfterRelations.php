@@ -84,7 +84,7 @@ final class BuilderAfterRelations implements PipeContract
             $passable->getMethodName(),
             $eloquentBuilder,
             $originalWhereVariant->getParameters(),
-            new ObjectType($builderClass)
+            new ObjectType($passable->getClassReflection()->getName())
         );
     }
 }
