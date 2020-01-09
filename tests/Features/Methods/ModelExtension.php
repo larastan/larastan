@@ -8,6 +8,7 @@ use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ModelExtension
@@ -54,7 +55,22 @@ class ModelExtension
         return (new Thread)->whereIn('id', [1, 2, 3]);
     }
 
-    public function testIncrement() : int
+    public function testRelationWhere(): HasMany
+    {
+        return (new User())->accounts()->where('foo', 'bar');
+    }
+
+    public function testRelationWhereIn(): HasMany
+    {
+        return (new User())->accounts()->whereIn('id', [1, 2, 3]);
+    }
+
+    public function testRelationDynamicWhere(): HasMany
+    {
+        return (new User())->accounts()->whereFoo(['bar']);
+    }
+
+    public function testIncrement(): int
     {
         /** @var User $user */
         $user = new User;
@@ -62,7 +78,7 @@ class ModelExtension
         return $user->increment('counter');
     }
 
-    public function testDecrement() : int
+    public function testDecrement(): int
     {
         /** @var User $user */
         $user = new User;
@@ -70,7 +86,7 @@ class ModelExtension
         return $user->decrement('counter');
     }
 
-    public function testFind() : ?User
+    public function testFind(): ?User
     {
         return User::find(1);
     }
@@ -78,7 +94,7 @@ class ModelExtension
     /**
      * @return Collection<\App\User>|null
      */
-    public function testFindCanReturnCollection() : ?Collection
+    public function testFindCanReturnCollection(): ?Collection
     {
         return User::find([1, 2, 3]);
     }
@@ -95,7 +111,7 @@ class ModelExtension
         return User::findMany([1, 2, 3]);
     }
 
-    public function testFindOrFail() : User
+    public function testFindOrFail(): User
     {
         return User::findOrFail(1);
     }
@@ -103,7 +119,7 @@ class ModelExtension
     /**
      * @return Collection<\App\User>
      */
-    public function testFindOrFailCanReturnCollection() : Collection
+    public function testFindOrFailCanReturnCollection(): Collection
     {
         /** @var Collection<\App\User> $users */
         $users = User::findOrFail([1, 2, 3]);
@@ -111,37 +127,37 @@ class ModelExtension
         return $users;
     }
 
-    public function testFirst() : ?User
+    public function testFirst(): ?User
     {
         return User::first();
     }
 
-//    public function testMake() : User
-//    {
-//        return User::make([]);
-//    }
+    public function testMake(): User
+    {
+        return User::make([]);
+    }
 
-    public function testCreate() : User
+    public function testCreate(): User
     {
         return User::create([]);
     }
 
-    public function testForceCreate() : User
+    public function testForceCreate(): User
     {
         return User::forceCreate([]);
     }
 
-    public function testFindOrNew() : User
+    public function testFindOrNew(): User
     {
         return User::findOrNew([]);
     }
 
-    public function testFirstOrNew() : User
+    public function testFirstOrNew(): User
     {
         return User::firstOrNew([]);
     }
 
-    public function testUpdateOrCreate() : User
+    public function testUpdateOrCreate(): User
     {
         return User::updateOrCreate([]);
     }
@@ -151,12 +167,12 @@ class ModelExtension
         return User::firstOrCreate([]);
     }
 
-    public function testScope() : Builder
+    public function testScope(): Builder
     {
         return Thread::valid();
     }
 
-    public function testMacro(Builder $query) : Builder
+    public function testMacro(Builder $query): Builder
     {
         return $query->macro('customMacro', function () {
         });
@@ -165,12 +181,12 @@ class ModelExtension
     /**
      * @return Collection<\App\User>
      */
-    public function testChainingCollectionMethodsOnModel() : Collection
+    public function testChainingCollectionMethodsOnModel(): Collection
     {
         return User::findOrFail([1, 2, 3])->makeHidden('foo');
     }
 
-    public function testFirstOrFailWithChain() : User
+    public function testFirstOrFailWithChain(): User
     {
         return User::with('foo')
             ->where('foo', 'bar')
@@ -178,7 +194,7 @@ class ModelExtension
             ->firstOrFail();
     }
 
-    public function testFirstWithChain() : ?User
+    public function testFirstWithChain(): ?User
     {
         return User::with('foo')
             ->where('foo', 'bar')
@@ -187,19 +203,19 @@ class ModelExtension
     }
 
     /** @return Collection<User>|null */
-    public function testFindWithCastingToArray(FormRequest $request) : ?Collection
+    public function testFindWithCastingToArray(FormRequest $request): ?Collection
     {
         $requestData = $request->validated();
 
         return User::find((array) $requestData['user_ids']);
     }
 
-    public function testFindWithCastingToInt() : ?User
+    public function testFindWithCastingToInt(): ?User
     {
         return User::find((int) '1');
     }
 
-    public function testCustomAccessorOnModels() : string
+    public function testCustomAccessorOnModels(): string
     {
         /** @var Thread $thread */
         $thread = Thread::findOrFail(5);
@@ -208,24 +224,24 @@ class ModelExtension
     }
 }
 
-function foo() : string
+function foo(): string
 {
     return 'foo';
 }
 
 class Thread extends Model
 {
-    public function scopeValid(Builder $query) : Builder
+    public function scopeValid(Builder $query): Builder
     {
         return $query->where('valid', true);
     }
 
-    public static function testFindOnStaticSelf() : ?Thread
+    public static function testFindOnStaticSelf(): ?Thread
     {
         return self::valid()->first();
     }
 
-    public static function testFindOnStatic() : ?Thread
+    public static function testFindOnStatic(): ?Thread
     {
         return static::valid()->first();
     }
@@ -236,7 +252,7 @@ class Thread extends Model
         return self::query()->where('foo', 'bar')->get();
     }
 
-    public function getCustomPropertyAttribute() : string
+    public function getCustomPropertyAttribute(): string
     {
         return 'thread';
     }
