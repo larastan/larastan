@@ -58,6 +58,16 @@ services:
             - phpstan.broker.propertiesClassReflectionExtension
 
     -
+        class: NunoMaduro\Larastan\Types\RelationDynamicMethodReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
+        class: NunoMaduro\Larastan\Types\ModelRelationsDynamicMethodReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
         class: NunoMaduro\Larastan\ReturnTypes\RelationCreateExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
