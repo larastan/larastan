@@ -2,15 +2,30 @@
 
 declare(strict_types=1);
 
-namespace Tests\Features\ReturnTypes;
+namespace Tests\Features\Models;
 
 use App\Account;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class ModelExtension
+class Relations
 {
+    public function testRelationWhere(): HasMany
+    {
+        return (new User())->accounts()->where('foo', 'bar');
+    }
+
+    public function testRelationWhereIn(): HasMany
+    {
+        return (new User())->accounts()->whereIn('id', [1, 2, 3]);
+    }
+
+    public function testRelationDynamicWhere(): HasMany
+    {
+        return (new User())->accounts()->whereFoo(['bar']);
+    }
+
     public function testCreateWithRelation(): Account
     {
         /** @var User $user */

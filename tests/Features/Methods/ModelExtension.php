@@ -55,21 +55,6 @@ class ModelExtension
         return (new Thread)->whereIn('id', [1, 2, 3]);
     }
 
-    public function testRelationWhere(): HasMany
-    {
-        return (new User())->accounts()->where('foo', 'bar');
-    }
-
-    public function testRelationWhereIn(): HasMany
-    {
-        return (new User())->accounts()->whereIn('id', [1, 2, 3]);
-    }
-
-    public function testRelationDynamicWhere(): HasMany
-    {
-        return (new User())->accounts()->whereFoo(['bar']);
-    }
-
     public function testIncrement(): int
     {
         /** @var User $user */
