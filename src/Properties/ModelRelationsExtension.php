@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Concerns;
+use NunoMaduro\Larastan\Types\RelationType;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\Dummy\DummyPropertyReflection;
@@ -55,10 +56,12 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
             return new DummyPropertyReflection();
         }
 
-        /** @var ObjectType $relationType */
+        /** @var ObjectType|RelationType $relationType */
         $relationType = $method->getVariants()[0]->getReturnType();
         $relationClass = $relationType->getClassName();
-        $relatedModel = get_class($this->getContainer()->make($classReflection->getName())->{$propertyName}()->getRelated());
+        $relatedModel = $relationType instanceof RelationType ?
+            $relationType->getRelatedModel() :
+            get_class($this->getContainer()->make($classReflection->getName())->{$propertyName}()->getRelated());
 
         if (Str::contains($relationClass, 'Many')) {
             return new ModelProperty(
