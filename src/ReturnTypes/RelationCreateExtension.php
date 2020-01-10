@@ -14,30 +14,20 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\ReturnTypes;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use NunoMaduro\Larastan\Concerns\HasContainer;
+use NunoMaduro\Larastan\Types\RelationType;
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Identifier;
 use PHPStan\Analyser\Scope;
-use PHPStan\Broker\Broker;
 use PHPStan\Broker\ClassNotFoundException;
-use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
-use PHPStan\Type\ThisType;
 use PHPStan\Type\Type;
 
-class RelationCreateExtension implements DynamicMethodReturnTypeExtension, BrokerAwareExtension
+class RelationCreateExtension implements DynamicMethodReturnTypeExtension
 {
-    use HasContainer;
-
-    /** @var Broker */
-    private $broker;
-
     public function getClass(): string
     {
         return Relation::class;
@@ -65,38 +55,12 @@ class RelationCreateExtension implements DynamicMethodReturnTypeExtension, Broke
             return new MixedType(true);
         }
 
-        /** @var Identifier $relationMethodIdentifier */
-        $relationMethodIdentifier = $relationMethodCall->name;
+        $relationType = $scope->getType($methodCall->var);
 
-        $propertyName = $relationMethodIdentifier->name;
-
-        /** @var ObjectType|ThisType $modelType */
-        $modelType = $scope->getType($relationMethodCall->var);
-
-        if ($modelType instanceof ObjectType) {
-            $modelClass = $modelType->getClassName();
-        } elseif ($modelType instanceof ThisType) {
-            $modelClass = $modelType->getBaseClass();
-        } else {
+        if (! $relationType instanceof RelationType) {
             return new MixedType(true);
         }
 
-        $modelReflection = $this->broker->getClass($modelClass);
-        if (! $modelReflection->isSubclassOf(Model::class)) {
-            throw new ShouldNotHappenException();
-        }
-
-        if (! $modelReflection->hasMethod($propertyName)) {
-            return new MixedType(true);
-        }
-
-        $relatedModel = get_class($this->getContainer()->make($modelClass)->{$propertyName}()->getRelated());
-
-        return new ObjectType($relatedModel);
-    }
-
-    public function setBroker(Broker $broker): void
-    {
-        $this->broker = $broker;
+        return new ObjectType($relationType->getRelatedModel());
     }
 }
