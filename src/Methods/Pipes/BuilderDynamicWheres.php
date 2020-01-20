@@ -14,9 +14,12 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 use NunoMaduro\Larastan\Methods\BuilderHelper;
+use PHPStan\Type\ObjectType;
 
 /**
  * @internal
@@ -30,12 +33,14 @@ final class BuilderDynamicWheres implements PipeContract
     {
         $classReflection = $passable->getClassReflection();
         $found = false;
-        $builderHelper = new BuilderHelper();
+        $builderHelper = new BuilderHelper($passable->getBroker());
 
-        if ($returnMethodReflection = $builderHelper->dynamicWhere($classReflection, $passable->getMethodName())) {
-            $passable->setMethodReflection($returnMethodReflection);
+        if ($classReflection->getName() === Builder::class || $classReflection->isSubclassOf(Builder::class)) {
+            if ($returnMethodReflection = $builderHelper->dynamicWhere($passable->getMethodName(), new ObjectType(EloquentBuilder::class))) {
+                $passable->setMethodReflection($returnMethodReflection);
 
-            $found = true;
+                $found = true;
+            }
         }
 
         if (! $found) {

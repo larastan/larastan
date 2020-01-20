@@ -8,7 +8,6 @@ use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ModelExtension
@@ -53,21 +52,6 @@ class ModelExtension
     public function testWhereIn(): Builder
     {
         return (new Thread)->whereIn('id', [1, 2, 3]);
-    }
-
-    public function testRelationWhere(): HasMany
-    {
-        return (new User())->accounts()->where('foo', 'bar');
-    }
-
-    public function testRelationWhereIn(): HasMany
-    {
-        return (new User())->accounts()->whereIn('id', [1, 2, 3]);
-    }
-
-    public function testRelationDynamicWhere(): HasMany
-    {
-        return (new User())->accounts()->whereFoo(['bar']);
     }
 
     public function testIncrement(): int

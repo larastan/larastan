@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tests\Application\HasManySyncable;
@@ -43,6 +44,11 @@ class User extends Authenticatable
     public function syncableRelation(): HasManySyncable
     {
         return $this->hasManySyncable(Account::class);
+    }
+
+    public function addressable(): MorphTo
+    {
+        return $this->morphTo(null, 'model_type', 'model_id');
     }
 
     public function hasManySyncable($related, $foreignKey = null, $localKey = null): HasManySyncable

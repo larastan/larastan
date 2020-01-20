@@ -14,23 +14,37 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
-use PHPStan\Reflection\ClassReflection;
+use PHPStan\Broker\Broker;
+use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\ObjectType;
 
 class BuilderHelper
 {
+    /** @var string[] */
+    public const MODEL_RETRIEVAL_METHODS = ['first', 'find', 'findMany', 'findOrFail', 'firstOrFail'];
+
+    /** @var string[] */
+    public const MODEL_CREATION_METHODS = ['make', 'create', 'forceCreate', 'findOrNew', 'firstOrNew', 'updateOrCreate', 'fromQuery', 'firstOrCreate'];
+
+    /**
+     * @var Broker
+     */
+    private $broker;
+
+    public function __construct(Broker $broker)
+    {
+        $this->broker = $broker;
+    }
+
     public function dynamicWhere(
-        ClassReflection $classReflection,
         string $methodName,
         ?ObjectType $returnObject = null
     ): ?EloquentBuilderMethodReflection {
-        if (! ($classReflection->getName() === Builder::class || $classReflection->isSubclassOf(Builder::class))) {
-            return null;
-        }
+        $classReflection = $this->broker->getClass(QueryBuilder::class);
 
         if (! Str::startsWith($methodName, 'where')) {
             return null;
@@ -47,5 +61,40 @@ class BuilderHelper
             [$originalDynamicWhereVariant->getParameters()[1]],
             $returnObject ?? new ObjectType(EloquentBuilder::class)
         );
+    }
+
+    public function searchOnEloquentBuilder(string $methodName, string $modelClassName): ?MethodReflection
+    {
+        $eloquentBuilder = $this->broker->getClass(EloquentBuilder::class);
+
+        if (! $eloquentBuilder->hasNativeMethod($methodName)) {
+            return null;
+        }
+
+        if (in_array($methodName, array_merge(self::MODEL_CREATION_METHODS, self::MODEL_RETRIEVAL_METHODS), true)) {
+            $methodReflection = $eloquentBuilder->getNativeMethod($methodName);
+            $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
+            $returnType = ModelTypeHelper::replaceStaticTypeWithModel($parametersAcceptor->getReturnType(), $modelClassName);
+
+            return new EloquentBuilderMethodReflection(
+                $methodName, $eloquentBuilder,
+                $parametersAcceptor->getParameters(),
+                $returnType,
+                $parametersAcceptor->isVariadic()
+            );
+        }
+
+        return $eloquentBuilder->getNativeMethod($methodName);
+    }
+
+    public function searchOnQueryBuilder(string $methodName, string $modelClassName): ?MethodReflection
+    {
+        $queryBuilder = $this->broker->getClass(QueryBuilder::class);
+
+        if ($queryBuilder->hasNativeMethod($methodName)) {
+            return $queryBuilder->getNativeMethod($methodName);
+        }
+
+        return null;
     }
 }
