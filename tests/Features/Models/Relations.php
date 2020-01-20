@@ -9,6 +9,7 @@ use App\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Relations
 {
@@ -91,6 +92,14 @@ class Relations
         $user = new User;
 
         return $user->accounts()->paginate(5);
+    }
+
+    public function testMorph(): MorphTo
+    {
+        /** @var User $user */
+        $user = new User;
+
+        return $user->addressable()->where('foo', 'bar');
     }
 
     private function getUser(): User

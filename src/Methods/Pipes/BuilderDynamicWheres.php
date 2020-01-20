@@ -43,8 +43,6 @@ final class BuilderDynamicWheres implements PipeContract
             }
         }
 
-
-
         if (! $found) {
             $next($passable);
         }

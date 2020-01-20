@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Types;
 
-
 use Illuminate\Database\Eloquent\Model;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
@@ -14,7 +13,6 @@ use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
-use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
@@ -31,7 +29,7 @@ class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTyp
             'hasOne', 'hasOneThrough', 'morphOne',
             'belongsTo', 'morphTo',
             'hasMany', 'hasManyThrough', 'morphMany',
-            'belongsToMany', 'morphToMany', 'morphedByMany'
+            'belongsToMany', 'morphToMany', 'morphedByMany',
         ], true);
     }
 
@@ -46,13 +44,13 @@ class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTyp
         $relatedModelArg = $methodCall->args[0]->value;
         $argType = $scope->getType($relatedModelArg);
 
-        if (! $argType instanceof ConstantStringType) {
-            throw new ShouldNotHappenException();
-        }
-
         /** @var FunctionVariant $functionVariant */
         $functionVariant = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
         $returnType = $functionVariant->getReturnType();
+
+        if (! $argType instanceof ConstantStringType) {
+            return $returnType;
+        }
 
         if (! $returnType instanceof ObjectType) {
             throw new ShouldNotHappenException();

@@ -48,7 +48,7 @@ final class RelationType extends ObjectType
         return $this->relatedModel;
     }
 
-    public function getClassReflection() : ?ClassReflection
+    public function getClassReflection(): ?ClassReflection
     {
         $classReflection = parent::getClassReflection();
 

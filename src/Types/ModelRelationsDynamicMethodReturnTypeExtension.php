@@ -4,16 +4,13 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Types;
 
-
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use NunoMaduro\Larastan\Concerns\HasContainer;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
-use PHPStan\Broker\ClassNotFoundException;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
@@ -31,7 +28,8 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-        $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+        $variants = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
+        $returnType = $variants->getReturnType();
 
         if (! $returnType instanceof ObjectType) {
             return false;
@@ -45,11 +43,15 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
             return false;
         }
 
+        if (count($variants->getParameters()) !== 0) {
+            return false;
+        }
+
         return ! in_array($methodReflection->getName(), [
             'hasOne', 'hasOneThrough', 'morphOne',
             'belongsTo', 'morphTo',
             'hasMany', 'hasManyThrough', 'morphMany',
-            'belongsToMany', 'morphToMany', 'morphedByMany'
+            'belongsToMany', 'morphToMany', 'morphedByMany',
         ], true);
     }
 

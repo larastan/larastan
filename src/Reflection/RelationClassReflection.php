@@ -11,7 +11,6 @@ declare(strict_types=1);
  *  file that was distributed with this source code.
  */
 
-
 namespace NunoMaduro\Larastan\Reflection;
 
 use PHPStan\Reflection\ClassReflection;
@@ -30,7 +29,9 @@ class RelationClassReflection extends ClassReflection
     public function __construct(string $relatedModel, ClassReflection $baseClassReflection)
     {
         $this->relatedModel = $relatedModel;
-        $privatePropertyAccessor = function($prop) { return $this->$prop; };
+        $privatePropertyAccessor = function ($prop) {
+            return $this->$prop;
+        };
 
         parent::__construct(
             $privatePropertyAccessor->call($baseClassReflection, 'reflectionProvider'), $privatePropertyAccessor->call($baseClassReflection, 'fileTypeMapper'), $privatePropertyAccessor->call($baseClassReflection, 'propertiesClassReflectionExtensions'),
