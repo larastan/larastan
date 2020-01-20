@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Types;
 
+use NunoMaduro\Larastan\Reflection\RelationClassReflection;
+use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\VerbosityLevel;
 
@@ -36,20 +38,25 @@ final class RelationType extends ObjectType
         $this->relatedModel = $relatedModel;
     }
 
-    /**
-     * @return string
-     */
     public function getRelationClass(): string
     {
         return $this->relationClass;
     }
 
-    /**
-     * @return string
-     */
     public function getRelatedModel(): string
     {
         return $this->relatedModel;
+    }
+
+    public function getClassReflection() : ?ClassReflection
+    {
+        $classReflection = parent::getClassReflection();
+
+        if ($classReflection === null) {
+            return null;
+        }
+
+        return new RelationClassReflection($this->relatedModel, $classReflection);
     }
 
     public function describe(VerbosityLevel $level): string
