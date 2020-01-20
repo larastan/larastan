@@ -28,6 +28,11 @@ services:
             - phpstan.broker.propertiesClassReflectionExtension
 
     -
+        class: NunoMaduro\Larastan\Methods\RelationForwardsCallsExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+
+    -
         class: NunoMaduro\Larastan\Methods\ModelForwardsCallsExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension

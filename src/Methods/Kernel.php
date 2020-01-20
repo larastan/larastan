@@ -61,7 +61,6 @@ final class Kernel
                 [
                     Pipes\SelfClass::class,
                     Pipes\Macros::class,
-                    Pipes\BuilderAfterRelations::class,
                     Pipes\Mixins::class,
                     Pipes\Contracts::class,
                     Pipes\Facades::class,
