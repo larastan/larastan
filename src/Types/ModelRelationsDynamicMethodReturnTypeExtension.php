@@ -31,6 +31,20 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
+        $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+
+        if (! $returnType instanceof ObjectType) {
+            return false;
+        }
+
+        if (! (new ObjectType(Relation::class))->isSuperTypeOf($returnType)->yes()) {
+            return false;
+        }
+
+        if (! $methodReflection->getDeclaringClass()->hasNativeMethod($methodReflection->getName())) {
+            return false;
+        }
+
         return ! in_array($methodReflection->getName(), [
             'hasOne', 'hasOneThrough', 'morphOne',
             'belongsTo', 'morphTo',
@@ -53,19 +67,8 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
         MethodCall $methodCall,
         Scope $scope
     ): Type {
+        /** @var ObjectType $returnType */
         $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
-
-        if (! $returnType instanceof ObjectType) {
-            return $returnType;
-        }
-
-        if (! (new ObjectType(Relation::class))->isSuperTypeOf($returnType)->yes()) {
-            return $returnType;
-        }
-
-        if (! $methodReflection->getDeclaringClass()->hasNativeMethod($methodReflection->getName())) {
-            return $returnType;
-        }
 
         return new RelationType(
             $returnType->getClassName(),
