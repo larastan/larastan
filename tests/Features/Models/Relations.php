@@ -6,6 +6,7 @@ namespace Tests\Features\Models;
 
 use App\Account;
 use App\User;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -45,6 +46,51 @@ class Relations
     public function testCreateWithGettingModelFromMethod(): Account
     {
         return $this->getUser()->accounts()->create();
+    }
+
+    public function testFirstWithRelation(): ?Account
+    {
+        return (new User())->accounts()->where('foo', 'bar')->first();
+    }
+
+    public function testIncrementOnRelation(): int
+    {
+        /** @var User $user */
+        $user = new User;
+
+        return $user->accounts()->increment('counter');
+    }
+
+    public function testDecrementOnRelation(): int
+    {
+        /** @var User $user */
+        $user = new User;
+
+        return $user->accounts()->decrement('counter');
+    }
+
+    public function testIncrementWithAmountOnRelation(): int
+    {
+        /** @var User $user */
+        $user = new User;
+
+        return $user->accounts()->increment('counter', 5);
+    }
+
+    public function testDecrementWithAmountOnRelation(): int
+    {
+        /** @var User $user */
+        $user = new User;
+
+        return $user->accounts()->decrement('counter', 5);
+    }
+
+    public function testPaginate(): LengthAwarePaginator
+    {
+        /** @var User $user */
+        $user = new User;
+
+        return $user->accounts()->paginate(5);
     }
 
     private function getUser(): User
