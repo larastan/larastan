@@ -156,9 +156,9 @@ class ModelExtension
         return Thread::valid();
     }
 
-    public function testMacro(Builder $query): Builder
+    public function testMacro(Builder $query): void
     {
-        return $query->macro('customMacro', function () {
+        $query->macro('customMacro', function () {
         });
     }
 

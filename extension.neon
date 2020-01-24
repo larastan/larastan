@@ -1,4 +1,6 @@
 parameters:
+    stubFiles:
+        - stubs/EloquentBuilder.stub
     scopeClass: NunoMaduro\Larastan\Analyser\Scope
     universalObjectCratesClasses:
         - Illuminate\Http\Resources\Json\JsonResource
@@ -15,6 +17,7 @@ parameters:
         - '#Cannot call method viaRequest\(\) on Illuminate\\Auth\\AuthManager\|null\.#'
     bootstrap: %rootDir%/../../nunomaduro/larastan/bootstrap.php
     reportUnmatchedIgnoredErrors: false
+    checkGenericClassInNonGenericObjectType: false
 
 services:
     -

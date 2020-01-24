@@ -13,8 +13,10 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes;
 
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Methods\ModelTypeHelper;
 use NunoMaduro\Larastan\Methods\Pipes\Mixins;
@@ -24,6 +26,8 @@ use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\FunctionVariantWithPhpDocs;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
+use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use ReflectionClass;
 
@@ -106,6 +110,12 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, Br
                     $returnType = ModelTypeHelper::replaceStaticTypeWithModel($returnType, $className);
                 }
             }
+        }
+
+        if ((count(array_intersect([EloquentBuilder::class, QueryBuilder::class], $returnType->getReferencedClasses())) > 0)
+            && $methodCall->class instanceof \PhpParser\Node\Name
+        ) {
+            $returnType = new GenericObjectType(EloquentBuilder::class, [new ObjectType($scope->resolveName($methodCall->class))]);
         }
 
         return $returnType;

@@ -7,6 +7,7 @@ namespace Tests\Features\Models;
 use App\Account;
 use App\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -100,6 +101,25 @@ class Relations
         $user = new User;
 
         return $user->addressable()->where('foo', 'bar');
+    }
+
+    public function testModelScopesOnRelation(): HasMany
+    {
+        /** @var User $user */
+        $user = new User;
+
+        return $user->accounts()->active();
+    }
+
+    /**
+     * @phpstan-return Collection<\App\Account>|null
+     */
+    public function testGetModelScopesOnRelation(): ?Collection
+    {
+        /** @var User $user */
+        $user = new User;
+
+        return $user->accounts()->active()->get();
     }
 
     private function getUser(): User

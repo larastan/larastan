@@ -24,9 +24,9 @@ class EloquentBuilderExtension
 
 class TestScopesModel extends Model
 {
-    public function scopeFoo(string $foo) : Builder
+    public function scopeFoo(Builder $query, string $foo): Builder
     {
-        return $this->where(['foo' => $foo]);
+        return $query->where(['foo' => $foo]);
     }
 
     /**

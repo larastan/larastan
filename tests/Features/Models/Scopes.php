@@ -15,25 +15,32 @@ class Scopes extends Model
     /** @var User */
     private $user;
 
-    public function testScopeAfterRelation() : HasOne
+    public function testScopeAfterRelation(): HasOne
     {
         return $this->hasOne(User::class)->active();
     }
 
-    public function testScopeAfterRelationWithHasMany() : HasMany
+    public function testScopeAfterRelationWithHasMany(): HasMany
     {
         return $this->hasMany(User::class)->active();
     }
 
-    public function testScopeAfterQueryBuilderStaticCall() : Builder
+    public function testScopeAfterQueryBuilderStaticCall(): Builder
     {
         return User::where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->active();
     }
 
-    public function testScopeAfterQueryBuilderVariableCall() : Builder
+    public function testScopeAfterQueryBuilderVariableCall(): Builder
     {
         $this->user = new User;
 
         return $this->user->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->active();
+    }
+
+    public function testScopeWithFirst(): ?User
+    {
+        $this->user = new User;
+
+        return $this->user->where('foo', 'bar')->active()->first();
     }
 }
