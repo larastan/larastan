@@ -1,0 +1,10 @@
+<?php
+
+namespace Illuminate\Database\Eloquent;
+
+/**
+ * @template TModelClass
+ */
+class Builder {
+
+}

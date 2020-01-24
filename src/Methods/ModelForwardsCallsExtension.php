@@ -13,19 +13,20 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\Dummy\DummyMethodReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\ParametersAcceptorSelector;
-use PHPStan\Type\IntegerType;
+use PHPStan\ShouldNotHappenException;
+use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 
 final class ModelForwardsCallsExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
@@ -38,13 +39,9 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
     /** @var string[] */
     public const MODEL_CREATION_METHODS = ['make', 'create', 'forceCreate', 'findOrNew', 'firstOrNew', 'updateOrCreate', 'fromQuery', 'firstOrCreate'];
 
-    /**
-     * @return ClassReflection
-     * @throws \PHPStan\Broker\ClassNotFoundException
-     */
     private function getBuilderReflection(): ClassReflection
     {
-        return $this->broker->getClass(Builder::class);
+        return $this->broker->getClass(EloquentBuilder::class);
     }
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
@@ -57,58 +54,64 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
             return true;
         }
 
+        // Model scopes
         if ($classReflection->hasNativeMethod('scope'.ucfirst($methodName))) {
-            // scopes handled later
-            return false;
+            return true;
+        }
+
+        // Dynamic wheres
+        if (Str::startsWith($methodName, 'where')) {
+            return true;
         }
 
         return $this->getBuilderReflection()->hasNativeMethod($methodName) || $this->broker->getClass(QueryBuilder::class)->hasNativeMethod($methodName);
     }
 
     /**
-     * @throws \PHPStan\Broker\ClassNotFoundException
-     * @throws \PHPStan\Reflection\MissingMethodFromReflectionException
-     * @throws \PHPStan\ShouldNotHappenException
+     * @param ClassReflection $originalModelReflection
+     * @param string          $methodName
+     *
+     * @return MethodReflection
+     * @throws ShouldNotHappenException
      */
     public function getMethod(ClassReflection $originalModelReflection, string $methodName): MethodReflection
     {
-        $returnType = null;
-        $methodReflection = null;
-        $queryBuilderReflection = $this->broker->getClass(QueryBuilder::class);
+        $returnMethodReflection = $this->getMethodReflectionFromBuilder($methodName, $originalModelReflection->getName());
 
-        if (in_array($methodName, ['increment', 'decrement'], true)) {
-            $methodReflection = $this->getBuilderReflection()->getNativeMethod($methodName);
-
-            $returnType = new IntegerType();
-        } elseif (in_array($methodName, ['paginate', 'simplePaginate'], true)) {
-            $methodReflection = $queryBuilderReflection->getNativeMethod($methodName);
-
-            $returnType = new ObjectType($methodName === 'paginate' ? LengthAwarePaginator::class : Paginator::class);
-        } elseif (in_array($methodName, array_merge(self::MODEL_CREATION_METHODS, self::MODEL_RETRIEVAL_METHODS), true)) {
-            $methodReflection = $this->getBuilderReflection()->getNativeMethod($methodName);
-
-            $returnType = ModelTypeHelper::replaceStaticTypeWithModel($methodReflection->getVariants()[0]->getReturnType(), $originalModelReflection->getName());
+        if ($returnMethodReflection !== null) {
+            return $returnMethodReflection;
         }
 
-        if ($this->getBuilderReflection()->hasNativeMethod($methodName)) {
-            $methodReflection = $methodReflection ?? $this->getBuilderReflection()->getNativeMethod($methodName);
+        return new DummyMethodReflection($methodName);
+    }
+
+    /**
+     * @throws ShouldNotHappenException
+     */
+    private function getMethodReflectionFromBuilder(string $methodName, string $modelName): ?EloquentBuilderMethodReflection
+    {
+        $builderHelper = new BuilderHelper($this->getBroker());
+        $methodReflection = $builderHelper->searchOnEloquentBuilder($methodName, $modelName);
+        if ($methodReflection === null) {
+            $methodReflection = $builderHelper->searchOnQueryBuilder($methodName, $modelName);
+        }
+
+        if ($methodReflection !== null) {
             $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
+            $returnType = $parametersAcceptor->getReturnType();
+
+            if (count(array_intersect([EloquentBuilder::class, QueryBuilder::class], $returnType->getReferencedClasses())) > 0) {
+                $returnType = new GenericObjectType(EloquentBuilder::class, [new ObjectType($modelName)]);
+            }
 
             return new EloquentBuilderMethodReflection(
-                $methodName, $originalModelReflection,
+                $methodName, $this->getBroker()->getClass($modelName),
                 $parametersAcceptor->getParameters(),
                 $returnType,
                 $parametersAcceptor->isVariadic()
             );
         }
 
-        $parametersAcceptor = ParametersAcceptorSelector::selectSingle($queryBuilderReflection->getNativeMethod($methodName)->getVariants());
-
-        return new EloquentBuilderMethodReflection(
-            $methodName, $originalModelReflection,
-            $parametersAcceptor->getParameters(),
-            $returnType,
-            $parametersAcceptor->isVariadic()
-        );
+        return $builderHelper->dynamicWhere($methodName, new GenericObjectType(EloquentBuilder::class, [new ObjectType($modelName)]));
     }
 }

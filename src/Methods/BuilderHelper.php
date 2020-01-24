@@ -65,6 +65,27 @@ class BuilderHelper
 
     public function searchOnEloquentBuilder(string $methodName, string $modelClassName): ?MethodReflection
     {
+        $model = $this->broker->getClass($modelClassName);
+
+        if ($model->hasNativeMethod('scope'.ucfirst($methodName))) {
+            $methodReflection = $model->getNativeMethod('scope'.ucfirst($methodName));
+            $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
+
+            $parameters = $parametersAcceptor->getParameters();
+            // We shift the parameters,
+            // because first parameter is the Builder
+            array_shift($parameters);
+
+            $returnType = $parametersAcceptor->getReturnType();
+
+            return new EloquentBuilderMethodReflection(
+                'scope'.ucfirst($methodName), $methodReflection->getDeclaringClass(),
+                $parameters,
+                $returnType,
+                $parametersAcceptor->isVariadic()
+            );
+        }
+
         $eloquentBuilder = $this->broker->getClass(EloquentBuilder::class);
 
         if (! $eloquentBuilder->hasNativeMethod($methodName)) {
