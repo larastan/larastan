@@ -50,12 +50,17 @@ class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTyp
         MethodCall $methodCall,
         Scope $scope
     ): Type {
-        $relatedModelArg = $methodCall->args[0]->value;
-        $argType = $scope->getType($relatedModelArg);
-
         /** @var FunctionVariant $functionVariant */
         $functionVariant = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
         $returnType = $functionVariant->getReturnType();
+
+        $relatedModelArg = $methodCall->args[0]->value;
+
+        if (count($methodCall->args) === 0) {
+            return $returnType;
+        }
+
+        $argType = $scope->getType($relatedModelArg);
 
         if (! $argType instanceof ConstantStringType) {
             return $returnType;
