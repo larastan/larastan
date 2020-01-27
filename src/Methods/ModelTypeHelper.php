@@ -23,7 +23,7 @@ use PHPStan\Type\TypeWithClassName;
 
 final class ModelTypeHelper
 {
-    public static function replaceStaticTypeWithModel(Type $type, string $modelClass) : Type
+    public static function replaceStaticTypeWithModel(Type $type, string $modelClass): Type
     {
         return TypeTraverser::map($type, static function (Type $type, callable $traverse) use ($modelClass): Type {
             if ($type instanceof ObjectWithoutClassType || $type instanceof StaticType) {

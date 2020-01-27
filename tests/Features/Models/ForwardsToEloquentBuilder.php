@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class ForwardsToEloquentBuilder
 {
-    public function testForwardsToEloquentBuilder() : Builder
+    public function testForwardsToEloquentBuilder(): Builder
     {
         return (new User)->withGlobalScope('test', function () {
         });

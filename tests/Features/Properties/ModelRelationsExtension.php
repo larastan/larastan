@@ -23,7 +23,7 @@ class ModelRelationsExtension
         return $dummyModel->hasManyRelation;
     }
 
-    public function testHasManyForEach() : OtherDummyModel
+    public function testHasManyForEach(): OtherDummyModel
     {
         /** @var DummyModel $dummyModel */
         $dummyModel = DummyModel::firstOrFail();
@@ -46,7 +46,7 @@ class ModelRelationsExtension
         return $dummyModel->hasManyThroughRelation;
     }
 
-    public function testBelongsTo() : ?DummyModel
+    public function testBelongsTo(): ?DummyModel
     {
         /** @var OtherDummyModel $otherDummyModel */
         $otherDummyModel = OtherDummyModel::firstOrFail();
@@ -72,7 +72,7 @@ class ModelRelationsExtension
         return $dummyModel->relationWithoutReturnType;
     }
 
-    public function testModelCanOverwriteRelationPropertyWithAnnotation() : DummyModel
+    public function testModelCanOverwriteRelationPropertyWithAnnotation(): DummyModel
     {
         /** @var OtherDummyModel $otherDummyModel */
         $otherDummyModel = OtherDummyModel::firstOrFail();
@@ -83,12 +83,12 @@ class ModelRelationsExtension
 
 class DummyModel extends Model
 {
-    public function hasManyRelation() : HasMany
+    public function hasManyRelation(): HasMany
     {
         return $this->hasMany(OtherDummyModel::class);
     }
 
-    public function hasManyThroughRelation() : HasManyThrough
+    public function hasManyThroughRelation(): HasManyThrough
     {
         return $this->hasManyThrough(OtherDummyModel::class, User::class);
     }
@@ -103,17 +103,17 @@ class DummyModel extends Model
 /** @property-read DummyModel $belongsToRelationWithoutNull */
 class OtherDummyModel extends Model
 {
-    public function belongsToRelation() : BelongsTo
+    public function belongsToRelation(): BelongsTo
     {
         return $this->belongsTo(DummyModel::class);
     }
 
-    public function belongsToRelationWithoutNull() : BelongsTo
+    public function belongsToRelationWithoutNull(): BelongsTo
     {
         return $this->belongsTo(DummyModel::class);
     }
 
-    public function morphToRelation() : MorphTo
+    public function morphToRelation(): MorphTo
     {
         return $this->morphTo('foo');
     }

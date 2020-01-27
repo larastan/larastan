@@ -6,7 +6,7 @@ namespace Tests\Features\Types;
 
 class AbortIf
 {
-    public function testAbortIf(?int $foo) : int
+    public function testAbortIf(?int $foo): int
     {
         abort_if(! $foo, 500);
 
@@ -17,7 +17,7 @@ class AbortIf
      * @param int|string $foo
      * @return int
      */
-    public function testAbortIfWithTypeCheck($foo = 5) : int
+    public function testAbortIfWithTypeCheck($foo = 5): int
     {
         abort_if(is_string($foo), 500);
 

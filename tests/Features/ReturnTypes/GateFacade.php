@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Gate;
 
 class GateFacade
 {
-    public function testGateForUser() :\Illuminate\Contracts\Auth\Access\Gate
+    public function testGateForUser(): \Illuminate\Contracts\Auth\Access\Gate
     {
         return Gate::forUser(new User());
     }
