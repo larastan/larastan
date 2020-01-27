@@ -50,7 +50,7 @@ final class Facades implements PipeContract
         }
     }
 
-    private function getFake(string $facade) : string
+    private function getFake(string $facade): string
     {
         $shortClassName = substr($facade, strrpos($facade, '\\') + 1);
 

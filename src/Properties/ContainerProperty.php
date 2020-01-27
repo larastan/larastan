@@ -110,7 +110,7 @@ final class ContainerProperty implements PropertyReflection
         return true;
     }
 
-    public function getDocComment() : ?string
+    public function getDocComment(): ?string
     {
         return null;
     }
