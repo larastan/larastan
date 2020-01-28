@@ -40,7 +40,7 @@ final class ReflectionTypeContainer extends ReflectionNamedType
      */
     public function allowsNull(): bool
     {
-        return true;
+        return false;
     }
 
     /**
