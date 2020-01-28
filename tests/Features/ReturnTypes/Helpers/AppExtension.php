@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Features\ReturnTypes\Helpers;
 
+use Illuminate\Foundation\Application;
 use NunoMaduro\Larastan\ApplicationResolver;
 
 class AppExtension
@@ -13,10 +14,7 @@ class AppExtension
         return app(ApplicationResolver::class);
     }
 
-    /**
-     * @return mixed
-     */
-    public function testMixedTypeNoArgument()
+    public function testMixedTypeNoArgument(): Application
     {
         return app();
     }

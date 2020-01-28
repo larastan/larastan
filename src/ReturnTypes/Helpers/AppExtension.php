@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes\Helpers;
 
+use Illuminate\Foundation\Application;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name\FullyQualified;
@@ -41,7 +42,7 @@ class AppExtension implements DynamicFunctionReturnTypeExtension
     private function getClassName(FuncCall $functionCall): ?string
     {
         if (count($functionCall->args) === 0) {
-            return null;
+            return Application::class;;
         }
 
         /** @var ClassConstFetch $value */
