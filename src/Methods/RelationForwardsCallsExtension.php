@@ -13,10 +13,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 use NunoMaduro\Larastan\Concerns\HasBroker;
-use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
 use NunoMaduro\Larastan\Reflection\RelationClassReflection;
 use NunoMaduro\Larastan\Types\RelationType;
 use PHPStan\Reflection\BrokerAwareExtension;
@@ -24,8 +21,6 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\Dummy\DummyMethodReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
-use PHPStan\Reflection\ParametersAcceptorSelector;
-use PHPStan\Type\ObjectType;
 
 final class RelationForwardsCallsExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
 {
@@ -36,65 +31,26 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
         return $classReflection instanceof RelationClassReflection;
     }
 
-    /**
-     * @param RelationClassReflection $classReflection
-     * @param string          $methodName
-     *
-     * @return MethodReflection
-     * @throws \PHPStan\ShouldNotHappenException
-     */
     public function getMethod(
-        $classReflection,
+        ClassReflection $classReflection,
         string $methodName
     ): MethodReflection {
         if (! ($classReflection instanceof RelationClassReflection)) {
             return new DummyMethodReflection($methodName);
         }
 
-        $returnMethodReflection = $this->getMethodReflectionFromBuilder($methodName, $classReflection);
+        $builderHelper = new BuilderHelper($this->getBroker());
+        $returnMethodReflection = $builderHelper->getMethodReflectionFromBuilder(
+            $classReflection,
+            $methodName,
+            $classReflection->getRelatedModel(),
+            new RelationType($classReflection->getName(), $classReflection->getRelatedModel())
+        );
 
         if ($returnMethodReflection !== null) {
             return $returnMethodReflection;
         }
 
         return new DummyMethodReflection($methodName);
-    }
-
-    /**
-     * @param string                  $methodName
-     * @param RelationClassReflection $classReflection
-     *
-     * @return EloquentBuilderMethodReflection|null
-     * @throws \PHPStan\ShouldNotHappenException
-     */
-    private function getMethodReflectionFromBuilder(string $methodName, $classReflection): ?EloquentBuilderMethodReflection
-    {
-        $builderHelper = new BuilderHelper($this->getBroker());
-        $methodReflection = $builderHelper->searchOnEloquentBuilder($methodName, $classReflection->getRelatedModel());
-        if ($methodReflection === null) {
-            $methodReflection = $builderHelper->searchOnQueryBuilder($methodName, $classReflection->getRelatedModel());
-        }
-
-        if ($methodReflection !== null) {
-            $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
-            $returnType = $parametersAcceptor->getReturnType();
-
-            if (count(array_intersect([EloquentBuilder::class, QueryBuilder::class], $returnType->getReferencedClasses())) > 0) {
-                $returnType = new RelationType($classReflection->getName(), $classReflection->getRelatedModel());
-            }
-
-            return new EloquentBuilderMethodReflection(
-                $methodName, $methodReflection->getDeclaringClass(),
-                $methodReflection->getVariants()[0]->getParameters(),
-                $returnType,
-                $methodReflection->getVariants()[0]->isVariadic()
-            );
-        }
-
-        if ($returnMethodReflection = $builderHelper->dynamicWhere($methodName, new ObjectType($classReflection->getName()))) {
-            return $returnMethodReflection;
-        }
-
-        return null;
     }
 }
