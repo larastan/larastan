@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Features\ReturnTypes\Helpers;
 
+use Illuminate\Auth\AuthManager;
 use Illuminate\Foundation\Application;
 use NunoMaduro\Larastan\ApplicationResolver;
 
@@ -25,5 +26,10 @@ class AppExtension
     public function testMixedTypeFor()
     {
         return app('sentry');
+    }
+
+    public function testAuthString(): AuthManager
+    {
+        return app('auth');
     }
 }
