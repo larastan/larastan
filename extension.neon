@@ -5,7 +5,6 @@ parameters:
     universalObjectCratesClasses:
         - Illuminate\Http\Resources\Json\JsonResource
         - Illuminate\Http\Request
-        - Illuminate\Contracts\Auth\Authenticatable
     excludes_analyse:
         - *.blade.php
     ignoreErrors:
@@ -57,6 +56,11 @@ services:
 
     -
         class: NunoMaduro\Larastan\Properties\ModelAccessorExtension
+        tags:
+            - phpstan.broker.propertiesClassReflectionExtension
+
+    -
+        class: NunoMaduro\Larastan\Properties\ModelPropertyExtension
         tags:
             - phpstan.broker.propertiesClassReflectionExtension
 

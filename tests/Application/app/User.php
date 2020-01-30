@@ -22,6 +22,9 @@ class User extends Authenticatable
         'name', 'email', 'password',
     ];
 
+    /** @var array<string, string> */
+    protected $casts = ['meta' => 'array'];
+
     /**
      * The attributes that should be hidden for arrays.
      *

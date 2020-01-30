@@ -16,31 +16,28 @@ namespace NunoMaduro\Larastan\Properties;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\TrinaryLogic;
-use PHPStan\Type\NeverType;
 use PHPStan\Type\Type;
 
 class ModelProperty implements PropertyReflection
 {
-    /**
-     * @var ClassReflection
-     */
+    /** @var ClassReflection */
     private $declaringClass;
 
-    /**
-     * @var Type
-     */
-    private $type;
+    /** @var Type */
+    private $readableType;
 
-    /**
-     * Property constructor.
-     *
-     * @param ClassReflection $declaringClass
-     * @param mixed           $type
-     */
-    public function __construct(ClassReflection $declaringClass, $type)
+    /** @var Type */
+    private $writableType;
+
+    /** @var bool */
+    private $writeable;
+
+    public function __construct(ClassReflection $declaringClass, Type $readableType, Type $writableType, bool $writeable = true)
     {
         $this->declaringClass = $declaringClass;
-        $this->type = $type;
+        $this->readableType = $readableType;
+        $this->writableType = $writableType;
+        $this->writeable = $writeable;
     }
 
     public function getDeclaringClass(): ClassReflection
@@ -70,7 +67,7 @@ class ModelProperty implements PropertyReflection
 
     public function isWritable(): bool
     {
-        return false;
+        return $this->writeable;
     }
 
     public function getDocComment(): ?string
@@ -80,12 +77,12 @@ class ModelProperty implements PropertyReflection
 
     public function getReadableType(): Type
     {
-        return $this->type;
+        return $this->readableType;
     }
 
     public function getWritableType(): Type
     {
-        return new NeverType();
+        return $this->writableType;
     }
 
     public function canChangeTypeAfterAssignment(): bool

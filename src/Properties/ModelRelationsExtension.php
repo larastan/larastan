@@ -27,6 +27,7 @@ use PHPStan\Reflection\PropertyReflection;
 use PHPStan\Type\IntersectionType;
 use PHPStan\Type\IterableType;
 use PHPStan\Type\MixedType;
+use PHPStan\Type\NeverType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\UnionType;
@@ -69,19 +70,19 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
                 new IntersectionType([
                     new ObjectType(Collection::class),
                     new IterableType(new MixedType(), new ObjectType($relatedModel)),
-                ]));
+                ]), new NeverType(), false);
         }
 
         if (Str::endsWith($relationClass, 'MorphTo')) {
             return new ModelProperty($classReflection, new UnionType([
                 new ObjectType(Model::class),
                 new MixedType(),
-            ]));
+            ]), new NeverType(), false);
         }
 
         return new ModelProperty($classReflection, new UnionType([
             new ObjectType($relatedModel),
             new NullType(),
-        ]));
+        ]), new NeverType(), false);
     }
 }

@@ -39,6 +39,10 @@ final class ModelAccessorExtension implements PropertiesClassReflectionExtension
     ): PropertyReflection {
         $method = $classReflection->getNativeMethod('get'.Str::studly($propertyName).'Attribute');
 
-        return new ModelProperty($classReflection, $method->getVariants()[0]->getReturnType());
+        return new ModelProperty(
+            $classReflection,
+            $method->getVariants()[0]->getReturnType(),
+            $method->getVariants()[0]->getReturnType()
+        );
     }
 }
