@@ -16,6 +16,7 @@ use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\MixedType;
+use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use Throwable;
@@ -43,7 +44,13 @@ class AppExtension implements DynamicFunctionReturnTypeExtension
 
         if ($expr instanceof String_) {
             try {
-                return new ObjectType(get_class($this->resolve($expr->value)));
+                $resolved = $this->resolve($expr->value);
+
+                if (is_null($resolved)) {
+                    return new NullType();
+                }
+
+                return new ObjectType(get_class($resolved));
             } catch (Throwable $exception) {
                 return new ErrorType();
             }
