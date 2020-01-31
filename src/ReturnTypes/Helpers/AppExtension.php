@@ -26,7 +26,7 @@ class AppExtension implements DynamicFunctionReturnTypeExtension
 
     public function isFunctionSupported(FunctionReflection $functionReflection): bool
     {
-        return $functionReflection->getName() === 'app';
+        return $functionReflection->getName() === 'app' || $functionReflection->getName() === 'resolve';
     }
 
     public function getTypeFromFunctionCall(

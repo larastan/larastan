@@ -10,26 +10,44 @@ use NunoMaduro\Larastan\ApplicationResolver;
 
 class AppExtension
 {
-    public function testObjectType(): ApplicationResolver
-    {
-        return app(ApplicationResolver::class);
-    }
-
-    public function testMixedTypeNoArgument(): Application
+    public function testAppNoArgument(): Application
     {
         return app();
+    }
+
+    public function testAppObjectType(): ApplicationResolver
+    {
+        return app(ApplicationResolver::class);
     }
 
     /**
      * @return mixed
      */
-    public function testMixedTypeFor()
+    public function testAppMixedType()
     {
         return app('sentry');
     }
 
-    public function testAuthString(): AuthManager
+    public function testAppAuthString(): AuthManager
     {
         return app('auth');
+    }
+
+    public function testResolveObjectType(): ApplicationResolver
+    {
+        return resolve(ApplicationResolver::class);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function testResolveMixedType()
+    {
+        return resolve('sentry');
+    }
+
+    public function testResolveAuthString(): AuthManager
+    {
+        return resolve('auth');
     }
 }
