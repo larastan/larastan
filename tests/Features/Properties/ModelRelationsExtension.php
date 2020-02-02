@@ -5,16 +5,16 @@ declare(strict_types=1);
 namespace Tests\Features\Properties;
 
 use App\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Support\Collection;
 
 class ModelRelationsExtension
 {
-    /** @return iterable<OtherDummyModel>&Collection */
+    /** @return Collection<OtherDummyModel> */
     public function testHasMany()
     {
         /** @var DummyModel $dummyModel */
@@ -37,7 +37,7 @@ class ModelRelationsExtension
         return new OtherDummyModel;
     }
 
-    /** @return iterable<OtherDummyModel>&Collection */
+    /** @return Collection<OtherDummyModel> */
     public function testHasManyThroughRelation()
     {
         /** @var DummyModel $dummyModel */
@@ -78,6 +78,33 @@ class ModelRelationsExtension
         $otherDummyModel = OtherDummyModel::firstOrFail();
 
         return $otherDummyModel->belongsToRelationWithoutNull;
+    }
+
+    public function testCollectionMethodFirstOnRelation(): ?OtherDummyModel
+    {
+        /** @var DummyModel $dummyModel */
+        $dummyModel = DummyModel::firstOrFail();
+
+        return $dummyModel->hasManyRelation->first();
+    }
+
+    public function testCollectionMethodFindOnRelation(): ?OtherDummyModel
+    {
+        /** @var DummyModel $dummyModel */
+        $dummyModel = DummyModel::firstOrFail();
+
+        return $dummyModel->hasManyRelation->find(1);
+    }
+
+    public function testModelRelationForeach(DummyModel $dummyModel): ?OtherDummyModel
+    {
+        foreach ($dummyModel->hasManyRelation as $item) {
+            if (random_int(0, 1)) {
+                return $item;
+            }
+        }
+
+        return null;
     }
 }
 

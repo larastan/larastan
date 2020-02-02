@@ -23,10 +23,11 @@ use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Type\ArrayType;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
-use PHPStan\Type\IntersectionType;
-use PHPStan\Type\IterableType;
+use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\MixedType;
+use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
@@ -78,6 +79,16 @@ final class ModelFindExtension implements DynamicStaticMethodReturnTypeExtension
         $argType = $scope->getType($methodCall->args[0]->value);
 
         if ($argType->isIterable()->yes()) {
+            if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
+                $genericCollectionReturnType = new GenericObjectType(Collection::class, [new ObjectType($modelName)]);
+
+                if ($returnType->accepts(new NullType(), true)->yes()) {
+                    return TypeCombinator::addNull($genericCollectionReturnType);
+                }
+
+                return $genericCollectionReturnType;
+            }
+
             return TypeCombinator::remove($returnType, new ObjectType($modelName));
         }
 
@@ -86,8 +97,11 @@ final class ModelFindExtension implements DynamicStaticMethodReturnTypeExtension
         }
 
         return TypeCombinator::remove(
-            $returnType,
-            new IntersectionType([new ObjectType(Collection::class), new IterableType(new MixedType(), new ObjectType($modelName))])
+            TypeCombinator::remove(
+                $returnType,
+                new ArrayType(new MixedType(), new ObjectType($modelName))
+            ),
+            new ObjectType(Collection::class)
         );
     }
 }

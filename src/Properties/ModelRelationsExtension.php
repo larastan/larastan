@@ -24,8 +24,7 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\Dummy\DummyPropertyReflection;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
-use PHPStan\Type\IntersectionType;
-use PHPStan\Type\IterableType;
+use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\NullType;
@@ -67,10 +66,9 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
         if (Str::contains($relationClass, 'Many')) {
             return new ModelProperty(
                 $classReflection,
-                new IntersectionType([
-                    new ObjectType(Collection::class),
-                    new IterableType(new MixedType(), new ObjectType($relatedModel)),
-                ]), new NeverType(), false);
+                new GenericObjectType(Collection::class, [new ObjectType($relatedModel)]),
+                new NeverType(), false
+            );
         }
 
         if (Str::endsWith($relationClass, 'MorphTo')) {
