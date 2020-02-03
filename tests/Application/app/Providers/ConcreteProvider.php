@@ -6,5 +6,4 @@ namespace App\Providers;
 
 class ConcreteProvider extends AbstractProvider
 {
-
 }

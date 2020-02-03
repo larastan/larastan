@@ -8,5 +8,4 @@ use Illuminate\Support\ServiceProvider;
 
 abstract class AbstractProvider extends ServiceProvider
 {
-
 }
