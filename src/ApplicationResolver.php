@@ -39,7 +39,7 @@ final class ApplicationResolver
 
         if (file_exists($composerFile)) {
             $namespace = (string) key(json_decode((string) file_get_contents($composerFile), true)['autoload']['psr-4']);
-
+            /* @var class-string $class */
             $serviceProviders = array_values(array_filter(self::getProjectClasses($namespace), function (string $class) use (
                 $namespace
             ) {
