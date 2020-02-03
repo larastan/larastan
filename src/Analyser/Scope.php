@@ -47,6 +47,8 @@ class Scope extends BaseScope
             $type = \Mockery::mock($type);
             $type->shouldReceive('isOffsetAccessible')
                 ->andReturn(TrinaryLogic::createYes());
+            $type->shouldReceive('hasOffsetValueType')
+                ->andReturn(TrinaryLogic::createYes());
         }
 
         return $this->getContainer()
