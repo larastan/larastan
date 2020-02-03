@@ -63,12 +63,12 @@ final class ApplicationResolver
     }
 
     /**
-     * @param  string $class
+     * @phpstan-param class-string $class
      *
      * @return bool
      * @throws \ReflectionException
      */
-    private static function isServiceProvider($class): bool
+    private static function isServiceProvider(string $class): bool
     {
         return in_array(\Illuminate\Support\ServiceProvider::class, class_parents($class), true) &&
                ! ((new \ReflectionClass($class))->isAbstract());
