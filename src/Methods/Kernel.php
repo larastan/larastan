@@ -67,7 +67,6 @@ final class Kernel
                     Pipes\Managers::class,
                     Pipes\Auths::class,
                     Pipes\BuilderLocalMacros::class,
-                    Pipes\BuilderDynamicWheres::class,
                     Pipes\RedirectResponseWiths::class,
                 ]
             )

@@ -50,7 +50,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        if ($classReflection->getName() !== EloquentBuilder::class) {
+        if ($classReflection->getName() !== EloquentBuilder::class && ! $classReflection->isSubclassOf(EloquentBuilder::class)) {
             return false;
         }
 
@@ -73,6 +73,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
 
     /**
      * @throws ShouldNotHappenException
+     * @throws \PHPStan\Reflection\MissingMethodFromReflectionException
      */
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
@@ -113,7 +114,14 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
         }
 
         if ($modelType instanceof ObjectType) {
-            $returnMethodReflection = $this->getMethodReflectionFromBuilder($classReflection, $methodName, $modelType->getClassName());
+            $builderHelper = new BuilderHelper($this->getBroker());
+            $customBuilderName = $builderHelper->determineBuilderType($modelType->getClassName());
+            $returnMethodReflection = $builderHelper->getMethodReflectionFromBuilder(
+                $classReflection,
+                $methodName,
+                $modelType->getClassName(),
+                new GenericObjectType($customBuilderName ?? EloquentBuilder::class, [new ObjectType($modelType->getClassName())])
+            );
 
             if ($returnMethodReflection !== null) {
                 return $returnMethodReflection;
@@ -121,35 +129,5 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
         }
 
         return new DummyMethodReflection($methodName);
-    }
-
-    /**
-     * @throws ShouldNotHappenException
-     */
-    private function getMethodReflectionFromBuilder(ClassReflection $classReflection, string $methodName, string $modelName): ?EloquentBuilderMethodReflection
-    {
-        $builderHelper = new BuilderHelper($this->getBroker());
-        $methodReflection = $builderHelper->searchOnEloquentBuilder($methodName, $modelName);
-        if ($methodReflection === null) {
-            $methodReflection = $builderHelper->searchOnQueryBuilder($methodName, $modelName);
-        }
-
-        if ($methodReflection !== null) {
-            $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
-            $returnType = $parametersAcceptor->getReturnType();
-
-            if (count(array_intersect([EloquentBuilder::class, QueryBuilder::class], $returnType->getReferencedClasses())) > 0) {
-                $returnType = new GenericObjectType(EloquentBuilder::class, [new ObjectType($modelName)]);
-            }
-
-            return new EloquentBuilderMethodReflection(
-                $methodName, $classReflection,
-                $parametersAcceptor->getParameters(),
-                $returnType,
-                $parametersAcceptor->isVariadic()
-            );
-        }
-
-        return $builderHelper->dynamicWhere($methodName, new GenericObjectType(EloquentBuilder::class, [new ObjectType($modelName)]));
     }
 }

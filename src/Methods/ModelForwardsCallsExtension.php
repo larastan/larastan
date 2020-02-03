@@ -18,13 +18,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Concerns;
-use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\Dummy\DummyMethodReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
-use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
@@ -64,7 +63,12 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
             return true;
         }
 
-        return $this->getBuilderReflection()->hasNativeMethod($methodName) || $this->broker->getClass(QueryBuilder::class)->hasNativeMethod($methodName);
+        $builderHelper = new BuilderHelper($this->getBroker());
+        $customBuilder = $builderHelper->determineBuilderType($classReflection->getName());
+
+        return $this->getBuilderReflection()->hasNativeMethod($methodName)
+            || $this->broker->getClass(QueryBuilder::class)->hasNativeMethod($methodName)
+            || ($customBuilder && $this->broker->getClass($customBuilder)->hasNativeMethod($methodName));
     }
 
     /**
@@ -73,45 +77,23 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
      *
      * @return MethodReflection
      * @throws ShouldNotHappenException
+     * @throws MissingMethodFromReflectionException
      */
     public function getMethod(ClassReflection $originalModelReflection, string $methodName): MethodReflection
     {
-        $returnMethodReflection = $this->getMethodReflectionFromBuilder($methodName, $originalModelReflection->getName());
+        $builderHelper = new BuilderHelper($this->getBroker());
+        $customBuilderName = $builderHelper->determineBuilderType($originalModelReflection->getName());
+        $returnMethodReflection = $builderHelper->getMethodReflectionFromBuilder(
+            $originalModelReflection,
+            $methodName,
+            $originalModelReflection->getName(),
+            new GenericObjectType($customBuilderName ?? EloquentBuilder::class, [new ObjectType($originalModelReflection->getName())])
+        );
 
         if ($returnMethodReflection !== null) {
             return $returnMethodReflection;
         }
 
         return new DummyMethodReflection($methodName);
-    }
-
-    /**
-     * @throws ShouldNotHappenException
-     */
-    private function getMethodReflectionFromBuilder(string $methodName, string $modelName): ?EloquentBuilderMethodReflection
-    {
-        $builderHelper = new BuilderHelper($this->getBroker());
-        $methodReflection = $builderHelper->searchOnEloquentBuilder($methodName, $modelName);
-        if ($methodReflection === null) {
-            $methodReflection = $builderHelper->searchOnQueryBuilder($methodName, $modelName);
-        }
-
-        if ($methodReflection !== null) {
-            $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
-            $returnType = $parametersAcceptor->getReturnType();
-
-            if (count(array_intersect([EloquentBuilder::class, QueryBuilder::class], $returnType->getReferencedClasses())) > 0) {
-                $returnType = new GenericObjectType(EloquentBuilder::class, [new ObjectType($modelName)]);
-            }
-
-            return new EloquentBuilderMethodReflection(
-                $methodName, $this->getBroker()->getClass($modelName),
-                $parametersAcceptor->getParameters(),
-                $returnType,
-                $parametersAcceptor->isVariadic()
-            );
-        }
-
-        return $builderHelper->dynamicWhere($methodName, new GenericObjectType(EloquentBuilder::class, [new ObjectType($modelName)]));
     }
 }

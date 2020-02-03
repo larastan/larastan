@@ -18,9 +18,15 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Broker\Broker;
+use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\FunctionVariantWithPhpDocs;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\Type;
+use PHPStan\Type\VerbosityLevel;
 
 class BuilderHelper
 {
@@ -42,24 +48,24 @@ class BuilderHelper
 
     public function dynamicWhere(
         string $methodName,
-        ?ObjectType $returnObject = null
+        Type $returnObject
     ): ?EloquentBuilderMethodReflection {
-        $classReflection = $this->broker->getClass(QueryBuilder::class);
-
         if (! Str::startsWith($methodName, 'where')) {
             return null;
         }
 
+        $classReflection = $this->broker->getClass(QueryBuilder::class);
+
         $methodReflection = $classReflection->getNativeMethod('dynamicWhere');
 
-        /** @var \PHPStan\Reflection\FunctionVariantWithPhpDocs $originalDynamicWhereVariant */
+        /** @var FunctionVariantWithPhpDocs $originalDynamicWhereVariant */
         $originalDynamicWhereVariant = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
 
         return new EloquentBuilderMethodReflection(
             $methodName,
             $classReflection,
             [$originalDynamicWhereVariant->getParameters()[1]],
-            $returnObject ?? new ObjectType(EloquentBuilder::class)
+            $returnObject
         );
     }
 
@@ -117,5 +123,79 @@ class BuilderHelper
         }
 
         return null;
+    }
+
+    /**
+     * @param string $modelClassName
+     *
+     * @return string|null
+     * @throws MissingMethodFromReflectionException
+     * @throws ShouldNotHappenException
+     */
+    public function determineBuilderType(string $modelClassName): ?string
+    {
+        $method = $this->broker->getClass($modelClassName)->getNativeMethod('newEloquentBuilder');
+
+        $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
+
+        if (in_array(EloquentBuilder::class, $returnType->getReferencedClasses(), true)) {
+            return null;
+        }
+
+        if (in_array(QueryBuilder::class, $returnType->getReferencedClasses(), true)) {
+            return null;
+        }
+
+        if ($returnType instanceof ObjectType) {
+            return $returnType->getClassName();
+        }
+
+        return $returnType->describe(VerbosityLevel::value());
+    }
+
+    public function getMethodReflectionFromBuilder(
+        ClassReflection $classReflection,
+        string $methodName,
+        string $modelName,
+        Type $customReturnType
+    ): ?EloquentBuilderMethodReflection {
+        $methodReflection = null;
+
+        // Check if model has a custom builder. If yes try to find the method there.
+        $customBuilderName = $this->determineBuilderType($modelName);
+
+        if ($customBuilderName !== null) {
+            $customBuilder = $this->broker->getClass($customBuilderName);
+
+            if ($customBuilder->hasNativeMethod($methodName)) {
+                $methodReflection = $customBuilder->getNativeMethod($methodName);
+            }
+        }
+
+        if ($methodReflection === null) {
+            $methodReflection = $this->searchOnEloquentBuilder($methodName, $modelName);
+        }
+
+        if ($methodReflection === null) {
+            $methodReflection = $this->searchOnQueryBuilder($methodName, $modelName);
+        }
+
+        if ($methodReflection !== null) {
+            $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
+            $returnType = $parametersAcceptor->getReturnType();
+
+            if ($customBuilderName || count(array_intersect([EloquentBuilder::class, QueryBuilder::class], $returnType->getReferencedClasses())) > 0) {
+                $returnType = $customReturnType;
+            }
+
+            return new EloquentBuilderMethodReflection(
+                $methodName, $classReflection,
+                $parametersAcceptor->getParameters(),
+                $returnType,
+                $parametersAcceptor->isVariadic()
+            );
+        }
+
+        return $this->dynamicWhere($methodName, $customReturnType);
     }
 }
