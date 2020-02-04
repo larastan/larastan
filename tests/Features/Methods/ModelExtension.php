@@ -13,8 +13,7 @@ use Illuminate\Foundation\Http\FormRequest;
 class ModelExtension
 {
     /**
-     * @phpstan-return iterable<User>|\Illuminate\Database\Eloquent\Collection<User>
-     * @return iterable<User>|\Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Database\Eloquent\Collection<User>
      */
     public function testAll()
     {
@@ -83,13 +82,13 @@ class ModelExtension
         return User::find([1, 2, 3]);
     }
 
-    /** @return iterable<User>|null */
+    /** @return Collection<User>|null */
     public function testFindCanReturnCollectionWithAnnotation()
     {
         return User::find([1, 2, 3]);
     }
 
-    /** @return iterable<User> */
+    /** @return Collection<User>|null */
     public function testFindMany()
     {
         return User::findMany([1, 2, 3]);
@@ -163,11 +162,16 @@ class ModelExtension
     }
 
     /**
-     * @return Collection<\App\User>
+     * @return Collection<User>
      */
     public function testChainingCollectionMethodsOnModel(): Collection
     {
         return User::findOrFail([1, 2, 3])->makeHidden('foo');
+    }
+
+    public function testCollectionMethodWillReturnUser(): ?User
+    {
+        return User::findOrFail([1, 2, 3])->makeHidden('foo')->first();
     }
 
     public function testFirstOrFailWithChain(): User

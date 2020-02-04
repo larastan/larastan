@@ -1,6 +1,10 @@
 parameters:
     stubFiles:
+        - stubs/Enumerable.stub
         - stubs/EloquentBuilder.stub
+        - stubs/Collection.stub
+        - stubs/EloquentCollection.stub
+        - stubs/Model.stub
     scopeClass: NunoMaduro\Larastan\Analyser\Scope
     universalObjectCratesClasses:
         - Illuminate\Http\Resources\Json\JsonResource
