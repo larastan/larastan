@@ -39,10 +39,10 @@ final class ApplicationResolver
 
         if (file_exists($composerFile)) {
             $namespace = (string) key(json_decode((string) file_get_contents($composerFile), true)['autoload']['psr-4']);
-
             $serviceProviders = array_values(array_filter(self::getProjectClasses($namespace), function (string $class) use (
                 $namespace
             ) {
+                /** @var class-string $class */
                 return substr($class, 0, strlen($namespace)) === $namespace && self::isServiceProvider($class);
             }));
 
@@ -63,13 +63,15 @@ final class ApplicationResolver
     }
 
     /**
-     * @param  string $class
+     * @phpstan-param class-string $class
      *
      * @return bool
+     * @throws \ReflectionException
      */
-    private static function isServiceProvider($class): bool
+    private static function isServiceProvider(string $class): bool
     {
-        return in_array(\Illuminate\Support\ServiceProvider::class, class_parents($class), true);
+        return in_array(\Illuminate\Support\ServiceProvider::class, class_parents($class), true) &&
+               ! ((new \ReflectionClass($class))->isAbstract());
     }
 
     /**
