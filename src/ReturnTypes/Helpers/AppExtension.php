@@ -15,6 +15,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
 use PHPStan\Type\ErrorType;
+use PHPStan\Type\NeverType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use Throwable;
@@ -58,6 +59,6 @@ class AppExtension implements DynamicFunctionReturnTypeExtension
             return new ObjectType($expr->class->toString());
         }
 
-        return new ErrorType();
+        return new NeverType();
     }
 }
