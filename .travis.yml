@@ -30,5 +30,3 @@ script:
   - composer test
   - export -f travis_retry
   - tests/laravel-test.sh
-  # Check for copyright messages
-  - test -z "$(grep -r -L '(c)\s*Nuno Maduro.*enunomaduro@gmail\.com' src/)"
