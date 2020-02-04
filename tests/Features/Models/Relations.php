@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Features\Models;
 
 use App\Account;
+use App\Group;
 use App\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
@@ -112,14 +113,32 @@ class Relations
     }
 
     /**
-     * @phpstan-return Collection<\App\Account>|null
+     * @phpstan-return Collection<Account>
      */
-    public function testGetModelScopesOnRelation(): ?Collection
+    public function testGetModelScopesOnRelation(): Collection
     {
         /** @var User $user */
         $user = new User;
 
         return $user->accounts()->active()->get();
+    }
+
+    /**
+     * @param User $user
+     *
+     * @return Collection<Account>
+     */
+    public function testGetOnRelationAndBuilder(User $user): Collection
+    {
+        /** @var Group $group */
+        $group = $user->group;
+
+        return $group->accounts()->where('active', 1)->get();
+    }
+
+    public function testMakeOnRelation(User $user): Account
+    {
+        return $user->accounts()->make();
     }
 
     private function getUser(): User
