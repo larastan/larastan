@@ -163,3 +163,8 @@ services:
         class: NunoMaduro\Larastan\Types\AbortIfFunctionTypeSpecifyingExtension
         tags:
             - phpstan.typeSpecifier.functionTypeSpecifyingExtension
+
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\Helpers\AppExtension
+        tags:
+            - phpstan.broker.dynamicFunctionReturnTypeExtension
