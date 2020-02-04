@@ -28,11 +28,7 @@ class RelationCreateExtension implements DynamicMethodReturnTypeExtension
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-        return $methodReflection->getName() === 'get' ||
-               $methodReflection->getName() === 'make' ||
-               $methodReflection->getName() === 'create' ||
-               $methodReflection->getName() === 'getEager' ||
-               $methodReflection->getName() === 'getResults';
+        return in_array($methodReflection->getName(), ['get', 'make', 'create', 'getEager', 'getResults'], true);
     }
 
     /**
