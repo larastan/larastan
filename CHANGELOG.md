@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.5.1] - 2020-02-04
+
+### Added
+- Support for model accessors ([#401](https://github.com/nunomaduro/larastan/pull/401))
+- Handle Builder method calls, model scope calls and dynamic where calls on relations. Thanks @BertvanHoekelen ([#410](https://github.com/nunomaduro/larastan/pull/410), [#419](https://github.com/nunomaduro/larastan/pull/419), [#423](https://github.com/nunomaduro/larastan/pull/423))
+- Support for custom Eloquent builders ([#432](https://github.com/nunomaduro/larastan/pull/432))
+- Infer Eloquent model property types. Thanks @muglug ([#435](https://github.com/nunomaduro/larastan/pull/435))
+- Support for app and resolve helper functions return type. Thanks @troelsselch ([#431](https://github.com/nunomaduro/larastan/pull/431))
+- Add generic stubs for Eloquent collection and Support collection. ([#439](https://github.com/nunomaduro/larastan/pull/439))
+
+### Fixed
+- Better return type support for find* methods ([#400](https://github.com/nunomaduro/larastan/pull/400))
+- Don't register abstract service providers. Thanks @CyberiaResurrection  ([#440](https://github.com/nunomaduro/larastan/pull/440))
+
 ## [0.5.0] - 2019-12-25
 
 Blogpost: [nunomaduro.com/larastan-0-5-is-out](https://nunomaduro.com/larastan-0-5-is-out)
@@ -252,7 +266,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.5.1...HEAD
+[0.5.1]: https://github.com/nunomaduro/larastan/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/nunomaduro/larastan/compare/v0.4.3...v0.5.0
 [0.4.3]: https://github.com/nunomaduro/larastan/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/nunomaduro/larastan/compare/v0.4.1...v0.4.2
