@@ -15,8 +15,6 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
 use PHPStan\Type\ErrorType;
-use PHPStan\Type\MixedType;
-use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use Throwable;
@@ -47,7 +45,7 @@ class AppExtension implements DynamicFunctionReturnTypeExtension
                 $resolved = $this->resolve($expr->value);
 
                 if (is_null($resolved)) {
-                    return new NullType();
+                    return new ErrorType();
                 }
 
                 return new ObjectType(get_class($resolved));
@@ -60,6 +58,6 @@ class AppExtension implements DynamicFunctionReturnTypeExtension
             return new ObjectType($expr->class->toString());
         }
 
-        return new MixedType();
+        return new ErrorType();
     }
 }
