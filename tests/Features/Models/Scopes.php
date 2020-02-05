@@ -43,4 +43,19 @@ class Scopes extends Model
 
         return $this->user->where('foo', 'bar')->active()->first();
     }
+
+    public function testVoidScopeStillReturnsBuilder(): Builder
+    {
+        return $this->withVoidReturn();
+    }
+
+    public function testVoidScopeStillHasGenericBuilder(): ?Scopes
+    {
+        return $this->withVoidReturn()->first();
+    }
+
+    public function scopeWithVoidReturn(Builder $query): void
+    {
+        $query->where('whyuse', 'void');
+    }
 }
