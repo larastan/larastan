@@ -109,6 +109,10 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, Br
             $returnType = new GenericObjectType(EloquentBuilder::class, [new ObjectType($scope->resolveName($methodCall->class))]);
         }
 
+        if ($methodReflection->getName() === 'all' && in_array(Collection::class, $returnType->getReferencedClasses(), true) && $methodCall->class instanceof \PhpParser\Node\Name) {
+            $returnType = new GenericObjectType(Collection::class, [new ObjectType($scope->resolveName($methodCall->class))]);
+        }
+
         return $returnType;
     }
 }

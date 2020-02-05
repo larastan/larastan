@@ -20,6 +20,11 @@ class ModelExtension
         return User::all();
     }
 
+    public function testAllFirst(): ?User
+    {
+        return User::all()->first();
+    }
+
     public function testReturnThis(): Builder
     {
         $user = User::join('tickets.tickets', 'tickets.tickets.id', '=', 'tickets.sale_ticket.ticket_id')
