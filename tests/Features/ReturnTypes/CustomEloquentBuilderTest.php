@@ -32,6 +32,11 @@ class CustomEloquentBuilderTest
         return ModelWithCustomBuilder::whereFoo(['bar'])->type('foo')->whereFoo(['bar']);
     }
 
+    public function testCustomBuilderMethodWithQueryBuilderMethod(): CustomBuilder
+    {
+        return ModelWithCustomBuilder::whereFoo(['bar'])->categories(['foo'])->whereFoo(['bar']);
+    }
+
     public function testFindAfterCustomBuilderMethodAfterDynamicWhere(): ?ModelWithCustomBuilder
     {
         return ModelWithCustomBuilder::whereFoo(['bar'])->type('foo')->first();
@@ -95,5 +100,16 @@ class CustomBuilder extends Builder
     public function type(string $type): CustomBuilder
     {
         return $this->where(['type' => $type]);
+    }
+
+    /**
+     * @param string[] $categories
+     *
+     * @return CustomBuilder
+     * @phpstan-return CustomBuilder<TModelClass>
+     */
+    public function categories(array $categories): CustomBuilder
+    {
+        return $this->whereIn('category', $categories);
     }
 }
