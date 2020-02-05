@@ -13,11 +13,16 @@ use Illuminate\Foundation\Http\FormRequest;
 class ModelExtension
 {
     /**
-     * @return \Illuminate\Database\Eloquent\Collection<User>
+     * @return \Illuminate\Support\Collection<User>
      */
     public function testAll()
     {
         return User::all();
+    }
+
+    public function testAllFirst(): ?User
+    {
+        return User::all()->first();
     }
 
     public function testReturnThis(): Builder

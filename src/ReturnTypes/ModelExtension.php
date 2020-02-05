@@ -18,6 +18,7 @@ use PHPStan\Reflection\FunctionVariantWithPhpDocs;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\IntersectionType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use ReflectionClass;
@@ -107,6 +108,12 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, Br
             && $methodCall->class instanceof \PhpParser\Node\Name
         ) {
             $returnType = new GenericObjectType(EloquentBuilder::class, [new ObjectType($scope->resolveName($methodCall->class))]);
+        }
+
+        if ((count(in_array(Collection::class, $returnType->getReferencedClasses())) > 0)
+            && $methodCall->name->name === 'all'
+        ) {
+            $returnType = new IntersectionType([new ObjectType(\Illuminate\Support\Collection::class), $returnType->getTypes()[1]]);
         }
 
         return $returnType;
