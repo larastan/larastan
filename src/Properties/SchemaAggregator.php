@@ -345,7 +345,9 @@ final class SchemaAggregator
                             break;
 
                         default:
-                            throw new \Exception('Unexpected value');
+                            // We know a property exists with a name, we just don't know its type.
+                            $table->setColumn(new SchemaColumn($columnName, 'mixed', $nullable));
+                            break;
                     }
                 }
             }
