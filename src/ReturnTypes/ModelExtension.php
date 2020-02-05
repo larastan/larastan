@@ -110,8 +110,7 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, Br
             $returnType = new GenericObjectType(EloquentBuilder::class, [new ObjectType($scope->resolveName($methodCall->class))]);
         }
 
-        if ((count(in_array(Collection::class, $returnType->getReferencedClasses())) > 0)
-            && $methodCall->name->name === 'all'
+        if (in_array(Collection::class, $returnType->getReferencedClasses()) && $methodCall->name->name === 'all'
         ) {
             $returnType = new IntersectionType([new ObjectType(\Illuminate\Support\Collection::class), $returnType->getTypes()[1]]);
         }
