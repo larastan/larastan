@@ -13,7 +13,7 @@ use Illuminate\Foundation\Http\FormRequest;
 class ModelExtension
 {
     /**
-     * @return \Illuminate\Support\Collection<User>
+     * @return \Illuminate\Database\Eloquent\Collection<User>
      */
     public function testAll()
     {
