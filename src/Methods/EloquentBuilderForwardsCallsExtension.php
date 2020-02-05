@@ -16,6 +16,7 @@ use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\Generic\TemplateMixedType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
@@ -88,18 +89,24 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
 
         $templateTypeMap = $classReflection->getActiveTemplateTypeMap();
 
-        /** @var Type|ObjectType|null $modelType */
+        /** @var Type|ObjectType|TemplateMixedType $modelType */
         $modelType = $templateTypeMap->getType('TModelClass');
 
-        if ($this->getBuilderReflection()->hasNativeMethod($methodName) && ($modelType === null || ! $modelType instanceof ObjectType)) {
+        if ($this->getBuilderReflection()->hasNativeMethod($methodName) && (! $modelType instanceof ObjectType)) {
             $methodReflection = $this->getBuilderReflection()->getNativeMethod($methodName);
+            $builderClass = EloquentBuilder::class;
+
+            if ($modelType instanceof TemplateMixedType) {
+                /** @var string $builderClass */
+                $builderClass = $modelType->getScope()->getClassName();
+            }
 
             $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
 
             return new EloquentBuilderMethodReflection(
                 $methodName, $classReflection,
                 $parametersAcceptor->getParameters(),
-                new ObjectType(EloquentBuilder::class),
+                new GenericObjectType($builderClass, [$modelType]),
                 $parametersAcceptor->isVariadic()
             );
         }
