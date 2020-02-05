@@ -18,6 +18,7 @@ use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\VerbosityLevel;
+use PHPStan\Type\VoidType;
 
 class BuilderHelper
 {
@@ -151,6 +152,7 @@ class BuilderHelper
         Type $customReturnType
     ): ?EloquentBuilderMethodReflection {
         $methodReflection = null;
+        $model = $this->broker->getClass($modelName);
 
         // Check if model has a custom builder. If yes try to find the method there.
         $customBuilderName = $this->determineBuilderType($modelName);
@@ -174,6 +176,11 @@ class BuilderHelper
         if ($methodReflection !== null) {
             $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
             $returnType = $parametersAcceptor->getReturnType();
+
+            // If a model scope has a void return type, return the builder
+            if ($returnType instanceof VoidType && $model->hasNativeMethod('scope'.ucfirst($methodName))) {
+                $returnType = $customReturnType;
+            }
 
             if ($customBuilderName || count(array_intersect([EloquentBuilder::class, QueryBuilder::class], $returnType->getReferencedClasses())) > 0) {
                 $returnType = $customReturnType;
