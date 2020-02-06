@@ -11,19 +11,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class BuilderExtension
 {
-    /** @return Collection|User[] */
+    /** @return Collection<User> */
     public function testCallingGetOnModelWithStaticQueryBuilder(): Collection
     {
         return User::where('id', 1)->get();
     }
 
-    /** @return Collection|User[] */
+    /** @return Collection<User> */
     public function testCallingGetOnModelWithVariableQueryBuilder(): Collection
     {
         return (new User)->where('id', 1)->get();
     }
 
-    /** @return Collection|User[] */
+    /** @return Collection<User> */
     public function testCallingLongGetChainOnModelWithStaticQueryBuilder(): Collection
     {
         return User::where('id', 1)
@@ -33,7 +33,7 @@ class BuilderExtension
             ->get();
     }
 
-    /** @return Collection|User[] */
+    /** @return Collection<User> */
     public function testCallingLongGetChainOnModelWithVariableQueryBuilder(): Collection
     {
         return (new User)->whereNotNull('active')
@@ -42,7 +42,7 @@ class BuilderExtension
             ->get();
     }
 
-    /** @return Collection|User[] */
+    /** @return Collection<User> */
     public function testCallingGetOnModelWithVariableQueryBuilder2(): Collection
     {
         $user = new User;
@@ -50,7 +50,7 @@ class BuilderExtension
         return $user->where('test', 1)->get();
     }
 
-    /** @return Collection|User[] */
+    /** @return Collection<User> */
     public function testUsingCollectionMethodsAfterGet(): Collection
     {
         return User::whereIn('id', [1, 2, 3])->get()->mapWithKeys('key');
@@ -73,6 +73,24 @@ class BuilderExtension
         $user = new User;
 
         return $user->where('test', 1)->exists();
+    }
+
+    /**
+     * @phpstan-return Builder<User>
+     */
+    public function testWith(): Builder
+    {
+        return User::with('foo')->whereNull('bar');
+    }
+
+    /**
+     * @phpstan-return Builder<User>
+     */
+    public function testWithWithBuilderMethods(): Builder
+    {
+        return User::with('foo')
+            ->where('foo', 'bar')
+            ->orWhere('bar', 'baz');
     }
 }
 
