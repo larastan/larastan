@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use NunoMaduro\Larastan\Concerns;
+use NunoMaduro\Larastan\Methods\BuilderHelper;
 use NunoMaduro\Larastan\Methods\ModelTypeHelper;
 use NunoMaduro\Larastan\Methods\Pipes\Mixins;
 use PhpParser\Node\Expr\StaticCall;
@@ -106,7 +107,12 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, Br
         if ((count(array_intersect([EloquentBuilder::class, QueryBuilder::class], $returnType->getReferencedClasses())) > 0)
             && $methodCall->class instanceof \PhpParser\Node\Name
         ) {
-            $returnType = new GenericObjectType(EloquentBuilder::class, [new ObjectType($scope->resolveName($methodCall->class))]);
+            $builderHelper = new BuilderHelper($this->getBroker());
+
+            $returnType = new GenericObjectType(
+                $builderHelper->determineBuilderType($scope->resolveName($methodCall->class)) ?? EloquentBuilder::class,
+                [new ObjectType($scope->resolveName($methodCall->class))]
+            );
         }
 
         if ($methodReflection->getName() === 'all' && in_array(Collection::class, $returnType->getReferencedClasses(), true) && $methodCall->class instanceof \PhpParser\Node\Name) {

@@ -4,28 +4,21 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes;
 
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Concerns;
+use NunoMaduro\Larastan\Methods\BuilderHelper;
 use NunoMaduro\Larastan\Methods\ModelForwardsCallsExtension;
 use NunoMaduro\Larastan\Methods\ModelTypeHelper;
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Expr\New_;
-use PhpParser\Node\Expr\PropertyFetch;
-use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Expr\Variable;
-use PhpParser\Node\Name;
-use PhpParser\Node\Name\FullyQualified;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\Dummy\DummyMethodReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
-use PHPStan\Type\IntegerType;
-use PHPStan\Type\IntersectionType;
-use PHPStan\Type\IterableType;
-use PHPStan\Type\MixedType;
+use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\Generic\TemplateMixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\ThisType;
 use PHPStan\Type\Type;
@@ -36,7 +29,7 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
 
     public function getClass(): string
     {
-        return Builder::class;
+        return EloquentBuilder::class;
     }
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
@@ -46,15 +39,13 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
             return false;
         }
 
-        if ($methodReflection instanceof DummyMethodReflection) {
-            return true;
+        $templateTypeMap = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap();
+
+        if (! $templateTypeMap->getType('TModelClass') instanceof ObjectType) {
+            return false;
         }
 
-        if (in_array($methodReflection->getName(), array_merge(ModelForwardsCallsExtension::MODEL_CREATION_METHODS, ModelForwardsCallsExtension::MODEL_RETRIEVAL_METHODS), true)) {
-            return true;
-        }
-
-        return $methodReflection->getName() === 'get';
+        return $this->getBroker()->getClass(EloquentBuilder::class)->hasNativeMethod($methodReflection->getName());
     }
 
     public function getTypeFromMethodCall(
@@ -62,31 +53,18 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
         MethodCall $methodCall,
         Scope $scope
     ): Type {
-        while ($methodCall->var instanceof MethodCall) {
-            $methodCall = $methodCall->var;
-        }
+        $returnType = $methodReflection->getVariants()[0]->getReturnType();
+        $templateTypeMap = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap();
 
-        $modelType = new MixedType();
-
-        if ($methodCall->var instanceof StaticCall || $methodCall->var instanceof New_) {
-            if ($methodCall->var->class instanceof Variable) {
-                $modelType = $scope->getType($methodCall->var->class);
-            } elseif ($methodCall->var->class instanceof FullyQualified) {
-                $modelType = new ObjectType($methodCall->var->class->toCodeString());
-            } elseif ($methodCall->var->class instanceof Name) {
-                $modelType = new ObjectType($scope->resolveName($methodCall->var->class));
-            }
-        } elseif ($methodCall->var instanceof Variable || $methodCall->var instanceof PropertyFetch) {
-            /** @var ObjectType $modelType */
-            $modelType = $scope->getType($methodCall->var);
-        }
+        /** @var Type|ObjectType|TemplateMixedType $modelType */
+        $modelType = $templateTypeMap->getType('TModelClass');
 
         if ($methodReflection instanceof DummyMethodReflection && $modelType instanceof ObjectType) {
             $scopeMethodName = 'scope'.ucfirst($methodReflection->getName());
             $modelReflection = $this->getBroker()->getClass($modelType->getClassName());
 
             if ($modelReflection->hasNativeMethod($scopeMethodName)) {
-                return new ObjectType(Builder::class);
+                return new ObjectType(EloquentBuilder::class);
             }
 
             if ($modelReflection->hasNativeMethod('newEloquentBuilder')) {
@@ -99,12 +77,23 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
         }
 
         if (($modelType instanceof ObjectType || $modelType instanceof ThisType) && in_array($methodReflection->getName(), array_merge(ModelForwardsCallsExtension::MODEL_CREATION_METHODS, ModelForwardsCallsExtension::MODEL_RETRIEVAL_METHODS), true)) {
-            return ModelTypeHelper::replaceStaticTypeWithModel($methodReflection->getVariants()[0]->getReturnType(), $modelType->getClassName());
+            $returnType = ModelTypeHelper::replaceStaticTypeWithModel($methodReflection->getVariants()[0]->getReturnType(), $modelType->getClassName());
+        }
+
+        if (($modelType instanceof ObjectType || $modelType instanceof ThisType) && in_array(EloquentBuilder::class, $returnType->getReferencedClasses(), true)) {
+            $builderHelper = new BuilderHelper($this->getBroker());
+
+            $returnType = new GenericObjectType(
+                $builderHelper->determineBuilderType($modelType->getClassName()) ?? EloquentBuilder::class,
+                [$modelType]
+            );
         }
 
         // 'get' method return type
-        return new IntersectionType([
-            new IterableType(new IntegerType(), $modelType), new ObjectType(Collection::class),
-        ]);
+        if ($methodReflection->getName() === 'get') {
+            return new GenericObjectType(Collection::class, [$modelType]);
+        }
+
+        return $returnType;
     }
 }

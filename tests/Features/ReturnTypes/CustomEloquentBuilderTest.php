@@ -10,6 +10,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CustomEloquentBuilderTest
 {
+    public function testModelWithCustomBuilderReturnsCorrectModelAfterBuilderMethod(): ?ModelWithCustomBuilder
+    {
+        return ModelWithCustomBuilder::where('foo', 'bar')->first();
+    }
+
+    public function testEloquentBuilderMethodReturnsCustomBuilder(): CustomBuilder
+    {
+        return ModelWithCustomBuilder::with('foo')->where('foo', 'bar');
+    }
+
     public function testModelScopeReturnsCustomBuilder(): CustomBuilder
     {
         return ModelWithCustomBuilder::foo('foo')->foo('bar');
@@ -40,6 +50,13 @@ class CustomEloquentBuilderTest
     public function testFindAfterCustomBuilderMethodAfterDynamicWhere(): ?ModelWithCustomBuilder
     {
         return ModelWithCustomBuilder::whereFoo(['bar'])->type('foo')->first();
+    }
+
+    public function testFindAfterCustomBuilderMethodAfterDynamicWhereOnExistingVariable(): ?ModelWithCustomBuilder
+    {
+        $query = ModelWithCustomBuilder::whereFoo(['bar'])->type('foo');
+
+        return $query->first();
     }
 }
 
