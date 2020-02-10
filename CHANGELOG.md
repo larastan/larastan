@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.5.2] - 2020-02-10
+
+### Fixed
+- Model scopes returns the builder, if return type is `void` ([#450](https://github.com/nunomaduro/larastan/pull/450))
+- Fix return type of calling query builder methods on custom builders ([#453](https://github.com/nunomaduro/larastan/pull/453))
+- Fix return type of `all` on model. Thanks @BertvanHoekelen ([#454](https://github.com/nunomaduro/larastan/pull/454))
+- Any query builder method should return the generic query builder ([#457](https://github.com/nunomaduro/larastan/pull/457))
+- Don't throw exception when unknown column type is encountered while scanning the migrations ([#451](https://github.com/nunomaduro/larastan/pull/451))
+
 ## [0.5.1] - 2020-02-04
 
 ### Added
@@ -266,7 +275,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.5.1...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.5.2...HEAD
+[0.5.2]: https://github.com/nunomaduro/larastan/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/nunomaduro/larastan/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/nunomaduro/larastan/compare/v0.4.3...v0.5.0
 [0.4.3]: https://github.com/nunomaduro/larastan/compare/v0.4.2...v0.4.3
