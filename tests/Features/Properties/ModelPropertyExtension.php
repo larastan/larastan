@@ -34,4 +34,12 @@ class ModelPropertyExtension
     {
         return $this->user->meta;
     }
+
+    public function testKnownColumnNameWithUnknownType(): string
+    {
+        $this->user->unknown_column = 5;
+        $this->user->unknown_column = 'foo';
+
+        return $this->user->unknown_column;
+    }
 }
