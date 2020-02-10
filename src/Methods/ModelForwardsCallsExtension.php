@@ -74,6 +74,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
     {
         $builderHelper = new BuilderHelper($this->getBroker());
         $customBuilderName = $builderHelper->determineBuilderType($originalModelReflection->getName());
+
         $returnMethodReflection = $builderHelper->getMethodReflectionFromBuilder(
             $originalModelReflection,
             $methodName,

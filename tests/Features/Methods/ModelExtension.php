@@ -231,18 +231,7 @@ class Thread extends Model
 
     public static function testFindOnStaticSelf(): ?Thread
     {
-        return self::valid()->first();
-    }
-
-    public static function testFindOnStatic(): ?Thread
-    {
-        return static::valid()->first();
-    }
-
-    /** @return iterable<Thread>&Collection */
-    public static function findAllFooBarThreads()
-    {
-        return self::query()->where('foo', 'bar')->get();
+        return self::query()->where('foo', 'bar')->get()->first();
     }
 
     public function getCustomPropertyAttribute(): string
