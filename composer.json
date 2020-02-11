@@ -36,7 +36,10 @@
         "psr-4": {
             "Tests\\": "tests/",
             "App\\": "tests/Application/app"
-        }
+        },
+        "classmap": [
+            "tests/Application/database/migrations"
+        ]
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
