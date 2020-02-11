@@ -84,7 +84,7 @@ final class ApplicationResolver
         // now class list of maps are assembled, use class_exists calls to explicitly autoload them,
         // while not running them
         foreach ($maps as $class => $file) {
-            class_exists($class, true);
+            class_exists((string) $class, true);
         }
 
         return get_declared_classes();

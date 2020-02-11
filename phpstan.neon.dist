@@ -1,9 +1,13 @@
+includes:
+    - ./extension.neon
 parameters:
     level: max
     paths:
         - src
+        - tests
     reportUnmatchedIgnoredErrors: false
     checkGenericClassInNonGenericObjectType: false
+    checkMissingIterableValueType: false
     ignoreErrors:
         - '#Method Illuminate\\Contracts\\Foundation\\Application::basePath\(\) invoked with 1 parameter, 0 required.#'
         - '#Call to an undefined method Mockery\\ExpectationInterface#'

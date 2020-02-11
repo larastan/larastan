@@ -33,6 +33,11 @@ class FeaturesTest extends TestCase
                 continue;
             }
             $fullPath = realpath((string) $file);
+
+            if (! $fullPath) {
+                throw new \Exception('could not determine the canonicalized absolute pathname for '.$file->getFilename());
+            }
+
             $calls[str_replace($baseDir, '', $fullPath)] = [$fullPath];
         }
 
