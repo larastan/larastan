@@ -1,0 +1,7 @@
+includes:
+    - ../extension.neon
+parameters:
+    bootstrap: ../bootstrap.php
+    level: max
+    paths:
+        - ./

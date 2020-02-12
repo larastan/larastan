@@ -10,7 +10,7 @@ class HasManySyncable extends HasMany
      * @param mixed $data
      * @param bool  $deleting
      *
-     * @return array
+     * @return array<string, array>
      */
     public function sync($data, $deleting = true)
     {
@@ -85,8 +85,8 @@ class HasManySyncable extends HasMany
     /**
      * Cast the given keys to integers if they are numeric and string otherwise.
      *
-     * @param  array $keys
-     * @return array
+     * @param  array<int|string> $keys
+     * @return array<int|string>
      */
     protected function castKeys(array $keys)
     {

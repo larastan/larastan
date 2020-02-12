@@ -60,12 +60,12 @@
         }
     },
     "scripts": {
-        "test:analyse-src": "phpstan analyse src --ansi",
+        "test:analyse-src": "phpstan analyse --ansi",
         "test:unit": "phpunit --colors=always",
-        "test:analyse-tests": "phpstan analyse tests --ansi",
+        "test:analyse-tests": "phpstan analyse -c ./tests/phpstan-tests.neon --ansi",
         "test": [
-            "@test:analyse-src",
             "@test:unit",
+            "@test:analyse-src",
             "@test:analyse-tests"
         ]
     }

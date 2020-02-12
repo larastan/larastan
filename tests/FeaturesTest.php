@@ -22,6 +22,10 @@ class FeaturesTest extends TestCase
         File::copyDirectory(__DIR__.'/Application/database/migrations', $this->getBasePath().'/database/migrations');
     }
 
+    /**
+     * @return array<string, array<string>>
+     * @throws \Exception
+     */
     public function getFeatures(): array
     {
         $calls = [];
