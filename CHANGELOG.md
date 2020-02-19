@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [Unreleased]
+
+### Added
+- Support for eloquent resources. Thanks @mr-feek ([#470](https://github.com/nunomaduro/larastan/pull/470))
+
 ## [0.5.2] - 2020-02-10
 
 ### Fixed

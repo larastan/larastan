@@ -5,9 +5,9 @@ parameters:
         - stubs/Collection.stub
         - stubs/EloquentCollection.stub
         - stubs/Model.stub
+        - stubs/JsonResource.stub
     scopeClass: NunoMaduro\Larastan\Analyser\Scope
     universalObjectCratesClasses:
-        - Illuminate\Http\Resources\Json\JsonResource
         - Illuminate\Http\Request
     excludes_analyse:
         - *.blade.php
@@ -115,6 +115,14 @@ services:
         class: NunoMaduro\Larastan\ReturnTypes\EloquentBuilderExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
+    -
+        class: NunoMaduro\Larastan\Properties\JsonResourceExtension
+        tags:
+            - phpstan.broker.propertiesClassReflectionExtension
+    -
+        class: NunoMaduro\Larastan\Properties\JsonResourceExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
 
     -
         class: NunoMaduro\Larastan\ReturnTypes\TestCaseExtension
