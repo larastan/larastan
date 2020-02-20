@@ -10,6 +10,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tests\Application\HasManySyncable;
 
+/**
+ * @property mixed $unknown_column
+ */
 class User extends Authenticatable
 {
     use Notifiable;
