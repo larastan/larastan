@@ -155,6 +155,12 @@ class Relations
 
         return $user->accounts->first();
     }
+
+    /** @test */
+    public function it_doesnt_treat_whereHas_as_dynamic_where(): User
+    {
+        return User::with('accounts')->whereHas('accounts')->firstOrFail();
+    }
 }
 
 /**

@@ -34,8 +34,12 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
+        $builderReflection = $this->getBroker()->getClass(EloquentBuilder::class);
+
         // Don't handle dynamic wheres
-        if (Str::startsWith($methodReflection->getName(), 'where')) {
+        if (Str::startsWith($methodReflection->getName(), 'where') &&
+            ! $builderReflection->hasNativeMethod($methodReflection->getName())
+        ) {
             return false;
         }
 
@@ -45,7 +49,7 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
             return false;
         }
 
-        return $this->getBroker()->getClass(EloquentBuilder::class)->hasNativeMethod($methodReflection->getName());
+        return $builderReflection->hasNativeMethod($methodReflection->getName());
     }
 
     public function getTypeFromMethodCall(
