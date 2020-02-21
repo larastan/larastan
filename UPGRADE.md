@@ -1,5 +1,20 @@
 # Upgrade Guide
 
+## Next
+
+#### Eloquent Resources
+In order to perform proper analysis on your eloquent resources, you must typehint the underlying eloquent model class.
+This will inform phpstan that only objects of type `User` will be accepted in this resource.
+
+```bash
+/**
+ * @extends JsonResource<User>
+ */
+class UserResource extends JsonResource
+...
+
+```
+
 ## Upgrading To 0.5.1 From 0.5.0
 
 #### Eloquent Model property types
