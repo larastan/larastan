@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Methods\BuilderHelper;
-use NunoMaduro\Larastan\Methods\ModelForwardsCallsExtension;
 use NunoMaduro\Larastan\Methods\ModelTypeHelper;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
@@ -80,7 +79,7 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
             }
         }
 
-        if (($modelType instanceof ObjectType || $modelType instanceof ThisType) && in_array($methodReflection->getName(), array_merge(ModelForwardsCallsExtension::MODEL_CREATION_METHODS, ModelForwardsCallsExtension::MODEL_RETRIEVAL_METHODS), true)) {
+        if (($modelType instanceof ObjectType || $modelType instanceof ThisType) && in_array($methodReflection->getName(), array_merge(BuilderHelper::MODEL_CREATION_METHODS, BuilderHelper::MODEL_RETRIEVAL_METHODS), true)) {
             $returnType = ModelTypeHelper::replaceStaticTypeWithModel($methodReflection->getVariants()[0]->getReturnType(), $modelType->getClassName());
         }
 
