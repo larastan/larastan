@@ -145,6 +145,16 @@ class Relations
     {
         return User::firstOrFail();
     }
+
+    /**
+     * @see https://github.com/nunomaduro/larastan/issues/476
+     */
+    public function testRelationshipPropertyHasCorrectReturnTypeWithIdeHelperDocblocks(): ?Account
+    {
+        $user = new User();
+
+        return $user->accounts->first();
+    }
 }
 
 /**
