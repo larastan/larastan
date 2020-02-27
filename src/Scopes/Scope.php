@@ -9,7 +9,7 @@ use function gettype;
 use Illuminate\Contracts\Container\Container;
 use function is_object;
 use NunoMaduro\Larastan\Concerns;
-use NunoMaduro\Larastan\Properties\ReflectionTypeContainer;
+use NunoMaduro\Larastan\Extensions\Properties\ReflectionTypeContainer;
 use NunoMaduro\Larastan\Types\TypeResolver;
 use PhpParser\Node\Expr;
 use PHPStan\Analyser\MutatingScope as BaseScope;

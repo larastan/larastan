@@ -52,22 +52,22 @@ services:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: NunoMaduro\Larastan\Properties\ModelRelationsExtension
+        class: NunoMaduro\Larastan\Extensions\Properties\ModelRelationsExtension
         tags:
             - phpstan.broker.propertiesClassReflectionExtension
 
     -
-        class: NunoMaduro\Larastan\Properties\ModelAccessorExtension
+        class: NunoMaduro\Larastan\Extensions\Properties\ModelAccessorExtension
         tags:
             - phpstan.broker.propertiesClassReflectionExtension
 
     -
-        class: NunoMaduro\Larastan\Properties\ModelPropertyExtension
+        class: NunoMaduro\Larastan\Extensions\Properties\ModelPropertyExtension
         tags:
             - phpstan.broker.propertiesClassReflectionExtension
 
     -
-        class: NunoMaduro\Larastan\Properties\Extension
+        class: NunoMaduro\Larastan\Extensions\Properties\Extension
         tags:
             - phpstan.broker.propertiesClassReflectionExtension
 
@@ -116,11 +116,11 @@ services:
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
     -
-        class: NunoMaduro\Larastan\Properties\JsonResourceExtension
+        class: NunoMaduro\Larastan\Extensions\Properties\JsonResourceExtension
         tags:
             - phpstan.broker.propertiesClassReflectionExtension
     -
-        class: NunoMaduro\Larastan\Properties\JsonResourceExtension
+        class: NunoMaduro\Larastan\Extensions\Properties\JsonResourceExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace NunoMaduro\Larastan\Properties;
+namespace NunoMaduro\Larastan\Extensions\Properties;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 use PHPStan\Analyser\OutOfClassScope;

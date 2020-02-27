@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Properties;
+namespace NunoMaduro\Larastan\Extensions\Properties;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
