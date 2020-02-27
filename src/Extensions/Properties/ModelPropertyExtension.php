@@ -7,6 +7,7 @@ namespace NunoMaduro\Larastan\Extensions\Properties;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Iterator;
+use NunoMaduro\Larastan\Reflections\ModelProperty;
 use NunoMaduro\Larastan\Schema\SchemaAggregator;
 use NunoMaduro\Larastan\Schema\SchemaColumn;
 use NunoMaduro\Larastan\Schema\SchemaTable;

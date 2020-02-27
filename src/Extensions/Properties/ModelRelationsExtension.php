@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Concerns;
+use NunoMaduro\Larastan\Reflections\ModelProperty;
 use NunoMaduro\Larastan\Types\RelationType;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;

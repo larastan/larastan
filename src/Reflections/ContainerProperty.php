@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Extensions\Properties;
+namespace NunoMaduro\Larastan\Reflections;
 
 use function get_class;
 use function gettype;

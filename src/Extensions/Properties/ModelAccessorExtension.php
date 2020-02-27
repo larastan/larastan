@@ -6,6 +6,7 @@ namespace NunoMaduro\Larastan\Extensions\Properties;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use NunoMaduro\Larastan\Reflections\ModelProperty;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;

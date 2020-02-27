@@ -7,6 +7,7 @@ namespace NunoMaduro\Larastan\Extensions\Properties;
 use function get_class;
 use Illuminate\Contracts\Container\Container;
 use NunoMaduro\Larastan\Concerns;
+use NunoMaduro\Larastan\Reflections\ContainerProperty;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
