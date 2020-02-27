@@ -2,30 +2,27 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\ReturnTypes\Helpers;
+namespace NunoMaduro\Larastan\Extensions\Types\ReturnTypes\Helpers;
 
 use function count;
-use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\FunctionReflection;
-use PHPStan\Type\ArrayType;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
-use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
 /**
  * @internal
  */
-final class RequestExtension implements DynamicFunctionReturnTypeExtension
+final class ViewExtension implements DynamicFunctionReturnTypeExtension
 {
     /**
      * {@inheritdoc}
      */
     public function isFunctionSupported(FunctionReflection $functionReflection): bool
     {
-        return $functionReflection->getName() === 'request';
+        return $functionReflection->getName() === 'view';
     }
 
     /**
@@ -36,15 +33,10 @@ final class RequestExtension implements DynamicFunctionReturnTypeExtension
         FuncCall $functionCall,
         Scope $scope
     ): Type {
-        // No arguments, it returns a request object from the container
         if (count($functionCall->args) === 0) {
-            return new ObjectType(\Illuminate\Http\Request::class);
+            return new ObjectType(\Illuminate\Contracts\View\Factory::class);
         }
 
-        if (isset($functionCall->args[0]->value) && $functionCall->args[0]->value instanceof Array_) {
-            return new ArrayType(new MixedType(), new MixedType());
-        }
-
-        return new MixedType();
+        return new ObjectType(\Illuminate\View\View::class);
     }
 }

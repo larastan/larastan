@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\ReturnTypes\Helpers;
+namespace NunoMaduro\Larastan\Extensions\Types\ReturnTypes\Helpers;
 
-use function count;
+use NunoMaduro\Larastan\Concerns;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\FunctionReflection;
@@ -15,14 +15,16 @@ use PHPStan\Type\Type;
 /**
  * @internal
  */
-final class RedirectExtension implements DynamicFunctionReturnTypeExtension
+final class AuthExtension implements DynamicFunctionReturnTypeExtension
 {
+    use Concerns\HasContainer;
+
     /**
      * {@inheritdoc}
      */
     public function isFunctionSupported(FunctionReflection $functionReflection): bool
     {
-        return $functionReflection->getName() === 'redirect';
+        return $functionReflection->getName() === 'auth';
     }
 
     /**
@@ -33,10 +35,10 @@ final class RedirectExtension implements DynamicFunctionReturnTypeExtension
         FuncCall $functionCall,
         Scope $scope
     ): Type {
-        if (count($functionCall->args) === 0) {
-            return new ObjectType(\Illuminate\Routing\Redirector::class);
+        if (! isset($functionCall->args[0]->value) || (isset($functionCall->args[0]->value) && $functionCall->args[0]->value === null)) {
+            return new ObjectType(get_class($this->resolve(\Illuminate\Contracts\Auth\Factory::class)));
         }
 
-        return new ObjectType(\Illuminate\Http\RedirectResponse::class);
+        return new ObjectType(\Illuminate\Contracts\Auth\Guard::class);
     }
 }

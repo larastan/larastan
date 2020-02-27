@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\ReturnTypes\Helpers;
+namespace NunoMaduro\Larastan\Extensions\Types\ReturnTypes\Helpers;
 
 use function count;
 use PhpParser\Node\Expr\FuncCall;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Types;
+namespace NunoMaduro\Larastan\Extensions\Types;
 
 use function count;
 use Illuminate\Database\Eloquent\Collection;

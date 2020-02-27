@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\ReturnTypes\Helpers;
+namespace NunoMaduro\Larastan\Extensions\Types\ReturnTypes\Helpers;
 
-use NunoMaduro\Larastan\Concerns;
+use function count;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\FunctionReflection;
@@ -15,16 +15,14 @@ use PHPStan\Type\Type;
 /**
  * @internal
  */
-final class AuthExtension implements DynamicFunctionReturnTypeExtension
+final class ResponseExtension implements DynamicFunctionReturnTypeExtension
 {
-    use Concerns\HasContainer;
-
     /**
      * {@inheritdoc}
      */
     public function isFunctionSupported(FunctionReflection $functionReflection): bool
     {
-        return $functionReflection->getName() === 'auth';
+        return $functionReflection->getName() === 'response';
     }
 
     /**
@@ -35,10 +33,10 @@ final class AuthExtension implements DynamicFunctionReturnTypeExtension
         FuncCall $functionCall,
         Scope $scope
     ): Type {
-        if (! isset($functionCall->args[0]->value) || (isset($functionCall->args[0]->value) && $functionCall->args[0]->value === null)) {
-            return new ObjectType(get_class($this->resolve(\Illuminate\Contracts\Auth\Factory::class)));
+        if (count($functionCall->args) === 0) {
+            return new ObjectType(\Illuminate\Contracts\Routing\ResponseFactory::class);
         }
 
-        return new ObjectType(\Illuminate\Contracts\Auth\Guard::class);
+        return new ObjectType(\Illuminate\Http\Response::class);
     }
 }

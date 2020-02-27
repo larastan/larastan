@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\ReturnTypes;
+namespace NunoMaduro\Larastan\Extensions\Types\ReturnTypes;
 
 use Illuminate\Foundation\Testing\TestCase;
 use PhpParser\Node\Expr\MethodCall;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Types;
+namespace NunoMaduro\Larastan\Extensions\Types;
 
 /*
  * This file is part of Larastan.

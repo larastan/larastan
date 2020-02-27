@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\ReturnTypes;
+namespace NunoMaduro\Larastan\Extensions\Types\ReturnTypes;
 
 use Illuminate\Support\Facades\Auth;
 use NunoMaduro\Larastan\Concerns;

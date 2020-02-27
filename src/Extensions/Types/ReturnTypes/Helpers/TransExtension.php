@@ -2,27 +2,24 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\ReturnTypes\Helpers;
+namespace NunoMaduro\Larastan\Extensions\Types\ReturnTypes\Helpers;
 
-use function count;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
+use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
-/**
- * @internal
- */
-final class ViewExtension implements DynamicFunctionReturnTypeExtension
+class TransExtension implements DynamicFunctionReturnTypeExtension
 {
     /**
      * {@inheritdoc}
      */
     public function isFunctionSupported(FunctionReflection $functionReflection): bool
     {
-        return $functionReflection->getName() === 'view';
+        return $functionReflection->getName() === 'trans';
     }
 
     /**
@@ -33,10 +30,11 @@ final class ViewExtension implements DynamicFunctionReturnTypeExtension
         FuncCall $functionCall,
         Scope $scope
     ): Type {
+        // No path provided, so it returns a Translator instance
         if (count($functionCall->args) === 0) {
-            return new ObjectType(\Illuminate\Contracts\View\Factory::class);
+            return new ObjectType(\Illuminate\Contracts\Translation\Translator::class);
         }
 
-        return new ObjectType(\Illuminate\View\View::class);
+        return new MixedType();
     }
 }

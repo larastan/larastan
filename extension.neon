@@ -72,47 +72,47 @@ services:
             - phpstan.broker.propertiesClassReflectionExtension
 
     -
-        class: NunoMaduro\Larastan\Types\RelationDynamicMethodReturnTypeExtension
+        class: NunoMaduro\Larastan\Extensions\Types\ReturnTypes\RelationDynamicMethodReturnTypeExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\Types\ModelRelationsDynamicMethodReturnTypeExtension
+        class: NunoMaduro\Larastan\Extensions\Types\ReturnTypes\ModelRelationsDynamicMethodReturnTypeExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\RelationCreateExtension
+        class: NunoMaduro\Larastan\Extensions\Types\ReturnTypes\RelationCreateExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\ModelExtension
+        class: NunoMaduro\Larastan\Extensions\Types\ReturnTypes\ModelExtension
         tags:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\ModelFindExtension
+        class: NunoMaduro\Larastan\Extensions\Types\ReturnTypes\ModelFindExtension
         tags:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\AuthExtension
+        class: NunoMaduro\Larastan\Extensions\Types\ReturnTypes\AuthExtension
         tags:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\AuthManagerExtension
+        class: NunoMaduro\Larastan\Extensions\Types\ReturnTypes\AuthManagerExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\RequestExtension
+        class: NunoMaduro\Larastan\Extensions\Types\ReturnTypes\RequestExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\EloquentBuilderExtension
+        class: NunoMaduro\Larastan\Extensions\Types\ReturnTypes\EloquentBuilderExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
     -
@@ -125,61 +125,61 @@ services:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\TestCaseExtension
+        class: NunoMaduro\Larastan\Extensions\Types\ReturnTypes\TestCaseExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\Helpers\AuthExtension
+        class: NunoMaduro\Larastan\Extensions\Types\ReturnTypes\Helpers\AuthExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\Helpers\CookieExtension
+        class: NunoMaduro\Larastan\Extensions\Types\ReturnTypes\Helpers\CookieExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\Helpers\ResponseExtension
+        class: NunoMaduro\Larastan\Extensions\Types\ReturnTypes\Helpers\ResponseExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\Helpers\RequestExtension
+        class: NunoMaduro\Larastan\Extensions\Types\ReturnTypes\Helpers\RequestExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\Helpers\RedirectExtension
+        class: NunoMaduro\Larastan\Extensions\Types\ReturnTypes\Helpers\RedirectExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\Helpers\UrlExtension
+        class: NunoMaduro\Larastan\Extensions\Types\ReturnTypes\Helpers\UrlExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\Helpers\ViewExtension
+        class: NunoMaduro\Larastan\Extensions\Types\ReturnTypes\Helpers\ViewExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\Helpers\TransExtension
+        class: NunoMaduro\Larastan\Extensions\Types\ReturnTypes\Helpers\TransExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\Types\AbortIfFunctionTypeSpecifyingExtension
+        class: NunoMaduro\Larastan\Extensions\Types\AbortIfFunctionTypeSpecifyingExtension
         tags:
             - phpstan.typeSpecifier.functionTypeSpecifyingExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\Helpers\AppExtension
+        class: NunoMaduro\Larastan\Extensions\Types\ReturnTypes\Helpers\AppExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\Types\GenericEloquentCollectionTypeNodeResolverExtension
+        class: NunoMaduro\Larastan\Extensions\Types\GenericEloquentCollectionTypeNodeResolverExtension
         tags:
             - phpstan.phpDoc.typeNodeResolverExtension

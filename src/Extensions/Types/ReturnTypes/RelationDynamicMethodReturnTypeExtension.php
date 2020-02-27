@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Types;
+namespace NunoMaduro\Larastan\Extensions\Types\ReturnTypes;
 
 use Illuminate\Database\Eloquent\Model;
+use NunoMaduro\Larastan\Types\RelationType;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\FunctionVariant;
