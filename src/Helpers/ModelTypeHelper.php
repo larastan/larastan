@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Methods;
+namespace NunoMaduro\Larastan\Helpers;
 
 use Illuminate\Database\Eloquent\Model;
 use PHPStan\Type\ObjectType;

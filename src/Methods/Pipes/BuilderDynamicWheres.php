@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
-use NunoMaduro\Larastan\Methods\BuilderHelper;
+use NunoMaduro\Larastan\Helpers\BuilderHelper;
 use PHPStan\Type\ObjectType;
 
 /**
