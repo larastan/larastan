@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Methods\Pipes;
+namespace NunoMaduro\Larastan\Extensions\Methods\Pipes;
 
 use Closure;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Methods;
+namespace NunoMaduro\Larastan\Extensions\Methods;
 
 use NunoMaduro\Larastan\Concerns;
 use PHPStan\Reflection\Annotations\AnnotationsMethodsClassReflectionExtension;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Methods;
+namespace NunoMaduro\Larastan\Reflections;
 
 use Closure;
 use ErrorException;

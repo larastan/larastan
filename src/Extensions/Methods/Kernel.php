@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Methods;
+namespace NunoMaduro\Larastan\Extensions\Methods;
 
 use Illuminate\Pipeline\Pipeline;
 use NunoMaduro\Larastan\Concerns;

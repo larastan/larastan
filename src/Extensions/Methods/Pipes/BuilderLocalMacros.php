@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Methods\Pipes;
+namespace NunoMaduro\Larastan\Extensions\Methods\Pipes;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,7 +13,7 @@ use function in_array;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
-use NunoMaduro\Larastan\Methods\Macro;
+use NunoMaduro\Larastan\Reflections\Macro;
 use PHPStan\Type\Generic\TemplateTypeMap;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\TypehintHelper;

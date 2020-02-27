@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Helpers\BuilderHelper;
-use NunoMaduro\Larastan\Methods\ModelForwardsCallsExtension;
+use NunoMaduro\Larastan\Extensions\Methods\ModelForwardsCallsExtension;
 use NunoMaduro\Larastan\Helpers\ModelTypeHelper;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;

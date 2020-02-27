@@ -22,32 +22,32 @@ parameters:
 
 services:
     -
-        class: NunoMaduro\Larastan\Methods\AnnotationExtension
+        class: NunoMaduro\Larastan\Extensions\Methods\AnnotationExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: NunoMaduro\Larastan\Methods\AnnotationExtension
+        class: NunoMaduro\Larastan\Extensions\Methods\AnnotationExtension
         tags:
             - phpstan.broker.propertiesClassReflectionExtension
 
     -
-        class: NunoMaduro\Larastan\Methods\RelationForwardsCallsExtension
+        class: NunoMaduro\Larastan\Extensions\Methods\RelationForwardsCallsExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: NunoMaduro\Larastan\Methods\ModelForwardsCallsExtension
+        class: NunoMaduro\Larastan\Extensions\Methods\ModelForwardsCallsExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: NunoMaduro\Larastan\Methods\EloquentBuilderForwardsCallsExtension
+        class: NunoMaduro\Larastan\Extensions\Methods\EloquentBuilderForwardsCallsExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: NunoMaduro\Larastan\Methods\Extension
+        class: NunoMaduro\Larastan\Extensions\Methods\Extension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
 

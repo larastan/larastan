@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Methods;
+namespace NunoMaduro\Larastan\Extensions\Methods;
 
 use NunoMaduro\Larastan\Concerns;
 use PHPStan\Reflection\BrokerAwareExtension;
@@ -19,7 +19,7 @@ final class Extension implements MethodsClassReflectionExtension, BrokerAwareExt
     use Concerns\HasBroker;
 
     /**
-     * @var \NunoMaduro\Larastan\Methods\Kernel
+     * @var \NunoMaduro\Larastan\Extensions\Methods\Kernel
      */
     private $kernel;
 
@@ -27,7 +27,7 @@ final class Extension implements MethodsClassReflectionExtension, BrokerAwareExt
      * Extension constructor.
      *
      * @param \PHPStan\Reflection\Php\PhpMethodReflectionFactory $methodReflectionFactory
-     * @param \NunoMaduro\Larastan\Methods\Kernel|null $kernel
+     * @param \NunoMaduro\Larastan\Extensions\Methods\Kernel|null $kernel
      */
     public function __construct(PhpMethodReflectionFactory $methodReflectionFactory, Kernel $kernel = null)
     {

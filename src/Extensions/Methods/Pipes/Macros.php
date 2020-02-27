@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Methods\Pipes;
+namespace NunoMaduro\Larastan\Extensions\Methods\Pipes;
 
 use Carbon\Traits\Macro as CarbonMacro;
 use Closure;
@@ -10,7 +10,7 @@ use Illuminate\Support\Traits\Macroable;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
-use NunoMaduro\Larastan\Methods\Macro;
+use NunoMaduro\Larastan\Reflections\Macro;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\Generic\TemplateTypeMap;
 

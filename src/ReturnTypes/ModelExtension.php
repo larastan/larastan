@@ -11,7 +11,7 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Helpers\BuilderHelper;
 use NunoMaduro\Larastan\Helpers\ModelTypeHelper;
-use NunoMaduro\Larastan\Methods\Pipes\Mixins;
+use NunoMaduro\Larastan\Extensions\Methods\Pipes\Mixins;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\BrokerAwareExtension;
@@ -31,12 +31,12 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, Br
     use Concerns\HasBroker;
 
     /**
-     * @var \NunoMaduro\Larastan\Methods\Pipes\Mixins
+     * @var \NunoMaduro\Larastan\Extensions\Methods\Pipes\Mixins
      */
     private $mixins;
 
     /**
-     * @param \NunoMaduro\Larastan\Methods\Pipes\Mixins $mixins
+     * @param \NunoMaduro\Larastan\Extensions\Methods\Pipes\Mixins $mixins
      *
      * @return void
      */
