@@ -10,6 +10,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tests\Application\HasManySyncable;
 
+/**
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Account[] $accounts
+ */
 class User extends Authenticatable
 {
     use Notifiable;
