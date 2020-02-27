@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Properties;
+namespace NunoMaduro\Larastan\Schema;
 
 use PhpParser;
 
