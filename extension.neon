@@ -6,7 +6,7 @@ parameters:
         - stubs/EloquentCollection.stub
         - stubs/Model.stub
         - stubs/JsonResource.stub
-    scopeClass: NunoMaduro\Larastan\Analyser\Scope
+    scopeClass: NunoMaduro\Larastan\Scopes\Scope
     universalObjectCratesClasses:
         - Illuminate\Http\Request
     excludes_analyse:

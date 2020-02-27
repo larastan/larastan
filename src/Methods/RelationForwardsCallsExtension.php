@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods;
 
 use NunoMaduro\Larastan\Concerns\HasBroker;
-use NunoMaduro\Larastan\Reflection\RelationClassReflection;
+use NunoMaduro\Larastan\Reflections\RelationClassReflection;
 use NunoMaduro\Larastan\Types\RelationType;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;

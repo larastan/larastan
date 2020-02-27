@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Reflection;
+namespace NunoMaduro\Larastan\Reflections;
 
 use Illuminate\Database\Eloquent\Builder;
 use PHPStan\Reflection\ClassMemberReflection;

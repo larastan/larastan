@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Analyser;
+namespace NunoMaduro\Larastan\Scopes;
 
 use function get_class;
 use function gettype;

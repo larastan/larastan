@@ -7,7 +7,7 @@ namespace NunoMaduro\Larastan\Methods;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
-use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
+use NunoMaduro\Larastan\Reflections\EloquentBuilderMethodReflection;
 use PHPStan\Broker\Broker;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\FunctionVariantWithPhpDocs;

@@ -7,7 +7,7 @@ namespace NunoMaduro\Larastan\Methods;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use NunoMaduro\Larastan\Concerns;
-use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
+use NunoMaduro\Larastan\Reflections\EloquentBuilderMethodReflection;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\Dummy\DummyMethodReflection;

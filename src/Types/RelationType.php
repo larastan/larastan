@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Types;
 
-use NunoMaduro\Larastan\Reflection\RelationClassReflection;
+use NunoMaduro\Larastan\Reflections\RelationClassReflection;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\VerbosityLevel;
