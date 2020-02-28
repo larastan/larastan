@@ -23,12 +23,6 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
 {
     use Concerns\HasBroker;
 
-    /** @var string[] */
-    public const MODEL_RETRIEVAL_METHODS = ['first', 'find', 'findMany', 'findOrFail', 'firstOrFail'];
-
-    /** @var string[] */
-    public const MODEL_CREATION_METHODS = ['make', 'create', 'forceCreate', 'findOrNew', 'firstOrNew', 'updateOrCreate', 'fromQuery', 'firstOrCreate'];
-
     private function getBuilderReflection(): ClassReflection
     {
         return $this->broker->getClass(EloquentBuilder::class);
