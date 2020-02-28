@@ -14,7 +14,9 @@ use PHPStan\Reflection\FunctionVariantWithPhpDocs;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Reflection\Php\DummyParameter;
 use PHPStan\ShouldNotHappenException;
+use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\VerbosityLevel;
@@ -53,11 +55,17 @@ class BuilderHelper
         /** @var FunctionVariantWithPhpDocs $originalDynamicWhereVariant */
         $originalDynamicWhereVariant = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
 
+        /** @var \PHPStan\Reflection\ParameterReflectionWithPhpDocs $originalParameter */
+        $originalParameter = $originalDynamicWhereVariant->getParameters()[1];
+
+        $actualParameter = new DummyParameter($originalParameter->getName(), new MixedType(), $originalParameter->isOptional(), $originalParameter->passedByReference(), $originalParameter->isVariadic(), $originalParameter->getDefaultValue());
+
         return new EloquentBuilderMethodReflection(
             $methodName,
             $classReflection,
-            [$originalDynamicWhereVariant->getParameters()[1]],
-            $returnObject
+            [$actualParameter],
+            $returnObject,
+            true
         );
     }
 
