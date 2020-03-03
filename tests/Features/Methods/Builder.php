@@ -13,4 +13,19 @@ class Builder
     {
         return User::query()->groupBy('foo', 'bar');
     }
+
+    public function testDynamicWhereAsString(): ?User
+    {
+        return (new User())->whereFoo('bar')->first();
+    }
+
+    public function testDynamicWhereMultiple(): ?User
+    {
+        return User::whereIdAndEmail(1, 'foo@example.com')->first();
+    }
+
+    public function testDynamicWhereAsInt(): ?User
+    {
+        return (new User())->whereFoo(1)->first();
+    }
 }
