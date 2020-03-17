@@ -30,7 +30,7 @@ echo "Add package from source"
 sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan" } ],|' -i composer.json
 travis_retry composer require --dev "nunomaduro/larastan:*"
 
-echo 'Fix Handler::render return type'
+echo "Fix Handler::render return type"
 sed -e 's/@return \\Illuminate\\Http\\Response|\\Illuminate\\Http\\JsonResponse$/@return \\Symfony\\Component\\HttpFoundation\\Response/' \
     -i app/Exceptions/Handler.php
 
