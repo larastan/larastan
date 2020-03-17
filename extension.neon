@@ -6,6 +6,7 @@ parameters:
         - stubs/EloquentCollection.stub
         - stubs/Model.stub
         - stubs/JsonResource.stub
+        - stubs/Gate.stub
     scopeClass: NunoMaduro\Larastan\Analyser\Scope
     universalObjectCratesClasses:
         - Illuminate\Http\Request
@@ -21,16 +22,6 @@ parameters:
     checkGenericClassInNonGenericObjectType: false
 
 services:
-    -
-        class: NunoMaduro\Larastan\Methods\AnnotationExtension
-        tags:
-            - phpstan.broker.methodsClassReflectionExtension
-
-    -
-        class: NunoMaduro\Larastan\Methods\AnnotationExtension
-        tags:
-            - phpstan.broker.propertiesClassReflectionExtension
-
     -
         class: NunoMaduro\Larastan\Methods\RelationForwardsCallsExtension
         tags:

@@ -1,0 +1,14 @@
+<?php
+
+namespace Illuminate\Contracts\Auth\Access;
+
+interface Gate
+{
+    /**
+     * Get a guard instance for the given user.
+     *
+     * @param  \Illuminate\Contracts\Auth\Authenticatable|mixed  $user
+     * @return \Illuminate\Contracts\Auth\Access\Gate
+     */
+    public function forUser($user);
+}
