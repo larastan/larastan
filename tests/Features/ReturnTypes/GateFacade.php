@@ -13,4 +13,14 @@ class GateFacade
     {
         return Gate::forUser(new User());
     }
+
+    public function testGateInspect(): \Illuminate\Auth\Access\Response
+    {
+        return Gate::inspect('foo');
+    }
+
+    public function testGateHas(): bool
+    {
+        return Gate::has('foo');
+    }
 }

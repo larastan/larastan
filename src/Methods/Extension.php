@@ -23,6 +23,9 @@ final class Extension implements MethodsClassReflectionExtension, BrokerAwareExt
      */
     private $kernel;
 
+    /** @var MethodReflection[] */
+    private $methodReflections = [];
+
     /**
      * Extension constructor.
      *
@@ -39,8 +42,19 @@ final class Extension implements MethodsClassReflectionExtension, BrokerAwareExt
      */
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        return $this->kernel->handle($this->broker, $classReflection, $methodName)
-            ->hasFound();
+        if (array_key_exists($methodName.'-'.$classReflection->getName(), $this->methodReflections)) {
+            return true;
+        }
+
+        $passable = $this->kernel->handle($this->broker, $classReflection, $methodName);
+
+        $found = $passable->hasFound();
+
+        if ($found) {
+            $this->methodReflections[$methodName.'-'.$classReflection->getName()] = $passable->getMethodReflection();
+        }
+
+        return $found;
     }
 
     /**
@@ -48,7 +62,6 @@ final class Extension implements MethodsClassReflectionExtension, BrokerAwareExt
      */
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
-        return $this->kernel->handle($this->broker, $classReflection, $methodName)
-            ->getMethodReflection();
+        return $this->methodReflections[$methodName.'-'.$classReflection->getName()];
     }
 }
