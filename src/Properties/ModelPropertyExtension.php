@@ -134,7 +134,10 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
         }
     }
 
-    private function getDateClass(): string
+    /**
+     * @return string|\Carbon\Carbon
+     */
+    private function getDateClass()
     {
         return $this->dateClass ?? class_exists(\Illuminate\Support\Facades\Date::class)
             ? '\\'.get_class(\Illuminate\Support\Facades\Date::now())
