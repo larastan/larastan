@@ -12,6 +12,7 @@ use PHPStan\PhpDoc\TypeStringResolver;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
+use PHPStan\Type\IntegerType;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
@@ -58,6 +59,10 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             $this->initializeTables();
         }
 
+        if ($propertyName === 'id') {
+            return true;
+        }
+
         /** @var Model $modelInstance */
         $modelInstance = $classReflection->getNativeReflection()->newInstance();
         $tableName = $modelInstance->getTable();
@@ -70,14 +75,16 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             return false;
         }
 
+        $this->castPropertiesType($modelInstance);
+
         $column = $this->tables[$tableName]->columns[$propertyName];
 
         [$readableType, $writableType] = $this->getReadableAndWritableTypes($column, $modelInstance);
 
-        $this->castPropertiesType($modelInstance);
-
         $column->readableType = $readableType;
         $column->writeableType = $writableType;
+
+        $this->tables[$tableName]->columns[$propertyName] = $column;
 
         return true;
     }
@@ -86,6 +93,14 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
         ClassReflection $classReflection,
         string $propertyName
     ): PropertyReflection {
+        if ($propertyName === 'id') {
+            return new ModelProperty(
+                $classReflection,
+                new IntegerType(),
+                new IntegerType()
+            );
+        }
+
         /** @var Model $modelInstance */
         $modelInstance = $classReflection->getNativeReflection()->newInstance();
         $tableName = $modelInstance->getTable();
