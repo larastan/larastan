@@ -100,6 +100,10 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
     private function initializeTables(): void
     {
+        if (! is_dir(database_path().'/migrations')) {
+            return;
+        }
+
         $schemaAggregator = new SchemaAggregator();
         $files = $this->getMigrationFiles(database_path().'/migrations');
         $filesArray = iterator_to_array($files);
