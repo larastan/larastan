@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Features\Properties;
 
+use App\Account;
 use App\User;
 use Carbon\Carbon as BaseCarbon;
 use Illuminate\Support\Carbon;
@@ -12,6 +13,9 @@ class ModelPropertyExtension
 {
     /** @var User */
     private $user;
+
+    /** @var Account */
+    private $account;
 
     public function testPropertyReturnType(): int
     {
@@ -46,5 +50,10 @@ class ModelPropertyExtension
         $this->user->unknown_column = 'foo';
 
         return $this->user->unknown_column;
+    }
+
+    public function testMigrationWithoutSchemaFacadeImport(): string
+    {
+        return $this->account->active;
     }
 }
