@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Features\Properties;
 
 use App\User;
+use Carbon\Carbon as BaseCarbon;
 use Illuminate\Support\Carbon;
 
 class ModelPropertyExtension
@@ -17,7 +18,10 @@ class ModelPropertyExtension
         return $this->user->id;
     }
 
-    public function testDateReturnType(): ?Carbon
+    /**
+     * @return Carbon|BaseCarbon|null
+     */
+    public function testDateReturnType()
     {
         return $this->user->created_at;
     }
@@ -27,6 +31,7 @@ class ModelPropertyExtension
         $this->user->created_at = 'test';
         $this->user->created_at = now();
         $this->user->created_at = null;
+        $this->user->created_at = BaseCarbon::now();
     }
 
     /** @return array<int, string> */
