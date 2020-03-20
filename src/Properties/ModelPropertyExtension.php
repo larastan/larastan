@@ -155,9 +155,15 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
     private function getDateClass(): string
     {
-        return $this->dateClass ?? class_exists(\Illuminate\Support\Facades\Date::class)
+        if ($this->dateClass) {
+            return $this->dateClass;
+        }
+
+        $dateClass = class_exists(\Illuminate\Support\Facades\Date::class)
             ? '\\'.get_class(\Illuminate\Support\Facades\Date::now())
             : '\Illuminate\Support\Carbon';
+
+        return $dateClass . '|Carbon\Carbon';
     }
 
     /**
