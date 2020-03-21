@@ -6,8 +6,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.5.3] 2020-03-21
+
 ### Added
-- Support for eloquent resources. Thanks @mr-feek ([#470](https://github.com/nunomaduro/larastan/pull/470))
+- Support for Eloquent resources. Thanks @mr-feek ([#470](https://github.com/nunomaduro/larastan/pull/470))
+- Treat Laravel ide-helper generated relationship properties as generic Collections. Thanks @mr-feek ([#479](https://github.com/nunomaduro/larastan/pull/479))
+- Treat Laravel ide-helper generated builder typehints as generic Builders. ([#497](https://github.com/nunomaduro/larastan/pull/497))
+- `id` property on any model class will be recognized as integer type. ([#499](https://github.com/nunomaduro/larastan/pull/499))
+
+### Fixed
+- Corrected parameter type of builder dynamic wheres. Thanks @mr-feek ([#482](https://github.com/nunomaduro/larastan/pull/482))
+- Added a check to see if migrations directory exists. Thanks @deleugpn ([#498](https://github.com/nunomaduro/larastan/pull/498))
+- Added `Carbon/Carbon` to possible types for a date properties in models. Thanks @arxeiss ([#500](https://github.com/nunomaduro/larastan/pull/500))
+- Fixed issue with scanning the migrations. ([#501](https://github.com/nunomaduro/larastan/pull/501))
 
 ## [0.5.2] - 2020-02-10
 
@@ -280,7 +291,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.5.2...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.5.3...HEAD
+[0.5.3]: https://github.com/nunomaduro/larastan/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/nunomaduro/larastan/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/nunomaduro/larastan/compare/v0.5.0...v0.5.1
 [0.5.0]: https://github.com/nunomaduro/larastan/compare/v0.4.3...v0.5.0
