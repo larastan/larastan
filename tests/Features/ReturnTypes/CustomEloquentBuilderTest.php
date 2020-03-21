@@ -130,3 +130,56 @@ class CustomBuilder extends Builder
         return $this->whereIn('category', $categories);
     }
 }
+
+class CustomEloquentBuilderTest1
+{
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<\Tests\Features\ReturnTypes\ModelWithCustomBuilderAndDocBlocks>
+     */
+    public function testGetModelFromModelWithCustomBuilderQuery()
+    {
+        return ModelWithCustomBuilderAndDocBlocks::query()->get();
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Collection<\Tests\Features\ReturnTypes\ModelWithCustomBuilderAndDocBlocks>
+     */
+    public function testAllModelFromModelWithCustomBuilderQuery()
+    {
+        return ModelWithCustomBuilderAndDocBlocks::all();
+    }
+
+    /**
+     * @return CustomBuilder2<\Tests\Features\ReturnTypes\ModelWithCustomBuilderAndDocBlocks>
+     */
+    public function testQueryModelFromModelWithCustomBuilderQuery()
+    {
+        return ModelWithCustomBuilderAndDocBlocks::query();
+    }
+}
+
+/**
+ * @method static \Tests\Features\ReturnTypes\CustomBuilder2|\Tests\Features\ReturnTypes\ModelWithCustomBuilderAndDocBlocks newModelQuery()
+ * @method static \Tests\Features\ReturnTypes\CustomBuilder2|\Tests\Features\ReturnTypes\ModelWithCustomBuilderAndDocBlocks newQuery()
+ * @method static \Tests\Features\ReturnTypes\CustomBuilder2|\Tests\Features\ReturnTypes\ModelWithCustomBuilderAndDocBlocks query()
+ */
+class ModelWithCustomBuilderAndDocBlocks extends Model
+{
+    /**
+     * @param \Illuminate\Database\Query\Builder $query
+     *
+     * @return CustomBuilder2<\Tests\Features\ReturnTypes\ModelWithCustomBuilderAndDocBlocks>
+     */
+    public function newEloquentBuilder($query): CustomBuilder2
+    {
+        return new CustomBuilder2($query);
+    }
+}
+
+/**
+ * @template TModelClass
+ * @extends Builder<TModelClass>
+ */
+class CustomBuilder2 extends Builder
+{
+}

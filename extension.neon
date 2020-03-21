@@ -174,3 +174,8 @@ services:
         class: NunoMaduro\Larastan\Types\GenericEloquentCollectionTypeNodeResolverExtension
         tags:
             - phpstan.phpDoc.typeNodeResolverExtension
+
+    -
+        class: NunoMaduro\Larastan\Types\GenericEloquentBuilderTypeNodeResolverExtension
+        tags:
+            - phpstan.phpDoc.typeNodeResolverExtension
