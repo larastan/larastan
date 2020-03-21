@@ -15,3 +15,6 @@ Contributions are welcome, and are accepted via pull requests. Please review the
 * Please remember that we follow [SemVer](http://semver.org/).
 
 We have [StyleCI](https://styleci.io/) setup to automatically fix any code style issues.
+
+## Tests
+Our current testsuite involves running `phpstan` on each individual file in `tests/Features` with our extension file loaded. The test will fail if phpstan fails on the given file. There is currently not a way for us to assert that larastan will fail for a given test suite, so it is difficult to test for expected failures in analysis.
