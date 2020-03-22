@@ -42,6 +42,12 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
             return false;
         }
 
+        if (Str::startsWith($methodReflection->getName(), 'find') &&
+            $builderReflection->hasNativeMethod($methodReflection->getName())
+        ) {
+            return false;
+        }
+
         $templateTypeMap = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap();
 
         if (! $templateTypeMap->getType('TModelClass') instanceof ObjectType) {

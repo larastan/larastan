@@ -6,7 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-## [0.5.3] 2020-03-21
+## [0.5.4] - 2020-03-22
+
+### Added
+- Support for return type inference of `find*` methods on Builder class depending on passed arguments. ([#503](https://github.com/nunomaduro/larastan/pull/503))
+
+## [0.5.3] - 2020-03-21
 
 ### Added
 - Support for Eloquent resources. Thanks @mr-feek ([#470](https://github.com/nunomaduro/larastan/pull/470))
@@ -291,7 +296,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.5.3...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.5.4...HEAD
+[0.5.4]: https://github.com/nunomaduro/larastan/compare/v0.5.3...HEAD
 [0.5.3]: https://github.com/nunomaduro/larastan/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/nunomaduro/larastan/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/nunomaduro/larastan/compare/v0.5.0...v0.5.1
