@@ -92,6 +92,45 @@ class BuilderExtension
             ->where('foo', 'bar')
             ->orWhere('bar', 'baz');
     }
+
+    public function testFindWithInteger(): ?User
+    {
+        return User::with(['foo'])->find(1);
+    }
+
+    /**
+     * @return Collection<User>|null
+     */
+    public function testFindWithArray()
+    {
+        return User::with(['foo'])->find([1, 2, 3]);
+    }
+
+    public function testFindOrFailWithInteger(): User
+    {
+        return User::with(['foo'])->findOrFail(1);
+    }
+
+    /**
+     * @return Collection<User>
+     */
+    public function testFindOrFailWithArray()
+    {
+        return User::with(['foo'])->findOrFail([1, 2, 3]);
+    }
+
+    public function testFindOrNewWithInteger(): User
+    {
+        return User::with(['foo'])->findOrNew(1);
+    }
+
+    /**
+     * @return Collection<User>
+     */
+    public function testFindOrNewWithArray()
+    {
+        return User::with(['foo'])->findOrNew([1, 2, 3]);
+    }
 }
 
 class TestModel extends Model

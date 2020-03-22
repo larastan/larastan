@@ -83,11 +83,6 @@ services:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\ModelFindExtension
-        tags:
-            - phpstan.broker.dynamicStaticMethodReturnTypeExtension
-
-    -
         class: NunoMaduro\Larastan\ReturnTypes\AuthExtension
         tags:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
@@ -106,6 +101,17 @@ services:
         class: NunoMaduro\Larastan\ReturnTypes\EloquentBuilderExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\ModelFindExtension
+        tags:
+            - phpstan.broker.dynamicStaticMethodReturnTypeExtension
+
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\BuilderModelFindExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
     -
         class: NunoMaduro\Larastan\Properties\JsonResourceExtension
         tags:
