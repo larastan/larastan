@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Tests\Features\Properties;
 
 use App\Account;
+use App\Group;
+use App\Role;
 use App\User;
 use Carbon\Carbon as BaseCarbon;
 use Illuminate\Support\Carbon;
@@ -16,6 +18,12 @@ class ModelPropertyExtension
 
     /** @var Account */
     private $account;
+
+    /** @var Role */
+    private $role;
+
+    /** @var Group */
+    private $group;
 
     public function testPropertyReturnType(): int
     {
@@ -55,5 +63,31 @@ class ModelPropertyExtension
     public function testMigrationWithoutSchemaFacadeImport(): string
     {
         return $this->account->active;
+    }
+
+    public function testReadUUIDProperty(): string
+    {
+        return $this->role->id;
+    }
+
+    public function testWriteUUIDProperty(): bool
+    {
+        $role = new Role();
+        $role->id = 'abcd-efgh-ijkl';
+
+        return $role->save();
+    }
+
+    public function testReadIdPropertyWhenMigrationsCouldntBeRead(): int
+    {
+        return $this->group->id;
+    }
+
+    public function testWriteIdPropertyWhenMigrationsCouldntBeRead(): bool
+    {
+        $group = new Group();
+        $group->id = 5;
+
+        return $group->save();
     }
 }
