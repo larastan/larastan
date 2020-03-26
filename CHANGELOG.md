@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+- Fixed an issue with generics in BuilderModelFindExtension. ([#505](https://github.com/nunomaduro/larastan/pull/505))
+
 ## [0.5.4] - 2020-03-22
 
 ### Added

@@ -125,6 +125,14 @@ class BuilderExtension
     }
 
     /**
+     * @return mixed
+     */
+    public function testFindWithCustom3rdPartyBuilder()
+    {
+        return (new CustomBuilder(User::query()->getQuery()))->with('foo')->find(1);
+    }
+
+    /**
      * @return Collection<User>
      */
     public function testFindOrNewWithArray()
@@ -152,4 +160,8 @@ class TestModel extends Model
     {
         return $this->where('foo', 'bar');
     }
+}
+
+class CustomBuilder extends Builder
+{
 }
