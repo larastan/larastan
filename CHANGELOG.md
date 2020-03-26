@@ -6,8 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+
+## [0.5.5] - 2020-03-26
+
 ### Fixed
-- Fixed an issue with generics in BuilderModelFindExtension. ([#505](https://github.com/nunomaduro/larastan/pull/505))
+- Assume id property exists only when it is not found. ([#510](https://github.com/nunomaduro/larastan/pull/510))
+- Fixed an issue with generics in BuilderModelFindExtension. ([#511](https://github.com/nunomaduro/larastan/pull/511))
 
 ## [0.5.4] - 2020-03-22
 
@@ -299,7 +303,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.5.4...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.5.5...HEAD
+[0.5.5]: https://github.com/nunomaduro/larastan/compare/v0.5.4...HEAD
 [0.5.4]: https://github.com/nunomaduro/larastan/compare/v0.5.3...HEAD
 [0.5.3]: https://github.com/nunomaduro/larastan/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/nunomaduro/larastan/compare/v0.5.1...v0.5.2
