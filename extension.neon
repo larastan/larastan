@@ -7,6 +7,18 @@ parameters:
         - stubs/Model.stub
         - stubs/JsonResource.stub
         - stubs/Gate.stub
+        - stubs/Relation.stub
+        - stubs/BelongsTo.stub
+        - stubs/BelongstoMany.stub
+        - stubs/HasOneOrMany.stub
+        - stubs/HasMany.stub
+        - stubs/HasOne.stub
+        - stubs/HasOneThrough.stub
+        - stubs/HasManyThrough.stub
+        - stubs/MorphOne.stub
+        - stubs/MorphOneOrMany.stub
+        - stubs/MorphToMany.stub
+        - stubs/MorphMany.stub
     scopeClass: NunoMaduro\Larastan\Analyser\Scope
     universalObjectCratesClasses:
         - Illuminate\Http\Request
@@ -43,11 +55,6 @@ services:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: NunoMaduro\Larastan\Properties\ModelRelationsExtension
-        tags:
-            - phpstan.broker.propertiesClassReflectionExtension
-
-    -
         class: NunoMaduro\Larastan\Properties\ModelAccessorExtension
         tags:
             - phpstan.broker.propertiesClassReflectionExtension
@@ -73,9 +80,9 @@ services:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\RelationCreateExtension
+        class: NunoMaduro\Larastan\Properties\ModelRelationsExtension
         tags:
-            - phpstan.broker.dynamicMethodReturnTypeExtension
+            - phpstan.broker.propertiesClassReflectionExtension
 
     -
         class: NunoMaduro\Larastan\ReturnTypes\ModelExtension
@@ -185,3 +192,6 @@ services:
         class: NunoMaduro\Larastan\Types\GenericEloquentBuilderTypeNodeResolverExtension
         tags:
             - phpstan.phpDoc.typeNodeResolverExtension
+
+    -
+        class: NunoMaduro\Larastan\Types\RelationParserHelper

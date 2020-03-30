@@ -65,7 +65,7 @@ class FeaturesTest extends TestCase
         $result = json_decode($jsonResult[0], true);
 
         if (! $result || $result['totals']['errors'] > 0 || $result['totals']['file_errors'] > 0) {
-            $this->fail($jsonResult[0]);
+            $this->fail(json_encode(json_decode($jsonResult[0]), JSON_PRETTY_PRINT));
         }
 
         return 0;

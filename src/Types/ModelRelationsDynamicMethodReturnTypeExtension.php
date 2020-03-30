@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Types;
 
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use NunoMaduro\Larastan\Concerns\HasContainer;
@@ -14,12 +13,21 @@ use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
+use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
 class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
     use HasContainer;
+
+    /** @var RelationParserHelper */
+    private $relationParserHelper;
+
+    public function __construct(RelationParserHelper $relationParserHelper)
+    {
+        $this->relationParserHelper = $relationParserHelper;
+    }
 
     public function getClass(): string
     {
@@ -47,12 +55,33 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
             return false;
         }
 
-        return ! in_array($methodReflection->getName(), [
+        if (in_array($methodReflection->getName(), [
             'hasOne', 'hasOneThrough', 'morphOne',
             'belongsTo', 'morphTo',
             'hasMany', 'hasManyThrough', 'morphMany',
             'belongsToMany', 'morphToMany', 'morphedByMany',
-        ], true);
+        ], true)) {
+            return false;
+        }
+
+        $fileName = $methodReflection
+            ->getDeclaringClass()
+            ->getNativeReflection()
+            ->getMethod($methodReflection->getName())
+            ->getFileName();
+
+        if (! is_string($fileName)) {
+            return false;
+        }
+
+        $relatedModel = $this
+            ->relationParserHelper
+            ->findRelatedModelInRelationMethod(
+                $fileName,
+                $methodReflection->getName()
+            );
+
+        return $relatedModel !== null;
     }
 
     /**
@@ -61,7 +90,6 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
      * @param Scope            $scope
      *
      * @return Type
-     * @throws BindingResolutionException
      * @throws ShouldNotHappenException
      */
     public function getTypeFromMethodCall(
@@ -72,13 +100,21 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
         /** @var ObjectType $returnType */
         $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
 
-        return new RelationType(
-            $returnType->getClassName(),
-            get_class(
-                $this->getContainer()->make($methodReflection->getDeclaringClass()->getName())
-                    ->{$methodReflection->getName()}()
-                    ->getRelated()
-            )
-        );
+        /** @var string $fileName */
+        $fileName = $methodReflection
+            ->getDeclaringClass()
+            ->getNativeReflection()
+            ->getMethod($methodReflection->getName())
+            ->getFileName();
+
+        /** @var string $relatedModelClassName */
+        $relatedModelClassName = $this
+            ->relationParserHelper
+            ->findRelatedModelInRelationMethod(
+                $fileName,
+                $methodReflection->getName()
+            );
+
+        return new GenericObjectType($returnType->getClassName(), [new ObjectType($relatedModelClassName)]);
     }
 }

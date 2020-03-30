@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Features\Properties;
 
+use App\Account;
 use App\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -38,53 +39,35 @@ class ModelRelationsExtension
     }
 
     /** @return Collection<OtherDummyModel> */
-    public function testHasManyThroughRelation()
+    public function testHasManyThroughRelation(DummyModel $dummyModel)
     {
-        /** @var DummyModel $dummyModel */
-        $dummyModel = DummyModel::firstOrFail();
-
         return $dummyModel->hasManyThroughRelation;
     }
 
-    public function testBelongsTo(): ?DummyModel
+    public function testBelongsTo(OtherDummyModel $otherDummyModel): ?DummyModel
     {
-        /** @var OtherDummyModel $otherDummyModel */
-        $otherDummyModel = OtherDummyModel::firstOrFail();
-
         return $otherDummyModel->belongsToRelation;
     }
 
     /** @return mixed */
-    public function testMorphTo()
+    public function testMorphTo(OtherDummyModel $otherDummyModel)
     {
-        /** @var OtherDummyModel $otherDummyModel */
-        $otherDummyModel = OtherDummyModel::firstOrFail();
-
         return $otherDummyModel->morphToRelation;
     }
 
     /** @return mixed */
-    public function testRelationWithoutReturnType()
+    public function testRelationWithoutReturnType(DummyModel $dummyModel)
     {
-        /** @var DummyModel $dummyModel */
-        $dummyModel = DummyModel::firstOrFail();
-
         return $dummyModel->relationWithoutReturnType;
     }
 
-    public function testCollectionMethodFirstOnRelation(): ?OtherDummyModel
+    public function testCollectionMethodFirstOnRelation(DummyModel $dummyModel): ?OtherDummyModel
     {
-        /** @var DummyModel $dummyModel */
-        $dummyModel = DummyModel::firstOrFail();
-
         return $dummyModel->hasManyRelation->first();
     }
 
-    public function testCollectionMethodFindOnRelation(): ?OtherDummyModel
+    public function testCollectionMethodFindOnRelation(DummyModel $dummyModel): ?OtherDummyModel
     {
-        /** @var DummyModel $dummyModel */
-        $dummyModel = DummyModel::firstOrFail();
-
         return $dummyModel->hasManyRelation->find(1);
     }
 
@@ -97,6 +80,11 @@ class ModelRelationsExtension
         }
 
         return null;
+    }
+
+    public function testModelWithRelationDefinedInTrait(Account $account): ?User
+    {
+        return $account->ownerRelation;
     }
 }
 

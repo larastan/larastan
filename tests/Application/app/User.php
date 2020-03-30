@@ -38,11 +38,17 @@ class User extends Authenticatable
         'password', 'remember_token',
     ];
 
+    public function id(): int
+    {
+        return $this->id;
+    }
+
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('active', 1);
     }
 
+    /** @phpstan-return BelongsTo<Group> */
     public function group(): BelongsTo
     {
         return $this->belongsTo(Group::class);

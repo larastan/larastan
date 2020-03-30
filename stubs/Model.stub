@@ -5,4 +5,6 @@ namespace Illuminate\Database\Eloquent;
 /**
  * @implements \ArrayAccess<string, mixed>
  */
-abstract class Model implements \JsonSerializable, \ArrayAccess {}
+abstract class Model implements \JsonSerializable, \ArrayAccess
+{
+}

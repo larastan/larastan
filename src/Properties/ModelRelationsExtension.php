@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Concerns;
-use NunoMaduro\Larastan\Types\RelationType;
+use NunoMaduro\Larastan\Types\RelationParserHelper;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\Dummy\DummyPropertyReflection;
@@ -30,6 +30,14 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
     use Concerns\HasBroker;
     use Concerns\HasContainer;
 
+    /** @var RelationParserHelper */
+    private $relationParserHelper;
+
+    public function __construct(RelationParserHelper $relationParserHelper)
+    {
+        $this->relationParserHelper = $relationParserHelper;
+    }
+
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
     {
         if (! $classReflection->isSubclassOf(Model::class)) {
@@ -47,17 +55,27 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
             return new DummyPropertyReflection();
         }
 
-        /** @var ObjectType|RelationType $relationType */
+        /** @var ObjectType $relationType */
         $relationType = $method->getVariants()[0]->getReturnType();
         $relationClass = $relationType->getClassName();
-        $relatedModel = $relationType instanceof RelationType ?
-            $relationType->getRelatedModel() :
-            get_class($this->getContainer()->make($classReflection->getName())->{$propertyName}()->getRelated());
+
+        /** @var string $filename */
+        $filename = $classReflection->getNativeReflection()->getMethod($propertyName)->getFileName();
+        $relatedModelClass = $this->relationParserHelper->findRelatedModelInRelationMethod(
+            $filename,
+            $propertyName
+        );
+
+        if ($relatedModelClass === null) {
+            $relatedModelClass = Model::class;
+        }
+
+        $relatedModel = new ObjectType($relatedModelClass);
 
         if (Str::contains($relationClass, 'Many')) {
             return new ModelProperty(
                 $classReflection,
-                new GenericObjectType(Collection::class, [new ObjectType($relatedModel)]),
+                new GenericObjectType(Collection::class, [$relatedModel]),
                 new NeverType(), false
             );
         }
@@ -70,7 +88,7 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
         }
 
         return new ModelProperty($classReflection, new UnionType([
-            new ObjectType($relatedModel),
+            $relatedModel,
             new NullType(),
         ]), new NeverType(), false);
     }

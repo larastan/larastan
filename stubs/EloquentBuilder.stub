@@ -5,6 +5,14 @@ namespace Illuminate\Database\Eloquent;
 /**
  * @template TModelClass
  */
-class Builder {
+class Builder
+{
+    /** @phpstan-return TModelClass */
+    public function getModel();
 
+    /**
+     * @param array<string, mixed> $attributes
+     * @phpstan-return TModelClass
+     */
+    public function create(array $attributes = []);
 }
