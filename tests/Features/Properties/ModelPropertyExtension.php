@@ -30,6 +30,11 @@ class ModelPropertyExtension
         return $this->user->id;
     }
 
+    public function testBooleanProperty(): bool
+    {
+        return $this->user->blocked;
+    }
+
     /**
      * @return Carbon|BaseCarbon|null
      */

@@ -197,16 +197,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
             case 'boolean':
             case 'bool':
-                switch ((string) config('database.default')) {
-                    case 'sqlite':
-                    case 'mysql':
-                        $writableType = '0|1|boolean';
-                        $readableType = '0|1';
-                        break;
-                    default:
-                        $readableType = $writableType = 'boolean';
-                        break;
-                }
+                $readableType = $writableType = 'boolean';
                 break;
             case 'enum':
                 if (! $column->options) {
