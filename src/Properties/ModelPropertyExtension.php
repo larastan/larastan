@@ -195,15 +195,16 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
                 $readableType = $writableType = $column->readableType.($column->nullable ? '|null' : '');
                 break;
 
+            case 'boolean':
             case 'bool':
                 switch ((string) config('database.default')) {
                     case 'sqlite':
                     case 'mysql':
-                        $writableType = '0|1|bool';
+                        $writableType = '0|1|boolean';
                         $readableType = '0|1';
                         break;
                     default:
-                        $readableType = $writableType = 'bool';
+                        $readableType = $writableType = 'boolean';
                         break;
                 }
                 break;
