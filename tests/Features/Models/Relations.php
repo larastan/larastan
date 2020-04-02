@@ -10,6 +10,7 @@ use App\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
@@ -30,19 +31,13 @@ class Relations
         return (new User())->accounts()->whereFoo(['bar']);
     }
 
-    public function testCreateWithRelation(): Account
+    public function testCreateWithRelation(User $user): Account
     {
-        /** @var User $user */
-        $user = User::first();
-
         return $user->accounts()->create();
     }
 
-    public function testCustomRelationCreate(): Account
+    public function testCustomRelationCreate(User $user): Account
     {
-        /** @var User $user */
-        $user = User::first();
-
         return $user->syncableRelation()->create();
     }
 
@@ -56,70 +51,46 @@ class Relations
         return (new User())->accounts()->where('foo', 'bar')->first();
     }
 
-    public function testIncrementOnRelation(): int
+    public function testIncrementOnRelation(User $user): int
     {
-        /** @var User $user */
-        $user = new User;
-
         return $user->accounts()->increment('counter');
     }
 
-    public function testDecrementOnRelation(): int
+    public function testDecrementOnRelation(User $user): int
     {
-        /** @var User $user */
-        $user = new User;
-
         return $user->accounts()->decrement('counter');
     }
 
-    public function testIncrementWithAmountOnRelation(): int
+    public function testIncrementWithAmountOnRelation(User $user): int
     {
-        /** @var User $user */
-        $user = new User;
-
         return $user->accounts()->increment('counter', 5);
     }
 
-    public function testDecrementWithAmountOnRelation(): int
+    public function testDecrementWithAmountOnRelation(User $user): int
     {
-        /** @var User $user */
-        $user = new User;
-
         return $user->accounts()->decrement('counter', 5);
     }
 
-    public function testPaginate(): LengthAwarePaginator
+    public function testPaginate(User $user): LengthAwarePaginator
     {
-        /** @var User $user */
-        $user = new User;
-
         return $user->accounts()->paginate(5);
     }
 
-    public function testMorph(): MorphTo
+    public function testMorph(User $user): MorphTo
     {
-        /** @var User $user */
-        $user = new User;
-
         return $user->addressable()->where('foo', 'bar');
     }
 
-    public function testModelScopesOnRelation(): HasMany
+    public function testModelScopesOnRelation(User $user): HasMany
     {
-        /** @var User $user */
-        $user = new User;
-
         return $user->accounts()->active();
     }
 
     /**
      * @phpstan-return Collection<Account>
      */
-    public function testGetModelScopesOnRelation(): Collection
+    public function testGetModelScopesOnRelation(User $user): Collection
     {
-        /** @var User $user */
-        $user = new User;
-
         return $user->accounts()->active()->get();
     }
 
@@ -160,6 +131,14 @@ class Relations
     public function it_doesnt_treat_whereHas_as_dynamic_where(): User
     {
         return User::with('accounts')->whereHas('accounts')->firstOrFail();
+    }
+
+    /**
+     * @phpstan-return BelongsTo<User>
+     */
+    public function testRelationWithTrait(Account $account): BelongsTo
+    {
+        return $account->ownerRelation();
     }
 }
 

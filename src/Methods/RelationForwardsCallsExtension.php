@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
+use Illuminate\Database\Eloquent\Relations\Relation;
 use NunoMaduro\Larastan\Concerns\HasBroker;
-use NunoMaduro\Larastan\Reflection\RelationClassReflection;
-use NunoMaduro\Larastan\Types\RelationType;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\Dummy\DummyMethodReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
+use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\ObjectType;
 
 final class RelationForwardsCallsExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
 {
@@ -19,23 +20,31 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        return $classReflection instanceof RelationClassReflection;
+        if (! $classReflection->isSubclassOf(Relation::class)) {
+            return false;
+        }
+
+        return $classReflection->getActiveTemplateTypeMap()->getType('TRelatedModel') !== null;
     }
 
     public function getMethod(
         ClassReflection $classReflection,
         string $methodName
     ): MethodReflection {
-        if (! ($classReflection instanceof RelationClassReflection)) {
+        $builderHelper = new BuilderHelper($this->getBroker());
+
+        /** @var ObjectType|null $relatedModel */
+        $relatedModel = $classReflection->getActiveTemplateTypeMap()->getType('TRelatedModel');
+
+        if ($relatedModel === null) {
             return new DummyMethodReflection($methodName);
         }
 
-        $builderHelper = new BuilderHelper($this->getBroker());
         $returnMethodReflection = $builderHelper->getMethodReflectionFromBuilder(
             $classReflection,
             $methodName,
-            $classReflection->getRelatedModel(),
-            new RelationType($classReflection->getName(), $classReflection->getRelatedModel())
+            $relatedModel->getClassName(),
+            new GenericObjectType($classReflection->getName(), [$relatedModel])
         );
 
         if ($returnMethodReflection !== null) {

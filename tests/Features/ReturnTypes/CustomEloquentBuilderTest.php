@@ -15,17 +15,17 @@ class CustomEloquentBuilderTest
         return ModelWithCustomBuilder::where('foo', 'bar')->first();
     }
 
-    public function testEloquentBuilderMethodReturnsCustomBuilder(): CustomBuilder
+    public function testEloquentBuilderMethodReturnsCustomBuilder(): CustomEloquentBuilder
     {
         return ModelWithCustomBuilder::with('foo')->where('foo', 'bar');
     }
 
-    public function testModelScopeReturnsCustomBuilder(): CustomBuilder
+    public function testModelScopeReturnsCustomBuilder(): CustomEloquentBuilder
     {
         return ModelWithCustomBuilder::foo('foo')->foo('bar');
     }
 
-    public function testCustomBuilderMethodReturnsBuilder(): CustomBuilder
+    public function testCustomBuilderMethodReturnsBuilder(): CustomEloquentBuilder
     {
         return ModelWithCustomBuilder::type('foo');
     }
@@ -37,12 +37,12 @@ class CustomEloquentBuilderTest
         return $foo->customModels()->category('foo');
     }
 
-    public function testCustomBuilderMethodAfterDynamicWhere(): CustomBuilder
+    public function testCustomBuilderMethodAfterDynamicWhere(): CustomEloquentBuilder
     {
         return ModelWithCustomBuilder::whereFoo(['bar'])->type('foo')->whereFoo(['bar']);
     }
 
-    public function testCustomBuilderMethodWithQueryBuilderMethod(): CustomBuilder
+    public function testCustomBuilderMethodWithQueryBuilderMethod(): CustomEloquentBuilder
     {
         return ModelWithCustomBuilder::whereFoo(['bar'])->categories(['foo'])->whereFoo(['bar']);
     }
@@ -70,12 +70,12 @@ class FooModel extends Model
 
 class ModelWithCustomBuilder extends Model
 {
-    public function scopeFoo(CustomBuilder $query, string $foo): CustomBuilder
+    public function scopeFoo(CustomEloquentBuilder $query, string $foo): CustomEloquentBuilder
     {
         return $query->where(['foo' => $foo]);
     }
 
-    public function testCustomBuilderReturnType(): CustomBuilder
+    public function testCustomBuilderReturnType(): CustomEloquentBuilder
     {
         return $this->where('foo', 'bar');
     }
@@ -83,11 +83,11 @@ class ModelWithCustomBuilder extends Model
     /**
      * @param \Illuminate\Database\Query\Builder $query
      *
-     * @return CustomBuilder<ModelWithCustomBuilder>
+     * @return CustomEloquentBuilder<ModelWithCustomBuilder>
      */
-    public function newEloquentBuilder($query): CustomBuilder
+    public function newEloquentBuilder($query): CustomEloquentBuilder
     {
-        return new CustomBuilder($query);
+        return new CustomEloquentBuilder($query);
     }
 }
 
@@ -95,15 +95,15 @@ class ModelWithCustomBuilder extends Model
  * @template TModelClass
  * @extends Builder<TModelClass>
  */
-class CustomBuilder extends Builder
+class CustomEloquentBuilder extends Builder
 {
     /**
      * @param string $category
      *
-     * @return CustomBuilder
-     * @phpstan-return CustomBuilder<TModelClass>
+     * @return CustomEloquentBuilder
+     * @phpstan-return CustomEloquentBuilder<TModelClass>
      */
-    public function category(string $category): CustomBuilder
+    public function category(string $category): CustomEloquentBuilder
     {
         return $this->where('category', $category);
     }
@@ -111,10 +111,10 @@ class CustomBuilder extends Builder
     /**
      * @param string $type
      *
-     * @return CustomBuilder
-     * @phpstan-return CustomBuilder<TModelClass>
+     * @return CustomEloquentBuilder
+     * @phpstan-return CustomEloquentBuilder<TModelClass>
      */
-    public function type(string $type): CustomBuilder
+    public function type(string $type): CustomEloquentBuilder
     {
         return $this->where(['type' => $type]);
     }
@@ -122,10 +122,10 @@ class CustomBuilder extends Builder
     /**
      * @param string[] $categories
      *
-     * @return CustomBuilder
-     * @phpstan-return CustomBuilder<TModelClass>
+     * @return CustomEloquentBuilder
+     * @phpstan-return CustomEloquentBuilder<TModelClass>
      */
-    public function categories(array $categories): CustomBuilder
+    public function categories(array $categories): CustomEloquentBuilder
     {
         return $this->whereIn('category', $categories);
     }

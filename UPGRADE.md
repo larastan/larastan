@@ -1,5 +1,21 @@
 # Upgrade Guide
 
+## Unreleased
+
+### Generic Relations
+Eloquent relations are now generic classes. Internally, this makes couple of things easier and more flexible. In general it shouldn't affect your code. The only caveat is if you define your custom relations. If you do that, you have to mark your custom relation class as generic like so:
+
+```php
+/**
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @extends Relation<TRelatedModel>
+ */
+class CustomRelation extends Relation
+{
+    //...
+}
+```
+
 ## Upgrading To 0.5.3 From 0.5.2
 
 #### Eloquent Resources

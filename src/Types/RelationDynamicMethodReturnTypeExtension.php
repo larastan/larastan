@@ -13,6 +13,7 @@ use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
+use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
@@ -56,9 +57,9 @@ class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTyp
         }
 
         if (! $returnType instanceof ObjectType) {
-            throw new ShouldNotHappenException();
+            return $returnType;
         }
 
-        return new RelationType($returnType->getClassName(), $argType->getValue());
+        return new GenericObjectType($returnType->getClassName(), [new ObjectType($argType->getValue())]);
     }
 }

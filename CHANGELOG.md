@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- Eloquent relations are now also generic.
 
 ## [0.5.5] - 2020-03-26
 
