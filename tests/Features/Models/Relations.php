@@ -6,6 +6,7 @@ namespace Tests\Features\Models;
 
 use App\Account;
 use App\Group;
+use App\Role;
 use App\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
@@ -87,11 +88,11 @@ class Relations
     }
 
     /**
-     * @phpstan-return Collection<Account>
+     * @return Collection<Role>
      */
-    public function testGetModelScopesOnRelation(User $user): Collection
+    public function testRelationWithPivot(User $user): Collection
     {
-        return $user->accounts()->active()->get();
+        return $user->roles()->get();
     }
 
     /**

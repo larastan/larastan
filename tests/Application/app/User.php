@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -67,6 +68,13 @@ class User extends Authenticatable
     public function addressable(): MorphTo
     {
         return $this->morphTo(null, 'model_type', 'model_id');
+    }
+
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class)
+            ->withPivot('some_column')
+            ->wherePivotIn('some_column', [1, 2, 3]);
     }
 
     public function hasManySyncable($related, $foreignKey = null, $localKey = null): HasManySyncable

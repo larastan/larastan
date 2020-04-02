@@ -39,8 +39,8 @@ class RelationParserHelper
 
         $methodCall = $returnStmt->expr;
 
-        if ($returnStmt->expr->var instanceof MethodCall) {
-            $methodCall = $returnStmt->expr->var;
+        while ($methodCall->var instanceof MethodCall) {
+            $methodCall = $methodCall->var;
         }
 
         if (count($methodCall->args) < 1) {
