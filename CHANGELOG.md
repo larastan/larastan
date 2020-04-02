@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+- Fixed relation methods with custom builders always returning custom builder. ([#520](https://github.com/nunomaduro/larastan/pull/520))
+
 ### Added
 - Eloquent relations are now also generic.
 

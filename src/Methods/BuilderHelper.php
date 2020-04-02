@@ -190,7 +190,10 @@ class BuilderHelper
                 $returnType = $customReturnType;
             }
 
-            if ($customBuilderName || count(array_intersect([EloquentBuilder::class, QueryBuilder::class], $returnType->getReferencedClasses())) > 0) {
+            $isBuilderReferenced = (count(array_intersect([EloquentBuilder::class, QueryBuilder::class], $returnType->getReferencedClasses())) > 0)
+                || (new ObjectType(EloquentBuilder::class))->isSuperTypeOf($returnType)->yes();
+
+            if ($isBuilderReferenced) {
                 $returnType = $customReturnType;
             }
 
