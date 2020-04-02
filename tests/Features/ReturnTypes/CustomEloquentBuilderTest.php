@@ -58,6 +58,16 @@ class CustomEloquentBuilderTest
 
         return $query->first();
     }
+
+    public function testCustomBuilderCountMethodThroughRelation(FooModel $foo): int
+    {
+        return $foo->customModels()->count();
+    }
+
+    public function testCustomBuilderExistsMethodThroughRelation(FooModel $foo): bool
+    {
+        return $foo->customModels()->exists();
+    }
 }
 
 class FooModel extends Model
