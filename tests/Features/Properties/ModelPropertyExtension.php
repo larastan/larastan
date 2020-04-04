@@ -9,6 +9,7 @@ use App\Group;
 use App\Role;
 use App\User;
 use Carbon\Carbon as BaseCarbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 
 class ModelPropertyExtension
@@ -95,4 +96,16 @@ class ModelPropertyExtension
 
         return $group->save();
     }
+
+    /** @test */
+    public function it_knows_name_of_primary_key_column(): void
+    {
+        $model = new CustomPrimaryKeyColumn();
+        $primaryKey = $model->custom_primary_key_name;
+    }
+}
+
+class CustomPrimaryKeyColumn extends Model
+{
+    protected $primaryKey = 'custom_primary_key_name';
 }

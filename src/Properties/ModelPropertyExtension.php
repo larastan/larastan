@@ -59,12 +59,13 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             $this->initializeTables();
         }
 
-        if ($propertyName === 'id') {
+        /** @var Model $modelInstance */
+        $modelInstance = $classReflection->getNativeReflection()->newInstance();
+
+        if ($propertyName === $modelInstance->getKeyName()) {
             return true;
         }
 
-        /** @var Model $modelInstance */
-        $modelInstance = $classReflection->getNativeReflection()->newInstance();
         $tableName = $modelInstance->getTable();
 
         if (! array_key_exists($tableName, $this->tables)) {
@@ -101,7 +102,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             (! array_key_exists($tableName, $this->tables)
                 || ! array_key_exists($propertyName, $this->tables[$tableName]->columns)
             )
-            && $propertyName === 'id'
+            && $propertyName === $modelInstance->getKeyName()
         ) {
             return new ModelProperty(
                 $classReflection,
