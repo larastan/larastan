@@ -187,7 +187,10 @@ services:
         class: NunoMaduro\Larastan\Types\GenericEloquentCollectionTypeNodeResolverExtension
         tags:
             - phpstan.phpDoc.typeNodeResolverExtension
-
+    -
+        class: NunoMaduro\Larastan\Rules\EloquentWhereParametersRule
+        tags:
+            - phpstan.rules.rule
     -
         class: NunoMaduro\Larastan\Types\GenericEloquentBuilderTypeNodeResolverExtension
         tags:
@@ -195,3 +198,5 @@ services:
 
     -
         class: NunoMaduro\Larastan\Types\RelationParserHelper
+
+
