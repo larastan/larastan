@@ -11,6 +11,7 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\VerbosityLevel;
 
 class EloquentWhereParametersRule implements Rule
 {
@@ -81,9 +82,17 @@ class EloquentWhereParametersRule implements Rule
                 $columnValue = $item->value->value;
                 if (!$modelReflection->hasProperty($columnName)) {
                     $errors[] = "cannot find property $columnName on $modelClassName";
+                    continue;
                 }
 
-                // @todo: ensure value is proper type
+                $propertyValueType = $modelReflection->getProperty($columnName, $scope)->getWritableType();
+                $valueType = $scope->getType($item->value);
+
+                // @todo: strict types? not sure if that's an option somewhere or what we should assume
+                if ($propertyValueType->accepts($valueType, true)->no()) {
+                    $errors[] = "property $columnName of $modelClassName expects value of type {$propertyValueType->describe(VerbosityLevel::getRecommendedLevelByType($propertyValueType))}, but got {$valueType->describe(VerbosityLevel::getRecommendedLevelByType($valueType))} $columnValue";
+                    continue;
+                }
                 // @todo: is there a way to check if the property is fillable?
             }
         }
