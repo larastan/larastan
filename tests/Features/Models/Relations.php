@@ -141,6 +141,14 @@ class Relations
     {
         return $account->ownerRelation();
     }
+
+    /** @test */
+    public function it_has_relationship_count_properties(): void
+    {
+        User::withCount('accounts')->get()->each(function (User $user) {
+            echo $user->accounts_count;
+        });
+    }
 }
 
 /**

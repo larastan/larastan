@@ -16,6 +16,7 @@ use PHPStan\Reflection\Dummy\DummyPropertyReflection;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\IntegerRangeType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\NullType;
@@ -44,11 +45,19 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
             return false;
         }
 
+        if (Str::endsWith($propertyName, '_count')) {
+            $propertyName = Str::beforeLast($propertyName, '_count');
+        }
+
         return $classReflection->hasNativeMethod($propertyName);
     }
 
     public function getProperty(ClassReflection $classReflection, string $propertyName): PropertyReflection
     {
+        if (Str::endsWith($propertyName, '_count')) {
+            return new ModelProperty($classReflection, IntegerRangeType::fromInterval(0, null), IntegerRangeType::fromInterval(0, null), false);
+        }
+
         $method = $classReflection->getNativeMethod($propertyName);
 
         if (! (new ObjectType(Relation::class))->isSuperTypeOf($method->getVariants()[0]->getReturnType())->yes()) {
