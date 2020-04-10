@@ -7,8 +7,12 @@ namespace NunoMaduro\Larastan;
 use Composer\Autoload\ClassLoader;
 use Composer\Autoload\ClassMapGenerator;
 use Illuminate\Contracts\Foundation\Application;
-use function in_array;
+use Illuminate\Foundation\Application;
+use Illuminate\Support\ServiceProvider;
 use Orchestra\Testbench\Concerns\CreatesApplication;
+use ReflectionClass;
+
+use function in_array;
 
 /**
  * @internal
@@ -49,7 +53,7 @@ final class ApplicationResolver
     /**
      * {@inheritdoc}
      */
-    protected function getEnvironmentSetUp(\Illuminate\Foundation\Application $app): void
+    protected function getEnvironmentSetUp(Application $app): void
     {
         // ..
     }
@@ -62,8 +66,8 @@ final class ApplicationResolver
      */
     private static function isServiceProvider(string $class): bool
     {
-        return in_array(\Illuminate\Support\ServiceProvider::class, class_parents($class), true) &&
-               ! ((new \ReflectionClass($class))->isAbstract());
+        return in_array(ServiceProvider::class, class_parents($class), true) &&
+               ! ((new ReflectionClass($class))->isAbstract());
     }
 
     /**
@@ -99,13 +103,11 @@ final class ApplicationResolver
      */
     private static function getProjectSearchDirs(string $namespace): array
     {
-        $reflection = new \ReflectionClass(ClassLoader::class);
+        $reflection = new ReflectionClass(ClassLoader::class);
         /** @var string $filename */
         $filename = $reflection->getFileName();
-        $composerDir = dirname($filename);
 
-        $file = $composerDir.DIRECTORY_SEPARATOR.'autoload_psr4.php';
-        $raw = include $file;
+        $raw = include dirname($filename).DIRECTORY_SEPARATOR.'autoload_psr4.php';
 
         return $raw[$namespace];
     }
