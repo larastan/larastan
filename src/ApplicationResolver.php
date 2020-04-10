@@ -6,10 +6,10 @@ namespace NunoMaduro\Larastan;
 
 use Composer\Autoload\ClassLoader;
 use Composer\Autoload\ClassMapGenerator;
-use function in_array;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
+use function in_array;
 use Orchestra\Testbench\Concerns\CreatesApplication;
 use ReflectionClass;
 
