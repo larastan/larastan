@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan;
 
+use Composer\Autoload\ClassLoader;
 use Composer\Autoload\ClassMapGenerator;
 use Illuminate\Contracts\Foundation\Application;
 use function in_array;
@@ -98,7 +99,7 @@ final class ApplicationResolver
      */
     private static function getProjectSearchDirs(string $namespace): array
     {
-        $reflection = new \ReflectionClass(\Composer\Autoload\ClassLoader::class);
+        $reflection = new \ReflectionClass(ClassLoader::class);
         /** @var string $filename */
         $filename = $reflection->getFileName();
         $composerDir = dirname($filename);
