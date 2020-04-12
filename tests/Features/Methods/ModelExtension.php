@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Features\Methods;
 
+use App\Account;
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -214,6 +215,11 @@ class ModelExtension
         $thread = Thread::findOrFail(5);
 
         return $thread->custom_property;
+    }
+
+    public function testFirstOrCreateWithRelation(User $user): Account
+    {
+        return $user->accounts()->firstOrCreate([]);
     }
 }
 

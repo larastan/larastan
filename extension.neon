@@ -1,5 +1,6 @@
 parameters:
     stubFiles:
+        - stubs/Arrayable.stub
         - stubs/Enumerable.stub
         - stubs/EloquentBuilder.stub
         - stubs/Collection.stub

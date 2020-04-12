@@ -8,3 +8,5 @@ namespace Illuminate\Database\Eloquent;
 abstract class Model implements \JsonSerializable, \ArrayAccess
 {
 }
+
+class ModelNotFoundException extends \RuntimeException {}
