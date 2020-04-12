@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Iterator;
 use PHPStan\Parser\CachedParser;
 use PHPStan\PhpDoc\TypeStringResolver;
+use PHPStan\Reflection\Annotations\AnnotationsPropertiesClassReflectionExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
@@ -35,10 +36,14 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
     /** @var string */
     private $dateClass;
 
-    public function __construct(CachedParser $parser, TypeStringResolver $stringResolver)
+    /** @var AnnotationsPropertiesClassReflectionExtension */
+    private $annotationExtension;
+
+    public function __construct(CachedParser $parser, TypeStringResolver $stringResolver, AnnotationsPropertiesClassReflectionExtension $annotationExtension)
     {
         $this->parser = $parser;
         $this->stringResolver = $stringResolver;
+        $this->annotationExtension = $annotationExtension;
     }
 
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
@@ -52,6 +57,10 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
         }
 
         if ($classReflection->hasNativeMethod('get'.Str::studly($propertyName).'Attribute')) {
+            return false;
+        }
+
+        if ($this->annotationExtension->hasProperty($classReflection, $propertyName)) {
             return false;
         }
 

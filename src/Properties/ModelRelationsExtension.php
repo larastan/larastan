@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Types\RelationParserHelper;
+use PHPStan\Analyser\OutOfClassScope;
+use PHPStan\Reflection\Annotations\AnnotationsPropertiesClassReflectionExtension;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\Dummy\DummyPropertyReflection;
@@ -33,14 +35,22 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
     /** @var RelationParserHelper */
     private $relationParserHelper;
 
-    public function __construct(RelationParserHelper $relationParserHelper)
+    /** @var AnnotationsPropertiesClassReflectionExtension */
+    private $annotationExtension;
+
+    public function __construct(RelationParserHelper $relationParserHelper, AnnotationsPropertiesClassReflectionExtension $annotationExtension)
     {
         $this->relationParserHelper = $relationParserHelper;
+        $this->annotationExtension = $annotationExtension;
     }
 
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
     {
         if (! $classReflection->isSubclassOf(Model::class)) {
+            return false;
+        }
+
+        if ($this->annotationExtension->hasProperty($classReflection, $propertyName)) {
             return false;
         }
 
