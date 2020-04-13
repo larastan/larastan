@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Properties;
 
-use function get_class;
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Concerns;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
+use function get_class;
 
 /**
  * @internal
@@ -26,10 +27,7 @@ final class Extension implements PropertiesClassReflectionExtension, BrokerAware
     {
         $hasProperty = false;
 
-        /*
-         * @todo Consider apply this rule only for Illuminate\Contracts.
-         */
-        if ($classReflection->isInterface()) {
+        if ($classReflection->isInterface() && Str::startsWith('Illuminate\Contracts', $classReflection->getName())) {
             $concrete = $this->resolve($classReflection->getName());
 
             if ($concrete !== null) {

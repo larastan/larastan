@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
-use function get_class;
+use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 use PHPStan\Reflection\ClassReflection;
+use function get_class;
 
 /**
  * @internal
@@ -43,7 +44,7 @@ final class Contracts implements PipeContract
      */
     private function concretes(ClassReflection $classReflection): array
     {
-        if ($classReflection->isInterface()) {
+        if ($classReflection->isInterface() && Str::startsWith('Illuminate\Contracts', $classReflection->getName())) {
             $concrete = $this->resolve($classReflection->getName());
 
             if ($concrete !== null) {

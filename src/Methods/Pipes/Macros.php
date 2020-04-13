@@ -6,6 +6,7 @@ namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Carbon\Traits\Macro as CarbonMacro;
 use Closure;
+use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
@@ -44,7 +45,7 @@ final class Macros implements PipeContract
         $found = false;
         $macroTraitProperty = null;
 
-        if ($classReflection->isInterface()) {
+        if ($classReflection->isInterface() && Str::startsWith('Illuminate\Contracts', $classReflection->getName())) {
             $concrete = $this->resolve($classReflection->getName());
 
             if ($concrete !== null) {
