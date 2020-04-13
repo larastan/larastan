@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Properties;
 
+use function get_class;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Concerns;
@@ -11,7 +12,6 @@ use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
-use function get_class;
 
 /**
  * @internal
