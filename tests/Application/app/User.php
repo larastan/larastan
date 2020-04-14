@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Tests\Application\HasManySyncable;
 
 /**
@@ -42,6 +43,11 @@ class User extends Authenticatable
     public function id(): int
     {
         return $this->id;
+    }
+
+    public function getAllCapsName(): string
+    {
+        return Str::upper($this->name);
     }
 
     public function scopeActive(Builder $query): Builder

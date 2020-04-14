@@ -190,6 +190,11 @@ services:
             - phpstan.phpDoc.typeNodeResolverExtension
 
     -
+        class: NunoMaduro\Larastan\Rules\NoUnnecessaryCollectionCallRule
+        tags:
+            - phpstan.rules.rule
+
+    -
         class: NunoMaduro\Larastan\Types\GenericEloquentBuilderTypeNodeResolverExtension
         tags:
             - phpstan.phpDoc.typeNodeResolverExtension
