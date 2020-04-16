@@ -2,6 +2,7 @@
 
 namespace App;
 
+use function get_class;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -75,6 +76,16 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class)
             ->withPivot('some_column')
             ->wherePivotIn('some_column', [1, 2, 3]);
+    }
+
+    public function children(): HasMany
+    {
+        return $this->hasMany(self::class, 'parent_id');
+    }
+
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(get_class($this));
     }
 
     public function hasManySyncable($related, $foreignKey = null, $localKey = null): HasManySyncable
