@@ -10,10 +10,12 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Types\RelationParserHelper;
+use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\Annotations\AnnotationsPropertiesClassReflectionExtension;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\Dummy\DummyPropertyReflection;
+use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\Type\Generic\GenericObjectType;
@@ -58,30 +60,32 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
 
     public function getProperty(ClassReflection $classReflection, string $propertyName): PropertyReflection
     {
-        $method = $classReflection->getNativeMethod($propertyName);
+        $method = $classReflection->getMethod($propertyName, new OutOfClassScope());
 
-        if (! (new ObjectType(Relation::class))->isSuperTypeOf($method->getVariants()[0]->getReturnType())->yes()) {
+        /** @var ObjectType $returnType */
+        $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
+
+        if (! (new ObjectType(Relation::class))->isSuperTypeOf($returnType)->yes()) {
             return new DummyPropertyReflection();
         }
 
-        /** @var ObjectType $relationType */
-        $relationType = $method->getVariants()[0]->getReturnType();
-        $relationClass = $relationType->getClassName();
-
-        /** @var string $filename */
-        $filename = $classReflection->getNativeReflection()->getMethod($propertyName)->getFileName();
-        $relatedModelClass = $this->relationParserHelper->findRelatedModelInRelationMethod(
-            $filename,
-            $propertyName
-        );
-
-        if ($relatedModelClass === null) {
-            $relatedModelClass = Model::class;
+        if ($returnType instanceof GenericObjectType) {
+            /** @var ObjectType $relatedModelType */
+            $relatedModelType = $returnType->getTypes()[0];
+            $relatedModelClassName = $relatedModelType->getClassName();
+        } else {
+            $relatedModelClassName = $this
+                ->relationParserHelper
+                ->findRelatedModelInRelationMethod($method);
         }
 
-        $relatedModel = new ObjectType($relatedModelClass);
+        if ($relatedModelClassName === null) {
+            $relatedModelClassName = Model::class;
+        }
 
-        if (Str::contains($relationClass, 'Many')) {
+        $relatedModel = new ObjectType($relatedModelClassName);
+
+        if (Str::contains($returnType->getClassName(), 'Many')) {
             return new ModelProperty(
                 $classReflection,
                 new GenericObjectType(Collection::class, [$relatedModel]),
@@ -89,7 +93,7 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
             );
         }
 
-        if (Str::endsWith($relationClass, 'MorphTo')) {
+        if (Str::endsWith($returnType->getClassName(), 'MorphTo')) {
             return new ModelProperty($classReflection, new UnionType([
                 new ObjectType(Model::class),
                 new MixedType(),
