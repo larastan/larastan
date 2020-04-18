@@ -30,4 +30,26 @@ class NoUnnecessaryCollectionCallRuleTest
 
         return User::where('id', '>', 1)->{$x}()->count();
     }
+
+    /**
+     * Can't analyze the closure as a parameter to contains, so should not throw any error.
+     * @return bool
+     */
+    public function testContainsClosure(): bool
+    {
+        return User::where('id', '>', 1)->get()->contains(function (User $user): bool {
+            return $user->id === 2;
+        });
+    }
+
+    /**
+     * Can't analyze the closure as a parameter to first, so should not throw any error.
+     * @return User|null
+     */
+    public function testFirstClosure(): ?User
+    {
+        return User::where('id', '>', 1)->get()->first(function (User $user): bool {
+            return $user->id === 2;
+        });
+    }
 }

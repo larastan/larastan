@@ -41,7 +41,6 @@ class NoUnnecessaryCollectionCallRule implements Rule
      */
     protected const RISKY_METHODS = [
         'count',
-        'first',
         'isempty',
         'isnotempty',
         'last',
@@ -50,10 +49,10 @@ class NoUnnecessaryCollectionCallRule implements Rule
         'slice',
         'take',
         // Eloquent collection
-        'modelKeys',
-        'contains',
+        'diff',
+        'except',
         'find',
-        'findMany',
+        'modelkeys',
         'only',
     ];
 
@@ -65,10 +64,13 @@ class NoUnnecessaryCollectionCallRule implements Rule
     protected const RISKY_PARAM_METHODS = [
         'average',
         'avg',
+        'firstwhere',
         'max',
         'min',
         'pluck',
         'sum',
+        'where',
+        'wherestrict',
     ];
 
     /**
@@ -134,31 +136,56 @@ class NoUnnecessaryCollectionCallRule implements Rule
             return [];
         }
 
-        if ($this->isRiskyMethod($name)) {
+        if ($name->toLowerString() === 'first') {
+            if (count($node->args) === 0) {
+                // 'first', also accepts a closure as an argument.
+                return [$this->formatError($name->toString())];
+            }
+        } elseif ($this->isRiskyMethod($name)) {
             return [$this->formatError($name->toString())];
         } elseif ($this->isRiskyParamMethod($name)) {
-            if (!$this->hasStringAsOnlyArgument($node)) {
-                return [];
+            if ($this->firstArgIsDatabaseColumn($node, $scope)) {
+                return [$this->formatError($name->toString())];
             }
-            /** @var \PhpParser\Node\Scalar\String_ $firstArg */
-            $firstArg = $node->args[0]->value;
-            $columnName = $firstArg->value;
-
-            /** @var \PHPStan\Type\ObjectType $iterableType */
-            $iterableType = $scope->getType($node->var)->getIterableValueType();
-            if ((new ObjectType(Model::class))->isSuperTypeOf($iterableType)->yes()) {
-                $modelReflection = $this->reflectionProvider->getClass($iterableType->getClassName());
-
-                if (!$this->propertyExtension->hasProperty($modelReflection, $columnName)) {
-                    // Not a database property so call couldn't have been improved with a DB query.
-                    return [];
-                }
-
+        } elseif ($name->toLowerString() === 'contains' || $name->toLowerString() === 'containsstrict') {
+            // 'contains' can also be called with Model instances or keys as its first argument
+            /** @var \PhpParser\Node\Arg[] $args */
+            $args = $node->args;
+            if (count($args) === 1 && !($args[0]->value instanceof Node\Expr\Closure)) {
+                return [$this->formatError($name->toString())];
+            } elseif ($this->firstArgIsDatabaseColumn($node, $scope)) {
                 return [$this->formatError($name->toString())];
             }
         }
 
         return [];
+    }
+
+    /**
+     * Determines whether the first argument is a string and references a database column.
+     * @param MethodCall $node
+     * @param Scope $scope
+     * @return bool
+     */
+    protected function firstArgIsDatabaseColumn(MethodCall $node, Scope $scope): bool
+    {
+        /** @var \PhpParser\Node\Arg[] $args */
+        $args = $node->args;
+        if (count($args) === 0 || !($args[0]->value instanceof Node\Scalar\String_)) {
+            return false;
+        }
+
+        /** @var \PHPStan\Type\ObjectType $iterableType */
+        $iterableType = $scope->getType($node->var)->getIterableValueType();
+        if ((new ObjectType(Model::class))->isSuperTypeOf($iterableType)->yes()) {
+            $modelReflection = $this->reflectionProvider->getClass($iterableType->getClassName());
+
+            /** @var \PhpParser\Node\Scalar\String_ $firstArg */
+            $firstArg = $args[0]->value;
+            return $this->propertyExtension->hasProperty($modelReflection, $firstArg->value);
+        }
+
+        return false;
     }
 
     /**
