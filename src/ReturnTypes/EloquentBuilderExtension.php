@@ -75,14 +75,6 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
             if ($modelReflection->hasNativeMethod($scopeMethodName)) {
                 return new ObjectType(EloquentBuilder::class);
             }
-
-            if ($modelReflection->hasNativeMethod('newEloquentBuilder')) {
-                $customBuilder = $modelReflection->getNativeMethod('newEloquentBuilder')->getVariants()[0]->getReturnType();
-
-                if ($customBuilder->hasMethod($methodReflection->getName())->yes()) {
-                    return $customBuilder;
-                }
-            }
         }
 
         if (($modelType instanceof ObjectType || $modelType instanceof ThisType) && in_array($methodReflection->getName(), array_merge(BuilderHelper::MODEL_CREATION_METHODS, BuilderHelper::MODEL_RETRIEVAL_METHODS), true)) {
@@ -93,7 +85,7 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
             $builderHelper = new BuilderHelper($this->getBroker());
 
             $returnType = new GenericObjectType(
-                $builderHelper->determineBuilderType($modelType->getClassName()) ?? EloquentBuilder::class,
+                $builderHelper->determineBuilderType($modelType->getClassName()),
                 [$modelType]
             );
         }

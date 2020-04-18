@@ -73,7 +73,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
             $originalModelReflection,
             $methodName,
             $originalModelReflection->getName(),
-            new GenericObjectType($customBuilderName ?? EloquentBuilder::class, [new ObjectType($originalModelReflection->getName())])
+            new GenericObjectType($customBuilderName, [new ObjectType($originalModelReflection->getName())])
         );
 
         if ($returnMethodReflection !== null) {

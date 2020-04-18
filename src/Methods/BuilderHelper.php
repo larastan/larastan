@@ -69,7 +69,7 @@ class BuilderHelper
         );
     }
 
-    public function searchOnEloquentBuilder(string $methodName, string $modelClassName): ?MethodReflection
+    public function searchOnEloquentBuilder(ClassReflection $eloquentBuilder, string $methodName, string $modelClassName): ?MethodReflection
     {
         $model = $this->broker->getClass($modelClassName);
 
@@ -91,8 +91,6 @@ class BuilderHelper
                 $parametersAcceptor->isVariadic()
             );
         }
-
-        $eloquentBuilder = $this->broker->getClass(EloquentBuilder::class);
 
         if (! $eloquentBuilder->hasNativeMethod($methodName)) {
             return null;
@@ -128,22 +126,18 @@ class BuilderHelper
     /**
      * @param string $modelClassName
      *
-     * @return string|null
+     * @return string
      * @throws MissingMethodFromReflectionException
      * @throws ShouldNotHappenException
      */
-    public function determineBuilderType(string $modelClassName): ?string
+    public function determineBuilderType(string $modelClassName): string
     {
         $method = $this->broker->getClass($modelClassName)->getNativeMethod('newEloquentBuilder');
 
         $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
 
         if (in_array(EloquentBuilder::class, $returnType->getReferencedClasses(), true)) {
-            return null;
-        }
-
-        if (in_array(QueryBuilder::class, $returnType->getReferencedClasses(), true)) {
-            return null;
+            return EloquentBuilder::class;
         }
 
         if ($returnType instanceof ObjectType) {
@@ -162,20 +156,12 @@ class BuilderHelper
         $methodReflection = null;
         $model = $this->broker->getClass($modelName);
 
-        // Check if model has a custom builder. If yes try to find the method there.
-        $customBuilderName = $this->determineBuilderType($modelName);
+        // This can be a custom EloquentBuilder or the normal one
+        $builderName = $this->determineBuilderType($modelName);
 
-        if ($customBuilderName !== null) {
-            $customBuilder = $this->broker->getClass($customBuilderName);
+        $builderReflection = $this->broker->getClass($builderName);
 
-            if ($customBuilder->hasNativeMethod($methodName)) {
-                $methodReflection = $customBuilder->getNativeMethod($methodName);
-            }
-        }
-
-        if ($methodReflection === null) {
-            $methodReflection = $this->searchOnEloquentBuilder($methodName, $modelName);
-        }
+        $methodReflection = $this->searchOnEloquentBuilder($builderReflection, $methodName, $modelName);
 
         if ($methodReflection === null) {
             $methodReflection = $this->searchOnQueryBuilder($methodName, $modelName);

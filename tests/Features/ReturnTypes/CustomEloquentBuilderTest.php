@@ -15,21 +15,25 @@ class CustomEloquentBuilderTest
         return ModelWithCustomBuilder::where('foo', 'bar')->first();
     }
 
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
     public function testEloquentBuilderMethodReturnsCustomBuilder(): CustomEloquentBuilder
     {
         return ModelWithCustomBuilder::with('foo')->where('foo', 'bar');
     }
 
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
     public function testModelScopeReturnsCustomBuilder(): CustomEloquentBuilder
     {
         return ModelWithCustomBuilder::foo('foo')->foo('bar');
     }
 
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
     public function testCustomBuilderMethodReturnsBuilder(): CustomEloquentBuilder
     {
         return ModelWithCustomBuilder::type('foo');
     }
 
+    /** @phpstan-return HasMany<ModelWithCustomBuilder> */
     public function testCustomBuilderMethodThroughRelation(): HasMany
     {
         $foo = new FooModel();
