@@ -189,27 +189,6 @@ class NoUnnecessaryCollectionCallRule implements Rule
     }
 
     /**
-     * Returns whether the method call was called with a string as its only argument.
-     * @param MethodCall $node
-     * @return bool
-     */
-    protected function hasStringAsOnlyArgument(MethodCall $node): bool
-    {
-        /** @var \PhpParser\Node\Arg[] $args */
-        $args = $node->args;
-
-        if (count($args) !== 1) {
-            return false;
-        }
-
-        if (!($args[0]->value instanceof Node\Scalar\String_)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
      * Returns whether the method call is a call on a builder instance.
      * @param Node\Expr $call
      * @param Scope $scope
