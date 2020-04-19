@@ -7,24 +7,46 @@ namespace NunoMaduro\Larastan\Types;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\NodeFinder;
+use PHPStan\Analyser\ScopeContext;
+use PHPStan\Analyser\ScopeFactory;
 use PHPStan\Parser\CachedParser;
+use PHPStan\Reflection\MethodReflection;
+use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\Generic\GenericClassStringType;
+use PHPStan\Type\Generic\TemplateTypeMap;
+use PHPStan\Type\ObjectType;
 
 class RelationParserHelper
 {
     /** @var CachedParser */
     private $parser;
 
-    public function __construct(CachedParser $parser)
+    /** @var ScopeFactory */
+    private $scopeFactory;
+
+    public function __construct(CachedParser $parser, ScopeFactory $scopeFactory)
     {
         $this->parser = $parser;
+        $this->scopeFactory = $scopeFactory;
     }
 
-    public function findRelatedModelInRelationMethod(string $fileName, string $methodName): ?string
-    {
+    public function findRelatedModelInRelationMethod(
+        MethodReflection $methodReflection
+    ): ?string {
+        $fileName = $methodReflection
+            ->getDeclaringClass()
+            ->getNativeReflection()
+            ->getMethod($methodReflection->getName())
+            ->getFileName();
+
+        if ($fileName === false) {
+            return null;
+        }
+
         $fileStmts = $this->parser->parseFile($fileName);
 
         /** @var Node\Stmt\ClassMethod|null $relationMethod */
-        $relationMethod = $this->findMethod($methodName, $fileStmts);
+        $relationMethod = $this->findMethod($methodReflection->getName(), $fileStmts);
 
         if ($relationMethod === null) {
             return null;
@@ -47,14 +69,30 @@ class RelationParserHelper
             return null;
         }
 
-        $argValue = $methodCall->args[0]->value;
+        $scope = $this->scopeFactory->create(
+            ScopeContext::create($fileName),
+            false,
+            $methodReflection
+        );
 
-        if ($argValue instanceof Node\Expr\ClassConstFetch && $argValue->class instanceof Node\Name) {
-            return $argValue->class->toString();
+        $methodScope = $scope
+            ->enterClass($methodReflection->getDeclaringClass())
+            ->enterClassMethod($relationMethod, TemplateTypeMap::createEmpty(), [], null, null, null, false, false, false);
+
+        $argType = $methodScope->getType($methodCall->args[0]->value);
+
+        if ($argType instanceof ConstantStringType) {
+            return $argType->getValue();
         }
 
-        if ($argValue instanceof Node\Scalar\String_) {
-            return $argValue->value;
+        if ($argType instanceof GenericClassStringType) {
+            $modelType = $argType->getGenericType();
+
+            if (! $modelType instanceof ObjectType) {
+                return null;
+            }
+
+            return $modelType->getClassName();
         }
 
         return null;

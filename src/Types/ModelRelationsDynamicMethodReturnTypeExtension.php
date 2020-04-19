@@ -37,6 +37,7 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
         $variants = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
+
         $returnType = $variants->getReturnType();
 
         if (! $returnType instanceof ObjectType) {
@@ -64,22 +65,9 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
             return false;
         }
 
-        $fileName = $methodReflection
-            ->getDeclaringClass()
-            ->getNativeReflection()
-            ->getMethod($methodReflection->getName())
-            ->getFileName();
-
-        if (! is_string($fileName)) {
-            return false;
-        }
-
         $relatedModel = $this
             ->relationParserHelper
-            ->findRelatedModelInRelationMethod(
-                $fileName,
-                $methodReflection->getName()
-            );
+            ->findRelatedModelInRelationMethod($methodReflection);
 
         return $relatedModel !== null;
     }
@@ -100,20 +88,10 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
         /** @var ObjectType $returnType */
         $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
 
-        /** @var string $fileName */
-        $fileName = $methodReflection
-            ->getDeclaringClass()
-            ->getNativeReflection()
-            ->getMethod($methodReflection->getName())
-            ->getFileName();
-
         /** @var string $relatedModelClassName */
         $relatedModelClassName = $this
             ->relationParserHelper
-            ->findRelatedModelInRelationMethod(
-                $fileName,
-                $methodReflection->getName()
-            );
+            ->findRelatedModelInRelationMethod($methodReflection);
 
         return new GenericObjectType($returnType->getClassName(), [new ObjectType($relatedModelClassName)]);
     }

@@ -141,6 +141,26 @@ class Relations
     {
         return $account->ownerRelation();
     }
+
+    /**
+     * @phpstan-return BelongsTo<Account>
+     */
+    public function testRelationInTraitWithStaticClass(Account $account): BelongsTo
+    {
+        return $account->parent();
+    }
+
+    /** @phpstan-return HasMany<User> */
+    public function testSameClassRelation(User $user): HasMany
+    {
+        return $user->children();
+    }
+
+    /** @phpstan-return BelongsTo<User> */
+    public function testSameClassRelationWithGetClass(User $user): BelongsTo
+    {
+        return $user->parent();
+    }
 }
 
 /**

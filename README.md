@@ -15,7 +15,7 @@
 
 ## ⚗️ About Larastan
 
-Larastan was created by [Nuno Maduro](https://github.com/nunomaduro), got artwork designed by [@Caneco](http://github.com/caneco), is maintained by [Can Vural](https://github.com/canvural) and [Viktor Szépe](https://github.com/szepeviktor), and is a [phpstan/phpstan](https://github.com/phpstan/phpstan) wrapper for Laravel. Larastan focuses on **finding errors in your code** without actually running it. It catches whole classes of bugs even **before you write tests** for the code.
+Larastan was created by [Nuno Maduro](https://github.com/nunomaduro), got artwork designed by [@Caneco](http://github.com/caneco), is maintained by [Can Vural](https://github.com/canvural) and [Viktor Szépe](https://github.com/szepeviktor), and is a [PHPStan](https://phpstan.org/) wrapper for Laravel. Larastan focuses on **finding errors in your code** without actually running it. It catches whole classes of bugs even **before you write tests** for the code.
 
 - Adds static typing to Laravel to improve developer productivity and **code quality**
 - Supports most of [Laravel](https://laravel.com)'s **beautiful magic**
@@ -57,7 +57,7 @@ parameters:
     checkMissingIterableValueType: false
 ```
 
-For all available options, please take a look at the PHPStan documentation: **https://github.com/phpstan/phpstan**
+For all available options, please take a look at the PHPStan documentation: **https://phpstan.org/config-reference**
 
 **3**: Finally, you may start analyzing your code using the phpstan console command:
 
