@@ -115,17 +115,18 @@ class NoUnnecessaryCollectionCallRule implements Rule
         );
 
         if (! empty($onlyMethods)) {
-            $this->shouldHandle = $onlyMethods;
+            $this->shouldHandle = array_map(function (string $methodName): string {
+                return Str::lower($methodName);
+            }, $onlyMethods);
         } else {
             $this->shouldHandle = $allMethods;
         }
 
         if (! empty($excludeMethods)) {
-            $this->shouldHandle = array_diff($this->shouldHandle, $excludeMethods);
+            $this->shouldHandle = array_diff($this->shouldHandle, array_map(function (string $methodName): string {
+                return Str::lower($methodName);
+            }, $excludeMethods));
         }
-        $this->shouldHandle = array_map(function (string $methodName): string {
-            return Str::lower($methodName);
-        }, $this->shouldHandle);
     }
 
     /**
