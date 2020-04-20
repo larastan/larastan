@@ -51,6 +51,11 @@ services:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
+        class: NunoMaduro\Larastan\Methods\StorageMethodsClassReflectionExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+
+    -
         class: NunoMaduro\Larastan\Methods\Extension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
