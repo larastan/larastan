@@ -2,33 +2,38 @@
 
 declare(strict_types=1);
 
-namespace Tests\Features\Rules;
+namespace Tests\Rules\Data;
 
+use App\Account;
 use App\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
-class NoUnnecessaryCollectionCallRuleTest
+class CorrectCollectionCalls
 {
-    public function testPluckComputedProperty(): Collection
+    public function staticCount(): int
+    {
+        return User::count();
+    }
+
+    public function pluckQuery(): Collection
+    {
+        return User::query()->pluck('id');
+    }
+
+    public function pluckComputed(): Collection
     {
         return User::all()->pluck('allCapsName');
     }
 
-    public function testCallPluckCorrect(): Collection
+    public function firstRelation(): ?Account
     {
-        return User::pluck('id');
+        return User::firstOrFail()->accounts()->first();
     }
 
-    public function testCallCountProperly(): int
+    public function maxQuery(): int
     {
-        return User::where('id', '>', 5)->count();
-    }
-
-    public function testNotAnalyzable(): int
-    {
-        $x = 'get';
-
-        return User::where('id', '>', 1)->{$x}()->count();
+        return DB::table('users')->max('id');
     }
 
     /**

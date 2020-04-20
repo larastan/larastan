@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Properties\ModelPropertyExtension;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
@@ -16,6 +17,7 @@ use PhpParser\Node\Identifier;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
+use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
@@ -73,6 +75,9 @@ class NoUnnecessaryCollectionCallRule implements Rule
         'wherestrict',
     ];
 
+    /** @var string[] The method names that should be checked by this rule - can be configured by the user. */
+    protected $shouldHandle;
+
     /**
      * @var \PHPStan\Reflection\ReflectionProvider
      */
@@ -87,11 +92,40 @@ class NoUnnecessaryCollectionCallRule implements Rule
      * NoRedundantCollectionCallRule constructor.
      * @param ReflectionProvider $reflectionProvider
      * @param ModelPropertyExtension $propertyExtension
+     * @param string[] $onlyMethods
+     * @param string[] $excludeMethods
      */
-    public function __construct(ReflectionProvider $reflectionProvider, ModelPropertyExtension $propertyExtension)
+    public function __construct(
+        ReflectionProvider $reflectionProvider,
+        ModelPropertyExtension $propertyExtension,
+        array $onlyMethods,
+        array $excludeMethods
+    )
     {
         $this->reflectionProvider = $reflectionProvider;
         $this->propertyExtension = $propertyExtension;
+        $allMethods = array_merge(
+            static::RISKY_METHODS,
+            static::RISKY_PARAM_METHODS,
+            [
+                'first',
+                'contains',
+                'containsstrict',
+            ]
+        );
+
+        if (! empty($onlyMethods)) {
+            $this->shouldHandle = $onlyMethods;
+        } else {
+            $this->shouldHandle = $allMethods;
+        }
+
+        if (! empty($excludeMethods)) {
+            $this->shouldHandle = array_diff($this->shouldHandle, $excludeMethods);
+        }
+        $this->shouldHandle = array_map(function (string $methodName): string {
+            return Str::lower($methodName);
+        }, $this->shouldHandle);
     }
 
     /**
@@ -110,7 +144,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
     public function processNode(Node $node, Scope $scope): array
     {
         /** @var \PhpParser\Node\Expr\MethodCall $node */
-        if (!$node->name instanceof Identifier) {
+        if (! $node->name instanceof Identifier) {
             return [];
         }
 
@@ -124,15 +158,19 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
         $previousCall = $node->var;
 
-        if (!$this->callIsQuery($previousCall, $scope)) {
+        if (! $this->callIsQuery($previousCall, $scope)) {
             // Previous call wasn't on a Builder, so no errors.
             return [];
         }
 
         /** @var Node\Expr\MethodCall|Node\Expr\StaticCall $previousCall */
-        if (!($previousCall->name instanceof Identifier)) {
+        if (! ($previousCall->name instanceof Identifier)) {
             // Previous call was made dynamically e.g. User::query()->{$method}()
             // Can't really analyze it in this scenario so no errors.
+            return [];
+        }
+
+        if (! in_array($name->toLowerString(), $this->shouldHandle, true)) {
             return [];
         }
 
@@ -144,6 +182,10 @@ class NoUnnecessaryCollectionCallRule implements Rule
         } elseif ($this->isRiskyMethod($name)) {
             return [$this->formatError($name->toString())];
         } elseif ($this->isRiskyParamMethod($name)) {
+            if (count($node->args) === 0) {
+                // Calling e.g. DB::table()->pluck('age')-sum()
+                return [$this->formatError($name->toString())];
+            }
             if ($this->firstArgIsDatabaseColumn($node, $scope)) {
                 return [$this->formatError($name->toString())];
             }
@@ -151,7 +193,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
             // 'contains' can also be called with Model instances or keys as its first argument
             /** @var \PhpParser\Node\Arg[] $args */
             $args = $node->args;
-            if (count($args) === 1 && !($args[0]->value instanceof Node\Expr\Closure)) {
+            if (count($args) === 1 && ! ($args[0]->value instanceof Node\Expr\Closure)) {
                 return [$this->formatError($name->toString())];
             } elseif ($this->firstArgIsDatabaseColumn($node, $scope)) {
                 return [$this->formatError($name->toString())];
@@ -171,20 +213,34 @@ class NoUnnecessaryCollectionCallRule implements Rule
     {
         /** @var \PhpParser\Node\Arg[] $args */
         $args = $node->args;
-        if (count($args) === 0 || !($args[0]->value instanceof Node\Scalar\String_)) {
+        if (count($args) === 0 || ! ($args[0]->value instanceof Node\Scalar\String_)) {
+            return false;
+        }
+
+        $iterableType = $scope->getType($node->var)->getIterableValueType();
+        if ($iterableType instanceof MixedType) {
+            $previous_call = $node->var;
+            if ($previous_call instanceof MethodCall) {
+                $query_builder_type = $scope->getType($previous_call->var);
+                if ((new ObjectType(QueryBuilder::class))->isSuperTypeOf($query_builder_type)->yes()) {
+                    // We encountered a DB query such as DB::table(..)->get()->max('id')
+                    // We assume max('id') could have been retrieved without calling get().
+                    return true;
+                }
+            }
+
             return false;
         }
 
         /** @var \PHPStan\Type\ObjectType $iterableType */
-        $iterableType = $scope->getType($node->var)->getIterableValueType();
         if ((new ObjectType(Model::class))->isSuperTypeOf($iterableType)->yes()) {
             $modelReflection = $this->reflectionProvider->getClass($iterableType->getClassName());
 
             /** @var \PhpParser\Node\Scalar\String_ $firstArg */
             $firstArg = $args[0]->value;
+
             return $this->propertyExtension->hasProperty($modelReflection, $firstArg->value);
         }
-
         return false;
     }
 
@@ -239,9 +295,9 @@ class NoUnnecessaryCollectionCallRule implements Rule
      */
     protected function isBuilder(Type $type): bool
     {
-        return !(new ObjectType(EloquentBuilder::class))->isSuperTypeOf($type)->no()
-            || !(new ObjectType(QueryBuilder::class))->isSuperTypeOf($type)->no()
-            || !(new ObjectType(Relation::class))->isSuperTypeOf($type)->no();
+        return ! (new ObjectType(EloquentBuilder::class))->isSuperTypeOf($type)->no()
+            || ! (new ObjectType(QueryBuilder::class))->isSuperTypeOf($type)->no()
+            || ! (new ObjectType(Relation::class))->isSuperTypeOf($type)->no();
     }
 
     /**
@@ -253,7 +309,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
     protected function isNotCalledOnCollection(Node\Expr $expr, Scope $scope): bool
     {
         $calledOnType = $scope->getType($expr);
-        return !(new ObjectType(Collection::class))->isSuperTypeOf($calledOnType)->yes();
+        return ! (new ObjectType(Collection::class))->isSuperTypeOf($calledOnType)->yes();
     }
 
     /**
