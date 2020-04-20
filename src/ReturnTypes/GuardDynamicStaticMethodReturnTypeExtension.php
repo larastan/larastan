@@ -39,6 +39,9 @@ class GuardDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethod
         $defaultReturnType = TypeCombinator::intersect(new ObjectType(Guard::class), new ObjectType(StatefulGuard::class));
 
         $config = $this->getContainer()->get('config');
+        if ($config === null) {
+            return $defaultReturnType;
+        }
 
         /** @var string $defaultGuard */
         $defaultGuard = $config->get('auth.defaults.guard');
