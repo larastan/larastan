@@ -62,7 +62,7 @@ final class Mixins implements PipeContract
             $classReflection->getParentClassesNames(),
             $this->resolve('config') === null ?
                 [] :
-                $this->resolve('config')->get('larastan.mixins')[$classReflection->getName()] ?? [],
+                $this->resolve('config')->get('larastan.mixins')[$classReflection->getName()] ?? []
         );
 
         $mixins = array_filter($mixins, function ($mixin) use ($classReflection) {
