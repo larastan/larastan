@@ -241,37 +241,38 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             switch ($type) {
                 case 'boolean':
                 case 'bool':
-                    $realType = 'boolean';
+                    $readableType = new BooleanType();
+                    $writableType = TypeCombinator::union(new BooleanType(), new ConstantIntegerType(0), new ConstantIntegerType(1));
                     break;
                 case 'string':
-                    $realType = 'string';
+                    $readableType = $writableType = 'string';
                     break;
                 case 'array':
                 case 'json':
-                    $realType = 'array';
+                    $readableType = $writableType = 'array';
                     break;
                 case 'object':
-                    $realType = 'object';
+                    $readableType = $writableType = 'object';
                     break;
                 case 'int':
                 case 'integer':
                 case 'timestamp':
-                    $realType = 'integer';
+                    $readableType = $writableType = 'integer';
                     break;
                 case 'real':
                 case 'double':
                 case 'float':
-                    $realType = 'float';
+                    $readableType = $writableType = 'float';
                     break;
                 case 'date':
                 case 'datetime':
-                    $realType = $this->dateClass;
+                    $readableType = $writableType = $this->dateClass;
                     break;
                 case 'collection':
-                    $realType = '\Illuminate\Support\Collection';
+                    $readableType = $writableType = '\Illuminate\Support\Collection';
                     break;
                 default:
-                    $realType = class_exists($type) ? ('\\'.$type) : 'mixed';
+                    $readableType = $writableType = class_exists($type) ? ('\\'.$type) : 'mixed';
                     break;
             }
 
@@ -279,8 +280,8 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
                 continue;
             }
 
-            $this->tables[$modelInstance->getTable()]->columns[$name]->readableType = $realType;
-            $this->tables[$modelInstance->getTable()]->columns[$name]->writeableType = $realType;
+            $this->tables[$modelInstance->getTable()]->columns[$name]->readableType = $readableType;
+            $this->tables[$modelInstance->getTable()]->columns[$name]->writeableType = $writableType;
         }
     }
 }
