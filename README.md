@@ -71,6 +71,8 @@ If you are getting the error `Allowed memory size exhausted`, then you can use t
 ./vendor/bin/phpstan analyse --memory-limit=2G
 ```
 
+## Rules
+A list of configurable rules specific to Laravel can be found [here](docs/rules.md).
 ## 👊🏻 Contributing
 
 Thank you for considering contributing to Larastan. All the contribution guidelines are mentioned [here](CONTRIBUTING.md).

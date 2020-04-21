@@ -241,6 +241,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
             return $this->propertyExtension->hasProperty($modelReflection, $firstArg->value);
         }
+
         return false;
     }
 
@@ -261,6 +262,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
             $class = $call->class;
             if ($class instanceof Node\Name) {
                 $modelClassName = $class->toCodeString();
+
                 return is_subclass_of($modelClassName, Model::class);
             }
         }
@@ -309,6 +311,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
     protected function isNotCalledOnCollection(Node\Expr $expr, Scope $scope): bool
     {
         $calledOnType = $scope->getType($expr);
+
         return ! (new ObjectType(Collection::class))->isSuperTypeOf($calledOnType)->yes();
     }
 
@@ -319,6 +322,6 @@ class NoUnnecessaryCollectionCallRule implements Rule
      */
     protected function formatError(string $method_name): string
     {
-        return "Called '{$method_name}' on collection, but could have been retrieved as a query.";
+        return "[NoUnnecessaryCollectionCallRule] Called '{$method_name}' on collection, but could have been retrieved as a query.";
     }
 }
