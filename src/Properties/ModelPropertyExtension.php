@@ -13,7 +13,11 @@ use PHPStan\Reflection\Annotations\AnnotationsPropertiesClassReflectionExtension
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
+use PHPStan\Type\BooleanType;
+use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\IntegerType;
+use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
@@ -121,10 +125,13 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
         $column = $this->tables[$tableName]->columns[$propertyName];
 
+        $readableType = $column->readableType instanceof Type ? $column->readableType : $this->stringResolver->resolve($column->readableType);
+        $writeableType = $column->writeableType instanceof Type ? $column->writeableType : $this->stringResolver->resolve($column->writeableType);
+
         return new ModelProperty(
             $classReflection,
-            $this->stringResolver->resolve($column->readableType),
-            $this->stringResolver->resolve($column->writeableType)
+            $readableType,
+            $writeableType
         );
     }
 
@@ -186,7 +193,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
      * @param Model $modelInstance
      *
      * @return string[]
-     * @phpstan-return array<int, string>
+     * @phpstan-return array<int, string|Type>
      */
     private function getReadableAndWritableTypes(SchemaColumn $column, Model $modelInstance): array
     {
@@ -201,12 +208,15 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             case 'string':
             case 'int':
             case 'float':
-                $readableType = $writableType = $column->readableType.($column->nullable ? '|null' : '');
+                /** @var string $type */
+                $type = $column->readableType;
+                $readableType = $writableType = $type.($column->nullable ? '|null' : '');
                 break;
 
             case 'boolean':
             case 'bool':
-                $readableType = $writableType = 'boolean';
+                $readableType = new BooleanType();
+                $writableType = TypeCombinator::union(new BooleanType(), new ConstantIntegerType(0), new ConstantIntegerType(1));
                 break;
             case 'enum':
                 if (! $column->options) {

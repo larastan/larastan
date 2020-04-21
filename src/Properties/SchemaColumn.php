@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Properties;
 
+use PHPStan\Type\Type;
+
 /**
  * @see https://github.com/psalm/laravel-psalm-plugin/blob/master/src/SchemaColumn.php
  */
@@ -12,10 +14,10 @@ final class SchemaColumn
     /** @var string */
     public $name;
 
-    /** @var string */
+    /** @var string|Type */
     public $readableType;
 
-    /** @var string */
+    /** @var string|Type */
     public $writeableType;
 
     /** @var bool */
