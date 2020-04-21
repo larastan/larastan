@@ -26,6 +26,7 @@ abstract class RulesTest extends TestCase
     protected function findErrorsByLine(string $filename): array
     {
         $errors = $this->findErrors($filename);
+
         return collect($errors['messages'] ?? [])->mapWithKeys(function ($message) {
             return [$message['line'] => $message['message']];
         })->toArray();

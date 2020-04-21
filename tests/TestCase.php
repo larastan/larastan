@@ -7,10 +7,12 @@ use Orchestra\Testbench\TestCase as BaseTestCase;
 
 class TestCase extends BaseTestCase
 {
-    public function setUpFiles(): void
+    public function setUp(): void
     {
-        @File::makeDirectory(__DIR__ . '/../vendor/nunomaduro/larastan', 0755, true);
-        @File::makeDirectory(__DIR__ . '/../vendor/nunomaduro/larastan/config', 0755, true);
+        parent::setUp();
+
+        @File::makeDirectory(__DIR__.'/../vendor/nunomaduro/larastan', 0755, true);
+        @File::makeDirectory(__DIR__.'/../vendor/nunomaduro/larastan/config', 0755, true);
         @File::copy(__DIR__.'/../bootstrap.php', __DIR__.'/../vendor/nunomaduro/larastan/bootstrap.php');
         @File::copy(__DIR__.'/../config/mixins.php', __DIR__.'/../vendor/nunomaduro/larastan/config/mixins.php');
         @File::copy(__DIR__.'/../config/statics.php', __DIR__.'/../vendor/nunomaduro/larastan/config/statics.php');

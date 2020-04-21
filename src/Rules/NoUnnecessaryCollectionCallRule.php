@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Rules;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Properties\ModelPropertyExtension;
@@ -100,8 +100,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
         ModelPropertyExtension $propertyExtension,
         array $onlyMethods,
         array $excludeMethods
-    )
-    {
+    ) {
         $this->reflectionProvider = $reflectionProvider;
         $this->propertyExtension = $propertyExtension;
         $allMethods = array_merge(
@@ -257,7 +256,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
             $calledOn = $scope->getType($call->var);
 
             return $this->isBuilder($calledOn);
-        } else if ($call instanceof Node\Expr\StaticCall) {
+        } elseif ($call instanceof Node\Expr\StaticCall) {
             /** @var Node\Name $class */
             $class = $call->class;
             if ($class instanceof Node\Name) {
