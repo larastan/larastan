@@ -183,6 +183,15 @@ services:
         class: NunoMaduro\Larastan\Types\AbortIfFunctionTypeSpecifyingExtension
         tags:
             - phpstan.typeSpecifier.functionTypeSpecifyingExtension
+        arguments:
+            negate: false
+
+    -
+        class: NunoMaduro\Larastan\Types\AbortIfFunctionTypeSpecifyingExtension
+        tags:
+            - phpstan.typeSpecifier.functionTypeSpecifyingExtension
+        arguments:
+            negate: true
 
     -
         class: NunoMaduro\Larastan\ReturnTypes\Helpers\AppExtension
