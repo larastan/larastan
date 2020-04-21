@@ -30,9 +30,13 @@ final class AbortIfFunctionTypeSpecifyingExtension implements FunctionTypeSpecif
     /** @var bool */
     protected $negate;
 
-    public function __construct(bool $negate)
+    /** @var string */
+    protected $methodName;
+
+    public function __construct(bool $negate, string $methodName)
     {
         $this->negate = $negate;
+        $this->methodName = $methodName.'_'.($negate === false ? 'if' : 'unless');
     }
 
     public function isFunctionSupported(
@@ -40,9 +44,7 @@ final class AbortIfFunctionTypeSpecifyingExtension implements FunctionTypeSpecif
         FuncCall $node,
         TypeSpecifierContext $context
     ): bool {
-        $methodName = $this->negate === false ? 'abort_if' : 'abort_unless';
-
-        return $functionReflection->getName() === $methodName && $context->null();
+        return $functionReflection->getName() === $this->methodName && $context->null();
     }
 
     public function specifyTypes(
