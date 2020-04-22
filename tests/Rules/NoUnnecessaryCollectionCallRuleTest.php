@@ -18,7 +18,7 @@ class NoUnnecessaryCollectionCallRuleTest extends RulesTest
     {
         $errors = $this->findErrorsByLine(__DIR__.'/Data/UnnecessaryCollectionCallsEloquent.php');
 
-        $this->assertEquals($errors, [
+        $this->assertEquals([
             15 => '[NoUnnecessaryCollectionCallRule] Called \'pluck\' on collection, but could have been retrieved as a query.',
             20 => '[NoUnnecessaryCollectionCallRule] Called \'count\' on collection, but could have been retrieved as a query.',
             25 => '[NoUnnecessaryCollectionCallRule] Called \'pluck\' on collection, but could have been retrieved as a query.',
@@ -34,7 +34,7 @@ class NoUnnecessaryCollectionCallRuleTest extends RulesTest
             77 => '[NoUnnecessaryCollectionCallRule] Called \'diff\' on collection, but could have been retrieved as a query.',
             85 => '[NoUnnecessaryCollectionCallRule] Called \'modelKeys\' on collection, but could have been retrieved as a query.',
             90 => '[NoUnnecessaryCollectionCallRule] Called \'containsStrict\' on collection, but could have been retrieved as a query.',
-        ]);
+        ], $errors);
     }
 
     public function testNoFalseNegativesQuery(): void

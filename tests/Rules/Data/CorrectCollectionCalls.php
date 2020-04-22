@@ -36,6 +36,11 @@ class CorrectCollectionCalls
         return DB::table('users')->max('id');
     }
 
+    public function collectionCalls(): int
+    {
+        return collect([1, 2, 3])->flip()->reverse()->sum();
+    }
+
     /**
      * Can't analyze the closure as a parameter to contains, so should not throw any error.
      * @return bool

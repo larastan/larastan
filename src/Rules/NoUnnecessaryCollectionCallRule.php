@@ -152,7 +152,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
         $name = $node->name;
 
         if ($this->isNotCalledOnCollection($node->var, $scope)) {
-            // Method was called not called on a collection, so no errors.
+            // Method was not called on a collection, so no errors.
             return [];
         }
 
@@ -189,13 +189,15 @@ class NoUnnecessaryCollectionCallRule implements Rule
             if ($this->firstArgIsDatabaseColumn($node, $scope)) {
                 return [$this->formatError($name->toString())];
             }
-        } elseif ($name->toLowerString() === 'contains' || $name->toLowerString() === 'containsstrict') {
+        } elseif (in_array($name->toLowerString(),  ['contains', 'containsstrict'], true)) {
             // 'contains' can also be called with Model instances or keys as its first argument
             /** @var \PhpParser\Node\Arg[] $args */
             $args = $node->args;
             if (count($args) === 1 && ! ($args[0]->value instanceof Node\Expr\Closure)) {
                 return [$this->formatError($name->toString())];
-            } elseif ($this->firstArgIsDatabaseColumn($node, $scope)) {
+            }
+
+            if ($this->firstArgIsDatabaseColumn($node, $scope)) {
                 return [$this->formatError($name->toString())];
             }
         }
@@ -257,7 +259,9 @@ class NoUnnecessaryCollectionCallRule implements Rule
             $calledOn = $scope->getType($call->var);
 
             return $this->isBuilder($calledOn);
-        } elseif ($call instanceof Node\Expr\StaticCall) {
+        }
+
+        if ($call instanceof Node\Expr\StaticCall) {
             /** @var Node\Name $class */
             $class = $call->class;
             if ($class instanceof Node\Name) {
@@ -297,9 +301,9 @@ class NoUnnecessaryCollectionCallRule implements Rule
      */
     protected function isBuilder(Type $type): bool
     {
-        return ! (new ObjectType(EloquentBuilder::class))->isSuperTypeOf($type)->no()
-            || ! (new ObjectType(QueryBuilder::class))->isSuperTypeOf($type)->no()
-            || ! (new ObjectType(Relation::class))->isSuperTypeOf($type)->no();
+        return (new ObjectType(EloquentBuilder::class))->isSuperTypeOf($type)->yes()
+            || (new ObjectType(QueryBuilder::class))->isSuperTypeOf($type)->yes()
+            || (new ObjectType(Relation::class))->isSuperTypeOf($type)->yes();
     }
 
     /**
