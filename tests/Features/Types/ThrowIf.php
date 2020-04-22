@@ -13,7 +13,6 @@ class ThrowIf
         try {
             throw_if(! $foo, ValidationException::withMessages(['$foo is null']));
         } catch (\Exception $e) {
-
         }
 
         // Should still be nullable because we don't know if the exception was caught.
