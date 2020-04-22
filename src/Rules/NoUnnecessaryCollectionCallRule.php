@@ -189,7 +189,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
             if ($this->firstArgIsDatabaseColumn($node, $scope)) {
                 return [$this->formatError($name->toString())];
             }
-        } elseif (in_array($name->toLowerString(),  ['contains', 'containsstrict'], true)) {
+        } elseif (in_array($name->toLowerString(), ['contains', 'containsstrict'], true)) {
             // 'contains' can also be called with Model instances or keys as its first argument
             /** @var \PhpParser\Node\Arg[] $args */
             $args = $node->args;
