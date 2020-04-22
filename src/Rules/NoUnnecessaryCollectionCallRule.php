@@ -316,7 +316,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
     {
         $calledOnType = $scope->getType($expr);
 
-        return ! (new ObjectType(Collection::class))->isSuperTypeOf($calledOnType)->yes();
+        return (new ObjectType(Collection::class))->isSuperTypeOf($calledOnType)->no();
     }
 
     /**
