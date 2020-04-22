@@ -27,12 +27,24 @@ final class AbortIfFunctionTypeSpecifyingExtension implements FunctionTypeSpecif
     /** @var TypeSpecifier */
     private $typeSpecifier;
 
+    /** @var bool */
+    protected $negate;
+
+    /** @var string */
+    protected $methodName;
+
+    public function __construct(bool $negate, string $methodName)
+    {
+        $this->negate = $negate;
+        $this->methodName = $methodName.'_'.($negate === false ? 'if' : 'unless');
+    }
+
     public function isFunctionSupported(
         FunctionReflection $functionReflection,
         FuncCall $node,
         TypeSpecifierContext $context
     ): bool {
-        return $functionReflection->getName() === 'abort_if' && $context->null();
+        return $functionReflection->getName() === $this->methodName && $context->null();
     }
 
     public function specifyTypes(
@@ -45,7 +57,9 @@ final class AbortIfFunctionTypeSpecifyingExtension implements FunctionTypeSpecif
             return new SpecifiedTypes();
         }
 
-        return $this->typeSpecifier->specifyTypesInCondition($scope, $node->args[0]->value, TypeSpecifierContext::createFalsey());
+        $context = $this->negate === false ? TypeSpecifierContext::createFalsey() : TypeSpecifierContext::createTruthy();
+
+        return $this->typeSpecifier->specifyTypesInCondition($scope, $node->args[0]->value, $context);
     }
 
     public function setTypeSpecifier(TypeSpecifier $typeSpecifier): void

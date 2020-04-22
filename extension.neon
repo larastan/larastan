@@ -188,6 +188,33 @@ services:
         class: NunoMaduro\Larastan\Types\AbortIfFunctionTypeSpecifyingExtension
         tags:
             - phpstan.typeSpecifier.functionTypeSpecifyingExtension
+        arguments:
+            methodName: 'abort'
+            negate: false
+
+    -
+        class: NunoMaduro\Larastan\Types\AbortIfFunctionTypeSpecifyingExtension
+        tags:
+            - phpstan.typeSpecifier.functionTypeSpecifyingExtension
+        arguments:
+            methodName: 'abort'
+            negate: true
+
+    -
+        class: NunoMaduro\Larastan\Types\AbortIfFunctionTypeSpecifyingExtension
+        tags:
+            - phpstan.typeSpecifier.functionTypeSpecifyingExtension
+        arguments:
+            methodName: throw
+            negate: false
+
+    -
+        class: NunoMaduro\Larastan\Types\AbortIfFunctionTypeSpecifyingExtension
+        tags:
+            - phpstan.typeSpecifier.functionTypeSpecifyingExtension
+        arguments:
+            methodName: throw
+            negate: true
 
     -
         class: NunoMaduro\Larastan\ReturnTypes\Helpers\AppExtension
