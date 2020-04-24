@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * @template TValue
+ * @param int $times
+ * @param callable(): TValue $callback
+ * @param int $sleep
+ * @param null|callable(): bool $when
+ * @phpstan-return TValue
+ *
+ * @throws \Exception
+ */
+function retry($times, callable $callback, $sleep = 0, $when = null)
+{
+}

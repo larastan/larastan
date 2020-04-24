@@ -20,6 +20,7 @@ parameters:
         - stubs/MorphOneOrMany.stub
         - stubs/MorphToMany.stub
         - stubs/MorphMany.stub
+        - stubs/Helpers.stub
     scopeClass: NunoMaduro\Larastan\Analyser\Scope
     universalObjectCratesClasses:
         - Illuminate\Http\Request
