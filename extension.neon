@@ -34,6 +34,18 @@ parameters:
     bootstrap: %rootDir%/../../nunomaduro/larastan/bootstrap.php
     reportUnmatchedIgnoredErrors: false
     checkGenericClassInNonGenericObjectType: false
+    noUnnecessaryCollectionCall: true
+    noUnnecessaryCollectionCallOnly: []
+    noUnnecessaryCollectionCallExcept: []
+
+parametersSchema:
+    noUnnecessaryCollectionCall: bool()
+    noUnnecessaryCollectionCallOnly: listOf(string())
+    noUnnecessaryCollectionCallExcept: listOf(string())
+
+conditionalTags:
+    NunoMaduro\Larastan\Rules\NoUnnecessaryCollectionCallRule:
+    		phpstan.rules.rule: %noUnnecessaryCollectionCall%
 
 services:
     -
@@ -231,6 +243,12 @@ services:
         class: NunoMaduro\Larastan\Types\GenericEloquentCollectionTypeNodeResolverExtension
         tags:
             - phpstan.phpDoc.typeNodeResolverExtension
+
+    -
+        class: NunoMaduro\Larastan\Rules\NoUnnecessaryCollectionCallRule
+        arguments:
+            onlyMethods: %noUnnecessaryCollectionCallOnly%
+            excludeMethods: %noUnnecessaryCollectionCallExcept%
 
     -
         class: NunoMaduro\Larastan\Types\GenericEloquentBuilderTypeNodeResolverExtension

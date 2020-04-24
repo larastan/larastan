@@ -4,24 +4,10 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use Illuminate\Support\Facades\File;
-use Orchestra\Testbench\TestCase;
 use Symfony\Component\Finder\Finder;
 
 class FeaturesTest extends TestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        @File::makeDirectory(__DIR__.'/../vendor/nunomaduro/larastan', 0755, true);
-        @File::makeDirectory(__DIR__.'/../vendor/nunomaduro/larastan/config', 0755, true);
-        @File::copy(__DIR__.'/../bootstrap.php', __DIR__.'/../vendor/nunomaduro/larastan/bootstrap.php');
-        @File::copy(__DIR__.'/../config/mixins.php', __DIR__.'/../vendor/nunomaduro/larastan/config/mixins.php');
-        @File::copy(__DIR__.'/../config/statics.php', __DIR__.'/../vendor/nunomaduro/larastan/config/statics.php');
-        File::copyDirectory(__DIR__.'/Application/database/migrations', $this->getBasePath().'/database/migrations');
-    }
-
     public function getFeatures(): array
     {
         $calls = [];
@@ -51,21 +37,10 @@ class FeaturesTest extends TestCase
 
     private function analyze(string $file): int
     {
-        $configPath = __DIR__.'/../extension.neon';
-        $command = escapeshellcmd(__DIR__.'/../vendor/bin/phpstan');
-
-        exec(sprintf('%s %s analyse --no-progress  --level=max --configuration %s --autoload-file %s %s --error-format=%s',
-            escapeshellarg(PHP_BINARY), $command,
-            escapeshellarg($configPath),
-            escapeshellarg(__DIR__.'/../vendor/autoload.php'),
-            escapeshellarg($file),
-            'json'),
-            $jsonResult);
-
-        $result = json_decode($jsonResult[0], true);
+        $result = $this->execLarastan($file);
 
         if (! $result || $result['totals']['errors'] > 0 || $result['totals']['file_errors'] > 0) {
-            $this->fail(json_encode(json_decode($jsonResult[0]), JSON_PRETTY_PRINT));
+            $this->fail(json_encode(json_decode($result[0]), JSON_PRETTY_PRINT));
         }
 
         return 0;

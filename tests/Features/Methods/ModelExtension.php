@@ -21,11 +21,6 @@ class ModelExtension
         return User::all();
     }
 
-    public function testAllFirst(): ?User
-    {
-        return User::all()->first();
-    }
-
     public function testReturnThis(): Builder
     {
         $user = User::join('tickets.tickets', 'tickets.tickets.id', '=', 'tickets.sale_ticket.ticket_id')
@@ -237,7 +232,7 @@ class Thread extends Model
 
     public static function testFindOnStaticSelf(): ?Thread
     {
-        return self::query()->where('foo', 'bar')->get()->first();
+        return self::query()->where('foo', 'bar')->first();
     }
 
     public function getCustomPropertyAttribute(): string
