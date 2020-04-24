@@ -26,6 +26,11 @@ class CorrectCollectionCalls
         return User::all()->pluck('allCapsName');
     }
 
+    public function pluckRelation(): Collection
+    {
+        return User::with(['accounts'])->get()->pluck('accounts');
+    }
+
     public function firstRelation(): ?Account
     {
         return User::firstOrFail()->accounts()->first();

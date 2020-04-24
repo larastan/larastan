@@ -20,8 +20,8 @@ $user->roles()->pluck('name')->contains('a role name');
 
 Will result in the following errors:
 ```
-[NoUnnecessaryCollectionCallRule] Called 'count' on collection, but could have been retrieved as a query.
-[NoUnnecessaryCollectionCallRule] Called 'contains' on collection, but could have been retrieved as a query.
+Called 'count' on Laravel collection, but could have been retrieved as a query.
+Called 'contains' on Laravel collection, but could have been retrieved as a query.
 ```
 
 To fix the errors, the code in the previous example could be changed to:
