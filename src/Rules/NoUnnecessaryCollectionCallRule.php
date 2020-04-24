@@ -326,6 +326,6 @@ class NoUnnecessaryCollectionCallRule implements Rule
      */
     protected function formatError(string $method_name): string
     {
-        return "[NoUnnecessaryCollectionCallRule] Called '{$method_name}' on collection, but could have been retrieved as a query.";
+        return "Called '{$method_name}' on Laravel collection, but could have been retrieved as a query.";
     }
 }

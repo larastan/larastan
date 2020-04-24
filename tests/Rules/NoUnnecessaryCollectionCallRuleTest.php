@@ -19,31 +19,31 @@ class NoUnnecessaryCollectionCallRuleTest extends RulesTest
         $errors = $this->findErrorsByLine(__DIR__.'/Data/UnnecessaryCollectionCallsEloquent.php');
 
         $this->assertEquals([
-            15 => '[NoUnnecessaryCollectionCallRule] Called \'pluck\' on collection, but could have been retrieved as a query.',
-            20 => '[NoUnnecessaryCollectionCallRule] Called \'count\' on collection, but could have been retrieved as a query.',
-            25 => '[NoUnnecessaryCollectionCallRule] Called \'pluck\' on collection, but could have been retrieved as a query.',
-            30 => '[NoUnnecessaryCollectionCallRule] Called \'count\' on collection, but could have been retrieved as a query.',
-            35 => '[NoUnnecessaryCollectionCallRule] Called \'first\' on collection, but could have been retrieved as a query.',
-            40 => '[NoUnnecessaryCollectionCallRule] Called \'take\' on collection, but could have been retrieved as a query.',
-            45 => '[NoUnnecessaryCollectionCallRule] Called \'count\' on collection, but could have been retrieved as a query.',
-            52 => '[NoUnnecessaryCollectionCallRule] Called \'isEmpty\' on collection, but could have been retrieved as a query.',
-            57 => '[NoUnnecessaryCollectionCallRule] Called \'first\' on collection, but could have been retrieved as a query.',
-            62 => '[NoUnnecessaryCollectionCallRule] Called \'contains\' on collection, but could have been retrieved as a query.',
-            67 => '[NoUnnecessaryCollectionCallRule] Called \'count\' on collection, but could have been retrieved as a query.',
-            72 => '[NoUnnecessaryCollectionCallRule] Called \'where\' on collection, but could have been retrieved as a query.',
-            77 => '[NoUnnecessaryCollectionCallRule] Called \'diff\' on collection, but could have been retrieved as a query.',
-            85 => '[NoUnnecessaryCollectionCallRule] Called \'modelKeys\' on collection, but could have been retrieved as a query.',
-            90 => '[NoUnnecessaryCollectionCallRule] Called \'containsStrict\' on collection, but could have been retrieved as a query.',
+            15 => 'Called \'pluck\' on Laravel collection, but could have been retrieved as a query.',
+            20 => 'Called \'count\' on Laravel collection, but could have been retrieved as a query.',
+            25 => 'Called \'pluck\' on Laravel collection, but could have been retrieved as a query.',
+            30 => 'Called \'count\' on Laravel collection, but could have been retrieved as a query.',
+            35 => 'Called \'first\' on Laravel collection, but could have been retrieved as a query.',
+            40 => 'Called \'take\' on Laravel collection, but could have been retrieved as a query.',
+            45 => 'Called \'count\' on Laravel collection, but could have been retrieved as a query.',
+            52 => 'Called \'isEmpty\' on Laravel collection, but could have been retrieved as a query.',
+            57 => 'Called \'first\' on Laravel collection, but could have been retrieved as a query.',
+            62 => 'Called \'contains\' on Laravel collection, but could have been retrieved as a query.',
+            67 => 'Called \'count\' on Laravel collection, but could have been retrieved as a query.',
+            72 => 'Called \'where\' on Laravel collection, but could have been retrieved as a query.',
+            77 => 'Called \'diff\' on Laravel collection, but could have been retrieved as a query.',
+            85 => 'Called \'modelKeys\' on Laravel collection, but could have been retrieved as a query.',
+            90 => 'Called \'containsStrict\' on Laravel collection, but could have been retrieved as a query.',
         ], $errors);
     }
 
     public function testNoFalseNegativesQuery(): void
     {
         $this->assertSeeErrorsInOrder(__DIR__.'/Data/UnnecessaryCollectionCallsQuery.php', [
-            '[NoUnnecessaryCollectionCallRule] Called \'max\' on collection, but could have been retrieved as a query.',
-            '[NoUnnecessaryCollectionCallRule] Called \'average\' on collection, but could have been retrieved as a query.',
-            '[NoUnnecessaryCollectionCallRule] Called \'isNotEmpty\' on collection, but could have been retrieved as a query.',
-            '[NoUnnecessaryCollectionCallRule] Called \'pluck\' on collection, but could have been retrieved as a query.',
+            'Called \'max\' on Laravel collection, but could have been retrieved as a query.',
+            'Called \'average\' on Laravel collection, but could have been retrieved as a query.',
+            'Called \'isNotEmpty\' on Laravel collection, but could have been retrieved as a query.',
+            'Called \'pluck\' on Laravel collection, but could have been retrieved as a query.',
         ]);
     }
 }
