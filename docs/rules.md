@@ -33,7 +33,8 @@ $user->roles()->where('name', 'a role name')->exists();
 #### Configuration
 This rule is enabled by default. To disable it completely, add:
 ```
-noUnnecessaryCollectionCall: false
+parameters:
+    noUnnecessaryCollectionCall: false
 ```
 to your `phpstan.neon` file.
 
@@ -42,12 +43,14 @@ checks for. By default, all collection methods are checked.
 To only enable a specific set of methods, you could set the
  `noUnnecessaryCollectionCallOnly` configuration key. For example:
 ```
-noUnnecessaryCollectionCallOnly: ['count', 'first']
+parameters:
+    noUnnecessaryCollectionCallOnly: ['count', 'first']
 ```
 will only throw errors on the `count` and `first` methods.
 The inverse is also configurable, to not throw an exception
 on the `contains` method, one could set the following value:
 ```
-noUnnecessaryCollectionCallExcept: ['contains']
+parameters:
+    noUnnecessaryCollectionCallExcept: ['contains']
 ```
 
