@@ -139,6 +139,22 @@ class BuilderExtension
     {
         return User::with(['foo'])->findOrNew([1, 2, 3]);
     }
+
+    /**
+     * @phpstan-return Collection<User>
+     */
+    public function testHydrate(): Collection
+    {
+        return User::hydrate([]);
+    }
+
+    /**
+     * @phpstan-return Collection<User>
+     */
+    public function testFromQuery(): Collection
+    {
+        return User::fromQuery('SELECT * FROM users');
+    }
 }
 
 class TestModel extends Model

@@ -74,7 +74,7 @@ class Builder
     /**
      * Get the first record matching the attributes or instantiate it.
      *
-     * @param  array<mixed>  $attributes
+     * @param  array<string, mixed>  $attributes
      * @param  array<mixed>  $values
      * @phpstan-return TModelClass
      */
@@ -83,7 +83,7 @@ class Builder
     /**
      * Get the first record matching the attributes or create it.
      *
-     * @param  array<mixed>  $attributes
+     * @param  array<string, mixed>  $attributes
      * @param  array<mixed>  $values
      * @phpstan-return TModelClass
      */
@@ -92,7 +92,7 @@ class Builder
     /**
      * Create or update a record matching the attributes, and fill it with values.
      *
-     * @param  array<mixed>  $attributes
+     * @param  array<string, mixed>  $attributes
      * @param  array<mixed>  $values
      * @phpstan-return TModelClass
      */
