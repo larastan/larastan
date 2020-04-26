@@ -16,4 +16,19 @@ class Account extends Model
     {
         return $query->where('active', 1);
     }
+
+    public function transactions(): HasMany
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    /**
+     * @param array<int, Account> $models
+     *
+     * @return AccountCollection<Account>
+     */
+    public function newCollection(array $models = []): AccountCollection
+    {
+        return new AccountCollection($models);
+    }
 }

@@ -28,7 +28,7 @@ class BuilderHelper
     public const MODEL_RETRIEVAL_METHODS = ['first', 'find', 'findMany', 'findOrFail', 'firstOrFail'];
 
     /** @var string[] */
-    public const MODEL_CREATION_METHODS = ['make', 'create', 'forceCreate', 'findOrNew', 'firstOrNew', 'updateOrCreate', 'fromQuery', 'firstOrCreate'];
+    public const MODEL_CREATION_METHODS = ['make', 'create', 'forceCreate', 'findOrNew', 'firstOrNew', 'updateOrCreate', 'firstOrCreate'];
 
     /**
      * @var Broker
@@ -192,5 +192,18 @@ class BuilderHelper
         }
 
         return $this->dynamicWhere($methodName, $customReturnType);
+    }
+
+    public function determineCollectionClassName(string $modelClassName): string
+    {
+        $newCollectionMethod = $this->broker->getClass($modelClassName)->getNativeMethod('newCollection');
+
+        $returnType = ParametersAcceptorSelector::selectSingle($newCollectionMethod->getVariants())->getReturnType();
+
+        if ($returnType instanceof ObjectType) {
+            return $returnType->getClassName();
+        }
+
+        return $returnType->describe(VerbosityLevel::value());
     }
 }
