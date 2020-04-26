@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Support for `abort_unless`, `throw_if` and `throw_unless` functions. Thanks @Daanra ([#542](https://github.com/nunomaduro/larastan/pull/542))
 - Support for `retry` helper return type. Thanks @Daanra ([#543](https://github.com/nunomaduro/larastan/pull/543))
 - A rule for detecting expensive calls on a Collection. Thanks @Daanra ([#538](https://github.com/nunomaduro/larastan/pull/538))
-- Support for `retry` helper function return type. Thanks @Daanra ([#545](https://github.com/nunomaduro/larastan/pull/545))
+- Support for `value` helper function return type. Thanks @Daanra ([#545](https://github.com/nunomaduro/larastan/pull/545))
 
 ## [0.5.5] - 2020-03-26
 
