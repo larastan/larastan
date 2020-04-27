@@ -49,7 +49,7 @@ conditionalTags:
     NunoMaduro\Larastan\Rules\NoUnnecessaryCollectionCallRule:
          phpstan.rules.rule: %noUnnecessaryCollectionCall%
     NunoMaduro\Larastan\Rules\NoInvalidRouteActionRule:
-             phpstan.rules.rule: %noInvalidRouteAction%
+         phpstan.rules.rule: %noInvalidRouteAction%
 
 services:
     -

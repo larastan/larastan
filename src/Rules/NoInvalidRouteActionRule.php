@@ -68,6 +68,10 @@ class NoInvalidRouteActionRule implements Rule
             return [];
         }
 
+        if (! ($node->name instanceof Node\Identifier)) {
+            return [];
+        }
+
         $method_name = $node->name->toLowerString();
 
         if (! $this->canAnalyzeArguments($node->args, $method_name)) {
@@ -95,21 +99,29 @@ class NoInvalidRouteActionRule implements Rule
 
     /**
      * Returns whether this static call is registering a new endpoint.
-     * @param Node $node
+     * @param Node\Expr\StaticCall $node
      * @return bool
      */
-    protected function isRegisteringRoute(Node $node): bool
+    protected function isRegisteringRoute(Node\Expr\StaticCall $node): bool
     {
+        if (! ($node->class instanceof Node\Name)) {
+            return false;
+        }
+
         if ($node->class->toString() !== Route::class) {
             return false;
         }
-        return in_array($node->name->toLowerString(), self::REGISTERING_METHODS, true);
+
+        /** @var Node\Identifier $method_name */
+        $method_name = $node->name;
+
+        return in_array($method_name->toLowerString(), self::REGISTERING_METHODS, true);
     }
 
     /**
      * Returns whether we can properly analyze the argument that was passed
      * to the static method call.
-     * @param array $arguments
+     * @param array<Node\Arg> $arguments
      * @param string $method_name
      * @return bool
      */
@@ -136,10 +148,13 @@ class NoInvalidRouteActionRule implements Rule
         $value = $arg->value;
         if ($value instanceof Node\Expr\Array_) {
             if ($this->hasCallableArrayNotation($value)) {
-                return [
-                    $this->getControllerClass($value),
-                    $value->items[1]->value->value
-                ];
+                $controller_class = $this->getControllerClass($value);
+                /** @var Node\Scalar\String_ $method */
+                $method = $value->items[1]->value;
+                return $controller_class !== null ? [
+                    $controller_class,
+                    $method->value,
+                ] : null;
             }
 
             if (($value = $this->getUsesParam($value)) === null) {
@@ -162,6 +177,10 @@ class NoInvalidRouteActionRule implements Rule
     protected function getUsesParam(Node\Expr\Array_ $value): ?Node\Expr
     {
         $uses = Arr::first($value->items, function (Node\Expr\ArrayItem $item): bool {
+            if ($item->key === null || ! ($item->key instanceof Node\Scalar\String_)) {
+                return false;
+            }
+
             return $item->key->value === 'uses';
         });
 
@@ -169,23 +188,25 @@ class NoInvalidRouteActionRule implements Rule
     }
 
     /**
-     * Gets the controller class as a string from the Node.
+     * Gets the controller class as a string from the Node or null if we
+     * are not able to determine it.
      * @param Node\Expr\Array_ $value
-     * @return string
-     * @throws ShouldNotHappenException
+     * @return string|null
      */
-    protected function getControllerClass(Node\Expr\Array_ $value): string
+    protected function getControllerClass(Node\Expr\Array_ $value): ?string
     {
         $first_arg = $value->items[0]->value;
         if ($first_arg instanceof Node\Expr\ClassConstFetch) {
-            return $first_arg->class->toCodeString();
+            if ($first_arg->class instanceof Node\Name) {
+                return $first_arg->class->toCodeString();
+            }
         }
 
         if ($first_arg instanceof Node\Scalar\String_) {
             return $first_arg->value;
         }
 
-        throw new ShouldNotHappenException();
+        return null;
     }
 
     /**
@@ -214,7 +235,7 @@ class NoInvalidRouteActionRule implements Rule
      */
     protected function hasCallableArrayNotation(Node\Expr\Array_ $array): bool
     {
-        if (count($array->items) !== 2) {
+        if (count($array->items) < 2) {
             return false;
         }
 
@@ -222,7 +243,7 @@ class NoInvalidRouteActionRule implements Rule
             return false;
         }
 
-        if ($array->items[1]->key->value !== null) {
+        if ($array->items[1]->key !== null) {
             // Ensure we don't have an associative array
             return false;
         }
