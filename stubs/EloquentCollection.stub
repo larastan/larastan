@@ -14,4 +14,11 @@ class Collection extends \Illuminate\Support\Collection
      * @phpstan-return TModel|null
      */
     public function find($key, $default = null) {}
+
+    /**
+     * @template TReturn
+     * @param callable(TModel, int): TReturn $callable
+     * @return static<TReturn>|\Illuminate\Support\Collection<int, TReturn>
+     */
+    public function map($callable) {}
 }
