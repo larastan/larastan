@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Features\ReturnTypes;
 
-use App\Role;
 use App\User;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection as SupportCollection;
@@ -17,7 +16,7 @@ class CollectionStub
     public function testEachUserParam(): EloquentCollection
     {
         return User::all()->each(function (User $user, int $key): void {
-            echo $user->id . $key;
+            echo $user->id.$key;
         });
     }
 
