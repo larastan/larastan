@@ -6,6 +6,12 @@ namespace Tests;
 
 abstract class RulesTest extends TestCase
 {
+    public function execLarastan(string $filename, array $options = [])
+    {
+        $options['config'] = __DIR__.'/Rules/rules.neon';
+        return parent::execLarastan($filename, $options);
+    }
+
     /**
      * Returns an array of errors that were found after analyzing $filename.
      * @param string $filename

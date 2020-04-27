@@ -51,3 +51,37 @@ on the `contains` method, one could set the following value:
 noUnnecessaryCollectionCallExcept: ['contains']
 ```
 
+## NoInvalidRouteAction
+
+Checks if the class and method that a route uses exist when registering a route using 
+the Route facade.
+
+#### Examples
+
+```php
+Route::get('/hello', [UserController::class, 'nonExistingMethod']);
+
+Route::match(['put', 'patch'], '/endpoint', 'App\Http\Controllers\UserTypoController@index');
+
+Route::post('/post', [
+    'uses' => 'App\Http\Controllers\UserController@typo',
+]);
+```
+
+results in the following errors:
+```
+Detected non-existing method 'nonExistingMethod' on class 'App\\Http\\Controllers\\UserController during route registration.
+Detected non-existing class 'App\Http\Controllers\UserTypoController' during route registration.
+Detected non-existing method 'typo' on class 'App\\Http\\Controllers\\UserController during route registration.
+```
+
+This rule assumes that no [namespace is set on your route groups](https://laravel.com/docs/7.x/routing#route-group-namespaces).
+Since Laravel has a namespace set by default in the `RouteServiceProvider`, this rule is also disabled by default.
+
+To enable this rule, set:
+```
+parameters:
+    noInvalidRouteAction: true
+```
+
+in your `phpstan.neon` config file.

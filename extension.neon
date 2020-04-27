@@ -37,15 +37,19 @@ parameters:
     noUnnecessaryCollectionCall: true
     noUnnecessaryCollectionCallOnly: []
     noUnnecessaryCollectionCallExcept: []
+    noInvalidRouteAction: false
 
 parametersSchema:
     noUnnecessaryCollectionCall: bool()
     noUnnecessaryCollectionCallOnly: listOf(string())
     noUnnecessaryCollectionCallExcept: listOf(string())
+    noInvalidRouteAction: bool()
 
 conditionalTags:
     NunoMaduro\Larastan\Rules\NoUnnecessaryCollectionCallRule:
-    		phpstan.rules.rule: %noUnnecessaryCollectionCall%
+         phpstan.rules.rule: %noUnnecessaryCollectionCall%
+    NunoMaduro\Larastan\Rules\NoInvalidRouteActionRule:
+             phpstan.rules.rule: %noInvalidRouteAction%
 
 services:
     -
@@ -249,6 +253,9 @@ services:
         arguments:
             onlyMethods: %noUnnecessaryCollectionCallOnly%
             excludeMethods: %noUnnecessaryCollectionCallExcept%
+
+    -
+        class: NunoMaduro\Larastan\Rules\NoInvalidRouteActionRule
 
     -
         class: NunoMaduro\Larastan\Types\GenericEloquentBuilderTypeNodeResolverExtension

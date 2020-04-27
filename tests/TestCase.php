@@ -19,9 +19,9 @@ class TestCase extends BaseTestCase
         File::copyDirectory(__DIR__.'/Application/database/migrations', $this->getBasePath().'/database/migrations');
     }
 
-    public function execLarastan(string $filename)
+    public function execLarastan(string $filename, array $options = [])
     {
-        $configPath = __DIR__.'/../extension.neon';
+        $configPath = $options['config'] ?? (__DIR__.'/../extension.neon');
         $command = escapeshellcmd(__DIR__.'/../vendor/bin/phpstan');
 
         exec(sprintf('%s %s analyse --no-progress  --level=max --configuration %s --autoload-file %s %s --error-format=%s',
