@@ -151,7 +151,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
         /** @var \PhpParser\Node\Identifier $name */
         $name = $node->name;
 
-        if ($this->isNotCalledOnCollection($node->var, $scope)) {
+        if (! $this->isCalledOnCollection($node->var, $scope)) {
             // Method was not called on a collection, so no errors.
             return [];
         }
@@ -312,11 +312,11 @@ class NoUnnecessaryCollectionCallRule implements Rule
      * @param Scope $scope
      * @return bool
      */
-    protected function isNotCalledOnCollection(Node\Expr $expr, Scope $scope): bool
+    protected function isCalledOnCollection(Node\Expr $expr, Scope $scope): bool
     {
         $calledOnType = $scope->getType($expr);
 
-        return (new ObjectType(Collection::class))->isSuperTypeOf($calledOnType)->no();
+        return (new ObjectType(Collection::class))->isSuperTypeOf($calledOnType)->yes();
     }
 
     /**

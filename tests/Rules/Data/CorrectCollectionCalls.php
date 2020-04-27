@@ -6,6 +6,8 @@ namespace Tests\Rules\Data;
 
 use App\Account;
 use App\User;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -46,6 +48,11 @@ class CorrectCollectionCalls
         return collect([1, 2, 3])->flip()->reverse()->sum();
     }
 
+    public function mixedReturn(): ?Foo
+    {
+        return Foo::query()->returnMixed()->first();
+    }
+
     /**
      * Can't analyze the closure as a parameter to contains, so should not throw any error.
      * @return bool
@@ -66,5 +73,32 @@ class CorrectCollectionCalls
         return User::where('id', '>', 1)->get()->first(function (User $user): bool {
             return $user->id === 2;
         });
+    }
+}
+
+class Foo extends Model
+{
+    /**
+     * @param \Illuminate\Database\Query\Builder $query
+     * @return FooBuilder
+     */
+    public function newEloquentBuilder($query): FooBuilder
+    {
+        return new FooBuilder($query);
+    }
+}
+
+/**
+ * @extends Builder<Foo>
+ */
+class FooBuilder extends Builder
+{
+    /**
+     * @return mixed
+     */
+    public function returnMixed()
+    {
+        /** @var mixed */
+        return $this;
     }
 }
