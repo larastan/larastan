@@ -21,6 +21,7 @@ parameters:
         - stubs/MorphToMany.stub
         - stubs/MorphMany.stub
         - stubs/Helpers.stub
+        - stubs/HigherOrderTapProxy.stub
     scopeClass: NunoMaduro\Larastan\Analyser\Scope
     universalObjectCratesClasses:
         - Illuminate\Http\Request
@@ -74,6 +75,11 @@ services:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
+        class: NunoMaduro\Larastan\Methods\HigherOrderTapProxyExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+
+    -
         class: NunoMaduro\Larastan\Properties\ModelAccessorExtension
         tags:
             - phpstan.broker.propertiesClassReflectionExtension
@@ -117,6 +123,11 @@ services:
         class: NunoMaduro\Larastan\ReturnTypes\GuardDynamicStaticMethodReturnTypeExtension
         tags:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
+
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\HigherOrderTapProxyExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
         class: NunoMaduro\Larastan\ReturnTypes\AuthManagerExtension
@@ -184,6 +195,11 @@ services:
 
     -
         class: NunoMaduro\Larastan\ReturnTypes\Helpers\UrlExtension
+        tags:
+            - phpstan.broker.dynamicFunctionReturnTypeExtension
+
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\Helpers\TapExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
 
