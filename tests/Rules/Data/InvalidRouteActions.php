@@ -15,6 +15,8 @@ class InvalidRouteActions
             ->name('hello');
 
         Route::post('/bye', [UserController::class, 'notAMethod']);
+
+        Route::options('/magical', [FooController::class, 'magic']);
     }
 
     public function testString(): void
@@ -41,5 +43,16 @@ class InvalidRouteActions
         Route::group(['middleware' => 'can:destroy cookies'], function (): void {
             Route::delete('/cookie/{cookie}', [UserController::class, 'typo']);
         });
+    }
+}
+
+class FooController
+{
+    /**
+     * @param string $name
+     * @param array<mixed> $arguments
+     */
+    public function __call($name, $arguments): void
+    {
     }
 }

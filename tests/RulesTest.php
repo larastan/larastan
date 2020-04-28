@@ -6,20 +6,15 @@ namespace Tests;
 
 abstract class RulesTest extends TestCase
 {
-    public function execLarastan(string $filename, array $options = [])
-    {
-        $options['config'] = __DIR__.'/Rules/rules.neon';
-        return parent::execLarastan($filename, $options);
-    }
-
     /**
      * Returns an array of errors that were found after analyzing $filename.
      * @param string $filename
+     * @param array $options
      * @return array
      */
-    protected function findErrors(string $filename): array
+    protected function findErrors(string $filename, array $options = []): array
     {
-        return $this->execLarastan($filename)['files'][$filename] ?? [];
+        return $this->execLarastan($filename, $options)['files'][$filename] ?? [];
     }
 
     /**
@@ -27,11 +22,12 @@ abstract class RulesTest extends TestCase
      * number and the value represents the error found. Will return
      * at most one error per line.
      * @param string $filename
+     * @param array $options
      * @return array<int, string>
      */
-    protected function findErrorsByLine(string $filename): array
+    protected function findErrorsByLine(string $filename, array $options = []): array
     {
-        $errors = $this->findErrors($filename);
+        $errors = $this->findErrors($filename, $options);
 
         return collect($errors['messages'] ?? [])->mapWithKeys(function ($message) {
             return [$message['line'] => $message['message']];

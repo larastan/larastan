@@ -1,5 +1,5 @@
 includes:
-    - ../../extension.neon
+    - ../../../extension.neon
 
 parameters:
     noInvalidRouteAction: true

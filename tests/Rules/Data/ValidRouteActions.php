@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Rules\Data;
 
 use App\Http\Controllers\UserController;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Route;
 
 class ValidRouteActions
@@ -21,7 +22,7 @@ class ValidRouteActions
 
     public function testString(): void
     {
-        Route::patch('/some/route', 'Tests\Rules\Data\FruitController@getPears');
+        Route::patch('/some/route', 'Tests\Rules\Data\FruitController@getBananas');
 
         Route::match(['put', 'patch'], '/hello', FruitController::class . '@non_existing_method');
 
@@ -32,7 +33,7 @@ class ValidRouteActions
     public function testUses(): void
     {
         Route::patch('/patch-something', [
-            'uses' => FruitController::class . '@getPears',
+            'uses' => MagicalController::class . '@index',
             'name' => 'some-name',
         ]);
 
@@ -51,12 +52,33 @@ class ValidRouteActions
     }
 }
 
-class FruitController {
+/**
+ * @method int getBananas()
+ */
+class FruitController
+{
     public function getApples(): void
     {
     }
 
     public function getPears(): void
     {
+    }
+}
+
+class MagicalController extends Controller
+{
+    public function index(): void
+    {
+    }
+
+    /**
+     * @param string $method
+     * @param array<mixed> $parameters
+     * @return int
+     */
+    public function __call($method, $parameters)
+    {
+        return $method === 'magic' ? 1 : 2;
     }
 }

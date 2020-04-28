@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Rules;
 
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
@@ -11,7 +12,6 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
-use PHPStan\ShouldNotHappenException;
 
 /**
  * This rule checks if the action of a route points to a valid Controller
@@ -90,8 +90,11 @@ class NoInvalidRouteActionRule implements Rule
             return ["Detected non-existing class '{$controller}' during route registration."];
         }
 
-        if (is_string($method) && ! method_exists($controller, $method)) {
-            return ["Detected non-existing method '{$method}' on class '{$controller}' during route registration."];
+        if (is_string($method)) {
+            $classReflection = $this->reflectionProvider->getClass($controller);
+            if (! $classReflection->hasMethod($method)) {
+                return ["Detected non-existing method '{$method}' on class '{$controller}' during route registration."];
+            }
         }
 
         return [];
