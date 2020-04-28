@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.5.7] - 2020-04-28
+
+### Fixed
+- Fixed incorrect stubs for model creation methods. ([85716a5](https://github.com/nunomaduro/larastan/commit/85716a50610740af787899709814c1053ef4acf6))
+- Fixed false positives on NoUnnecessaryCollectionCallRule rule. Thanks @Daanra ([#546](https://github.com/nunomaduro/larastan/pull/546))
+
+### Added
+
+- Added more methods to collection stubs. Thanks @Daanra ([#547](https://github.com/nunomaduro/larastan/pull/547))
+
 ## [0.5.6] - 2020-04-26
 
 ### Fixed
@@ -318,7 +328,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.5.6...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.5.7...HEAD
+[0.5.7]: https://github.com/nunomaduro/larastan/compare/v0.5.6...HEAD
 [0.5.6]: https://github.com/nunomaduro/larastan/compare/v0.5.5...HEAD
 [0.5.5]: https://github.com/nunomaduro/larastan/compare/v0.5.4...HEAD
 [0.5.4]: https://github.com/nunomaduro/larastan/compare/v0.5.3...HEAD
