@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
@@ -16,6 +17,7 @@ use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\Php\DummyParameter;
 use PHPStan\ShouldNotHappenException;
+use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
@@ -181,6 +183,10 @@ class BuilderHelper
 
             if ($isBuilderReferenced) {
                 $returnType = $customReturnType;
+            }
+
+            if (! $isBuilderReferenced && (new ObjectType(Collection::class))->isSuperTypeOf($returnType)->yes()) {
+                $returnType = new GenericObjectType(Collection::class, [new ObjectType($modelName)]);
             }
 
             return new EloquentBuilderMethodReflection(
