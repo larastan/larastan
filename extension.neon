@@ -144,6 +144,11 @@ services:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
+        class: NunoMaduro\Larastan\ReturnTypes\RelationModelFindExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
         class: NunoMaduro\Larastan\Properties\JsonResourceExtension
         tags:
             - phpstan.broker.propertiesClassReflectionExtension
