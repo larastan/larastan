@@ -216,6 +216,16 @@ class ModelExtension
     {
         return $user->accounts()->firstOrCreate([]);
     }
+
+    public function testFindOrFailWithIntWithRelation(User $user): Account
+    {
+        return $user->accounts()->findOrFail(1);
+    }
+
+    public function testFindOrFailWithArrayWithRelation(User $user): Collection
+    {
+        return $user->accounts()->findOrFail([1, 2, 3]);
+    }
 }
 
 function foo(): string
