@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Concerns;
+use NunoMaduro\Larastan\Methods\BuilderHelper;
 use NunoMaduro\Larastan\Methods\ModelTypeHelper;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
@@ -18,7 +19,6 @@ use PHPStan\Type\ArrayType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\MixedType;
-use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
@@ -80,13 +80,11 @@ final class BuilderModelFindExtension implements DynamicMethodReturnTypeExtensio
 
         if ($argType->isIterable()->yes()) {
             if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
-                $genericCollectionReturnType = new GenericObjectType(Collection::class, [$model]);
+                $builderHelper = new BuilderHelper($this->getBroker());
 
-                if ($returnType->accepts(new NullType(), true)->yes()) {
-                    return TypeCombinator::addNull($genericCollectionReturnType);
-                }
+                $collectionClassName = $builderHelper->determineCollectionClassName($model->getClassName());
 
-                return $genericCollectionReturnType;
+                return new GenericObjectType($collectionClassName, [$model]);
             }
 
             return TypeCombinator::remove($returnType, $model);

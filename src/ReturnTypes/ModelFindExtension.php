@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Concerns;
+use NunoMaduro\Larastan\Methods\BuilderHelper;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\BrokerAwareExtension;
@@ -18,7 +19,6 @@ use PHPStan\Type\ArrayType;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\MixedType;
-use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
@@ -71,13 +71,11 @@ final class ModelFindExtension implements DynamicStaticMethodReturnTypeExtension
 
         if ($argType->isIterable()->yes()) {
             if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
-                $genericCollectionReturnType = new GenericObjectType(Collection::class, [new ObjectType($modelName)]);
+                $builderHelper = new BuilderHelper($this->getBroker());
 
-                if ($returnType->accepts(new NullType(), true)->yes()) {
-                    return TypeCombinator::addNull($genericCollectionReturnType);
-                }
+                $collectionClassName = $builderHelper->determineCollectionClassName($modelName);
 
-                return $genericCollectionReturnType;
+                return new GenericObjectType($collectionClassName, [new ObjectType($modelName)]);
             }
 
             return TypeCombinator::remove($returnType, new ObjectType($modelName));

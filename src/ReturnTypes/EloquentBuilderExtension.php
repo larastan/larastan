@@ -90,9 +90,12 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
             );
         }
 
-        // 'get' method return type
-        if ($methodReflection->getName() === 'get') {
-            return new GenericObjectType(Collection::class, [$modelType]);
+        if ($modelType instanceof ObjectType && in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
+            $builderHelper = new BuilderHelper($this->getBroker());
+
+            $collectionClassName = $builderHelper->determineCollectionClassName($modelType->getClassName());
+
+            return new GenericObjectType($collectionClassName, [$modelType]);
         }
 
         return $returnType;
