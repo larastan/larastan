@@ -70,8 +70,34 @@ class Collection implements \ArrayAccess, Enumerable
     public function map($callable) {}
 
     /**
-     * @param callable(static<TValue>): void $callable
-     * @return static<TValue>
+     * @param callable(TValue, TKey): array<mixed> $callback
+     * @return static<static<mixed>>
      */
-    public function tap($callable) {}
+    public function mapToGroups(callable $callback) {}
+
+    /**
+     * @param callable(TValue, TKey): mixed $callback
+     * @return static<mixed>
+     */
+    public function flatMap(callable $callback) {}
+
+    /**
+     * @param callable $callback
+     * @return static<int, mixed>
+     */
+    public function mapSpread(callable $callback) {}
+
+    /**
+     * @param int $number
+     * @param null|callable(int, int): mixed $callback
+     * @return static<mixed>
+     */
+    public static function times($number, callable $callback = null) {}
+
+    /**
+     * @param string|array<mixed> $value
+     * @param string|null $key
+     * @return static<mixed>
+     */
+    public function pluck($value, $key = null) {}
 }
