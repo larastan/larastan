@@ -23,13 +23,13 @@ class Collection extends \Illuminate\Support\Collection
     public function map($callable) {}
 
     /**
-     * @param callable(TValue, TKey): array<mixed> $callback
+     * @param callable(TModel, int): array<mixed> $callback
      * @return \Illuminate\Support\Collection<mixed, static<mixed>>
      */
     public function mapToGroups(callable $callback) {}
 
     /**
-     * @param callable(TValue, TKey): mixed $callback
+     * @param callable(TModel, int): mixed $callback
      * @return \Illuminate\Support\Collection<mixed, mixed>
      */
     public function flatMap(callable $callback) {}
