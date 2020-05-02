@@ -10,6 +10,13 @@
  *
  * @throws \Exception
  */
-function retry($times, callable $callback, $sleep = 0, $when = null)
-{
-}
+function retry($times, callable $callback, $sleep = 0, $when = null){}
+
+/**
+ * @template TModel
+ * @template TAmount
+ * @param  class-string<TModel>  $class
+ * @param  TAmount  $amount
+ * @return \Illuminate\Database\Eloquent\FactoryBuilder<TModel, TAmount>
+ */
+function factory($class, $amount = null){}

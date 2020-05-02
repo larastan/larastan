@@ -1,0 +1,18 @@
+<?php
+
+namespace Illuminate\Database\Eloquent;
+
+/**
+ * @template TModel
+ * @template TAmount
+ */
+class FactoryBuilder
+{
+    /**
+     * Create a collection of models and persist them to the database.
+     *
+     * @param  array<string, mixed>  $attributes
+     * @phpstan-return Collection<TModel>|TModel
+     */
+    public function create(array $attributes = []){}
+}

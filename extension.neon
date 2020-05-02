@@ -21,6 +21,7 @@ parameters:
         - stubs/MorphToMany.stub
         - stubs/MorphMany.stub
         - stubs/Helpers.stub
+        - stubs/FactoryBuilder.stub
     scopeClass: NunoMaduro\Larastan\Analyser\Scope
     universalObjectCratesClasses:
         - Illuminate\Http\Request
@@ -206,6 +207,11 @@ services:
         class: NunoMaduro\Larastan\ReturnTypes\Helpers\TransExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
+
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\Helpers\FactoryHelper
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
         class: NunoMaduro\Larastan\Types\AbortIfFunctionTypeSpecifyingExtension
