@@ -155,7 +155,6 @@ class CollectionStub
         });
     }
 
-
     /**
      * @param EloquentCollection<User> $items
      * @return EloquentCollection<User>
