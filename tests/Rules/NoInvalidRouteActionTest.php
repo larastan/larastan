@@ -11,7 +11,7 @@ class NoInvalidRouteActionTest extends RulesTest
     public function testNoFalsePositives(): void
     {
         $errors = $this->findErrors(__DIR__.'/Data/ValidRouteActions.php', [
-            'config' => __DIR__.'/configs/valid-route-actions.neon'
+            'config' => __DIR__.'/configs/valid-route-actions.neon',
         ]);
         $this->assertEquals([], $errors, 'The rule should not result in any errors for this data set.');
     }
@@ -19,7 +19,7 @@ class NoInvalidRouteActionTest extends RulesTest
     public function testNoFalseNegatives(): void
     {
         $errors = $this->findErrorsByLine(__DIR__.'/Data/InvalidRouteActions.php', [
-            'config' => __DIR__.'/configs/valid-route-actions.neon'
+            'config' => __DIR__.'/configs/valid-route-actions.neon',
         ]);
 
         $this->assertEquals([

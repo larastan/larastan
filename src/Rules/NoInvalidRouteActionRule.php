@@ -136,6 +136,7 @@ class NoInvalidRouteActionRule implements Rule
         }
 
         $second_arg = $arguments[$required_arguments - 1];
+
         return $second_arg->value instanceof Node\Expr\Array_
             || $second_arg->value instanceof Node\Scalar\String_;
     }
@@ -154,6 +155,7 @@ class NoInvalidRouteActionRule implements Rule
                 $controller_class = $this->getControllerClass($value);
                 /** @var Node\Scalar\String_ $method */
                 $method = $value->items[1]->value;
+
                 return $controller_class !== null ? [
                     $controller_class,
                     $method->value,

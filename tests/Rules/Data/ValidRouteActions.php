@@ -24,16 +24,16 @@ class ValidRouteActions
     {
         Route::patch('/some/route', 'Tests\Rules\Data\FruitController@getBananas');
 
-        Route::match(['put', 'patch'], '/hello', FruitController::class . '@non_existing_method');
+        Route::match(['put', 'patch'], '/hello', FruitController::class.'@non_existing_method');
 
         $controller = UserController::class;
-        Route::get('/users', $controller . '@index');
+        Route::get('/users', $controller.'@index');
     }
 
     public function testUses(): void
     {
         Route::patch('/patch-something', [
-            'uses' => MagicalController::class . '@index',
+            'uses' => MagicalController::class.'@index',
             'name' => 'some-name',
         ]);
 
@@ -46,7 +46,7 @@ class ValidRouteActions
     {
         Route::group(['middleware' => 'can:get fruit'], function (): void {
             foreach (['getApples', 'getPears'] as $method) {
-                Route::get('/fruit/' . $method, [FruitController::class, $method]);
+                Route::get('/fruit/'.$method, [FruitController::class, $method]);
             }
         });
     }
