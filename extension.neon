@@ -31,7 +31,7 @@ parameters:
         - '#Call to an undefined method Illuminate\\Support\\HigherOrder#'
         - '#Method App\\Exceptions\\Handler::render\(\) should return Illuminate\\Http\\Response but returns Symfony\\Component\\HttpFoundation\\Response#'
         - '#Property App\\Http\\Middleware\\TrustProxies::\$headers \(string\) does not accept default value of type int#'
-        - path: %rootDir%/../../database/factories/*
+        - path: %rootDir%/../../../database/factories/*
           message: '#Undefined variable: \$factory#'
     bootstrap: %rootDir%/../../nunomaduro/larastan/bootstrap.php
     reportUnmatchedIgnoredErrors: false
