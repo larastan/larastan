@@ -10,5 +10,5 @@
 
 **Breaking changes**
 
-<!-- If there are any breaking changes, list them here.
-Make sure to mention them in UPGRADE.md. -->
+<!-- Are existing use cases affected and require changes when upgrading? 
+If so, describe the necessary changes in UPGRADE.md. -->
