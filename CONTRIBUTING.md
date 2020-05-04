@@ -34,7 +34,7 @@ Unit tests:
 
     composer test:unit
 
-Our current testsuite involves running `phpstan` on each individual file in `tests/Features` with our extension file loaded.
-The test will fail if PHPStan fails on the given file.
+Our current testsuite involves running `phpstan` on each individual file in [`tests/Features`](tests/Features)
+with our extension file loaded. The test will fail if PHPStan fails on the given file.
 There is currently no way for us to assert that larastan will fail for a given test suite,
 so it is difficult to test for expected failures in analysis.
