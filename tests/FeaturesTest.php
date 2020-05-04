@@ -40,7 +40,7 @@ class FeaturesTest extends TestCase
         $result = $this->execLarastan($file);
 
         if (! $result || $result['totals']['errors'] > 0 || $result['totals']['file_errors'] > 0) {
-            $this->fail(json_encode(json_decode($result[0]), JSON_PRETTY_PRINT));
+            $this->fail(json_encode($result, JSON_PRETTY_PRINT));
         }
 
         return 0;
