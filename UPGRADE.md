@@ -1,6 +1,41 @@
 # Upgrade Guide
 
-## Unreleased
+## Upgrading to 0.5.8
+
+### Custom collections
+If you are taking advantage of custom Eloquent Collections for your models, you have to mark your custom collection class as generic like so:
+```php
+/**
+ * @template TModel
+ * @extends Collection<TModel>
+ */
+class CustomCollection extends Collection
+{
+}
+```
+If your IDE complains about the `template` or `extends` annotation you may also use the PHPStan specific annotations `@phpstan-template` and `@phpstan-extends`
+
+Also in your model file where you are overriding the `newCollection` method, you have to specify the return type like so:
+
+```php
+/**
+     * @param array<int, YourModel> $models
+     *
+     * @return CustomCollection<YourModel>
+     */
+    public function newCollection(array $models = []): CustomCollection
+    {
+        return new CustomCollection($models);
+    }
+```
+
+If your IDE complains about the return type annotation you may also use the PHPStan specific return type `@phpstan-return`
+
+### `laravel-ide-helper` package and `@mixin`
+
+If you are using [laravel-ide-helper](https://github.com/barryvdh/laravel-ide-helper) package in your project and have used it to write `@mixin \Eloquent` annotation into your model files, you may want to remove it. It can prevent Larastan from analyzing your classes correctly. Instead, you can configure `laravel-ide-helper` package to write all the annotations to the `_ide_helper_models.php` file. You can read it in their documentation [here](https://github.com/barryvdh/laravel-ide-helper#automatic-phpdocs-for-models), to see how to do it.
+
+## Upgrading to 0.5.6
 
 ### Generic Relations
 Eloquent relations are now generic classes. Internally, this makes couple of things easier and more flexible. In general it shouldn't affect your code. The only caveat is if you define your custom relations. If you do that, you have to mark your custom relation class as generic like so:
