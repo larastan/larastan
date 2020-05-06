@@ -31,10 +31,6 @@ Also in your model file where you are overriding the `newCollection` method, you
 
 If your IDE complains about the return type annotation you may also use the PHPStan specific return type `@phpstan-return`
 
-### `laravel-ide-helper` package and `@mixin`
-
-If you are using [laravel-ide-helper](https://github.com/barryvdh/laravel-ide-helper) package in your project and have used it to write `@mixin \Eloquent` annotation into your model files, you may want to remove it. It can prevent Larastan from analyzing your classes correctly. Instead, you can configure `laravel-ide-helper` package to write all the annotations to the `_ide_helper_models.php` file. You can read it in their documentation [here](https://github.com/barryvdh/laravel-ide-helper#automatic-phpdocs-for-models), to see how to do it.
-
 ## Upgrading to 0.5.6
 
 ### Generic Relations
