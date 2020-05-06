@@ -13,11 +13,7 @@ use PHPStan\Reflection\Annotations\AnnotationsPropertiesClassReflectionExtension
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
-use PHPStan\Type\BooleanType;
-use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\IntegerType;
-use PHPStan\Type\Type;
-use PHPStan\Type\TypeCombinator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
@@ -125,13 +121,10 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
         $column = $this->tables[$tableName]->columns[$propertyName];
 
-        $readableType = $column->readableType instanceof Type ? $column->readableType : $this->stringResolver->resolve($column->readableType);
-        $writeableType = $column->writeableType instanceof Type ? $column->writeableType : $this->stringResolver->resolve($column->writeableType);
-
         return new ModelProperty(
             $classReflection,
-            $readableType,
-            $writeableType
+            $this->stringResolver->resolve($column->readableType),
+            $this->stringResolver->resolve($column->writeableType)
         );
     }
 
@@ -193,7 +186,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
      * @param Model $modelInstance
      *
      * @return string[]
-     * @phpstan-return array<int, string|Type>
+     * @phpstan-return array<int, string>
      */
     private function getReadableAndWritableTypes(SchemaColumn $column, Model $modelInstance): array
     {
@@ -208,15 +201,21 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             case 'string':
             case 'int':
             case 'float':
-                /** @var string $type */
-                $type = $column->readableType;
-                $readableType = $writableType = $type.($column->nullable ? '|null' : '');
+                $readableType = $writableType = $column->readableType.($column->nullable ? '|null' : '');
                 break;
 
             case 'boolean':
             case 'bool':
-                $readableType = new BooleanType();
-                $writableType = TypeCombinator::union(new BooleanType(), new ConstantIntegerType(0), new ConstantIntegerType(1));
+                switch ((string) config('database.default')) {
+                    case 'sqlite':
+                    case 'mysql':
+                        $writableType = '0|1|bool';
+                        $readableType = 'bool';
+                        break;
+                    default:
+                        $readableType = $writableType = 'bool';
+                        break;
+                }
                 break;
             case 'enum':
                 if (! $column->options) {
@@ -241,38 +240,37 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             switch ($type) {
                 case 'boolean':
                 case 'bool':
-                    $readableType = new BooleanType();
-                    $writableType = TypeCombinator::union(new BooleanType(), new ConstantIntegerType(0), new ConstantIntegerType(1));
+                    $realType = 'boolean';
                     break;
                 case 'string':
-                    $readableType = $writableType = 'string';
+                    $realType = 'string';
                     break;
                 case 'array':
                 case 'json':
-                    $readableType = $writableType = 'array';
+                    $realType = 'array';
                     break;
                 case 'object':
-                    $readableType = $writableType = 'object';
+                    $realType = 'object';
                     break;
                 case 'int':
                 case 'integer':
                 case 'timestamp':
-                    $readableType = $writableType = 'integer';
+                    $realType = 'integer';
                     break;
                 case 'real':
                 case 'double':
                 case 'float':
-                    $readableType = $writableType = 'float';
+                    $realType = 'float';
                     break;
                 case 'date':
                 case 'datetime':
-                    $readableType = $writableType = $this->dateClass;
+                    $realType = $this->dateClass;
                     break;
                 case 'collection':
-                    $readableType = $writableType = '\Illuminate\Support\Collection';
+                    $realType = '\Illuminate\Support\Collection';
                     break;
                 default:
-                    $readableType = $writableType = class_exists($type) ? ('\\'.$type) : 'mixed';
+                    $realType = class_exists($type) ? ('\\'.$type) : 'mixed';
                     break;
             }
 
@@ -280,8 +278,8 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
                 continue;
             }
 
-            $this->tables[$modelInstance->getTable()]->columns[$name]->readableType = $readableType;
-            $this->tables[$modelInstance->getTable()]->columns[$name]->writeableType = $writableType;
+            $this->tables[$modelInstance->getTable()]->columns[$name]->readableType = $realType;
+            $this->tables[$modelInstance->getTable()]->columns[$name]->writeableType = $realType;
         }
     }
 }
