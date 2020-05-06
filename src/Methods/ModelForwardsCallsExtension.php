@@ -30,7 +30,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        if (! $classReflection->isSubclassOf(Model::class)) {
+        if ($classReflection->getName() !== Model::class && ! $classReflection->isSubclassOf(Model::class)) {
             return false;
         }
 
