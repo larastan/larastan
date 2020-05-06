@@ -16,6 +16,7 @@ use Tests\Application\HasManySyncable;
 
 /**
  * @property-read \App\AccountCollection $accounts
+ * @mixin \Eloquent
  */
 class User extends Authenticatable
 {
