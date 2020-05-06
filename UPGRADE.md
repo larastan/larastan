@@ -19,14 +19,14 @@ Also in your model file where you are overriding the `newCollection` method, you
 
 ```php
 /**
-     * @param array<int, YourModel> $models
-     *
-     * @return CustomCollection<YourModel>
-     */
-    public function newCollection(array $models = []): CustomCollection
-    {
-        return new CustomCollection($models);
-    }
+ * @param array<int, YourModel> $models
+ *
+ * @return CustomCollection<YourModel>
+ */
+public function newCollection(array $models = []): CustomCollection
+{
+    return new CustomCollection($models);
+}
 ```
 
 If your IDE complains about the return type annotation you may also use the PHPStan specific return type `@phpstan-return`
