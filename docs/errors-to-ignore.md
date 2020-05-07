@@ -3,15 +3,7 @@
 Some parts of Laravel are currently too magical for Larastan/PHPStan to understand.
 
 If you hit those errors in your project, you can add them to your `phpstan.neon` as needed.
-For example:
-
-```neon
-ignoreErrors:
-- '#Result of function abort \(void\) is used#'
-```
-
-> Tip: If you set `reportUnmatchedIgnoredErrors: true`, you will be notified once Larastan
-> properly recognizes what's going on, and you no longer have to ignore the error.
+[Learn more about ignoring errors in PHPStan.](https://phpstan.org/user-guide/ignoring-errors)
 
 ### Higher Order Messages
 
