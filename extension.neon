@@ -24,6 +24,8 @@ parameters:
     scopeClass: NunoMaduro\Larastan\Analyser\Scope
     universalObjectCratesClasses:
         - Illuminate\Http\Request
+    earlyTerminatingFunctionCalls:
+        - abort
     excludes_analyse:
         - *.blade.php
     ignoreErrors:
