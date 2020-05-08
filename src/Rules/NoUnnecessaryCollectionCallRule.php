@@ -34,6 +34,7 @@ use PHPStan\Type\Type;
  * User::whereStatus('active')->get()->pluck('id')
  * could be simplified to:
  * User::whereStatus('active')->pluck('id')
+ * @implements Rule<MethodCall>
  */
 class NoUnnecessaryCollectionCallRule implements Rule
 {
