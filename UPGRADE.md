@@ -1,5 +1,45 @@
 # Upgrade Guide
 
+## Upgrading to 0.6
+
+Larastan no longer ignores errors on your behalf. Here is how you can fix them yourself:
+
+### Result of function abort \(void\) is used
+
+Stop `return`-ing abort.
+
+```diff
+-return abort(401);
++abort(401);
+```
+
+### Call to an undefined method Illuminate\\Support\\HigherOrder
+
+Larastan still does not understand this particular magic, you can
+[ignore it yourself](docs/errors-to-ignore.md#higher-order-messages) for now.
+
+### Method App\\Exceptions\\Handler::render\(\) should return Illuminate\\Http\\Response but returns Symfony\\Component\\HttpFoundation\\Response
+
+Fix the docblock.
+
+```diff
+-    * @return Illuminate\Http\Response|Symfony\Component\HttpFoundation\Response
++    * @return Symfony\Component\HttpFoundation\Response
+     */
+    public function render($request, Exception $exception)
+```
+
+### Property App\\Http\\Middleware\\TrustProxies::\$headers \(string\) does not accept default value of type int
+
+Fix the docblock. 
+
+```diff
+-    * @var string
++    * @var int
+     */
+    protected $headers = Request::HEADER_X_FORWARDED_ALL;
+```
+
 ## Upgrading to 0.5.8
 
 ### Custom collections

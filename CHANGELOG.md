@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- Document common errors for users to ignore ([#564](https://github.com/nunomaduro/larastan/pull/564))
+
+### Changed
+- Do not overwrite PHPStan's default for `reportUnmatchedIgnoredErrors` ([#564](https://github.com/nunomaduro/larastan/pull/564))
+
+### Removed
+- Stop ignoring errors ([#564](https://github.com/nunomaduro/larastan/pull/564))
+
 ## [0.5.8] - 2020-05-06
 
 ### Added
