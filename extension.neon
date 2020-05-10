@@ -28,6 +28,8 @@ parameters:
         - abort
     excludes_analyse:
         - *.blade.php
+    mixinExcludeClasses:
+        - Eloquent
     bootstrap: %rootDir%/../../nunomaduro/larastan/bootstrap.php
     checkGenericClassInNonGenericObjectType: false
     noUnnecessaryCollectionCall: true
