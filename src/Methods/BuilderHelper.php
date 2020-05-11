@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
@@ -16,6 +17,7 @@ use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\Php\DummyParameter;
 use PHPStan\ShouldNotHappenException;
+use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
@@ -28,7 +30,7 @@ class BuilderHelper
     public const MODEL_RETRIEVAL_METHODS = ['first', 'find', 'findMany', 'findOrFail', 'firstOrFail'];
 
     /** @var string[] */
-    public const MODEL_CREATION_METHODS = ['make', 'create', 'forceCreate', 'findOrNew', 'firstOrNew', 'updateOrCreate', 'fromQuery', 'firstOrCreate'];
+    public const MODEL_CREATION_METHODS = ['make', 'create', 'forceCreate', 'findOrNew', 'firstOrNew', 'updateOrCreate', 'firstOrCreate'];
 
     /**
      * @var Broker
@@ -183,6 +185,10 @@ class BuilderHelper
                 $returnType = $customReturnType;
             }
 
+            if (! $isBuilderReferenced && (new ObjectType(Collection::class))->isSuperTypeOf($returnType)->yes()) {
+                $returnType = new GenericObjectType(Collection::class, [new ObjectType($modelName)]);
+            }
+
             return new EloquentBuilderMethodReflection(
                 $methodName, $classReflection,
                 $parametersAcceptor->getParameters(),
@@ -192,5 +198,18 @@ class BuilderHelper
         }
 
         return $this->dynamicWhere($methodName, $customReturnType);
+    }
+
+    public function determineCollectionClassName(string $modelClassName): string
+    {
+        $newCollectionMethod = $this->broker->getClass($modelClassName)->getNativeMethod('newCollection');
+
+        $returnType = ParametersAcceptorSelector::selectSingle($newCollectionMethod->getVariants())->getReturnType();
+
+        if ($returnType instanceof ObjectType) {
+            return $returnType->getClassName();
+        }
+
+        return $returnType->describe(VerbosityLevel::value());
     }
 }

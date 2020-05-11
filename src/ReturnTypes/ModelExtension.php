@@ -63,6 +63,10 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, Br
             return false;
         }
 
+        if (in_array($name, ['get', 'hydrate', 'fromQuery'], true)) {
+            return true;
+        }
+
         return $methodReflection->getDeclaringClass()->hasNativeMethod($name);
     }
 
@@ -115,8 +119,12 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, Br
             );
         }
 
-        if ($methodReflection->getName() === 'all' && in_array(Collection::class, $returnType->getReferencedClasses(), true) && $methodCall->class instanceof \PhpParser\Node\Name) {
-            $returnType = new GenericObjectType(Collection::class, [new ObjectType($scope->resolveName($methodCall->class))]);
+        if ($methodCall->class instanceof \PhpParser\Node\Name && in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
+            $builderHelper = new BuilderHelper($this->getBroker());
+
+            $collectionClassName = $builderHelper->determineCollectionClassName($methodCall->class->toString());
+
+            return new GenericObjectType($collectionClassName, [new ObjectType($methodCall->class->toString())]);
         }
 
         return $returnType;

@@ -20,7 +20,7 @@ class BelongsToMany extends Relation
     /**
      * Get the first related model record matching the attributes or instantiate it.
      *
-     * @param  array<int, mixed>  $attributes
+     * @param  array<string, mixed>  $attributes
      * @return TRelatedModel
      */
     public function firstOrNew(array $attributes);
@@ -28,7 +28,7 @@ class BelongsToMany extends Relation
     /**
      * Get the first related record matching the attributes or create it.
      *
-     * @param  array<int, mixed>  $attributes
+     * @param  array<string, mixed>  $attributes
      * @param  array<mixed>  $joining
      * @param  bool  $touch
      * @return TRelatedModel
@@ -38,7 +38,7 @@ class BelongsToMany extends Relation
     /**
      * Create or update a related record matching the attributes, and fill it with values.
      *
-     * @param  array<int, mixed>  $attributes
+     * @param  array<string, mixed>  $attributes
      * @param  array<mixed>  $values
      * @param  array<mixed>  $joining
      * @param  bool  $touch

@@ -25,15 +25,13 @@ parameters:
     scopeClass: NunoMaduro\Larastan\Analyser\Scope
     universalObjectCratesClasses:
         - Illuminate\Http\Request
+    earlyTerminatingFunctionCalls:
+        - abort
     excludes_analyse:
         - *.blade.php
-    ignoreErrors:
-        - '#Result of function abort \(void\) is used#'
-        - '#Call to an undefined method Illuminate\\Support\\HigherOrder#'
-        - '#Method App\\Exceptions\\Handler::render\(\) should return Illuminate\\Http\\Response but returns Symfony\\Component\\HttpFoundation\\Response#'
-        - '#Property App\\Http\\Middleware\\TrustProxies::\$headers \(string\) does not accept default value of type int#'
+    mixinExcludeClasses:
+        - Eloquent
     bootstrap: %rootDir%/../../nunomaduro/larastan/bootstrap.php
-    reportUnmatchedIgnoredErrors: false
     checkGenericClassInNonGenericObjectType: false
     noUnnecessaryCollectionCall: true
     noUnnecessaryCollectionCallOnly: []
@@ -141,6 +139,16 @@ services:
 
     -
         class: NunoMaduro\Larastan\ReturnTypes\EloquentBuilderExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\RelationFindExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\RelationExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 

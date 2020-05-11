@@ -6,6 +6,37 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- Document common errors for users to ignore ([#564](https://github.com/nunomaduro/larastan/pull/564))
+
+### Fixed
+- Avoid false-positive when calling static builder methods such as `::find()` on Model classes where
+  the concrete subclass is not yet known ([#565](https://github.com/nunomaduro/larastan/pull/565))
+
+### Changed
+- Do not overwrite PHPStan's default for `reportUnmatchedIgnoredErrors` ([#564](https://github.com/nunomaduro/larastan/pull/564))
+
+### Removed
+- Stop ignoring errors ([#564](https://github.com/nunomaduro/larastan/pull/564))
+
+## [0.5.8] - 2020-05-06
+
+### Added
+- Support for custom Eloquent collections. Thanks @timacdonald ([#537](https://github.com/nunomaduro/larastan/pull/537))
+- Added issue and PR templates for new contributors. Thanks @spawnia ([#560](https://github.com/nunomaduro/larastan/pull/560))
+### Fixed
+- Fixed some of the collection methods in stub files. Thanks @Daanra ([#556](https://github.com/nunomaduro/larastan/pull/556))
+- Fixed a bug with Composer autoloading. Thanks @ondrejmirtes ([#561](https://github.com/nunomaduro/larastan/pull/561))
+## [0.5.7] - 2020-04-28
+
+### Fixed
+- Fixed incorrect stubs for model creation methods. ([85716a5](https://github.com/nunomaduro/larastan/commit/85716a50610740af787899709814c1053ef4acf6))
+- Fixed false positives on NoUnnecessaryCollectionCallRule rule. Thanks @Daanra ([#546](https://github.com/nunomaduro/larastan/pull/546))
+
+### Added
+
+- Added more methods to collection stubs. Thanks @Daanra ([#547](https://github.com/nunomaduro/larastan/pull/547))
+
 ## [0.5.6] - 2020-04-26
 
 ### Fixed
@@ -318,7 +349,9 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.5.6...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.5.8...HEAD
+[0.5.8]: https://github.com/nunomaduro/larastan/compare/v0.5.7...HEAD
+[0.5.7]: https://github.com/nunomaduro/larastan/compare/v0.5.6...HEAD
 [0.5.6]: https://github.com/nunomaduro/larastan/compare/v0.5.5...HEAD
 [0.5.5]: https://github.com/nunomaduro/larastan/compare/v0.5.4...HEAD
 [0.5.4]: https://github.com/nunomaduro/larastan/compare/v0.5.3...HEAD

@@ -45,7 +45,7 @@ final class Macros implements PipeContract
         $found = false;
         $macroTraitProperty = null;
 
-        if ($classReflection->isInterface() && Str::startsWith('Illuminate\Contracts', $classReflection->getName())) {
+        if ($classReflection->isInterface() && Str::startsWith($classReflection->getName(), 'Illuminate\Contracts')) {
             $concrete = $this->resolve($classReflection->getName());
 
             if ($concrete !== null) {

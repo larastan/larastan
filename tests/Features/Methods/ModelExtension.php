@@ -75,6 +75,19 @@ class ModelExtension
         return User::find(1);
     }
 
+    public function testFindOnGenericModel(Model $model): ?Model
+    {
+        return $model::find(1);
+    }
+
+    /**
+     * @param  class-string<Model>  $modelClass
+     */
+    public function testFindOnModelClassString(string $modelClass): ?Model
+    {
+        return $modelClass::find(1);
+    }
+
     /**
      * @return Collection<\App\User>|null
      */

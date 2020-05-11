@@ -1,6 +1,77 @@
 # Upgrade Guide
 
-## Unreleased
+## Upgrading to 0.6
+
+Larastan no longer ignores errors on your behalf. Here is how you can fix them yourself:
+
+### Result of function abort \(void\) is used
+
+Stop `return`-ing abort.
+
+```diff
+-return abort(401);
++abort(401);
+```
+
+### Call to an undefined method Illuminate\\Support\\HigherOrder
+
+Larastan still does not understand this particular magic, you can
+[ignore it yourself](docs/errors-to-ignore.md#higher-order-messages) for now.
+
+### Method App\\Exceptions\\Handler::render\(\) should return Illuminate\\Http\\Response but returns Symfony\\Component\\HttpFoundation\\Response
+
+Fix the docblock.
+
+```diff
+-    * @return Illuminate\Http\Response|Symfony\Component\HttpFoundation\Response
++    * @return Symfony\Component\HttpFoundation\Response
+     */
+    public function render($request, Exception $exception)
+```
+
+### Property App\\Http\\Middleware\\TrustProxies::\$headers \(string\) does not accept default value of type int
+
+Fix the docblock. 
+
+```diff
+-    * @var string
++    * @var int
+     */
+    protected $headers = Request::HEADER_X_FORWARDED_ALL;
+```
+
+## Upgrading to 0.5.8
+
+### Custom collections
+If you are taking advantage of custom Eloquent Collections for your models, you have to mark your custom collection class as generic like so:
+```php
+/**
+ * @template TModel
+ * @extends Collection<TModel>
+ */
+class CustomCollection extends Collection
+{
+}
+```
+If your IDE complains about the `template` or `extends` annotation you may also use the PHPStan specific annotations `@phpstan-template` and `@phpstan-extends`
+
+Also in your model file where you are overriding the `newCollection` method, you have to specify the return type like so:
+
+```php
+/**
+ * @param array<int, YourModel> $models
+ *
+ * @return CustomCollection<YourModel>
+ */
+public function newCollection(array $models = []): CustomCollection
+{
+    return new CustomCollection($models);
+}
+```
+
+If your IDE complains about the return type annotation you may also use the PHPStan specific return type `@phpstan-return`
+
+## Upgrading to 0.5.6
 
 ### Generic Relations
 Eloquent relations are now generic classes. Internally, this makes couple of things easier and more flexible. In general it shouldn't affect your code. The only caveat is if you define your custom relations. If you do that, you have to mark your custom relation class as generic like so:
