@@ -32,8 +32,6 @@ final class HigherOrderTapProxyExtension implements MethodsClassReflectionExtens
             return false;
         }
 
-        // dd($methodName, 141, $classReflection->getName(), $templateType, $templateType->hasMethod($methodName)->no(), ! $templateType->hasMethod('updatezz')->no(), $templateType->hasMethod('updatezz')->yes(), 3);
-// dd($methodName, $templateType->hasMethod($methodName)->yes());
         return $templateType->hasMethod($methodName)->yes();
     }
 
