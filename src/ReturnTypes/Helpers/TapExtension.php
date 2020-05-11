@@ -10,9 +10,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\MixedType;
 use PHPStan\Type\NeverType;
-use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
 class TapExtension implements DynamicFunctionReturnTypeExtension
@@ -35,7 +33,7 @@ class TapExtension implements DynamicFunctionReturnTypeExtension
     ): Type {
         if (count($functionCall->args) === 1) {
             return new GenericObjectType(HigherOrderTapProxy::class, [
-                $scope->getType($functionCall->args[0]->value)
+                $scope->getType($functionCall->args[0]->value),
             ]);
         }
 
