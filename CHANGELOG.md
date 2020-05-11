@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Document common errors for users to ignore ([#564](https://github.com/nunomaduro/larastan/pull/564))
 
+### Fixed
+- Avoid false-positive when calling static builder methods such as `::find()` on Model classes where
+  the concrete subclass is not yet known ([#565](https://github.com/nunomaduro/larastan/pull/565))
+
 ### Changed
 - Do not overwrite PHPStan's default for `reportUnmatchedIgnoredErrors` ([#564](https://github.com/nunomaduro/larastan/pull/564))
 
