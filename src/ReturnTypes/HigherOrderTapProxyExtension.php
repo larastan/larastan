@@ -32,7 +32,6 @@ final class HigherOrderTapProxyExtension implements DynamicMethodReturnTypeExten
      */
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-        dd($methodReflection->getName(), $methodReflection->getDeclaringClass());
         return true;
     }
 

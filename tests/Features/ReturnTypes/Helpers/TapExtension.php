@@ -5,23 +5,28 @@ declare(strict_types=1);
 namespace Tests\Features\ReturnTypes\Helpers;
 
 use App\User;
-use Illuminate\Auth\AuthManager;
-use Illuminate\Foundation\Application;
-use NunoMaduro\Larastan\ApplicationResolver;
+use Illuminate\Support\HigherOrderTapProxy;
 
 class TapExtension
 {
-    /*public function testTapClosure(): User
+    public function testTapClosure(): User
     {
-        return tap(new User, function (User $user) {
+        return tap(new User, function (User $user): void {
             $user->name = 'Daan Raatjes';
             $user->save();
         });
-    }*/
+    }
 
-    public function testTapProxy(): int
+    /**
+     * @return HigherOrderTapProxy<User>
+     */
+    public function testTapProxyReturnType(): HigherOrderTapProxy
     {
-        // User::firstOrFail()->hello();
-        return tap(new User)->updatez(['name' => 'Taylor otwell']);
+        return tap(new User);
+    }
+
+    public function testTapProxy(): User
+    {
+        return tap(new User)->update(['name' => 'Taylor Otwell']);
     }
 }
