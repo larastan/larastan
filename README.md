@@ -21,7 +21,7 @@ Larastan was created by [Nuno Maduro](https://github.com/nunomaduro), got artwor
 - Supports most of [Laravel](https://laravel.com)'s **beautiful magic**
 - Discovers bugs in your code without running it
 
-## ✨ Getting Started in 3 Steps
+## ✨ Getting Started In 3 Steps
 
 > **Requires:**
 - **[PHP 7.2+](https://php.net/releases/)**
@@ -72,14 +72,21 @@ If you are getting the error `Allowed memory size exhausted`, then you can use t
 ```
 
 ## Rules
+
 A list of configurable rules specific to Laravel can be found [here](docs/rules.md).
+
+## Errors To Ignore
+
+Some parts of Laravel are currently too magical for Larastan/PHPStan to understand.
+We listed common [errors to ignore](docs/errors-to-ignore.md), add them as needed.
+
 ## 👊🏻 Contributing
 
 Thank you for considering contributing to Larastan. All the contribution guidelines are mentioned [here](CONTRIBUTING.md).
 
 You can have a look at the [CHANGELOG](CHANGELOG.md) for constant updates & detailed information about the changes. You can also follow the Twitter account for the latest announcements or just come say hi!: [@enunomaduro](https://twitter.com/enunomaduro).
 
-## ❤️ Support the development
+## ❤️ Support The Development
 
 **Do you like this project? Support it by donating**
 

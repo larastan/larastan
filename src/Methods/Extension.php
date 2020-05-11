@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
+use Illuminate\Database\Eloquent\Model;
 use NunoMaduro\Larastan\Concerns;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
@@ -42,6 +43,10 @@ final class Extension implements MethodsClassReflectionExtension, BrokerAwareExt
      */
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
+        if ($classReflection->getName() === Model::class) {
+            return false;
+        }
+
         if (array_key_exists($methodName.'-'.$classReflection->getName(), $this->methodReflections)) {
             return true;
         }

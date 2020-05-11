@@ -21,8 +21,8 @@ class CollectionStub
     }
 
     /**
-     * @param SupportCollection<class-string, int> $items
-     * @return SupportCollection<class-string, int>
+     * @param SupportCollection<string, int> $items
+     * @return SupportCollection<string, int>
      */
     public function testEachWithoutParams(SupportCollection $items): SupportCollection
     {

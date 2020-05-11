@@ -48,7 +48,7 @@ final class Auths implements PipeContract
                 $found = $passable->sendToPipeline($userModel);
             }
         } elseif ($classReflectionName === \Illuminate\Contracts\Auth\Factory::class || $classReflectionName === \Illuminate\Auth\AuthManager::class) {
-            $found = $passable->searchOn(
+            $found = $passable->sendToPipeline(
                 \Illuminate\Contracts\Auth\Guard::class
             );
         }
