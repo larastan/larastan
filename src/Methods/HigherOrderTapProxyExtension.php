@@ -5,19 +5,15 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods;
 
 use Illuminate\Support\HigherOrderTapProxy;
-use NunoMaduro\Larastan\Concerns\HasBroker;
 use PHPStan\Analyser\OutOfClassScope;
-use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\Dummy\DummyMethodReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Type\ObjectType;
 
-final class HigherOrderTapProxyExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
+final class HigherOrderTapProxyExtension implements MethodsClassReflectionExtension
 {
-    use HasBroker;
-
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
         if ($classReflection->getName() !== HigherOrderTapProxy::class) {
@@ -39,12 +35,8 @@ final class HigherOrderTapProxyExtension implements MethodsClassReflectionExtens
         ClassReflection $classReflection,
         string $methodName
     ): MethodReflection {
-        /** @var ObjectType|null $templateType */
+        /** @var ObjectType $templateType */
         $templateType = $classReflection->getActiveTemplateTypeMap()->getType('TClass');
-
-        if ($templateType === null) {
-            return new DummyMethodReflection($methodName);
-        }
 
         $reflection = $templateType->getClassReflection();
 
