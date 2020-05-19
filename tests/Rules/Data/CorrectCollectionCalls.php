@@ -74,6 +74,24 @@ class CorrectCollectionCalls
             return $user->id === 2;
         });
     }
+
+    public function testAggregateNoArgs(): int
+    {
+        return User::query()
+            ->select([DB::raw('COUNT(*) as temp')])
+            ->pluck('temp')
+            ->sum();
+    }
+
+    public function testRelationAggregate(User $user): int
+    {
+        return $user->group()
+            ->withCount(['accounts' => function ($query) {
+                $query->where('id', '<>', 1);
+            }])
+            ->pluck('accounts_count')
+            ->avg();
+    }
 }
 
 class Foo extends Model

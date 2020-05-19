@@ -89,4 +89,9 @@ class UnnecessaryCollectionCallsEloquent
     {
         return User::query()->get()->containsStrict('id', 1);
     }
+
+    public function testSum(): int
+    {
+        return User::pluck('id')->sum();
+    }
 }

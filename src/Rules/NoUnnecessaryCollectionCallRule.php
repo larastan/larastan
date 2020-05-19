@@ -184,8 +184,14 @@ class NoUnnecessaryCollectionCallRule implements Rule
             return [$this->formatError($name->toString())];
         } elseif ($this->isRiskyParamMethod($name)) {
             if (count($node->args) === 0) {
-                // Calling e.g. DB::table()->pluck('age')-sum()
-                return [$this->formatError($name->toString())];
+                // Calling e.g. DB::table()->pluck($columnName)-sum()
+                // We have to check whether $columnName is actually a database column
+                // and not an alias for some computed attribute
+                if ($previousCall->name->name === 'pluck' && $this->firstArgIsDatabaseColumn($previousCall, $scope)) {
+                    return [$this->formatError($name->toString())];
+                }
+
+                return [];
             }
             if ($this->firstArgIsDatabaseColumn($node, $scope)) {
                 return [$this->formatError($name->toString())];
@@ -208,16 +214,28 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
     /**
      * Determines whether the first argument is a string and references a database column.
-     * @param MethodCall $node
+     * @param Node\Expr\StaticCall|MethodCall $node
      * @param Scope $scope
      * @return bool
      */
-    protected function firstArgIsDatabaseColumn(MethodCall $node, Scope $scope): bool
+    protected function firstArgIsDatabaseColumn($node, Scope $scope): bool
     {
         /** @var \PhpParser\Node\Arg[] $args */
         $args = $node->args;
         if (count($args) === 0 || ! ($args[0]->value instanceof Node\Scalar\String_)) {
             return false;
+        }
+
+        if ($node instanceof Node\Expr\StaticCall) {
+            /** @var Node\Name $class */
+            $class = $node->class;
+
+            $modelReflection = $this->reflectionProvider->getClass($class->toCodeString());
+
+            /** @var \PhpParser\Node\Scalar\String_ $firstArg */
+            $firstArg = $args[0]->value;
+
+            return $this->propertyExtension->hasProperty($modelReflection, $firstArg->value);
         }
 
         $iterableType = $scope->getType($node->var)->getIterableValueType();
