@@ -14,11 +14,6 @@ class UnnecessaryCollectionCallsQuery
         return DB::table('users')->get()->max('id');
     }
 
-    public function queryAverageNoParam(): float
-    {
-        return DB::table('users')->pluck('id')->average();
-    }
-
     public function queryNotEmpty(): bool
     {
         return DB::table('users')->pluck('id')->isNotEmpty();
