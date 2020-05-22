@@ -229,4 +229,9 @@ final class Macro implements BuiltinMethodReflection
     {
         return $this;
     }
+
+    public function getReflection(): ?\ReflectionMethod
+    {
+        return null;
+    }
 }

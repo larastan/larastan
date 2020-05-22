@@ -163,15 +163,6 @@ services:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\Properties\JsonResourceExtension
-        tags:
-            - phpstan.broker.propertiesClassReflectionExtension
-    -
-        class: NunoMaduro\Larastan\Properties\JsonResourceExtension
-        tags:
-            - phpstan.broker.methodsClassReflectionExtension
-
-    -
         class: NunoMaduro\Larastan\ReturnTypes\TestCaseExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
