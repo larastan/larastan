@@ -11,6 +11,7 @@ use PHPStan\Analyser\ScopeContext;
 use PHPStan\Analyser\ScopeFactory;
 use PHPStan\Parser\CachedParser;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\GenericClassStringType;
 use PHPStan\Type\Generic\TemplateTypeMap;
@@ -24,10 +25,14 @@ class RelationParserHelper
     /** @var ScopeFactory */
     private $scopeFactory;
 
-    public function __construct(CachedParser $parser, ScopeFactory $scopeFactory)
+    /** @var ReflectionProvider */
+    private $reflectionProvider;
+
+    public function __construct(CachedParser $parser, ScopeFactory $scopeFactory, ReflectionProvider $reflectionProvider)
     {
         $this->parser = $parser;
         $this->scopeFactory = $scopeFactory;
+        $this->reflectionProvider = $reflectionProvider;
     }
 
     public function findRelatedModelInRelationMethod(
@@ -80,9 +85,10 @@ class RelationParserHelper
             ->enterClassMethod($relationMethod, TemplateTypeMap::createEmpty(), [], null, null, null, false, false, false);
 
         $argType = $methodScope->getType($methodCall->args[0]->value);
+        $returnClass = null;
 
         if ($argType instanceof ConstantStringType) {
-            return $argType->getValue();
+            $returnClass = $argType->getValue();
         }
 
         if ($argType instanceof GenericClassStringType) {
@@ -92,10 +98,14 @@ class RelationParserHelper
                 return null;
             }
 
-            return $modelType->getClassName();
+            $returnClass = $modelType->getClassName();
         }
 
-        return null;
+        if ($returnClass === null) {
+            return null;
+        }
+
+        return $this->reflectionProvider->hasClass($returnClass) ? $returnClass : null;
     }
 
     /**
