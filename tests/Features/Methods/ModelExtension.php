@@ -254,6 +254,12 @@ class Thread extends Model
         return 'thread';
     }
 
+    /** @phpstan-return mixed[] */
+    public static function asSelect(): array
+    {
+        return self::all()->pluck('name', 'id')->toArray();
+    }
+
     public function methodUsingACustomMethodReturningRelation(): HasMany
     {
         return $this->customMethodReturningRelation();
