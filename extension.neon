@@ -31,7 +31,8 @@ parameters:
         - *.blade.php
     mixinExcludeClasses:
         - Eloquent
-    bootstrap: %rootDir%/../../nunomaduro/larastan/bootstrap.php
+    bootstrapFiles:
+        - %rootDir%/../../nunomaduro/larastan/bootstrap.php
     checkGenericClassInNonGenericObjectType: false
     noUnnecessaryCollectionCall: true
     noUnnecessaryCollectionCallOnly: []
