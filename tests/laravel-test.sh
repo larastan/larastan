@@ -28,7 +28,8 @@ cd ../lumen/
 
 echo "Add package from source"
 sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan" } ],|' -i composer.json
-travis_retry composer require --dev "nunomaduro/larastan:*"
+# FIXME https://github.com/nunomaduro/larastan/pull/590#issuecomment-640538581
+COMPOSER_MEMORY_LIMIT=-1 travis_retry composer require --dev "nunomaduro/larastan:*"
 
 echo "Fix Handler::render return type"
 sed -e 's/@return \\Illuminate\\Http\\Response|\\Illuminate\\Http\\JsonResponse$/@return \\Symfony\\Component\\HttpFoundation\\Response/' \
