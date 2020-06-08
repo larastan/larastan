@@ -77,6 +77,7 @@ class RelationParserHelper
         $scope = $this->scopeFactory->create(
             ScopeContext::create($fileName),
             false,
+            [],
             $methodReflection
         );
 
