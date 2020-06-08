@@ -50,6 +50,9 @@
         "preferred-install": "dist"
     },
     "extra": {
+        "branch-alias": {
+            "dev-master": "0.5-dev"
+        },
         "phpstan": {
             "includes": [
                 "extension.neon"
