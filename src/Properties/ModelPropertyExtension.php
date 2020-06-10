@@ -72,8 +72,9 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             return true;
         }
 
+        $modelName = $classReflection->getNativeReflection()->getName();
         /** @var Model $modelInstance */
-        $modelInstance = $classReflection->getNativeReflection()->newInstance();
+        $modelInstance = new $modelName;
         $tableName = $modelInstance->getTable();
 
         if (! array_key_exists($tableName, $this->tables)) {
@@ -102,8 +103,10 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
         ClassReflection $classReflection,
         string $propertyName
     ): PropertyReflection {
+        $modelName = $classReflection->getNativeReflection()->getName();
+
         /** @var Model $modelInstance */
-        $modelInstance = $classReflection->getNativeReflection()->newInstance();
+        $modelInstance = new $modelName;
         $tableName = $modelInstance->getTable();
 
         if (
