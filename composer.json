@@ -21,7 +21,7 @@
         "illuminate/pipeline": "^6.0 || ^7.0",
         "illuminate/support": "^6.0 || ^7.0",
         "mockery/mockery": "^0.9 || ^1.0",
-        "phpstan/phpstan": "^0.12.26",
+        "phpstan/phpstan": "^0.12.28",
         "symfony/process": "^4.3 || ^5.0",
         "ext-json": "*"
     },
