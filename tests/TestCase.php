@@ -24,10 +24,9 @@ class TestCase extends BaseTestCase
         $configPath = __DIR__.'/../extension.neon';
         $command = escapeshellcmd(__DIR__.'/../vendor/bin/phpstan');
 
-        exec(sprintf('%s %s analyse --no-progress  --level=max --configuration %s --autoload-file %s %s --error-format=%s',
+        exec(sprintf('%s %s analyse --no-progress  --level=max --configuration %s  %s --error-format=%s',
             escapeshellarg(PHP_BINARY), $command,
             escapeshellarg($configPath),
-            escapeshellarg(__DIR__.'/../vendor/autoload.php'),
             escapeshellarg($filename),
             'json'),
             $jsonResult);
