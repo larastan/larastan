@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Iterator;
 use PHPStan\Parser\CachedParser;
 use PHPStan\PhpDoc\TypeStringResolver;
+use PHPStan\Reflection\Annotations\AnnotationsPropertiesClassReflectionExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
@@ -35,10 +36,14 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
     /** @var string */
     private $dateClass;
 
-    public function __construct(CachedParser $parser, TypeStringResolver $stringResolver)
+    /** @var AnnotationsPropertiesClassReflectionExtension */
+    private $annotationExtension;
+
+    public function __construct(CachedParser $parser, TypeStringResolver $stringResolver, AnnotationsPropertiesClassReflectionExtension $annotationExtension)
     {
         $this->parser = $parser;
         $this->stringResolver = $stringResolver;
+        $this->annotationExtension = $annotationExtension;
     }
 
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
@@ -55,6 +60,10 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             return false;
         }
 
+        if ($this->annotationExtension->hasProperty($classReflection, $propertyName)) {
+            return false;
+        }
+
         if (count($this->tables) === 0) {
             $this->initializeTables();
         }
@@ -63,8 +72,9 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             return true;
         }
 
+        $modelName = $classReflection->getNativeReflection()->getName();
         /** @var Model $modelInstance */
-        $modelInstance = $classReflection->getNativeReflection()->newInstance();
+        $modelInstance = new $modelName;
         $tableName = $modelInstance->getTable();
 
         if (! array_key_exists($tableName, $this->tables)) {
@@ -93,8 +103,10 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
         ClassReflection $classReflection,
         string $propertyName
     ): PropertyReflection {
+        $modelName = $classReflection->getNativeReflection()->getName();
+
         /** @var Model $modelInstance */
-        $modelInstance = $classReflection->getNativeReflection()->newInstance();
+        $modelInstance = new $modelName;
         $tableName = $modelInstance->getTable();
 
         if (
@@ -197,7 +209,16 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
             case 'boolean':
             case 'bool':
-                $readableType = $writableType = 'boolean';
+                switch ((string) config('database.default')) {
+                    case 'sqlite':
+                    case 'mysql':
+                        $writableType = '0|1|bool';
+                        $readableType = 'bool';
+                        break;
+                    default:
+                        $readableType = $writableType = 'bool';
+                        break;
+                }
                 break;
             case 'enum':
                 if (! $column->options) {

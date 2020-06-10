@@ -55,4 +55,49 @@ class Collection implements \ArrayAccess, Enumerable
      * @return TValue|null
      */
     public function shift() {}
+
+    /**
+     * @param callable(TValue, TKey): (void|bool) $callable
+     * @return static<TValue>
+     */
+    public function each($callable) {}
+
+    /**
+     * @template TReturn
+     * @param callable(TValue, TKey): TReturn $callable
+     * @return static<TKey, TReturn>
+     */
+    public function map($callable) {}
+
+    /**
+     * @param callable(TValue, TKey): array<mixed> $callback
+     * @return static<static<mixed>>
+     */
+    public function mapToGroups(callable $callback) {}
+
+    /**
+     * @param callable(TValue, TKey): mixed $callback
+     * @return static<mixed>
+     */
+    public function flatMap(callable $callback) {}
+
+    /**
+     * @param callable $callback
+     * @return static<int, mixed>
+     */
+    public function mapSpread(callable $callback) {}
+
+    /**
+     * @param int $number
+     * @param null|callable(int, int): mixed $callback
+     * @return static<mixed>
+     */
+    public static function times($number, callable $callback = null) {}
+
+    /**
+     * @param string|array<mixed> $value
+     * @param string|null $key
+     * @return static<mixed>
+     */
+    public function pluck($value, $key = null) {}
 }

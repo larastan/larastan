@@ -27,7 +27,7 @@ before_install:
 install:
   - composer validate --strict
   - travis_retry composer require "illuminate/contracts:${LARAVEL_VERSION}" --dev --prefer-dist --no-interaction --no-suggest
-  - travis_retry composer require "composer/composer:${COMPOSER_VERSION}" --update-with-dependencies --prefer-dist --no-interaction --no-suggest
+  - travis_retry composer require "composer/composer:${COMPOSER_VERSION}" --prefer-dist --no-interaction --no-suggest --update-with-dependencies
 
 script:
   - composer test

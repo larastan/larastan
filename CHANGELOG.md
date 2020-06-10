@@ -6,11 +6,58 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-### Fixed
-- Fixed relation methods with custom builders always returning custom builder. ([#520](https://github.com/nunomaduro/larastan/pull/520))
+## [0.6.0] - 2020-06-10
 
 ### Added
-- Eloquent relations are now also generic.
+- Document common errors for users to ignore ([#564](https://github.com/nunomaduro/larastan/pull/564))
+- Add `abort` to `earlyTerminatingFunctionCalls` config option ([#567](https://github.com/nunomaduro/larastan/pull/567))
+- Support for `tap` helper. ([#575](https://github.com/nunomaduro/larastan/pull/575))
+- Bumped minimum PHPStan version to 0.12.28
+
+### Fixed
+- Avoid false-positive when calling static builder methods such as `::find()` on Model classes where
+  the concrete subclass is not yet known ([#565](https://github.com/nunomaduro/larastan/pull/565))
+- Use correct argument order for `Str::startsWith` ([#570](https://github.com/nunomaduro/larastan/pull/570))
+
+### Changed
+- Do not overwrite PHPStan's default for `reportUnmatchedIgnoredErrors` ([#564](https://github.com/nunomaduro/larastan/pull/564))
+
+### Removed
+- Stop ignoring errors ([#564](https://github.com/nunomaduro/larastan/pull/564))
+
+## [0.5.8] - 2020-05-06
+
+### Added
+- Support for custom Eloquent collections. Thanks @timacdonald ([#537](https://github.com/nunomaduro/larastan/pull/537))
+- Added issue and PR templates for new contributors. Thanks @spawnia ([#560](https://github.com/nunomaduro/larastan/pull/560))
+### Fixed
+- Fixed some of the collection methods in stub files. Thanks @Daanra ([#556](https://github.com/nunomaduro/larastan/pull/556))
+- Fixed a bug with Composer autoloading. Thanks @ondrejmirtes ([#561](https://github.com/nunomaduro/larastan/pull/561))
+## [0.5.7] - 2020-04-28
+
+### Fixed
+- Fixed incorrect stubs for model creation methods. ([85716a5](https://github.com/nunomaduro/larastan/commit/85716a50610740af787899709814c1053ef4acf6))
+- Fixed false positives on NoUnnecessaryCollectionCallRule rule. Thanks @Daanra ([#546](https://github.com/nunomaduro/larastan/pull/546))
+
+### Added
+
+- Added more methods to collection stubs. Thanks @Daanra ([#547](https://github.com/nunomaduro/larastan/pull/547))
+
+## [0.5.6] - 2020-04-26
+
+### Fixed
+- Fixed relation methods with custom builders always returning custom builder. ([#520](https://github.com/nunomaduro/larastan/pull/520))
+- Fixed reading `boolean` columns from migrations. ([#514](https://github.com/nunomaduro/larastan/pull/514), [#513](https://github.com/nunomaduro/larastan/pull/513), [692fcd1](https://github.com/nunomaduro/larastan/commit/692fcd1ddc7017a5d25a476153b3e3d0b8081624), [d1f1861](https://github.com/nunomaduro/larastan/commit/d1f1861ae0094cd8e0f24f001f2bc43e2c85c9fb))
+- Annotations for model properties have higher order than migration files. ([ec22906](https://github.com/nunomaduro/larastan/commit/ec22906dba63325b21c1ac2640879dfd55a1394f))
+- Improved support for Eloquent relationships. ([#533](https://github.com/nunomaduro/larastan/pull/533))
+
+### Added
+- Eloquent relations are now also generic. ([#518](https://github.com/nunomaduro/larastan/pull/518))
+- Support for Composer 2. Thanks @GrahamCampbell ([#528](https://github.com/nunomaduro/larastan/pull/528))
+- Support for `abort_unless`, `throw_if` and `throw_unless` functions. Thanks @Daanra ([#542](https://github.com/nunomaduro/larastan/pull/542))
+- Support for `retry` helper return type. Thanks @Daanra ([#543](https://github.com/nunomaduro/larastan/pull/543))
+- A rule for detecting expensive calls on a Collection. Thanks @Daanra ([#538](https://github.com/nunomaduro/larastan/pull/538))
+- Support for `value` helper function return type. Thanks @Daanra ([#545](https://github.com/nunomaduro/larastan/pull/545))
 
 ## [0.5.5] - 2020-03-26
 
@@ -308,7 +355,11 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.5.5...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/nunomaduro/larastan/compare/v0.5.8...HEAD
+[0.5.8]: https://github.com/nunomaduro/larastan/compare/v0.5.7...HEAD
+[0.5.7]: https://github.com/nunomaduro/larastan/compare/v0.5.6...HEAD
+[0.5.6]: https://github.com/nunomaduro/larastan/compare/v0.5.5...HEAD
 [0.5.5]: https://github.com/nunomaduro/larastan/compare/v0.5.4...HEAD
 [0.5.4]: https://github.com/nunomaduro/larastan/compare/v0.5.3...HEAD
 [0.5.3]: https://github.com/nunomaduro/larastan/compare/v0.5.2...v0.5.3

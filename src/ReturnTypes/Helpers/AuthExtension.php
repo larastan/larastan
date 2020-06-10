@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes\Helpers;
 
+use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Contracts\Auth\StatefulGuard;
 use NunoMaduro\Larastan\Concerns;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
@@ -11,6 +13,7 @@ use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
 
 /**
  * @internal
@@ -39,6 +42,6 @@ final class AuthExtension implements DynamicFunctionReturnTypeExtension
             return new ObjectType(get_class($this->resolve(\Illuminate\Contracts\Auth\Factory::class)));
         }
 
-        return new ObjectType(\Illuminate\Contracts\Auth\Guard::class);
+        return TypeCombinator::intersect(new ObjectType(Guard::class), new ObjectType(StatefulGuard::class));
     }
 }

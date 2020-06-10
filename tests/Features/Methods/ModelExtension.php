@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Features\Methods;
 
+use App\Account;
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ModelExtension
@@ -18,11 +20,6 @@ class ModelExtension
     public function testAll()
     {
         return User::all();
-    }
-
-    public function testAllFirst(): ?User
-    {
-        return User::all()->first();
     }
 
     public function testReturnThis(): Builder
@@ -77,6 +74,19 @@ class ModelExtension
     public function testFind(): ?User
     {
         return User::find(1);
+    }
+
+    public function testFindOnGenericModel(Model $model): ?Model
+    {
+        return $model::find(1);
+    }
+
+    /**
+     * @param  class-string<Model>  $modelClass
+     */
+    public function testFindOnModelClassString(string $modelClass): ?Model
+    {
+        return $modelClass::find(1);
     }
 
     /**
@@ -215,6 +225,11 @@ class ModelExtension
 
         return $thread->custom_property;
     }
+
+    public function testFirstOrCreateWithRelation(User $user): Account
+    {
+        return $user->accounts()->firstOrCreate([]);
+    }
 }
 
 function foo(): string
@@ -231,11 +246,53 @@ class Thread extends Model
 
     public static function testFindOnStaticSelf(): ?Thread
     {
-        return self::query()->where('foo', 'bar')->get()->first();
+        return self::query()->where('foo', 'bar')->first();
     }
 
     public function getCustomPropertyAttribute(): string
     {
         return 'thread';
+    }
+
+    /** @phpstan-return mixed[] */
+    public static function asSelect(): array
+    {
+        return self::all()->pluck('name', 'id')->toArray();
+    }
+
+    public function methodUsingACustomMethodReturningRelation(): HasMany
+    {
+        return $this->customMethodReturningRelation();
+    }
+
+    public function customMethodReturningRelation(): HasMany
+    {
+        return $this->hasManyFromConnection('replica', User::class)
+            ->where('status', '!=', 'deleted');
+    }
+
+    /**
+     * @see https://github.com/nunomaduro/larastan/issues/562
+     *
+     * Allows use of different DB connections for relationships
+     *
+     * @param  string  $connection
+     * @param  string  $related
+     * @param  string  $foreignKey
+     * @param  string  $localKey
+     * @return HasMany
+     */
+    public function hasManyFromConnection(
+        string $connection,
+        string $related,
+        string $foreignKey = null,
+        string $localKey = null
+    ): HasMany {
+        $foreignKey = $foreignKey ?: $this->getForeignKey();
+        $instance = new $related;
+        $instance->setConnection($connection);
+        $localKey = $localKey ?: $this->getKeyName();
+
+        return new HasMany($instance->newQuery(), $this, $instance->getTable().'.'.$foreignKey, $localKey);
     }
 }

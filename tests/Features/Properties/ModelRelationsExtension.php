@@ -86,6 +86,11 @@ class ModelRelationsExtension
     {
         return $account->ownerRelation;
     }
+
+    public function testRelationCanbeOverridenWithAnnotation(OtherDummyModel $dummyModel): DummyModel
+    {
+        return $dummyModel->belongsToRelation;
+    }
 }
 
 class DummyModel extends Model
@@ -107,6 +112,9 @@ class DummyModel extends Model
     }
 }
 
+/**
+ * @property DummyModel $belongsToRelation
+ */
 class OtherDummyModel extends Model
 {
     public function belongsToRelation(): BelongsTo

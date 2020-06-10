@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan;
 
-use Composer\Autoload\ClassLoader;
 use Composer\Autoload\ClassMapGenerator;
+use const DIRECTORY_SEPARATOR;
 use Illuminate\Contracts\Foundation\Application;
 use function in_array;
 use Orchestra\Testbench\Concerns\CreatesApplication;
@@ -31,7 +31,7 @@ final class ApplicationResolver
 
         if (file_exists($composerFile)) {
             $namespace = (string) key(json_decode((string) file_get_contents($composerFile), true)['autoload']['psr-4']);
-            $serviceProviders = array_values(array_filter(self::getProjectClasses($namespace), function (string $class) use (
+            $serviceProviders = array_values(array_filter(self::getProjectClasses($namespace, dirname($composerFile)), function (string $class) use (
                 $namespace
             ) {
                 /** @var class-string $class */
@@ -72,9 +72,9 @@ final class ApplicationResolver
      * @return string[]
      * @throws \ReflectionException
      */
-    private static function getProjectClasses(string $namespace): array
+    private static function getProjectClasses(string $namespace, string $rootDir): array
     {
-        $projectDirs = self::getProjectSearchDirs($namespace);
+        $projectDirs = self::getProjectSearchDirs($namespace, $rootDir);
         /** @var string[] $maps */
         $maps = [];
         // Use composer's ClassMapGenerator to pull the class list out of each project search directory
@@ -93,16 +93,14 @@ final class ApplicationResolver
 
     /**
      * @param string $namespace
+     * @param string $rootDir
      *
      * @return string[]
      * @throws \ReflectionException
      */
-    private static function getProjectSearchDirs(string $namespace): array
+    private static function getProjectSearchDirs(string $namespace, string $rootDir): array
     {
-        $reflection = new \ReflectionClass(ClassLoader::class);
-        /** @var string $filename */
-        $filename = $reflection->getFileName();
-        $composerDir = dirname($filename);
+        $composerDir = $rootDir.DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'composer';
 
         $file = $composerDir.DIRECTORY_SEPARATOR.'autoload_psr4.php';
         $raw = include $file;
