@@ -6,12 +6,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.6.0] - 2020-06-10
+
 ### Added
 - Document common errors for users to ignore ([#564](https://github.com/nunomaduro/larastan/pull/564))
+- Add `abort` to `earlyTerminatingFunctionCalls` config option ([#567](https://github.com/nunomaduro/larastan/pull/567))
+- Support for `tap` helper. ([#575](https://github.com/nunomaduro/larastan/pull/575))
+- Bumped minimum PHPStan version to 0.12.28
 
 ### Fixed
 - Avoid false-positive when calling static builder methods such as `::find()` on Model classes where
   the concrete subclass is not yet known ([#565](https://github.com/nunomaduro/larastan/pull/565))
+- Use correct argument order for `Str::startsWith` ([#570](https://github.com/nunomaduro/larastan/pull/570))
 
 ### Changed
 - Do not overwrite PHPStan's default for `reportUnmatchedIgnoredErrors` ([#564](https://github.com/nunomaduro/larastan/pull/564))
@@ -349,7 +355,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.5.8...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/nunomaduro/larastan/compare/v0.5.8...HEAD
 [0.5.8]: https://github.com/nunomaduro/larastan/compare/v0.5.7...HEAD
 [0.5.7]: https://github.com/nunomaduro/larastan/compare/v0.5.6...HEAD
 [0.5.6]: https://github.com/nunomaduro/larastan/compare/v0.5.5...HEAD

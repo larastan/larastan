@@ -2,7 +2,7 @@
 
 ## Upgrading to 0.6
 
-Larastan no longer ignores errors on your behalf. Here is how you can fix them yourself:
+In previous versions of Larastan, `reportUnmatchedIgnoredErrors` config value was set to `false` by Larastan. Larastan no longer ignores errors on your behalf. Here is how you can fix them yourself:
 
 ### Result of function abort \(void\) is used
 
