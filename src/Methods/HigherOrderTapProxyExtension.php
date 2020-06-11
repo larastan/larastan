@@ -11,6 +11,7 @@ use PHPStan\Reflection\Dummy\DummyMethodReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\ThisType;
 
 final class HigherOrderTapProxyExtension implements MethodsClassReflectionExtension
 {
@@ -24,7 +25,7 @@ final class HigherOrderTapProxyExtension implements MethodsClassReflectionExtens
 
         $templateType = $templateTypeMap->getType('TClass');
 
-        if (! $templateType instanceof ObjectType) {
+        if (! $templateType instanceof ObjectType && ! $templateType instanceof ThisType) {
             return false;
         }
 
@@ -35,8 +36,12 @@ final class HigherOrderTapProxyExtension implements MethodsClassReflectionExtens
         ClassReflection $classReflection,
         string $methodName
     ): MethodReflection {
-        /** @var ObjectType $templateType */
+        /** @var ObjectType|ThisType $templateType */
         $templateType = $classReflection->getActiveTemplateTypeMap()->getType('TClass');
+
+        if ($templateType instanceof ThisType) {
+            $templateType = $templateType->getStaticObjectType();
+        }
 
         $reflection = $templateType->getClassReflection();
 
