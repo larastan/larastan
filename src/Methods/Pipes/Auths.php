@@ -62,7 +62,7 @@ final class Auths implements PipeContract
     /**
      * Returns the default auth model from config.
      *
-     * @return string|void
+     * @return string
      */
     private function getAuthModel(ConfigRepository $config)
     {
@@ -71,7 +71,7 @@ final class Auths implements PipeContract
             ! ($provider = $config->get('auth.guards.'.$guard.'.provider')) ||
             ! ($authModel = $config->get('auth.providers.'.$provider.'.model'))
         ) {
-            return;
+            return '';
         }
 
         return $authModel;
