@@ -11,7 +11,6 @@ use PHPStan\Reflection\Dummy\DummyMethodReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Type\ObjectType;
-use PHPStan\Type\ThisType;
 
 final class HigherOrderTapProxyExtension implements MethodsClassReflectionExtension
 {
