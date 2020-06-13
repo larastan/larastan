@@ -43,9 +43,9 @@ final class Auths implements PipeContract
         if (in_array($classReflectionName, $this->classes, true)) {
             $config = $this->resolve('config');
 
-            $authModel = $this->getAuthModel($config);
+            $authModel = $this->getDefaultAuthModel($config);
 
-            if ($authModel) {
+            if ($authModel !== null) {
                 $found = $passable->sendToPipeline($authModel);
             }
         } elseif ($classReflectionName === \Illuminate\Contracts\Auth\Factory::class || $classReflectionName === \Illuminate\Auth\AuthManager::class) {
@@ -59,19 +59,14 @@ final class Auths implements PipeContract
         }
     }
 
-    /**
-     * Returns the default auth model from config.
-     *
-     * @return string
-     */
-    private function getAuthModel(ConfigRepository $config)
+    private function getDefaultAuthModel(ConfigRepository $config): ?string
     {
         if (
             ! ($guard = $config->get('auth.defaults.guard')) ||
             ! ($provider = $config->get('auth.guards.'.$guard.'.provider')) ||
             ! ($authModel = $config->get('auth.providers.'.$provider.'.model'))
         ) {
-            return '';
+            return null;
         }
 
         return $authModel;

@@ -41,26 +41,23 @@ final class AuthManagerExtension implements DynamicMethodReturnTypeExtension
         $config = $this->getContainer()
             ->get('config');
 
-        if ($authModel = $this->getAuthModel($config)) {
+        $authModel = $this->getDefaultAuthModel($config);
+
+        if ($authModel !== null) {
             return TypeCombinator::addNull(new ObjectType($authModel));
         }
 
         return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
     }
 
-    /**
-     * Returns the default auth model from config.
-     *
-     * @return string
-     */
-    private function getAuthModel(ConfigRepository $config)
+    private function getDefaultAuthModel(ConfigRepository $config): ?string
     {
         if (
             ! ($guard = $config->get('auth.defaults.guard')) ||
             ! ($provider = $config->get('auth.guards.'.$guard.'.provider')) ||
             ! ($authModel = $config->get('auth.providers.'.$provider.'.model'))
         ) {
-            return '';
+            return null;
         }
 
         return $authModel;
