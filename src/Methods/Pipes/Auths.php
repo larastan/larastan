@@ -66,12 +66,16 @@ final class Auths implements PipeContract
      */
     private function getAuthModel(ConfigRepository $config)
     {
-        if (
-            ($guard = $config->get('auth.defaults.guard')) &&
-            ($provider = $config->get('auth.guards.'.$guard.'.provider')) &&
-            ($authModel = $config->get('auth.providers.'.$provider.'.model'))
-        ) {
-            return $authModel;
+        if ($guard = $config->get('auth.defaults.guard')) {
+            if ($provider = $config->get('auth.guards.'.$guard.'.provider')) {
+                if ($authModel = $config->get('auth.providers.'.$provider.'.model')) {
+                    return $authModel;
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
         } else {
             return null;
         }
