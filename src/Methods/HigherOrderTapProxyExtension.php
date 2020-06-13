@@ -25,7 +25,7 @@ final class HigherOrderTapProxyExtension implements MethodsClassReflectionExtens
 
         $templateType = $templateTypeMap->getType('TClass');
 
-        if (! $templateType instanceof ObjectType && ! $templateType instanceof ThisType) {
+        if (! $templateType instanceof ObjectType) {
             return false;
         }
 
@@ -36,12 +36,8 @@ final class HigherOrderTapProxyExtension implements MethodsClassReflectionExtens
         ClassReflection $classReflection,
         string $methodName
     ): MethodReflection {
-        /** @var ObjectType|ThisType $templateType */
+        /** @var ObjectType $templateType */
         $templateType = $classReflection->getActiveTemplateTypeMap()->getType('TClass');
-
-        if ($templateType instanceof ThisType) {
-            $templateType = $templateType->getStaticObjectType();
-        }
 
         $reflection = $templateType->getClassReflection();
 
