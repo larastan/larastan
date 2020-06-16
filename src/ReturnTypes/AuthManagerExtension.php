@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\ReturnTypes;
 
 use Illuminate\Auth\AuthManager;
-use Illuminate\Config\Repository as ConfigRepository;
 use NunoMaduro\Larastan\Concerns;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
@@ -19,6 +18,7 @@ use PHPStan\Type\TypeCombinator;
 final class AuthManagerExtension implements DynamicMethodReturnTypeExtension
 {
     use Concerns\HasContainer;
+    use Concerns\LoadsAuthModel;
 
     /**
      * {@inheritdoc}
@@ -48,18 +48,5 @@ final class AuthManagerExtension implements DynamicMethodReturnTypeExtension
         }
 
         return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
-    }
-
-    private function getDefaultAuthModel(ConfigRepository $config): ?string
-    {
-        if (
-            ! ($guard = $config->get('auth.defaults.guard')) ||
-            ! ($provider = $config->get('auth.guards.'.$guard.'.provider')) ||
-            ! ($authModel = $config->get('auth.providers.'.$provider.'.model'))
-        ) {
-            return null;
-        }
-
-        return $authModel;
     }
 }
