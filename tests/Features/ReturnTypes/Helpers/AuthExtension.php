@@ -17,6 +17,11 @@ class AuthExtension
 
     public function testAuthGuard(): Guard
     {
+        return auth()->guard('web');
+    }
+
+    public function testAuthGuardParameter(): Guard
+    {
         return auth('web');
     }
 
@@ -28,6 +33,16 @@ class AuthExtension
     public function testCheck(): bool
     {
         return auth()->check();
+    }
+
+    public function testAuthGuardUser(): ?User
+    {
+        return auth()->guard('web')->user();
+    }
+
+    public function testAuthGuardParameterUser(): ?User
+    {
+        return auth('web')->user();
     }
 
     /**
