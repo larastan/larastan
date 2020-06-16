@@ -43,10 +43,10 @@ final class AuthManagerExtension implements DynamicMethodReturnTypeExtension
 
         $authModel = $this->getDefaultAuthModel($config);
 
-        if ($authModel !== null) {
-            return TypeCombinator::addNull(new ObjectType($authModel));
+        if ($authModel === null) {
+            return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
         }
 
-        return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+        return TypeCombinator::addNull(new ObjectType($authModel));
     }
 }
