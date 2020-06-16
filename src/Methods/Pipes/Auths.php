@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
+use Illuminate\Config\Repository as ConfigRepository;
 use Illuminate\Contracts\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
@@ -42,10 +43,10 @@ final class Auths implements PipeContract
         if (in_array($classReflectionName, $this->classes, true)) {
             $config = $this->resolve('config');
 
-            $userModel = $config->get('auth.providers.users.model');
+            $authModel = $this->getDefaultAuthModel($config);
 
-            if ($userModel) {
-                $found = $passable->sendToPipeline($userModel);
+            if ($authModel !== null) {
+                $found = $passable->sendToPipeline($authModel);
             }
         } elseif ($classReflectionName === \Illuminate\Contracts\Auth\Factory::class || $classReflectionName === \Illuminate\Auth\AuthManager::class) {
             $found = $passable->sendToPipeline(
@@ -56,5 +57,18 @@ final class Auths implements PipeContract
         if (! $found) {
             $next($passable);
         }
+    }
+
+    private function getDefaultAuthModel(ConfigRepository $config): ?string
+    {
+        if (
+            ! ($guard = $config->get('auth.defaults.guard')) ||
+            ! ($provider = $config->get('auth.guards.'.$guard.'.provider')) ||
+            ! ($authModel = $config->get('auth.providers.'.$provider.'.model'))
+        ) {
+            return null;
+        }
+
+        return $authModel;
     }
 }
