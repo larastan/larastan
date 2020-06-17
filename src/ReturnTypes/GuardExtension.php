@@ -6,6 +6,8 @@ namespace NunoMaduro\Larastan\ReturnTypes;
 
 use Illuminate\Contracts\Auth\Guard;
 use NunoMaduro\Larastan\Concerns;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Name;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
@@ -65,6 +67,7 @@ final class GuardExtension implements DynamicMethodReturnTypeExtension
         }
 
         if (
+            (! ($methodCall->var->name instanceof Identifier) && ! ($methodCall->var->name instanceof Name)) ||
             ! in_array((string)$methodCall->var->name, ['guard', 'auth'], true) ||
             count($methodCall->var->args) === 0 ||
             ! ($methodCall->var->args[0]->value instanceof String_)
