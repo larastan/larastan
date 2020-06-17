@@ -8,10 +8,10 @@ use Illuminate\Config\Repository as ConfigRepository;
 
 trait LoadsAuthModel
 {
-    private function getDefaultAuthModel(ConfigRepository $config): ?string
+    private function getAuthModel(ConfigRepository $config, ?string $guard = null): ?string
     {
         if (
-            ! ($guard = $config->get('auth.defaults.guard')) ||
+            ($guard === null && ! ($guard = $config->get('auth.defaults.guard'))) ||
             ! ($provider = $config->get('auth.guards.'.$guard.'.provider')) ||
             ! ($authModel = $config->get('auth.providers.'.$provider.'.model'))
         ) {
@@ -19,5 +19,20 @@ trait LoadsAuthModel
         }
 
         return $authModel;
+    }
+
+    private function getGuardFromNodeKey(?string $key): ?string
+    {
+        if ($key === null) {
+            return null;
+        }
+
+        $pattern = '/(?:guard|auth)\(\'(.*?)\'\)/';
+
+        if (! preg_match($pattern, $key, $matches)) {
+            return null;
+        }
+
+        return $matches[1];
     }
 }

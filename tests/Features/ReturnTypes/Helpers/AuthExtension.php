@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Features\ReturnTypes\Helpers;
 
+use App\Admin;
 use App\User;
 use Illuminate\Contracts\Auth\Factory;
 use Illuminate\Contracts\Auth\Guard;
@@ -43,6 +44,16 @@ class AuthExtension
     public function testAuthGuardParameterUser(): ?User
     {
         return auth('web')->user();
+    }
+
+    public function testAuthGuardAdminUser(): ?Admin
+    {
+        return auth()->guard('admin')->user();
+    }
+
+    public function testAuthGuardAdminParameterUser(): ?Admin
+    {
+        return auth('admin')->user();
     }
 
     /**
