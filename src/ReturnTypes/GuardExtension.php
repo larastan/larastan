@@ -11,10 +11,10 @@ use PhpParser\Node\Name;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Scalar\String_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
@@ -46,7 +46,7 @@ final class GuardExtension implements DynamicMethodReturnTypeExtension
         $config = $this->getContainer()
             ->get('config');
 
-        $guard = $this->getGuardFromMethodCall($methodCall);
+        $guard = $this->getGuardFromMethodCall($scope, $methodCall);
         $authModel = $this->getAuthModel($config, $guard);
 
         if ($authModel === null) {
@@ -56,25 +56,23 @@ final class GuardExtension implements DynamicMethodReturnTypeExtension
         return TypeCombinator::addNull(new ObjectType($authModel));
     }
 
-    private function getGuardFromMethodCall(MethodCall $methodCall): ?string
+    private function getGuardFromMethodCall(Scope $scope, MethodCall $methodCall): ?string
     {
         if (
             ! ($methodCall->var instanceof StaticCall) &&
             ! ($methodCall->var instanceof MethodCall) &&
-            ! ($methodCall->var instanceof FuncCall)
+            ! ($methodCall->var instanceof FuncCall) ||
+            count($methodCall->var->args) !== 1
         ) {
             return null;
         }
 
-        if (
-            (! ($methodCall->var->name instanceof Identifier) && ! ($methodCall->var->name instanceof Name)) ||
-            ! in_array((string)$methodCall->var->name, ['guard', 'auth'], true) ||
-            count($methodCall->var->args) === 0 ||
-            ! ($methodCall->var->args[0]->value instanceof String_)
-        ) {
+        $guardType = $scope->getType($methodCall->var->args[0]->value);
+
+        if (!$guardType instanceof ConstantStringType) {
             return null;
         }
 
-        return $methodCall->var->args[0]->value->value;
+        return $guardType->getValue();
     }
 }
