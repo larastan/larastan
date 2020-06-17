@@ -20,19 +20,4 @@ trait LoadsAuthModel
 
         return $authModel;
     }
-
-    private function getGuardFromNodeKey(?string $key): ?string
-    {
-        if ($key === null) {
-            return null;
-        }
-
-        $pattern = '/(?:guard|auth)\(\'(.*?)\'\)/';
-
-        if (! preg_match($pattern, $key, $matches)) {
-            return null;
-        }
-
-        return $matches[1];
-    }
 }

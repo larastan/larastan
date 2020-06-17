@@ -6,7 +6,10 @@ namespace NunoMaduro\Larastan\ReturnTypes;
 
 use Illuminate\Contracts\Auth\Guard;
 use NunoMaduro\Larastan\Concerns;
+use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Scalar\String_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
@@ -41,8 +44,7 @@ final class GuardExtension implements DynamicMethodReturnTypeExtension
         $config = $this->getContainer()
             ->get('config');
 
-        $nodeKey = $methodCall->getAttribute('phpstan_cache_printer');
-        $guard = $this->getGuardFromNodeKey($nodeKey);
+        $guard = $this->getGuardFromMethodCall($methodCall);
         $authModel = $this->getAuthModel($config, $guard);
 
         if ($authModel === null) {
@@ -50,5 +52,26 @@ final class GuardExtension implements DynamicMethodReturnTypeExtension
         }
 
         return TypeCombinator::addNull(new ObjectType($authModel));
+    }
+
+    private function getGuardFromMethodCall(MethodCall $methodCall): ?string
+    {
+        if (
+            ! ($methodCall->var instanceof StaticCall) &&
+            ! ($methodCall->var instanceof MethodCall) &&
+            ! ($methodCall->var instanceof FuncCall)
+        ) {
+            return null;
+        }
+
+        if (
+            ! in_array((string)$methodCall->var->name, ['guard', 'auth'], true) ||
+            count($methodCall->var->args) === 0 ||
+            ! ($methodCall->var->args[0]->value instanceof String_)
+        ) {
+            return null;
+        }
+
+        return $methodCall->var->args[0]->value->value;
     }
 }
