@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+- Fix false positive when calling `tap($this)` ([#601](https://github.com/nunomaduro/larastan/pull/601))
+
 ## [0.6.0] - 2020-06-10
 
 ### Added
