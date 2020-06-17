@@ -43,7 +43,7 @@ final class GuardExtension implements DynamicMethodReturnTypeExtension
 
         $nodeKey = $methodCall->getAttribute('phpstan_cache_printer');
         $guard = $this->getGuardFromNodeKey($nodeKey);
-        $authModel = $this->getAuthModel($config, null);
+        $authModel = $this->getAuthModel($config, $guard);
 
         if ($authModel === null) {
             return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
