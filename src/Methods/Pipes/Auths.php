@@ -40,9 +40,9 @@ final class Auths implements PipeContract
 
         $found = false;
 
-        if (in_array($classReflectionName, $this->classes, true)) {
-            $config = $this->resolve('config');
+        $config = $this->resolve('config');
 
+        if ($config !== null && in_array($classReflectionName, $this->classes, true)) {
             $authModel = $this->getDefaultAuthModel($config);
 
             if ($authModel !== null) {
