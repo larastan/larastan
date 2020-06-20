@@ -105,7 +105,7 @@ final class ApplicationResolver
     {
         $composerDir = $rootDir.DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'composer';
 
-        $raw = include dirname($filename).DIRECTORY_SEPARATOR.'autoload_psr4.php';
+        $raw = include $composerDir.DIRECTORY_SEPARATOR.'autoload_psr4.php';
 
         return $raw[$namespace];
     }
