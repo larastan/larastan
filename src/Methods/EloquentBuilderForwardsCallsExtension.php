@@ -113,12 +113,12 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
 
         if ($modelType instanceof ObjectType) {
             $builderHelper = new BuilderHelper($this->getBroker());
-            $customBuilderName = $builderHelper->determineBuilderType($modelType->getClassName());
+            $eloquentBuilderClass = $builderHelper->determineBuilderType($modelType->getClassName());
             $returnMethodReflection = $builderHelper->getMethodReflectionFromBuilder(
                 $classReflection,
                 $methodName,
                 $modelType->getClassName(),
-                new GenericObjectType($customBuilderName ?? EloquentBuilder::class, [new ObjectType($modelType->getClassName())])
+                new GenericObjectType($eloquentBuilderClass, [new ObjectType($modelType->getClassName())])
             );
 
             if ($returnMethodReflection !== null) {

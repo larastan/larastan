@@ -13,15 +13,15 @@
     "require": {
         "php": "^7.2",
         "composer/composer": "^1.0 || ^2.0",
-        "illuminate/console": "^6.0 || ^7.0",
-        "illuminate/container": "^6.0 || ^7.0",
-        "illuminate/contracts": "^6.0 || ^7.0",
-        "illuminate/database": "^6.0 || ^7.0",
-        "illuminate/http": "^6.0 || ^7.0",
-        "illuminate/pipeline": "^6.0 || ^7.0",
-        "illuminate/support": "^6.0 || ^7.0",
+        "illuminate/console": "^6.0 || ^7.0 || ^8.0",
+        "illuminate/container": "^6.0 || ^7.0 || ^8.0",
+        "illuminate/contracts": "^6.0 || ^7.0 || ^8.0",
+        "illuminate/database": "^6.0 || ^7.0 || ^8.0",
+        "illuminate/http": "^6.0 || ^7.0 || ^8.0",
+        "illuminate/pipeline": "^6.0 || ^7.0 || ^8.0",
+        "illuminate/support": "^6.0 || ^7.0 || ^8.0",
         "mockery/mockery": "^0.9 || ^1.0",
-        "phpstan/phpstan": "^0.12",
+        "phpstan/phpstan": "^0.12.28",
         "symfony/process": "^4.3 || ^5.0",
         "ext-json": "*"
     },
@@ -50,6 +50,9 @@
         "preferred-install": "dist"
     },
     "extra": {
+        "branch-alias": {
+            "dev-master": "0.6-dev"
+        },
         "phpstan": {
             "includes": [
                 "extension.neon"

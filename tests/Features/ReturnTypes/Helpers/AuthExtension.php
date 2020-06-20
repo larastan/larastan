@@ -38,4 +38,15 @@ class AuthExtension
     {
         return auth()->id();
     }
+
+    /** @return \Illuminate\Contracts\Auth\Authenticatable|false */
+    public function testLoginUsingId(User $user)
+    {
+        return auth()->loginUsingId($user->id);
+    }
+
+    public function testLogin(User $user): void
+    {
+        auth()->login($user);
+    }
 }

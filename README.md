@@ -15,13 +15,13 @@
 
 ## ⚗️ About Larastan
 
-Larastan was created by [Nuno Maduro](https://github.com/nunomaduro), got artwork designed by [@Caneco](http://github.com/caneco), is maintained by [Can Vural](https://github.com/canvural) and [Viktor Szépe](https://github.com/szepeviktor), and is a [phpstan/phpstan](https://github.com/phpstan/phpstan) wrapper for Laravel. Larastan focuses on **finding errors in your code** without actually running it. It catches whole classes of bugs even **before you write tests** for the code.
+Larastan was created by [Nuno Maduro](https://github.com/nunomaduro), got artwork designed by [@Caneco](http://github.com/caneco), is maintained by [Can Vural](https://github.com/canvural) and [Viktor Szépe](https://github.com/szepeviktor), and is a [PHPStan](https://phpstan.org/) wrapper for Laravel. Larastan focuses on **finding errors in your code** without actually running it. It catches whole classes of bugs even **before you write tests** for the code.
 
 - Adds static typing to Laravel to improve developer productivity and **code quality**
 - Supports most of [Laravel](https://laravel.com)'s **beautiful magic**
 - Discovers bugs in your code without running it
 
-## ✨ Getting Started in 3 Steps
+## ✨ Getting Started In 3 Steps
 
 > **Requires:**
 - **[PHP 7.2+](https://php.net/releases/)**
@@ -57,7 +57,7 @@ parameters:
     checkMissingIterableValueType: false
 ```
 
-For all available options, please take a look at the PHPStan documentation: **https://github.com/phpstan/phpstan**
+For all available options, please take a look at the PHPStan documentation: **https://phpstan.org/config-reference**
 
 **3**: Finally, you may start analyzing your code using the phpstan console command:
 
@@ -71,13 +71,22 @@ If you are getting the error `Allowed memory size exhausted`, then you can use t
 ./vendor/bin/phpstan analyse --memory-limit=2G
 ```
 
+## Rules
+
+A list of configurable rules specific to Laravel can be found [here](docs/rules.md).
+
+## Errors To Ignore
+
+Some parts of Laravel are currently too magical for Larastan/PHPStan to understand.
+We listed common [errors to ignore](docs/errors-to-ignore.md), add them as needed.
+
 ## 👊🏻 Contributing
 
 Thank you for considering contributing to Larastan. All the contribution guidelines are mentioned [here](CONTRIBUTING.md).
 
 You can have a look at the [CHANGELOG](CHANGELOG.md) for constant updates & detailed information about the changes. You can also follow the Twitter account for the latest announcements or just come say hi!: [@enunomaduro](https://twitter.com/enunomaduro).
 
-## ❤️ Support the development
+## ❤️ Support The Development
 
 **Do you like this project? Support it by donating**
 

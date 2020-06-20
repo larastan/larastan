@@ -2,17 +2,21 @@
 
 namespace App;
 
+use function get_class;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 use Tests\Application\HasManySyncable;
 
 /**
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Account[] $accounts
+ * @property-read \App\AccountCollection $accounts
+ * @mixin \Eloquent
  */
 class User extends Authenticatable
 {
@@ -44,6 +48,11 @@ class User extends Authenticatable
         return $this->id;
     }
 
+    public function getAllCapsName(): string
+    {
+        return Str::upper($this->name);
+    }
+
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('active', 1);
@@ -58,6 +67,11 @@ class User extends Authenticatable
     public function accounts(): HasMany
     {
         return $this->hasMany(Account::class);
+    }
+
+    public function transactions(): HasManyThrough
+    {
+        return $this->hasManyThrough(Transaction::class, Account::class);
     }
 
     public function syncableRelation(): HasManySyncable
@@ -75,6 +89,16 @@ class User extends Authenticatable
         return $this->belongsToMany(Role::class)
             ->withPivot('some_column')
             ->wherePivotIn('some_column', [1, 2, 3]);
+    }
+
+    public function children(): HasMany
+    {
+        return $this->hasMany(self::class, 'parent_id');
+    }
+
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(get_class($this));
     }
 
     public function hasManySyncable($related, $foreignKey = null, $localKey = null): HasManySyncable

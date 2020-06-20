@@ -53,7 +53,9 @@ class BuilderExtension
     /** @return Collection<User> */
     public function testUsingCollectionMethodsAfterGet(): Collection
     {
-        return User::whereIn('id', [1, 2, 3])->get()->mapWithKeys('key');
+        return User::whereIn('id', [1, 2, 3])->get()->mapWithKeys(function ($user) {
+            return [$user->name => $user->email];
+        });
     }
 
     public function testCallingQueryBuilderMethodOnEloquentBuilderReturnsEloquentBuilder(Builder $builder): Builder
@@ -138,6 +140,22 @@ class BuilderExtension
     public function testFindOrNewWithArray()
     {
         return User::with(['foo'])->findOrNew([1, 2, 3]);
+    }
+
+    /**
+     * @phpstan-return Collection<User>
+     */
+    public function testHydrate(): Collection
+    {
+        return User::hydrate([]);
+    }
+
+    /**
+     * @phpstan-return Collection<User>
+     */
+    public function testFromQuery(): Collection
+    {
+        return User::fromQuery('SELECT * FROM users');
     }
 }
 

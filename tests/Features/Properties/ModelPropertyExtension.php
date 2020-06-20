@@ -35,6 +35,21 @@ class ModelPropertyExtension
         return $this->user->blocked;
     }
 
+    public function testBooleanAcceptsZero(): void
+    {
+        $this->user->blocked = 0;
+    }
+
+    public function testBooleanAcceptsOne(): void
+    {
+        $this->user->blocked = 1;
+    }
+
+    public function testBooleanAcceptsFalse(): void
+    {
+        $this->user->blocked = false;
+    }
+
     /**
      * @return Carbon|BaseCarbon|null
      */
