@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.6.1] - 2020-06-20
+
+### Added
+- Support for dynamic auth model loading from config. Thanks @0xb4lint ([#602](https://github.com/nunomaduro/larastan/pull/602))
+- Support for Laravel 8
+
 ### Fixed
 - Fix false positive when calling `tap($this)` ([#601](https://github.com/nunomaduro/larastan/pull/601))
 
@@ -358,7 +364,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.6.1...HEAD
+[0.6.1]: https://github.com/nunomaduro/larastan/compare/v0.6.0...HEAD
 [0.6.0]: https://github.com/nunomaduro/larastan/compare/v0.5.8...HEAD
 [0.5.8]: https://github.com/nunomaduro/larastan/compare/v0.5.7...HEAD
 [0.5.7]: https://github.com/nunomaduro/larastan/compare/v0.5.6...HEAD
