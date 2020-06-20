@@ -6,7 +6,7 @@ namespace NunoMaduro\Larastan;
 
 use Composer\Autoload\ClassMapGenerator;
 use const DIRECTORY_SEPARATOR;
-use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Foundation\Application as ApplicationContracts;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use function in_array;
@@ -26,7 +26,7 @@ final class ApplicationResolver
      * @return \Illuminate\Contracts\Foundation\Application
      * @throws \ReflectionException
      */
-    public static function resolve(): Application
+    public static function resolve(): ApplicationContracts
     {
         $app = (new self)->createApplication();
 
