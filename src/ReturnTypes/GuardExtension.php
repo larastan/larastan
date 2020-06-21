@@ -6,8 +6,6 @@ namespace NunoMaduro\Larastan\ReturnTypes;
 
 use Illuminate\Contracts\Auth\Guard;
 use NunoMaduro\Larastan\Concerns;
-use PhpParser\Node\Identifier;
-use PhpParser\Node\Name;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
@@ -69,7 +67,7 @@ final class GuardExtension implements DynamicMethodReturnTypeExtension
 
         $guardType = $scope->getType($methodCall->var->args[0]->value);
 
-        if (!$guardType instanceof ConstantStringType) {
+        if (! $guardType instanceof ConstantStringType) {
             return null;
         }
 
