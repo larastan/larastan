@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+- Fix false positive for NoUnnecessaryCollectionCallRule when statically calling hydrate on a Model class. ([#609](https://github.com/nunomaduro/larastan/pull/609))
+
 ## [0.6.0] - 2020-06-10
 
 ### Added
