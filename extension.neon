@@ -134,6 +134,11 @@ services:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
+        class: NunoMaduro\Larastan\ReturnTypes\GuardExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
         class: NunoMaduro\Larastan\ReturnTypes\RequestExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension

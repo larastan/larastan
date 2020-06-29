@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
-use Illuminate\Config\Repository as ConfigRepository;
 use Illuminate\Contracts\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
@@ -20,6 +19,7 @@ use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 final class Auths implements PipeContract
 {
     use Concerns\HasContainer;
+    use Concerns\LoadsAuthModel;
 
     /**
      * @var string[]
@@ -43,7 +43,7 @@ final class Auths implements PipeContract
         $config = $this->resolve('config');
 
         if ($config !== null && in_array($classReflectionName, $this->classes, true)) {
-            $authModel = $this->getDefaultAuthModel($config);
+            $authModel = $this->getAuthModel($config);
 
             if ($authModel !== null) {
                 $found = $passable->sendToPipeline($authModel);
@@ -57,18 +57,5 @@ final class Auths implements PipeContract
         if (! $found) {
             $next($passable);
         }
-    }
-
-    private function getDefaultAuthModel(ConfigRepository $config): ?string
-    {
-        if (
-            ! ($guard = $config->get('auth.defaults.guard')) ||
-            ! ($provider = $config->get('auth.guards.'.$guard.'.provider')) ||
-            ! ($authModel = $config->get('auth.providers.'.$provider.'.model'))
-        ) {
-            return null;
-        }
-
-        return $authModel;
     }
 }
