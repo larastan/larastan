@@ -38,10 +38,12 @@ final class AuthManagerExtension implements DynamicMethodReturnTypeExtension
         MethodCall $methodCall,
         Scope $scope
     ): Type {
-        $config = $this->getContainer()
-            ->get('config');
+        $config = $this->getContainer()->get('config');
+        $authModel = null;
 
-        $authModel = $this->getAuthModel($config);
+        if ($config !== null) {
+            $authModel = $this->getAuthModel($config);
+        }
 
         if ($authModel === null) {
             return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
