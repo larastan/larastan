@@ -174,8 +174,8 @@ final class Passable implements PassableContract
         $classReflection = $this->broker->getClass($class);
 
         if (! $this->staticAllowed && $staticAllowed === false) {
-            $statics = $this->resolve('config')
-                ->get('larastan.statics');
+            $statics = $this->resolve('config') === null ? [] : $this->resolve('config')->get('larastan.statics');
+
             foreach ($statics as $staticClass) {
                 if ($staticClass === $class || $classReflection->isSubclassOf($staticClass)) {
                     $staticAllowed = true;
