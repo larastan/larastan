@@ -21,6 +21,7 @@ class CorrectCollectionCalls
     public function hydrate(): ?User
     {
         $users = [['name' => 'Daan', 'email' => 'test@test.dev']];
+
         return User::hydrate($users)->first();
     }
 
