@@ -18,6 +18,12 @@ class CorrectCollectionCalls
         return User::count();
     }
 
+    public function hydrate(): ?User
+    {
+        $users = [['name' => 'Daan', 'email' => 'test@test.dev']];
+        return User::hydrate($users)->first();
+    }
+
     public function pluckQuery(): Collection
     {
         return User::query()->pluck('id');
