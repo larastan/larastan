@@ -176,6 +176,10 @@ final class Passable implements PassableContract
         if (! $this->staticAllowed && $staticAllowed === false) {
             $statics = $this->resolve('config') === null ? [] : $this->resolve('config')->get('larastan.statics');
 
+            if ($statics === null) {
+                $statics = [];
+            }
+
             foreach ($statics as $staticClass) {
                 if ($staticClass === $class || $classReflection->isSubclassOf($staticClass)) {
                     $staticAllowed = true;
