@@ -36,7 +36,7 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/",
-            "App\\": "tests/Application/app"
+            "App\\": "tests/Application/app/"
         }
     },
     "minimum-stability": "dev",
@@ -63,7 +63,7 @@
     "scripts": {
         "test:types": "phpstan analyse --ansi",
         "test:unit": "phpunit --colors=always",
-        "test:lint": "php-cs-fixer fix -v --dry-run",
+        "test:lint": "php-cs-fixer fix -v --dry-run --diff",
         "lint": "php-cs-fixer fix -v",
         "test": [
             "@test:types",
