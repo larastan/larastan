@@ -96,8 +96,6 @@ class Relations
     }
 
     /**
-     * @param User $user
-     *
      * @return Collection<Account>
      */
     public function testGetOnRelationAndBuilder(User $user): Collection
@@ -164,7 +162,7 @@ class Relations
 }
 
 /**
- * @property-read User $relation
+ * @property User $relation
  */
 class RelationCreateExample extends Model
 {

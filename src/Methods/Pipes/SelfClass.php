@@ -21,7 +21,7 @@ final class SelfClass implements PipeContract
         $className = $passable->getClassReflection()
             ->getName();
 
-        if (! $passable->searchOn($className)) {
+        if (!$passable->searchOn($className)) {
             $next($passable);
         }
     }

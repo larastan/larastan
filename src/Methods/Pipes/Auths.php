@@ -54,7 +54,7 @@ final class Auths implements PipeContract
             );
         }
 
-        if (! $found) {
+        if (!$found) {
             $next($passable);
         }
     }

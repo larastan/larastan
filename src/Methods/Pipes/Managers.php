@@ -45,7 +45,7 @@ final class Managers implements PipeContract
             }
         }
 
-        if (! $found) {
+        if (!$found) {
             $next($passable);
         }
     }

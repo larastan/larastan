@@ -59,12 +59,6 @@ final class Passable implements PassableContract
 
     /**
      * Method constructor.
-     *
-     * @param \PHPStan\Reflection\Php\PhpMethodReflectionFactory $methodReflectionFactory
-     * @param \PHPStan\Broker\Broker $broker
-     * @param \Illuminate\Contracts\Pipeline\Pipeline $pipeline
-     * @param \PHPStan\Reflection\ClassReflection $classReflection
-     * @param string $methodName
      */
     public function __construct(
         PhpMethodReflectionFactory $methodReflectionFactory,
@@ -74,10 +68,10 @@ final class Passable implements PassableContract
         string $methodName
     ) {
         $this->methodReflectionFactory = $methodReflectionFactory;
-        $this->broker = $broker;
-        $this->pipeline = $pipeline;
-        $this->classReflection = $classReflection;
-        $this->methodName = $methodName;
+        $this->broker                  = $broker;
+        $this->pipeline                = $pipeline;
+        $this->classReflection         = $classReflection;
+        $this->methodName              = $methodName;
     }
 
     /**
@@ -173,7 +167,7 @@ final class Passable implements PassableContract
     {
         $classReflection = $this->broker->getClass($class);
 
-        if (! $this->staticAllowed && $staticAllowed === false) {
+        if (!$this->staticAllowed && $staticAllowed === false) {
             $statics = $this->resolve('config') === null ? [] : $this->resolve('config')->get('larastan.statics');
 
             if ($statics === null) {

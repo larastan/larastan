@@ -10,15 +10,15 @@ class FeaturesTest extends TestCase
 {
     public function getFeatures(): array
     {
-        $calls = [];
-        $baseDir = __DIR__.DIRECTORY_SEPARATOR.'Features'.DIRECTORY_SEPARATOR;
+        $calls   = [];
+        $baseDir = __DIR__ . DIRECTORY_SEPARATOR . 'Features' . DIRECTORY_SEPARATOR;
 
         /** @var \Symfony\Component\Finder\SplFileInfo $file */
         foreach ((new Finder())->in($baseDir)->files() as $file) {
             if ($file->getExtension() !== 'php') {
                 continue;
             }
-            $fullPath = realpath((string) $file);
+            $fullPath                                    = realpath((string) $file);
             $calls[str_replace($baseDir, '', $fullPath)] = [$fullPath];
         }
 
@@ -39,7 +39,7 @@ class FeaturesTest extends TestCase
     {
         $result = $this->execLarastan($file);
 
-        if (! $result || $result['totals']['errors'] > 0 || $result['totals']['file_errors'] > 0) {
+        if (!$result || $result['totals']['errors'] > 0 || $result['totals']['file_errors'] > 0) {
             $this->fail(json_encode($result, JSON_PRETTY_PRINT));
         }
 

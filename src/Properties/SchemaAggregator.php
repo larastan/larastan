@@ -76,8 +76,8 @@ final class SchemaAggregator
 
     private function alterTable(PhpParser\Node\Expr\StaticCall $call, bool $creating): void
     {
-        if (! isset($call->args[0])
-            || ! $call->args[0]->value instanceof PhpParser\Node\Scalar\String_
+        if (!isset($call->args[0])
+            || !$call->args[0]->value instanceof PhpParser\Node\Scalar\String_
         ) {
             return;
         }
@@ -88,8 +88,8 @@ final class SchemaAggregator
             $this->tables[$tableName] = new SchemaTable($tableName);
         }
 
-        if (! isset($call->args[1])
-            || ! $call->args[1]->value instanceof PhpParser\Node\Expr\Closure
+        if (!isset($call->args[1])
+            || !$call->args[1]->value instanceof PhpParser\Node\Expr\Closure
             || count($call->args[1]->value->params) < 1
             || ($call->args[1]->value->params[0]->type instanceof PhpParser\Node\Name
                 && $call->args[1]->value->params[0]->type->toCodeString()
@@ -110,15 +110,13 @@ final class SchemaAggregator
     }
 
     /**
-     * @param string                $tableName
-     * @param string                $argName
      * @param PhpParser\Node\Stmt[] $stmts
      *
      * @throws \Exception
      */
     private function processColumnUpdates(string $tableName, string $argName, array $stmts): void
     {
-        if (! isset($this->tables[$tableName])) {
+        if (!isset($this->tables[$tableName])) {
             return;
         }
 
@@ -143,17 +141,17 @@ final class SchemaAggregator
                     }
 
                     $firstMethodCall = $rootVar;
-                    $rootVar = $rootVar->var;
+                    $rootVar         = $rootVar->var;
                 }
 
                 if ($rootVar instanceof PhpParser\Node\Expr\Variable
                     && $rootVar->name === $argName
                     && $firstMethodCall->name instanceof PhpParser\Node\Identifier
                 ) {
-                    $firstArg = $firstMethodCall->args[0]->value ?? null;
+                    $firstArg  = $firstMethodCall->args[0]->value ?? null;
                     $secondArg = $firstMethodCall->args[1]->value ?? null;
 
-                    if (! $firstArg instanceof PhpParser\Node\Scalar\String_) {
+                    if (!$firstArg instanceof PhpParser\Node\Scalar\String_) {
                         if ($firstMethodCall->name->name === 'timestamps'
                             || $firstMethodCall->name->name === 'timestampsTz'
                             || $firstMethodCall->name->name === 'nullableTimestamps'
@@ -297,8 +295,8 @@ final class SchemaAggregator
                             break;
 
                         case 'dropmorphs':
-                            $table->dropColumn($columnName.'_type');
-                            $table->dropColumn($columnName.'_id');
+                            $table->dropColumn($columnName . '_type');
+                            $table->dropColumn($columnName . '_id');
                             break;
 
                         case 'enum':
@@ -306,18 +304,18 @@ final class SchemaAggregator
                             break;
 
                         case 'morphs':
-                            $table->setColumn(new SchemaColumn($columnName.'_type', 'string', $nullable));
-                            $table->setColumn(new SchemaColumn($columnName.'_id', 'int', $nullable));
+                            $table->setColumn(new SchemaColumn($columnName . '_type', 'string', $nullable));
+                            $table->setColumn(new SchemaColumn($columnName . '_id', 'int', $nullable));
                             break;
 
                         case 'nullablemorphs':
-                            $table->setColumn(new SchemaColumn($columnName.'_type', 'string', true));
-                            $table->setColumn(new SchemaColumn($columnName.'_id', 'int', true));
+                            $table->setColumn(new SchemaColumn($columnName . '_type', 'string', true));
+                            $table->setColumn(new SchemaColumn($columnName . '_id', 'int', true));
                             break;
 
                         case 'nullableuuidmorphs':
-                            $table->setColumn(new SchemaColumn($columnName.'_type', 'string', true));
-                            $table->setColumn(new SchemaColumn($columnName.'_id', 'string', true));
+                            $table->setColumn(new SchemaColumn($columnName . '_type', 'string', true));
+                            $table->setColumn(new SchemaColumn($columnName . '_id', 'string', true));
                             break;
 
                         case 'rename':
@@ -340,8 +338,8 @@ final class SchemaAggregator
                             break;
 
                         case 'uuidmorphs':
-                            $table->setColumn(new SchemaColumn($columnName.'_type', 'string', $nullable));
-                            $table->setColumn(new SchemaColumn($columnName.'_id', 'string', $nullable));
+                            $table->setColumn(new SchemaColumn($columnName . '_type', 'string', $nullable));
+                            $table->setColumn(new SchemaColumn($columnName . '_id', 'string', $nullable));
                             break;
 
                         default:
@@ -356,8 +354,8 @@ final class SchemaAggregator
 
     private function dropTable(PhpParser\Node\Expr\StaticCall $call): void
     {
-        if (! isset($call->args[0])
-            || ! $call->args[0]->value instanceof PhpParser\Node\Scalar\String_
+        if (!isset($call->args[0])
+            || !$call->args[0]->value instanceof PhpParser\Node\Scalar\String_
         ) {
             return;
         }
@@ -369,9 +367,9 @@ final class SchemaAggregator
 
     private function renameTable(PhpParser\Node\Expr\StaticCall $call): void
     {
-        if (! isset($call->args[0], $call->args[1])
-            || ! $call->args[0]->value instanceof PhpParser\Node\Scalar\String_
-            || ! $call->args[1]->value instanceof PhpParser\Node\Scalar\String_
+        if (!isset($call->args[0], $call->args[1])
+            || !$call->args[0]->value instanceof PhpParser\Node\Scalar\String_
+            || !$call->args[1]->value instanceof PhpParser\Node\Scalar\String_
         ) {
             return;
         }
@@ -379,7 +377,7 @@ final class SchemaAggregator
         $oldTableName = $call->args[0]->value->value;
         $newTableName = $call->args[1]->value->value;
 
-        if (! isset($this->tables[$oldTableName])) {
+        if (!isset($this->tables[$oldTableName])) {
             return;
         }
 

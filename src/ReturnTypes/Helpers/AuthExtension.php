@@ -38,7 +38,7 @@ final class AuthExtension implements DynamicFunctionReturnTypeExtension
         FuncCall $functionCall,
         Scope $scope
     ): Type {
-        if (! isset($functionCall->args[0]->value) || (isset($functionCall->args[0]->value) && $functionCall->args[0]->value === null)) {
+        if (!isset($functionCall->args[0]->value) || (isset($functionCall->args[0]->value) && $functionCall->args[0]->value === null)) {
             return new ObjectType(get_class($this->resolve(\Illuminate\Contracts\Auth\Factory::class)));
         }
 

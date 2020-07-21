@@ -42,12 +42,12 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
     public function __construct(RelationParserHelper $relationParserHelper, AnnotationsPropertiesClassReflectionExtension $annotationExtension)
     {
         $this->relationParserHelper = $relationParserHelper;
-        $this->annotationExtension = $annotationExtension;
+        $this->annotationExtension  = $annotationExtension;
     }
 
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
     {
-        if (! $classReflection->isSubclassOf(Model::class)) {
+        if (!$classReflection->isSubclassOf(Model::class)) {
             return false;
         }
 
@@ -65,13 +65,13 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
         /** @var ObjectType $returnType */
         $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
 
-        if (! (new ObjectType(Relation::class))->isSuperTypeOf($returnType)->yes()) {
+        if (!(new ObjectType(Relation::class))->isSuperTypeOf($returnType)->yes()) {
             return new DummyPropertyReflection();
         }
 
         if ($returnType instanceof GenericObjectType) {
             /** @var ObjectType $relatedModelType */
-            $relatedModelType = $returnType->getTypes()[0];
+            $relatedModelType      = $returnType->getTypes()[0];
             $relatedModelClassName = $relatedModelType->getClassName();
         } else {
             $relatedModelClassName = $this

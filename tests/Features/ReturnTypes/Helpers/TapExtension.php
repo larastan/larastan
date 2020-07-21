@@ -12,7 +12,7 @@ class TapExtension
 {
     public function testTapClosure(): User
     {
-        return tap(new User, function (User $user): void {
+        return tap(new User(), function (User $user): void {
             $user->name = 'Daan Raatjes';
             $user->save();
         });
@@ -23,12 +23,12 @@ class TapExtension
      */
     public function testTapProxyReturnType(): HigherOrderTapProxy
     {
-        return tap(new User);
+        return tap(new User());
     }
 
     public function testTapProxy(): User
     {
-        return tap(new User)->update(['name' => 'Taylor Otwell']);
+        return tap(new User())->update(['name' => 'Taylor Otwell']);
     }
 }
 

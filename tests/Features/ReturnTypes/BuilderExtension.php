@@ -20,7 +20,7 @@ class BuilderExtension
     /** @return Collection<User> */
     public function testCallingGetOnModelWithVariableQueryBuilder(): Collection
     {
-        return (new User)->where('id', 1)->get();
+        return (new User())->where('id', 1)->get();
     }
 
     /** @return Collection<User> */
@@ -36,7 +36,7 @@ class BuilderExtension
     /** @return Collection<User> */
     public function testCallingLongGetChainOnModelWithVariableQueryBuilder(): Collection
     {
-        return (new User)->whereNotNull('active')
+        return (new User())->whereNotNull('active')
             ->where('foo', 'bar')
             ->whereFoo(['bar'])
             ->get();
@@ -45,7 +45,7 @@ class BuilderExtension
     /** @return Collection<User> */
     public function testCallingGetOnModelWithVariableQueryBuilder2(): Collection
     {
-        $user = new User;
+        $user = new User();
 
         return $user->where('test', 1)->get();
     }
@@ -65,14 +65,14 @@ class BuilderExtension
 
     public function testMax(): int
     {
-        $user = new User;
+        $user = new User();
 
         return (int) $user->where('test', 1)->max('foo');
     }
 
     public function testExists(): bool
     {
-        $user = new User;
+        $user = new User();
 
         return $user->where('test', 1)->exists();
     }

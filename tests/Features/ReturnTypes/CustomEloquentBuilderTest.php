@@ -144,9 +144,6 @@ class ModelWithCustomBuilder extends Model
 class CustomEloquentBuilder extends Builder
 {
     /**
-     * @param string $category
-     *
-     * @return CustomEloquentBuilder
      * @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder>
      */
     public function category(string $category): CustomEloquentBuilder
@@ -155,9 +152,6 @@ class CustomEloquentBuilder extends Builder
     }
 
     /**
-     * @param string $type
-     *
-     * @return CustomEloquentBuilder
      * @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder>
      */
     public function type(string $type): CustomEloquentBuilder
@@ -168,7 +162,6 @@ class CustomEloquentBuilder extends Builder
     /**
      * @param string[] $categories
      *
-     * @return CustomEloquentBuilder
      * @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder>
      */
     public function categories(array $categories): CustomEloquentBuilder

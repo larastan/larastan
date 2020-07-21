@@ -16,12 +16,13 @@ class CollectionStub
     public function testEachUserParam(): EloquentCollection
     {
         return User::all()->each(function (User $user, int $key): void {
-            echo $user->id.$key;
+            echo $user->id . $key;
         });
     }
 
     /**
      * @param SupportCollection<string, int> $items
+     *
      * @return SupportCollection<string, int>
      */
     public function testEachWithoutParams(SupportCollection $items): SupportCollection
@@ -33,6 +34,7 @@ class CollectionStub
 
     /**
      * @param SupportCollection<int> $items
+     *
      * @return SupportCollection<string>
      */
     public function testMap(SupportCollection $items): SupportCollection
@@ -56,7 +58,6 @@ class CollectionStub
 
     /**
      * @param EloquentCollection<User> $collection
-     * @return int|null
      */
     public function testPluck(EloquentCollection $collection): ?int
     {
@@ -65,6 +66,7 @@ class CollectionStub
 
     /**
      * @param EloquentCollection<User> $collection
+     *
      * @return SupportCollection<int>
      */
     public function testMapToGroups(EloquentCollection $collection)
@@ -78,6 +80,7 @@ class CollectionStub
 
     /**
      * @param EloquentCollection<User> $collection
+     *
      * @return EloquentCollection<User>
      */
     public function testKeyBy(EloquentCollection $collection)
@@ -133,6 +136,7 @@ class CollectionStub
 
     /**
      * @param SupportCollection<array<mixed>> $collection
+     *
      * @return SupportCollection<string>
      */
     public function testMapSpread(SupportCollection $collection)
@@ -144,6 +148,7 @@ class CollectionStub
 
     /**
      * @param EloquentCollection<mixed> $collection
+     *
      * @return SupportCollection<User>
      */
     public function testFlatMap(EloquentCollection $collection)
@@ -157,6 +162,7 @@ class CollectionStub
 
     /**
      * @param EloquentCollection<User> $items
+     *
      * @return EloquentCollection<User>
      */
     public function testTap(EloquentCollection $items): EloquentCollection

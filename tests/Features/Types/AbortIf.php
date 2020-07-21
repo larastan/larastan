@@ -8,14 +8,13 @@ class AbortIf
 {
     public function testAbortIf(?int $foo): int
     {
-        abort_if(! $foo, 500);
+        abort_if(!$foo, 500);
 
         return $foo;
     }
 
     /**
      * @param int|string $foo
-     * @return int
      */
     public function testAbortIfWithTypeCheck($foo = 5): int
     {

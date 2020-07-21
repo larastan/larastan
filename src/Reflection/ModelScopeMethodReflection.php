@@ -32,9 +32,9 @@ final class ModelScopeMethodReflection implements MethodReflection
 
     public function __construct(string $methodName, ClassReflection $classReflection, ClassReflection $relation)
     {
-        $this->methodName = $methodName;
+        $this->methodName      = $methodName;
         $this->classReflection = $classReflection;
-        $this->relation = $relation;
+        $this->relation        = $relation;
     }
 
     public function getDeclaringClass(): ClassReflection

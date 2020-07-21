@@ -16,9 +16,6 @@ trait HasBroker
      */
     protected $broker;
 
-    /**
-     * @param \PHPStan\Broker\Broker $broker
-     */
     public function setBroker(Broker $broker): void
     {
         $this->broker = $broker;
@@ -26,8 +23,6 @@ trait HasBroker
 
     /**
      * Returns the current broker.
-     *
-     * @return \PHPStan\Broker\Broker
      */
     public function getBroker(): Broker
     {

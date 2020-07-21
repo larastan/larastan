@@ -37,7 +37,7 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
 
         // Don't handle dynamic wheres
         if (Str::startsWith($methodReflection->getName(), 'where') &&
-            ! $builderReflection->hasNativeMethod($methodReflection->getName())
+            !$builderReflection->hasNativeMethod($methodReflection->getName())
         ) {
             return false;
         }
@@ -50,7 +50,7 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
 
         $templateTypeMap = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap();
 
-        if (! $templateTypeMap->getType('TModelClass') instanceof ObjectType) {
+        if (!$templateTypeMap->getType('TModelClass') instanceof ObjectType) {
             return false;
         }
 
@@ -62,14 +62,14 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
         MethodCall $methodCall,
         Scope $scope
     ): Type {
-        $returnType = $methodReflection->getVariants()[0]->getReturnType();
+        $returnType      = $methodReflection->getVariants()[0]->getReturnType();
         $templateTypeMap = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap();
 
         /** @var Type|ObjectType|TemplateMixedType $modelType */
         $modelType = $templateTypeMap->getType('TModelClass');
 
         if ($methodReflection instanceof DummyMethodReflection && $modelType instanceof ObjectType) {
-            $scopeMethodName = 'scope'.ucfirst($methodReflection->getName());
+            $scopeMethodName = 'scope' . ucfirst($methodReflection->getName());
             $modelReflection = $this->getBroker()->getClass($modelType->getClassName());
 
             if ($modelReflection->hasNativeMethod($scopeMethodName)) {

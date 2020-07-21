@@ -256,7 +256,7 @@ class CustomEloquentCollectionTest
      */
     public function testRelationGetReturnsCustomCollection(): AccountCollection
     {
-        return (new User)->accounts()->get();
+        return (new User())->accounts()->get();
     }
 
     /**
@@ -264,7 +264,7 @@ class CustomEloquentCollectionTest
      */
     public function testRelationGetReturnsEloquentCollection(): Collection
     {
-        return (new User)->children()->get();
+        return (new User())->children()->get();
     }
 
     /**
@@ -272,7 +272,7 @@ class CustomEloquentCollectionTest
      */
     public function testRelationGetEagerReturnsCustomCollection(): AccountCollection
     {
-        return (new User)->accounts()->getEager();
+        return (new User())->accounts()->getEager();
     }
 
     /**
@@ -280,7 +280,7 @@ class CustomEloquentCollectionTest
      */
     public function testRelationGetEagerReturnsEloquentCollection(): Collection
     {
-        return (new User)->children()->getEager();
+        return (new User())->children()->getEager();
     }
 
     /**
@@ -288,8 +288,7 @@ class CustomEloquentCollectionTest
      */
     public function testRelationCreateManyReturnsCustomCollection(): AccountCollection
     {
-        return (new User)->accounts()->createMany([
-            //
+        return (new User())->accounts()->createMany([
         ]);
     }
 
@@ -298,8 +297,7 @@ class CustomEloquentCollectionTest
      */
     public function testRelationCreateManyReturnsEloquentCollection(): Collection
     {
-        return (new User)->children()->createMany([
-            //
+        return (new User())->children()->createMany([
         ]);
     }
 
@@ -308,7 +306,7 @@ class CustomEloquentCollectionTest
      */
     public function testRelationQueryWithWhereReturnsCustomCollection(): AccountCollection
     {
-        return (new User)->accounts()->active()->get();
+        return (new User())->accounts()->active()->get();
     }
 
     /**
@@ -316,7 +314,7 @@ class CustomEloquentCollectionTest
      */
     public function testRelationQueryWithWhereReturnsEloquentCollection(): Collection
     {
-        return (new User)->children()->active()->get();
+        return (new User())->children()->active()->get();
     }
 
     /**
@@ -324,7 +322,7 @@ class CustomEloquentCollectionTest
      */
     public function testRelationAttributeReturnsCustomCollection(): AccountCollection
     {
-        return (new User)->accounts;
+        return (new User())->accounts;
     }
 
     /**
@@ -332,7 +330,7 @@ class CustomEloquentCollectionTest
      */
     public function testRelationAttributeReturnsEloquentCollection(): Collection
     {
-        return (new User)->children;
+        return (new User())->children;
     }
 
     /**
@@ -340,7 +338,7 @@ class CustomEloquentCollectionTest
      */
     public function testRelationBelongsToManyFindReturnsCustomCollection(): RoleCollection
     {
-        return (new User)->roles()->find([1, 2]);
+        return (new User())->roles()->find([1, 2]);
     }
 
     /**
@@ -348,12 +346,12 @@ class CustomEloquentCollectionTest
      */
     public function testRelationBelongsToManyFindReturnsEloquentCollection(): Collection
     {
-        return (new Role)->users()->find([1, 2]);
+        return (new Role())->users()->find([1, 2]);
     }
 
     public function testRelationBelongsToManyFindExpectingSingleModelDoesntReturnACustomCollection(): ?Role
     {
-        return (new User)->roles()->find(1);
+        return (new User())->roles()->find(1);
     }
 
     /**
@@ -361,7 +359,7 @@ class CustomEloquentCollectionTest
      */
     public function testRelationBelongsToManyFindOrFailReturnsCustomCollection(): RoleCollection
     {
-        return (new User)->roles()->findOrFail([1, 2]);
+        return (new User())->roles()->findOrFail([1, 2]);
     }
 
     /**
@@ -369,12 +367,12 @@ class CustomEloquentCollectionTest
      */
     public function testRelationBelongsToManyFindOrFailReturnsEloquentCollection(): Collection
     {
-        return (new Role)->users()->findOrFail([1, 2]);
+        return (new Role())->users()->findOrFail([1, 2]);
     }
 
     public function testRelationBelongsToManyFindOrFailExpectingSingleModelDoesntReturnACustomCollection(): Role
     {
-        return (new User)->roles()->findOrFail(1);
+        return (new User())->roles()->findOrFail(1);
     }
 
     /**
@@ -382,7 +380,7 @@ class CustomEloquentCollectionTest
      */
     public function testRelationBelongsToManyFindManyReturnsCustomCollection(): RoleCollection
     {
-        return (new User)->roles()->findMany([1, 2]);
+        return (new User())->roles()->findMany([1, 2]);
     }
 
     /**
@@ -390,7 +388,7 @@ class CustomEloquentCollectionTest
      */
     public function testRelationBelongsToManyFindManyReturnsEloquentCollection(): Collection
     {
-        return (new Role)->users()->findMany([1, 2]);
+        return (new Role())->users()->findMany([1, 2]);
     }
 
     /**
@@ -398,7 +396,7 @@ class CustomEloquentCollectionTest
      */
     public function testRelationHasManyThroughManyFindReturnsCustomCollection(): TransactionCollection
     {
-        return (new User)->transactions()->find([1, 2]);
+        return (new User())->transactions()->find([1, 2]);
     }
 
     /**
@@ -406,12 +404,12 @@ class CustomEloquentCollectionTest
      */
     public function testRelationHasManyThroughManyFindReturnsEloquentCollection(): Collection
     {
-        return (new Role)->users()->find([1, 2]);
+        return (new Role())->users()->find([1, 2]);
     }
 
     public function testRelationHasManyThroughManyFindExpectingSingleModelDoesntReturnACustomCollection(): ?Model
     {
-        return (new User)->transactions()->find(1);
+        return (new User())->transactions()->find(1);
     }
 
     /**
@@ -419,7 +417,7 @@ class CustomEloquentCollectionTest
      */
     public function testRelationHasManyThroughManyFindOrFailReturnsCustomCollection(): TransactionCollection
     {
-        return (new User)->transactions()->findOrFail([1, 2]);
+        return (new User())->transactions()->findOrFail([1, 2]);
     }
 
     /**
@@ -427,12 +425,12 @@ class CustomEloquentCollectionTest
      */
     public function testRelationHasManyThroughManyFindOrFailReturnsEloquentCollection(): Collection
     {
-        return (new Role)->users()->findOrFail([1, 2]);
+        return (new Role())->users()->findOrFail([1, 2]);
     }
 
     public function testRelationHasManyThroughManyFindOrFailExpectingSingleModelDoesntReturnACustomCollection(): Model
     {
-        return (new User)->transactions()->findOrFail(1);
+        return (new User())->transactions()->findOrFail(1);
     }
 
     /**
@@ -440,7 +438,7 @@ class CustomEloquentCollectionTest
      */
     public function testRelationHasManyThroughManyFindManyReturnsCustomCollection(): TransactionCollection
     {
-        return (new User)->transactions()->findMany([1, 2]);
+        return (new User())->transactions()->findMany([1, 2]);
     }
 
     /**
@@ -448,7 +446,7 @@ class CustomEloquentCollectionTest
      */
     public function testRelationHasManyThroughManyFindManyReturnsEloquentCollection(): Collection
     {
-        return (new Role)->users()->findMany([1, 2]);
+        return (new Role())->users()->findMany([1, 2]);
     }
 
     /**
@@ -456,7 +454,7 @@ class CustomEloquentCollectionTest
      */
     public function testRelationHasManyFindReturnsCustomCollection(): AccountCollection
     {
-        return (new Group)->accounts()->find([1, 2]);
+        return (new Group())->accounts()->find([1, 2]);
     }
 
     /**
@@ -464,12 +462,12 @@ class CustomEloquentCollectionTest
      */
     public function testRelationHasManyFindReturnsElquentCollection(): Collection
     {
-        return (new User)->children()->find([1, 2]);
+        return (new User())->children()->find([1, 2]);
     }
 
     public function testRelationHasManyFindExpectingSingleModelDoesntReturnACustomCollection(): ?Model
     {
-        return (new Group)->accounts()->find(1);
+        return (new Group())->accounts()->find(1);
     }
 
     /**
@@ -477,7 +475,7 @@ class CustomEloquentCollectionTest
      */
     public function testRelationHasManyFindOrFailReturnsCustomCollection(): AccountCollection
     {
-        return (new Group)->accounts()->findOrFail([1, 2]);
+        return (new Group())->accounts()->findOrFail([1, 2]);
     }
 
     /**
@@ -485,12 +483,12 @@ class CustomEloquentCollectionTest
      */
     public function testRelationHasManyFindOrFailReturnsEloquentCollection(): Collection
     {
-        return (new User)->children()->findOrFail([1, 2]);
+        return (new User())->children()->findOrFail([1, 2]);
     }
 
     public function testRelationHasManyFindOrFailExpectingSingleModelDoesntReturnACustomCollection(): Model
     {
-        return (new Group)->accounts()->findOrFail(1);
+        return (new Group())->accounts()->findOrFail(1);
     }
 
     /**
@@ -498,7 +496,7 @@ class CustomEloquentCollectionTest
      */
     public function testRelationHasManyFindManyReturnsCustomCollection(): AccountCollection
     {
-        return (new Group)->accounts()->findMany([1, 2]);
+        return (new Group())->accounts()->findMany([1, 2]);
     }
 
     /**
@@ -506,7 +504,7 @@ class CustomEloquentCollectionTest
      */
     public function testRelationHasManyFindManyReturnsEloquentCollection(): Collection
     {
-        return (new User)->children()->findMany([1, 2]);
+        return (new User())->children()->findMany([1, 2]);
     }
 
     // Collection...
@@ -516,7 +514,7 @@ class CustomEloquentCollectionTest
      */
     public function testCustomCollectionWhereReturnsCustomCollection(): AccountCollection
     {
-        return (new User)->accounts->where('active', true);
+        return (new User())->accounts->where('active', true);
     }
 
     /**
@@ -524,6 +522,6 @@ class CustomEloquentCollectionTest
      */
     public function testEloquentCollectionWhereReturnsEloquentCollection(): Collection
     {
-        return (new User)->children->where('active', true);
+        return (new User())->children->where('active', true);
     }
 }

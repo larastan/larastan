@@ -18,7 +18,8 @@ use PHPStan\Reflection\PropertyReflection;
  */
 final class Extension implements PropertiesClassReflectionExtension, BrokerAwareExtension
 {
-    use Concerns\HasContainer, Concerns\HasBroker;
+    use Concerns\HasContainer;
+    use Concerns\HasBroker;
 
     /**
      * {@inheritdoc}
@@ -31,7 +32,6 @@ final class Extension implements PropertiesClassReflectionExtension, BrokerAware
             $concrete = $this->resolve($classReflection->getName());
 
             if ($concrete !== null) {
-
                 /*
                  * @todo Consider refactor
                  */
@@ -59,7 +59,7 @@ final class Extension implements PropertiesClassReflectionExtension, BrokerAware
         switch ($concrete) {
             case $concrete instanceof Container:
                 $propertyValue = $this->resolve($propertyName);
-                $property = new ContainerProperty(
+                $property      = new ContainerProperty(
                     $classReflection, $propertyValue
                 );
                 break;

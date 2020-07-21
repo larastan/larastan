@@ -42,7 +42,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        if ($classReflection->getName() !== EloquentBuilder::class && ! $classReflection->isSubclassOf(EloquentBuilder::class)) {
+        if ($classReflection->getName() !== EloquentBuilder::class && !$classReflection->isSubclassOf(EloquentBuilder::class)) {
             return false;
         }
 
@@ -56,7 +56,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
 
         $templateTypeMap = $classReflection->getActiveTemplateTypeMap();
 
-        if (! $templateTypeMap->getType('TModelClass') instanceof ObjectType) {
+        if (!$templateTypeMap->getType('TModelClass') instanceof ObjectType) {
             return false;
         }
 
@@ -73,7 +73,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             $methodReflection = $this->getBuilderReflection()->getNativeMethod($methodName);
 
             $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
-            $returnType = $parametersAcceptor->getReturnType();
+            $returnType         = $parametersAcceptor->getReturnType();
 
             if ($returnType instanceof MixedType) {
                 $returnType = $returnType->subtract(new ObjectType(EloquentBuilder::class));
@@ -92,9 +92,9 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
         /** @var Type|ObjectType|TemplateMixedType $modelType */
         $modelType = $templateTypeMap->getType('TModelClass');
 
-        if ($this->getBuilderReflection()->hasNativeMethod($methodName) && (! $modelType instanceof ObjectType)) {
+        if ($this->getBuilderReflection()->hasNativeMethod($methodName) && (!$modelType instanceof ObjectType)) {
             $methodReflection = $this->getBuilderReflection()->getNativeMethod($methodName);
-            $builderClass = EloquentBuilder::class;
+            $builderClass     = EloquentBuilder::class;
 
             if ($modelType instanceof TemplateMixedType) {
                 /** @var string $builderClass */
@@ -112,8 +112,8 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
         }
 
         if ($modelType instanceof ObjectType) {
-            $builderHelper = new BuilderHelper($this->getBroker());
-            $eloquentBuilderClass = $builderHelper->determineBuilderType($modelType->getClassName());
+            $builderHelper          = new BuilderHelper($this->getBroker());
+            $eloquentBuilderClass   = $builderHelper->determineBuilderType($modelType->getClassName());
             $returnMethodReflection = $builderHelper->getMethodReflectionFromBuilder(
                 $classReflection,
                 $methodName,

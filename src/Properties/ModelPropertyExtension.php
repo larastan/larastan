@@ -41,14 +41,14 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
     public function __construct(CachedParser $parser, TypeStringResolver $stringResolver, AnnotationsPropertiesClassReflectionExtension $annotationExtension)
     {
-        $this->parser = $parser;
-        $this->stringResolver = $stringResolver;
+        $this->parser              = $parser;
+        $this->stringResolver      = $stringResolver;
         $this->annotationExtension = $annotationExtension;
     }
 
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
     {
-        if (! $classReflection->isSubclassOf(Model::class)) {
+        if (!$classReflection->isSubclassOf(Model::class)) {
             return false;
         }
 
@@ -56,7 +56,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             return false;
         }
 
-        if ($classReflection->hasNativeMethod('get'.Str::studly($propertyName).'Attribute')) {
+        if ($classReflection->hasNativeMethod('get' . Str::studly($propertyName) . 'Attribute')) {
             return false;
         }
 
@@ -74,14 +74,14 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
         $modelName = $classReflection->getNativeReflection()->getName();
         /** @var Model $modelInstance */
-        $modelInstance = new $modelName;
-        $tableName = $modelInstance->getTable();
+        $modelInstance = new $modelName();
+        $tableName     = $modelInstance->getTable();
 
-        if (! array_key_exists($tableName, $this->tables)) {
+        if (!array_key_exists($tableName, $this->tables)) {
             return false;
         }
 
-        if (! array_key_exists($propertyName, $this->tables[$tableName]->columns)) {
+        if (!array_key_exists($propertyName, $this->tables[$tableName]->columns)) {
             return false;
         }
 
@@ -91,7 +91,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
         [$readableType, $writableType] = $this->getReadableAndWritableTypes($column, $modelInstance);
 
-        $column->readableType = $readableType;
+        $column->readableType  = $readableType;
         $column->writeableType = $writableType;
 
         $this->tables[$tableName]->columns[$propertyName] = $column;
@@ -106,12 +106,12 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
         $modelName = $classReflection->getNativeReflection()->getName();
 
         /** @var Model $modelInstance */
-        $modelInstance = new $modelName;
-        $tableName = $modelInstance->getTable();
+        $modelInstance = new $modelName();
+        $tableName     = $modelInstance->getTable();
 
         if (
-            (! array_key_exists($tableName, $this->tables)
-                || ! array_key_exists($propertyName, $this->tables[$tableName]->columns)
+            (!array_key_exists($tableName, $this->tables)
+                || !array_key_exists($propertyName, $this->tables[$tableName]->columns)
             )
             && $propertyName === 'id'
         ) {
@@ -133,13 +133,13 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
     private function initializeTables(): void
     {
-        if (! is_dir(database_path().'/migrations')) {
+        if (!is_dir(database_path() . '/migrations')) {
             return;
         }
 
         $schemaAggregator = new SchemaAggregator();
-        $files = $this->getMigrationFiles(database_path().'/migrations');
-        $filesArray = iterator_to_array($files);
+        $files            = $this->getMigrationFiles(database_path() . '/migrations');
+        $filesArray       = iterator_to_array($files);
         ksort($filesArray);
 
         $this->requireFiles($filesArray);
@@ -152,8 +152,6 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
     }
 
     /**
-     * @param string $path
-     *
      * @return Iterator<SplFileInfo>
      */
     private function getMigrationFiles(string $path): Iterator
@@ -173,9 +171,9 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
     private function getDateClass(): string
     {
-        if (! $this->dateClass) {
+        if (!$this->dateClass) {
             $this->dateClass = class_exists(\Illuminate\Support\Facades\Date::class)
-                ? '\\'.get_class(\Illuminate\Support\Facades\Date::now())
+                ? '\\' . get_class(\Illuminate\Support\Facades\Date::now())
                 : '\Illuminate\Support\Carbon';
 
             $this->dateClass .= '|\Carbon\Carbon';
@@ -185,9 +183,6 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
     }
 
     /**
-     * @param SchemaColumn $column
-     * @param Model $modelInstance
-     *
      * @return string[]
      * @phpstan-return array<int, string>
      */
@@ -197,14 +192,14 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
         $writableType = 'mixed';
 
         if (in_array($column->name, $modelInstance->getDates(), true)) {
-            return [$this->getDateClass().($column->nullable ? '|null' : ''), $this->getDateClass().'|string'.($column->nullable ? '|null' : '')];
+            return [$this->getDateClass() . ($column->nullable ? '|null' : ''), $this->getDateClass() . '|string' . ($column->nullable ? '|null' : '')];
         }
 
         switch ($column->readableType) {
             case 'string':
             case 'int':
             case 'float':
-                $readableType = $writableType = $column->readableType.($column->nullable ? '|null' : '');
+                $readableType = $writableType = $column->readableType . ($column->nullable ? '|null' : '');
                 break;
 
             case 'boolean':
@@ -221,10 +216,10 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
                 }
                 break;
             case 'enum':
-                if (! $column->options) {
+                if (!$column->options) {
                     $readableType = $writableType = 'string';
                 } else {
-                    $readableType = $writableType = '\''.implode('\'|\'', $column->options).'\'';
+                    $readableType = $writableType = '\'' . implode('\'|\'', $column->options) . '\'';
                 }
 
                 break;
@@ -273,15 +268,15 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
                     $realType = '\Illuminate\Support\Collection';
                     break;
                 default:
-                    $realType = class_exists($type) ? ('\\'.$type) : 'mixed';
+                    $realType = class_exists($type) ? ('\\' . $type) : 'mixed';
                     break;
             }
 
-            if (! array_key_exists($name, $this->tables[$modelInstance->getTable()]->columns)) {
+            if (!array_key_exists($name, $this->tables[$modelInstance->getTable()]->columns)) {
                 continue;
             }
 
-            $this->tables[$modelInstance->getTable()]->columns[$name]->readableType = $realType;
+            $this->tables[$modelInstance->getTable()]->columns[$name]->readableType  = $realType;
             $this->tables[$modelInstance->getTable()]->columns[$name]->writeableType = $realType;
         }
     }

@@ -43,13 +43,13 @@ final class RelationFindExtension implements DynamicMethodReturnTypeExtension, B
      */
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-        if (! Str::startsWith($methodReflection->getName(), 'find')) {
+        if (!Str::startsWith($methodReflection->getName(), 'find')) {
             return false;
         }
 
         $modelType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TRelatedModel');
 
-        if (! $modelType instanceof ObjectType) {
+        if (!$modelType instanceof ObjectType) {
             return false;
         }
 

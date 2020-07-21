@@ -24,7 +24,7 @@ final class HigherOrderTapProxyExtension implements MethodsClassReflectionExtens
 
         $templateType = $templateTypeMap->getType('TClass');
 
-        if (! $templateType instanceof ObjectType) {
+        if (!$templateType instanceof ObjectType) {
             return false;
         }
 

@@ -42,7 +42,7 @@ final class TestCaseExtension implements DynamicMethodReturnTypeExtension
 
         $classType = $scope->getType($methodCall->args[0]->value);
 
-        if (! $classType instanceof ConstantStringType) {
+        if (!$classType instanceof ConstantStringType) {
             return $defaultReturnType;
         }
 

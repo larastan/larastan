@@ -40,16 +40,14 @@ final class Mixins implements PipeContract
             }
         }
 
-        if (! $found) {
+        if (!$found) {
             $next($passable);
         }
     }
 
     /**
-     * @param \PHPStan\Broker\Broker              $broker
-     * @param \PHPStan\Reflection\ClassReflection $classReflection
-     *
      * @return string[]
+     *
      * @throws \PHPStan\Broker\ClassNotFoundException
      */
     public function getMixinsFromClass(Broker $broker, ClassReflection $classReflection): array
@@ -73,9 +71,9 @@ final class Mixins implements PipeContract
             }
         });
 
-        if (! empty($mixins)) {
+        if (!empty($mixins)) {
             foreach ($mixins as $mixin) {
-                if (! array_key_exists($mixin, self::$resolved)) {
+                if (!array_key_exists($mixin, self::$resolved)) {
                     /*
                      * Marks as resolved.
                      */
@@ -91,9 +89,6 @@ final class Mixins implements PipeContract
     }
 
     /**
-     * @param  string $phpdocs
-     * @param  string $pattern
-     *
      * @return string[]
      */
     private function getMixinsFromPhpDocs(string $phpdocs, string $pattern): array

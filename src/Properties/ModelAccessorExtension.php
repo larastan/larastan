@@ -17,18 +17,18 @@ final class ModelAccessorExtension implements PropertiesClassReflectionExtension
 {
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
     {
-        if (! $classReflection->isSubclassOf(Model::class)) {
+        if (!$classReflection->isSubclassOf(Model::class)) {
             return false;
         }
 
-        return $classReflection->hasNativeMethod('get'.Str::studly($propertyName).'Attribute');
+        return $classReflection->hasNativeMethod('get' . Str::studly($propertyName) . 'Attribute');
     }
 
     public function getProperty(
         ClassReflection $classReflection,
         string $propertyName
     ): PropertyReflection {
-        $method = $classReflection->getNativeMethod('get'.Str::studly($propertyName).'Attribute');
+        $method = $classReflection->getNativeMethod('get' . Str::studly($propertyName) . 'Attribute');
 
         return new ModelProperty(
             $classReflection,

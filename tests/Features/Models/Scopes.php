@@ -32,14 +32,14 @@ class Scopes extends Model
 
     public function testScopeAfterQueryBuilderVariableCall(): Builder
     {
-        $this->user = new User;
+        $this->user = new User();
 
         return $this->user->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->active();
     }
 
     public function testScopeWithFirst(): ?User
     {
-        $this->user = new User;
+        $this->user = new User();
 
         return $this->user->where('foo', 'bar')->active()->first();
     }

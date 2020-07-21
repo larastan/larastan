@@ -20,22 +20,21 @@ final class ApplicationResolver
     /**
      * Creates an application and registers service providers found.
      *
-     * @return \Illuminate\Contracts\Foundation\Application
      * @throws \ReflectionException
      */
     public static function resolve(): Application
     {
-        $app = (new self)->createApplication();
+        $app = (new self())->createApplication();
 
-        $composerFile = getcwd().DIRECTORY_SEPARATOR.'composer.json';
+        $composerFile = getcwd() . DIRECTORY_SEPARATOR . 'composer.json';
 
         if (file_exists($composerFile)) {
-            $namespace = (string) key(json_decode((string) file_get_contents($composerFile), true)['autoload']['psr-4']);
+            $namespace        = (string) key(json_decode((string) file_get_contents($composerFile), true)['autoload']['psr-4']);
             $serviceProviders = array_values(array_filter(self::getProjectClasses($namespace, dirname($composerFile)), function (string $class) use (
                 $namespace
             ) {
-                /** @var class-string $class */
-                return substr($class, 0, strlen($namespace)) === $namespace && self::isServiceProvider($class);
+                /* @var class-string $class */
+                return strpos($class, $namespace) === 0 && self::isServiceProvider($class);
             }));
 
             foreach ($serviceProviders as $serviceProvider) {
@@ -57,19 +56,17 @@ final class ApplicationResolver
     /**
      * @phpstan-param class-string $class
      *
-     * @return bool
      * @throws \ReflectionException
      */
     private static function isServiceProvider(string $class): bool
     {
         return in_array(\Illuminate\Support\ServiceProvider::class, class_parents($class), true) &&
-               ! ((new \ReflectionClass($class))->isAbstract());
+               !((new \ReflectionClass($class))->isAbstract());
     }
 
     /**
-     * @param string $namespace
-     *
      * @return string[]
+     *
      * @throws \ReflectionException
      */
     private static function getProjectClasses(string $namespace, string $rootDir): array
@@ -92,18 +89,16 @@ final class ApplicationResolver
     }
 
     /**
-     * @param string $namespace
-     * @param string $rootDir
-     *
      * @return string[]
+     *
      * @throws \ReflectionException
      */
     private static function getProjectSearchDirs(string $namespace, string $rootDir): array
     {
-        $composerDir = $rootDir.DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'composer';
+        $composerDir = $rootDir . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'composer';
 
-        $file = $composerDir.DIRECTORY_SEPARATOR.'autoload_psr4.php';
-        $raw = include $file;
+        $file = $composerDir . DIRECTORY_SEPARATOR . 'autoload_psr4.php';
+        $raw  = include $file;
 
         return $raw[$namespace];
     }

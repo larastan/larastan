@@ -41,8 +41,8 @@ final class Macros implements PipeContract
         $classReflection = $passable->getClassReflection();
 
         /** @var class-string $className */
-        $className = null;
-        $found = false;
+        $className          = null;
+        $found              = false;
         $macroTraitProperty = null;
 
         if ($classReflection->isInterface() && Str::startsWith($classReflection->getName(), 'Illuminate\Contracts')) {
@@ -58,15 +58,15 @@ final class Macros implements PipeContract
                 }
             }
         } elseif ($classReflection->hasTraitUse(Macroable::class)) {
-            $className = $classReflection->getName();
+            $className          = $classReflection->getName();
             $macroTraitProperty = 'macros';
         } elseif ($this->hasIndirectTraitUse($classReflection, CarbonMacro::class)) {
-            $className = $classReflection->getName();
+            $className          = $classReflection->getName();
             $macroTraitProperty = 'globalMacros';
         }
 
         if ($className !== null && $macroTraitProperty) {
-            $refObject = new \ReflectionClass($className);
+            $refObject   = new \ReflectionClass($className);
             $refProperty = $refObject->getProperty($macroTraitProperty);
             $refProperty->setAccessible(true);
 
@@ -75,7 +75,7 @@ final class Macros implements PipeContract
             if ($found = $className::hasMacro($passable->getMethodName())) {
                 $reflectionFunction = new \ReflectionFunction($refProperty->getValue()[$passable->getMethodName()]);
                 /** @var \PHPStan\Type\Type[] $parameters */
-                $parameters = $reflectionFunction->getParameters();
+                $parameters       = $reflectionFunction->getParameters();
                 $methodReflection = new Macro(
                     $className, $passable->getMethodName(), $reflectionFunction
                 );
@@ -102,7 +102,7 @@ final class Macros implements PipeContract
             }
         }
 
-        if (! $found) {
+        if (!$found) {
             $next($passable);
         }
     }

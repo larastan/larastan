@@ -30,7 +30,6 @@ final class Extension implements MethodsClassReflectionExtension, BrokerAwareExt
     /**
      * Extension constructor.
      *
-     * @param \PHPStan\Reflection\Php\PhpMethodReflectionFactory $methodReflectionFactory
      * @param \NunoMaduro\Larastan\Methods\Kernel|null $kernel
      */
     public function __construct(PhpMethodReflectionFactory $methodReflectionFactory, Kernel $kernel = null)
@@ -47,7 +46,7 @@ final class Extension implements MethodsClassReflectionExtension, BrokerAwareExt
             return false;
         }
 
-        if (array_key_exists($methodName.'-'.$classReflection->getName(), $this->methodReflections)) {
+        if (array_key_exists($methodName . '-' . $classReflection->getName(), $this->methodReflections)) {
             return true;
         }
 
@@ -56,7 +55,7 @@ final class Extension implements MethodsClassReflectionExtension, BrokerAwareExt
         $found = $passable->hasFound();
 
         if ($found) {
-            $this->methodReflections[$methodName.'-'.$classReflection->getName()] = $passable->getMethodReflection();
+            $this->methodReflections[$methodName . '-' . $classReflection->getName()] = $passable->getMethodReflection();
         }
 
         return $found;
@@ -67,6 +66,6 @@ final class Extension implements MethodsClassReflectionExtension, BrokerAwareExt
      */
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
-        return $this->methodReflections[$methodName.'-'.$classReflection->getName()];
+        return $this->methodReflections[$methodName . '-' . $classReflection->getName()];
     }
 }

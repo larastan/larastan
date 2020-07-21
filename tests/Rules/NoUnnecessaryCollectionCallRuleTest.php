@@ -10,13 +10,13 @@ class NoUnnecessaryCollectionCallRuleTest extends RulesTest
 {
     public function testNoFalsePositives(): void
     {
-        $errors = $this->findErrors(__DIR__.'/Data/CorrectCollectionCalls.php');
+        $errors = $this->findErrors(__DIR__ . '/Data/CorrectCollectionCalls.php');
         $this->assertEquals([], $errors, 'The rule should not result in any errors for this data set.');
     }
 
     public function testNoFalseNegativesEloquent(): void
     {
-        $errors = $this->findErrorsByLine(__DIR__.'/Data/UnnecessaryCollectionCallsEloquent.php');
+        $errors = $this->findErrorsByLine(__DIR__ . '/Data/UnnecessaryCollectionCallsEloquent.php');
 
         $this->assertEquals([
             15 => 'Called \'pluck\' on Laravel collection, but could have been retrieved as a query.',
@@ -40,7 +40,7 @@ class NoUnnecessaryCollectionCallRuleTest extends RulesTest
 
     public function testNoFalseNegativesQuery(): void
     {
-        $this->assertSeeErrorsInOrder(__DIR__.'/Data/UnnecessaryCollectionCallsQuery.php', [
+        $this->assertSeeErrorsInOrder(__DIR__ . '/Data/UnnecessaryCollectionCallsQuery.php', [
             'Called \'max\' on Laravel collection, but could have been retrieved as a query.',
             'Called \'isNotEmpty\' on Laravel collection, but could have been retrieved as a query.',
             'Called \'pluck\' on Laravel collection, but could have been retrieved as a query.',

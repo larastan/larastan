@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 use Tests\Application\HasManySyncable;
 
 /**
- * @property-read \App\AccountCollection $accounts
+ * @property \App\AccountCollection $accounts
  * @mixin \Eloquent
  */
 class User extends Authenticatable
@@ -110,7 +110,7 @@ class User extends Authenticatable
         $localKey = $localKey ?: $this->getKeyName();
 
         return new HasManySyncable(
-            $instance->newQuery(), $this, $instance->getTable().'.'.$foreignKey, $localKey
+            $instance->newQuery(), $this, $instance->getTable() . '.' . $foreignKey, $localKey
         );
     }
 }

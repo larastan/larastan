@@ -45,12 +45,12 @@ final class ModelFindExtension implements DynamicStaticMethodReturnTypeExtension
     {
         $methodName = $methodReflection->getName();
 
-        if (! Str::startsWith($methodName, 'find')) {
+        if (!Str::startsWith($methodName, 'find')) {
             return false;
         }
 
-        if (! $this->getBroker()->getClass(Builder::class)->hasNativeMethod($methodName) &&
-            ! $this->getBroker()->getClass(QueryBuilder::class)->hasNativeMethod($methodName)) {
+        if (!$this->getBroker()->getClass(Builder::class)->hasNativeMethod($methodName) &&
+            !$this->getBroker()->getClass(QueryBuilder::class)->hasNativeMethod($methodName)) {
             return false;
         }
 
@@ -65,9 +65,9 @@ final class ModelFindExtension implements DynamicStaticMethodReturnTypeExtension
         StaticCall $methodCall,
         Scope $scope
     ): Type {
-        $modelName = $methodReflection->getDeclaringClass()->getName();
+        $modelName  = $methodReflection->getDeclaringClass()->getName();
         $returnType = $methodReflection->getVariants()[0]->getReturnType();
-        $argType = $scope->getType($methodCall->args[0]->value);
+        $argType    = $scope->getType($methodCall->args[0]->value);
 
         if ($argType->isIterable()->yes()) {
             if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {

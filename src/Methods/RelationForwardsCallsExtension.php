@@ -20,7 +20,7 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        if (! $classReflection->isSubclassOf(Relation::class)) {
+        if (!$classReflection->isSubclassOf(Relation::class)) {
             return false;
         }
 

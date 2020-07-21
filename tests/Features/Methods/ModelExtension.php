@@ -32,7 +32,7 @@ class ModelExtension
 
     public function testWhere(): Builder
     {
-        return (new Thread)->where(['foo' => 'bar']);
+        return (new Thread())->where(['foo' => 'bar']);
     }
 
     public function testStaticWhere(): Builder
@@ -42,7 +42,7 @@ class ModelExtension
 
     public function testDynamicWhere(): Builder
     {
-        return (new Thread)->whereFoo(['bar']);
+        return (new Thread())->whereFoo(['bar']);
     }
 
     public function testStaticDynamicWhere(): Builder
@@ -52,13 +52,13 @@ class ModelExtension
 
     public function testWhereIn(): Builder
     {
-        return (new Thread)->whereIn('id', [1, 2, 3]);
+        return (new Thread())->whereIn('id', [1, 2, 3]);
     }
 
     public function testIncrement(): int
     {
         /** @var User $user */
-        $user = new User;
+        $user = new User();
 
         return $user->increment('counter');
     }
@@ -66,7 +66,7 @@ class ModelExtension
     public function testDecrement(): int
     {
         /** @var User $user */
-        $user = new User;
+        $user = new User();
 
         return $user->decrement('counter');
     }
@@ -82,7 +82,7 @@ class ModelExtension
     }
 
     /**
-     * @param  class-string<Model>  $modelClass
+     * @param class-string<Model> $modelClass
      */
     public function testFindOnModelClassString(string $modelClass): ?Model
     {
@@ -276,11 +276,8 @@ class Thread extends Model
      *
      * Allows use of different DB connections for relationships
      *
-     * @param  string  $connection
-     * @param  string  $related
-     * @param  string  $foreignKey
-     * @param  string  $localKey
-     * @return HasMany
+     * @param string $foreignKey
+     * @param string $localKey
      */
     public function hasManyFromConnection(
         string $connection,
@@ -289,10 +286,10 @@ class Thread extends Model
         string $localKey = null
     ): HasMany {
         $foreignKey = $foreignKey ?: $this->getForeignKey();
-        $instance = new $related;
+        $instance   = new $related();
         $instance->setConnection($connection);
         $localKey = $localKey ?: $this->getKeyName();
 
-        return new HasMany($instance->newQuery(), $this, $instance->getTable().'.'.$foreignKey, $localKey);
+        return new HasMany($instance->newQuery(), $this, $instance->getTable() . '.' . $foreignKey, $localKey);
     }
 }

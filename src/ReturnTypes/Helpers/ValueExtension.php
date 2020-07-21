@@ -41,7 +41,7 @@ final class ValueExtension implements DynamicFunctionReturnTypeExtension
 
         $arg = $functionCall->args[0]->value;
         if ($arg instanceof Closure) {
-            $callbackType = $scope->getType($arg);
+            $callbackType       = $scope->getType($arg);
             $callbackReturnType = ParametersAcceptorSelector::selectFromArgs(
                 $scope,
                 $functionCall->args,

@@ -26,9 +26,9 @@ class ModelProperty implements PropertyReflection
     public function __construct(ClassReflection $declaringClass, Type $readableType, Type $writableType, bool $writeable = true)
     {
         $this->declaringClass = $declaringClass;
-        $this->readableType = $readableType;
-        $this->writableType = $writableType;
-        $this->writeable = $writeable;
+        $this->readableType   = $readableType;
+        $this->writableType   = $writableType;
+        $this->writeable      = $writeable;
     }
 
     public function getDeclaringClass(): ClassReflection

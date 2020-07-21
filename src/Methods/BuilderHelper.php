@@ -46,7 +46,7 @@ class BuilderHelper
         string $methodName,
         Type $returnObject
     ): ?EloquentBuilderMethodReflection {
-        if (! Str::startsWith($methodName, 'where')) {
+        if (!Str::startsWith($methodName, 'where')) {
             return null;
         }
 
@@ -75,8 +75,8 @@ class BuilderHelper
     {
         $model = $this->broker->getClass($modelClassName);
 
-        if ($model->hasNativeMethod('scope'.ucfirst($methodName))) {
-            $methodReflection = $model->getNativeMethod('scope'.ucfirst($methodName));
+        if ($model->hasNativeMethod('scope' . ucfirst($methodName))) {
+            $methodReflection   = $model->getNativeMethod('scope' . ucfirst($methodName));
             $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
 
             $parameters = $parametersAcceptor->getParameters();
@@ -87,21 +87,21 @@ class BuilderHelper
             $returnType = $parametersAcceptor->getReturnType();
 
             return new EloquentBuilderMethodReflection(
-                'scope'.ucfirst($methodName), $methodReflection->getDeclaringClass(),
+                'scope' . ucfirst($methodName), $methodReflection->getDeclaringClass(),
                 $parameters,
                 $returnType,
                 $parametersAcceptor->isVariadic()
             );
         }
 
-        if (! $eloquentBuilder->hasNativeMethod($methodName)) {
+        if (!$eloquentBuilder->hasNativeMethod($methodName)) {
             return null;
         }
 
         if (in_array($methodName, array_merge(self::MODEL_CREATION_METHODS, self::MODEL_RETRIEVAL_METHODS), true)) {
-            $methodReflection = $eloquentBuilder->getNativeMethod($methodName);
+            $methodReflection   = $eloquentBuilder->getNativeMethod($methodName);
             $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
-            $returnType = ModelTypeHelper::replaceStaticTypeWithModel($parametersAcceptor->getReturnType(), $modelClassName);
+            $returnType         = ModelTypeHelper::replaceStaticTypeWithModel($parametersAcceptor->getReturnType(), $modelClassName);
 
             return new EloquentBuilderMethodReflection(
                 $methodName, $eloquentBuilder,
@@ -126,9 +126,6 @@ class BuilderHelper
     }
 
     /**
-     * @param string $modelClassName
-     *
-     * @return string
      * @throws MissingMethodFromReflectionException
      * @throws ShouldNotHappenException
      */
@@ -156,7 +153,7 @@ class BuilderHelper
         Type $customReturnType
     ): ?EloquentBuilderMethodReflection {
         $methodReflection = null;
-        $model = $this->broker->getClass($modelName);
+        $model            = $this->broker->getClass($modelName);
 
         // This can be a custom EloquentBuilder or the normal one
         $builderName = $this->determineBuilderType($modelName);
@@ -171,10 +168,10 @@ class BuilderHelper
 
         if ($methodReflection !== null) {
             $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
-            $returnType = $parametersAcceptor->getReturnType();
+            $returnType         = $parametersAcceptor->getReturnType();
 
             // If a model scope has a void return type, return the builder
-            if ($returnType instanceof VoidType && $model->hasNativeMethod('scope'.ucfirst($methodName))) {
+            if ($returnType instanceof VoidType && $model->hasNativeMethod('scope' . ucfirst($methodName))) {
                 $returnType = $customReturnType;
             }
 
@@ -185,7 +182,7 @@ class BuilderHelper
                 $returnType = $customReturnType;
             }
 
-            if (! $isBuilderReferenced && (new ObjectType(Collection::class))->isSuperTypeOf($returnType)->yes()) {
+            if (!$isBuilderReferenced && (new ObjectType(Collection::class))->isSuperTypeOf($returnType)->yes()) {
                 $returnType = new GenericObjectType(Collection::class, [new ObjectType($modelName)]);
             }
 

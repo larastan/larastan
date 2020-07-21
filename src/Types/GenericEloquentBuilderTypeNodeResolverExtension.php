@@ -20,11 +20,11 @@ class GenericEloquentBuilderTypeNodeResolverExtension implements TypeNodeResolve
 {
     public function resolve(TypeNode $typeNode, NameScope $nameScope): ?Type
     {
-        if (! $typeNode instanceof UnionTypeNode || count($typeNode->types) !== 2) {
+        if (!$typeNode instanceof UnionTypeNode || count($typeNode->types) !== 2) {
             return null;
         }
 
-        $modelTypeNode = null;
+        $modelTypeNode   = null;
         $builderTypeNode = null;
         foreach ($typeNode->types as $innerTypeNode) {
             if ($innerTypeNode instanceof IdentifierTypeNode
@@ -47,7 +47,7 @@ class GenericEloquentBuilderTypeNodeResolverExtension implements TypeNodeResolve
         }
 
         $builderTypeName = $nameScope->resolveStringName($builderTypeNode->name);
-        $modelTypeName = $nameScope->resolveStringName($modelTypeNode->name);
+        $modelTypeName   = $nameScope->resolveStringName($modelTypeNode->name);
 
         return new GenericObjectType($builderTypeName, [
             new ObjectType($modelTypeName),

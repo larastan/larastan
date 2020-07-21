@@ -32,14 +32,12 @@ final class Contracts implements PipeContract
             }
         }
 
-        if (! $found) {
+        if (!$found) {
             $next($passable);
         }
     }
 
     /**
-     * @param \PHPStan\Reflection\ClassReflection $classReflection
-     *
      * @return string[]
      */
     private function concretes(ClassReflection $classReflection): array

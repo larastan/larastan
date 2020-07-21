@@ -11,7 +11,7 @@ class ThrowIf
     public function testThrowIfTryCatch(?int $foo): ?int
     {
         try {
-            throw_if(! $foo, ValidationException::withMessages(['$foo is null']));
+            throw_if(!$foo, ValidationException::withMessages(['$foo is null']));
         } catch (\Exception $e) {
         }
 
@@ -21,7 +21,6 @@ class ThrowIf
 
     /**
      * @param int|string $foo
-     * @return int
      */
     public function testThrowIfWithTypeCheck($foo = 5): int
     {

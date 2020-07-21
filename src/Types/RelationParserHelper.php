@@ -30,8 +30,8 @@ class RelationParserHelper
 
     public function __construct(CachedParser $parser, ScopeFactory $scopeFactory, ReflectionProvider $reflectionProvider)
     {
-        $this->parser = $parser;
-        $this->scopeFactory = $scopeFactory;
+        $this->parser             = $parser;
+        $this->scopeFactory       = $scopeFactory;
         $this->reflectionProvider = $reflectionProvider;
     }
 
@@ -60,7 +60,7 @@ class RelationParserHelper
         /** @var Node\Stmt\Return_|null $returnStmt */
         $returnStmt = $this->findReturn($relationMethod);
 
-        if ($returnStmt === null || ! $returnStmt->expr instanceof MethodCall) {
+        if ($returnStmt === null || !$returnStmt->expr instanceof MethodCall) {
             return null;
         }
 
@@ -85,7 +85,7 @@ class RelationParserHelper
             ->enterClass($methodReflection->getDeclaringClass())
             ->enterClassMethod($relationMethod, TemplateTypeMap::createEmpty(), [], null, null, null, false, false, false);
 
-        $argType = $methodScope->getType($methodCall->args[0]->value);
+        $argType     = $methodScope->getType($methodCall->args[0]->value);
         $returnClass = null;
 
         if ($argType instanceof ConstantStringType) {
@@ -95,7 +95,7 @@ class RelationParserHelper
         if ($argType instanceof GenericClassStringType) {
             $modelType = $argType->getGenericType();
 
-            if (! $modelType instanceof ObjectType) {
+            if (!$modelType instanceof ObjectType) {
                 return null;
             }
 
@@ -110,13 +110,11 @@ class RelationParserHelper
     }
 
     /**
-     * @param string $method
      * @param mixed $statements
-     * @return Node|null
      */
     private function findMethod(string $method, $statements): ?Node
     {
-        return (new NodeFinder)->findFirst($statements, static function (Node $node) use ($method) {
+        return (new NodeFinder())->findFirst($statements, static function (Node $node) use ($method) {
             return $node instanceof Node\Stmt\ClassMethod
                 && $node->name->toString() === $method;
         });
@@ -127,6 +125,6 @@ class RelationParserHelper
         /** @var Node[] $statements */
         $statements = $relationMethod->stmts;
 
-        return (new NodeFinder)->findFirstInstanceOf($statements, Node\Stmt\Return_::class);
+        return (new NodeFinder())->findFirstInstanceOf($statements, Node\Stmt\Return_::class);
     }
 }

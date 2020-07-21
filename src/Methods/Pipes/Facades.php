@@ -31,12 +31,12 @@ final class Facades implements PipeContract
                 $found = $passable->sendToPipeline(get_class($concrete), true);
             }
 
-            if (! $found && Str::startsWith($passable->getMethodName(), 'assert')) {
+            if (!$found && Str::startsWith($passable->getMethodName(), 'assert')) {
                 $found = $passable->sendToPipeline($this->getFake($classReflection->getName()), true);
             }
         }
 
-        if (! $found) {
+        if (!$found) {
             $next($passable);
         }
     }

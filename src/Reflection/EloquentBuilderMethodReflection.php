@@ -43,19 +43,15 @@ final class EloquentBuilderMethodReflection implements MethodReflection
     private $isVariadic;
 
     /**
-     * @param string                $methodName
-     * @param ClassReflection       $classReflection
      * @param ParameterReflection[] $parameters
-     * @param Type|null             $returnType
-     * @param bool                  $isVariadic
      */
     public function __construct(string $methodName, ClassReflection $classReflection, array $parameters, ?Type $returnType = null, bool $isVariadic = false)
     {
-        $this->methodName = $methodName;
+        $this->methodName      = $methodName;
         $this->classReflection = $classReflection;
-        $this->parameters = $parameters;
-        $this->returnType = $returnType ?? new ObjectType(Builder::class);
-        $this->isVariadic = $isVariadic;
+        $this->parameters      = $parameters;
+        $this->returnType      = $returnType ?? new ObjectType(Builder::class);
+        $this->isVariadic      = $isVariadic;
     }
 
     public function getDeclaringClass(): ClassReflection

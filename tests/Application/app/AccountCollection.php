@@ -10,5 +10,4 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class AccountCollection extends Collection
 {
-    //
 }

@@ -47,7 +47,7 @@ final class AuthExtension implements DynamicStaticMethodReturnTypeExtension
         StaticCall $methodCall,
         Scope $scope
     ): Type {
-        $config = $this->getContainer()->get('config');
+        $config    = $this->getContainer()->get('config');
         $authModel = null;
 
         if ($config !== null) {

@@ -62,7 +62,7 @@ class Scope extends BaseScope
         $parentType = parent::getTypeFromArrayDimFetch($arrayDimFetch, $offsetType, $offsetAccessibleType);
         if ($this->isContainer($offsetAccessibleType)) {
             $dimType = $this->getType($arrayDimFetch->dim);
-            if (! $dimType instanceof ConstantStringType) {
+            if (!$dimType instanceof ConstantStringType) {
                 return $parentType;
             }
 
@@ -90,9 +90,6 @@ class Scope extends BaseScope
      * Checks if the provided type implements
      * the Illuminate Container Contract.
      *
-     * @param \PHPStan\Type\Type $type
-     *
-     * @return bool
      * @throws \ReflectionException
      */
     private function isContainer(Type $type): bool

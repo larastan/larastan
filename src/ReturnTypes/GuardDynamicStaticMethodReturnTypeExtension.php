@@ -50,7 +50,7 @@ class GuardDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethod
             /** @var array<string, mixed> $guards */
             $guards = $config->get('auth.guards');
 
-            if (! array_key_exists($defaultGuard, $guards)) {
+            if (!array_key_exists($defaultGuard, $guards)) {
                 return $defaultReturnType;
             }
 
@@ -59,7 +59,7 @@ class GuardDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethod
 
         $argType = $scope->getType($methodCall->args[0]->value);
 
-        if (! $argType instanceof ConstantStringType) {
+        if (!$argType instanceof ConstantStringType) {
             return $defaultReturnType;
         }
 

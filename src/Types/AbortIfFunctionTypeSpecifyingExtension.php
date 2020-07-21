@@ -35,8 +35,8 @@ final class AbortIfFunctionTypeSpecifyingExtension implements FunctionTypeSpecif
 
     public function __construct(bool $negate, string $methodName)
     {
-        $this->negate = $negate;
-        $this->methodName = $methodName.'_'.($negate === false ? 'if' : 'unless');
+        $this->negate     = $negate;
+        $this->methodName = $methodName . '_' . ($negate === false ? 'if' : 'unless');
     }
 
     public function isFunctionSupported(

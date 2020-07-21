@@ -27,7 +27,7 @@ final class SchemaTable
 
     public function renameColumn(string $oldName, string $newName): void
     {
-        if (! isset($this->columns[$oldName])) {
+        if (!isset($this->columns[$oldName])) {
             return;
         }
 

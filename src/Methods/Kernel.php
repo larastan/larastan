@@ -25,8 +25,6 @@ final class Kernel
 
     /**
      * Kernel constructor.
-     *
-     * @param \PHPStan\Reflection\Php\PhpMethodReflectionFactory $methodReflectionFactory
      */
     public function __construct(
         PhpMethodReflectionFactory $methodReflectionFactory
@@ -34,13 +32,6 @@ final class Kernel
         $this->methodReflectionFactory = $methodReflectionFactory;
     }
 
-    /**
-     * @param \PHPStan\Broker\Broker $broker
-     * @param \PHPStan\Reflection\ClassReflection $classReflection
-     * @param string $methodName
-     *
-     * @return \NunoMaduro\Larastan\Contracts\Methods\PassableContract
-     */
     public function handle(Broker $broker, ClassReflection $classReflection, string $methodName): PassableContract
     {
         $pipeline = new Pipeline($this->getContainer());

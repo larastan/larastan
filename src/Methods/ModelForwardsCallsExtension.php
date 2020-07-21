@@ -30,7 +30,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        if ($classReflection->getName() !== Model::class && ! $classReflection->isSubclassOf(Model::class)) {
+        if ($classReflection->getName() !== Model::class && !$classReflection->isSubclassOf(Model::class)) {
             return false;
         }
 
@@ -39,7 +39,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
         }
 
         // Model scopes
-        if ($classReflection->hasNativeMethod('scope'.ucfirst($methodName))) {
+        if ($classReflection->hasNativeMethod('scope' . ucfirst($methodName))) {
             return true;
         }
 
@@ -57,16 +57,12 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
     }
 
     /**
-     * @param ClassReflection $originalModelReflection
-     * @param string          $methodName
-     *
-     * @return MethodReflection
      * @throws ShouldNotHappenException
      * @throws MissingMethodFromReflectionException
      */
     public function getMethod(ClassReflection $originalModelReflection, string $methodName): MethodReflection
     {
-        $builderHelper = new BuilderHelper($this->getBroker());
+        $builderHelper     = new BuilderHelper($this->getBroker());
         $customBuilderName = $builderHelper->determineBuilderType($originalModelReflection->getName());
 
         $returnMethodReflection = $builderHelper->getMethodReflectionFromBuilder(

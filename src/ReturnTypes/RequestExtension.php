@@ -41,6 +41,6 @@ final class RequestExtension implements DynamicMethodReturnTypeExtension
         MethodCall $methodCall,
         Scope $scope
     ): Type {
-        return new MixedType;
+        return new MixedType();
     }
 }

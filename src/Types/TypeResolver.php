@@ -16,10 +16,6 @@ final class TypeResolver
 {
     use Concerns\HasContainer;
 
-    /**
-     * @param \PHPStan\Type\Type $type
-     * @return \PHPStan\Type\Type
-     */
     public function resolveFrom(Type $type): Type
     {
         $pipeline = new Pipeline($this->getContainer());

@@ -35,7 +35,7 @@ class ModelRelationsExtension
             }
         }
 
-        return new OtherDummyModel;
+        return new OtherDummyModel();
     }
 
     /** @return Collection<OtherDummyModel> */

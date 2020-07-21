@@ -33,7 +33,7 @@ class HasManySyncable extends HasMany
 
         // Separate the submitted data into "update" and "new"
         $updateRows = [];
-        $newRows = [];
+        $newRows    = [];
         foreach ($data as $row) {
             unset($row[$this->createdAt()], $row[$this->updatedAt()]); //remove the so they can be auto updated/created
             if (method_exists($this->parent, 'getDeletedAtColumn')) {
@@ -41,8 +41,8 @@ class HasManySyncable extends HasMany
             }
             // We determine "updateable" rows as those whose $relatedKeyName (usually 'id') is set, not empty, and
             // match a related row in the database.
-            if (isset($row[$relatedKeyName]) && ! empty($row[$relatedKeyName]) && in_array($row[$relatedKeyName], $current)) {
-                $id = $row[$relatedKeyName];
+            if (isset($row[$relatedKeyName]) && !empty($row[$relatedKeyName]) && in_array($row[$relatedKeyName], $current)) {
+                $id              = $row[$relatedKeyName];
                 $updateRows[$id] = $row;
             } else {
                 $newRows[] = $row;
@@ -54,7 +54,7 @@ class HasManySyncable extends HasMany
         $updateIds = array_keys($updateRows);
         $deleteIds = [];
         foreach ($current as $currentId) {
-            if (! in_array($currentId, $updateIds)) {
+            if (!in_array($currentId, $updateIds)) {
                 $deleteIds[] = $currentId;
             }
         }
@@ -89,7 +89,6 @@ class HasManySyncable extends HasMany
     /**
      * Cast the given keys to integers if they are numeric and string otherwise.
      *
-     * @param  array $keys
      * @return array
      */
     protected function castKeys(array $keys)
@@ -102,7 +101,8 @@ class HasManySyncable extends HasMany
     /**
      * Cast the given key to an integer if it is numeric.
      *
-     * @param  mixed $key
+     * @param mixed $key
+     *
      * @return mixed
      */
     protected function castKey($key)

@@ -21,7 +21,7 @@ final class RedirectResponseWiths implements PipeContract
     public function handle(PassableContract $passable, Closure $next): void
     {
         $classReflection = $passable->getClassReflection();
-        $methodName = $passable->getMethodName();
+        $methodName      = $passable->getMethodName();
 
         $found = false;
 
@@ -36,7 +36,7 @@ final class RedirectResponseWiths implements PipeContract
             $found = true;
         }
 
-        if (! $found) {
+        if (!$found) {
             $next($passable);
         }
     }

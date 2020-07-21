@@ -44,7 +44,7 @@ final class RelationExtension implements DynamicMethodReturnTypeExtension, Broke
 
         $modelType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TRelatedModel');
 
-        if (! $modelType instanceof ObjectType) {
+        if (!$modelType instanceof ObjectType) {
             return false;
         }
 

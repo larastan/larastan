@@ -34,11 +34,11 @@ class GenericEloquentCollectionTypeNodeResolverExtension implements TypeNodeReso
 {
     public function resolve(TypeNode $typeNode, NameScope $nameScope): ?Type
     {
-        if (! $typeNode instanceof UnionTypeNode || count($typeNode->types) !== 2) {
+        if (!$typeNode instanceof UnionTypeNode || count($typeNode->types) !== 2) {
             return null;
         }
 
-        $arrayTypeNode = null;
+        $arrayTypeNode      = null;
         $identifierTypeNode = null;
         foreach ($typeNode->types as $innerTypeNode) {
             if ($innerTypeNode instanceof ArrayTypeNode) {
@@ -61,7 +61,7 @@ class GenericEloquentCollectionTypeNodeResolverExtension implements TypeNodeReso
         }
 
         $innerArrayTypeNode = $arrayTypeNode->type;
-        if (! $innerArrayTypeNode instanceof IdentifierTypeNode) {
+        if (!$innerArrayTypeNode instanceof IdentifierTypeNode) {
             return null;
         }
 

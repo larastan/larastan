@@ -11,19 +11,19 @@ class TestCase extends BaseTestCase
     {
         parent::setUp();
 
-        @File::makeDirectory(__DIR__.'/../vendor/nunomaduro/larastan', 0755, true);
-        @File::makeDirectory(__DIR__.'/../vendor/nunomaduro/larastan/config', 0755, true);
-        @File::copy(__DIR__.'/../bootstrap.php', __DIR__.'/../vendor/nunomaduro/larastan/bootstrap.php');
-        @File::copy(__DIR__.'/../config/mixins.php', __DIR__.'/../vendor/nunomaduro/larastan/config/mixins.php');
-        @File::copy(__DIR__.'/../config/statics.php', __DIR__.'/../vendor/nunomaduro/larastan/config/statics.php');
-        File::copyDirectory(__DIR__.'/Application/database/migrations', $this->getBasePath().'/database/migrations');
-        File::copyDirectory(__DIR__.'/Application/config', $this->getBasePath().'/config');
+        @File::makeDirectory(__DIR__ . '/../vendor/nunomaduro/larastan', 0755, true);
+        @File::makeDirectory(__DIR__ . '/../vendor/nunomaduro/larastan/config', 0755, true);
+        @File::copy(__DIR__ . '/../bootstrap.php', __DIR__ . '/../vendor/nunomaduro/larastan/bootstrap.php');
+        @File::copy(__DIR__ . '/../config/mixins.php', __DIR__ . '/../vendor/nunomaduro/larastan/config/mixins.php');
+        @File::copy(__DIR__ . '/../config/statics.php', __DIR__ . '/../vendor/nunomaduro/larastan/config/statics.php');
+        File::copyDirectory(__DIR__ . '/Application/database/migrations', $this->getBasePath() . '/database/migrations');
+        File::copyDirectory(__DIR__ . '/Application/config', $this->getBasePath() . '/config');
     }
 
     public function execLarastan(string $filename)
     {
-        $configPath = __DIR__.'/../extension.neon';
-        $command = escapeshellcmd(__DIR__.'/../vendor/bin/phpstan');
+        $configPath = __DIR__ . '/../extension.neon';
+        $command    = escapeshellcmd(__DIR__ . '/../vendor/bin/phpstan');
 
         exec(sprintf('%s %s analyse --no-progress  --level=max --configuration %s  %s --error-format=%s',
             escapeshellarg(PHP_BINARY), $command,

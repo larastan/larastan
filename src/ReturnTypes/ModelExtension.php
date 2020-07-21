@@ -81,7 +81,7 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, Br
         $method = $methodReflection->getDeclaringClass()
             ->getMethod($methodReflection->getName(), $scope);
 
-        $variants = $method->getVariants();
+        $variants   = $method->getVariants();
         $returnType = $variants[0]->getReturnType();
 
         /*

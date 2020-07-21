@@ -45,18 +45,18 @@ final class BuilderModelFindExtension implements DynamicMethodReturnTypeExtensio
     {
         $methodName = $methodReflection->getName();
 
-        if (! Str::startsWith($methodName, 'find')) {
+        if (!Str::startsWith($methodName, 'find')) {
             return false;
         }
 
         $model = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TModelClass');
 
-        if ($model === null || ! $model instanceof ObjectType) {
+        if ($model === null || !$model instanceof ObjectType) {
             return false;
         }
 
-        if (! $this->getBroker()->getClass(Builder::class)->hasNativeMethod($methodName) &&
-            ! $this->getBroker()->getClass(QueryBuilder::class)->hasNativeMethod($methodName)) {
+        if (!$this->getBroker()->getClass(Builder::class)->hasNativeMethod($methodName) &&
+            !$this->getBroker()->getClass(QueryBuilder::class)->hasNativeMethod($methodName)) {
             return false;
         }
 
@@ -72,9 +72,9 @@ final class BuilderModelFindExtension implements DynamicMethodReturnTypeExtensio
         Scope $scope
     ): Type {
         /** @var ObjectType $model */
-        $model = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TModelClass');
+        $model      = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TModelClass');
         $returnType = $methodReflection->getVariants()[0]->getReturnType();
-        $argType = $scope->getType($methodCall->args[0]->value);
+        $argType    = $scope->getType($methodCall->args[0]->value);
 
         $returnType = ModelTypeHelper::replaceStaticTypeWithModel($returnType, $model->getClassName());
 

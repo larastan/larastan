@@ -92,7 +92,7 @@ class ModelPropertyExtension
 
     public function testWriteUUIDProperty(): bool
     {
-        $role = new Role();
+        $role     = new Role();
         $role->id = 'abcd-efgh-ijkl';
 
         return $role->save();
@@ -105,7 +105,7 @@ class ModelPropertyExtension
 
     public function testWriteIdPropertyWhenMigrationsCouldntBeRead(): bool
     {
-        $group = new Group();
+        $group     = new Group();
         $group->id = 5;
 
         return $group->save();

@@ -41,11 +41,11 @@ final class GuardExtension implements DynamicMethodReturnTypeExtension
         MethodCall $methodCall,
         Scope $scope
     ): Type {
-        $config = $this->getContainer()->get('config');
+        $config    = $this->getContainer()->get('config');
         $authModel = null;
 
         if ($config !== null) {
-            $guard = $this->getGuardFromMethodCall($scope, $methodCall);
+            $guard     = $this->getGuardFromMethodCall($scope, $methodCall);
             $authModel = $this->getAuthModel($config, $guard);
         }
 
@@ -59,9 +59,9 @@ final class GuardExtension implements DynamicMethodReturnTypeExtension
     private function getGuardFromMethodCall(Scope $scope, MethodCall $methodCall): ?string
     {
         if (
-            ! ($methodCall->var instanceof StaticCall) &&
-            ! ($methodCall->var instanceof MethodCall) &&
-            ! ($methodCall->var instanceof FuncCall)
+            !($methodCall->var instanceof StaticCall) &&
+            !($methodCall->var instanceof MethodCall) &&
+            !($methodCall->var instanceof FuncCall)
         ) {
             return null;
         }
@@ -72,7 +72,7 @@ final class GuardExtension implements DynamicMethodReturnTypeExtension
 
         $guardType = $scope->getType($methodCall->var->args[0]->value);
 
-        if (! $guardType instanceof ConstantStringType) {
+        if (!$guardType instanceof ConstantStringType) {
             return null;
         }
 
