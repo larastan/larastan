@@ -1,0 +1,11 @@
+<?php
+
+namespace Illuminate\Support\Facades;
+
+/**
+ * @mixin \Redis
+ * @mixin \Illuminate\Redis\RedisManager
+ * @mixin \Illuminate\Contracts\Redis\Factory
+ */
+class Redis
+{}
