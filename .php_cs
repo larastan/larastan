@@ -18,6 +18,7 @@ $rules = [
     ],
     'concat_space'            => ['spacing' => 'one'],
     'not_operator_with_space' => false,
+    'phpdoc_to_comment'       => false,
 ];
 
 $rules['increment_style'] = ['style' => 'post'];

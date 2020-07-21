@@ -33,7 +33,7 @@ final class ApplicationResolver
             $serviceProviders = array_values(array_filter(self::getProjectClasses($namespace, dirname($composerFile)), function (string $class) use (
                 $namespace
             ) {
-                /* @var class-string $class */
+                /** @var class-string $class */
                 return strpos($class, $namespace) === 0 && self::isServiceProvider($class);
             }));
 
