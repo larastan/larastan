@@ -90,7 +90,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
 
         $templateTypeMap = $classReflection->getActiveTemplateTypeMap();
 
-        /** @var Type|ObjectType|TemplateMixedType|Null $modelType */
+        /** @var Type|ObjectType|TemplateMixedType|null $modelType */
         $modelType = $templateTypeMap->getType('TModelClass');
 
         if ($modelType === null) {
