@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use PHPStan\Type\Generic\GenericObjectType;
 use function in_array;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
@@ -67,7 +68,7 @@ final class BuilderLocalMacros implements PipeContract
                     $macro, TemplateTypeMap::createEmpty(),
                     array_map(function (ReflectionParameter $parameter) {
                         return TypehintHelper::decideTypeFromReflection($parameter->getType());
-                    }, $parameters), new ObjectType($classReflection->getName()),
+                    }, $parameters), new GenericObjectType(Builder::class, [new ObjectType($classReflection->getName())]),
                     null, null,
                     false, false,
                     false, null));

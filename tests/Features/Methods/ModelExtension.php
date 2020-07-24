@@ -230,6 +230,17 @@ class ModelExtension
     {
         return $user->accounts()->firstOrCreate([]);
     }
+
+    /** @return Builder<User> */
+    public function testSoftDeletesOnlyTrashed(): Builder
+    {
+        return User::onlyTrashed();
+    }
+
+    public function testFindOrFailWithSoftDeletesTrait(): User
+    {
+        return User::onlyTrashed()->findOrFail(5);
+    }
 }
 
 function foo(): string
