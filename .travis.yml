@@ -1,38 +1,48 @@
+os: linux
+
 dist: bionic
+
 language: php
 
 php:
-  - 7.2
-  - 7.3
   - 7.4
+  - 7.3
+  - 7.2
 
 cache:
   directories:
-    - "$HOME/.composer/cache/files"
+    - "${HOME}/.composer/cache"
 
 env:
-  matrix:
-    - LARAVEL_VERSION=^6.0 COMPOSER_VERSION=^1.0
-    - LARAVEL_VERSION=^6.0 COMPOSER_VERSION=^2.0
-    - LARAVEL_VERSION=^7.0 COMPOSER_VERSION=^1.0
-    - LARAVEL_VERSION=^7.0 COMPOSER_VERSION=^2.0
+  - LARAVEL_VERSION="^6.0" COMPOSER_VERSION="^1.0"
+  - LARAVEL_VERSION="^6.0" COMPOSER_VERSION="^2.0"
+  - LARAVEL_VERSION="^7.0" COMPOSER_VERSION="^1.0"
+  - LARAVEL_VERSION="^7.0" COMPOSER_VERSION="^2.0"
 
-matrix:
+jobs:
   fast_finish: true
+  include:
+    - name: "Static Analysis"
+      php: 7.4
+      env:
+        - LARAVEL_VERSION="^7.0" COMPOSER_VERSION="^2.0"
+      script:
+        - composer test:types
+        - export -f travis_retry
+        # Run Larastan on Laravel and Lumen sample applications
+        - tests/laravel-test.sh
 
 before_install:
-  # Must be before any additional files are created
+  # Must run before any additional files are created
   - test "$(find . -type f -not -path "./.git/*" -perm /111)" == ./tests/laravel-test.sh
+  # Install Composer version 2.0
+  - composer self-update --preview
 
 install:
-  - composer self-update --preview
   - composer validate --strict
-  - travis_retry composer require "illuminate/contracts:${LARAVEL_VERSION}" --dev --no-update --no-interaction
-  - travis_retry composer require "composer/composer:${COMPOSER_VERSION}" --no-update --no-interaction
-  - composer update --prefer-dist --no-interaction
-
+  - travis_retry composer require "illuminate/contracts:${LARAVEL_VERSION}" --no-interaction --dev --no-update
+  - travis_retry composer require "composer/composer:${COMPOSER_VERSION}" --no-interaction --no-update --no-interaction
+  - composer update --ansi --no-interaction --prefer-dist
 
 script:
-  - composer test
-  - export -f travis_retry
-  - tests/laravel-test.sh
+  - composer test:unit
