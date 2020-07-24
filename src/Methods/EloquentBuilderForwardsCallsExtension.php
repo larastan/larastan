@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
@@ -89,8 +90,12 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
 
         $templateTypeMap = $classReflection->getActiveTemplateTypeMap();
 
-        /** @var Type|ObjectType|TemplateMixedType $modelType */
+        /** @var Type|ObjectType|TemplateMixedType|Null $modelType */
         $modelType = $templateTypeMap->getType('TModelClass');
+
+        if ($modelType === null) {
+            $modelType = new ObjectType(Model::class);
+        }
 
         if ($this->getBuilderReflection()->hasNativeMethod($methodName) && (! $modelType instanceof ObjectType)) {
             $methodReflection = $this->getBuilderReflection()->getNativeMethod($methodName);
@@ -113,7 +118,13 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
 
         if ($modelType instanceof ObjectType) {
             $builderHelper = new BuilderHelper($this->getBroker());
-            $eloquentBuilderClass = $builderHelper->determineBuilderType($modelType->getClassName());
+
+            if ($classReflection->isSubclassOf(EloquentBuilder::class)) {
+                $eloquentBuilderClass = $classReflection->getName();
+            } else {
+                $eloquentBuilderClass = $builderHelper->determineBuilderType($modelType->getClassName());
+            }
+
             $returnMethodReflection = $builderHelper->getMethodReflectionFromBuilder(
                 $classReflection,
                 $methodName,
