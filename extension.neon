@@ -22,6 +22,7 @@ parameters:
         - stubs/MorphMany.stub
         - stubs/Helpers.stub
         - stubs/HigherOrderTapProxy.stub
+        - stubs/QueryBuilder.stub
     scopeClass: NunoMaduro\Larastan\Analyser\Scope
     universalObjectCratesClasses:
         - Illuminate\Http\Request
