@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Fix false positive for NoUnnecessaryCollectionCallRule when statically calling hydrate on a Model class. ([#609](https://github.com/nunomaduro/larastan/pull/609))
+- Fixed slightly incorrect stubs for accepted $values for `whereBetween`/`orWhereBetween` and `whereRowValues`/`orWhereRowValues` ([#626](https://github.com/nunomaduro/larastan/pull/626))
 
 ## [0.6.1] - 2020-06-20
 
