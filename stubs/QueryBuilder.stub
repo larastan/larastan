@@ -467,7 +467,7 @@ class Builder
      * Add a where between statement to the query.
      *
      * @param  string  $column
-     * @param  array<string, mixed>  $values
+     * @param  array<string|int, mixed>  $values
      * @param  string  $boolean
      * @param  bool  $not
      * @return $this
@@ -479,7 +479,7 @@ class Builder
      * Add an or where between statement to the query.
      *
      * @param  string  $column
-     * @param  array<string, mixed>  $values
+     * @param  array<string|int, mixed>  $values
      * @return $this
      */
     public function orWhereBetween($column, array $values)
@@ -739,7 +739,7 @@ class Builder
      *
      * @param  array<string>  $columns
      * @param  string  $operator
-     * @param  array<string, mixed>  $values
+     * @param  array<string|int, mixed>  $values
      * @param  string  $boolean
      * @return $this
      *
@@ -753,7 +753,7 @@ class Builder
      *
      * @param  array<string>  $columns
      * @param  string  $operator
-     * @param  array<string, mixed>  $values
+     * @param  array<string|int, mixed>  $values
      * @return $this
      */
     public function orWhereRowValues($columns, $operator, $values)
