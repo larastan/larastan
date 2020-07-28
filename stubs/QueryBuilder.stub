@@ -238,7 +238,7 @@ class Builder
     /**
      * Add a basic where clause to the query.
      *
-     * @param  \Closure|string|array<string>  $column
+     * @param  \Closure|string|array<string, mixed>  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
@@ -295,7 +295,7 @@ class Builder
     /**
      * Add an "or where" clause to the query.
      *
-     * @param  \Closure|string|array<string>  $column
+     * @param  \Closure|string|array<string, mixed>  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @return $this
@@ -1284,7 +1284,7 @@ class Builder
     /**
      * Insert a new record into the database.
      *
-     * @param  array<string, mixed>  $values
+     * @param  array<mixed>  $values
      * @return bool
      */
     public function insert(array $values)
