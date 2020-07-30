@@ -23,6 +23,8 @@ parameters:
         - stubs/Helpers.stub
         - stubs/HigherOrderTapProxy.stub
         - stubs/QueryBuilder.stub
+        - stubs/Facades.stub
+        - stubs/Redis/Connection.stub
     scopeClass: NunoMaduro\Larastan\Analyser\Scope
     universalObjectCratesClasses:
         - Illuminate\Http\Request
