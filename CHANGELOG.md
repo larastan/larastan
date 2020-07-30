@@ -6,9 +6,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.6.2] - 2020-07-30
+
 ### Fixed
+
 - Fix false positive for NoUnnecessaryCollectionCallRule when statically calling hydrate on a Model class. ([#609](https://github.com/nunomaduro/larastan/pull/609))
 - Fixed slightly incorrect stubs for accepted $values for `whereBetween`/`orWhereBetween` and `whereRowValues`/`orWhereRowValues` ([#626](https://github.com/nunomaduro/larastan/pull/626))
+- Check if facade fake exists ([852c131](https://github.com/nunomaduro/larastan/commit/852c1313e1c94feab8da8055d0abceda97a27586))
+- Correct query builder stub ([d8d8b41](https://github.com/nunomaduro/larastan/commit/d8d8b41d91d8934fa5a1d44908b37c344af87472))
+- Dont override return type when eloquent builder returns a query builder instance ([b5f96b4](https://github.com/nunomaduro/larastan/commit/b5f96b4df2d0931a6eb00a5c6539c56df2d67bd9))
+- Handle the case when a custom query builder does not have generic annotations ([c54b517](https://github.com/nunomaduro/larastan/commit/c54b5179e72b8ea18e724c50bf6a9c36af79d52d))
+- Soft delete trait methods should return generic Eloquent builder with model ([023043b](https://github.com/nunomaduro/larastan/commit/023043b05c9ec04ef92f32960315621fdfe21100))
+
+### Added
+
+- Support for Redis facade ([#615](https://github.com/nunomaduro/larastan/issues/615)) ([a42b2f6](https://github.com/nunomaduro/larastan/commit/a42b2f65448548e725f5d4b1bf1c4fe9840c4262))
+- Auth guard with multiple dynamic auth models ([#605](https://github.com/nunomaduro/larastan/issues/605)) ([63a3934](https://github.com/nunomaduro/larastan/commit/63a393433805a1142fbffe507875f2af825d11fd))
+- Use latest version of Composer in travis ([#599](https://github.com/nunomaduro/larastan/issues/599)) ([29a9023](https://github.com/nunomaduro/larastan/commit/29a9023d19750298ae7b656e989ebef221925fb9))
 
 ## [0.6.1] - 2020-06-20
 
@@ -368,14 +382,15 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.6.1...HEAD
-[0.6.1]: https://github.com/nunomaduro/larastan/compare/v0.6.0...HEAD
-[0.6.0]: https://github.com/nunomaduro/larastan/compare/v0.5.8...HEAD
-[0.5.8]: https://github.com/nunomaduro/larastan/compare/v0.5.7...HEAD
-[0.5.7]: https://github.com/nunomaduro/larastan/compare/v0.5.6...HEAD
-[0.5.6]: https://github.com/nunomaduro/larastan/compare/v0.5.5...HEAD
-[0.5.5]: https://github.com/nunomaduro/larastan/compare/v0.5.4...HEAD
-[0.5.4]: https://github.com/nunomaduro/larastan/compare/v0.5.3...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.6.2...HEAD
+[0.6.2]: https://github.com/nunomaduro/larastan/compare/v0.6.1...v0.6.2
+[0.6.1]: https://github.com/nunomaduro/larastan/compare/v0.6.0...v0.6.1
+[0.6.0]: https://github.com/nunomaduro/larastan/compare/v0.5.8...v0.6.0
+[0.5.8]: https://github.com/nunomaduro/larastan/compare/v0.5.7...v0.5.8
+[0.5.7]: https://github.com/nunomaduro/larastan/compare/v0.5.6...v0.5.7
+[0.5.6]: https://github.com/nunomaduro/larastan/compare/v0.5.5...v0.5.6
+[0.5.5]: https://github.com/nunomaduro/larastan/compare/v0.5.4...v0.5.5
+[0.5.4]: https://github.com/nunomaduro/larastan/compare/v0.5.3...v0.5.4
 [0.5.3]: https://github.com/nunomaduro/larastan/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/nunomaduro/larastan/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/nunomaduro/larastan/compare/v0.5.0...v0.5.1
