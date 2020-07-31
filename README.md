@@ -8,7 +8,7 @@
   <a href="https://travis-ci.org/nunomaduro/larastan"><img src="https://img.shields.io/travis/nunomaduro/larastan/master.svg" alt="Build Status"></img></a>
   <a href="https://packagist.org/packages/nunomaduro/larastan/stats"><img src="https://poser.pugx.org/nunomaduro/larastan/d/total.svg" alt="Total Downloads"></a>
   <a href="https://packagist.org/packages/nunomaduro/larastan"><img src="https://poser.pugx.org/nunomaduro/larastan/v/stable.svg" alt="Latest Version"></a>
-  <a href="https://packagist.org/packages/nunomaduro/larastan"><img src="https://poser.pugx.org/nunomaduro/larastan/license.svg" alt="License"></a>
+  <a href="https://github.com/nunomaduro/larastan/blob/master/LICENSE.md"><img src="https://poser.pugx.org/nunomaduro/larastan/license.svg" alt="License"></a>
 </p>
 
 ------
