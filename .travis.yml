@@ -23,7 +23,8 @@ jobs:
   fast_finish: true
   include:
     - name: "Static Analysis"
-      php: 7.4
+      php:
+        - 7.4
       env:
         - LARAVEL_VERSION="^7.0" COMPOSER_VERSION="^2.0"
       script:
@@ -31,6 +32,14 @@ jobs:
         - export -f travis_retry
         # Run Larastan on Laravel and Lumen sample applications
         - tests/laravel-test.sh
+    - name: "Check EditorConfig adherence"
+      php:
+        - 7.4
+      before_install: skip
+      install:
+        - npm install --no-package-lock eclint
+      script:
+        - npx eclint check
 
 before_install:
   # Must run before any additional files are created

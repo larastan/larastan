@@ -38,10 +38,10 @@ parameters:
 ```
 to your `phpstan.neon` file.
 
-You can also configure the collection methods which this rule 
-checks for. By default, all collection methods are checked. 
+You can also configure the collection methods which this rule
+checks for. By default, all collection methods are checked.
 To only enable a specific set of methods, you could set the
- `noUnnecessaryCollectionCallOnly` configuration key. For example:
+`noUnnecessaryCollectionCallOnly` configuration key. For example:
 ```
 parameters:
     noUnnecessaryCollectionCallOnly: ['count', 'first']

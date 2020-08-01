@@ -48,7 +48,7 @@ parametersSchema:
 
 conditionalTags:
     NunoMaduro\Larastan\Rules\NoUnnecessaryCollectionCallRule:
-    		phpstan.rules.rule: %noUnnecessaryCollectionCall%
+        phpstan.rules.rule: %noUnnecessaryCollectionCall%
 
 services:
     -
