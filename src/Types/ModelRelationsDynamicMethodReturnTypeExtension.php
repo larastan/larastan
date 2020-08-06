@@ -99,7 +99,7 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
         if ($returnType->isInstanceOf(BelongsTo::class)->yes()) {
             return new GenericObjectType($returnType->getClassName(), [
                 new ObjectType($relatedModelClassName),
-                new ObjectType($classReflection->getName())
+                new ObjectType($classReflection->getName()),
             ]);
         }
 
