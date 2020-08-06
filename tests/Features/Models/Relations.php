@@ -135,7 +135,7 @@ class Relations
     }
 
     /**
-     * @phpstan-return BelongsTo<User>
+     * @phpstan-return BelongsTo<User, Account>
      */
     public function testRelationWithTrait(Account $account): BelongsTo
     {
@@ -143,7 +143,7 @@ class Relations
     }
 
     /**
-     * @phpstan-return BelongsTo<Account>
+     * @phpstan-return BelongsTo<Account, Account>
      */
     public function testRelationInTraitWithStaticClass(Account $account): BelongsTo
     {
@@ -156,7 +156,7 @@ class Relations
         return $user->children();
     }
 
-    /** @phpstan-return BelongsTo<User> */
+    /** @phpstan-return BelongsTo<User, User> */
     public function testSameClassRelationWithGetClass(User $user): BelongsTo
     {
         return $user->parent();
@@ -200,5 +200,18 @@ class TestRelationCreateOnExistingModel
     public function testRelationCreateOnExistingModel(): Account
     {
         return $this->user->accounts()->create();
+    }
+}
+
+class Post extends Model
+{
+    public function author(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function addUser(User $user): self
+    {
+        return $this->author()->associate($user);
     }
 }
