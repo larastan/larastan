@@ -1,5 +1,5 @@
 parameters:
-    level: max
+    level: 0
     paths:
         - src
     ignoreErrors:
