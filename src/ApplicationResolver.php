@@ -49,7 +49,7 @@ final class ApplicationResolver
     /**
      * {@inheritdoc}
      */
-    protected function getEnvironmentSetUp(\Illuminate\Foundation\Application $app): void
+    protected function getEnvironmentSetUp($app)
     {
         // ..
     }
