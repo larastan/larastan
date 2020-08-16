@@ -205,7 +205,7 @@ final class SchemaAggregator
                         $secondArgArray = [];
 
                         foreach ($secondArg->items as $array_item) {
-                            if ($array_item->value instanceof PhpParser\Node\Scalar\String_) {
+                            if ($array_item !== null && $array_item->value instanceof PhpParser\Node\Scalar\String_) {
                                 $secondArgArray[] = $array_item->value->value;
                             }
                         }
