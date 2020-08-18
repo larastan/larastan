@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes\Helpers;
 
-use PHPStan\Type\IntersectionType;
-use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\TypehintHelper;
 use function count;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
+use PHPStan\Type\IntersectionType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
@@ -36,7 +34,7 @@ final class ValidatorExtension implements DynamicFunctionReturnTypeExtension
 
         return new IntersectionType([
             new ObjectType(\Illuminate\Validation\Validator::class),
-            new ObjectType(\Illuminate\Contracts\Validation\Validator::class)
+            new ObjectType(\Illuminate\Contracts\Validation\Validator::class),
         ]);
     }
 }
