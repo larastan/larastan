@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Return type extension for `validator` helper ([#641](https://github.com/nunomaduro/larastan/pull/641))
+
 ### Fixed
 
 - Return type of `associate`, `dissociate` and `getChild` methods of `BelongsTo` relations ([#633](https://github.com/nunomaduro/larastan/pull/633))
