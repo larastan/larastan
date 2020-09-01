@@ -22,9 +22,16 @@ env:
   - LARAVEL_VERSION="^6.0" COMPOSER_VERSION="^2.0"
   - LARAVEL_VERSION="^7.0" COMPOSER_VERSION="^1.0"
   - LARAVEL_VERSION="^7.0" COMPOSER_VERSION="^2.0"
+  - LARAVEL_VERSION="^8.0" COMPOSER_VERSION="^1.0"
+  - LARAVEL_VERSION="^8.0" COMPOSER_VERSION="^2.0"
 
 jobs:
   fast_finish: true
+  exclude:
+    - php: 7.2
+      env: LARAVEL_VERSION="^8.0" COMPOSER_VERSION="^1.0"
+    - php: 7.2
+      env: LARAVEL_VERSION="^8.0" COMPOSER_VERSION="^2.0"
   include:
     - name: "Static Analysis"
       php:
