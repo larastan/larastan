@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+- Return type of `firstWhere` method on model, builder and relations ([#649](https://github.com/nunomaduro/larastan/pull/649))
 
 ## [0.6.3] - 2020-08-31
 

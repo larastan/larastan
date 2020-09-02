@@ -241,6 +241,16 @@ class ModelExtension
     {
         return User::onlyTrashed()->findOrFail(5);
     }
+
+    public function testFirstWhere(): ?User
+    {
+        return User::firstWhere(['email' => 'foo@bar.com']);
+    }
+
+    public function testFirstWhereWithBuilder(): ?User
+    {
+        return User::query()->where('foo', 'bar')->firstWhere(['email' => 'foo@bar.com']);
+    }
 }
 
 function foo(): string
