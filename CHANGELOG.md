@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.6.4] - 2020-09-02
+
+### Changed
+- Update `orchestra/testbench` version to allow Laravel 8 installations ([#646](https://github.com/nunomaduro/larastan/pull/646))
+
 ### Fixed
 - Return type of `firstWhere` method on model, builder and relations ([#649](https://github.com/nunomaduro/larastan/pull/649))
 
@@ -395,7 +400,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.6.3...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.6.4...HEAD
+[0.6.4]: https://github.com/nunomaduro/larastan/compare/v0.6.3...v0.6.4
 [0.6.3]: https://github.com/nunomaduro/larastan/compare/v0.6.2...v0.6.3
 [0.6.2]: https://github.com/nunomaduro/larastan/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/nunomaduro/larastan/compare/v0.6.0...v0.6.1
