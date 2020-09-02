@@ -60,7 +60,7 @@ class User extends Authenticatable
         return $query->where('active', 1);
     }
 
-    /** @phpstan-return BelongsTo<Group> */
+    /** @phpstan-return BelongsTo<Group, User> */
     public function group(): BelongsTo
     {
         return $this->belongsTo(Group::class);

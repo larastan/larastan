@@ -118,6 +118,17 @@ class Builder
     public function firstOr($columns = ['*'], \Closure $callback = null);
 
     /**
+     * Add a basic where clause to the query, and return the first result.
+     *
+     * @param  \Closure|string|array<string, string>  $column
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @param  string  $boolean
+     * @phpstan-return TModelClass|null
+     */
+    public function firstWhere($column, $operator = null, $value = null, $boolean = 'and');
+
+    /**
      * Execute the query as a "select" statement.
      *
      * @param  array<int, string>|string  $columns

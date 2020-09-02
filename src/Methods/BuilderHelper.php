@@ -18,9 +18,14 @@ use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\Php\DummyParameter;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\Generic\TemplateObjectType;
+use PHPStan\Type\Generic\TemplateTypeHelper;
+use PHPStan\Type\Generic\TemplateTypeMap;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypehintHelper;
+use PHPStan\Type\UnionTypeHelper;
 use PHPStan\Type\VerbosityLevel;
 use PHPStan\Type\VoidType;
 
@@ -171,7 +176,9 @@ class BuilderHelper
 
         if ($methodReflection !== null) {
             $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
-            $returnType = $parametersAcceptor->getReturnType();
+
+            // Resolve any generic models in the return type
+            $returnType = TemplateTypeHelper::resolveTemplateTypes($parametersAcceptor->getReturnType(), new TemplateTypeMap(['TModelClass' => new ObjectType($modelName)]));
 
             // If a model scope has a void return type, return the builder
             if ($returnType instanceof VoidType && $model->hasNativeMethod('scope'.ucfirst($methodName))) {

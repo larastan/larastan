@@ -161,6 +161,16 @@ class Relations
     {
         return $user->parent();
     }
+
+    public function testFirstWhereWithHasManyRelation(User $user): ?Account
+    {
+        return $user->accounts()->firstWhere('foo', 'bar');
+    }
+
+    public function testFirstWhereWithBelongsToRelation(User $user): ?Group
+    {
+        return $user->group()->firstWhere('foo', 'bar');
+    }
 }
 
 /**
