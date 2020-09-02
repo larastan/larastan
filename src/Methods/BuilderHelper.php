@@ -18,14 +18,11 @@ use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\Php\DummyParameter;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\Generic\TemplateObjectType;
 use PHPStan\Type\Generic\TemplateTypeHelper;
 use PHPStan\Type\Generic\TemplateTypeMap;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
-use PHPStan\Type\TypehintHelper;
-use PHPStan\Type\UnionTypeHelper;
 use PHPStan\Type\VerbosityLevel;
 use PHPStan\Type\VoidType;
 
