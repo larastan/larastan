@@ -11,6 +11,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class BuilderExtension
 {
+    public function testArrayOfWheres(): Collection
+    {
+        return User::where([
+            ['active', true],
+            ['id', '>=', 5],
+            ['id', '<=', 10],
+        ])->get();
+    }
+
     /** @return Collection<User> */
     public function testCallingGetOnModelWithStaticQueryBuilder(): Collection
     {
