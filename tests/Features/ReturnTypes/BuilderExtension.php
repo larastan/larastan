@@ -16,7 +16,7 @@ class BuilderExtension
         return User::where([
             ['active', true],
             ['id', '>=', 5],
-            ['id', '<=', 10]
+            ['id', '<=', 10],
         ])->get();
     }
 
