@@ -238,7 +238,7 @@ class Builder
     /**
      * Add a basic where clause to the query.
      *
-     * @param  \Closure|string|array<string, mixed>  $column
+     * @param  \Closure|string|array<string|int, mixed>  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
@@ -250,7 +250,7 @@ class Builder
     /**
      * Add an array of where clauses to the query.
      *
-     * @param  array<string>  $column
+     * @param  array<string|int, mixed>  $column
      * @param  string  $boolean
      * @param  string  $method
      * @return $this
@@ -295,7 +295,7 @@ class Builder
     /**
      * Add an "or where" clause to the query.
      *
-     * @param  \Closure|string|array<string, mixed>  $column
+     * @param  \Closure|string|array<string|int, mixed>  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @return $this
