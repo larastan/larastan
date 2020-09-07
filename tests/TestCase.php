@@ -18,6 +18,7 @@ class TestCase extends BaseTestCase
         @File::copy(__DIR__.'/../config/statics.php', __DIR__.'/../vendor/nunomaduro/larastan/config/statics.php');
         File::copyDirectory(__DIR__.'/Application/database/migrations', $this->getBasePath().'/database/migrations');
         File::copyDirectory(__DIR__.'/Application/config', $this->getBasePath().'/config');
+        File::copyDirectory(__DIR__.'/Application/resources', $this->getBasePath().'/resources');
     }
 
     public function execLarastan(string $filename)

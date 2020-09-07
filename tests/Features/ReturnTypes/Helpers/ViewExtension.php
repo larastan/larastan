@@ -11,7 +11,7 @@ class ViewExtension
 {
     public function testView(): View
     {
-        return view('foo');
+        return view('home');
     }
 
     public function testViewFactory(): Factory

@@ -1,0 +1,22 @@
+<?php
+
+namespace Illuminate\Mail;
+
+class Mailable
+{
+    /**
+     * @param blade-view $view
+     * @param  array<string, mixed>  $data
+     * @return $this
+     */
+    public function markdown($view, array $data = [])
+    {}
+
+    /**
+     * @param  blade-view  $view
+     * @param  array<string, mixed>  $data
+     * @return $this
+     */
+    public function view($view, array $data = [])
+    {}
+}
