@@ -75,6 +75,10 @@ If you are getting the error `Allowed memory size exhausted`, then you can use t
 
 A list of configurable rules specific to Laravel can be found [here](docs/rules.md).
 
+## Custom PHPDoc types
+
+A list of PHPDoc types specific to Larastan can be found [here](docs/custom-types.md).
+
 ## Errors To Ignore
 
 Some parts of Laravel are currently too magical for Larastan/PHPStan to understand.
