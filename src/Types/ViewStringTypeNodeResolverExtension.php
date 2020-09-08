@@ -11,14 +11,14 @@ use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\Type\Type;
 
 /**
- * Ensures a 'blade-view' type in PHPDoc is recognised to be of type BladeViewType.
+ * Ensures a 'view-string' type in PHPDoc is recognised to be of type ViewStringType.
  */
-class BladeViewTypeNodeResolverExtension implements TypeNodeResolverExtension
+class ViewStringTypeNodeResolverExtension implements TypeNodeResolverExtension
 {
     public function resolve(TypeNode $typeNode, NameScope $nameScope): ?Type
     {
-        if ($typeNode instanceof IdentifierTypeNode && $typeNode->__toString() === 'blade-view') {
-            return new BladeViewType();
+        if ($typeNode instanceof IdentifierTypeNode && $typeNode->__toString() === 'view-string') {
+            return new ViewStringType();
         }
         return null;
     }

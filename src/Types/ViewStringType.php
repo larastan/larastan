@@ -12,14 +12,14 @@ use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 
 /**
- * The custom 'blade-view' type class. It's a subset of the string type. Every string that passes the
- * view()->exists($string) test is a valid blade-view type.
+ * The custom 'view-string' type class. It's a subset of the string type. Every string that passes the
+ * view()->exists($string) test is a valid view-string type.
  */
-class BladeViewType extends StringType
+class ViewStringType extends StringType
 {
     public function describe(\PHPStan\Type\VerbosityLevel $level) : string
     {
-        return 'blade-view';
+        return 'view-string';
     }
 
     public function accepts(Type $type, bool $strictTypes): TrinaryLogic

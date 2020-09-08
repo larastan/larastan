@@ -25,7 +25,7 @@ function tap($value, $callback = null)
 }
 
 /**
- * @param  blade-view|null  $view
+ * @param  view-string|null  $view
  * @param  \Illuminate\Contracts\Support\Arrayable|array<string, mixed>  $data
  * @param  array<string, mixed>  $mergeData
  * @return mixed

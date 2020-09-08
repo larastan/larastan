@@ -280,7 +280,7 @@ services:
             - phpstan.phpDoc.typeNodeResolverExtension
 
     -
-        class: NunoMaduro\Larastan\Types\BladeViewTypeNodeResolverExtension
+        class: NunoMaduro\Larastan\Types\ViewStringTypeNodeResolverExtension
         tags:
             - phpstan.phpDoc.typeNodeResolverExtension
 

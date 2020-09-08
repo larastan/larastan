@@ -5,7 +5,7 @@ namespace Illuminate\Mail;
 class Mailable
 {
     /**
-     * @param blade-view $view
+     * @param view-string $view
      * @param  array<string, mixed>  $data
      * @return $this
      */
@@ -13,7 +13,7 @@ class Mailable
     {}
 
     /**
-     * @param  blade-view  $view
+     * @param  view-string  $view
      * @param  array<string, mixed>  $data
      * @return $this
      */

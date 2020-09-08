@@ -14,7 +14,7 @@ class BladeViewType
     }
 
     /**
-     * @phpstan-param blade-view $view
+     * @phpstan-param view-string $view
      * @param string $view
      * @return void
      */
