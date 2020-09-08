@@ -16,6 +16,7 @@ parameters:
         - stubs/HasOne.stub
         - stubs/HasOneThrough.stub
         - stubs/HasManyThrough.stub
+        - stubs/Mailable.stub
         - stubs/MorphOne.stub
         - stubs/MorphOneOrMany.stub
         - stubs/MorphToMany.stub
@@ -275,6 +276,11 @@ services:
 
     -
         class: NunoMaduro\Larastan\Types\GenericEloquentCollectionTypeNodeResolverExtension
+        tags:
+            - phpstan.phpDoc.typeNodeResolverExtension
+
+    -
+        class: NunoMaduro\Larastan\Types\ViewStringTypeNodeResolverExtension
         tags:
             - phpstan.phpDoc.typeNodeResolverExtension
 
