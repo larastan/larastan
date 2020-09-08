@@ -8,7 +8,6 @@ use PHPStan\TrinaryLogic;
 use PHPStan\Type\CompoundType;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\StringType;
-
 use PHPStan\Type\Type;
 
 /**
@@ -17,7 +16,7 @@ use PHPStan\Type\Type;
  */
 class ViewStringType extends StringType
 {
-    public function describe(\PHPStan\Type\VerbosityLevel $level) : string
+    public function describe(\PHPStan\Type\VerbosityLevel $level): string
     {
         return 'view-string';
     }
@@ -31,6 +30,7 @@ class ViewStringType extends StringType
         if ($type instanceof ConstantStringType) {
             /** @var \Illuminate\View\Factory $view */
             $view = view();
+
             return TrinaryLogic::createFromBoolean($view->exists($type->getValue()));
         }
 
@@ -50,6 +50,7 @@ class ViewStringType extends StringType
         if ($type instanceof ConstantStringType) {
             /** @var \Illuminate\View\Factory $view */
             $view = view();
+
             return TrinaryLogic::createFromBoolean($view->exists($type->getValue()));
         }
 

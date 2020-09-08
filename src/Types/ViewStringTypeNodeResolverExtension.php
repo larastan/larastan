@@ -20,6 +20,7 @@ class ViewStringTypeNodeResolverExtension implements TypeNodeResolverExtension
         if ($typeNode instanceof IdentifierTypeNode && $typeNode->__toString() === 'view-string') {
             return new ViewStringType();
         }
+
         return null;
     }
 }
