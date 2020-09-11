@@ -164,12 +164,12 @@ class Relations
 
     public function testFirstWhereWithHasManyRelation(User $user): ?Account
     {
-        return $user->accounts()->firstWhere('foo', 'bar');
+        return $user->accounts()->firstWhere('active', 'bar');
     }
 
     public function testFirstWhereWithBelongsToRelation(User $user): ?Group
     {
-        return $user->group()->firstWhere('foo', 'bar');
+        return $user->group()->firstWhere('id', 'bar');
     }
 }
 

@@ -30,3 +30,39 @@ If the string is not an existing blade view, the following error will be display
 ```
 Parameter #1 $view of method TestClass::renderView() expects view-string, string given.  
 ```
+
+## model-property
+The `model-property` type is a generic type that validates whether a string 
+exists as a property on a subclass of `\Illuminate\Database\Eloquent\Model`. 
+
+Given the type `model-property<\App\Models\User>`, Larastan will check whether 
+the string exists as a property on the `\App\Models\User` class. This is true if there
+exists a PHPDoc annotation for this property, or if Larastan is able to infer
+this from your migrations.
+
+**Example:**
+
+```php
+class User extends \Illuminate\Database\Eloquent\Model
+{
+    /**
+     * @phpstan-param model-property<self> $column
+     * @param string $column
+     * @return Builder
+     */
+    public function scopeWhereTrue($query, string $column): Builder
+    {
+        return $query->where($column, true);
+    }
+}
+```
+
+Larastan will then make sure that the string passed to the `whereTrue` scope
+actually exists as a property on your User model.
+
+This type is disabled by default. To allow Larastan to inspect these strings, set
+```
+parameters:
+    checkModelProperties: true
+```
+in your configuration file.

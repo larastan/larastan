@@ -61,9 +61,11 @@
     },
     "scripts": {
         "test:types": "phpstan analyse --ansi",
+        "test:laravel-types": "phpstan analyse --ansi --level=max --configuration ./extension.neon ./tests/Application/app",
         "test:unit": "phpunit --colors=always",
         "test": [
             "@test:types",
+            "@test:laravel-types",
             "@test:unit"
         ]
     }

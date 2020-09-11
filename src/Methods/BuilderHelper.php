@@ -163,7 +163,8 @@ class BuilderHelper
         // This can be a custom EloquentBuilder or the normal one
         $builderName = $this->determineBuilderType($modelName);
 
-        $builderReflection = $this->broker->getClass($builderName);
+        /** @var \PHPStan\Reflection\ClassReflection $builderReflection */
+        $builderReflection = (new GenericObjectType($builderName, [new ObjectType($modelName)]))->getClassReflection();
 
         $methodReflection = $this->searchOnEloquentBuilder($builderReflection, $methodName, $modelName);
 

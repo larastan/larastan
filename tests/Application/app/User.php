@@ -24,22 +24,18 @@ class User extends Authenticatable
     use Notifiable;
     use SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    /** @var array<int, model-property<self>|'*'> */
     protected $fillable = [
         'name', 'email', 'password',
     ];
 
-    /** @var array<string, string> */
+    /** @var array<model-property<self>, string> */
     protected $casts = ['meta' => 'array', 'blocked' => 'boolean'];
 
     /**
      * The attributes that should be hidden for arrays.
      *
-     * @var array
+     * @var array<model-property<self>>
      */
     protected $hidden = [
         'password', 'remember_token',
@@ -55,12 +51,27 @@ class User extends Authenticatable
         return Str::upper($this->name);
     }
 
+    /**
+     * @param model-property<self> $property
+     */
+    public function printPropertySelf(string $property): void
+    {
+        echo $this->{$property};
+    }
+
+    /**
+     * @param model-property<static> $property
+     */
+    public function printPropertyStatic(string $property): void
+    {
+        echo $this->{$property};
+    }
+
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('active', 1);
     }
 
-    /** @phpstan-return BelongsTo<Group, User> */
     public function group(): BelongsTo
     {
         return $this->belongsTo(Group::class);
@@ -103,6 +114,12 @@ class User extends Authenticatable
         return $this->belongsTo(get_class($this));
     }
 
+    /**
+     * @param string $related
+     * @param string|null $foreignKey
+     * @param string|null $localKey
+     * @return HasManySyncable
+     */
     public function hasManySyncable($related, $foreignKey = null, $localKey = null): HasManySyncable
     {
         $instance = $this->newRelatedInstance($related);
