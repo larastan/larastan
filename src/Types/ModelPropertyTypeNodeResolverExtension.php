@@ -11,8 +11,11 @@ use PHPStan\PhpDoc\TypeNodeResolver;
 use PHPStan\PhpDoc\TypeNodeResolverExtension;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
+use PHPStan\PhpDocParser\Ast\Type\IntersectionTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\Type\ErrorType;
+use PHPStan\Type\IntersectionType;
+use PHPStan\Type\NeverType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
@@ -56,6 +59,10 @@ class ModelPropertyTypeNodeResolverExtension implements TypeNodeResolverExtensio
             $genericType = $this->baseResolver->resolve($typeNode->genericTypes[0], $nameScope);
 
             if ((new ObjectType(Model::class))->isSuperTypeOf($genericType)->no()) {
+                return new ErrorType();
+            }
+
+            if ($genericType instanceof NeverType) {
                 return new ErrorType();
             }
 
