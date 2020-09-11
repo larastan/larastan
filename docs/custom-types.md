@@ -36,9 +36,8 @@ The `model-property` type is a generic type that validates whether a string
 exists as a property on a subclass of `\Illuminate\Database\Eloquent\Model`. 
 
 Given the type `model-property<\App\Models\User>`, Larastan will check whether 
-the string exists as a property on the `\App\Models\User` class. This is true if there
-exists a PHPDoc annotation for this property, or if Larastan is able to infer
-this from your migrations.
+the string exists as a property on the `\App\Models\User` class. This is true if 
+Larastan finds a column definition on the corresponding table in one of your migrations.
 
 **Example:**
 
