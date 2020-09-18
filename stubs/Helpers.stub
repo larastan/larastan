@@ -3,9 +3,9 @@
 /**
  * @template TValue
  * @param int $times
- * @param callable(): TValue $callback
+ * @param callable(int): TValue $callback
  * @param int $sleep
- * @param null|callable(): bool $when
+ * @param null|callable(\Exception): bool $when
  * @phpstan-return TValue
  *
  * @throws \Exception
