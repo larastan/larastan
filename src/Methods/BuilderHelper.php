@@ -67,6 +67,7 @@ class BuilderHelper
         return new EloquentBuilderMethodReflection(
             $methodName,
             $classReflection,
+            $methodReflection,
             [$actualParameter],
             $returnObject,
             true
@@ -89,7 +90,9 @@ class BuilderHelper
             $returnType = $parametersAcceptor->getReturnType();
 
             return new EloquentBuilderMethodReflection(
-                'scope'.ucfirst($methodName), $methodReflection->getDeclaringClass(),
+                'scope'.ucfirst($methodName),
+                $methodReflection->getDeclaringClass(),
+                $methodReflection,
                 $parameters,
                 $returnType,
                 $parametersAcceptor->isVariadic()
@@ -106,7 +109,7 @@ class BuilderHelper
             $returnType = ModelTypeHelper::replaceStaticTypeWithModel($parametersAcceptor->getReturnType(), $modelClassName);
 
             return new EloquentBuilderMethodReflection(
-                $methodName, $eloquentBuilder,
+                $methodName, $eloquentBuilder, $methodReflection,
                 $parametersAcceptor->getParameters(),
                 $returnType,
                 $parametersAcceptor->isVariadic()
@@ -163,7 +166,8 @@ class BuilderHelper
         // This can be a custom EloquentBuilder or the normal one
         $builderName = $this->determineBuilderType($modelName);
 
-        $builderReflection = $this->broker->getClass($builderName);
+        /** @var ClassReflection $builderReflection */
+        $builderReflection = (new GenericObjectType($builderName, [new ObjectType($modelName)]))->getClassReflection();
 
         $methodReflection = $this->searchOnEloquentBuilder($builderReflection, $methodName, $modelName);
 
@@ -199,8 +203,14 @@ class BuilderHelper
                 $returnType = new GenericObjectType(Collection::class, [new ObjectType($modelName)]);
             }
 
+            $originalMethodReflection = $methodReflection;
+
+            if ($originalMethodReflection instanceof EloquentBuilderMethodReflection) {
+                $originalMethodReflection = $originalMethodReflection->getOriginalMethodReflection();
+            }
+
             return new EloquentBuilderMethodReflection(
-                $methodName, $classReflection,
+                $methodName, $classReflection, $originalMethodReflection,
                 $parametersAcceptor->getParameters(),
                 $returnType,
                 $parametersAcceptor->isVariadic()

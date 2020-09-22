@@ -58,7 +58,7 @@ final class SchemaAggregator
                 && $stmt->expr instanceof PhpParser\Node\Expr\StaticCall
                 && ($stmt->expr->class instanceof PhpParser\Node\Name)
                 && $stmt->expr->name instanceof PhpParser\Node\Identifier
-                && ($stmt->expr->class->toCodeString() === '\\Illuminate\Support\Facades\Schema' || $stmt->expr->class->toCodeString() === '\Schema')
+                && ($stmt->expr->class->toCodeString() === '\Illuminate\Support\Facades\Schema' || $stmt->expr->class->toCodeString() === '\Schema')
             ) {
                 switch ($stmt->expr->name->name) {
                     case 'create':

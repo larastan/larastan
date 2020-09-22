@@ -81,7 +81,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             }
 
             return new EloquentBuilderMethodReflection(
-                $methodName, $classReflection,
+                $methodName, $classReflection, $methodReflection,
                 $parametersAcceptor->getParameters(),
                 $returnType,
                 $parametersAcceptor->isVariadic()
@@ -109,7 +109,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
 
             return new EloquentBuilderMethodReflection(
-                $methodName, $classReflection,
+                $methodName, $classReflection, $methodReflection,
                 $parametersAcceptor->getParameters(),
                 new GenericObjectType($builderClass, [$modelType]),
                 $parametersAcceptor->isVariadic()
