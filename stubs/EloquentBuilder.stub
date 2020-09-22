@@ -11,7 +11,7 @@ class Builder
     public function getModel();
 
     /**
-     * @param array<string, mixed> $attributes
+     * @phpstan-param array<model-property<TModelClass>, mixed> $attributes
      * @phpstan-return TModelClass
      */
     public function create(array $attributes = []);
@@ -37,7 +37,7 @@ class Builder
      * Find a model by its primary key.
      *
      * @param  mixed  $id
-     * @param  array<int, mixed>  $columns
+     * @param  array<int, (model-property<TModelClass>|'*')>|model-property<TModelClass>|'*'  $columns
      * @phpstan-return TModelClass|\Illuminate\Database\Eloquent\Collection<TModelClass>|null
      */
     public function find($id, $columns = ['*']);
@@ -46,7 +46,7 @@ class Builder
      * Find multiple models by their primary keys.
      *
      * @param  \Illuminate\Contracts\Support\Arrayable|array<mixed>  $ids
-     * @param  array<mixed>  $columns
+     * @param  array<int, (model-property<TModelClass>|'*')>|model-property<TModelClass>|'*'  $columns
      * @phpstan-return \Illuminate\Database\Eloquent\Collection<TModelClass>
      */
     public function findMany($ids, $columns = ['*']);
@@ -55,7 +55,7 @@ class Builder
      * Find a model by its primary key or throw an exception.
      *
      * @param  mixed  $id
-     * @param  array<int, mixed>  $columns
+     * @param  array<int, (model-property<TModelClass>|'*')>|model-property<TModelClass>|'*'  $columns
      * @phpstan-return TModelClass|\Illuminate\Database\Eloquent\Collection<TModelClass>
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
@@ -66,7 +66,7 @@ class Builder
      * Find a model by its primary key or return fresh model instance.
      *
      * @param  mixed  $id
-     * @param  array<int, mixed>  $columns
+     * @param  array<int, (model-property<TModelClass>|'*')>|model-property<TModelClass>|'*'  $columns
      * @phpstan-return TModelClass
      */
     public function findOrNew($id, $columns = ['*']);
@@ -74,8 +74,8 @@ class Builder
     /**
      * Get the first record matching the attributes or instantiate it.
      *
-     * @param  array<string, mixed>  $attributes
-     * @param  array<mixed>  $values
+     * @param  array<model-property<TModelClass>, mixed>  $attributes
+     * @param  array<model-property<TModelClass>, mixed>  $values
      * @phpstan-return TModelClass
      */
     public function firstOrNew(array $attributes = [], array $values = []);
@@ -83,8 +83,8 @@ class Builder
     /**
      * Get the first record matching the attributes or create it.
      *
-     * @param  array<string, mixed>  $attributes
-     * @param  array<mixed>  $values
+     * @param  array<model-property<TModelClass>, mixed>  $attributes
+     * @param  array<model-property<TModelClass>, mixed>  $values
      * @phpstan-return TModelClass
      */
     public function firstOrCreate(array $attributes, array $values = []);
@@ -92,16 +92,28 @@ class Builder
     /**
      * Create or update a record matching the attributes, and fill it with values.
      *
-     * @param  array<string, mixed>  $attributes
-     * @param  array<mixed>  $values
+     * @param  array<model-property<TModelClass>, mixed>  $attributes
+     * @param  array<model-property<TModelClass>, mixed>  $values
      * @phpstan-return TModelClass
      */
     public function updateOrCreate(array $attributes, array $values = []);
 
     /**
+     * @param  array<model-property<TModelClass>, mixed>  $attributes
+     * @return \Illuminate\Database\Eloquent\Model|$this
+     */
+    public function forceCreate(array $attributes);
+
+   /**
+     * @param  array<model-property<TModelClass>, mixed>  $values
+     * @return int
+     */
+    public function update(array $values);
+
+    /**
      * Execute the query and get the first result or throw an exception.
      *
-     * @param  array<int, string>  $columns
+     * @param  array<int, (model-property<TModelClass>|'*')>|model-property<TModelClass>|'*'  $columns
      * @phpstan-return TModelClass
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
@@ -111,16 +123,27 @@ class Builder
     /**
      * Execute the query and get the first result or call a callback.
      *
-     * @param  \Closure|array<int, string>  $columns
+     * @param  \Closure|array<int, (model-property<TModelClass>|'*')>  $columns
      * @param  \Closure|null  $callback
      * @phpstan-return TModelClass|mixed
      */
     public function firstOr($columns = ['*'], \Closure $callback = null);
 
     /**
+     * Add a basic where clause to the query.
+     *
+     * @param  \Closure|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>  $column
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @param  string  $boolean
+     * @return $this
+     */
+    public function where($column, $operator = null, $value = null, $boolean = 'and');
+
+    /**
      * Add a basic where clause to the query, and return the first result.
      *
-     * @param  \Closure|string|array<string, string>  $column
+     * @param  \Closure|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
@@ -131,7 +154,7 @@ class Builder
     /**
      * Execute the query as a "select" statement.
      *
-     * @param  array<int, string>|string  $columns
+     * @param  array<int, (model-property<TModelClass>|'*')>|model-property<TModelClass>|'*'  $columns
      * @phpstan-return \Illuminate\Database\Eloquent\Collection<TModelClass>
      */
     public function get($columns = ['*']);
@@ -139,7 +162,7 @@ class Builder
     /**
      * Get the hydrated models without eager loading.
      *
-     * @param  array<int, string>|string  $columns
+     * @param  array<int, (model-property<TModelClass>|'*')>|model-property<TModelClass>|'*'  $columns
      * @phpstan-return TModelClass[]
      */
     public function getModels($columns = ['*']);

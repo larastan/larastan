@@ -306,7 +306,7 @@ class Builder
     /**
      * Add a "where" clause comparing two columns to the query.
      *
-     * @param  string|array<mixed>  $first
+     * @param  model-property|array<model-property|int, mixed>  $first
      * @param  string|null  $operator
      * @param  string|null  $second
      * @param  string|null  $boolean

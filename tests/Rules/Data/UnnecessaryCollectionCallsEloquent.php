@@ -47,7 +47,7 @@ class UnnecessaryCollectionCallsEloquent
 
     public function testVarWrong(): bool
     {
-        $query = User::query()->limit(3)->where('status', 'active');
+        $query = User::query()->limit(3)->where('email', 'foo@bar.com');
 
         return $query->get()->isEmpty();
     }
