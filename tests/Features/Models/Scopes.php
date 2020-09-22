@@ -27,21 +27,21 @@ class Scopes extends Model
 
     public function testScopeAfterQueryBuilderStaticCall(): Builder
     {
-        return User::where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->active();
+        return User::where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->active();
     }
 
     public function testScopeAfterQueryBuilderVariableCall(): Builder
     {
         $this->user = new User;
 
-        return $this->user->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->where('foo', 'bar')->active();
+        return $this->user->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->active();
     }
 
     public function testScopeWithFirst(): ?User
     {
         $this->user = new User;
 
-        return $this->user->where('foo', 'bar')->active()->first();
+        return $this->user->where('name', 'bar')->active()->first();
     }
 
     public function testVoidScopeStillReturnsBuilder(): Builder

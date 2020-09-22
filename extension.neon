@@ -42,16 +42,22 @@ parameters:
     noUnnecessaryCollectionCallOnly: []
     noUnnecessaryCollectionCallExcept: []
     databaseMigrationsPath: null
+    checkModelProperties: false
 
 parametersSchema:
     noUnnecessaryCollectionCall: bool()
     noUnnecessaryCollectionCallOnly: listOf(string())
     noUnnecessaryCollectionCallExcept: listOf(string())
     databaseMigrationsPath: schema(anyOf(string()), nullable())
+    checkModelProperties: bool()
 
 conditionalTags:
     NunoMaduro\Larastan\Rules\NoUnnecessaryCollectionCallRule:
         phpstan.rules.rule: %noUnnecessaryCollectionCall%
+    NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertyRule:
+        phpstan.rules.rule: %checkModelProperties%
+    NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertyStaticCallRule:
+        phpstan.rules.rule: %checkModelProperties%
 
 services:
     -
@@ -293,9 +299,26 @@ services:
             excludeMethods: %noUnnecessaryCollectionCallExcept%
 
     -
+        class: NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertyRule
+        tags:
+            - phpstan.rules.rule
+
+    -
+        class: NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertyStaticCallRule
+        tags:
+            - phpstan.rules.rule
+
+    -
         class: NunoMaduro\Larastan\Types\GenericEloquentBuilderTypeNodeResolverExtension
         tags:
             - phpstan.phpDoc.typeNodeResolverExtension
+
+    -
+        class: NunoMaduro\Larastan\Types\ModelProperty\ModelPropertyTypeNodeResolverExtension
+        tags:
+            - phpstan.phpDoc.typeNodeResolverExtension
+        arguments:
+            active: %checkModelProperties%
 
     -
         class: NunoMaduro\Larastan\Types\RelationParserHelper
@@ -305,3 +328,7 @@ services:
         arguments:
             databaseMigrationPath: %databaseMigrationsPath%
             currentWorkingDirectory: %currentWorkingDirectory%
+
+    -
+        class: NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertiesRuleHelper
+

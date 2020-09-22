@@ -19,7 +19,7 @@ class Relations
 {
     public function testRelationWhere(): HasMany
     {
-        return (new User())->accounts()->where('foo', 'bar');
+        return (new User())->accounts()->where('name', 'bar');
     }
 
     public function testRelationWhereIn(): HasMany
@@ -49,27 +49,27 @@ class Relations
 
     public function testFirstWithRelation(): ?Account
     {
-        return (new User())->accounts()->where('foo', 'bar')->first();
+        return (new User())->accounts()->where('name', 'bar')->first();
     }
 
     public function testIncrementOnRelation(User $user): int
     {
-        return $user->accounts()->increment('counter');
+        return $user->accounts()->increment('id');
     }
 
     public function testDecrementOnRelation(User $user): int
     {
-        return $user->accounts()->decrement('counter');
+        return $user->accounts()->decrement('id');
     }
 
     public function testIncrementWithAmountOnRelation(User $user): int
     {
-        return $user->accounts()->increment('counter', 5);
+        return $user->accounts()->increment('id', 5);
     }
 
     public function testDecrementWithAmountOnRelation(User $user): int
     {
-        return $user->accounts()->decrement('counter', 5);
+        return $user->accounts()->decrement('id', 5);
     }
 
     public function testPaginate(User $user): LengthAwarePaginator
@@ -79,7 +79,7 @@ class Relations
 
     public function testMorph(User $user): MorphTo
     {
-        return $user->addressable()->where('foo', 'bar');
+        return $user->addressable()->where('name', 'bar');
     }
 
     public function testModelScopesOnRelation(User $user): HasMany
@@ -164,12 +164,12 @@ class Relations
 
     public function testFirstWhereWithHasManyRelation(User $user): ?Account
     {
-        return $user->accounts()->firstWhere('foo', 'bar');
+        return $user->accounts()->firstWhere('name', 'bar');
     }
 
     public function testFirstWhereWithBelongsToRelation(User $user): ?Group
     {
-        return $user->group()->firstWhere('foo', 'bar');
+        return $user->group()->firstWhere('name', 'bar');
     }
 }
 

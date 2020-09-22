@@ -96,7 +96,7 @@ class CorrectCollectionCalls
             ->withCount(['accounts' => function ($query) {
                 $query->where('id', '<>', 1);
             }])
-            ->pluck('accounts_count')
+            ->pluck('id')
             ->avg();
     }
 }
