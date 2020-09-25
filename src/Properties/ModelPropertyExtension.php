@@ -13,6 +13,7 @@ use PHPStan\Reflection\Annotations\AnnotationsPropertiesClassReflectionExtension
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
+use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\IntegerType;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -73,9 +74,17 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
         }
 
         $modelName = $classReflection->getNativeReflection()->getName();
-        /** @var Model $modelInstance */
-        $modelInstance = new $modelName;
-        $tableName = $modelInstance->getTable();
+
+        try {
+            $reflect = new \ReflectionClass($modelName);
+
+            /** @var Model $modelInstance */
+            $modelInstance = $reflect->newInstanceWithoutConstructor();
+
+            $tableName = $modelInstance->getTable();
+        } catch (\ReflectionException $e) {
+            return false;
+        }
 
         if (! array_key_exists($tableName, $this->tables)) {
             return false;
@@ -105,9 +114,18 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
     ): PropertyReflection {
         $modelName = $classReflection->getNativeReflection()->getName();
 
-        /** @var Model $modelInstance */
-        $modelInstance = new $modelName;
-        $tableName = $modelInstance->getTable();
+        try {
+            $reflect = new \ReflectionClass($modelName);
+
+            /** @var Model $modelInstance */
+            $modelInstance = $reflect->newInstanceWithoutConstructor();
+
+            $tableName = $modelInstance->getTable();
+        } catch (\ReflectionException $e) {
+            // `hasProperty` should return false if there was a reflection exception.
+            // so this should never happen
+            throw new ShouldNotHappenException();
+        }
 
         if (
             (! array_key_exists($tableName, $this->tables)

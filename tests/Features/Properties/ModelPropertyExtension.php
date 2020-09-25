@@ -6,6 +6,7 @@ namespace Tests\Features\Properties;
 
 use App\Account;
 use App\Group;
+use App\GuardedModel;
 use App\Role;
 use App\User;
 use Carbon\Carbon as BaseCarbon;
@@ -109,5 +110,10 @@ class ModelPropertyExtension
         $group->id = 5;
 
         return $group->save();
+    }
+
+    public function testModelWithGuardedProperties(GuardedModel $guardedModel): string
+    {
+        return $guardedModel->name;
     }
 }
