@@ -29,4 +29,13 @@ class RetryStub
             return true;
         });
     }
+
+    public function testRetryWhenException(): bool
+    {
+        return retry(5, function (int $attempt): bool {
+            return false;
+        }, 0, function (\Exception $e): bool {
+            return true;
+        });
+    }
 }
