@@ -20,7 +20,7 @@ class MigrationHelperTest extends TestCase
     }
 
     /** @test */
-    function it_will_return_empty_array_if_migrations_path_is_not_a_directory()
+    public function it_will_return_empty_array_if_migrations_path_is_not_a_directory()
     {
         $migrationHelper = new MigrationHelper($this->cachedParser, 'foobar');
 
@@ -28,9 +28,9 @@ class MigrationHelperTest extends TestCase
     }
 
     /** @test */
-    function it_can_read_basic_migrations_and_create_table_structure()
+    public function it_can_read_basic_migrations_and_create_table_structure()
     {
-        $migrationHelper = new MigrationHelper($this->cachedParser, __DIR__ . '/data/basic_migration');
+        $migrationHelper = new MigrationHelper($this->cachedParser, __DIR__.'/data/basic_migration');
 
         $tables = $migrationHelper->initializeTables();
 
@@ -38,9 +38,9 @@ class MigrationHelperTest extends TestCase
     }
 
     /** @test */
-    function it_can_read_schema_definitions_from_any_method_in_class()
+    public function it_can_read_schema_definitions_from_any_method_in_class()
     {
-        $migrationHelper = new MigrationHelper($this->cachedParser, __DIR__ . '/data/migrations_with_different_methods');
+        $migrationHelper = new MigrationHelper($this->cachedParser, __DIR__.'/data/migrations_with_different_methods');
 
         $tables = $migrationHelper->initializeTables();
 
@@ -48,9 +48,9 @@ class MigrationHelperTest extends TestCase
     }
 
     /** @test */
-    function it_can_read_schema_definitions_with_multiple_create_and_drop_methods_for_one_table()
+    public function it_can_read_schema_definitions_with_multiple_create_and_drop_methods_for_one_table()
     {
-        $migrationHelper = new MigrationHelper($this->cachedParser, __DIR__ . '/data/complex_migrations');
+        $migrationHelper = new MigrationHelper($this->cachedParser, __DIR__.'/data/complex_migrations');
 
         $tables = $migrationHelper->initializeTables();
 
