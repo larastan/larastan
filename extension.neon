@@ -41,11 +41,13 @@ parameters:
     noUnnecessaryCollectionCall: true
     noUnnecessaryCollectionCallOnly: []
     noUnnecessaryCollectionCallExcept: []
+    databaseMigrationsPath: null
 
 parametersSchema:
     noUnnecessaryCollectionCall: bool()
     noUnnecessaryCollectionCallOnly: listOf(string())
     noUnnecessaryCollectionCallExcept: listOf(string())
+    databaseMigrationsPath: schema(anyOf(string()), nullable())
 
 conditionalTags:
     NunoMaduro\Larastan\Rules\NoUnnecessaryCollectionCallRule:
@@ -297,3 +299,6 @@ services:
 
     -
         class: NunoMaduro\Larastan\Types\RelationParserHelper
+
+    -
+        class: NunoMaduro\Larastan\Properties\MigrationHelper

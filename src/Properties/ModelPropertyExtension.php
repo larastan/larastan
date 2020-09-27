@@ -6,8 +6,6 @@ namespace NunoMaduro\Larastan\Properties;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Iterator;
-use PHPStan\Parser\CachedParser;
 use PHPStan\PhpDoc\TypeStringResolver;
 use PHPStan\Reflection\Annotations\AnnotationsPropertiesClassReflectionExtension;
 use PHPStan\Reflection\ClassReflection;
@@ -15,19 +13,12 @@ use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\IntegerType;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use RegexIterator;
-use SplFileInfo;
 
 /**
  * @internal
  */
 final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 {
-    /** @var CachedParser */
-    private $parser;
-
     /** @var SchemaTable[] */
     private $tables = [];
 
@@ -40,11 +31,14 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
     /** @var AnnotationsPropertiesClassReflectionExtension */
     private $annotationExtension;
 
-    public function __construct(CachedParser $parser, TypeStringResolver $stringResolver, AnnotationsPropertiesClassReflectionExtension $annotationExtension)
+    /** @var MigrationHelper */
+    private $migrationHelper;
+
+    public function __construct(TypeStringResolver $stringResolver, AnnotationsPropertiesClassReflectionExtension $annotationExtension, MigrationHelper $migrationHelper)
     {
-        $this->parser = $parser;
         $this->stringResolver = $stringResolver;
         $this->annotationExtension = $annotationExtension;
+        $this->migrationHelper = $migrationHelper;
     }
 
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
@@ -66,7 +60,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
         }
 
         if (count($this->tables) === 0) {
-            $this->initializeTables();
+            $this->tables = $this->migrationHelper->initializeTables();
         }
 
         if ($propertyName === 'id') {
@@ -147,46 +141,6 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             $this->stringResolver->resolve($column->readableType),
             $this->stringResolver->resolve($column->writeableType)
         );
-    }
-
-    private function initializeTables(): void
-    {
-        if (! is_dir(database_path().'/migrations')) {
-            return;
-        }
-
-        $schemaAggregator = new SchemaAggregator();
-        $files = $this->getMigrationFiles(database_path().'/migrations');
-        $filesArray = iterator_to_array($files);
-        ksort($filesArray);
-
-        $this->requireFiles($filesArray);
-
-        foreach ($filesArray as $file) {
-            $schemaAggregator->addStatements($this->parser->parseFile($file->getPathname()));
-        }
-
-        $this->tables = $schemaAggregator->tables;
-    }
-
-    /**
-     * @param string $path
-     *
-     * @return Iterator<SplFileInfo>
-     */
-    private function getMigrationFiles(string $path): Iterator
-    {
-        return new RegexIterator(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path)), '/\.php$/i');
-    }
-
-    /**
-     * @param SplFileInfo[] $files
-     */
-    private function requireFiles(array $files): void
-    {
-        foreach ($files as $file) {
-            require_once $file;
-        }
     }
 
     private function getDateClass(): string
