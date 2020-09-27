@@ -6,8 +6,6 @@ namespace NunoMaduro\Larastan\Properties;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Iterator;
-use PHPStan\Parser\CachedParser;
 use PHPStan\PhpDoc\TypeStringResolver;
 use PHPStan\Reflection\Annotations\AnnotationsPropertiesClassReflectionExtension;
 use PHPStan\Reflection\ClassReflection;
@@ -15,10 +13,6 @@ use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\IntegerType;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use RegexIterator;
-use SplFileInfo;
 
 /**
  * @internal

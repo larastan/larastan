@@ -13,7 +13,7 @@ use SplFileInfo;
 
 class MigrationHelper
 {
-    /**  @var CachedParser */
+    /** @var CachedParser */
     private $parser;
 
     /** @var ?string */
@@ -31,7 +31,7 @@ class MigrationHelper
     public function initializeTables(): array
     {
         if ($this->databaseMigrationPath === null) {
-            $this->databaseMigrationPath = database_path() . '/migrations';
+            $this->databaseMigrationPath = database_path().'/migrations';
         }
 
         if (! is_dir($this->databaseMigrationPath)) {
