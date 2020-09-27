@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Parameter type of the query builder's `where`, `orWhere` and `addArrayOfWheres` ([#651](https://github.com/nunomaduro/larastan/pull/651)).
 - Fix callback parameters for `retry` ([#663](https://github.com/nunomaduro/larastan/pull/663)).
+- Using Reflection to initiate a model in `ModelPropertyExtension` to avoid errors caused by using Model constructor. ([#666](https://github.com/nunomaduro/larastan/pull/666))
+
+### Changed
+- Made improvements to database migrations scanning. ([#670](https://github.com/nunomaduro/larastan/pull/670))
 
 ## [0.6.4] - 2020-09-02
 
