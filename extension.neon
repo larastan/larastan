@@ -302,3 +302,6 @@ services:
 
     -
         class: NunoMaduro\Larastan\Properties\MigrationHelper
+        arguments:
+            databaseMigrationPath: %databaseMigrationsPath%
+            currentWorkingDirectory: %currentWorkingDirectory%

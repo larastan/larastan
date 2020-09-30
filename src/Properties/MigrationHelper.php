@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Properties;
 
 use Iterator;
+use PHPStan\File\FileHelper;
 use PHPStan\Parser\CachedParser;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -19,10 +20,14 @@ class MigrationHelper
     /** @var ?string */
     private $databaseMigrationPath;
 
-    public function __construct(CachedParser $parser, ?string $databaseMigrationPath)
+    /** @var string */
+    private $currentWorkingDirectory;
+
+    public function __construct(CachedParser $parser, string $currentWorkingDirectory, ?string $databaseMigrationPath)
     {
         $this->parser = $parser;
         $this->databaseMigrationPath = $databaseMigrationPath;
+        $this->currentWorkingDirectory = $currentWorkingDirectory;
     }
 
     /**
@@ -30,8 +35,10 @@ class MigrationHelper
      */
     public function initializeTables(): array
     {
-        if ($this->databaseMigrationPath === null) {
-            $this->databaseMigrationPath = database_path().'/migrations';
+        if ($this->databaseMigrationPath !== null) {
+            $this->databaseMigrationPath = $this->getFileHelper()->absolutizePath($this->databaseMigrationPath);
+        } else {
+            $this->databaseMigrationPath = database_path('migrations');
         }
 
         if (! is_dir($this->databaseMigrationPath)) {
@@ -70,5 +77,10 @@ class MigrationHelper
         foreach ($files as $file) {
             require_once $file;
         }
+    }
+
+    private function getFileHelper(): FileHelper
+    {
+        return new FileHelper($this->currentWorkingDirectory);
     }
 }
