@@ -10,7 +10,7 @@ class ModelPropertyRuleTest extends RulesTest
 {
     public function testModelPropertyRuleOnBuilder(): void
     {
-        $errors = $this->setConfigPath(__DIR__ . DIRECTORY_SEPARATOR . 'Data/modelPropertyConfig.neon')->findErrorsByLine(__DIR__ . '/Data/model-property-builder.php');
+        $errors = $this->setConfigPath(__DIR__.DIRECTORY_SEPARATOR.'Data/modelPropertyConfig.neon')->findErrorsByLine(__DIR__.'/Data/model-property-builder.php');
 
         self::assertEquals([
             3 => 'Property \'foo\' does not exist in App\\User model.',
@@ -23,7 +23,7 @@ class ModelPropertyRuleTest extends RulesTest
 
     public function testModelPropertyRuleOnRelation(): void
     {
-        $errors = $this->setConfigPath(__DIR__ . DIRECTORY_SEPARATOR . 'Data/modelPropertyConfig.neon')->findErrorsByLine(__DIR__ . '/Data/model-property-relation.php');
+        $errors = $this->setConfigPath(__DIR__.DIRECTORY_SEPARATOR.'Data/modelPropertyConfig.neon')->findErrorsByLine(__DIR__.'/Data/model-property-relation.php');
 
         self::assertEquals([
             6 => 'Property \'foo\' does not exist in App\\Account model.',
@@ -36,7 +36,7 @@ class ModelPropertyRuleTest extends RulesTest
 
     public function testModelPropertyRuleOnModel(): void
     {
-        $errors = $this->setConfigPath(__DIR__ . DIRECTORY_SEPARATOR . 'Data/modelPropertyConfig.neon')->findErrorsByLine(__DIR__ . '/Data/model-property-model.php');
+        $errors = $this->setConfigPath(__DIR__.DIRECTORY_SEPARATOR.'Data/modelPropertyConfig.neon')->findErrorsByLine(__DIR__.'/Data/model-property-model.php');
 
         self::assertEquals([
             7 => 'Property \'foo\' does not exist in ModelPropertyOnModel model.',

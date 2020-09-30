@@ -26,5 +26,4 @@ class ModelPropertyStaticCallsInClass extends Model
             'name' => 'John Doe',
         ]);
     }
-
 }

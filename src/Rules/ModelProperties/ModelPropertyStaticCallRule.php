@@ -77,7 +77,7 @@ class ModelPropertyStaticCallRule implements Rule
 
                 $modelReflection = $scope->getClassReflection();
             } elseif ($lowercasedClassName === 'parent') {
-                if (!$scope->isInClass()) {
+                if (! $scope->isInClass()) {
                     return [];
                 }
 

@@ -1,27 +1,20 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Types\ModelProperty;
 
-use NunoMaduro\Larastan\Properties\ModelPropertyExtension;
-use PHPStan\TrinaryLogic;
 use PHPStan\Type\ClassStringType;
-use PHPStan\Type\CompoundType;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\TemplateType;
 use PHPStan\Type\Generic\TemplateTypeMap;
 use PHPStan\Type\Generic\TemplateTypeVariance;
 use PHPStan\Type\IntersectionType;
-use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\ObjectWithoutClassType;
-use PHPStan\Type\StaticType;
-use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\UnionType;
-use PHPStan\Type\VerbosityLevel;
 
 class GenericModelPropertyType extends ModelPropertyType
 {
@@ -98,5 +91,4 @@ class GenericModelPropertyType extends ModelPropertyType
     {
         return new self($properties['type']);
     }
-
 }

@@ -31,13 +31,13 @@ class ModelPropertiesRuleHelper
     /** @var ModelPropertyExtension */
     private $modelPropertyExtension;
 
-    /**  @var AnnotationsPropertiesClassReflectionExtension */
+    /** @var AnnotationsPropertiesClassReflectionExtension */
     private $annotationExtension;
 
     /** @var ModelAccessorExtension */
     private $modelAccessorExtension;
 
-    public function __construct(ModelPropertyExtension $modelPropertyExtension, ModelAccessorExtension $modelAccessorExtension,  AnnotationsPropertiesClassReflectionExtension $annotationExtension)
+    public function __construct(ModelPropertyExtension $modelPropertyExtension, ModelAccessorExtension $modelAccessorExtension, AnnotationsPropertiesClassReflectionExtension $annotationExtension)
     {
         $this->modelPropertyExtension = $modelPropertyExtension;
         $this->modelAccessorExtension = $modelAccessorExtension;
@@ -188,11 +188,11 @@ class ModelPropertiesRuleHelper
                 $keyType = $type->getKeyType();
                 $itemType = $type->getItemType();
 
-                if($keyType instanceof GenericModelPropertyType) {
+                if ($keyType instanceof GenericModelPropertyType) {
                     return [$index, $keyType->getGenericType()];
                 }
 
-                if($itemType instanceof GenericModelPropertyType) {
+                if ($itemType instanceof GenericModelPropertyType) {
                     return [$index, $itemType->getGenericType()];
                 }
 

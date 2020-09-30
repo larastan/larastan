@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Types\ModelProperty;
 
 use Illuminate\Database\Eloquent\Model;
-use NunoMaduro\Larastan\Properties\ModelPropertyExtension;
 use PHPStan\Analyser\NameScope;
 use PHPStan\PhpDoc\TypeNodeResolver;
 use PHPStan\PhpDoc\TypeNodeResolverExtension;

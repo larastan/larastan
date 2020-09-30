@@ -53,7 +53,7 @@ final class EloquentBuilderMethodReflection implements MethodReflection
      * @param Type|null             $returnType
      * @param bool                  $isVariadic
      */
-    public function __construct(string $methodName, ClassReflection $classReflection, MethodReflection  $originalMethodReflection, array $parameters, ?Type $returnType = null, bool $isVariadic = false)
+    public function __construct(string $methodName, ClassReflection $classReflection, MethodReflection $originalMethodReflection, array $parameters, ?Type $returnType = null, bool $isVariadic = false)
     {
         $this->methodName = $methodName;
         $this->classReflection = $classReflection;
