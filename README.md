@@ -1,10 +1,10 @@
-<p align="center">
+<p align="Center">
     <img src="https://raw.githubusercontent.com/nunomaduro/larastan/master/docs/logo.png" alt="Larastan Logo" width="300">
     <br><br>
     <img src="https://raw.githubusercontent.com/nunomaduro/larastan/master/docs/example.png" alt="Larastan Example" height="300">
 </p>
 
-<p align="center">
+<p align="Center">
   <a href="https://travis-ci.org/nunomaduro/larastan"><img src="https://img.shields.io/travis/nunomaduro/larastan/master.svg" alt="Build Status"></img></a>
   <a href="https://packagist.org/packages/nunomaduro/larastan/stats"><img src="https://poser.pugx.org/nunomaduro/larastan/d/total.svg" alt="Total Downloads"></a>
   <a href="https://packagist.org/packages/nunomaduro/larastan"><img src="https://poser.pugx.org/nunomaduro/larastan/v/stable.svg" alt="Latest Version"></a>
@@ -17,7 +17,7 @@
 
 Larastan was created by [Nuno Maduro](https://github.com/nunomaduro), got artwork designed by [@Caneco](http://github.com/caneco), is maintained by [Can Vural](https://github.com/canvural) and [Viktor Szépe](https://github.com/szepeviktor), and is a [PHPStan](https://phpstan.org/) wrapper for Laravel. Larastan focuses on **finding errors in your code** without actually running it. It catches whole classes of bugs even **before you write tests** for the code.
 
-- Adds static typing to Laravel to improve developer productivity and **code quality**
+- Adds static typing to laravel to improve developer productivity and **code quality**
 - Supports most of [Laravel](https://laravel.com)'s **beautiful magic**
 - Discovers bugs in your code without running it
 
