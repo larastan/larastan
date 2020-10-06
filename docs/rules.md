@@ -54,3 +54,49 @@ parameters:
     noUnnecessaryCollectionCallExcept: ['contains']
 ```
 
+## ModelPropertyRule
+
+This rule checks every argument of a method or a function, and if the argument has the type `model-property`, it will try to check the given value against the model properties. And if the model does not have the given property, it'll produce an error.
+
+### Basic example
+
+```php
+User::create([
+    'name' => 'John Doe',
+    'emaiil' => 'john@example.test'
+]);
+```
+
+Here we have a typo in `email` column. So if we run analysis on this file Larastan will generate the following error:
+
+```
+Property 'emaiil' does not exist in App\User model.
+```
+
+This check will be done automatically on Laravel's core methods where a property is expected. But you can also typehint the `model-property` in your own code to take advantage of this analysis.
+
+You can define a function like this:
+```php
+/**
+ * @phpstan-param model-property<\App\User> $property
+ */
+function takesOnlyUserModelProperties(string $property)
+{
+    // ...
+}
+```
+
+And if you call the function above with a property that does not exist in User model, Larastan will warn you about it.
+
+```php
+// Property 'emaiil' does not exist in App\User model.
+takesOnlyUserModelProperties('emaiil');
+```
+
+### Configuration
+This rule is disabled by default. You can enable it by putting
+```
+parameters:
+    checkModelProperties: true
+```
+to your `phpstan.neon` file.
