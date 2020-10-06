@@ -14,6 +14,7 @@ class CreateAccountsTable extends Migration
     {
         Schema::create('accounts', static function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('name');
             $table->string('active', 1);
             $table->timestamps();
         });

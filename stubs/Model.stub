@@ -7,6 +7,15 @@ namespace Illuminate\Database\Eloquent;
  */
 abstract class Model implements \JsonSerializable, \ArrayAccess
 {
+    /**
+     * Update the model in the database.
+     *
+     * @param  array<model-property, mixed>  $attributes
+     * @param  array<int|string, mixed>  $options
+     * @return bool
+     */
+    public function update(array $attributes = [], array $options = []);
+
 }
 
 class ModelNotFoundException extends \RuntimeException {}

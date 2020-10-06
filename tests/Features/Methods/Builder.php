@@ -43,8 +43,8 @@ class Builder
 
     public function testToBaseReturnsQueryBuilderAfterChain(): QueryBuilder
     {
-        return User::whereNull('foo')
-            ->orderBy('fooBar')
+        return User::whereNull('name')
+            ->orderBy('email')
             ->toBase();
     }
 

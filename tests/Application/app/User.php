@@ -103,6 +103,11 @@ class User extends Authenticatable
         return $this->belongsTo(get_class($this));
     }
 
+    public function posts(): BelongsToMany
+    {
+        return $this->belongsToMany(Post::class);
+    }
+
     public function hasManySyncable($related, $foreignKey = null, $localKey = null): HasManySyncable
     {
         $instance = $this->newRelatedInstance($related);

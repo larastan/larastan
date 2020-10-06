@@ -25,19 +25,19 @@ class ModelExtension
     public function testReturnThis(): Builder
     {
         $user = User::join('tickets.tickets', 'tickets.tickets.id', '=', 'tickets.sale_ticket.ticket_id')
-            ->where(['foo' => 'bar']);
+            ->where(['email' => 'bar']);
 
         return $user;
     }
 
     public function testWhere(): Builder
     {
-        return (new Thread)->where(['foo' => 'bar']);
+        return (new Thread)->where(['name' => 'bar']);
     }
 
     public function testStaticWhere(): Builder
     {
-        return Thread::where(['foo' => 'bar']);
+        return Thread::where(['name' => 'bar']);
     }
 
     public function testDynamicWhere(): Builder
@@ -192,16 +192,16 @@ class ModelExtension
     public function testFirstOrFailWithChain(): User
     {
         return User::with('foo')
-            ->where('foo', 'bar')
-            ->orWhere('bar', 'baz')
+            ->where('email', 'bar')
+            ->orWhere('name', 'baz')
             ->firstOrFail();
     }
 
     public function testFirstWithChain(): ?User
     {
         return User::with('foo')
-            ->where('foo', 'bar')
-            ->orWhere('bar', 'baz')
+            ->where('email', 'bar')
+            ->orWhere('name', 'baz')
             ->first();
     }
 
@@ -249,7 +249,7 @@ class ModelExtension
 
     public function testFirstWhereWithBuilder(): ?User
     {
-        return User::query()->where('foo', 'bar')->firstWhere(['email' => 'foo@bar.com']);
+        return User::query()->where('name', 'bar')->firstWhere(['email' => 'foo@bar.com']);
     }
 }
 
@@ -258,16 +258,19 @@ function foo(): string
     return 'foo';
 }
 
+/**
+ * @property string $name
+ */
 class Thread extends Model
 {
     public function scopeValid(Builder $query): Builder
     {
-        return $query->where('valid', true);
+        return $query->where('name', true);
     }
 
     public static function testFindOnStaticSelf(): ?Thread
     {
-        return self::query()->where('foo', 'bar')->first();
+        return self::query()->where('name', 'bar')->first();
     }
 
     public function getCustomPropertyAttribute(): string

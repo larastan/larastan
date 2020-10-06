@@ -30,3 +30,11 @@ If the string is not an existing blade view, the following error will be display
 ```
 Parameter #1 $view of method TestClass::renderView() expects view-string, string given.  
 ```
+
+## model-property
+`model-property` extends the built-in `string` type and acts like a string in the type level. But during the analysis if Larastan finds that an argument of the method or a function has a `model-property<ModelName>`, it'll try to check that the given argument value is actually a property of the model.
+
+All of the Laravel core methods have this type thanks to the stubs. So whenever you use a Eloquent builder, relation or a model method that expects a column, it'll be checked by Larastan if the column actually exists. But you can also typehint any argument with `model-property` in your code.
+
+The actual check is done by the `ModelPropertyRule`. You can read the details [here](rules.md#ModelPropertyRule).
+
