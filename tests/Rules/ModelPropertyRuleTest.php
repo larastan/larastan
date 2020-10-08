@@ -18,6 +18,10 @@ class ModelPropertyRuleTest extends RulesTest
             8 => 'Property \'foo\' does not exist in App\\User model.',
             18 => 'Property \'foo\' does not exist in App\\User model.',
             23 => 'Property \'foo\' does not exist in App\\User model.',
+            25 => 'Property \'foo\' does not exist in App\\User model.',
+            26 => 'Property \'foo\' does not exist in App\\User model.',
+            27 => 'Property \'foo\' does not exist in App\\User model.',
+            30 => 'Property \'foo\' does not exist in App\\User model.',
         ], $errors);
     }
 

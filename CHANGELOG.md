@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - Add a new `view-string` PHPDoc type ([#654](https://github.com/nunomaduro/larastan/pull/654))
+- Stubs for Eloquent builder `value` and `orWhere` methods
 
 ### Fixed
 - Parameter type of the query builder's `where`, `orWhere` and `addArrayOfWheres` ([#651](https://github.com/nunomaduro/larastan/pull/651)).

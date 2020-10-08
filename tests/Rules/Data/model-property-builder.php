@@ -22,6 +22,12 @@ function bar(\Illuminate\Database\Eloquent\Builder $builder): \Illuminate\Databa
 
 \App\User::query()->whereColumn('foo', '=', 'foo');
 \App\User::query()->where(getKey(), '=', 'foo');
+\App\User::query()->orWhere('foo', '=', 'foo');
+\App\User::query()->orWhere('foo', 'foo');
+\App\User::query()->orWhere([
+    'foo' => 'foo',
+]);
+\App\User::query()->value('foo');
 
 function getKey(): string
 {
