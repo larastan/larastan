@@ -55,7 +55,19 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
             return false;
         }
 
-        return $classReflection->hasNativeMethod($propertyName);
+        $hasNativeMethod = $classReflection->hasNativeMethod($propertyName);
+
+        if (! $hasNativeMethod) {
+            return false;
+        }
+
+        $returnType = ParametersAcceptorSelector::selectSingle($classReflection->getNativeMethod($propertyName)->getVariants())->getReturnType();
+
+        if (! (new ObjectType(Relation::class))->isSuperTypeOf($returnType)->yes()) {
+            return false;
+        }
+
+        return true;
     }
 
     public function getProperty(ClassReflection $classReflection, string $propertyName): PropertyReflection
