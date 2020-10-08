@@ -141,6 +141,16 @@ class Builder
     public function where($column, $operator = null, $value = null, $boolean = 'and');
 
     /**
+     * Add an "or where" clause to the query.
+     *
+     * @param  \Closure|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>  $column
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return $this
+     */
+    public function orWhere($column, $operator = null, $value = null);
+
+    /**
      * Add a basic where clause to the query, and return the first result.
      *
      * @param  \Closure|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>  $column
@@ -166,4 +176,12 @@ class Builder
      * @phpstan-return TModelClass[]
      */
     public function getModels($columns = ['*']);
+
+    /**
+     * Get a single column's value from the first result of a query.
+     *
+     * @param  model-property<TModelClass>  $column
+     * @return mixed
+     */
+    public function value($column);
 }
