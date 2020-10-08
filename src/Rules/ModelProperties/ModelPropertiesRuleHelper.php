@@ -6,13 +6,10 @@ namespace NunoMaduro\Larastan\Rules\ModelProperties;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use NunoMaduro\Larastan\Properties\ModelAccessorExtension;
-use NunoMaduro\Larastan\Properties\ModelPropertyExtension;
 use NunoMaduro\Larastan\Types\ModelProperty\GenericModelPropertyType;
 use NunoMaduro\Larastan\Types\ModelProperty\ModelPropertyType;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\Annotations\AnnotationsPropertiesClassReflectionExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParameterReflection;
@@ -29,22 +26,6 @@ use PHPStan\Type\UnionType;
 
 class ModelPropertiesRuleHelper
 {
-    /** @var ModelPropertyExtension */
-    private $modelPropertyExtension;
-
-    /** @var AnnotationsPropertiesClassReflectionExtension */
-    private $annotationExtension;
-
-    /** @var ModelAccessorExtension */
-    private $modelAccessorExtension;
-
-    public function __construct(ModelPropertyExtension $modelPropertyExtension, ModelAccessorExtension $modelAccessorExtension, AnnotationsPropertiesClassReflectionExtension $annotationExtension)
-    {
-        $this->modelPropertyExtension = $modelPropertyExtension;
-        $this->modelAccessorExtension = $modelAccessorExtension;
-        $this->annotationExtension = $annotationExtension;
-    }
-
     /**
      * @param MethodReflection $methodReflection
      * @param Scope            $scope
@@ -116,7 +97,7 @@ class ModelPropertiesRuleHelper
                     continue;
                 }
 
-                if (! $this->hasProperty($modelReflection, $valueType->getValue())) {
+                if (! $modelReflection->hasProperty($valueType->getValue())) {
                     $error = sprintf('Property \'%s\' does not exist in %s model.', $valueType->getValue(), $modelReflection->getName());
 
                     if ($methodReflection->getDeclaringClass()->getName() === BelongsToMany::class) {
@@ -139,7 +120,7 @@ class ModelPropertiesRuleHelper
             return [];
         }
 
-        if (! $this->hasProperty($modelReflection, $argType->getValue())) {
+        if (! $modelReflection->hasProperty($argType->getValue())) {
             $error = sprintf('Property \'%s\' does not exist in %s model.', $argType->getValue(), $modelReflection->getName());
 
             if ($methodReflection->getDeclaringClass()->getName() === BelongsToMany::class) {
@@ -150,21 +131,6 @@ class ModelPropertiesRuleHelper
         }
 
         return [];
-    }
-
-    public function hasProperty(ClassReflection $modelReflection, string $propertyName): bool
-    {
-        // First check the annotations. This is also how our own ModelProperties extension works
-        if ($this->annotationExtension->hasProperty($modelReflection, $propertyName)) {
-            return true;
-        }
-
-        // Then check accessors.
-        if ($this->modelAccessorExtension->hasProperty($modelReflection, $propertyName)) {
-            return true;
-        }
-
-        return $this->modelPropertyExtension->hasProperty($modelReflection, $propertyName);
     }
 
     /**

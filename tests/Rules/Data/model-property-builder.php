@@ -29,6 +29,9 @@ function bar(\Illuminate\Database\Eloquent\Builder $builder): \Illuminate\Databa
 ]);
 \App\User::query()->value('foo');
 
+\App\User::query()->where('propertyDefinedOnlyInAnnotation', 'foo');
+\App\User::query()->where('only_available_with_accessor', 'foo');
+
 function getKey(): string
 {
     if (random_int(0, 1)) {

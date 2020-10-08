@@ -16,6 +16,7 @@ use Illuminate\Support\Str;
 use Tests\Application\HasManySyncable;
 
 /**
+ * @property string $propertyDefinedOnlyInAnnotation
  * @property-read \App\AccountCollection $accounts
  * @mixin \Eloquent
  */
@@ -119,5 +120,10 @@ class User extends Authenticatable
         return new HasManySyncable(
             $instance->newQuery(), $this, $instance->getTable().'.'.$foreignKey, $localKey
         );
+    }
+
+    public function getOnlyAvailableWithAccessorAttribute(): string
+    {
+        return 'foo';
     }
 }
