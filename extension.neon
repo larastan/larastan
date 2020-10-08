@@ -121,6 +121,11 @@ services:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
+        class: NunoMaduro\Larastan\ReturnTypes\ModelDynamicStaticMethodReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicStaticMethodReturnTypeExtension
+
+    -
         class: NunoMaduro\Larastan\Properties\ModelRelationsExtension
         tags:
             - phpstan.broker.propertiesClassReflectionExtension

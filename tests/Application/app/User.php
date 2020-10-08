@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use function get_class;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,6 +24,7 @@ class User extends Authenticatable
 {
     use Notifiable;
     use SoftDeletes;
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.
