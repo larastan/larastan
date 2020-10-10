@@ -7,8 +7,7 @@ use Tests\Application\database\factories\UserFactory;
 
 class ModelFactoryReturnTypeTest
 {
-    /** @phpstan-return UserFactory */
-    public function testFactoryCallFromModelReturnsSpecificFactory()
+    public function testFactoryCallFromModelReturnsSpecificFactory(): UserFactory
     {
         return User::factory();
     }
