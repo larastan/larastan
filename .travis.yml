@@ -2,9 +2,7 @@ branches:
   only:
     - master
 
-os: linux
-
-dist: bionic
+os: windows
 
 language: php
 
