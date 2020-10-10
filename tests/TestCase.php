@@ -28,14 +28,19 @@ class TestCase extends BaseTestCase
 
     public function execLarastan(string $filename)
     {
-        $command = escapeshellcmd(__DIR__.'/../vendor/bin/phpstan');
+        $command = escapeshellcmd(dirname(__DIR__).'/vendor/bin/phpstan');
 
-        exec(sprintf('%s %s analyse --no-progress  --level=max --configuration %s  %s --error-format=%s',
-            escapeshellarg(PHP_BINARY), $command,
-            escapeshellarg($this->configPath),
-            escapeshellarg($filename),
-            'json'),
-            $jsonResult);
+        exec(
+            sprintf(
+                '%s %s analyse --no-progress --level=max --error-format=%s --configuration=%s %s',
+                escapeshellarg(PHP_BINARY),
+                $command,
+                'json',
+                escapeshellarg($this->configPath),
+                escapeshellarg($filename)
+            ),
+            $jsonResult
+        );
 
         return json_decode($jsonResult[0], true);
     }
