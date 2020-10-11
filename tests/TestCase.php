@@ -28,7 +28,7 @@ class TestCase extends BaseTestCase
 
     public function execLarastan(string $filename)
     {
-        $command = escapeshellcmd(dirname(__DIR__).'/vendor/bin/phpstan');
+        $command = escapeshellcmd(dirname(__DIR__).'/vendor/phpstan/phpstan/phpstan');
 
         exec(
             sprintf(
