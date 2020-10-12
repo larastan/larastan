@@ -14,28 +14,33 @@ class TestCase extends BaseTestCase
     {
         parent::setUp();
 
-        @File::makeDirectory(__DIR__.'/../vendor/nunomaduro/larastan', 0755, true);
-        @File::makeDirectory(__DIR__.'/../vendor/nunomaduro/larastan/config', 0755, true);
-        @File::copy(__DIR__.'/../bootstrap.php', __DIR__.'/../vendor/nunomaduro/larastan/bootstrap.php');
-        @File::copy(__DIR__.'/../config/mixins.php', __DIR__.'/../vendor/nunomaduro/larastan/config/mixins.php');
-        @File::copy(__DIR__.'/../config/statics.php', __DIR__.'/../vendor/nunomaduro/larastan/config/statics.php');
+        @File::makeDirectory(dirname(__DIR__).'/vendor/nunomaduro/larastan', 0755, true);
+        @File::makeDirectory(dirname(__DIR__).'/vendor/nunomaduro/larastan/config', 0755, true);
+        @File::copy(dirname(__DIR__).'/bootstrap.php', dirname(__DIR__).'/vendor/nunomaduro/larastan/bootstrap.php');
+        @File::copy(dirname(__DIR__).'/config/mixins.php', dirname(__DIR__).'/vendor/nunomaduro/larastan/config/mixins.php');
+        @File::copy(dirname(__DIR__).'/config/statics.php', dirname(__DIR__).'/vendor/nunomaduro/larastan/config/statics.php');
         File::copyDirectory(__DIR__.'/Application/database/migrations', $this->getBasePath().'/database/migrations');
         File::copyDirectory(__DIR__.'/Application/config', $this->getBasePath().'/config');
         File::copyDirectory(__DIR__.'/Application/resources', $this->getBasePath().'/resources');
 
-        $this->configPath = __DIR__.'/../extension.neon';
+        $this->configPath = dirname(__DIR__).'/extension.neon';
     }
 
     public function execLarastan(string $filename)
     {
-        $command = escapeshellcmd(__DIR__.'/../vendor/bin/phpstan');
+        $command = escapeshellcmd(dirname(__DIR__).'/vendor/phpstan/phpstan/phpstan');
 
-        exec(sprintf('%s %s analyse --no-progress  --level=max --configuration %s  %s --error-format=%s',
-            escapeshellarg(PHP_BINARY), $command,
-            escapeshellarg($this->configPath),
-            escapeshellarg($filename),
-            'json'),
-            $jsonResult);
+        exec(
+            sprintf(
+                '%s %s analyse --no-progress --level=max --error-format=%s --configuration=%s %s',
+                escapeshellarg(PHP_BINARY),
+                $command,
+                'json',
+                escapeshellarg($this->configPath),
+                escapeshellarg($filename)
+            ),
+            $jsonResult
+        );
 
         return json_decode($jsonResult[0], true);
     }
