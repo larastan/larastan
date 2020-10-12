@@ -66,7 +66,13 @@ final class ApplicationResolver
      */
     private static function isServiceProvider(string $class): bool
     {
-        return in_array(\Illuminate\Support\ServiceProvider::class, class_parents($class), true)
+        $classParents = class_parents($class);
+
+        if (! $classParents) {
+            return false;
+        }
+
+        return in_array(\Illuminate\Support\ServiceProvider::class, $classParents, true)
             && ! (new \ReflectionClass($class))->isAbstract();
     }
 
