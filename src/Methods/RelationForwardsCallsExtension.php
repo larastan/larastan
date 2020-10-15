@@ -53,7 +53,7 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
         $relatedModel = $classReflection->getActiveTemplateTypeMap()->getType('TRelatedModel');
 
         if ($relatedModel === null) {
-            throw new ShouldNotHappenException(sprintf("%s does not have TRelatedModel template type. But it should.", $classReflection->getName()));
+            throw new ShouldNotHappenException(sprintf('%s does not have TRelatedModel template type. But it should.', $classReflection->getName()));
         }
 
         $returnMethodReflection = $builderHelper->getMethodReflectionFromBuilder(
@@ -64,7 +64,7 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
         );
 
         if ($returnMethodReflection === null) {
-            throw new ShouldNotHappenException(sprintf("%s does not have %s method. But it should.", $classReflection->getName(), $methodName));
+            throw new ShouldNotHappenException(sprintf('%s does not have %s method. But it should.', $classReflection->getName(), $methodName));
         }
 
         return $returnMethodReflection;

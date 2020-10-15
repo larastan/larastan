@@ -6,12 +6,9 @@ namespace NunoMaduro\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Concerns;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\Dummy\DummyMethodReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
@@ -60,7 +57,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
         $builderHelper = new BuilderHelper($this->getBroker());
         $customBuilderName = $builderHelper->determineBuilderType($originalModelReflection->getName());
 
-        $returnMethodReflection =  $builderHelper->getMethodReflectionFromBuilder(
+        $returnMethodReflection = $builderHelper->getMethodReflectionFromBuilder(
             $originalModelReflection,
             $methodName,
             $originalModelReflection->getName(),
