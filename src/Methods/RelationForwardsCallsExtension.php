@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use NunoMaduro\Larastan\Concerns\HasBroker;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\Dummy\DummyMethodReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
+use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 
@@ -24,7 +24,23 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
             return false;
         }
 
-        return $classReflection->getActiveTemplateTypeMap()->getType('TRelatedModel') !== null;
+        /** @var ObjectType|null $relatedModel */
+        $relatedModel = $classReflection->getActiveTemplateTypeMap()->getType('TRelatedModel');
+
+        if ($relatedModel === null) {
+            return false;
+        }
+
+        $builderHelper = new BuilderHelper($this->getBroker());
+
+        $returnMethodReflection = $builderHelper->getMethodReflectionFromBuilder(
+            $classReflection,
+            $methodName,
+            $relatedModel->getClassName(),
+            new GenericObjectType($classReflection->getName(), [$relatedModel])
+        );
+
+        return $returnMethodReflection !== null;
     }
 
     public function getMethod(
@@ -37,7 +53,7 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
         $relatedModel = $classReflection->getActiveTemplateTypeMap()->getType('TRelatedModel');
 
         if ($relatedModel === null) {
-            return new DummyMethodReflection($methodName);
+            throw new ShouldNotHappenException(sprintf("%s does not have TRelatedModel template type. But it should.", $classReflection->getName()));
         }
 
         $returnMethodReflection = $builderHelper->getMethodReflectionFromBuilder(
@@ -47,10 +63,10 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
             new GenericObjectType($classReflection->getName(), [$relatedModel])
         );
 
-        if ($returnMethodReflection !== null) {
-            return $returnMethodReflection;
+        if ($returnMethodReflection === null) {
+            throw new ShouldNotHappenException(sprintf("%s does not have %s method. But it should.", $classReflection->getName(), $methodName));
         }
 
-        return new DummyMethodReflection($methodName);
+        return $returnMethodReflection;
     }
 }

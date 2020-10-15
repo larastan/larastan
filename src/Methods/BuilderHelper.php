@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
+use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Broker\Broker;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\FunctionVariantWithPhpDocs;
@@ -17,9 +18,11 @@ use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\Php\DummyParameter;
 use PHPStan\ShouldNotHappenException;
+use PHPStan\TrinaryLogic;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Generic\TemplateTypeHelper;
 use PHPStan\Type\Generic\TemplateTypeMap;
+use PHPStan\Type\Generic\TemplateTypeVariance;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
@@ -52,6 +55,40 @@ class BuilderHelper
             return null;
         }
 
+        if ($returnObject instanceof GenericObjectType) {
+            $returnClassReflection = $returnObject->getClassReflection();
+
+            if ($returnClassReflection !== null) {
+                $modelType = $returnClassReflection->getActiveTemplateTypeMap()->getType('TModelClass');
+
+                if ($modelType === null) {
+                    $modelType = $returnClassReflection->getActiveTemplateTypeMap()->getType('TRelatedModel');
+                }
+
+                if ($modelType !== null) {
+                    $finder = substr($methodName, 5);
+
+                    $segments = preg_split(
+                        '/(And|Or)(?=[A-Z])/', $finder, -1, PREG_SPLIT_DELIM_CAPTURE
+                    );
+
+                    if ($segments !== false) {
+                        $trinaryLogic = TrinaryLogic::createYes();
+
+                        foreach ($segments as $segment) {
+                            if ($segment !== 'And' && $segment !== 'Or') {
+                                $trinaryLogic = $trinaryLogic->and($modelType->hasProperty(Str::snake($segment)));
+                            }
+                        }
+
+                        if (! $trinaryLogic->yes()) {
+                            return null;
+                        }
+                    }
+                }
+            }
+        }
+
         $classReflection = $this->broker->getClass(QueryBuilder::class);
 
         $methodReflection = $classReflection->getNativeMethod('dynamicWhere');
@@ -59,7 +96,6 @@ class BuilderHelper
         /** @var FunctionVariantWithPhpDocs $originalDynamicWhereVariant */
         $originalDynamicWhereVariant = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
 
-        /** @var \PHPStan\Reflection\ParameterReflectionWithPhpDocs $originalParameter */
         $originalParameter = $originalDynamicWhereVariant->getParameters()[1];
 
         $actualParameter = new DummyParameter($originalParameter->getName(), new MixedType(), $originalParameter->isOptional(), $originalParameter->passedByReference(), $originalParameter->isVariadic(), $originalParameter->getDefaultValue());

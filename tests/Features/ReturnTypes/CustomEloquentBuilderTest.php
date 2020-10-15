@@ -45,23 +45,23 @@ class CustomEloquentBuilderTest
     /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
     public function testCustomBuilderMethodAfterDynamicWhere(): CustomEloquentBuilder
     {
-        return ModelWithCustomBuilder::whereFoo(['bar'])->type('foo')->whereFoo(['bar']);
+        return ModelWithCustomBuilder::whereEmail(['bar'])->type('foo')->whereEmail(['bar']);
     }
 
     /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
     public function testCustomBuilderMethodWithQueryBuilderMethod(): CustomEloquentBuilder
     {
-        return ModelWithCustomBuilder::whereFoo(['bar'])->categories(['foo'])->whereFoo(['bar']);
+        return ModelWithCustomBuilder::whereEmail(['bar'])->categories(['foo'])->whereType(['bar']);
     }
 
     public function testFindAfterCustomBuilderMethodAfterDynamicWhere(): ?ModelWithCustomBuilder
     {
-        return ModelWithCustomBuilder::whereFoo(['bar'])->type('foo')->first();
+        return ModelWithCustomBuilder::whereEmail(['bar'])->type('foo')->first();
     }
 
     public function testFindAfterCustomBuilderMethodAfterDynamicWhereOnExistingVariable(): ?ModelWithCustomBuilder
     {
-        $query = ModelWithCustomBuilder::whereFoo(['bar'])->type('foo');
+        $query = ModelWithCustomBuilder::whereEmail(['bar'])->type('foo');
 
         return $query->first();
     }

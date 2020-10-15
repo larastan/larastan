@@ -34,26 +34,17 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
             return false;
         }
 
-        if (in_array($methodName, ['increment', 'decrement', 'paginate', 'simplePaginate'], true)) {
-            return true;
-        }
-
-        // Model scopes
-        if ($classReflection->hasNativeMethod('scope'.ucfirst($methodName))) {
-            return true;
-        }
-
-        // Dynamic wheres
-        if (Str::startsWith($methodName, 'where')) {
-            return true;
-        }
-
         $builderHelper = new BuilderHelper($this->getBroker());
-        $customBuilder = $builderHelper->determineBuilderType($classReflection->getName());
+        $customBuilderName = $builderHelper->determineBuilderType($classReflection->getName());
 
-        return $this->getBuilderReflection()->hasNativeMethod($methodName)
-            || $this->broker->getClass(QueryBuilder::class)->hasNativeMethod($methodName)
-            || ($customBuilder && $this->broker->getClass($customBuilder)->hasNativeMethod($methodName));
+        $returnMethodReflection = $builderHelper->getMethodReflectionFromBuilder(
+            $classReflection,
+            $methodName,
+            $classReflection->getName(),
+            new GenericObjectType($customBuilderName, [new ObjectType($classReflection->getName())])
+        );
+
+        return $returnMethodReflection !== null;
     }
 
     /**
@@ -69,17 +60,17 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
         $builderHelper = new BuilderHelper($this->getBroker());
         $customBuilderName = $builderHelper->determineBuilderType($originalModelReflection->getName());
 
-        $returnMethodReflection = $builderHelper->getMethodReflectionFromBuilder(
+        $returnMethodReflection =  $builderHelper->getMethodReflectionFromBuilder(
             $originalModelReflection,
             $methodName,
             $originalModelReflection->getName(),
             new GenericObjectType($customBuilderName, [new ObjectType($originalModelReflection->getName())])
         );
 
-        if ($returnMethodReflection !== null) {
-            return $returnMethodReflection;
+        if ($returnMethodReflection === null) {
+            throw new ShouldNotHappenException();
         }
 
-        return new DummyMethodReflection($methodName);
+        return $returnMethodReflection;
     }
 }
