@@ -332,3 +332,7 @@ services:
     -
         class: NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertiesRuleHelper
 
+    -
+        class: NunoMaduro\Larastan\Methods\BuilderHelper
+        arguments:
+            checkProperties: %checkModelProperties%

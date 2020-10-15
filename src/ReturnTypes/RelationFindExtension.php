@@ -9,12 +9,11 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
-use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Methods\BuilderHelper;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
@@ -26,9 +25,19 @@ use PHPStan\Type\TypeCombinator;
 /**
  * @internal
  */
-final class RelationFindExtension implements DynamicMethodReturnTypeExtension, BrokerAwareExtension
+final class RelationFindExtension implements DynamicMethodReturnTypeExtension
 {
-    use Concerns\HasBroker;
+    /** @var BuilderHelper */
+    private $builderHelper;
+
+    /** @var ReflectionProvider */
+    private $reflectionProvider;
+
+    public function __construct(ReflectionProvider $reflectionProvider, BuilderHelper $builderHelper)
+    {
+        $this->builderHelper = $builderHelper;
+        $this->reflectionProvider = $reflectionProvider;
+    }
 
     /**
      * {@inheritdoc}
@@ -54,8 +63,8 @@ final class RelationFindExtension implements DynamicMethodReturnTypeExtension, B
         }
 
         return $methodReflection->getDeclaringClass()->hasNativeMethod($methodReflection->getName()) ||
-            $this->getBroker()->getClass(Builder::class)->hasNativeMethod($methodReflection->getName()) ||
-            $this->getBroker()->getClass(QueryBuilder::class)->hasNativeMethod($methodReflection->getName());
+            $this->reflectionProvider->getClass(Builder::class)->hasNativeMethod($methodReflection->getName()) ||
+            $this->reflectionProvider->getClass(QueryBuilder::class)->hasNativeMethod($methodReflection->getName());
     }
 
     /**
@@ -75,9 +84,7 @@ final class RelationFindExtension implements DynamicMethodReturnTypeExtension, B
 
         if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
             if ($argType->isIterable()->yes()) {
-                $builderHelper = new BuilderHelper($this->getBroker());
-
-                $collectionClassName = $builderHelper->determineCollectionClassName($modelType->getClassname());
+                $collectionClassName = $this->builderHelper->determineCollectionClassName($modelType->getClassname());
 
                 return new GenericObjectType($collectionClassName, [$modelType]);
             }

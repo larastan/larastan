@@ -9,12 +9,11 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
-use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Methods\BuilderHelper;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
@@ -26,9 +25,19 @@ use PHPStan\Type\TypeCombinator;
 /**
  * @internal
  */
-final class ModelFindExtension implements DynamicStaticMethodReturnTypeExtension, BrokerAwareExtension
+final class ModelFindExtension implements DynamicStaticMethodReturnTypeExtension
 {
-    use Concerns\HasBroker;
+    /** @var BuilderHelper */
+    private $builderHelper;
+
+    /** @var ReflectionProvider */
+    private $reflectionProvider;
+
+    public function __construct(ReflectionProvider $reflectionProvider, BuilderHelper $builderHelper)
+    {
+        $this->builderHelper = $builderHelper;
+        $this->reflectionProvider = $reflectionProvider;
+    }
 
     /**
      * {@inheritdoc}
@@ -49,8 +58,8 @@ final class ModelFindExtension implements DynamicStaticMethodReturnTypeExtension
             return false;
         }
 
-        if (! $this->getBroker()->getClass(Builder::class)->hasNativeMethod($methodName) &&
-            ! $this->getBroker()->getClass(QueryBuilder::class)->hasNativeMethod($methodName)) {
+        if (! $this->reflectionProvider->getClass(Builder::class)->hasNativeMethod($methodName) &&
+            ! $this->reflectionProvider->getClass(QueryBuilder::class)->hasNativeMethod($methodName)) {
             return false;
         }
 
@@ -71,9 +80,7 @@ final class ModelFindExtension implements DynamicStaticMethodReturnTypeExtension
 
         if ($argType->isIterable()->yes()) {
             if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
-                $builderHelper = new BuilderHelper($this->getBroker());
-
-                $collectionClassName = $builderHelper->determineCollectionClassName($modelName);
+                $collectionClassName = $this->builderHelper->determineCollectionClassName($modelName);
 
                 return new GenericObjectType($collectionClassName, [new ObjectType($modelName)]);
             }
