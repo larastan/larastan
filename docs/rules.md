@@ -56,6 +56,12 @@ parameters:
 
 ## ModelPropertyRule
 
+---
+
+**NOTE**: This rule is currently in beta! If you want to improve it's analysis you can check out the issue [here](https://github.com/nunomaduro/larastan/issues/676) and contribute!
+
+---
+
 This rule checks every argument of a method or a function, and if the argument has the type `model-property`, it will try to check the given value against the model properties. And if the model does not have the given property, it'll produce an error.
 
 ### Basic example

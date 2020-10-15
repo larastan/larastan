@@ -79,6 +79,9 @@ A list of configurable rules specific to Laravel can be found [here](docs/rules.
 
 A list of PHPDoc types specific to Larastan can be found [here](docs/custom-types.md).
 
+## Custom PHPStan config parameters
+A list of custom config parameters that you can use in your PHPStan config file can be found [here](docs/custom-config-paramaters.md).
+
 ## Errors To Ignore
 
 Some parts of Laravel are currently too magical for Larastan/PHPStan to understand.
@@ -88,7 +91,7 @@ We listed common [errors to ignore](docs/errors-to-ignore.md), add them as neede
 
 Thank you for considering contributing to Larastan. All the contribution guidelines are mentioned [here](CONTRIBUTING.md).
 
-You can have a look at the [CHANGELOG](CHANGELOG.md) for constant updates & detailed information about the changes. You can also follow the Twitter account for the latest announcements or just come say hi!: [@enunomaduro](https://twitter.com/enunomaduro).
+You can have a look at the [CHANGELOG](CHANGELOG.md) for constant updates & detailed information about the changes. You can also follow the Twitter account for the latest announcements or just come say hi!: [@enunomaduro](https://twitter.com/enunomaduro), [@can__vural](https://twitter.com/can__vural).
 
 ## ❤️ Support The Development
 

@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.6.5] - 2020-10-15
+
+This release introduces a new rule that can check the arguments of methods that expects a model property name, and can warn you if the passed argument is not actually a property of the model. You can read the details about the rule [here](https://github.com/nunomaduro/larastan/blob/master/docs/rules.md#modelpropertyrule).
+
+**NOTE**: This rule is currently in beta! If you want to improve it's analysis, you can check out the issue [here](https://github.com/nunomaduro/larastan/issues/676) and contribute!
+
+
 ### Added
 - Add a new `view-string` PHPDoc type ([#654](https://github.com/nunomaduro/larastan/pull/654))
 - Stubs for Eloquent builder `value` and `orWhere` methods
@@ -17,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Made improvements to database migrations scanning. ([#670](https://github.com/nunomaduro/larastan/pull/670))
+- Improved running test suite commands and Windows compatibility ([#682](https://github.com/nunomaduro/larastan/pull/682))
 
 ## [0.6.4] - 2020-09-02
 
@@ -412,7 +420,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.6.4...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.6.5...HEAD
+[0.6.5]: https://github.com/nunomaduro/larastan/compare/v0.6.4...v0.6.5
 [0.6.4]: https://github.com/nunomaduro/larastan/compare/v0.6.3...v0.6.4
 [0.6.3]: https://github.com/nunomaduro/larastan/compare/v0.6.2...v0.6.3
 [0.6.2]: https://github.com/nunomaduro/larastan/compare/v0.6.1...v0.6.2
