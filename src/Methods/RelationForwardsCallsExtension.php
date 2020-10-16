@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Relations\Relation;
-use NunoMaduro\Larastan\Concerns\HasBroker;
-use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
@@ -14,9 +12,15 @@ use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 
-final class RelationForwardsCallsExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
+final class RelationForwardsCallsExtension implements MethodsClassReflectionExtension
 {
-    use HasBroker;
+    /** @var BuilderHelper */
+    private $builderHelper;
+
+    public function __construct(BuilderHelper $builderHelper)
+    {
+        $this->builderHelper = $builderHelper;
+    }
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
@@ -31,9 +35,7 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
             return false;
         }
 
-        $builderHelper = new BuilderHelper($this->getBroker());
-
-        $returnMethodReflection = $builderHelper->getMethodReflectionFromBuilder(
+        $returnMethodReflection = $this->builderHelper->getMethodReflectionFromBuilder(
             $classReflection,
             $methodName,
             $relatedModel->getClassName(),
@@ -47,8 +49,6 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
         ClassReflection $classReflection,
         string $methodName
     ): MethodReflection {
-        $builderHelper = new BuilderHelper($this->getBroker());
-
         /** @var ObjectType|null $relatedModel */
         $relatedModel = $classReflection->getActiveTemplateTypeMap()->getType('TRelatedModel');
 
@@ -56,7 +56,7 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
             throw new ShouldNotHappenException(sprintf('%s does not have TRelatedModel template type. But it should.', $classReflection->getName()));
         }
 
-        $returnMethodReflection = $builderHelper->getMethodReflectionFromBuilder(
+        $returnMethodReflection = $this->builderHelper->getMethodReflectionFromBuilder(
             $classReflection,
             $methodName,
             $relatedModel->getClassName(),

@@ -9,13 +9,13 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
-use PHPStan\Broker\Broker;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\FunctionVariantWithPhpDocs;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\Php\DummyParameter;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\Generic\GenericObjectType;
@@ -35,14 +35,16 @@ class BuilderHelper
     /** @var string[] */
     public const MODEL_CREATION_METHODS = ['make', 'create', 'forceCreate', 'findOrNew', 'firstOrNew', 'updateOrCreate', 'firstOrCreate'];
 
-    /**
-     * @var Broker
-     */
-    private $broker;
+    /** @var ReflectionProvider */
+    private $reflectionProvider;
 
-    public function __construct(Broker $broker)
+    /** @var bool */
+    private $checkProperties;
+
+    public function __construct(ReflectionProvider $reflectionProvider, bool $checkProperties)
     {
-        $this->broker = $broker;
+        $this->reflectionProvider = $reflectionProvider;
+        $this->checkProperties = $checkProperties;
     }
 
     public function dynamicWhere(
@@ -53,7 +55,7 @@ class BuilderHelper
             return null;
         }
 
-        if ($returnObject instanceof GenericObjectType) {
+        if ($returnObject instanceof GenericObjectType && $this->checkProperties) {
             $returnClassReflection = $returnObject->getClassReflection();
 
             if ($returnClassReflection !== null) {
@@ -87,7 +89,7 @@ class BuilderHelper
             }
         }
 
-        $classReflection = $this->broker->getClass(QueryBuilder::class);
+        $classReflection = $this->reflectionProvider->getClass(QueryBuilder::class);
 
         $methodReflection = $classReflection->getNativeMethod('dynamicWhere');
 
@@ -110,7 +112,7 @@ class BuilderHelper
 
     public function searchOnEloquentBuilder(ClassReflection $eloquentBuilder, string $methodName, string $modelClassName): ?MethodReflection
     {
-        $model = $this->broker->getClass($modelClassName);
+        $model = $this->reflectionProvider->getClass($modelClassName);
 
         if ($model->hasNativeMethod('scope'.ucfirst($methodName))) {
             $methodReflection = $model->getNativeMethod('scope'.ucfirst($methodName));
@@ -155,7 +157,7 @@ class BuilderHelper
 
     public function searchOnQueryBuilder(string $methodName, string $modelClassName): ?MethodReflection
     {
-        $queryBuilder = $this->broker->getClass(QueryBuilder::class);
+        $queryBuilder = $this->reflectionProvider->getClass(QueryBuilder::class);
 
         if ($queryBuilder->hasNativeMethod($methodName)) {
             return $queryBuilder->getNativeMethod($methodName);
@@ -173,7 +175,7 @@ class BuilderHelper
      */
     public function determineBuilderType(string $modelClassName): string
     {
-        $method = $this->broker->getClass($modelClassName)->getNativeMethod('newEloquentBuilder');
+        $method = $this->reflectionProvider->getClass($modelClassName)->getNativeMethod('newEloquentBuilder');
 
         $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
 
@@ -195,7 +197,7 @@ class BuilderHelper
         Type $customReturnType
     ): ?EloquentBuilderMethodReflection {
         $methodReflection = null;
-        $model = $this->broker->getClass($modelName);
+        $model = $this->reflectionProvider->getClass($modelName);
 
         // This can be a custom EloquentBuilder or the normal one
         $builderName = $this->determineBuilderType($modelName);
@@ -256,7 +258,7 @@ class BuilderHelper
 
     public function determineCollectionClassName(string $modelClassName): string
     {
-        $newCollectionMethod = $this->broker->getClass($modelClassName)->getNativeMethod('newCollection');
+        $newCollectionMethod = $this->reflectionProvider->getClass($modelClassName)->getNativeMethod('newCollection');
 
         $returnType = ParametersAcceptorSelector::selectSingle($newCollectionMethod->getVariants())->getReturnType();
 

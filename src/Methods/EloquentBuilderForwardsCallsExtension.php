@@ -36,6 +36,14 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
         'exists', 'doesntExist', 'count', 'min', 'max', 'avg', 'average', 'sum', 'getConnection',
     ];
 
+    /** @var BuilderHelper */
+    private $builderHelper;
+
+    public function __construct(BuilderHelper $builderHelper)
+    {
+        $this->builderHelper = $builderHelper;
+    }
+
     private function getBuilderReflection(): ClassReflection
     {
         return $this->broker->getClass(QueryBuilder::class);
@@ -117,15 +125,13 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
         }
 
         if ($modelType instanceof ObjectType) {
-            $builderHelper = new BuilderHelper($this->getBroker());
-
             if ($classReflection->isSubclassOf(EloquentBuilder::class)) {
                 $eloquentBuilderClass = $classReflection->getName();
             } else {
-                $eloquentBuilderClass = $builderHelper->determineBuilderType($modelType->getClassName());
+                $eloquentBuilderClass = $this->builderHelper->determineBuilderType($modelType->getClassName());
             }
 
-            $returnMethodReflection = $builderHelper->getMethodReflectionFromBuilder(
+            $returnMethodReflection = $this->builderHelper->getMethodReflectionFromBuilder(
                 $classReflection,
                 $methodName,
                 $modelType->getClassName(),

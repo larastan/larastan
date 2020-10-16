@@ -17,6 +17,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\FunctionVariantWithPhpDocs;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
@@ -26,23 +27,27 @@ use ReflectionClass;
 /**
  * @internal
  */
-final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, BrokerAwareExtension
+final class ModelExtension implements DynamicStaticMethodReturnTypeExtension
 {
-    use Concerns\HasBroker;
-
-    /**
-     * @var \NunoMaduro\Larastan\Methods\Pipes\Mixins
-     */
+    /** @var Mixins */
     private $mixins;
 
+    /** @var BuilderHelper */
+    private $builderHelper;
+
+    /** @var ReflectionProvider */
+    private $reflectionProvider;
+
     /**
-     * @param \NunoMaduro\Larastan\Methods\Pipes\Mixins $mixins
+     * @param BuilderHelper $builderHelper
+     * @param Mixins|null   $mixins
      *
-     * @return void
      */
-    public function __construct(Mixins $mixins = null)
+    public function __construct(ReflectionProvider $reflectionProvider, BuilderHelper $builderHelper, Mixins $mixins = null)
     {
         $this->mixins = $mixins ?? new Mixins();
+        $this->builderHelper = $builderHelper;
+        $this->reflectionProvider = $reflectionProvider;
     }
 
     /**
@@ -94,8 +99,8 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, Br
                 $classReflection = new ReflectionClass($className);
                 $isValidInstance = false;
                 foreach ($this->mixins->getMixinsFromClass(
-                    $this->broker,
-                    $this->broker->getClass(Collection::class)
+                    $this->reflectionProvider,
+                    $this->reflectionProvider->getClass(Collection::class)
                 ) as $mixin) {
                     if ($isValidInstance = $classReflection->isSubclassOf($mixin)) {
                         break;
@@ -111,18 +116,14 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension, Br
         if ((count(array_intersect([EloquentBuilder::class, QueryBuilder::class], $returnType->getReferencedClasses())) > 0)
             && $methodCall->class instanceof \PhpParser\Node\Name
         ) {
-            $builderHelper = new BuilderHelper($this->getBroker());
-
             $returnType = new GenericObjectType(
-                $builderHelper->determineBuilderType($scope->resolveName($methodCall->class)) ?? EloquentBuilder::class,
+                $this->builderHelper->determineBuilderType($scope->resolveName($methodCall->class)) ?? EloquentBuilder::class,
                 [new ObjectType($scope->resolveName($methodCall->class))]
             );
         }
 
         if ($methodCall->class instanceof \PhpParser\Node\Name && in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
-            $builderHelper = new BuilderHelper($this->getBroker());
-
-            $collectionClassName = $builderHelper->determineCollectionClassName($scope->resolveName($methodCall->class));
+            $collectionClassName = $this->builderHelper->determineCollectionClassName($scope->resolveName($methodCall->class));
 
             return new GenericObjectType($collectionClassName, [new ObjectType($scope->resolveName($methodCall->class))]);
         }

@@ -15,6 +15,7 @@ use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
@@ -26,9 +27,19 @@ use PHPStan\Type\TypeCombinator;
 /**
  * @internal
  */
-final class BuilderModelFindExtension implements DynamicMethodReturnTypeExtension, BrokerAwareExtension
+final class BuilderModelFindExtension implements DynamicMethodReturnTypeExtension
 {
-    use Concerns\HasBroker;
+    /** @var BuilderHelper */
+    private $builderHelper;
+
+    /** @var ReflectionProvider */
+    private $reflectionProvider;
+
+    public function __construct(ReflectionProvider $reflectionProvider, BuilderHelper $builderHelper)
+    {
+        $this->builderHelper = $builderHelper;
+        $this->reflectionProvider = $reflectionProvider;
+    }
 
     /**
      * {@inheritdoc}
@@ -55,8 +66,8 @@ final class BuilderModelFindExtension implements DynamicMethodReturnTypeExtensio
             return false;
         }
 
-        if (! $this->getBroker()->getClass(Builder::class)->hasNativeMethod($methodName) &&
-            ! $this->getBroker()->getClass(QueryBuilder::class)->hasNativeMethod($methodName)) {
+        if (! $this->reflectionProvider->getClass(Builder::class)->hasNativeMethod($methodName) &&
+            ! $this->reflectionProvider->getClass(QueryBuilder::class)->hasNativeMethod($methodName)) {
             return false;
         }
 
@@ -80,9 +91,7 @@ final class BuilderModelFindExtension implements DynamicMethodReturnTypeExtensio
 
         if ($argType->isIterable()->yes()) {
             if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
-                $builderHelper = new BuilderHelper($this->getBroker());
-
-                $collectionClassName = $builderHelper->determineCollectionClassName($model->getClassName());
+                $collectionClassName = $this->builderHelper->determineCollectionClassName($model->getClassName());
 
                 return new GenericObjectType($collectionClassName, [$model]);
             }

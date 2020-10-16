@@ -16,13 +16,14 @@ use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 
-final class ModelForwardsCallsExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
+final class ModelForwardsCallsExtension implements MethodsClassReflectionExtension
 {
-    use Concerns\HasBroker;
+    /** @var BuilderHelper */
+    private $builderHelper;
 
-    private function getBuilderReflection(): ClassReflection
+    public function __construct(BuilderHelper $builderHelper)
     {
-        return $this->broker->getClass(EloquentBuilder::class);
+        $this->builderHelper = $builderHelper;
     }
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
@@ -31,10 +32,9 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
             return false;
         }
 
-        $builderHelper = new BuilderHelper($this->getBroker());
-        $customBuilderName = $builderHelper->determineBuilderType($classReflection->getName());
+        $customBuilderName = $this->builderHelper->determineBuilderType($classReflection->getName());
 
-        $returnMethodReflection = $builderHelper->getMethodReflectionFromBuilder(
+        $returnMethodReflection = $this->builderHelper->getMethodReflectionFromBuilder(
             $classReflection,
             $methodName,
             $classReflection->getName(),
@@ -54,10 +54,9 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
      */
     public function getMethod(ClassReflection $originalModelReflection, string $methodName): MethodReflection
     {
-        $builderHelper = new BuilderHelper($this->getBroker());
-        $customBuilderName = $builderHelper->determineBuilderType($originalModelReflection->getName());
+        $customBuilderName = $this->builderHelper->determineBuilderType($originalModelReflection->getName());
 
-        $returnMethodReflection = $builderHelper->getMethodReflectionFromBuilder(
+        $returnMethodReflection = $this->builderHelper->getMethodReflectionFromBuilder(
             $originalModelReflection,
             $methodName,
             $originalModelReflection->getName(),

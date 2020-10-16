@@ -15,6 +15,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\Dummy\DummyMethodReflection;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Generic\TemplateMixedType;
@@ -22,9 +23,19 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\ThisType;
 use PHPStan\Type\Type;
 
-final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension, BrokerAwareExtension
+final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
 {
-    use Concerns\HasBroker;
+    /** @var BuilderHelper */
+    private $builderHelper;
+
+    /** @var ReflectionProvider */
+    private $reflectionProvider;
+
+    public function __construct(ReflectionProvider $reflectionProvider, BuilderHelper $builderHelper)
+    {
+        $this->builderHelper = $builderHelper;
+        $this->reflectionProvider = $reflectionProvider;
+    }
 
     public function getClass(): string
     {
@@ -33,7 +44,7 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-        $builderReflection = $this->getBroker()->getClass(EloquentBuilder::class);
+        $builderReflection = $this->reflectionProvider->getClass(EloquentBuilder::class);
 
         // Don't handle dynamic wheres
         if (Str::startsWith($methodReflection->getName(), 'where') &&
@@ -70,7 +81,7 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
 
         if ($methodReflection instanceof DummyMethodReflection && $modelType instanceof ObjectType) {
             $scopeMethodName = 'scope'.ucfirst($methodReflection->getName());
-            $modelReflection = $this->getBroker()->getClass($modelType->getClassName());
+            $modelReflection = $this->reflectionProvider->getClass($modelType->getClassName());
 
             if ($modelReflection->hasNativeMethod($scopeMethodName)) {
                 return new ObjectType(EloquentBuilder::class);
@@ -82,18 +93,14 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
         }
 
         if (($modelType instanceof ObjectType || $modelType instanceof ThisType) && in_array(EloquentBuilder::class, $returnType->getReferencedClasses(), true)) {
-            $builderHelper = new BuilderHelper($this->getBroker());
-
             $returnType = new GenericObjectType(
-                $builderHelper->determineBuilderType($modelType->getClassName()),
+                $this->builderHelper->determineBuilderType($modelType->getClassName()),
                 [$modelType]
             );
         }
 
         if ($modelType instanceof ObjectType && in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
-            $builderHelper = new BuilderHelper($this->getBroker());
-
-            $collectionClassName = $builderHelper->determineCollectionClassName($modelType->getClassName());
+            $collectionClassName = $this->builderHelper->determineCollectionClassName($modelType->getClassName());
 
             return new GenericObjectType($collectionClassName, [$modelType]);
         }
