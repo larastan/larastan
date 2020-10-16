@@ -18,7 +18,7 @@ class Builder
 
     public function testDynamicWhereAsString(): ?User
     {
-        return (new User())->whereFoo('bar')->first();
+        return (new User())->whereEmail('bar')->first();
     }
 
     public function testDynamicWhereMultiple(): ?User
@@ -28,7 +28,7 @@ class Builder
 
     public function testDynamicWhereAsInt(): ?User
     {
-        return (new User())->whereFoo(1)->first();
+        return (new User())->whereEmail(1)->first();
     }
 
     public function testGetQueryReturnsQueryBuilder(): QueryBuilder

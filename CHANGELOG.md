@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Support fot checking model properties on dynamic wheres ([#686](https://github.com/nunomaduro/larastan/pull/686))
+
 ## [0.6.5] - 2020-10-15
 
 This release introduces a new rule that can check the arguments of methods that expects a model property name, and can warn you if the passed argument is not actually a property of the model. You can read the details about the rule [here](https://github.com/nunomaduro/larastan/blob/master/docs/rules.md#modelpropertyrule).

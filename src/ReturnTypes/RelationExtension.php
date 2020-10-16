@@ -7,11 +7,9 @@ namespace NunoMaduro\Larastan\ReturnTypes;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
-use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Methods\BuilderHelper;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
@@ -21,9 +19,15 @@ use PHPStan\Type\Type;
 /**
  * @internal
  */
-final class RelationExtension implements DynamicMethodReturnTypeExtension, BrokerAwareExtension
+final class RelationExtension implements DynamicMethodReturnTypeExtension
 {
-    use Concerns\HasBroker;
+    /** @var BuilderHelper */
+    private $builderHelper;
+
+    public function __construct(BuilderHelper $builderHelper)
+    {
+        $this->builderHelper = $builderHelper;
+    }
 
     /**
      * {@inheritdoc}
@@ -65,9 +69,7 @@ final class RelationExtension implements DynamicMethodReturnTypeExtension, Broke
         $returnType = $methodReflection->getVariants()[0]->getReturnType();
 
         if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
-            $builderHelper = new BuilderHelper($this->getBroker());
-
-            $collectionClassName = $builderHelper->determineCollectionClassName($modelType->getClassname());
+            $collectionClassName = $this->builderHelper->determineCollectionClassName($modelType->getClassname());
 
             return new GenericObjectType($collectionClassName, [$modelType]);
         }

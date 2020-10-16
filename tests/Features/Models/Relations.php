@@ -29,7 +29,7 @@ class Relations
 
     public function testRelationDynamicWhere(): HasMany
     {
-        return (new User())->accounts()->whereFoo(['bar']);
+        return (new User())->accounts()->whereActive(true);
     }
 
     public function testCreateWithRelation(User $user): Account
