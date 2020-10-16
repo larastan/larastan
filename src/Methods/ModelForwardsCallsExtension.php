@@ -4,10 +4,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
-use NunoMaduro\Larastan\Concerns;
-use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;

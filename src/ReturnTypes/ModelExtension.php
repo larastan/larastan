@@ -8,13 +8,11 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
-use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Methods\BuilderHelper;
 use NunoMaduro\Larastan\Methods\ModelTypeHelper;
 use NunoMaduro\Larastan\Methods\Pipes\Mixins;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\FunctionVariantWithPhpDocs;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ReflectionProvider;
@@ -41,7 +39,6 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension
     /**
      * @param BuilderHelper $builderHelper
      * @param Mixins|null   $mixins
-     *
      */
     public function __construct(ReflectionProvider $reflectionProvider, BuilderHelper $builderHelper, Mixins $mixins = null)
     {
