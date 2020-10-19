@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Generic model type is preserved when `with` method is used on a model instance.
+
 ## [0.6.6] - 2020-10-17
 
 ### Added

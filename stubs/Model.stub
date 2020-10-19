@@ -16,6 +16,13 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
      */
     public function update(array $attributes = [], array $options = []);
 
+    /**
+     * Begin querying a model with eager loading.
+     *
+     * @param  string[]|string  $relations
+     * @return \Illuminate\Database\Eloquent\Builder<static>
+     */
+    public static function with($relations);
 }
 
 class ModelNotFoundException extends \RuntimeException {}

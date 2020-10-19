@@ -251,6 +251,16 @@ class ModelExtension
     {
         return User::query()->where('name', 'bar')->firstWhere(['email' => 'foo@bar.com']);
     }
+
+    public function testWithOnModelVariable(User $user): ?User
+    {
+        return $user->with('accounts')->find(1);
+    }
+
+    public function testMultipleWithOnModelVariable(User $user): ?User
+    {
+        return $user->with('accounts')->with('group')->find(1);
+    }
 }
 
 function foo(): string
