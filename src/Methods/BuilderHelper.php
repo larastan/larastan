@@ -6,10 +6,12 @@ namespace NunoMaduro\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\Dummy\DummyMethodReflection;
 use PHPStan\Reflection\FunctionVariantWithPhpDocs;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
@@ -211,6 +213,10 @@ class BuilderHelper
             $methodReflection = $this->searchOnQueryBuilder($methodName, $modelName);
         }
 
+        if ($methodReflection === null) {
+            $methodReflection = $this->searchOnSoftDeletesTraitOfRelatedModel($methodName, $modelName);
+        }
+
         if ($methodReflection !== null) {
             $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
 
@@ -267,5 +273,17 @@ class BuilderHelper
         }
 
         return $returnType->describe(VerbosityLevel::value());
+    }
+
+    private function searchOnSoftDeletesTraitOfRelatedModel(string $methodName, string $modelName): ?MethodReflection
+    {
+        $relatedModel = $this->reflectionProvider->getClass($modelName);
+        $hasSoftDeletesTrait = $relatedModel->hasTraitUse(SoftDeletes::class);
+        $isSoftDeletesMethod = in_array($methodName, ['withTrashed', 'withoutTrashed', 'onlyTrashed']);
+        if ($hasSoftDeletesTrait && $isSoftDeletesMethod) {
+            return new DummyMethodReflection($methodName);
+        }
+
+        return null;
     }
 }
