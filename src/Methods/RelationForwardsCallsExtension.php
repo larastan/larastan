@@ -81,10 +81,6 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
             );
         }
 
-        if ($returnMethodReflection === null) {
-            throw new ShouldNotHappenException(sprintf('%s does not have %s method. But it should.', $classReflection->getName(), $methodName));
-        }
-
         return $returnMethodReflection;
     }
 }
