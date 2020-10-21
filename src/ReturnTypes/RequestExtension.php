@@ -5,12 +5,18 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\ReturnTypes;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Type\ArrayType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
+use PHPStan\Type\IntegerType;
 use PHPStan\Type\MixedType;
+use PHPStan\Type\NullType;
+use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
 
 /**
  * @internal
@@ -30,7 +36,7 @@ final class RequestExtension implements DynamicMethodReturnTypeExtension
      */
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-        return $methodReflection->getName() === 'input';
+        return $methodReflection->getName() === 'file';
     }
 
     /**
@@ -41,6 +47,16 @@ final class RequestExtension implements DynamicMethodReturnTypeExtension
         MethodCall $methodCall,
         Scope $scope
     ): Type {
-        return new MixedType;
+        $uploadedFileType = new ObjectType(UploadedFile::class);
+
+        if (count($methodCall->args) === 0) {
+            return new ArrayType(new IntegerType(), $uploadedFileType);
+        }
+
+        if (count($methodCall->args) === 1) {
+            return TypeCombinator::addNull($uploadedFileType);
+        }
+
+        return TypeCombinator::union($uploadedFileType, $scope->getType($methodCall->args[1]->value));
     }
 }

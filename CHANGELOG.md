@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Dynamic return type support for `$request->file()` method call.
+
 ## [0.6.7] - 2020-10-21
 
 ### Fixed
