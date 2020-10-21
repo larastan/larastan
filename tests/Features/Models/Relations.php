@@ -171,6 +171,21 @@ class Relations
     {
         return $user->group()->firstWhere('name', 'bar');
     }
+
+    public function testWithTrashedWithBelongsToRelation(User $user): BelongsTo
+    {
+        return $user->group()->withTrashed();
+    }
+
+    public function testOnlyTrashedWithBelongsToRelation(User $user): BelongsTo
+    {
+        return $user->group()->onlyTrashed();
+    }
+
+    public function testWithoutTrashedWithBelongsToRelation(User $user): BelongsTo
+    {
+        return $user->group()->withoutTrashed();
+    }
 }
 
 /**

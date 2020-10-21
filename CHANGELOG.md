@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- `SoftDeletes` methods on relations are no longer marked as undefined ([#692](https://github.com/nunomaduro/larastan/pull/692))
 - Generic model type is preserved when `with` method is used on a model instance.
 
 ## [0.6.6] - 2020-10-17

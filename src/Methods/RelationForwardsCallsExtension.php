@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Relations\Relation;
+use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
+use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
+use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
@@ -42,7 +45,11 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
             new GenericObjectType($classReflection->getName(), [$relatedModel])
         );
 
-        return $returnMethodReflection !== null;
+        if ($returnMethodReflection === null) {
+            return $relatedModel->hasMethod($methodName)->yes();
+        }
+
+        return true;
     }
 
     public function getMethod(
@@ -64,7 +71,14 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
         );
 
         if ($returnMethodReflection === null) {
-            throw new ShouldNotHappenException(sprintf('%s does not have %s method. But it should.', $classReflection->getName(), $methodName));
+            $originalMethodReflection = $relatedModel->getMethod($methodName, new OutOfClassScope());
+
+            $returnMethodReflection = new EloquentBuilderMethodReflection(
+                $methodName, $classReflection, $originalMethodReflection,
+                ParametersAcceptorSelector::selectSingle($originalMethodReflection->getVariants())->getParameters(),
+                new GenericObjectType($classReflection->getName(), [$relatedModel]),
+                false
+            );
         }
 
         return $returnMethodReflection;
