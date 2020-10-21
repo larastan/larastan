@@ -62,6 +62,16 @@ parameters:
 
 ---
 
+**default**: false
+
+### Configuration
+This rule is disabled by default. You can enable it by putting
+```
+parameters:
+    checkModelProperties: true
+```
+to your `phpstan.neon` file.
+
 This rule checks every argument of a method or a function, and if the argument has the type `model-property`, it will try to check the given value against the model properties. And if the model does not have the given property, it'll produce an error.
 
 ### Basic example
@@ -98,11 +108,3 @@ And if you call the function above with a property that does not exist in User m
 // Property 'emaiil' does not exist in App\User model.
 takesOnlyUserModelProperties('emaiil');
 ```
-
-### Configuration
-This rule is disabled by default. You can enable it by putting
-```
-parameters:
-    checkModelProperties: true
-```
-to your `phpstan.neon` file.
