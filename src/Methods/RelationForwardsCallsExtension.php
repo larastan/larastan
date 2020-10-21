@@ -73,7 +73,7 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
         if ($returnMethodReflection === null) {
             $originalMethodReflection = $relatedModel->getMethod($methodName, new OutOfClassScope());
 
-            return new EloquentBuilderMethodReflection(
+            $returnMethodReflection = new EloquentBuilderMethodReflection(
                 $methodName, $classReflection, $originalMethodReflection,
                 ParametersAcceptorSelector::selectSingle($originalMethodReflection->getVariants())->getParameters(),
                 new GenericObjectType($classReflection->getName(), [$relatedModel]),
