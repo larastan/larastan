@@ -17,7 +17,7 @@ final class ApplicationResolver
 {
     use CreatesApplication;
 
-    /** @var mixed $composer */
+    /** @var mixed */
     public static $composer;
 
     /**
@@ -99,7 +99,7 @@ final class ApplicationResolver
         // Create array of dev classes from Composer configuration.
         $devClasses = [];
         $autoloadDev = self::$composer['autoload-dev'] ?? [];
-        $autoloadDevPsr4 = $autoload4['psr-4'] ?? [];
+        $autoloadDevPsr4 = $autoloadDev['psr-4'] ?? [];
         foreach ($autoloadDevPsr4 as $path) {
             $devClasses = array_merge($devClasses, array_keys(ClassMapGenerator::createMap($path)));
         }
