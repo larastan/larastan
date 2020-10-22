@@ -18,7 +18,7 @@ final class ApplicationResolver
     use CreatesApplication;
 
     /** @var mixed $composer */
-    static $composer;
+    public static $composer;
 
     /**
      * Creates an application and registers service providers found.
@@ -107,7 +107,7 @@ final class ApplicationResolver
         // now class list of maps are assembled, use class_exists calls to explicitly autoload them,
         // while not running them
         foreach ($maps as $class => $file) {
-            if (!in_array($class, $devClasses)) {
+            if (! in_array($class, $devClasses)) {
                 class_exists($class, true);
             }
         }
