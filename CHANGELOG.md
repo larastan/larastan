@@ -6,9 +6,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.6.8] - 2020-10-23
+
 ### Added
 
 - Dynamic return type support for `$request->file()` method call.
+
+### Fixed
+
+- Fixed an issue with running tests on Windows ([#696](https://github.com/nunomaduro/larastan/pull/696)) Thanks @kwebble
+- Fixed autoloading of autoload-dev classes during bootstrap. ([#696](https://github.com/nunomaduro/larastan/pull/696)) Thanks @kwebble
 
 ## [0.6.7] - 2020-10-21
 
@@ -437,7 +444,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.6.7...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.6.8...HEAD
+[0.6.8]: https://github.com/nunomaduro/larastan/compare/v0.6.7...v0.6.8
 [0.6.7]: https://github.com/nunomaduro/larastan/compare/v0.6.6...v0.6.7
 [0.6.6]: https://github.com/nunomaduro/larastan/compare/v0.6.5...v0.6.6
 [0.6.5]: https://github.com/nunomaduro/larastan/compare/v0.6.4...v0.6.5
