@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Relations
 {
@@ -186,6 +187,22 @@ class Relations
     {
         return $user->group()->withoutTrashed();
     }
+
+    /**
+     * @phpstan-return MorphToMany<Address>
+     */
+    public function testMorphToManyWithTimestamps(Tag $tag): MorphToMany
+    {
+        return $tag->addresses();
+    }
+
+    /**
+     * @phpstan-return MorphToMany<Address>
+     */
+    public function testMorphToManyWithPivot(Tag $tag): MorphToMany
+    {
+        return $tag->addresses();
+    }
 }
 
 /**
@@ -210,33 +227,27 @@ class ModelWithoutPropertyAnnotation extends Model
     {
         return $this->hasMany(User::class);
     }
+}
 
-    public function addRelation(): User
+class Tag extends Model
+{
+    /**
+     * @phpstan-return MorphToMany<Address>
+     */
+    public function addresses(): MorphToMany
     {
-        return $this->relation()->create([]);
+        return $this->morphToMany(Address::class, 'taggable')->withTimestamps();
+    }
+
+    /**
+     * @phpstan-return MorphToMany<Address>
+     */
+    public function addressesWithPivot(): MorphToMany
+    {
+        return $this->morphToMany(Address::class, 'taggable')->withPivot('foo');
     }
 }
 
-class TestRelationCreateOnExistingModel
+class Address extends Model
 {
-    /** @var User */
-    private $user;
-
-    public function testRelationCreateOnExistingModel(): Account
-    {
-        return $this->user->accounts()->create();
-    }
-}
-
-class Post extends Model
-{
-    public function author(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function addUser(User $user): self
-    {
-        return $this->author()->associate($user);
-    }
 }
