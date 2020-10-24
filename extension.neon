@@ -166,7 +166,7 @@ services:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\RelationExtension
+        class: NunoMaduro\Larastan\ReturnTypes\RelationCollectionExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 

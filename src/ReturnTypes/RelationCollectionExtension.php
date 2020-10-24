@@ -11,6 +11,7 @@ use NunoMaduro\Larastan\Methods\BuilderHelper;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
@@ -19,7 +20,7 @@ use PHPStan\Type\Type;
 /**
  * @internal
  */
-final class RelationExtension implements DynamicMethodReturnTypeExtension
+final class RelationCollectionExtension implements DynamicMethodReturnTypeExtension
 {
     /** @var BuilderHelper */
     private $builderHelper;
@@ -52,6 +53,12 @@ final class RelationExtension implements DynamicMethodReturnTypeExtension
             return false;
         }
 
+        $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+
+        if (! in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
+            return false;
+        }
+
         return $methodReflection->getDeclaringClass()->hasNativeMethod($methodReflection->getName());
     }
 
@@ -66,7 +73,7 @@ final class RelationExtension implements DynamicMethodReturnTypeExtension
         /** @var ObjectType $modelType */
         $modelType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TRelatedModel');
 
-        $returnType = $methodReflection->getVariants()[0]->getReturnType();
+        $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
 
         if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
             $collectionClassName = $this->builderHelper->determineCollectionClassName($modelType->getClassname());
