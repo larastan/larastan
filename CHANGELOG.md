@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Corrected return type for some QueryBuilder methods ([#702](https://github.com/nunomaduro/larastan/pull/702))
+
 ## [0.6.8] - 2020-10-23
 
 ### Added

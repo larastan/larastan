@@ -261,6 +261,24 @@ class ModelExtension
     {
         return $user->with('accounts')->with('group')->find(1);
     }
+
+    /** @phpstan-return Builder<User> */
+    public function testLockForUpdate(): Builder
+    {
+        return User::where('id', '>', 5)->lockForUpdate();
+    }
+
+    /** @phpstan-return Builder<User> */
+    public function testSharedLock(): Builder
+    {
+        return User::where('id', '>', 5)->sharedLock();
+    }
+
+    /** @phpstan-return Builder<User> */
+    public function testNewQuery(): Builder
+    {
+        return User::where('id', '>', 5)->newQuery();
+    }
 }
 
 function foo(): string
