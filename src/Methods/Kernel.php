@@ -19,14 +19,14 @@ final class Kernel
     use Concerns\HasContainer;
 
     /**
-     * @var \PHPStan\Reflection\Php\PhpMethodReflectionFactory
+     * @var PhpMethodReflectionFactory
      */
     private $methodReflectionFactory;
 
     /**
      * Kernel constructor.
      *
-     * @param \PHPStan\Reflection\Php\PhpMethodReflectionFactory $methodReflectionFactory
+     * @param PhpMethodReflectionFactory $methodReflectionFactory
      */
     public function __construct(
         PhpMethodReflectionFactory $methodReflectionFactory
@@ -35,11 +35,11 @@ final class Kernel
     }
 
     /**
-     * @param \PHPStan\Broker\Broker $broker
-     * @param \PHPStan\Reflection\ClassReflection $classReflection
-     * @param string $methodName
+     * @param Broker          $broker
+     * @param ClassReflection $classReflection
+     * @param string          $methodName
      *
-     * @return \NunoMaduro\Larastan\Contracts\Methods\PassableContract
+     * @return PassableContract
      */
     public function handle(Broker $broker, ClassReflection $classReflection, string $methodName): PassableContract
     {
@@ -52,7 +52,6 @@ final class Kernel
                 [
                     Pipes\SelfClass::class,
                     Pipes\Macros::class,
-                    Pipes\Mixins::class,
                     Pipes\Contracts::class,
                     Pipes\Facades::class,
                     Pipes\Managers::class,

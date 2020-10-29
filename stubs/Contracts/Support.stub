@@ -2,6 +2,9 @@
 
 namespace Illuminate\Contracts\Support;
 
+interface Htmlable
+{}
+
 interface Arrayable
 {
     /**
@@ -11,3 +14,6 @@ interface Arrayable
      */
     public function toArray();
 }
+
+interface Jsonable
+{}
