@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "php": "^7.2",
+        "php": "^7.2 || ^8.0",
         "composer/composer": "^1.0 || ^2.0",
         "illuminate/console": "^6.0 || ^7.0 || ^8.0",
         "illuminate/container": "^6.0 || ^7.0 || ^8.0",
@@ -27,7 +27,7 @@
     },
     "require-dev": {
         "orchestra/testbench": "^4.0 || ^5.0 || ^6.0",
-        "phpunit/phpunit": "^7.3 || ^8.2"
+        "phpunit/phpunit": "^7.3 || ^8.2 || ^9.3"
     },
     "suggest": {
         "orchestra/testbench": "^4.0 || ^5.0"

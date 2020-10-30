@@ -9,33 +9,30 @@ dist: bionic
 language: php
 
 php:
-  - 7.4
-  - 7.3
-  - 7.2
+  # PHP 8.0
+  - "nightly"
+  - "7.4"
+  - "7.3"
+  - "7.2"
 
 cache:
   directories:
     - "${HOME}/.composer/cache"
 
 env:
-  - LARAVEL_VERSION="^6.0" COMPOSER_VERSION="^1.0"
   - LARAVEL_VERSION="^6.0" COMPOSER_VERSION="^2.0"
-  - LARAVEL_VERSION="^7.0" COMPOSER_VERSION="^1.0"
   - LARAVEL_VERSION="^7.0" COMPOSER_VERSION="^2.0"
-  - LARAVEL_VERSION="^8.0" COMPOSER_VERSION="^1.0"
   - LARAVEL_VERSION="^8.0" COMPOSER_VERSION="^2.0"
 
 jobs:
   fast_finish: true
   exclude:
-    - php: 7.2
-      env: LARAVEL_VERSION="^8.0" COMPOSER_VERSION="^1.0"
-    - php: 7.2
+    - php: "7.2"
       env: LARAVEL_VERSION="^8.0" COMPOSER_VERSION="^2.0"
   include:
     - name: "Static Analysis"
       php:
-        - 7.4
+        - "7.4"
       env:
         - LARAVEL_VERSION="^7.0" COMPOSER_VERSION="^2.0"
       script:
@@ -45,7 +42,7 @@ jobs:
         - tests/laravel-test.sh
     - name: "Check EditorConfig adherence"
       php:
-        - 7.4
+        - "7.4"
       before_install: skip
       install:
         - npm install --no-package-lock eclint
