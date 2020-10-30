@@ -1,0 +1,42 @@
+name: tests
+
+on: ['push', 'pull_request']
+
+jobs:
+  linux_tests:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [7.2, 7.3, 7.4, 8.0]
+        laravel: [^6.0, ^7.0, ^8.0]
+        exclude:
+          - php: 7.2
+            laravel: ^8.0
+
+    name: PHP ${{ matrix.php }} - ${{ matrix.stability }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer:v2
+          coverage: none
+
+      - name: Setup Problem Matches
+        run: |
+          echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+          echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+
+      - name: Install PHP dependencies
+        run: composer update --${{ matrix.stability }} --no-interaction --no-progress
+
+      - name: Execute static analysis
+        run: composer test:types
+
+      - name: Execute unit tests
+        run: composer test:unit
