@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.6.9] - 2020-10-30
+
+### Added
+
+- Support to PHP 8 ([#701](https://github.com/nunomaduro/larastan/pull/701))
+
 ### Fixed
 
 - Corrected return type for some QueryBuilder methods ([#702](https://github.com/nunomaduro/larastan/pull/702))
@@ -205,7 +211,7 @@ This release introduces a new rule that can check the arguments of methods that 
 Blogpost: [nunomaduro.com/larastan-0-5-is-out](https://nunomaduro.com/larastan-0-5-is-out)
 Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/UPGRADE.md)
 
-### Added 
+### Added
 - Support to PHPStan `0.12` [#378](https://github.com/nunomaduro/larastan/pull/378)
 - Support to Laravel 7 [#377](https://github.com/nunomaduro/larastan/pull/377)
 - Support for Facade fakes [#347](https://github.com/nunomaduro/larastan/pull/347)
