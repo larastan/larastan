@@ -31,6 +31,7 @@ parameters:
         - Illuminate\Http\Request
     earlyTerminatingFunctionCalls:
         - abort
+        - dd
     excludes_analyse:
         - *.blade.php
     mixinExcludeClasses:

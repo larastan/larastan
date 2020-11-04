@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Added `dd` to list of early terminating functions ([#710](https://github.com/nunomaduro/larastan/pull/710))
+
 ## [0.6.9] - 2020-10-30
 
 ### Added
