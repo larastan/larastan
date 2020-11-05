@@ -19,6 +19,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+        run: - test "$(find . -type f -not -path "./.git/*" -perm /111)" == ./tests/laravel-test.sh
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -40,3 +41,6 @@ jobs:
 
       - name: Execute unit tests
         run: composer test:unit
+
+      - name: Run Larastan on Laravel and Lumen sample applications
+        run: tests/laravel-test.sh
