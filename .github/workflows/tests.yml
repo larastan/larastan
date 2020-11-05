@@ -36,7 +36,7 @@ jobs:
         run: test "$(find . -type f -not -path "./.git/*" -perm /111)" == ./tests/laravel-test.sh
 
       - name: Install PHP dependencies
-        run: composer install --${{ matrix.stability }} --no-interaction --no-progress
+        run: composer require --${{ matrix.stability }} --no-interaction --no-progress
 
       - name: Execute static analysis
         run: composer test:types
