@@ -3,12 +3,12 @@
 set -e
 
 echo "Install Laravel"
-travis_retry composer create-project --quiet --prefer-dist "laravel/laravel" ../laravel
+composer create-project --quiet --prefer-dist "laravel/laravel" ../laravel
 cd ../laravel/
 
 echo "Add package from source"
 sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan" } ],|' -i composer.json
-travis_retry composer require --dev "nunomaduro/larastan:*"
+composer require --dev "nunomaduro/larastan:*"
 
 echo "Fix https://github.com/laravel/framework/pull/23825"
 sed -e 's|@return \\Illuminate\\Http\\Response$|@return \\Symfony\\Component\\HttpFoundation\\Response|' \
@@ -23,12 +23,12 @@ vendor/bin/phpstan analyse app --level=5 -c vendor/nunomaduro/larastan/extension
 cd -
 
 echo "Install Lumen"
-travis_retry composer create-project --quiet --prefer-dist "laravel/lumen" ../lumen
+composer create-project --quiet --prefer-dist "laravel/lumen" ../lumen
 cd ../lumen/
 
 echo "Add package from source"
 sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan" } ],|' -i composer.json
-travis_retry composer require --dev "nunomaduro/larastan:*"
+composer require --dev "nunomaduro/larastan:*"
 
 echo "Fix Handler::render return type"
 sed -e 's/@return \\Illuminate\\Http\\Response|\\Illuminate\\Http\\JsonResponse$/@return \\Symfony\\Component\\HttpFoundation\\Response/' \
