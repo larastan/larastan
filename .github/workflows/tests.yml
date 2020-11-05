@@ -19,7 +19,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        run: - test "$(find . -type f -not -path "./.git/*" -perm /111)" == ./tests/laravel-test.sh
+        run: test "$(find . -type f -not -path "./.git/*" -perm /111)" == ./tests/laravel-test.sh
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
