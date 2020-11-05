@@ -1,0 +1,51 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  tests:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [7.2, 7.3, 7.4, 8.0]
+        laravel: [^6.0, ^7.0, ^8.0]
+        exclude:
+          - php: 7.2
+            laravel: ^8.0
+
+    name: P${{ matrix.php }} - L${{ matrix.laravel }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip
+          tools: composer:v2
+          coverage: none
+
+      - name: Prepares repository
+        run: test "$(find . -type f -not -path "./.git/*" -perm /111)" == ./tests/laravel-test.sh
+
+      - name: Install dependencies
+        run: |
+           composer require "illuminate/contracts:${{ matrix.laravel }}" --dev --no-update
+           composer update --prefer-dist --no-interaction --no-progress
+
+      - name: Execute static analysis
+        run: composer test:types
+
+      - name: Execute unit tests
+        run: composer test:unit
+
+      - name: Run Larastan on Laravel and Lumen sample applications
+        run: tests/laravel-test.sh
