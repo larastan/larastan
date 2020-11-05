@@ -1,9 +1,14 @@
 name: tests
 
-on: ['push', 'pull_request']
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 0 * * *'
 
 jobs:
-  linux_tests:
+  tests:
+
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
@@ -14,7 +19,7 @@ jobs:
           - php: 7.2
             laravel: ^8.0
 
-    name: PHP ${{ matrix.php }} - ${{ matrix.stability }}
+    name: P${{ matrix.php }} - L${{ matrix.laravel }}
 
     steps:
       - name: Checkout code
@@ -24,19 +29,17 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip
           tools: composer:v2
           coverage: none
-
-      - name: Setup Problem Matches
-        run: |
-          echo "::add-matcher::${{ runner.tool_cache }}/php.json"
-          echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
       - name: Prepares repository
         run: test "$(find . -type f -not -path "./.git/*" -perm /111)" == ./tests/laravel-test.sh
 
-      - name: Install PHP dependencies
-        run: composer require --${{ matrix.stability }} --no-interaction --no-progress
+      - name: Install dependencies
+        run: |
+           composer require "illuminate/contracts:${{ matrix.laravel }}" --dev --no-update
+           composer update --prefer-dist --no-interaction --no-progress
 
       - name: Execute static analysis
         run: composer test:types
