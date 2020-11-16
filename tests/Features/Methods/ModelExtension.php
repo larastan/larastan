@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ModelExtension
@@ -203,6 +204,13 @@ class ModelExtension
             ->where('email', 'bar')
             ->orWhere('name', 'baz')
             ->first();
+    }
+
+    public function testWithAcceptsArrayOfClosures(): ?User
+    {
+        return User::with(['accounts' => function (Relation $relation) {
+            return $relation->where('active', true);
+        }])->find(1);
     }
 
     /** @return Collection<User>|null */
