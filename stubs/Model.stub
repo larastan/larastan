@@ -19,7 +19,7 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
     /**
      * Begin querying a model with eager loading.
      *
-     * @param  string[]|string  $relations
+     * @param  string|array<int|string, (\Closure)|string>  $relations
      * @return \Illuminate\Database\Eloquent\Builder<static>
      */
     public static function with($relations);
