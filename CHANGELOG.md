@@ -6,9 +6,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.6.10] - 2020-11-26
+
 ### Added
 
 - Added `dd` to list of early terminating functions ([#710](https://github.com/nunomaduro/larastan/pull/710))
+
+### Fixed
+
+- Model::with() accepts array of Closure ([#713](https://github.com/nunomaduro/larastan/pull/713)) Thanks @kvas-damian
+- Use function map instead of calling newQuery on model ([#717](https://github.com/nunomaduro/larastan/pull/717))
 
 ## [0.6.9] - 2020-10-30
 
@@ -458,7 +465,9 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.6.8...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.6.10...HEAD
+[0.6.10]: https://github.com/nunomaduro/larastan/compare/v0.6.9...v0.6.10
+[0.6.9]: https://github.com/nunomaduro/larastan/compare/v0.6.8...v0.6.9
 [0.6.8]: https://github.com/nunomaduro/larastan/compare/v0.6.7...v0.6.8
 [0.6.7]: https://github.com/nunomaduro/larastan/compare/v0.6.6...v0.6.7
 [0.6.6]: https://github.com/nunomaduro/larastan/compare/v0.6.5...v0.6.6
