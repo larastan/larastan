@@ -8,7 +8,6 @@ use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use function in_array;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
@@ -18,7 +17,6 @@ use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Generic\TemplateTypeMap;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\TypehintHelper;
-use ReflectionClass;
 use ReflectionFunction;
 use ReflectionParameter;
 
@@ -43,10 +41,14 @@ final class BuilderLocalMacros implements PipeContract
         if ($classReflection->isSubclassOf(Model::class) && in_array(SoftDeletes::class,
                 trait_uses_recursive($classReflection->getName()), true)) {
             $methods = [
-                'restore' => function(Builder $builder) {},
-                'withTrashed' => function(Builder $builder, bool $withTrashed = true) {},
-                'withoutTrashed' => function(Builder $builder) {},
-                'onlyTrashed' => function(Builder $builder) {},
+                'restore' => function (Builder $builder) {
+                },
+                'withTrashed' => function (Builder $builder, bool $withTrashed = true) {
+                },
+                'withoutTrashed' => function (Builder $builder) {
+                },
+                'onlyTrashed' => function (Builder $builder) {
+                },
             ];
 
             if (array_key_exists($passable->getMethodName(), $methods)) {
