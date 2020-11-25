@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/laravel/vapor-ui/actions"><img src="https://github.com/laravel/vapor-ui/workflows/tests/badge.svg" alt="Build Status"></a>
+  <a href="https://github.com/nunomaduro/larastan/actions"><img src="https://github.com/nunomaduro/larastan/workflows/tests/badge.svg" alt="Build Status"></a>
   <a href="https://packagist.org/packages/nunomaduro/larastan/stats"><img src="https://poser.pugx.org/nunomaduro/larastan/d/total.svg" alt="Total Downloads"></a>
   <a href="https://packagist.org/packages/nunomaduro/larastan"><img src="https://poser.pugx.org/nunomaduro/larastan/v/stable.svg" alt="Latest Version"></a>
   <a href="https://github.com/nunomaduro/larastan/blob/master/LICENSE.md"><img src="https://poser.pugx.org/nunomaduro/larastan/license.svg" alt="License"></a>
