@@ -23,6 +23,7 @@ class ModelExtension
         return User::all();
     }
 
+    /** @return Builder<User> */
     public function testReturnThis(): Builder
     {
         $user = User::join('tickets.tickets', 'tickets.tickets.id', '=', 'tickets.sale_ticket.ticket_id')
@@ -31,26 +32,31 @@ class ModelExtension
         return $user;
     }
 
+    /** @return Builder<Thread> */
     public function testWhere(): Builder
     {
         return (new Thread)->where(['name' => 'bar']);
     }
 
+    /** @return Builder<Thread> */
     public function testStaticWhere(): Builder
     {
         return Thread::where(['name' => 'bar']);
     }
 
+    /** @return Builder<Thread> */
     public function testDynamicWhere(): Builder
     {
         return (new Thread)->whereName(['bar']);
     }
 
+    /** @return Builder<Thread> */
     public function testStaticDynamicWhere(): Builder
     {
         return Thread::whereName(['bar']);
     }
 
+    /** @return Builder<Thread> */
     public function testWhereIn(): Builder
     {
         return (new Thread)->whereIn('id', [1, 2, 3]);
@@ -243,6 +249,12 @@ class ModelExtension
     public function testSoftDeletesOnlyTrashed(): Builder
     {
         return User::onlyTrashed();
+    }
+
+    /** @return Builder<User> */
+    public function testSoftDeletesWithTrashed(): Builder
+    {
+        return User::withTrashed(false);
     }
 
     public function testFindOrFailWithSoftDeletesTrait(): User

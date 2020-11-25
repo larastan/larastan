@@ -42,18 +42,15 @@ final class BuilderLocalMacros implements PipeContract
 
         if ($classReflection->isSubclassOf(Model::class) && in_array(SoftDeletes::class,
                 trait_uses_recursive($classReflection->getName()), true)) {
-            $model = new class extends Model {
-            };
+            $methods = [
+                'restore' => function(Builder $builder) {},
+                'withTrashed' => function(Builder $builder, bool $withTrashed = true) {},
+                'withoutTrashed' => function(Builder $builder) {},
+                'onlyTrashed' => function(Builder $builder) {},
+            ];
 
-            (new SoftDeletingScope)->extend($builder = $model->newQuery());
-
-            $refObject = new ReflectionClass(Builder::class);
-            $refProperty = $refObject->getProperty('localMacros');
-            $refProperty->setAccessible(true);
-            $localMacros = $refProperty->getValue($builder);
-
-            if (array_key_exists($passable->getMethodName(), $localMacros)) {
-                $reflectionFunction = new ReflectionFunction($localMacros[$passable->getMethodName()]);
+            if (array_key_exists($passable->getMethodName(), $methods)) {
+                $reflectionFunction = new ReflectionFunction($methods[$passable->getMethodName()]);
                 $parameters = $reflectionFunction->getParameters();
                 unset($parameters[0]); // The query argument.
                 $parameters = array_values($parameters);
