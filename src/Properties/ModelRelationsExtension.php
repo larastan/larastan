@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Properties;
 
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Concerns;
+use NunoMaduro\Larastan\Methods\BuilderHelper;
 use NunoMaduro\Larastan\Types\RelationParserHelper;
 use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\Annotations\AnnotationsPropertiesClassReflectionExtension;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\Dummy\DummyPropertyReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
@@ -39,10 +38,17 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
     /** @var AnnotationsPropertiesClassReflectionExtension */
     private $annotationExtension;
 
-    public function __construct(RelationParserHelper $relationParserHelper, AnnotationsPropertiesClassReflectionExtension $annotationExtension)
+    /** @var BuilderHelper */
+    private $builderHelper;
+
+    public function __construct(
+        RelationParserHelper $relationParserHelper,
+        AnnotationsPropertiesClassReflectionExtension $annotationExtension,
+        BuilderHelper $builderHelper)
     {
         $this->relationParserHelper = $relationParserHelper;
         $this->annotationExtension = $annotationExtension;
+        $this->builderHelper = $builderHelper;
     }
 
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
@@ -77,10 +83,6 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
         /** @var ObjectType $returnType */
         $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
 
-        if (! (new ObjectType(Relation::class))->isSuperTypeOf($returnType)->yes()) {
-            return new DummyPropertyReflection();
-        }
-
         if ($returnType instanceof GenericObjectType) {
             /** @var ObjectType $relatedModelType */
             $relatedModelType = $returnType->getTypes()[0];
@@ -96,11 +98,12 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
         }
 
         $relatedModel = new ObjectType($relatedModelClassName);
+        $collectionClass = $this->builderHelper->determineCollectionClassName($relatedModelClassName);
 
         if (Str::contains($returnType->getClassName(), 'Many')) {
             return new ModelProperty(
                 $classReflection,
-                new GenericObjectType(Collection::class, [$relatedModel]),
+                new GenericObjectType($collectionClass, [$relatedModel]),
                 new NeverType(), false
             );
         }
