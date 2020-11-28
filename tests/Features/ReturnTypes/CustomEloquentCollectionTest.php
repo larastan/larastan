@@ -520,6 +520,14 @@ class CustomEloquentCollectionTest
     }
 
     /**
+     * @phpstan-return AccountCollection<Account>
+     */
+    public function testCustomMethodInCustomCollection(User $user): AccountCollection
+    {
+        return $user->accounts->filterByActive();
+    }
+
+    /**
      * @phpstan-return Collection<User>
      */
     public function testEloquentCollectionWhereReturnsEloquentCollection(): Collection

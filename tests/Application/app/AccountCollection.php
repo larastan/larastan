@@ -10,5 +10,11 @@ use Illuminate\Database\Eloquent\Collection;
  */
 class AccountCollection extends Collection
 {
-    //
+    /**
+     * @return self<TModel>
+     */
+    public function filterByActive(): self
+    {
+        return $this->where('active', true);
+    }
 }
