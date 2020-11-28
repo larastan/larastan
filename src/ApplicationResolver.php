@@ -102,7 +102,7 @@ final class ApplicationResolver
         $autoloadDevPsr4 = $autoloadDev['psr-4'] ?? [];
         foreach ($autoloadDevPsr4 as $paths) {
             $paths = is_array($paths) ? $paths : [$paths];
-            
+
             foreach ($paths as $path) {
                 $devClasses = array_merge($devClasses, array_keys(ClassMapGenerator::createMap($path)));
             }
