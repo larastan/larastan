@@ -20,7 +20,7 @@ class TestCase extends BaseTestCase
         File::copyDirectory(__DIR__.'/Application/config', $this->getBasePath().'/config');
         File::copyDirectory(__DIR__.'/Application/resources', $this->getBasePath().'/resources');
 
-        $this->configPath = __DIR__ . '/phpstan-tests.neon';
+        $this->configPath = __DIR__.'/phpstan-tests.neon';
     }
 
     public function execLarastan(string $filename)
