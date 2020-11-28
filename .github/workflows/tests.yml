@@ -2,6 +2,9 @@ name: "tests"
 
 on:
   push:
+    # Prevent duplicating jobs on PR-s from local branches
+    branches:    
+      - "master"
   pull_request:
   schedule:
     - cron: "0 0 * * *"
