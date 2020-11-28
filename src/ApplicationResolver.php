@@ -100,8 +100,12 @@ final class ApplicationResolver
         $devClasses = [];
         $autoloadDev = self::$composer['autoload-dev'] ?? [];
         $autoloadDevPsr4 = $autoloadDev['psr-4'] ?? [];
-        foreach ($autoloadDevPsr4 as $path) {
-            $devClasses = array_merge($devClasses, array_keys(ClassMapGenerator::createMap($path)));
+        foreach ($autoloadDevPsr4 as $paths) {
+            $paths = is_array($paths) ? $paths : [$paths];
+
+            foreach ($paths as $path) {
+                $devClasses = array_merge($devClasses, array_keys(ClassMapGenerator::createMap($path)));
+            }
         }
 
         // now class list of maps are assembled, use class_exists calls to explicitly autoload them,
