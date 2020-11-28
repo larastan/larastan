@@ -1,0 +1,6 @@
+includes:
+    - ../extension.neon
+parameters:
+    ignoreErrors:
+        - '#Return typehint of method Tests\\Features\\ReturnTypes\\Facades::testHttpBaseUrl\(\) has invalid type Illuminate\\Http\\Client\\PendingRequest\.#'
+        - '#Call to static method baseUrl\(\) on an unknown class Illuminate\\Support\\Facades\\Http\.#'

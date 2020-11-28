@@ -1,6 +1,5 @@
 parameters:
     stubFiles:
-        - stubs/Arrayable.stub
         - stubs/Enumerable.stub
         - stubs/EloquentBuilder.stub
         - stubs/Collection.stub
@@ -19,12 +18,16 @@ parameters:
         - stubs/Mailable.stub
         - stubs/MorphOne.stub
         - stubs/MorphOneOrMany.stub
+        - stubs/MorphTo.stub
         - stubs/MorphToMany.stub
         - stubs/MorphMany.stub
         - stubs/Helpers.stub
         - stubs/HigherOrderTapProxy.stub
         - stubs/QueryBuilder.stub
         - stubs/Facades.stub
+        - stubs/Pagination.stub
+        - stubs/Contracts/Pagination.stub
+        - stubs/Contracts/Support.stub
         - stubs/Redis/Connection.stub
     scopeClass: NunoMaduro\Larastan\Analyser\Scope
     universalObjectCratesClasses:

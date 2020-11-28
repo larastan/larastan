@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+- Removed mixin pipe class ([#704](https://github.com/nunomaduro/larastan/pull/704))
+
 ## [0.6.10] - 2020-11-26
 
 ### Added

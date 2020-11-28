@@ -20,7 +20,7 @@ final class Extension implements MethodsClassReflectionExtension, BrokerAwareExt
     use Concerns\HasBroker;
 
     /**
-     * @var \NunoMaduro\Larastan\Methods\Kernel
+     * @var Kernel
      */
     private $kernel;
 
@@ -30,17 +30,14 @@ final class Extension implements MethodsClassReflectionExtension, BrokerAwareExt
     /**
      * Extension constructor.
      *
-     * @param \PHPStan\Reflection\Php\PhpMethodReflectionFactory $methodReflectionFactory
-     * @param \NunoMaduro\Larastan\Methods\Kernel|null $kernel
+     * @param PhpMethodReflectionFactory $methodReflectionFactory
+     * @param Kernel|null                $kernel
      */
     public function __construct(PhpMethodReflectionFactory $methodReflectionFactory, Kernel $kernel = null)
     {
         $this->kernel = $kernel ?? new Kernel($methodReflectionFactory);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
         if ($classReflection->getName() === Model::class) {
@@ -62,9 +59,6 @@ final class Extension implements MethodsClassReflectionExtension, BrokerAwareExt
         return $found;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
         return $this->methodReflections[$methodName.'-'.$classReflection->getName()];

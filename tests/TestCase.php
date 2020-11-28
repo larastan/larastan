@@ -15,15 +15,12 @@ class TestCase extends BaseTestCase
         parent::setUp();
 
         @File::makeDirectory(dirname(__DIR__).'/vendor/nunomaduro/larastan', 0755, true);
-        @File::makeDirectory(dirname(__DIR__).'/vendor/nunomaduro/larastan/config', 0755, true);
         @File::copy(dirname(__DIR__).'/bootstrap.php', dirname(__DIR__).'/vendor/nunomaduro/larastan/bootstrap.php');
-        @File::copy(dirname(__DIR__).'/config/mixins.php', dirname(__DIR__).'/vendor/nunomaduro/larastan/config/mixins.php');
-        @File::copy(dirname(__DIR__).'/config/statics.php', dirname(__DIR__).'/vendor/nunomaduro/larastan/config/statics.php');
         File::copyDirectory(__DIR__.'/Application/database/migrations', $this->getBasePath().'/database/migrations');
         File::copyDirectory(__DIR__.'/Application/config', $this->getBasePath().'/config');
         File::copyDirectory(__DIR__.'/Application/resources', $this->getBasePath().'/resources');
 
-        $this->configPath = dirname(__DIR__).'/extension.neon';
+        $this->configPath = __DIR__.'/phpstan-tests.neon';
     }
 
     public function execLarastan(string $filename)
