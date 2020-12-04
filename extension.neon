@@ -40,7 +40,7 @@ parameters:
     mixinExcludeClasses:
         - Eloquent
     bootstrapFiles:
-        - %rootDir%/../../nunomaduro/larastan/bootstrap.php
+        - bootstrap.php
     checkGenericClassInNonGenericObjectType: false
     noUnnecessaryCollectionCall: true
     noUnnecessaryCollectionCallOnly: []
