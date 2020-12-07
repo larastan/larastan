@@ -6,7 +6,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### [0.6.11] - 2020-12-07
+
+### Added
+
+- Support for autoloaded arrays ([#725](https://github.com/nunomaduro/larastan/pull/725)) Thanks @stancl
+
+### Fixed
+
+- Changed bootstrap file path ([#727](https://github.com/nunomaduro/larastan/pull/727)) Thanks @bepsvpt
 - Removed mixin pipe class ([#704](https://github.com/nunomaduro/larastan/pull/704))
+- Don't return dummy method reflection for unknown methods ([2581f3b](https://github.com/nunomaduro/larastan/commit/2581f3b255a6ad3f38301d088557a0ddc598dbf8))
 
 ## [0.6.10] - 2020-11-26
 
@@ -467,7 +477,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.6.10...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.6.11...HEAD
+[0.6.11]: https://github.com/nunomaduro/larastan/compare/v0.6.10...v0.6.11
 [0.6.10]: https://github.com/nunomaduro/larastan/compare/v0.6.9...v0.6.10
 [0.6.9]: https://github.com/nunomaduro/larastan/compare/v0.6.8...v0.6.9
 [0.6.8]: https://github.com/nunomaduro/larastan/compare/v0.6.7...v0.6.8
