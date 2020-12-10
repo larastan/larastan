@@ -135,5 +135,4 @@ final class ApplicationResolver
 
         return $raw[$namespace];
     }
-
 }

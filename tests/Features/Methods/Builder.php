@@ -64,5 +64,4 @@ class Builder
             ->orWhereNotBetween('a', [1, 5])
             ->toBase();
     }
-
 }
