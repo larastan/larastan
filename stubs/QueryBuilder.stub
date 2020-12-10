@@ -489,7 +489,7 @@ class Builder
      * Add a where not between statement to the query.
      *
      * @param  string  $column
-     * @param  array<string, mixed>  $values
+     * @param  array<string|int, mixed>  $values
      * @param  string  $boolean
      * @return $this
      */
@@ -500,7 +500,7 @@ class Builder
      * Add an or where not between statement to the query.
      *
      * @param  string  $column
-     * @param  array<string, mixed>  $values
+     * @param  array<string|int, mixed>  $values
      * @return $this
      */
     public function orWhereNotBetween($column, array $values)

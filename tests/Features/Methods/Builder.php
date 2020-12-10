@@ -56,4 +56,12 @@ class Builder
         ->orderBy('some_model.created', 'desc')
         ->first();
     }
+
+    public function testWhereNotBetweenInt(): QueryBuilder
+    {
+        return User::query()
+            ->whereNotBetween('a', [1, 5])
+            ->orWhereNotBetween('a', [1, 5])
+            ->toBase();
+    }
 }
