@@ -136,14 +136,4 @@ final class ApplicationResolver
         return $raw[$namespace];
     }
 
-    /**
-     * Parse test method annotations.
-     *
-     * @param  \Illuminate\Foundation\Application  $app
-     * @param  string  $name
-     */
-    protected function parseTestMethodAnnotations($app, string $name): void
-    {
-        // Support Laravel 6.x & TestBench 4.x
-    }
 }
