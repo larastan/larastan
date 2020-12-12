@@ -9,7 +9,7 @@ parameters:
         - stubs/Gate.stub
         - stubs/Relation.stub
         - stubs/BelongsTo.stub
-        - stubs/BelongstoMany.stub
+        - stubs/BelongsToMany.stub
         - stubs/HasOneOrMany.stub
         - stubs/HasMany.stub
         - stubs/HasOne.stub
