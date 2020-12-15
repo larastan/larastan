@@ -64,4 +64,10 @@ class Builder
             ->orWhereNotBetween('a', [1, 5])
             ->toBase();
     }
+
+    /** @phpstan-return EloquentBuilder<User> */
+    public function testWithTrashedOnBuilderWithModel(): EloquentBuilder
+    {
+        return User::query()->withTrashed();
+    }
 }
