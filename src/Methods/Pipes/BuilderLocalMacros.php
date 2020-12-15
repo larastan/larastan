@@ -38,6 +38,13 @@ final class BuilderLocalMacros implements PipeContract
         $className = $classReflection->getName();
         $found = false;
 
+        if (($classReflection->isSubclassOf(Builder::class) || $classReflection->getName() === Builder::class) && $classReflection->getActiveTemplateTypeMap()->getType('TModelClass') !== null) {
+            /** @var ObjectType $modelType */
+            $modelType = $classReflection->getActiveTemplateTypeMap()->getType('TModelClass');
+
+            $classReflection = $passable->getBroker()->getClass($modelType->getClassName());
+        }
+
         if ($classReflection->isSubclassOf(Model::class) && in_array(SoftDeletes::class,
                 trait_uses_recursive($classReflection->getName()), true)) {
             $methods = [
