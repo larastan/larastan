@@ -8,6 +8,7 @@ use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use PHPStan\Reflection\ClassReflection;
 use function in_array;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
@@ -37,6 +38,13 @@ final class BuilderLocalMacros implements PipeContract
         /** @var class-string $className */
         $className = $classReflection->getName();
         $found = false;
+
+        if (($classReflection->isSubclassOf(Builder::class) || $classReflection->getName() === Builder::class) && $classReflection->getActiveTemplateTypeMap()->getType('TModelClass') !== null) {
+            /** @var ObjectType $modelType */
+            $modelType = $classReflection->getActiveTemplateTypeMap()->getType('TModelClass');
+
+            $classReflection = $passable->getBroker()->getClass($modelType->getClassName());
+        }
 
         if ($classReflection->isSubclassOf(Model::class) && in_array(SoftDeletes::class,
                 trait_uses_recursive($classReflection->getName()), true)) {
