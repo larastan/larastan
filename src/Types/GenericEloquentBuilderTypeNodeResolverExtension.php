@@ -36,7 +36,7 @@ class GenericEloquentBuilderTypeNodeResolverExtension implements TypeNodeResolve
 
             if (
                 $innerTypeNode instanceof IdentifierTypeNode
-                && ($nameScope->resolveStringName($innerTypeNode->name) === Builder::class || is_subclass_of($nameScope->resolveStringName($innerTypeNode->name), Builder::class))
+                && ($nameScope->resolveStringName($innerTypeNode->name) === Builder::class || is_subclass_of($nameScope->resolveStringName($innerTypeNode->name), Builder::class, false))
             ) {
                 $builderTypeNode = $innerTypeNode;
             }
