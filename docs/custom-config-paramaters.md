@@ -8,7 +8,7 @@ These parameters are related to the `NoUnnecessaryCollectionCall` rule. You can 
 
 ## `databaseMigrationsPath`
 
-By default, the default Laravel database migration path (`database/migrations`) is used to scan migration files to understand the table structure and model properties. If you have database migrations in other place then the default, you can use this config parameter to tell Larastan where the database migrations are stored.
+By default, the default Laravel database migration path (`database/migrations`) is used to scan migration files to understand the table structure and model properties. If you have database migrations in other place than the default, you can use this config parameter to tell Larastan where the database migrations are stored.
 
 You can give an absolute path, or a path relative to the PHPStan config file.
 
