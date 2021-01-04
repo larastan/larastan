@@ -14,7 +14,10 @@ class StorageFacade
         return Storage::disk();
     }
 
-    public function testDiskGetDriver(): \League\Flysystem\FilesystemInterface
+    /**
+     * @return \League\Flysystem\FilesystemOperator|\League\Flysystem\FilesystemInterface
+     */
+    public function testDiskGetDriver()
     {
         return Storage::disk()->getDriver();
     }
