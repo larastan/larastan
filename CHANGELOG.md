@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### [0.6.12] - 2021-01-03
+
+### Added
+
+- Support to Laravel 9 [060aa1d](https://github.com/nunomaduro/larastan/commit/060aa1df1a63f4861ebce541257c77f4038c43c6)
+
 ### [0.6.11] - 2020-12-07
 
 ### Added
