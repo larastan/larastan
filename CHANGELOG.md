@@ -10,7 +10,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Support to Laravel 9 [060aa1d](https://github.com/nunomaduro/larastan/commit/060aa1df1a63f4861ebce541257c77f4038c43c6)
+- Support to Laravel 9 ([060aa1d](https://github.com/nunomaduro/larastan/commit/060aa1df1a63f4861ebce541257c77f4038c43c6))
+- Support for `Model::whereNotBetween()` ([#731](https://github.com/nunomaduro/larastan/pull/731))
+
+### Fixed
+- Search missing method also in templated model ([#739](https://github.com/nunomaduro/larastan/pull/739))
 
 ### [0.6.11] - 2020-12-07
 
