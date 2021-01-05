@@ -298,6 +298,24 @@ class ModelExtension
     {
         return User::where('id', '>', 5)->newQuery();
     }
+
+    /** @phpstan-return Collection<User> */
+    public function testMethodReturningCollectionOfAnotherModel()
+    {
+        return Thread::methodReturningCollectionOfAnotherModel();
+    }
+
+    /** @phpstan-return Collection<Thread>|Thread */
+    public function testMethodReturningUnionWithCollection()
+    {
+        return Thread::methodReturningUnionWithCollection();
+    }
+
+    /** @phpstan-return Collection<User>|User */
+    public function testMethodReturningUnionWithCollectionOfAnotherModel()
+    {
+        return Thread::methodReturningUnionWithCollectionOfAnotherModel();
+    }
 }
 
 function foo(): string
@@ -365,5 +383,29 @@ class Thread extends Model
         $localKey = $localKey ?: $this->getKeyName();
 
         return new HasMany($instance->newQuery(), $this, $instance->getTable().'.'.$foreignKey, $localKey);
+    }
+
+    /**
+     * @return Collection<User>
+     */
+    public static function methodReturningCollectionOfAnotherModel()
+    {
+        return new Collection([]);
+    }
+
+    /**
+     * @return Collection|Thread
+     */
+    public static function methodReturningUnionWithCollection()
+    {
+        return new Collection([]);
+    }
+
+    /**
+     * @return Collection<User>|User
+     */
+    public static function methodReturningUnionWithCollectionOfAnotherModel()
+    {
+        return new Collection([]);
     }
 }
