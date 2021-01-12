@@ -1293,7 +1293,7 @@ class Builder
     /**
      * Insert a new record into the database while ignoring errors.
      *
-     * @param  array<string, mixed>  $values
+     * @param  array<mixed>  $values
      * @return int
      */
     public function insertOrIgnore(array $values)
