@@ -35,7 +35,7 @@ parameters:
     earlyTerminatingFunctionCalls:
         - abort
         - dd
-    excludes_analyse:
+    excludePaths:
         - *.blade.php
     mixinExcludeClasses:
         - Eloquent
