@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Features\Methods;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Redis;
 
@@ -47,5 +48,17 @@ class Facades
     public function testRedisHmget(): array
     {
         return Redis::hmget('h', ['field1', 'field2']);
+    }
+
+    public function testDBQuery(): \Illuminate\Database\Query\Builder
+    {
+        return DB::query();
+    }
+
+    public function testDBAfterCommit(): void
+    {
+        DB::afterCommit(function() {
+
+        });
     }
 }

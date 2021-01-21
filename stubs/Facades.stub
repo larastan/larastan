@@ -2,10 +2,18 @@
 
 namespace Illuminate\Support\Facades;
 
+abstract class Facade {}
+
 /**
  * @mixin \Redis
  * @mixin \Illuminate\Redis\RedisManager
  * @mixin \Illuminate\Contracts\Redis\Factory
  */
-class Redis
-{}
+class Redis {}
+
+/**
+ * @mixin \Illuminate\Database\DatabaseManager
+ * @mixin \Illuminate\Database\Connection
+ * @mixin \Illuminate\Database\ConnectionInterface
+ */
+class DB extends Facade {}
