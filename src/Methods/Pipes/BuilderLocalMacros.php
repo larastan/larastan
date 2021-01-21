@@ -42,7 +42,9 @@ final class BuilderLocalMacros implements PipeContract
             /** @var ObjectType $modelType */
             $modelType = $classReflection->getActiveTemplateTypeMap()->getType('TModelClass');
 
-            $classReflection = $passable->getBroker()->getClass($modelType->getClassName());
+            if ($modelType instanceof ObjectType) {
+                $classReflection = $passable->getBroker()->getClass($modelType->getClassName());
+            }
         }
 
         if ($classReflection->isSubclassOf(Model::class) && in_array(SoftDeletes::class,
