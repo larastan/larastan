@@ -15,7 +15,7 @@ class StorageFacade
     }
 
     /**
-     * @return \League\Flysystem\FilesystemOperator|\League\Flysystem\FilesystemInterface
+     * @return \League\Flysystem\FilesystemInterface
      */
     public function testDiskGetDriver()
     {
