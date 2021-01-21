@@ -57,8 +57,7 @@ class Facades
 
     public function testDBAfterCommit(): void
     {
-        DB::afterCommit(function() {
-
+        DB::afterCommit(function () {
         });
     }
 }
