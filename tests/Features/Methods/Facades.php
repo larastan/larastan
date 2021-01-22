@@ -65,7 +65,6 @@ class Facades
     public function testQueueCreatePayloadUsing(): void
     {
         Queue::createPayloadUsing(function () {
-
         });
     }
 }
