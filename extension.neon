@@ -29,6 +29,7 @@ parameters:
         - stubs/Contracts/Pagination.stub
         - stubs/Contracts/Support.stub
         - stubs/Redis/Connection.stub
+        - stubs/Logger.stub
     scopeClass: NunoMaduro\Larastan\Analyser\Scope
     universalObjectCratesClasses:
         - Illuminate\Http\Request
