@@ -17,3 +17,9 @@ class Redis {}
  * @mixin \Illuminate\Database\ConnectionInterface
  */
 class DB extends Facade {}
+
+/**
+ * @mixin \Illuminate\Queue\QueueManager
+ * @mixin \Illuminate\Queue\Queue
+ */
+class Queue extends Facade {}

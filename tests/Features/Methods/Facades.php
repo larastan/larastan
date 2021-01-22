@@ -6,6 +6,7 @@ namespace Tests\Features\Methods;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Redis;
 
 class Facades
@@ -58,6 +59,13 @@ class Facades
     public function testDBAfterCommit(): void
     {
         DB::afterCommit(function () {
+        });
+    }
+
+    public function testQueueCreatePayloadUsing(): void
+    {
+        Queue::createPayloadUsing(function () {
+
         });
     }
 }
