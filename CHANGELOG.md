@@ -6,6 +6,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### [0.6.13] - 2021-01-22
+
+### Added
+
+- DB facade stub ([8aa4b6d](https://github.com/nunomaduro/larastan/commit/8aa4b6dc3407fad6ced8115da02f610aad55366f))
+- Queue facade stub ([d0b0909](https://github.com/nunomaduro/larastan/commit/d0b0909c3ef60d45d3db9a2cf1fb91a73711ef26))
+- Logger stub ([208df29](https://github.com/nunomaduro/larastan/commit/208df29dab0ad80cabd6dc1b4e2232fc0f1044a0))
+
+### Changed
+
+- Use updated excludePaths parameter ([#759](https://github.com/nunomaduro/larastan/pull/759)) Thanks @erikgaal
+- Improve Pipes\Facades ([#744](https://github.com/nunomaduro/larastan/pull/744)) Thanks @szepeviktor
+
+### Fixed
+
+- Fixed insertOrIgnore typehint ([#756](https://github.com/nunomaduro/larastan/pull/756)) Thanks @bistory
+- Fix BelongsToMany stub's file name ([#736](https://github.com/nunomaduro/larastan/pull/736)) Thanks @szepeviktor
+
 ### [0.6.12] - 2021-01-03
 
 ### Added
@@ -487,7 +505,9 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.6.11...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.6.13...HEAD
+[0.6.13]: https://github.com/nunomaduro/larastan/compare/v0.6.12...v0.6.13
+[0.6.12]: https://github.com/nunomaduro/larastan/compare/v0.6.11...v0.6.12
 [0.6.11]: https://github.com/nunomaduro/larastan/compare/v0.6.10...v0.6.11
 [0.6.10]: https://github.com/nunomaduro/larastan/compare/v0.6.9...v0.6.10
 [0.6.9]: https://github.com/nunomaduro/larastan/compare/v0.6.8...v0.6.9
