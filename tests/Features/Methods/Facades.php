@@ -56,10 +56,9 @@ class Facades
         return DB::query();
     }
 
-    public function testDBAfterCommit(): void
+    public function testDBTransactionLevel(): int
     {
-        DB::afterCommit(function () {
-        });
+        return DB::transactionLevel();
     }
 
     public function testQueueCreatePayloadUsing(): void
