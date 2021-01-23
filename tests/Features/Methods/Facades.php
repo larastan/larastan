@@ -6,6 +6,7 @@ namespace Tests\Features\Methods;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Redis;
 
@@ -65,5 +66,10 @@ class Facades
     {
         Queue::createPayloadUsing(function () {
         });
+    }
+
+    public function testGetLogger(): \Psr\Log\LoggerInterface
+    {
+        return Log::getLogger();
     }
 }
