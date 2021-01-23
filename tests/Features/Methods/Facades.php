@@ -67,10 +67,9 @@ class Facades
         Queue::createPayloadUsing(function () {
         });
     }
-    
+
     public function testGetLogger(): \Psr\Log\LoggerInterface
     {
         return Log::getLogger();
     }
-    
 }
