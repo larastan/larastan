@@ -25,7 +25,8 @@ class MigrationHelper
     /**
      * @param string[] $databaseMigrationPath
      */
-    public function __construct(CachedParser $parser, string $currentWorkingDirectory, array $databaseMigrationPath) {
+    public function __construct(CachedParser $parser, string $currentWorkingDirectory, array $databaseMigrationPath)
+    {
         $this->parser = $parser;
         $this->databaseMigrationPath = $databaseMigrationPath;
         $this->currentWorkingDirectory = $currentWorkingDirectory;
@@ -36,7 +37,7 @@ class MigrationHelper
      */
     public function initializeTables(): array
     {
-        if(empty($this->databaseMigrationPath)) {
+        if (empty($this->databaseMigrationPath)) {
             $this->databaseMigrationPath = [database_path('migrations')];
         }
 
