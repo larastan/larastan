@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Add support for additional database migrations paths using `additionalDatabaseMigrationPaths`.
+
 ### [0.6.13] - 2021-01-22
 
 ### Added
