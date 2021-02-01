@@ -16,30 +16,19 @@ class MigrationHelper
     /** @var CachedParser */
     private $parser;
 
-    /** @var ?string */
+    /** @var string[] */
     private $databaseMigrationPath;
 
     /** @var string */
     private $currentWorkingDirectory;
 
     /**
-     * @var string[]
+     * @param string[] $databaseMigrationPath
      */
-    private $additionalDatabaseMigrationPaths;
-
-    /**
-     * @param string[] $additionalDatabaseMigrationPaths
-     */
-    public function __construct(
-        CachedParser $parser,
-        string $currentWorkingDirectory,
-        ?string $databaseMigrationPath,
-        array $additionalDatabaseMigrationPaths = []
-    ) {
+    public function __construct(CachedParser $parser, string $currentWorkingDirectory, array $databaseMigrationPath) {
         $this->parser = $parser;
         $this->databaseMigrationPath = $databaseMigrationPath;
         $this->currentWorkingDirectory = $currentWorkingDirectory;
-        $this->additionalDatabaseMigrationPaths = $additionalDatabaseMigrationPaths;
     }
 
     /**
@@ -47,18 +36,17 @@ class MigrationHelper
      */
     public function initializeTables(): array
     {
-        if ($this->databaseMigrationPath !== null) {
-            $this->databaseMigrationPath = $this->getFileHelper()->absolutizePath($this->databaseMigrationPath);
-        } else {
-            $this->databaseMigrationPath = database_path('migrations');
-        }
-
-        if (! is_dir($this->databaseMigrationPath)) {
-            return [];
+        if(empty($this->databaseMigrationPath)) {
+            $this->databaseMigrationPath = [database_path('migrations')];
         }
 
         $schemaAggregator = new SchemaAggregator();
-        $filesArray = $this->getMigrationFiles($this->databaseMigrationPath);
+        $filesArray = $this->getMigrationFiles();
+
+        if (empty($filesArray)) {
+            return [];
+        }
+
         ksort($filesArray);
 
         $this->requireFiles($filesArray);
@@ -71,23 +59,22 @@ class MigrationHelper
     }
 
     /**
-     * @param string $path
-     *
      * @return SplFileInfo[]
      */
-    private function getMigrationFiles(string $path): array
+    private function getMigrationFiles(): array
     {
-        $migrationFiles = iterator_to_array(
-            new RegexIterator(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path)), '/\.php$/i')
-        );
+        $migrationFiles = [];
 
-        foreach ($this->additionalDatabaseMigrationPaths as $additionalPath) {
-            $migrationFiles += iterator_to_array(
-                new RegexIterator(
-                    new RecursiveIteratorIterator(new RecursiveDirectoryIterator($additionalPath)),
-                    '/\.php$/i'
-                )
-            );
+        foreach ($this->databaseMigrationPath as $additionalPath) {
+            $absolutePath = $this->getFileHelper()->absolutizePath($additionalPath);
+            if (is_dir($absolutePath)) {
+                $migrationFiles += iterator_to_array(
+                    new RegexIterator(
+                        new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
+                        '/\.php$/i'
+                    )
+                );
+            }
         }
 
         return $migrationFiles;

@@ -46,16 +46,14 @@ parameters:
     noUnnecessaryCollectionCall: true
     noUnnecessaryCollectionCallOnly: []
     noUnnecessaryCollectionCallExcept: []
-    databaseMigrationsPath: null
-    additionalDatabaseMigrationPaths: []
+    databaseMigrationsPath: []
     checkModelProperties: false
 
 parametersSchema:
     noUnnecessaryCollectionCall: bool()
     noUnnecessaryCollectionCallOnly: listOf(string())
     noUnnecessaryCollectionCallExcept: listOf(string())
-    databaseMigrationsPath: schema(anyOf(string()), nullable())
-    additionalDatabaseMigrationPaths: listOf(string())
+    databaseMigrationsPath: listOf(string())
     checkModelProperties: bool()
 
 conditionalTags:
@@ -335,7 +333,6 @@ services:
         arguments:
             databaseMigrationPath: %databaseMigrationsPath%
             currentWorkingDirectory: %currentWorkingDirectory%
-            additionalDatabaseMigrationPaths: %additionalDatabaseMigrationPaths%
 
     -
         class: NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertiesRuleHelper

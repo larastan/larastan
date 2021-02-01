@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
-- Add support for additional database migrations paths using `additionalDatabaseMigrationPaths`.
+- BREAKING: Changed `databaseMigrationsPath` to be an array instead of a string, so it allows multiple directories.
 
 ### [0.6.13] - 2021-01-22
 
