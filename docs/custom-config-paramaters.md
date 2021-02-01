@@ -15,7 +15,7 @@ You can give absolute paths, or paths relative to the PHPStan config file.
 #### Example
 ```neon
 parameters:
-    additionalDatabaseMigrationPaths:
+    databaseMigrationsPath:
         - app/Domain/DomainA/migrations
         - app/Domain/DomainB/migrations
 ```
