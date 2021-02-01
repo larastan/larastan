@@ -46,14 +46,14 @@ parameters:
     noUnnecessaryCollectionCall: true
     noUnnecessaryCollectionCallOnly: []
     noUnnecessaryCollectionCallExcept: []
-    databaseMigrationsPath: null
+    databaseMigrationsPath: []
     checkModelProperties: false
 
 parametersSchema:
     noUnnecessaryCollectionCall: bool()
     noUnnecessaryCollectionCallOnly: listOf(string())
     noUnnecessaryCollectionCallExcept: listOf(string())
-    databaseMigrationsPath: schema(anyOf(string()), nullable())
+    databaseMigrationsPath: listOf(string())
     checkModelProperties: bool()
 
 conditionalTags:
