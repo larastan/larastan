@@ -1,0 +1,36 @@
+<?php
+
+namespace Illuminate\Support\Traits;
+
+use Illuminate\Support\HigherOrderCollectionProxy;
+
+/**
+ * @template TModel
+ * @property-read HigherOrderCollectionProxy<'average', TModel> $average
+ * @property-read HigherOrderCollectionProxy<'avg', TModel> $avg
+ * @property-read HigherOrderCollectionProxy<'contains', TModel> $contains
+ * @property-read HigherOrderCollectionProxy<'each', TModel> $each
+ * @property-read HigherOrderCollectionProxy<'every', TModel> $every
+ * @property-read HigherOrderCollectionProxy<'filter', TModel> $filter
+ * @property-read HigherOrderCollectionProxy<'first', TModel> $first
+ * @property-read HigherOrderCollectionProxy<'flatMap', TModel> $flatMap
+ * @property-read HigherOrderCollectionProxy<'groupBy', TModel> $groupBy
+ * @property-read HigherOrderCollectionProxy<'keyBy', TModel> $keyBy
+ * @property-read HigherOrderCollectionProxy<'map', TModel> $map
+ * @property-read HigherOrderCollectionProxy<'max', TModel> $max
+ * @property-read HigherOrderCollectionProxy<'min', TModel> $min
+ * @property-read HigherOrderCollectionProxy<'partition', TModel> $partition
+ * @property-read HigherOrderCollectionProxy<'reject', TModel> $reject
+ * @property-read HigherOrderCollectionProxy<'some', TModel> $some
+ * @property-read HigherOrderCollectionProxy<'sortBy', TModel> $sortBy
+ * @property-read HigherOrderCollectionProxy<'sortByDesc', TModel> $sortByDesc
+ * @property-read HigherOrderCollectionProxy<'skipUntil', TModel> $skipUntil
+ * @property-read HigherOrderCollectionProxy<'skipWhile', TModel> $skipWhile
+ * @property-read HigherOrderCollectionProxy<'sum', TModel> $sum
+ * @property-read HigherOrderCollectionProxy<'takeUntil', TModel> $takeUntil
+ * @property-read HigherOrderCollectionProxy<'takeWhile', TModel> $takeWhile
+ * @property-read HigherOrderCollectionProxy<'unique', TModel> $unique
+ * @property-read HigherOrderCollectionProxy<'until', TModel> $until
+ */
+trait EnumeratesValues
+{}

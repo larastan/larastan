@@ -66,6 +66,7 @@ class User extends Authenticatable
         return $this->belongsTo(Group::class);
     }
 
+    /** @phpstan-return HasMany<Account> */
     public function accounts(): HasMany
     {
         return $this->hasMany(Account::class);
@@ -124,5 +125,15 @@ class User extends Authenticatable
     public function getOnlyAvailableWithAccessorAttribute(): string
     {
         return 'foo';
+    }
+
+    public function isActive(): bool
+    {
+        return $this->active === 1;
+    }
+
+    public function setActive(): void
+    {
+        $this->active = 1;
     }
 }

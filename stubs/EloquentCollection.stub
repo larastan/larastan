@@ -2,12 +2,18 @@
 
 namespace Illuminate\Database\Eloquent;
 
+use Illuminate\Support\Traits\EnumeratesValues;
+
 /**
  * @template TModel
  * @extends \Illuminate\Support\Collection<int, TModel>
  */
 class Collection extends \Illuminate\Support\Collection
 {
+
+    /** @phpstan-use EnumeratesValues<TModel> */
+    use EnumeratesValues;
+
     /**
      * @param  mixed  $key
      * @param  mixed  $default
