@@ -22,7 +22,7 @@ parameters:
         - stubs/MorphToMany.stub
         - stubs/MorphMany.stub
         - stubs/Helpers.stub
-        - stubs/HigherOrderTapProxy.stub
+        - stubs/HigherOrderProxies.stub
         - stubs/QueryBuilder.stub
         - stubs/Facades.stub
         - stubs/Pagination.stub
@@ -30,6 +30,7 @@ parameters:
         - stubs/Contracts/Support.stub
         - stubs/Redis/Connection.stub
         - stubs/Logger.stub
+        - stubs/EnumeratesValues.stub
     scopeClass: NunoMaduro\Larastan\Analyser\Scope
     universalObjectCratesClasses:
         - Illuminate\Http\Request
@@ -86,6 +87,11 @@ services:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
+        class: NunoMaduro\Larastan\Methods\HigherOrderCollectionProxyExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+
+    -
         class: NunoMaduro\Larastan\Methods\StorageMethodsClassReflectionExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
@@ -107,6 +113,11 @@ services:
 
     -
         class: NunoMaduro\Larastan\Properties\Extension
+        tags:
+            - phpstan.broker.propertiesClassReflectionExtension
+
+    -
+        class: NunoMaduro\Larastan\Properties\HigherOrderCollectionProxyPropertyExtension
         tags:
             - phpstan.broker.propertiesClassReflectionExtension
 
