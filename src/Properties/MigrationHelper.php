@@ -23,7 +23,7 @@ class MigrationHelper
     private $currentWorkingDirectory;
 
     /**
-     * @var string[] $additionalDatabaseMigrationPaths
+     * @var string[]
      */
     private $additionalDatabaseMigrationPaths;
 
@@ -53,7 +53,7 @@ class MigrationHelper
             $this->databaseMigrationPath = database_path('migrations');
         }
 
-        if (!is_dir($this->databaseMigrationPath)) {
+        if (! is_dir($this->databaseMigrationPath)) {
             return [];
         }
 

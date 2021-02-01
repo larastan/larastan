@@ -69,7 +69,7 @@ class MigrationHelperTest extends TestCase
     /** @test */
     public function it_can_read_additional_directories(): void
     {
-        $migrationHelper = new MigrationHelper($this->cachedParser, '', __DIR__ . '/data/basic_migration', [
+        $migrationHelper = new MigrationHelper($this->cachedParser, '', __DIR__.'/data/basic_migration', [
             __DIR__.'/data/additional_migrations',
         ]);
 
