@@ -18,6 +18,20 @@ parameters:
     databaseMigrationsPath: ../custom/migrations/path
 ```
 
+## `additionalDatabaseMigrationPaths`
+
+If your Laravel configuration uses database paths in multiple directories, you can extend `databaseMigrationsPath` by setting `additionalDatabaseMigrationPaths`.
+
+You can give absolute paths, or paths relative to the PHPStan config file.
+
+#### Example
+```neon
+parameters:
+    additionalDatabaseMigrationPaths:
+        - app/Domain/DomainA/migrations
+        - app/Domain/DomainB/migrations
+```
+
 ## `checkModelProperties`
 **default**: `false`
 

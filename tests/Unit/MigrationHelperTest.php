@@ -66,6 +66,20 @@ class MigrationHelperTest extends TestCase
         self::assertSame('int', $tables['users']->columns['active']->readableType);
     }
 
+    /** @test */
+    public function it_can_read_additional_directories(): void
+    {
+        $migrationHelper = new MigrationHelper($this->cachedParser, '', __DIR__ . '/data/basic_migration', [
+            __DIR__.'/data/additional_migrations',
+        ]);
+
+        $tables = $migrationHelper->initializeTables();
+
+        self::assertCount(2, $tables);
+        self::assertArrayHasKey('users', $tables);
+        self::assertArrayHasKey('teams', $tables);
+    }
+
     /**
      * @param array<string, SchemaTable> $tables
      */

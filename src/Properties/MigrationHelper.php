@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Properties;
 
-use Iterator;
 use PHPStan\File\FileHelper;
 use PHPStan\Parser\CachedParser;
 use RecursiveDirectoryIterator;
@@ -23,11 +22,24 @@ class MigrationHelper
     /** @var string */
     private $currentWorkingDirectory;
 
-    public function __construct(CachedParser $parser, string $currentWorkingDirectory, ?string $databaseMigrationPath)
-    {
+    /**
+     * @var string[] $additionalDatabaseMigrationPaths
+     */
+    private $additionalDatabaseMigrationPaths;
+
+    /**
+     * @param string[] $additionalDatabaseMigrationPaths
+     */
+    public function __construct(
+        CachedParser $parser,
+        string $currentWorkingDirectory,
+        ?string $databaseMigrationPath,
+        array $additionalDatabaseMigrationPaths = []
+    ) {
         $this->parser = $parser;
         $this->databaseMigrationPath = $databaseMigrationPath;
         $this->currentWorkingDirectory = $currentWorkingDirectory;
+        $this->additionalDatabaseMigrationPaths = $additionalDatabaseMigrationPaths;
     }
 
     /**
@@ -41,13 +53,12 @@ class MigrationHelper
             $this->databaseMigrationPath = database_path('migrations');
         }
 
-        if (! is_dir($this->databaseMigrationPath)) {
+        if (!is_dir($this->databaseMigrationPath)) {
             return [];
         }
 
         $schemaAggregator = new SchemaAggregator();
-        $files = $this->getMigrationFiles($this->databaseMigrationPath);
-        $filesArray = iterator_to_array($files);
+        $filesArray = $this->getMigrationFiles($this->databaseMigrationPath);
         ksort($filesArray);
 
         $this->requireFiles($filesArray);
@@ -62,11 +73,24 @@ class MigrationHelper
     /**
      * @param string $path
      *
-     * @return Iterator<SplFileInfo>
+     * @return SplFileInfo[]
      */
-    private function getMigrationFiles(string $path): Iterator
+    private function getMigrationFiles(string $path): array
     {
-        return new RegexIterator(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path)), '/\.php$/i');
+        $migrationFiles = iterator_to_array(
+            new RegexIterator(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path)), '/\.php$/i')
+        );
+
+        foreach ($this->additionalDatabaseMigrationPaths as $additionalPath) {
+            $migrationFiles += iterator_to_array(
+                new RegexIterator(
+                    new RecursiveIteratorIterator(new RecursiveDirectoryIterator($additionalPath)),
+                    '/\.php$/i'
+                )
+            );
+        }
+
+        return $migrationFiles;
     }
 
     /**
