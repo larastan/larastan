@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Changed
+- Updated php phpstan/phpstan from v0.12.65 -> v0.12.70 ([phpstan/releases/tag/0.12.7](https://github.com/phpstan/phpstan/releases/tag/0.12.7))
 
 ### Added
 
