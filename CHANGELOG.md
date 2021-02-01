@@ -5,14 +5,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+## [0.7.0] - 2021-02-01
 ### Changed
-- Updated php phpstan/phpstan from v0.12.65 -> v0.12.70 ([phpstan/releases/tag/0.12.7](https://github.com/phpstan/phpstan/releases/tag/0.12.7))
+- Updated `phpstan/phpstan` from v0.12.65 to v0.12.70 ([#774](https://github.com/nunomaduro/larastan/pull/774)) Thanks @chrisp-github
 
 ### Added
 
-- BREAKING: Changed `databaseMigrationsPath` to be an array instead of a string, so it allows multiple directories.
+- **BREAKING**: Changed `databaseMigrationsPath` to be an array instead of a string, so it allows multiple directories. ([#777](https://github.com/nunomaduro/larastan/pull/777)) Thanks @haringsrob
+- Support for Log facade ([#771](https://github.com/nunomaduro/larastan/pull/771)) Thanks @Pe46dro
 
-### [0.6.13] - 2021-01-22
+## [0.6.13] - 2021-01-22
 
 ### Added
 
@@ -30,7 +33,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Fixed insertOrIgnore typehint ([#756](https://github.com/nunomaduro/larastan/pull/756)) Thanks @bistory
 - Fix BelongsToMany stub's file name ([#736](https://github.com/nunomaduro/larastan/pull/736)) Thanks @szepeviktor
 
-### [0.6.12] - 2021-01-03
+## [0.6.12] - 2021-01-03
 
 ### Added
 
@@ -40,7 +43,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Search missing method also in templated model ([#739](https://github.com/nunomaduro/larastan/pull/739))
 
-### [0.6.11] - 2020-12-07
+## [0.6.11] - 2020-12-07
 
 ### Added
 
@@ -511,7 +514,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.6.13...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/nunomaduro/larastan/compare/v0.6.13...v0.7.0
 [0.6.13]: https://github.com/nunomaduro/larastan/compare/v0.6.12...v0.6.13
 [0.6.12]: https://github.com/nunomaduro/larastan/compare/v0.6.11...v0.6.12
 [0.6.11]: https://github.com/nunomaduro/larastan/compare/v0.6.10...v0.6.11
