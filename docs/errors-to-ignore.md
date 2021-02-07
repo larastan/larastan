@@ -7,7 +7,7 @@ If you hit those errors in your project, you can add them to your `phpstan.neon`
 
 ### Higher Order Messages
 
-This comes up when using [higher order messages](https://laravel.com/docs/collections#higher-order-messages). 
+Although Larastan has support for [HigherOrderCollectionProxy](https://laravel.com/docs/collections#higher-order-messages), you can still have some errors if you are using higher order messages with `Support\Collection` rather than `Eloquent\Collection` . 
 
 ```neon
 - '#Call to an undefined method Illuminate\\Support\\HigherOrder#'
