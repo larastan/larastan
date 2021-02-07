@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Features\Properties;
 
-
-use App\Group;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use function PHPStan\dumpType;
 
 class HigherOrderCollectionProxyProperties
 {

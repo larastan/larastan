@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
-use Illuminate\Database\Eloquent\Collection;
 use NunoMaduro\Larastan\Support\HigherOrderCollectionProxyHelper;
 use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\ClassReflection;
@@ -106,7 +105,7 @@ class HigherOrderCollectionProxyExtension implements MethodsClassReflectionExten
                         ParametersAcceptorSelector::selectSingle($this->modelMethodReflection->getVariants())->getParameters(),
                         ParametersAcceptorSelector::selectSingle($this->modelMethodReflection->getVariants())->isVariadic(),
                         $this->returnType
-                    )
+                    ),
                 ];
             }
 

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Properties;
 
-use Illuminate\Database\Eloquent\Collection;
 use NunoMaduro\Larastan\Support\HigherOrderCollectionProxyHelper;
 use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\ClassReflection;
@@ -43,7 +42,8 @@ class HigherOrderCollectionProxyPropertyExtension implements PropertiesClassRefl
             /** @var Type\Type */
             private $returnType;
 
-            public function __construct(Type\ObjectType $modelType, Type\Type $returnType) {
+            public function __construct(Type\ObjectType $modelType, Type\Type $returnType)
+            {
                 $this->modelType = $modelType;
                 $this->returnType = $returnType;
             }

@@ -80,13 +80,13 @@ class HigherOrderCollectionProxyHelper
             case 'groupBy':
             case 'partition':
                 $returnType = new Type\Generic\GenericObjectType(Collection::class, [
-                    new Type\Generic\GenericObjectType(Collection::class, [$modelType])
+                    new Type\Generic\GenericObjectType(Collection::class, [$modelType]),
                 ]);
                 break;
             case 'map':
                 $returnType = new Type\Generic\GenericObjectType(\Illuminate\Support\Collection::class, [
                     new Type\IntegerType(),
-                    $methodOrPropertyReturnType
+                    $methodOrPropertyReturnType,
                 ]);
                 break;
             case 'max':
