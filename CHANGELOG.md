@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+- Support for HigherOrderCollectionProxy ([#781](https://github.com/nunomaduro/larastan/pull/781))
+
 ## [0.7.0] - 2021-02-01
 ### Changed
 - Updated `phpstan/phpstan` from v0.12.65 to v0.12.70 ([#774](https://github.com/nunomaduro/larastan/pull/774)) Thanks @chrisp-github
