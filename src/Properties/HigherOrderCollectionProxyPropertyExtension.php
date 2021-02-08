@@ -29,7 +29,7 @@ class HigherOrderCollectionProxyPropertyExtension implements PropertiesClassRefl
         $methodType = $activeTemplateTypeMap->getType('T');
 
         /** @var Type\ObjectType $modelType */
-        $modelType = $activeTemplateTypeMap->getType('TModel');
+        $modelType = $activeTemplateTypeMap->getType('TValue');
 
         $propertyType = $modelType->getProperty($propertyName, new OutOfClassScope())->getReadableType();
 

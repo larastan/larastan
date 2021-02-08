@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Features\Methods;
 
-use App\Account;
+use App\Importer;
 use App\User;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection as SupportCollection;
 
 class HigherOrderCollectionProxyMethods
 {
@@ -46,8 +46,8 @@ class HigherOrderCollectionProxyMethods
         return $this->users->first->isActive();
     }
 
-    /** @return \Illuminate\Support\Collection<int, mixed> */
-    public function testFlatMap(): \Illuminate\Support\Collection
+    /** @return SupportCollection */
+    public function testFlatMap(): SupportCollection
     {
         return $this->users->flatMap->isActive();
     }
@@ -64,20 +64,20 @@ class HigherOrderCollectionProxyMethods
         return $this->users->keyBy->isActive();
     }
 
-    /** @return \Illuminate\Support\Collection<int, bool> */
-    public function testMapWithBoolMethod(): \Illuminate\Support\Collection
+    /** @return SupportCollection */
+    public function testMapWithBoolMethod(): SupportCollection
     {
         return $this->users->map->isActive();
     }
 
-    /** @return \Illuminate\Support\Collection<int, HasMany<Account>> */
-    public function testMapWithRelationMethod(): \Illuminate\Support\Collection
+    /** @return SupportCollection */
+    public function testMapWithRelationMethod(): SupportCollection
     {
         return $this->users->map->accounts();
     }
 
-    /** @return \Illuminate\Support\Collection<int, int> */
-    public function testMapWithIntegerMethod(): \Illuminate\Support\Collection
+    /** @return SupportCollection */
+    public function testMapWithIntegerMethod(): SupportCollection
     {
         return $this->users->map->id();
     }
@@ -143,5 +143,50 @@ class HigherOrderCollectionProxyMethods
     public function testUnique(): Collection
     {
         return $this->users->unique->isActive();
+    }
+
+    /**
+     * @param SupportCollection $collection
+     *
+     * @return SupportCollection
+     */
+    public function testMapWithSupportCollection(SupportCollection $collection): SupportCollection
+    {
+        return $collection->map->import();
+    }
+
+    /**
+     * @param SupportCollection $collection
+     * @return SupportCollection
+     */
+    public function testEachWithSupportCollection(SupportCollection $collection): SupportCollection
+    {
+        return $collection->each->import();
+    }
+
+    /**
+     * @param SupportCollection $collection
+     * @return SupportCollection
+     */
+    public function testKeyByWithSupportCollection(SupportCollection $collection): SupportCollection
+    {
+        return $collection->keyBy->getKey();
+    }
+
+    /**
+     * @param SupportCollection $collection
+     * @return SupportCollection
+     */
+    public function testFilterWithSupportCollection(SupportCollection $collection): SupportCollection
+    {
+        return $collection->filter->isImported();
+    }
+
+    /**
+     * @return SupportCollection<int, Importer>
+     */
+    public function testFilterWithSupportCollectionWithUnknownType(SupportCollection $collection): SupportCollection
+    {
+        return $collection->filter->isImported(); //Intentional typo
     }
 }

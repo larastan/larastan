@@ -6,6 +6,7 @@ namespace NunoMaduro\Larastan\Support;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\HigherOrderCollectionProxy;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type;
@@ -28,26 +29,36 @@ class HigherOrderCollectionProxyHelper
         }
 
         $methodType = $activeTemplateTypeMap->getType('T');
-        /** @var ?Type\ObjectType $modelType */
-        $modelType = $activeTemplateTypeMap->getType('TModel');
+        $valueType = $activeTemplateTypeMap->getType('TValue');
 
-        if (($methodType === null) || ($modelType === null)) {
+        if (($methodType === null) || ($valueType === null)) {
             return false;
         }
 
-        if (! (new Type\ObjectType(Model::class))->isSuperTypeOf($modelType)->yes()) {
+        if (! $methodType instanceof Type\Constant\ConstantStringType) {
+            return false;
+        }
+
+        if (! $valueType->canCallMethods()->yes()) {
             return false;
         }
 
         if ($propertyOrMethod === 'method') {
-            return $modelType->hasMethod($name)->yes();
+            return $valueType->hasMethod($name)->yes();
         }
 
-        return $modelType->hasProperty($name)->yes();
+        return $valueType->hasProperty($name)->yes();
     }
 
-    public static function determineReturnType(string $name, Type\Type $modelType, Type\Type $methodOrPropertyReturnType): Type\Type
+    public static function determineReturnType(string $name, Type\Type $valueType, Type\Type $methodOrPropertyReturnType): Type\Type
     {
+        if ((new Type\ObjectType(Model::class))->isSuperTypeOf($valueType)->yes()) {
+            $collectionType = Collection::class;
+            $types = [$valueType];
+        } else {
+            $collectionType = SupportCollection::class;
+            $types = [new Type\IntegerType(), $valueType];
+        }
         switch ($name) {
             case 'average':
             case 'avg':
@@ -60,7 +71,6 @@ class HigherOrderCollectionProxyHelper
                 break;
             case 'each':
             case 'filter':
-            case 'keyBy':
             case 'reject':
             case 'skipUntil':
             case 'skipWhile':
@@ -69,22 +79,35 @@ class HigherOrderCollectionProxyHelper
             case 'takeUntil':
             case 'takeWhile':
             case 'unique':
-                $returnType = new Type\Generic\GenericObjectType(Collection::class, [$modelType]);
+                $returnType = new Type\Generic\GenericObjectType($collectionType, $types);
+                break;
+            case 'keyBy':
+                if ($collectionType === SupportCollection::class) {
+                    $returnType = new Type\Generic\GenericObjectType($collectionType, [$methodOrPropertyReturnType, $valueType]);
+                } else {
+                    $returnType = new Type\Generic\GenericObjectType($collectionType, $types);
+                }
                 break;
             case 'first':
-                $returnType = Type\TypeCombinator::addNull($modelType);
+                $returnType = Type\TypeCombinator::addNull($valueType);
                 break;
             case 'flatMap':
-                $returnType = new Type\Generic\GenericObjectType(\Illuminate\Support\Collection::class, [new Type\IntegerType(), new Type\MixedType()]);
+                $returnType = new Type\Generic\GenericObjectType(SupportCollection::class, [new Type\IntegerType(), new Type\MixedType()]);
                 break;
             case 'groupBy':
             case 'partition':
-                $returnType = new Type\Generic\GenericObjectType(Collection::class, [
-                    new Type\Generic\GenericObjectType(Collection::class, [$modelType]),
-                ]);
+                $innerTypes = [
+                    new Type\Generic\GenericObjectType($collectionType, $types),
+                ];
+
+                if ($collectionType === SupportCollection::class) {
+                    array_unshift($innerTypes, new Type\IntegerType());
+                }
+
+                $returnType = new Type\Generic\GenericObjectType($collectionType, $innerTypes);
                 break;
             case 'map':
-                $returnType = new Type\Generic\GenericObjectType(\Illuminate\Support\Collection::class, [
+                $returnType = new Type\Generic\GenericObjectType(SupportCollection::class, [
                     new Type\IntegerType(),
                     $methodOrPropertyReturnType,
                 ]);

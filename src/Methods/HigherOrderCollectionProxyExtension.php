@@ -14,7 +14,7 @@ use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type;
 
-class HigherOrderCollectionProxyExtension implements MethodsClassReflectionExtension
+final class HigherOrderCollectionProxyExtension implements MethodsClassReflectionExtension
 {
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
@@ -30,17 +30,16 @@ class HigherOrderCollectionProxyExtension implements MethodsClassReflectionExten
         /** @var Type\Constant\ConstantStringType $methodType */
         $methodType = $activeTemplateTypeMap->getType('T');
 
-        /** @var Type\ObjectType $modelType */
-        $modelType = $activeTemplateTypeMap->getType('TModel');
+        /** @var Type\ObjectType $valueType */
+        $valueType = $activeTemplateTypeMap->getType('TValue');
 
-        $modelMethodReflection = $modelType->getMethod($methodName, new OutOfClassScope());
+        $modelMethodReflection = $valueType->getMethod($methodName, new OutOfClassScope());
 
         $modelMethodReturnType = ParametersAcceptorSelector::selectSingle($modelMethodReflection->getVariants())->getReturnType();
 
-        $returnType = HigherOrderCollectionProxyHelper::determineReturnType($methodType->getValue(), $modelType, $modelMethodReturnType);
+        $returnType = HigherOrderCollectionProxyHelper::determineReturnType($methodType->getValue(), $valueType, $modelMethodReturnType);
 
-        /** @phpstan-ignore-next-line */
-        return new class($modelType->getClassReflection(), $methodName, $modelMethodReflection, $returnType) implements MethodReflection {
+        return new class($classReflection, $methodName, $modelMethodReflection, $returnType) implements MethodReflection {
             /** @var ClassReflection */
             private $classReflection;
 
