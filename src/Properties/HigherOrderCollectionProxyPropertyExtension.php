@@ -12,7 +12,7 @@ use PHPStan\Reflection\PropertyReflection;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type;
 
-class HigherOrderCollectionProxyPropertyExtension implements PropertiesClassReflectionExtension
+final class HigherOrderCollectionProxyPropertyExtension implements PropertiesClassReflectionExtension
 {
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
     {
@@ -35,23 +35,22 @@ class HigherOrderCollectionProxyPropertyExtension implements PropertiesClassRefl
 
         $returnType = HigherOrderCollectionProxyHelper::determineReturnType($methodType->getValue(), $modelType, $propertyType);
 
-        return new class($modelType, $returnType) implements PropertyReflection {
-            /** @var Type\ObjectType */
-            private $modelType;
+        return new class($classReflection, $returnType) implements PropertyReflection {
+            /** @var ClassReflection */
+            private $classReflection;
 
             /** @var Type\Type */
             private $returnType;
 
-            public function __construct(Type\ObjectType $modelType, Type\Type $returnType)
+            public function __construct(ClassReflection $classReflection, Type\Type $returnType)
             {
-                $this->modelType = $modelType;
+                $this->classReflection = $classReflection;
                 $this->returnType = $returnType;
             }
 
             public function getDeclaringClass(): \PHPStan\Reflection\ClassReflection
             {
-                /** @phpstan-ignore-next-line */
-                return $this->modelType->getClassReflection();
+                return $this->classReflection;
             }
 
             public function isStatic(): bool
