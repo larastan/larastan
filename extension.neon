@@ -9,7 +9,7 @@ parameters:
         - stubs/Gate.stub
         - stubs/Relation.stub
         - stubs/BelongsTo.stub
-        - stubs/BelongstoMany.stub
+        - stubs/BelongsToMany.stub
         - stubs/HasOneOrMany.stub
         - stubs/HasMany.stub
         - stubs/HasOne.stub
@@ -22,20 +22,22 @@ parameters:
         - stubs/MorphToMany.stub
         - stubs/MorphMany.stub
         - stubs/Helpers.stub
-        - stubs/HigherOrderTapProxy.stub
+        - stubs/HigherOrderProxies.stub
         - stubs/QueryBuilder.stub
         - stubs/Facades.stub
         - stubs/Pagination.stub
         - stubs/Contracts/Pagination.stub
         - stubs/Contracts/Support.stub
         - stubs/Redis/Connection.stub
+        - stubs/Logger.stub
+        - stubs/EnumeratesValues.stub
     scopeClass: NunoMaduro\Larastan\Analyser\Scope
     universalObjectCratesClasses:
         - Illuminate\Http\Request
     earlyTerminatingFunctionCalls:
         - abort
         - dd
-    excludes_analyse:
+    excludePaths:
         - *.blade.php
     mixinExcludeClasses:
         - Eloquent
@@ -45,14 +47,14 @@ parameters:
     noUnnecessaryCollectionCall: true
     noUnnecessaryCollectionCallOnly: []
     noUnnecessaryCollectionCallExcept: []
-    databaseMigrationsPath: null
+    databaseMigrationsPath: []
     checkModelProperties: false
 
 parametersSchema:
     noUnnecessaryCollectionCall: bool()
     noUnnecessaryCollectionCallOnly: listOf(string())
     noUnnecessaryCollectionCallExcept: listOf(string())
-    databaseMigrationsPath: schema(anyOf(string()), nullable())
+    databaseMigrationsPath: listOf(string())
     checkModelProperties: bool()
 
 conditionalTags:
@@ -85,6 +87,11 @@ services:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
+        class: NunoMaduro\Larastan\Methods\HigherOrderCollectionProxyExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+
+    -
         class: NunoMaduro\Larastan\Methods\StorageMethodsClassReflectionExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
@@ -106,6 +113,11 @@ services:
 
     -
         class: NunoMaduro\Larastan\Properties\Extension
+        tags:
+            - phpstan.broker.propertiesClassReflectionExtension
+
+    -
+        class: NunoMaduro\Larastan\Properties\HigherOrderCollectionProxyPropertyExtension
         tags:
             - phpstan.broker.propertiesClassReflectionExtension
 

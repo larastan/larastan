@@ -1,5 +1,11 @@
 # Upgrade Guide
 
+## Upgrading to `0.7.0`
+
+### `databaseMigrationsPath` parameter is now an array
+
+`databaseMigrationsPath` parameter is changed to be an `array` from `string`. To allow multiple migration paths.
+
 ## Upgrading to 0.6
 
 In previous versions of Larastan, `reportUnmatchedIgnoredErrors` config value was set to `false` by Larastan. Larastan no longer ignores errors on your behalf. Here is how you can fix them yourself:

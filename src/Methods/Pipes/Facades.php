@@ -32,7 +32,7 @@ final class Facades implements PipeContract
             }
 
             if (! $found && Str::startsWith($passable->getMethodName(), 'assert')) {
-                $fakeFacadeClass = $this->getFake($classReflection->getName());
+                $fakeFacadeClass = $this->getFake($facadeClass);
 
                 if ($passable->getBroker()->hasClass($fakeFacadeClass)) {
                     $found = $passable->sendToPipeline($fakeFacadeClass, true);
@@ -49,6 +49,6 @@ final class Facades implements PipeContract
     {
         $shortClassName = substr($facade, strrpos($facade, '\\') + 1);
 
-        return sprintf("\Illuminate\Support\Testing\Fakes\%sFake", $shortClassName);
+        return sprintf('\\Illuminate\\Support\\Testing\\Fakes\\%sFake', $shortClassName);
     }
 }

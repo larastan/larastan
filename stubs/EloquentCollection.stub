@@ -2,34 +2,40 @@
 
 namespace Illuminate\Database\Eloquent;
 
+use Illuminate\Support\Traits\EnumeratesValues;
+
 /**
- * @template TModel
- * @extends \Illuminate\Support\Collection<int, TModel>
+ * @template TValue
+ * @extends \Illuminate\Support\Collection<int, TValue>
  */
 class Collection extends \Illuminate\Support\Collection
 {
+
+    /** @phpstan-use EnumeratesValues<TValue> */
+    use EnumeratesValues;
+
     /**
      * @param  mixed  $key
      * @param  mixed  $default
-     * @phpstan-return TModel|null
+     * @phpstan-return TValue|null
      */
     public function find($key, $default = null) {}
 
     /**
      * @template TReturn
-     * @param callable(TModel, int): TReturn $callable
+     * @param callable(TValue, int): TReturn $callable
      * @return static<TReturn>|\Illuminate\Support\Collection<int, TReturn>
      */
     public function map($callable) {}
 
     /**
-     * @param callable(TModel, int): array<mixed> $callback
+     * @param callable(TValue, int): array<mixed> $callback
      * @return \Illuminate\Support\Collection<mixed, static<mixed>>
      */
     public function mapToGroups(callable $callback) {}
 
     /**
-     * @param callable(TModel, int): mixed $callback
+     * @param callable(TValue, int): mixed $callback
      * @return \Illuminate\Support\Collection<mixed, mixed>
      */
     public function flatMap(callable $callback) {}

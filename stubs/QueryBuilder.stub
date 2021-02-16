@@ -394,7 +394,7 @@ class Builder
      * Add a "where in raw" clause for integer values to the query.
      *
      * @param  string  $column
-     * @param  \Illuminate\Contracts\Support\Arrayable|array<string, mixed>  $values
+     * @param  \Illuminate\Contracts\Support\Arrayable|array<int|string, mixed>  $values
      * @param  string  $boolean
      * @param  bool  $not
      * @return $this
@@ -406,7 +406,7 @@ class Builder
      * Add an "or where in raw" clause for integer values to the query.
      *
      * @param  string  $column
-     * @param  \Illuminate\Contracts\Support\Arrayable|array<string, mixed>  $values
+     * @param  \Illuminate\Contracts\Support\Arrayable|array<int|string, mixed>  $values
      * @return $this
      */
     public function orWhereIntegerInRaw($column, $values)
@@ -1293,7 +1293,7 @@ class Builder
     /**
      * Insert a new record into the database while ignoring errors.
      *
-     * @param  array<string, mixed>  $values
+     * @param  array<mixed>  $values
      * @return int
      */
     public function insertOrIgnore(array $values)
