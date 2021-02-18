@@ -170,7 +170,7 @@ class BuilderExtension
     public function testOrWhereWithQueryExpression(): Builder
     {
         return User::with('foo')
-            ->orWhere(\Illuminate\Support\Facades\DB::raw('name LIKE \'%baz%\''));
+            ->orWhere(\Illuminate\Support\Facades\DB::raw('name'), 'like', 'baz');
     }
 }
 

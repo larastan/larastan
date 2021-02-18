@@ -302,7 +302,7 @@ class ModelExtension
     public function testOrWhereWithQueryExpression(): ?User
     {
         return User::with('foo')
-            ->orWhere(\Illuminate\Support\Facades\DB::raw('name LIKE \'%john%\''))
+            ->orWhere(\Illuminate\Support\Facades\DB::raw('name'), 'like', '%john%')
             ->first();
     }
 }
