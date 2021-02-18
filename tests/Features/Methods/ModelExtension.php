@@ -298,6 +298,13 @@ class ModelExtension
     {
         return User::where('id', '>', 5)->newQuery();
     }
+
+    public function testOrWhereWithQueryExpression(): ?User
+    {
+        return User::with('foo')
+            ->orWhere(\Illuminate\Support\Facades\DB::raw('name LIKE \'%john%\''))
+            ->first();
+    }
 }
 
 function foo(): string
