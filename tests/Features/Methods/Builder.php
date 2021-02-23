@@ -7,6 +7,7 @@ namespace Tests\Features\Methods;
 use App\User;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Collection;
 use stdClass;
 
 class Builder
@@ -69,5 +70,49 @@ class Builder
     public function testWithTrashedOnBuilderWithModel(): EloquentBuilder
     {
         return User::query()->withTrashed();
+    }
+
+    public function testOrderByToBaseWithQueryExpression(): ?QueryBuilder
+    {
+        return User::whereNull('name')
+            ->orderBy(\Illuminate\Support\Facades\DB::raw('name'))
+            ->toBase();
+    }
+
+    public function testLatestToBaseWithQueryExpression(): ?QueryBuilder
+    {
+        return User::whereNull('name')
+            ->latest(\Illuminate\Support\Facades\DB::raw('created_at'))
+            ->toBase();
+    }
+
+    public function testOldestToBaseWithQueryExpression(): ?QueryBuilder
+    {
+        return User::whereNull('name')
+            ->oldest(\Illuminate\Support\Facades\DB::raw('created_at'))
+            ->toBase();
+    }
+
+    public function testPluckToBaseWithQueryExpression(): ?Collection
+    {
+        return User::whereNull('name')
+            ->pluck(\Illuminate\Support\Facades\DB::raw('created_at'))
+            ->toBase();
+    }
+
+    public function testIncrementWithQueryExpression(): int
+    {
+        /** @var User $user */
+        $user = new User;
+
+        return $user->increment(\Illuminate\Support\Facades\DB::raw('counter'));
+    }
+
+    public function testDecrementWithQueryExpression(): int
+    {
+        /** @var User $user */
+        $user = new User;
+
+        return $user->decrement(\Illuminate\Support\Facades\DB::raw('counter'));
     }
 }
