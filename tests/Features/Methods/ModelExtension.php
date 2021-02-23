@@ -318,6 +318,12 @@ class ModelExtension
         return User::with('foo')
             ->firstWhere(\Illuminate\Support\Facades\DB::raw('name'), 'like', '%john%');
     }
+
+    public function testValueWithQueryExpression(): ?string
+    {
+        return User::with('foo')
+            ->value(\Illuminate\Support\Facades\DB::raw('name'));
+    }
 }
 
 function foo(): string
