@@ -166,12 +166,6 @@ class BuilderExtension
     {
         return User::fromQuery('SELECT * FROM users');
     }
-
-    public function testOrWhereWithQueryExpression(): Builder
-    {
-        return User::with('foo')
-            ->orWhere(\Illuminate\Support\Facades\DB::raw('name'), 'like', 'baz');
-    }
 }
 
 /**
