@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use stdClass;
-use function PHPStan\dumpType;
 
 class Builder
 {
@@ -123,6 +122,7 @@ class Builder
         $innerQuery = null;
         User::query()->when($foo, static function (EloquentBuilder $query) use (&$innerQuery) {
             $innerQuery = $query;
+
             return $query->active();
         });
 
@@ -135,6 +135,7 @@ class Builder
         $innerQuery = null;
         User::query()->unless($foo, static function (EloquentBuilder $query) use (&$innerQuery) {
             $innerQuery = $query;
+
             return $query->active();
         });
 
