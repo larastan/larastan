@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use stdClass;
+use function PHPStan\dumpType;
 
 class Builder
 {
@@ -114,5 +115,29 @@ class Builder
         $user = new User;
 
         return $user->decrement(\Illuminate\Support\Facades\DB::raw('counter'));
+    }
+
+    /** @phpstan-return null|EloquentBuilder<User> */
+    public function testWhen(bool $foo): ?EloquentBuilder
+    {
+        $innerQuery = null;
+        User::query()->when($foo, static function (EloquentBuilder $query) use (&$innerQuery) {
+            $innerQuery = $query;
+            return $query->active();
+        });
+
+        return $innerQuery;
+    }
+
+    /** @phpstan-return null|EloquentBuilder<User> */
+    public function testUnless(bool $foo): ?EloquentBuilder
+    {
+        $innerQuery = null;
+        User::query()->unless($foo, static function (EloquentBuilder $query) use (&$innerQuery) {
+            $innerQuery = $query;
+            return $query->active();
+        });
+
+        return $innerQuery;
     }
 }

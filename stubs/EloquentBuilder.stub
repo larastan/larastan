@@ -184,4 +184,24 @@ class Builder
      * @return mixed
      */
     public function value($column);
+
+    /**
+     * Apply the callback's query changes if the given "value" is true.
+     *
+     * @param mixed  $value
+     * @param callable($this, mixed): null|Builder<TModelClass> $callback
+     * @param callable($this, mixed): null|Builder<TModelClass>|null  $default
+     * @return mixed|$this
+     */
+    public function when($value, $callback, $default = null);
+
+    /**
+     * Apply the callback's query changes if the given "value" is false.
+     *
+     * @param  mixed  $value
+     * @param  callable($this, mixed): null|Builder<TModelClass>  $callback
+     * @param  callable($this, mixed): null|Builder<TModelClass>|null  $default
+     * @return mixed|$this
+     */
+    public function unless($value, $callback, $default = null);
 }
