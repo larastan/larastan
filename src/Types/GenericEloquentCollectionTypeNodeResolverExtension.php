@@ -7,13 +7,13 @@ namespace NunoMaduro\Larastan\Types;
 use function count;
 use Illuminate\Database\Eloquent\Collection;
 use PHPStan\Analyser\NameScope;
+use PHPStan\PhpDoc\TypeNodeResolver;
 use PHPStan\PhpDoc\TypeNodeResolverExtension;
 use PHPStan\PhpDocParser\Ast\Type\ArrayTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\PhpDocParser\Ast\Type\UnionTypeNode;
 use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
 /**
@@ -32,6 +32,16 @@ use PHPStan\Type\Type;
  */
 class GenericEloquentCollectionTypeNodeResolverExtension implements TypeNodeResolverExtension
 {
+    /**
+     * @var TypeNodeResolver
+     */
+    private $typeNodeResolver;
+
+    public function __construct(TypeNodeResolver $typeNodeResolver)
+    {
+        $this->typeNodeResolver = $typeNodeResolver;
+    }
+
     public function resolve(TypeNode $typeNode, NameScope $nameScope): ?Type
     {
         if (! $typeNode instanceof UnionTypeNode || count($typeNode->types) !== 2) {
@@ -65,10 +75,10 @@ class GenericEloquentCollectionTypeNodeResolverExtension implements TypeNodeReso
             return null;
         }
 
-        $innerArrayTypeName = $nameScope->resolveStringName($innerArrayTypeNode->name);
+        $resolvedInnerArrayType = $this->typeNodeResolver->resolve($innerArrayTypeNode, $nameScope);
 
         return new GenericObjectType($identifierTypeName, [
-            new ObjectType($innerArrayTypeName),
+            $resolvedInnerArrayType,
         ]);
     }
 }

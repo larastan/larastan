@@ -86,7 +86,11 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension
             );
         }
 
-        if ($methodCall->class instanceof \PhpParser\Node\Name && in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
+        if (
+            $methodCall->class instanceof \PhpParser\Node\Name
+            && in_array(Collection::class, $returnType->getReferencedClasses(), true)
+            && in_array($methodReflection->getName(), ['get', 'hydrate', 'fromQuery', 'all', 'findMany'], true)
+        ) {
             $collectionClassName = $this->builderHelper->determineCollectionClassName($scope->resolveName($methodCall->class));
 
             return new GenericObjectType($collectionClassName, [new ObjectType($scope->resolveName($methodCall->class))]);
