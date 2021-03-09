@@ -7,14 +7,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 ### Added
+
 - Support for HigherOrderCollectionProxy ([#781](https://github.com/nunomaduro/larastan/pull/781))
 - Support for Illuminate\Database\Query\Expression as column ([#784](https://github.com/nunomaduro/larastan/issues/784))
 - Support for `when` and `unless` methods on Eloquent builder ([#791](https://github.com/nunomaduro/larastan/pull/791))
-- Restricts the methods that ModelExtension will change the return type ([#751](https://github.com/nunomaduro/larastan/pull/751)) Thanks @Josh-G
+
+### Fixed
+
+- Fixed incorrectly inferring the return type of custom methods that return Collections ([#751](https://github.com/nunomaduro/larastan/pull/751)) Thanks @Josh-G
 
 ## [0.7.0] - 2021-02-01
 
 ### Changed
+
 - Updated `phpstan/phpstan` from v0.12.65 to v0.12.70 ([#774](https://github.com/nunomaduro/larastan/pull/774)) Thanks @chrisp-github
 
 ### Added
