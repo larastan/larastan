@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 - Support for HigherOrderCollectionProxy ([#781](https://github.com/nunomaduro/larastan/pull/781))
+- SUpport for Illuminate\Database\Query\Expression as column ([#784](https://github.com/nunomaduro/larastan/issues/784))
+- Support for `when` and `unless` methods on Eloquent builder ([#791](https://github.com/nunomaduro/larastan/pull/791))
 
 ## [0.7.0] - 2021-02-01
 ### Changed

@@ -316,6 +316,32 @@ class ModelExtension
     {
         return Thread::methodReturningUnionWithCollectionOfAnotherModel();
     }
+
+    public function testOrWhereWithQueryExpression(): ?User
+    {
+        return User::with('foo')
+            ->orWhere(\Illuminate\Support\Facades\DB::raw('name'), 'like', '%john%')
+            ->first();
+    }
+
+    public function testWhereWithQueryExpression(): ?User
+    {
+        return User::with('foo')
+            ->where(\Illuminate\Support\Facades\DB::raw('name'), 'like', '%john%')
+            ->first();
+    }
+
+    public function testFirstWhereWithQueryExpression(): ?User
+    {
+        return User::with('foo')
+            ->firstWhere(\Illuminate\Support\Facades\DB::raw('name'), 'like', '%john%');
+    }
+
+    public function testValueWithQueryExpression(): ?string
+    {
+        return User::with('foo')
+            ->value(\Illuminate\Support\Facades\DB::raw('name'));
+    }
 }
 
 function foo(): string
