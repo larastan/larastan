@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- Prevent phpstan/phpstan v0.12.82+ from installing
+
 ## [0.7.1] - 2021-03-19
 
 ### Added
