@@ -20,7 +20,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-- Fixed the phpstan/phpstan dependency to 0.12.81
+- Locked phpstan/phpstan dependency to v0.12.81
 
 ## [0.7.0] - 2021-02-01
 
