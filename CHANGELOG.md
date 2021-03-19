@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.1] - 2021-03-19
+
 ### Added
 
 - Support for HigherOrderCollectionProxy ([#781](https://github.com/nunomaduro/larastan/pull/781))
@@ -15,6 +17,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Fixed incorrectly inferring the return type of custom methods that return Collections ([#751](https://github.com/nunomaduro/larastan/pull/751)) Thanks @Josh-G
+
+### Changed
+
+- Fixed the phpstan/phpstan dependency to 0.12.81
 
 ## [0.7.0] - 2021-02-01
 
@@ -526,7 +532,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.1...HEAD
+[0.7.1]: https://github.com/nunomaduro/larastan/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/nunomaduro/larastan/compare/v0.6.13...v0.7.0
 [0.6.13]: https://github.com/nunomaduro/larastan/compare/v0.6.12...v0.6.13
 [0.6.12]: https://github.com/nunomaduro/larastan/compare/v0.6.11...v0.6.12
