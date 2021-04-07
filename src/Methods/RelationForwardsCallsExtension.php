@@ -13,7 +13,6 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\ParametersAcceptorSelector;
-use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 
@@ -32,14 +31,14 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        if (array_key_exists($classReflection->getCacheKey() . '-' . $methodName, $this->cache)) {
+        if (array_key_exists($classReflection->getCacheKey().'-'.$methodName, $this->cache)) {
             return true;
         }
 
         $methodReflection = $this->findMethod($classReflection, $methodName);
 
         if ($methodReflection !== null) {
-            $this->cache[$classReflection->getCacheKey() . '-' . $methodName] = $methodReflection;
+            $this->cache[$classReflection->getCacheKey().'-'.$methodName] = $methodReflection;
 
             return true;
         }
@@ -51,7 +50,7 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
         ClassReflection $classReflection,
         string $methodName
     ): MethodReflection {
-        return $this->cache[$classReflection->getCacheKey() . '-' . $methodName];
+        return $this->cache[$classReflection->getCacheKey().'-'.$methodName];
     }
 
     private function findMethod(ClassReflection $classReflection, string $methodName): ?MethodReflection
@@ -84,7 +83,7 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
         );
 
         if ($returnMethodReflection === null && $relatedModel->hasMethod($methodName)->yes()) {
-            $originalMethodReflection =  $relatedModel->getMethod($methodName, new OutOfClassScope());
+            $originalMethodReflection = $relatedModel->getMethod($methodName, new OutOfClassScope());
 
             return new EloquentBuilderMethodReflection(
                 $methodName, $classReflection, $originalMethodReflection,
