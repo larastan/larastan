@@ -1098,7 +1098,7 @@ class Builder
     /**
      * Lock the selected rows in the table for updating.
      *
-     * @return $this
+     * @return static
      */
     public function lockForUpdate()
     {}

@@ -9,6 +9,17 @@ namespace Illuminate\Database\Eloquent\Relations;
 abstract class HasOneOrMany extends Relation
 {
     /**
+     * Create a new has one or many relationship instance.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder<TRelatedModel>  $query
+     * @param  TRelatedModel  $parent
+     * @param  string  $foreignKey
+     * @param  string  $localKey
+     * @return void
+     */
+    public function __construct(\Illuminate\Database\Eloquent\Builder $query, \Illuminate\Database\Eloquent\Model $parent, $foreignKey, $localKey);
+
+    /**
      * @param array<model-property<TRelatedModel>, mixed> $attributes
      * @phpstan-return TRelatedModel
      */
