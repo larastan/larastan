@@ -15,7 +15,6 @@ class GuardedModel extends Model
      */
     public function __construct(array $attributes = [])
     {
-        dd(debug_backtrace()[0]);
         $attributes['name'] = $attributes['name'] ?? 'foo';
 
         parent::__construct($attributes);

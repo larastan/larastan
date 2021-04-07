@@ -234,19 +234,3 @@ class ModelWithCustomBuilderAndDocBlocks extends Model
 class CustomBuilder2 extends Builder
 {
 }
-
-abstract class AbstractQueryBuilder extends Builder
-{
-}
-
-class QueryBuilderWithoutDocBlock extends AbstractQueryBuilder
-{
-    public function whereFooBar(): QueryBuilderWithoutDocBlock
-    {
-        return $this
-            ->leftJoin('foo', 'bar.id', '=', 'foo.bar')
-            ->whereNull('bar.baz')
-            ->orWhereNull('foo.bar')
-            ->orWhereNotNull('foo.biz');
-    }
-}
