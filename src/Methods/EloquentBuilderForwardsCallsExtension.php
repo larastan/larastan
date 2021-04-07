@@ -14,7 +14,6 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\ParametersAcceptorSelector;
-use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Generic\TemplateMixedType;
 use PHPStan\Type\MixedType;
@@ -53,14 +52,14 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        if (array_key_exists($classReflection->getCacheKey() . '-' . $methodName, self::$cache)) {
+        if (array_key_exists($classReflection->getCacheKey().'-'.$methodName, self::$cache)) {
             return true;
         }
 
         $methodReflection = $this->findMethod($classReflection, $methodName);
 
         if ($methodReflection !== null && $classReflection->isGeneric()) {
-            self::$cache[$classReflection->getCacheKey() . '-' . $methodName] = $methodReflection;
+            self::$cache[$classReflection->getCacheKey().'-'.$methodName] = $methodReflection;
 
             return true;
         }
@@ -70,7 +69,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
 
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
-        return self::$cache[$classReflection->getCacheKey() . '-' . $methodName];
+        return self::$cache[$classReflection->getCacheKey().'-'.$methodName];
     }
 
     private function findMethod(ClassReflection $classReflection, string $methodName): ?MethodReflection
