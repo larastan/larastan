@@ -213,7 +213,7 @@ class ModelExtension
 
     public function testWithAcceptsArrayOfClosures(): ?User
     {
-        return User::with(['accounts' => function (HasMany $relation) {
+        return User::with(['accounts' => function ($relation) {
             return $relation->where('active', true);
         }])->find(1);
     }
@@ -382,8 +382,10 @@ class Thread extends Model
 
     public function customMethodReturningRelation(): HasMany
     {
-        return $this->hasManyFromConnection('replica', User::class)
-            ->where('status', '!=', 'deleted');
+        /** @var HasMany<User> $hasMany */
+        $hasMany = $this->hasManyFromConnection('replica', User::class);
+
+        return $hasMany->where('status', '!=', 'deleted');
     }
 
     /**

@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- PHPStan 0.12.82 compatibility ([#801](https://github.com/nunomaduro/larastan/pull/801))
+
 ## [0.7.1] - 2021-03-19
 
 ### Added

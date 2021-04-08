@@ -14,7 +14,6 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\ParametersAcceptorSelector;
-use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Generic\TemplateMixedType;
 use PHPStan\Type\MixedType;
@@ -35,6 +34,9 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
         'exists', 'doesntExist', 'count', 'min', 'max', 'avg', 'average', 'sum', 'getConnection',
     ];
 
+    /** @var array<string, MethodReflection> */
+    private static $cache = [];
+
     /** @var BuilderHelper */
     private $builderHelper;
 
@@ -50,18 +52,24 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        return $this->findMethod($classReflection, $methodName) !== null;
+        if (array_key_exists($classReflection->getCacheKey().'-'.$methodName, self::$cache)) {
+            return true;
+        }
+
+        $methodReflection = $this->findMethod($classReflection, $methodName);
+
+        if ($methodReflection !== null && $classReflection->isGeneric()) {
+            self::$cache[$classReflection->getCacheKey().'-'.$methodName] = $methodReflection;
+
+            return true;
+        }
+
+        return false;
     }
 
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
-        $methodReflection = $this->findMethod($classReflection, $methodName);
-
-        if ($methodReflection === null) {
-            throw new ShouldNotHappenException(sprintf("'%s' not found in %s", $methodName, $classReflection->getName()));
-        }
-
-        return $methodReflection;
+        return self::$cache[$classReflection->getCacheKey().'-'.$methodName];
     }
 
     private function findMethod(ClassReflection $classReflection, string $methodName): ?MethodReflection
@@ -94,12 +102,18 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
         $modelType = $templateTypeMap->getType('TModelClass');
 
         if ($modelType === null) {
-            $modelType = new ObjectType(Model::class);
+            return null;
         }
 
-        if ($this->getBuilderReflection()->hasNativeMethod($methodName) && (! $modelType instanceof ObjectType)) {
+        if ($this->getBuilderReflection()->hasNativeMethod($methodName)) {
             $methodReflection = $this->getBuilderReflection()->getNativeMethod($methodName);
-            $builderClass = EloquentBuilder::class;
+            if ($classReflection->isSubclassOf(EloquentBuilder::class)) {
+                $builderClass = $classReflection->getName();
+            } elseif ($modelType instanceof ObjectType) {
+                $builderClass = $this->builderHelper->determineBuilderType($modelType->getClassName());
+            } else {
+                $builderClass = EloquentBuilder::class;
+            }
 
             if ($modelType instanceof TemplateMixedType) {
                 /** @var string $builderClass */
@@ -116,7 +130,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             );
         }
 
-        if ($modelType instanceof ObjectType) {
+        if ($modelType instanceof ObjectType && $modelType->getClassName() !== Model::class) {
             if ($classReflection->isSubclassOf(EloquentBuilder::class)) {
                 $eloquentBuilderClass = $classReflection->getName();
             } else {

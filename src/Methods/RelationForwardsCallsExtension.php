@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Analyser\OutOfClassScope;
@@ -11,7 +13,6 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\ParametersAcceptorSelector;
-use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 
@@ -20,6 +21,9 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
     /** @var BuilderHelper */
     private $builderHelper;
 
+    /** @var array<string, MethodReflection> */
+    private $cache = [];
+
     public function __construct(BuilderHelper $builderHelper)
     {
         $this->builderHelper = $builderHelper;
@@ -27,40 +31,48 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        if (! $classReflection->isSubclassOf(Relation::class)) {
-            return false;
+        if (array_key_exists($classReflection->getCacheKey().'-'.$methodName, $this->cache)) {
+            return true;
         }
 
-        /** @var ObjectType|null $relatedModel */
-        $relatedModel = $classReflection->getActiveTemplateTypeMap()->getType('TRelatedModel');
+        $methodReflection = $this->findMethod($classReflection, $methodName);
 
-        if ($relatedModel === null) {
-            return false;
+        if ($methodReflection !== null) {
+            $this->cache[$classReflection->getCacheKey().'-'.$methodName] = $methodReflection;
+
+            return true;
         }
 
-        $returnMethodReflection = $this->builderHelper->getMethodReflectionFromBuilder(
-            $classReflection,
-            $methodName,
-            $relatedModel->getClassName(),
-            new GenericObjectType($classReflection->getName(), [$relatedModel])
-        );
-
-        if ($returnMethodReflection === null) {
-            return $relatedModel->hasMethod($methodName)->yes();
-        }
-
-        return true;
+        return false;
     }
 
     public function getMethod(
         ClassReflection $classReflection,
         string $methodName
     ): MethodReflection {
+        return $this->cache[$classReflection->getCacheKey().'-'.$methodName];
+    }
+
+    private function findMethod(ClassReflection $classReflection, string $methodName): ?MethodReflection
+    {
+        if (! $classReflection->isSubclassOf(Relation::class)) {
+            return null;
+        }
+
         /** @var ObjectType|null $relatedModel */
         $relatedModel = $classReflection->getActiveTemplateTypeMap()->getType('TRelatedModel');
 
         if ($relatedModel === null) {
-            throw new ShouldNotHappenException(sprintf('%s does not have TRelatedModel template type. But it should.', $classReflection->getName()));
+            return null;
+        }
+
+        if ($relatedModel instanceof ObjectType &&
+            ($classReflection->getName() !== MorphTo::class &&
+                $relatedModel->getClassReflection() !== null &&
+                $relatedModel->getClassReflection()->getName() === Model::class
+            )
+        ) {
+            return null;
         }
 
         $returnMethodReflection = $this->builderHelper->getMethodReflectionFromBuilder(
@@ -70,10 +82,10 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
             new GenericObjectType($classReflection->getName(), [$relatedModel])
         );
 
-        if ($returnMethodReflection === null) {
+        if ($returnMethodReflection === null && $relatedModel->hasMethod($methodName)->yes()) {
             $originalMethodReflection = $relatedModel->getMethod($methodName, new OutOfClassScope());
 
-            $returnMethodReflection = new EloquentBuilderMethodReflection(
+            return new EloquentBuilderMethodReflection(
                 $methodName, $classReflection, $originalMethodReflection,
                 ParametersAcceptorSelector::selectSingle($originalMethodReflection->getVariants())->getParameters(),
                 new GenericObjectType($classReflection->getName(), [$relatedModel]),
