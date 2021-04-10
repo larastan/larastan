@@ -40,7 +40,8 @@ class FooServiceProvider extends \Illuminate\Support\ServiceProvider
     }
 }
 
-function foo(Application $app): void {
+function foo(Application $app): void
+{
     $app->singleton(Service::class, function ($app) {
         return new Service($app);
     });
@@ -50,7 +51,8 @@ function foo(Application $app): void {
     return new Service($app);
 });
 
-class Service {
+class Service
+{
     /**
      * @var Application
      */

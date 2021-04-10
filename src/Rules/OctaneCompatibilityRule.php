@@ -89,7 +89,7 @@ class OctaneCompatibilityRule implements Rule
                 return false;
             }
 
-            if (! $node->args[0]->value instanceof Node\Expr\Variable && ! $node->args[0]->value instanceof Node\Expr\ArrayDimFetch ) {
+            if (! $node->args[0]->value instanceof Node\Expr\Variable && ! $node->args[0]->value instanceof Node\Expr\ArrayDimFetch) {
                 return false;
             }
 
@@ -105,7 +105,7 @@ class OctaneCompatibilityRule implements Rule
                     return false;
                 }
 
-                if(! $node->args[0]->value->dim instanceof Node\Scalar\String_) {
+                if (! $node->args[0]->value->dim instanceof Node\Scalar\String_) {
                     return false;
                 }
 
@@ -141,8 +141,7 @@ class OctaneCompatibilityRule implements Rule
                 $node->var instanceof Node\Expr\Variable &&
                 $node->var->name === 'this' &&
                 $node->name instanceof Node\Identifier &&
-                $node->name->name === 'app'
-            ;
+                $node->name->name === 'app';
         });
 
         if (count($nodes) > 0) {
