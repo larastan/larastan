@@ -545,7 +545,7 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 - Adds first alpha version
 
 [Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.3...HEAD
-[0.7.2]: https://github.com/nunomaduro/larastan/compare/v0.7.2...0.7.3
+[0.7.3]: https://github.com/nunomaduro/larastan/compare/v0.7.2...0.7.3
 [0.7.2]: https://github.com/nunomaduro/larastan/compare/v0.7.1...0.7.2
 [0.7.1]: https://github.com/nunomaduro/larastan/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/nunomaduro/larastan/compare/v0.6.13...v0.7.0
