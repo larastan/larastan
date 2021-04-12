@@ -108,3 +108,31 @@ And if you call the function above with a property that does not exist in User m
 // Property 'emaiil' does not exist in App\User model.
 takesOnlyUserModelProperties('emaiil');
 ```
+
+## OctaneCompatibilityRule
+
+This is an optional rule that can check your application for Laravel Octane compatibility. You can read more about why in the official [Octane docs](https://github.com/laravel/octane#dependency-injection--octane).
+
+### Configuration
+
+This rule is disabled by default. You can enable it by adding
+```
+parameters:
+    checkOctaneCompatibility: true
+```
+to your `phpstan.neon` file.
+
+### Examples
+
+Following code
+```php
+public function register()
+{
+    $this->app->singleton(Service::class, function ($app) {
+        return new Service($app);
+    });
+}
+```
+Will result in the following error:
+
+`Consider using bind method instead or pass a closure.`
