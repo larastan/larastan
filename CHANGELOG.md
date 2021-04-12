@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.3] - 2021-04-12
+
+### Added
+
+- Octane compatibility checking rule ([#809](https://github.com/nunomaduro/larastan/pull/809))
+
 ## [0.7.2] - 2021-04-08
 
 ### Fixed
@@ -538,7 +544,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.2...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.3...HEAD
+[0.7.2]: https://github.com/nunomaduro/larastan/compare/v0.7.2...0.7.3
 [0.7.2]: https://github.com/nunomaduro/larastan/compare/v0.7.1...0.7.2
 [0.7.1]: https://github.com/nunomaduro/larastan/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/nunomaduro/larastan/compare/v0.6.13...v0.7.0

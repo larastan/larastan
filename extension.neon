@@ -44,6 +44,7 @@ parameters:
     bootstrapFiles:
         - bootstrap.php
     checkGenericClassInNonGenericObjectType: false
+    checkOctaneCompatibility: false
     noUnnecessaryCollectionCall: true
     noUnnecessaryCollectionCallOnly: []
     noUnnecessaryCollectionCallExcept: []
@@ -51,6 +52,7 @@ parameters:
     checkModelProperties: false
 
 parametersSchema:
+    checkOctaneCompatibility: bool()
     noUnnecessaryCollectionCall: bool()
     noUnnecessaryCollectionCallOnly: listOf(string())
     noUnnecessaryCollectionCallExcept: listOf(string())
@@ -60,6 +62,8 @@ parametersSchema:
 conditionalTags:
     NunoMaduro\Larastan\Rules\NoUnnecessaryCollectionCallRule:
         phpstan.rules.rule: %noUnnecessaryCollectionCall%
+    NunoMaduro\Larastan\Rules\OctaneCompatibilityRule:
+        phpstan.rules.rule: %checkOctaneCompatibility%
     NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertyRule:
         phpstan.rules.rule: %checkModelProperties%
     NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertyStaticCallRule:
@@ -307,6 +311,9 @@ services:
         class: NunoMaduro\Larastan\Types\ViewStringTypeNodeResolverExtension
         tags:
             - phpstan.phpDoc.typeNodeResolverExtension
+
+    -
+        class: NunoMaduro\Larastan\Rules\OctaneCompatibilityRule
 
     -
         class: NunoMaduro\Larastan\Rules\NoUnnecessaryCollectionCallRule
