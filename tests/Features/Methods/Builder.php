@@ -52,10 +52,10 @@ class Builder
     public function testQueryBuilderChainStartedWithGetQueryReturnsStdClass(): ?stdClass
     {
         return User::getQuery()
-        ->select('some_model.created')
-        ->where('some_model.some_column', '=', true)
-        ->orderBy('some_model.created', 'desc')
-        ->first();
+            ->select('some_model.created')
+            ->where('some_model.some_column', '=', true)
+            ->orderBy('some_model.created', 'desc')
+            ->first();
     }
 
     public function testWhereNotBetweenInt(): QueryBuilder
@@ -121,9 +121,10 @@ class Builder
     {
         $innerQuery = null;
         User::query()->when($foo, static function (EloquentBuilder $query) use (&$innerQuery) {
+            /** @phpstan-var EloquentBuilder<User> $query */
             $innerQuery = $query;
 
-            return $query->active();
+            return $query->whereNull('name');
         });
 
         return $innerQuery;
@@ -134,9 +135,10 @@ class Builder
     {
         $innerQuery = null;
         User::query()->unless($foo, static function (EloquentBuilder $query) use (&$innerQuery) {
+            /** @phpstan-var EloquentBuilder<User> $query */
             $innerQuery = $query;
 
-            return $query->active();
+            return $query->whereNull('name');
         });
 
         return $innerQuery;
