@@ -130,6 +130,13 @@ class Builder
         return $innerQuery;
     }
 
+    public function testWhenVoid(bool $foo): void
+    {
+        User::query()->when($foo, static function (EloquentBuilder $query) {
+            $query->whereNull('name');
+        });
+    }
+
     /** @phpstan-return null|EloquentBuilder<User> */
     public function testUnless(bool $foo): ?EloquentBuilder
     {
@@ -142,5 +149,12 @@ class Builder
         });
 
         return $innerQuery;
+    }
+
+    public function testUnlessVoid(bool $foo): void
+    {
+        User::query()->unless($foo, static function (EloquentBuilder $query) {
+            $query->whereNull('name');
+        });
     }
 }

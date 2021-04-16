@@ -189,7 +189,7 @@ class Builder
      * Apply the callback's query changes if the given "value" is true.
      *
      * @param mixed  $value
-     * @param callable($this, mixed): (null|Builder<TModelClass>) $callback
+     * @param callable($this, mixed): (void|Builder<TModelClass>) $callback
      * @param callable($this, mixed): (null|Builder<TModelClass>)|null  $default
      * @return mixed|$this
      */
@@ -199,7 +199,7 @@ class Builder
      * Apply the callback's query changes if the given "value" is false.
      *
      * @param  mixed  $value
-     * @param  callable($this, mixed): (null|Builder<TModelClass>)  $callback
+     * @param  callable($this, mixed): (void|Builder<TModelClass>)  $callback
      * @param  callable($this, mixed): (null|Builder<TModelClass>)|null  $default
      * @return mixed|$this
      */
