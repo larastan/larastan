@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.4] - 2021-04-16
+
+### Fixed
+
+- Correct `when` and `unless` return value ([#807](https://github.com/nunomaduro/larastan/pull/807), [#811](https://github.com/nunomaduro/larastan/pull/811)) Thanks @netpok and @BertvanHoekelen
+
 ## [0.7.3] - 2021-04-12
 
 ### Added
@@ -544,7 +550,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.3...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.4...HEAD
+[0.7.4]: https://github.com/nunomaduro/larastan/compare/v0.7.3...0.7.4
 [0.7.3]: https://github.com/nunomaduro/larastan/compare/v0.7.2...0.7.3
 [0.7.2]: https://github.com/nunomaduro/larastan/compare/v0.7.1...0.7.2
 [0.7.1]: https://github.com/nunomaduro/larastan/compare/v0.7.0...v0.7.1
