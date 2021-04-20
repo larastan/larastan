@@ -87,7 +87,6 @@ class ModelExtension
         return $user->decrement('counter');
     }
 
-
     public function testFirst(): ?User
     {
         return User::first();
@@ -133,7 +132,6 @@ class ModelExtension
     {
         return Thread::valid();
     }
-
 
     /** @phpstan-return Builder<User> */
     public function testWithAcceptsArrayOfClosures(): Builder

@@ -39,7 +39,7 @@ class BuilderHelper
     public $passthru = [
         'average', 'avg',
         'count',
-        'dd','dump',
+        'dd', 'dump',
         'doesntExist', 'exists',
         'getBindings', 'getConnection', 'getGrammar',
         'insert', 'insertGetId', 'insertOrIgnore', 'insertUsing',

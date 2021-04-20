@@ -100,7 +100,7 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
 
         if ($builderReflection->hasNativeMethod($methodName)) {
             $reflection = $builderReflection->getNativeMethod($methodName);
-        } elseif($this->eloquentBuilderForwardsCallsExtension->hasMethod($builderReflection, $methodName)) {
+        } elseif ($this->eloquentBuilderForwardsCallsExtension->hasMethod($builderReflection, $methodName)) {
             $reflection = $this->eloquentBuilderForwardsCallsExtension->getMethod($builderReflection, $methodName);
         } else {
             return null;

@@ -9,10 +9,9 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use stdClass;
-use function PHPStan\dumpType;
 
 /**
- * This class tests `EloquentBuilder::__call` method
+ * This class tests `EloquentBuilder::__call` method.
  *
  * So every test should either begin with `User::query`,
  * or need to use a `Builder` typed argument.
@@ -166,7 +165,6 @@ class Builder
         });
     }
 
-
     public function testFirstOrFailWithChain(): User
     {
         return User::with('foo')
@@ -187,7 +185,6 @@ class Builder
     {
         return User::query()->firstWhere(['email' => 'foo@bar.com']);
     }
-
 
     public function testOrWhereWithQueryExpression(): ?User
     {
