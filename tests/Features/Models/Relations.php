@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use function PHPStan\dumpType;
 
 class Relations
 {
@@ -220,9 +219,9 @@ class Relations
     public function testRelationWithWithOnModel(): Builder
     {
         return User::with([
-            'accounts' => function(HasMany $query) {
+            'accounts' => function (HasMany $query) {
                 return $query->where('foo', 'bar');
-            }
+            },
         ]);
     }
 }
@@ -260,7 +259,7 @@ class Tag extends Model
     {
         return $this->morphToMany(Address::class, 'taggable')->withTimestamps();
     }
-//
+
     /**
      * @phpstan-return MorphToMany<Address>
      */

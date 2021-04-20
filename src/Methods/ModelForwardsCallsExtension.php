@@ -186,7 +186,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
 
             $parametersAcceptor = ParametersAcceptorSelector::selectSingle($reflection->getVariants());
 
-            $returnType = TypeTraverser::map($parametersAcceptor->getReturnType(), static function(Type $type, callable $traverse) use ($genericBuilderAndModelType) {
+            $returnType = TypeTraverser::map($parametersAcceptor->getReturnType(), static function (Type $type, callable $traverse) use ($genericBuilderAndModelType) {
                 if ($type instanceof TypeWithClassName && $type->getClassName() === Builder::class) {
                     return $genericBuilderAndModelType;
                 }

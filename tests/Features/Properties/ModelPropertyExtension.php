@@ -8,8 +8,8 @@ use App\Account;
 use App\Group;
 use App\GuardedModel;
 use App\Role;
-use App\User;
 use App\Thread;
+use App\User;
 use Carbon\Carbon as BaseCarbon;
 use Illuminate\Support\Carbon;
 
