@@ -7,6 +7,31 @@ namespace Illuminate\Database\Eloquent;
  */
 class Builder
 {
+    /**
+     * Create and return an un-saved model instance.
+     *
+     * @phpstan-param array<model-property<TModelClass>, mixed> $attributes
+     * @phpstan-return TModelClass
+     */
+    public function make(array $attributes = []);
+
+    /**
+     * Register a new global scope.
+     *
+     * @param  string  $identifier
+     * @param  \Illuminate\Database\Eloquent\Scope|\Closure  $scope
+     * @return static<TModelClass>
+     */
+    public function withGlobalScope($identifier, $scope);
+
+    /**
+     * Remove a registered global scope.
+     *
+     * @param  \Illuminate\Database\Eloquent\Scope|string  $scope
+     * @return static<TModelClass>
+     */
+    public function withoutGlobalScope($scope);
+
     /** @phpstan-return TModelClass */
     public function getModel();
 
@@ -100,7 +125,7 @@ class Builder
 
     /**
      * @param  array<model-property<TModelClass>, mixed>  $attributes
-     * @return \Illuminate\Database\Eloquent\Model|$this
+     * @phpstan-return TModelClass
      */
     public function forceCreate(array $attributes);
 
@@ -136,7 +161,7 @@ class Builder
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
-     * @return $this
+     * @return static
      */
     public function where($column, $operator = null, $value = null, $boolean = 'and');
 
@@ -146,9 +171,20 @@ class Builder
      * @param  \Closure|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
-     * @return $this
+     * @return static
      */
     public function orWhere($column, $operator = null, $value = null);
+
+    /**
+     * Add a relationship count / exists condition to the query with where clauses.
+     *
+     * @param  string  $relation
+     * @param  \Closure|null  $callback
+     * @param  string  $operator
+     * @param  int  $count
+     * @return static<TModelClass>
+     */
+    public function whereHas($relation, \Closure $callback = null, $operator = '>=', $count = 1);
 
     /**
      * Add a basic where clause to the query, and return the first result.
@@ -205,3 +241,13 @@ class Builder
      */
     public function unless($value, $callback, $default = null);
 }
+
+class Scope {}
+
+/**
+ * @method static \Illuminate\Database\Eloquent\Builder<static> withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static> onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static> withoutTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static> restore()
+ */
+trait SoftDeletes {}
