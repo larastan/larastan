@@ -8,17 +8,15 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Methods\BuilderHelper;
-use NunoMaduro\Larastan\Methods\ModelTypeHelper;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\Dummy\DummyMethodReflection;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Generic\TemplateMixedType;
 use PHPStan\Type\ObjectType;
-use PHPStan\Type\ThisType;
 use PHPStan\Type\Type;
 
 final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
@@ -71,31 +69,11 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
         MethodCall $methodCall,
         Scope $scope
     ): Type {
-        $returnType = $methodReflection->getVariants()[0]->getReturnType();
+        $returnType = ParametersAcceptorSelector::selectFromArgs($scope, $methodCall->args, $methodReflection->getVariants())->getReturnType();
         $templateTypeMap = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap();
 
         /** @var Type|ObjectType|TemplateMixedType $modelType */
         $modelType = $templateTypeMap->getType('TModelClass');
-
-        if ($methodReflection instanceof DummyMethodReflection && $modelType instanceof ObjectType) {
-            $scopeMethodName = 'scope'.ucfirst($methodReflection->getName());
-            $modelReflection = $this->reflectionProvider->getClass($modelType->getClassName());
-
-            if ($modelReflection->hasNativeMethod($scopeMethodName)) {
-                return new ObjectType(EloquentBuilder::class);
-            }
-        }
-
-        if (($modelType instanceof ObjectType || $modelType instanceof ThisType) && in_array($methodReflection->getName(), array_merge(BuilderHelper::MODEL_CREATION_METHODS, BuilderHelper::MODEL_RETRIEVAL_METHODS), true)) {
-            $returnType = ModelTypeHelper::replaceStaticTypeWithModel($methodReflection->getVariants()[0]->getReturnType(), $modelType->getClassName());
-        }
-
-        if (($modelType instanceof ObjectType || $modelType instanceof ThisType) && in_array(EloquentBuilder::class, $returnType->getReferencedClasses(), true)) {
-            $returnType = new GenericObjectType(
-                $this->builderHelper->determineBuilderType($modelType->getClassName()),
-                [$modelType]
-            );
-        }
 
         if ($modelType instanceof ObjectType && in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
             $collectionClassName = $this->builderHelper->determineCollectionClassName($modelType->getClassName());

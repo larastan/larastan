@@ -9,6 +9,7 @@ use App\Group;
 use App\Role;
 use App\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,16 +19,24 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Relations
 {
+    public function testFirstOrCreateWithRelation(User $user): Account
+    {
+        return $user->accounts()->firstOrCreate([]);
+    }
+
+    /** @phpstan-return HasMany<Account> */
     public function testRelationWhere(): HasMany
     {
         return (new User())->accounts()->where('name', 'bar');
     }
 
+    /** @phpstan-return HasMany<Account> */
     public function testRelationWhereIn(): HasMany
     {
         return (new User())->accounts()->whereIn('id', [1, 2, 3]);
     }
 
+    /** @phpstan-return HasMany<Account> */
     public function testRelationDynamicWhere(): HasMany
     {
         return (new User())->accounts()->whereActive(true);
@@ -83,6 +92,7 @@ class Relations
         return $user->addressable()->where('name', 'bar');
     }
 
+    /** @phpstan-return HasMany<Account> */
     public function testModelScopesOnRelation(User $user): HasMany
     {
         return $user->accounts()->active();
@@ -135,9 +145,7 @@ class Relations
         return User::with('accounts')->whereHas('accounts')->firstOrFail();
     }
 
-    /**
-     * @phpstan-return BelongsTo<User, Account>
-     */
+    /** @phpstan-return BelongsTo<User, Account> */
     public function testRelationWithTrait(Account $account): BelongsTo
     {
         return $account->ownerRelation();
@@ -173,16 +181,19 @@ class Relations
         return $user->group()->firstWhere('name', 'bar');
     }
 
+    /** @phpstan-return BelongsTo<Group, User> */
     public function testWithTrashedWithBelongsToRelation(User $user): BelongsTo
     {
         return $user->group()->withTrashed();
     }
 
+    /** @phpstan-return BelongsTo<Group, User> */
     public function testOnlyTrashedWithBelongsToRelation(User $user): BelongsTo
     {
         return $user->group()->onlyTrashed();
     }
 
+    /** @phpstan-return BelongsTo<Group, User> */
     public function testWithoutTrashedWithBelongsToRelation(User $user): BelongsTo
     {
         return $user->group()->withoutTrashed();
@@ -202,6 +213,16 @@ class Relations
     public function testMorphToManyWithPivot(Tag $tag): MorphToMany
     {
         return $tag->addresses();
+    }
+
+    /** @phpstan-return Builder<User> */
+    public function testRelationWithWithOnModel(): Builder
+    {
+        return User::with([
+            'accounts' => function (HasMany $query) {
+                return $query->where('foo', 'bar');
+            },
+        ]);
     }
 }
 

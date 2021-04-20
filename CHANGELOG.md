@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- refactor: cleanup call forwarding logic in extensions ([#816](https://github.com/nunomaduro/larastan/pull/816))
+
 ## [0.7.4] - 2021-04-16
 
 ### Fixed

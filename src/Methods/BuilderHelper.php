@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
@@ -19,13 +18,10 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\Generic\TemplateTypeHelper;
-use PHPStan\Type\Generic\TemplateTypeMap;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\VerbosityLevel;
-use PHPStan\Type\VoidType;
 
 class BuilderHelper
 {
@@ -34,6 +30,24 @@ class BuilderHelper
 
     /** @var string[] */
     public const MODEL_CREATION_METHODS = ['make', 'create', 'forceCreate', 'findOrNew', 'firstOrNew', 'updateOrCreate', 'firstOrCreate'];
+
+    /**
+     * The methods that should be returned from query builder.
+     *
+     * @var string[]
+     */
+    public $passthru = [
+        'average', 'avg',
+        'count',
+        'dd', 'dump',
+        'doesntExist', 'exists',
+        'getBindings', 'getConnection', 'getGrammar',
+        'insert', 'insertGetId', 'insertOrIgnore', 'insertUsing',
+        'max', 'min',
+        'raw',
+        'sum',
+        'toSql',
+    ];
 
     /** @var ReflectionProvider */
     private $reflectionProvider;
@@ -110,10 +124,22 @@ class BuilderHelper
         );
     }
 
-    public function searchOnEloquentBuilder(ClassReflection $eloquentBuilder, string $methodName, string $modelClassName): ?MethodReflection
+    /**
+     * This method mimics the `EloquentBuilder::__call` method.
+     * Does not handle the case where $methodName exists in `EloquentBuilder`,
+     * that should be checked by caller before calling this method.
+     *
+     * @param ClassReflection $eloquentBuilder Can be `EloquentBuilder` or a custom builder extending it.
+     * @param string          $methodName
+     * @param ClassReflection $model
+     *
+     * @return MethodReflection|null
+     * @throws MissingMethodFromReflectionException
+     * @throws ShouldNotHappenException
+     */
+    public function searchOnEloquentBuilder(ClassReflection $eloquentBuilder, string $methodName, ClassReflection $model): ?MethodReflection
     {
-        $model = $this->reflectionProvider->getClass($modelClassName);
-
+        // Check for local query scopes
         if ($model->hasNativeMethod('scope'.ucfirst($methodName))) {
             $methodReflection = $model->getNativeMethod('scope'.ucfirst($methodName));
             $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
@@ -135,35 +161,17 @@ class BuilderHelper
             );
         }
 
-        if (! $eloquentBuilder->hasNativeMethod($methodName)) {
-            return null;
+        $queryBuilderReflection = $this->reflectionProvider->getClass(QueryBuilder::class);
+
+        if (in_array($methodName, $this->passthru, true)) {
+            return $queryBuilderReflection->getNativeMethod($methodName);
         }
 
-        if (in_array($methodName, array_merge(self::MODEL_CREATION_METHODS, self::MODEL_RETRIEVAL_METHODS), true)) {
-            $methodReflection = $eloquentBuilder->getNativeMethod($methodName);
-            $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
-            $returnType = ModelTypeHelper::replaceStaticTypeWithModel($parametersAcceptor->getReturnType(), $modelClassName);
-
-            return new EloquentBuilderMethodReflection(
-                $methodName, $eloquentBuilder, $methodReflection,
-                $parametersAcceptor->getParameters(),
-                $returnType,
-                $parametersAcceptor->isVariadic()
-            );
+        if ($queryBuilderReflection->hasNativeMethod($methodName)) {
+            return $queryBuilderReflection->getNativeMethod($methodName);
         }
 
-        return $eloquentBuilder->getNativeMethod($methodName);
-    }
-
-    public function searchOnQueryBuilder(string $methodName, string $modelClassName): ?MethodReflection
-    {
-        $queryBuilder = $this->reflectionProvider->getClass(QueryBuilder::class);
-
-        if ($queryBuilder->hasNativeMethod($methodName)) {
-            return $queryBuilder->getNativeMethod($methodName);
-        }
-
-        return null;
+        return $this->dynamicWhere($methodName, new GenericObjectType($eloquentBuilder->getName(), [new ObjectType($model->getName())]));
     }
 
     /**
@@ -173,7 +181,7 @@ class BuilderHelper
      * @throws MissingMethodFromReflectionException
      * @throws ShouldNotHappenException
      */
-    public function determineBuilderType(string $modelClassName): string
+    public function determineBuilderName(string $modelClassName): string
     {
         $method = $this->reflectionProvider->getClass($modelClassName)->getNativeMethod('newEloquentBuilder');
 
@@ -190,72 +198,10 @@ class BuilderHelper
         return $returnType->describe(VerbosityLevel::value());
     }
 
-    public function getMethodReflectionFromBuilder(
-        ClassReflection $classReflection,
-        string $methodName,
-        string $modelName,
-        Type $customReturnType
-    ): ?EloquentBuilderMethodReflection {
-        $methodReflection = null;
-        $model = $this->reflectionProvider->getClass($modelName);
-
-        // This can be a custom EloquentBuilder or the normal one
-        $builderName = $this->determineBuilderType($modelName);
-
-        /** @var ClassReflection $builderReflection */
-        $builderReflection = (new GenericObjectType($builderName, [new ObjectType($modelName)]))->getClassReflection();
-
-        $methodReflection = $this->searchOnEloquentBuilder($builderReflection, $methodName, $modelName);
-
-        if ($methodReflection === null) {
-            $methodReflection = $this->searchOnQueryBuilder($methodName, $modelName);
-        }
-
-        if ($methodReflection !== null) {
-            $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
-
-            // Resolve any generic models in the return type
-            $returnType = TemplateTypeHelper::resolveTemplateTypes($parametersAcceptor->getReturnType(), new TemplateTypeMap(['TModelClass' => new ObjectType($modelName)]));
-
-            // If a model scope has a void return type, return the builder
-            if ($returnType instanceof VoidType && $model->hasNativeMethod('scope'.ucfirst($methodName))) {
-                $returnType = $customReturnType;
-            }
-
-            $isBuilderReferenced = (
-                count(array_intersect([EloquentBuilder::class, QueryBuilder::class], $returnType->getReferencedClasses())) > 0)
-                || (new ObjectType(EloquentBuilder::class))->isSuperTypeOf($returnType)->yes();
-
-            // A special case for when return type is just the `QueryBuilder`
-            if ($returnType instanceof ObjectType && $returnType->getClassName() === QueryBuilder::class) {
-                $isBuilderReferenced = false;
-            }
-
-            if ($isBuilderReferenced) {
-                $returnType = $customReturnType;
-            }
-
-            if (! $isBuilderReferenced && (new ObjectType(Collection::class))->isSuperTypeOf($returnType)->yes()) {
-                $returnType = new GenericObjectType(Collection::class, [new ObjectType($modelName)]);
-            }
-
-            $originalMethodReflection = $methodReflection;
-
-            if ($originalMethodReflection instanceof EloquentBuilderMethodReflection) {
-                $originalMethodReflection = $originalMethodReflection->getOriginalMethodReflection();
-            }
-
-            return new EloquentBuilderMethodReflection(
-                $methodName, $classReflection, $originalMethodReflection,
-                $parametersAcceptor->getParameters(),
-                $returnType,
-                $parametersAcceptor->isVariadic()
-            );
-        }
-
-        return $this->dynamicWhere($methodName, $customReturnType);
-    }
-
+    /**
+     * @throws MissingMethodFromReflectionException
+     * @throws ShouldNotHappenException
+     */
     public function determineCollectionClassName(string $modelClassName): string
     {
         $newCollectionMethod = $this->reflectionProvider->getClass($modelClassName)->getNativeMethod('newCollection');
