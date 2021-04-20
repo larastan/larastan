@@ -128,7 +128,7 @@ class CustomEloquentCollectionTest
     /**
      * @phpstan-return AccountCollection<Account>
      */
-    public function testQueryBuilderFindManyViaQueryRetunsCustomCollection(): AccountCollection
+    public function testQueryBuilderFindManyViaQueryReturnsCustomCollection(): AccountCollection
     {
         return Account::query()->findMany([1, 2]);
     }
@@ -136,7 +136,7 @@ class CustomEloquentCollectionTest
     /**
      * @phpstan-return Collection<User>
      */
-    public function testQueryBuilderFindManyViaQueryRetunsEloquentCollection(): Collection
+    public function testQueryBuilderFindManyViaQueryReturnsEloquentCollection(): Collection
     {
         return User::query()->findMany([1, 2]);
     }
@@ -462,7 +462,7 @@ class CustomEloquentCollectionTest
     /**
      * @phpstan-return Collection<User>
      */
-    public function testRelationHasManyFindReturnsElquentCollection(): Collection
+    public function testRelationHasManyFindReturnsEloquentCollection(): Collection
     {
         return (new User)->children()->find([1, 2]);
     }

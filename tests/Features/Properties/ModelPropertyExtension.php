@@ -9,6 +9,7 @@ use App\Group;
 use App\GuardedModel;
 use App\Role;
 use App\User;
+use App\Thread;
 use Carbon\Carbon as BaseCarbon;
 use Illuminate\Support\Carbon;
 
@@ -115,5 +116,10 @@ class ModelPropertyExtension
     public function testModelWithGuardedProperties(GuardedModel $guardedModel): string
     {
         return $guardedModel->name;
+    }
+
+    public function testCustomAccessorOnModels(Thread $thread): string
+    {
+        return $thread->custom_property;
     }
 }
