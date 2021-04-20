@@ -27,16 +27,12 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension
     /** @var BuilderHelper */
     private $builderHelper;
 
-    /** @var ReflectionProvider */
-    private $reflectionProvider;
-
     /**
      * @param BuilderHelper $builderHelper
      */
-    public function __construct(ReflectionProvider $reflectionProvider, BuilderHelper $builderHelper)
+    public function __construct(BuilderHelper $builderHelper)
     {
         $this->builderHelper = $builderHelper;
-        $this->reflectionProvider = $reflectionProvider;
     }
 
     /**
@@ -81,7 +77,7 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension
             && $methodCall->class instanceof \PhpParser\Node\Name
         ) {
             $returnType = new GenericObjectType(
-                $this->builderHelper->determineBuilderType($scope->resolveName($methodCall->class)) ?? EloquentBuilder::class,
+                $this->builderHelper->determineBuilderName($scope->resolveName($methodCall->class)),
                 [new ObjectType($scope->resolveName($methodCall->class))]
             );
         }
