@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests;
 
+use Illuminate\Support\Str;
 use Symfony\Component\Finder\Finder;
 
 class FeaturesTest extends TestCase
@@ -37,6 +38,10 @@ class FeaturesTest extends TestCase
 
     private function analyze(string $file): int
     {
+        if (Str::contains($file, 'Features/Laravel8') && version_compare(app()->version(), '8.0.0', '<')) {
+            return 0;
+        }
+
         $result = $this->execLarastan($file);
 
         if (! $result || $result['totals']['errors'] > 0 || $result['totals']['file_errors'] > 0) {
