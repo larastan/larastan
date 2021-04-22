@@ -38,9 +38,7 @@ class FeaturesTest extends TestCase
 
     private function analyze(string $file): int
     {
-        $laravelMajorVersion = (int) explode('.', app()->version())[0];
-
-        if (Str::contains($file, 'Features/Laravel8') && $laravelMajorVersion < 8) {
+        if (Str::contains($file, 'Features/Laravel8') && version_compare(app()->version(), '8.0.0') < 0) {
             return 0;
         }
 
