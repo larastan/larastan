@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Support for `sole` method on Eloquent builder ([#822](https://github.com/nunomaduro/larastan/pull/822))
+
 ### Changed
 
 - refactor: cleanup call forwarding logic in extensions ([#816](https://github.com/nunomaduro/larastan/pull/816))

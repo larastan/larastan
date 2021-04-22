@@ -146,6 +146,17 @@ class Builder
     public function firstOrFail($columns = ['*']);
 
     /**
+     * Execute the query and get the first result if it's the sole matching record.
+     *
+     * @param  array<int, (model-property<TModelClass>|'*')>|model-property<TModelClass>|'*'  $columns
+     * @phpstan-return TModelClass
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Illuminate\Database\MultipleRecordsFoundException
+     */
+    public function sole($columns = ['*']);
+
+    /**
      * Execute the query and get the first result or call a callback.
      *
      * @param  \Closure|array<int, (model-property<TModelClass>|'*')>  $columns
