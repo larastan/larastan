@@ -150,9 +150,6 @@ class Builder
      *
      * @param  array<int, (model-property<TModelClass>|'*')>|model-property<TModelClass>|'*'  $columns
      * @phpstan-return TModelClass
-     *
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
-     * @throws \Illuminate\Database\MultipleRecordsFoundException
      */
     public function sole($columns = ['*']);
 
