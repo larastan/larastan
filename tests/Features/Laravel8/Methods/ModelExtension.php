@@ -13,6 +13,5 @@ class ModelExtension
      */
     public function testCanThrowLaravel8Exception(): void
     {
-
     }
 }
