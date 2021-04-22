@@ -43,7 +43,7 @@ class FeaturesTest extends TestCase
         if (Str::contains($file, 'Features/Laravel8') && $laravelMajorVersion < 8) {
             return 0;
         }
-        
+
         $result = $this->execLarastan($file);
 
         if (! $result || $result['totals']['errors'] > 0 || $result['totals']['file_errors'] > 0) {
