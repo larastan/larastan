@@ -173,7 +173,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
 
                 public function hasSideEffects(): \PHPStan\TrinaryLogic
                 {
-                    return TrinaryLogic::createNo();
+                    return TrinaryLogic::createYes();
                 }
             };
         }

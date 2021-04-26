@@ -79,12 +79,28 @@ class ModelExtension
         return $user->increment('counter');
     }
 
+    public function testIncrementOnSeperateLine(): void
+    {
+        /** @var User $user */
+        $user = new User;
+
+        $user->increment('counter');
+    }
+
     public function testDecrement(): int
     {
         /** @var User $user */
         $user = new User;
 
         return $user->decrement('counter');
+    }
+
+    public function testDecrementOnSeperateLine(): void
+    {
+        /** @var User $user */
+        $user = new User;
+
+        $user->decrement('counter');
     }
 
     public function testFirst(): ?User
