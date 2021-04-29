@@ -6,13 +6,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.5] - 2021-04-29
+
 ### Added
 
-- Support for `sole` method on Eloquent builder ([#822](https://github.com/nunomaduro/larastan/pull/822))
+- Support for `sole` method on Eloquent builder ([#822](https://github.com/nunomaduro/larastan/pull/822)) Thanks @ThibaudDauce
 
 ### Changed
 
-- refactor: cleanup call forwarding logic in extensions ([#816](https://github.com/nunomaduro/larastan/pull/816))
+- Cleanup call forwarding logic in extensions ([#816](https://github.com/nunomaduro/larastan/pull/816))
+
+### Fixed
+
+- `increment` and `decrement` methods on query builder has side effects
 
 ## [0.7.4] - 2021-04-16
 
@@ -558,7 +564,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.4...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.5...HEAD
+[0.7.5]: https://github.com/nunomaduro/larastan/compare/v0.7.4...0.7.5
 [0.7.4]: https://github.com/nunomaduro/larastan/compare/v0.7.3...0.7.4
 [0.7.3]: https://github.com/nunomaduro/larastan/compare/v0.7.2...0.7.3
 [0.7.2]: https://github.com/nunomaduro/larastan/compare/v0.7.1...0.7.2
