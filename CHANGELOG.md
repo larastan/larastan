@@ -6,9 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.6] - 2021-05-18
+
 ### Fixed
 
-- Update link to Octane dependency injection docs ([#829](https://github.com/nunomaduro/larastan/pull/829))
+- Update link to Octane dependency injection docs ([#829](https://github.com/nunomaduro/larastan/pull/829)) Thanks @spawnia
 
 ## [0.7.5] - 2021-04-29
 
@@ -568,7 +570,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.5...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.6...HEAD
+[0.7.6]: https://github.com/nunomaduro/larastan/compare/v0.7.5...0.7.6
 [0.7.5]: https://github.com/nunomaduro/larastan/compare/v0.7.4...0.7.5
 [0.7.4]: https://github.com/nunomaduro/larastan/compare/v0.7.3...0.7.4
 [0.7.3]: https://github.com/nunomaduro/larastan/compare/v0.7.2...0.7.3
