@@ -39,7 +39,8 @@ final class HigherOrderCollectionProxyExtension implements MethodsClassReflectio
 
         $returnType = HigherOrderCollectionProxyHelper::determineReturnType($methodType->getValue(), $valueType, $modelMethodReturnType);
 
-        return new class($classReflection, $methodName, $modelMethodReflection, $returnType) implements MethodReflection {
+        return new class($classReflection, $methodName, $modelMethodReflection, $returnType) implements MethodReflection
+        {
             /** @var ClassReflection */
             private $classReflection;
 
