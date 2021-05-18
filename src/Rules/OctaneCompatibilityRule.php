@@ -10,6 +10,7 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\NodeFinder;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\ObjectType;
 
@@ -120,14 +121,7 @@ class OctaneCompatibilityRule implements Rule
         });
 
         if (count($nodes) > 0) {
-            $errors = [];
-
-            foreach ($nodes as $node) {
-                $errors[] = RuleErrorBuilder::message('Consider using bind method instead or pass a closure.')
-                    ->identifier('rules.octane')->tip('See: https://github.com/laravel/octane#dependency-injection--octane')->line($node->getAttribute('startLine'))->build();
-            }
-
-            return $errors;
+            return array_map([$this, 'dependencyInjectionError'], $nodes);
         }
 
         return [];
@@ -145,16 +139,18 @@ class OctaneCompatibilityRule implements Rule
         });
 
         if (count($nodes) > 0) {
-            $errors = [];
-
-            foreach ($nodes as $node) {
-                $errors[] = RuleErrorBuilder::message('Consider using bind method instead or pass a closure.')
-                    ->identifier('rules.octane')->tip('See: https://github.com/laravel/octane#dependency-injection--octane')->line($node->getAttribute('startLine'))->build();
-            }
-
-            return $errors;
+            return array_map([$this, 'dependencyInjectionError'], $nodes);
         }
 
         return [];
+    }
+
+    private function dependencyInjectionError(Node $node): RuleError
+    {
+        return RuleErrorBuilder::message('Consider using bind method instead or pass a closure.')
+            ->identifier('rules.octane')
+            ->tip('See: https://laravel.com/docs/octane#dependency-injection-and-octane')
+            ->line($node->getAttribute('startLine'))
+            ->build();
     }
 }

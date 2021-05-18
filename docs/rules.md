@@ -111,7 +111,8 @@ takesOnlyUserModelProperties('emaiil');
 
 ## OctaneCompatibilityRule
 
-This is an optional rule that can check your application for Laravel Octane compatibility. You can read more about why in the official [Octane docs](https://github.com/laravel/octane#dependency-injection--octane).
+This is an optional rule that can check your application for Laravel Octane compatibility.
+You can read more about why in [the official Octane docs](https://laravel.com/docs/octane#dependency-injection-and-octane).
 
 ### Configuration
 

@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Update link to Octane dependency injection docs ([#829](https://github.com/nunomaduro/larastan/pull/829))
+
 ## [0.7.5] - 2021-04-29
 
 ### Added
