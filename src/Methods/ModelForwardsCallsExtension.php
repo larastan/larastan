@@ -89,7 +89,8 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
         if (in_array($methodName, ['increment', 'decrement'], true)) {
             $methodReflection = $classReflection->getNativeMethod($methodName);
 
-            return new class($classReflection, $methodName, $methodReflection) implements MethodReflection {
+            return new class($classReflection, $methodName, $methodReflection) implements MethodReflection
+            {
                 /** @var ClassReflection */
                 private $classReflection;
 
