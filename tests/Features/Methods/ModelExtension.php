@@ -193,6 +193,11 @@ class ModelExtension
         return User::onlyTrashed()->findOrFail(5);
     }
 
+    public function testRestore(User $user): bool
+    {
+        return $user->restore();
+    }
+
     public function testFirstWhere(): ?User
     {
         return User::firstWhere(['email' => 'foo@bar.com']);
