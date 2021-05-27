@@ -2,16 +2,16 @@
 
 namespace App;
 
+use App\Traits\NestedSoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property string $name
  */
 class Group extends Model
 {
-    use SoftDeletes;
+    use NestedSoftDeletes;
 
     /** @phpstan-return HasMany<Account> */
     public function accounts(): HasMany
