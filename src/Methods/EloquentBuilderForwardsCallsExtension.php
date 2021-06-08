@@ -169,6 +169,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
 
             array_shift($traitsLeftToAnalyze);
         }
+
         return $traits;
     }
 }
