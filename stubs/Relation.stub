@@ -4,6 +4,8 @@ namespace Illuminate\Database\Eloquent\Relations;
 
 /**
  * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ *
+ * @mixin \Illuminate\Database\Eloquent\Builder
  */
 class Relation
 {
