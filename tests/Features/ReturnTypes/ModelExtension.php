@@ -81,6 +81,7 @@ class ModelExtension
     /** @phpstan-return Collection<User>|null */
     public function testFindWithCastingToArray(FormRequest $request): ?Collection
     {
+        /** @var array<string, string> $requestData */
         $requestData = $request->validated();
 
         return User::find((array) $requestData['user_ids']);
