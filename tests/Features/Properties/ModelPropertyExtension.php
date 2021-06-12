@@ -123,4 +123,16 @@ class ModelPropertyExtension
     {
         return $thread->custom_property;
     }
+
+    public function testDateCast(User $user): ?BaseCarbon
+    {
+        $user->email_verified_at = now();
+
+        return $user->email_verified_at;
+    }
+
+    public function testNullablePropertyWithCast(User $user): void
+    {
+        $user->email_verified_at = null;
+    }
 }

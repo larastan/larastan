@@ -253,6 +253,10 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
                 continue;
             }
 
+            if ($this->tables[$modelInstance->getTable()]->columns[$name]->nullable) {
+                $realType .= '|null';
+            }
+
             $this->tables[$modelInstance->getTable()]->columns[$name]->readableType = $realType;
             $this->tables[$modelInstance->getTable()]->columns[$name]->writeableType = $realType;
         }

@@ -34,7 +34,7 @@ class User extends Authenticatable
     ];
 
     /** @var array<string, string> */
-    protected $casts = ['meta' => 'array', 'blocked' => 'boolean'];
+    protected $casts = ['meta' => 'array', 'blocked' => 'boolean', 'email_verified_at' => 'date'];
 
     /**
      * The attributes that should be hidden for arrays.
