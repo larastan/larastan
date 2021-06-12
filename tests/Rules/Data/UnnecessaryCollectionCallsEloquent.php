@@ -90,7 +90,8 @@ class UnnecessaryCollectionCallsEloquent
         return User::query()->get()->containsStrict('id', 1);
     }
 
-    public function testSum(): int
+    /** @phpstan-return mixed */
+    public function testSum()
     {
         return User::pluck('id')->sum();
     }

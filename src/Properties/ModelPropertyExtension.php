@@ -165,8 +165,8 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
      */
     private function getReadableAndWritableTypes(SchemaColumn $column, Model $modelInstance): array
     {
-        $readableType = 'mixed';
-        $writableType = 'mixed';
+        $readableType = $column->readableType;
+        $writableType = $column->writeableType;
 
         if (in_array($column->name, $modelInstance->getDates(), true)) {
             return [$this->getDateClass().($column->nullable ? '|null' : ''), $this->getDateClass().'|string'.($column->nullable ? '|null' : '')];

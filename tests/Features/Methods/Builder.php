@@ -206,7 +206,8 @@ class Builder
             ->firstWhere(\Illuminate\Support\Facades\DB::raw('name'), 'like', '%john%');
     }
 
-    public function testValueWithQueryExpression(): ?string
+    /** @phpstan-return mixed */
+    public function testValueWithQueryExpression()
     {
         return User::with('foo')
             ->value(\Illuminate\Support\Facades\DB::raw('name'));

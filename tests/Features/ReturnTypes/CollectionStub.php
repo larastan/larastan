@@ -56,9 +56,9 @@ class CollectionStub
 
     /**
      * @param EloquentCollection<User> $collection
-     * @return int|null
+     * @return mixed
      */
-    public function testPluck(EloquentCollection $collection): ?int
+    public function testPluck(EloquentCollection $collection)
     {
         return $collection->pluck('id')->first();
     }

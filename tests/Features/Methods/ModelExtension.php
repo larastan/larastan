@@ -251,7 +251,8 @@ class ModelExtension
         return Thread::methodReturningUnionWithCollectionOfAnotherModel();
     }
 
-    public function testMin(User $user): int
+    /** @phpstan-return mixed */
+    public function testMin(User $user)
     {
         return $user->min('id');
     }

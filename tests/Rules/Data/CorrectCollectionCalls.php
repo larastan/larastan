@@ -45,19 +45,16 @@ class CorrectCollectionCalls
         return User::firstOrFail()->accounts()->first();
     }
 
-    public function maxQuery(): int
+    /** @phpstan-return mixed */
+    public function maxQuery()
     {
         return DB::table('users')->max('id');
     }
 
-    public function collectionCalls(): int
+    /** @phpstan-return mixed */
+    public function collectionCalls()
     {
         return collect([1, 2, 3])->flip()->reverse()->sum();
-    }
-
-    public function mixedReturn(): ?Foo
-    {
-        return Foo::query()->returnMixed()->first();
     }
 
     /**
@@ -82,7 +79,8 @@ class CorrectCollectionCalls
         });
     }
 
-    public function testAggregateNoArgs(): int
+    /** @phpstan-return mixed */
+    public function testAggregateNoArgs()
     {
         return User::query()
             ->select([DB::raw('COUNT(*) as temp')])
@@ -90,7 +88,8 @@ class CorrectCollectionCalls
             ->sum();
     }
 
-    public function testRelationAggregate(User $user): int
+    /** @phpstan-return mixed */
+    public function testRelationAggregate(User $user)
     {
         return $user->group()
             ->withCount(['accounts' => function ($query) {

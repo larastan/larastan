@@ -72,11 +72,12 @@ class BuilderExtension
         return $builder->whereNotNull('test');
     }
 
-    public function testMax(): int
+    /** @phpstan-return mixed */
+    public function testMax()
     {
         $user = new User;
 
-        return (int) $user->where('email', 1)->max('email');
+        return $user->where('email', 1)->max('email');
     }
 
     public function testExists(): bool

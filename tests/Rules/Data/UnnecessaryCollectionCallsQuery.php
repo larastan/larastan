@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class UnnecessaryCollectionCallsQuery
 {
-    public function queryMax(): int
+    /** @phpstan-return mixed */
+    public function queryMax()
     {
         return DB::table('users')->get()->max('id');
     }
