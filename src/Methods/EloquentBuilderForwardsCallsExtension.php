@@ -22,7 +22,6 @@ use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Generic\TemplateMixedType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeWithClassName;
-use ReflectionClass;
 
 final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
 {
