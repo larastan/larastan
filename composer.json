@@ -12,6 +12,7 @@
     ],
     "require": {
         "php": "^7.2 || ^8.0",
+        "ext-json": "*",
         "composer/composer": "^1.0 || ^2.0",
         "illuminate/console": "^6.0 || ^7.0 || ^8.0 || ^9.0",
         "illuminate/container": "^6.0 || ^7.0 || ^8.0 || ^9.0",
@@ -21,9 +22,8 @@
         "illuminate/pipeline": "^6.0 || ^7.0 || ^8.0 || ^9.0",
         "illuminate/support": "^6.0 || ^7.0 || ^8.0 || ^9.0",
         "mockery/mockery": "^0.9 || ^1.0",
-        "phpstan/phpstan": "^0.12.83",
-        "symfony/process": "^4.3 || ^5.0",
-        "ext-json": "*"
+        "phpstan/phpstan": "^0.12.90",
+        "symfony/process": "^4.3 || ^5.0"
     },
     "require-dev": {
         "orchestra/testbench": "^4.0 || ^5.0 || ^6.0 || ^7.0",

@@ -63,7 +63,7 @@ class User extends Authenticatable
     /** @phpstan-return BelongsTo<Group, User> */
     public function group(): BelongsTo
     {
-        return $this->belongsTo(Group::class);
+        return $this->belongsTo(Group::class)->withTrashed();
     }
 
     /** @phpstan-return HasMany<Account> */

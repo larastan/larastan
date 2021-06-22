@@ -102,7 +102,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             // Special case for `SoftDeletes` trait
             if (
                 in_array($methodName, ['withTrashed', 'onlyTrashed', 'withoutTrashed'], true) &&
-                $modelReflection->hasTraitUse(SoftDeletes::class)
+                in_array(SoftDeletes::class, array_keys($modelReflection->getTraits(true)))
             ) {
                 $ref = $this->reflectionProvider->getClass(SoftDeletes::class)->getMethod($methodName, new OutOfClassScope());
 
