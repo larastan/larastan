@@ -103,7 +103,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             // Special case for `SoftDeletes` trait
             if (
                 in_array($methodName, ['withTrashed', 'onlyTrashed', 'withoutTrashed'], true) &&
-                in_array(SoftDeletes::class, $this->collectTraitNames($modelReflection->getNativeReflection()))
+                in_array(SoftDeletes::class, array_keys($modelReflection->getTraits(true)))
             ) {
                 $ref = $this->reflectionProvider->getClass(SoftDeletes::class)->getMethod($methodName, new OutOfClassScope());
 
@@ -143,33 +143,5 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             new GenericObjectType($classReflection->getName(), [$modelType]),
             $parametersAcceptor->isVariadic()
         );
-    }
-
-    /**
-     * @param ReflectionClass<object> $class
-     *
-     * @return string[]
-     */
-    private function collectTraitNames(ReflectionClass $class): array
-    {
-        $traits = [];
-        $traitsLeftToAnalyze = $class->getTraits();
-
-        while (count($traitsLeftToAnalyze) !== 0) {
-            $trait = reset($traitsLeftToAnalyze);
-            $traits[] = $trait->getName();
-
-            foreach ($trait->getTraits() as $subTrait) {
-                if (in_array($subTrait->getName(), $traits, \true)) {
-                    continue;
-                }
-
-                $traitsLeftToAnalyze[] = $subTrait;
-            }
-
-            array_shift($traitsLeftToAnalyze);
-        }
-
-        return $traits;
     }
 }
