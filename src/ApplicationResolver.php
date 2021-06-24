@@ -35,7 +35,8 @@ final class ApplicationResolver
         if (file_exists($composerFile)) {
             self::$composer = json_decode((string) file_get_contents($composerFile), true);
             $namespace = (string) key(self::$composer['autoload']['psr-4']);
-            $serviceProviders = array_values(array_filter(self::getProjectClasses($namespace, dirname($composerFile)), function (string $class) use (
+            $vendorDir = self::$composer['config']['vendor-dir'] ?? dirname($composerFile).DIRECTORY_SEPARATOR.'vendor';
+            $serviceProviders = array_values(array_filter(self::getProjectClasses($namespace, $vendorDir), function (string $class) use (
                 $namespace
             ) {
                 /** @var class-string $class */
@@ -86,9 +87,9 @@ final class ApplicationResolver
      * @return string[]
      * @throws \ReflectionException
      */
-    private static function getProjectClasses(string $namespace, string $rootDir): array
+    private static function getProjectClasses(string $namespace, string $vendorDir): array
     {
-        $projectDirs = self::getProjectSearchDirs($namespace, $rootDir);
+        $projectDirs = self::getProjectSearchDirs($namespace, $vendorDir);
         /** @var string[] $maps */
         $maps = [];
         // Use composer's ClassMapGenerator to pull the class list out of each project search directory
@@ -121,14 +122,14 @@ final class ApplicationResolver
 
     /**
      * @param string $namespace
-     * @param string $rootDir
+     * @param string $vendorDir
      *
      * @return string[]
      * @throws \ReflectionException
      */
-    private static function getProjectSearchDirs(string $namespace, string $rootDir): array
+    private static function getProjectSearchDirs(string $namespace, string $vendorDir): array
     {
-        $composerDir = $rootDir.DIRECTORY_SEPARATOR.'vendor'.DIRECTORY_SEPARATOR.'composer';
+        $composerDir = $vendorDir.DIRECTORY_SEPARATOR.'composer';
 
         $file = $composerDir.DIRECTORY_SEPARATOR.'autoload_psr4.php';
         $raw = include $file;
