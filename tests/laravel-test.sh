@@ -7,7 +7,7 @@ composer create-project --quiet --prefer-dist "laravel/laravel" ../laravel
 cd ../laravel/
 
 echo "Add package from source"
-sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan" } ],|' -i composer.json
+sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan", "options": { "symlink": false }} ],|' -i composer.json
 composer require --dev "nunomaduro/larastan:*"
 
 echo "Fix https://github.com/laravel/framework/pull/23825"
@@ -27,7 +27,7 @@ composer create-project --quiet --prefer-dist "laravel/lumen" ../lumen
 cd ../lumen/
 
 echo "Add package from source"
-sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan" } ],|' -i composer.json
+sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan", "options": { "symlink": false }} ],|' -i composer.json
 composer require --dev "nunomaduro/larastan:*"
 
 echo "Fix Handler::render return type"
