@@ -23,7 +23,7 @@ We have [StyleCI](https://styleci.io/) setup to automatically fix any code style
 
 Clone your fork, then install the dev dependencies:
 
-    composer install
+    composer update
 
 ## Tests
 
