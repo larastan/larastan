@@ -6,6 +6,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.7] - 2021-07-01
+
+### Added
+
+- Use `checkExplicitMixed` PHPStan option when running tests ([#844](https://github.com/nunomaduro/larastan/pull/844))
+- Added .github folder to the export list ([#849](https://github.com/nunomaduro/larastan/pull/849)) Thanks @dingo-d
+- Added support for detecting nested trait usage for SoftDeletes trait ([#838](https://github.com/nunomaduro/larastan/pull/838)) Thanks @IAmRGroot
+- Added support for vendor-dir ([#850](https://github.com/nunomaduro/larastan/pull/850)) Thanks @rajyan
+
+
+### Fixed
+
+- Correct return type for restore method
+- Nullable properties should not be overwritten when applying model casts
+- Fixed suggest in Composer config ([#846](https://github.com/nunomaduro/larastan/pull/846)) Thanks @szepeviktor
+- Fixed bootstrap path ([#852](https://github.com/nunomaduro/larastan/pull/852)) Thanks @rajyan
+
+
 ## [0.7.6] - 2021-05-18
 
 ### Fixed
@@ -570,7 +588,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.6...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.7...HEAD
+[0.7.7]: https://github.com/nunomaduro/larastan/compare/v0.7.6...0.7.7
 [0.7.6]: https://github.com/nunomaduro/larastan/compare/v0.7.5...0.7.6
 [0.7.5]: https://github.com/nunomaduro/larastan/compare/v0.7.4...0.7.5
 [0.7.4]: https://github.com/nunomaduro/larastan/compare/v0.7.3...0.7.4
