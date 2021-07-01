@@ -19,6 +19,7 @@ use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 final class Auths implements PipeContract
 {
     use Concerns\HasContainer;
+    use Concerns\LoadsAuthModel;
 
     /**
      * @var string[]
@@ -39,16 +40,16 @@ final class Auths implements PipeContract
 
         $found = false;
 
-        if (in_array($classReflectionName, $this->classes, true)) {
-            $config = $this->resolve('config');
+        $config = $this->resolve('config');
 
-            $userModel = $config->get('auth.providers.users.model');
+        if ($config !== null && in_array($classReflectionName, $this->classes, true)) {
+            $authModel = $this->getAuthModel($config);
 
-            if ($userModel) {
-                $found = $passable->sendToPipeline($userModel);
+            if ($authModel !== null) {
+                $found = $passable->sendToPipeline($authModel);
             }
         } elseif ($classReflectionName === \Illuminate\Contracts\Auth\Factory::class || $classReflectionName === \Illuminate\Auth\AuthManager::class) {
-            $found = $passable->searchOn(
+            $found = $passable->sendToPipeline(
                 \Illuminate\Contracts\Auth\Guard::class
             );
         }

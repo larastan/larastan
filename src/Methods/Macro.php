@@ -80,6 +80,7 @@ final class Macro implements BuiltinMethodReflection
 
     /**
      * {@inheritdoc}
+     * @phpstan-ignore-next-line
      */
     public function getDeclaringClass(): ReflectionClass
     {
@@ -227,5 +228,10 @@ final class Macro implements BuiltinMethodReflection
     public function getPrototype(): BuiltinMethodReflection
     {
         return $this;
+    }
+
+    public function getReflection(): ?\ReflectionMethod
+    {
+        return null;
     }
 }

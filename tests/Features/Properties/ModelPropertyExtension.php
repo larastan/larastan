@@ -6,7 +6,9 @@ namespace Tests\Features\Properties;
 
 use App\Account;
 use App\Group;
+use App\GuardedModel;
 use App\Role;
+use App\Thread;
 use App\User;
 use Carbon\Carbon as BaseCarbon;
 use Illuminate\Support\Carbon;
@@ -72,7 +74,8 @@ class ModelPropertyExtension
         return $this->user->meta;
     }
 
-    public function testKnownColumnNameWithUnknownType(): string
+    /** @return mixed */
+    public function testKnownColumnNameWithUnknownType()
     {
         $this->user->unknown_column = 5;
         $this->user->unknown_column = 'foo';
@@ -109,5 +112,27 @@ class ModelPropertyExtension
         $group->id = 5;
 
         return $group->save();
+    }
+
+    public function testModelWithGuardedProperties(GuardedModel $guardedModel): string
+    {
+        return $guardedModel->name;
+    }
+
+    public function testCustomAccessorOnModels(Thread $thread): string
+    {
+        return $thread->custom_property;
+    }
+
+    public function testDateCast(User $user): ?BaseCarbon
+    {
+        $user->email_verified_at = now();
+
+        return $user->email_verified_at;
+    }
+
+    public function testNullablePropertyWithCast(User $user): void
+    {
+        $user->email_verified_at = null;
     }
 }

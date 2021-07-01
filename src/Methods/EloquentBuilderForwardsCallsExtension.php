@@ -5,127 +5,142 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
+use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\Dummy\DummyMethodReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
+use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Generic\TemplateMixedType;
-use PHPStan\Type\MixedType;
-use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeWithClassName;
 
 final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
 {
     use Concerns\HasBroker;
 
-    /**
-     * The methods that should be returned from query builder.
-     *
-     * @var string[]
-     */
-    protected $passthru = [
-        'insert', 'insertOrIgnore', 'insertGetId', 'insertUsing', 'getBindings', 'toSql', 'dump', 'dd',
-        'exists', 'doesntExist', 'count', 'min', 'max', 'avg', 'average', 'sum', 'getConnection',
-    ];
+    /** @var array<string, MethodReflection> */
+    private $cache = [];
 
-    private function getBuilderReflection(): ClassReflection
+    /** @var BuilderHelper */
+    private $builderHelper;
+
+    /** @var ReflectionProvider */
+    private $reflectionProvider;
+
+    public function __construct(BuilderHelper $builderHelper, ReflectionProvider $reflectionProvider)
     {
-        return $this->broker->getClass(QueryBuilder::class);
-    }
-
-    public function hasMethod(ClassReflection $classReflection, string $methodName): bool
-    {
-        if ($classReflection->getName() !== EloquentBuilder::class && ! $classReflection->isSubclassOf(EloquentBuilder::class)) {
-            return false;
-        }
-
-        if (in_array($methodName, $this->passthru, true)) {
-            return true;
-        }
-
-        if ($this->getBuilderReflection()->hasNativeMethod($methodName)) {
-            return true;
-        }
-
-        $templateTypeMap = $classReflection->getActiveTemplateTypeMap();
-
-        if (! $templateTypeMap->getType('TModelClass') instanceof ObjectType) {
-            return false;
-        }
-
-        return true;
+        $this->builderHelper = $builderHelper;
+        $this->reflectionProvider = $reflectionProvider;
     }
 
     /**
      * @throws ShouldNotHappenException
-     * @throws \PHPStan\Reflection\MissingMethodFromReflectionException
+     * @throws MissingMethodFromReflectionException
      */
+    public function hasMethod(ClassReflection $classReflection, string $methodName): bool
+    {
+        if (array_key_exists($classReflection->getCacheKey().'-'.$methodName, $this->cache)) {
+            return true;
+        }
+
+        $methodReflection = $this->findMethod($classReflection, $methodName);
+
+        if ($methodReflection !== null && $classReflection->isGeneric()) {
+            $this->cache[$classReflection->getCacheKey().'-'.$methodName] = $methodReflection;
+
+            return true;
+        }
+
+        return false;
+    }
+
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
-        if (in_array($methodName, $this->passthru, true)) {
-            $methodReflection = $this->getBuilderReflection()->getNativeMethod($methodName);
+        return $this->cache[$classReflection->getCacheKey().'-'.$methodName];
+    }
 
-            $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
-            $returnType = $parametersAcceptor->getReturnType();
+    /**
+     * @throws MissingMethodFromReflectionException
+     * @throws ShouldNotHappenException
+     */
+    private function findMethod(ClassReflection $classReflection, string $methodName): ?MethodReflection
+    {
+        if ($classReflection->getName() !== EloquentBuilder::class && ! $classReflection->isSubclassOf(EloquentBuilder::class)) {
+            return null;
+        }
 
-            if ($returnType instanceof MixedType) {
-                $returnType = $returnType->subtract(new ObjectType(EloquentBuilder::class));
+        /** @var Type|TemplateMixedType|null $modelType */
+        $modelType = $classReflection->getActiveTemplateTypeMap()->getType('TModelClass');
+
+        // Generic type is not specified
+        if ($modelType === null) {
+            return null;
+        }
+
+        if ($modelType instanceof TypeWithClassName) {
+            $modelReflection = $modelType->getClassReflection();
+        } else {
+            $modelReflection = $this->reflectionProvider->getClass(Model::class);
+        }
+
+        if ($modelReflection === null) {
+            return null;
+        }
+
+        $ref = $this->builderHelper->searchOnEloquentBuilder($classReflection, $methodName, $modelReflection);
+
+        if ($ref === null) {
+            // Special case for `SoftDeletes` trait
+            if (
+                in_array($methodName, ['withTrashed', 'onlyTrashed', 'withoutTrashed'], true) &&
+                in_array(SoftDeletes::class, array_keys($modelReflection->getTraits(true)))
+            ) {
+                $ref = $this->reflectionProvider->getClass(SoftDeletes::class)->getMethod($methodName, new OutOfClassScope());
+
+                return new EloquentBuilderMethodReflection(
+                    $methodName,
+                    $classReflection,
+                    $ref,
+                    ParametersAcceptorSelector::selectSingle($ref->getVariants())->getParameters(),
+                    new GenericObjectType($classReflection->getName(), [$modelType]),
+                    ParametersAcceptorSelector::selectSingle($ref->getVariants())->isVariadic()
+                );
             }
+
+            return null;
+        }
+
+        $parametersAcceptor = ParametersAcceptorSelector::selectSingle($ref->getVariants());
+
+        if (in_array($methodName, $this->builderHelper->passthru, true)) {
+            $returnType = $parametersAcceptor->getReturnType();
 
             return new EloquentBuilderMethodReflection(
                 $methodName, $classReflection,
+                $ref,
                 $parametersAcceptor->getParameters(),
                 $returnType,
                 $parametersAcceptor->isVariadic()
             );
         }
 
-        $templateTypeMap = $classReflection->getActiveTemplateTypeMap();
-
-        /** @var Type|ObjectType|TemplateMixedType $modelType */
-        $modelType = $templateTypeMap->getType('TModelClass');
-
-        if ($this->getBuilderReflection()->hasNativeMethod($methodName) && (! $modelType instanceof ObjectType)) {
-            $methodReflection = $this->getBuilderReflection()->getNativeMethod($methodName);
-            $builderClass = EloquentBuilder::class;
-
-            if ($modelType instanceof TemplateMixedType) {
-                /** @var string $builderClass */
-                $builderClass = $modelType->getScope()->getClassName();
-            }
-
-            $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
-
-            return new EloquentBuilderMethodReflection(
-                $methodName, $classReflection,
-                $parametersAcceptor->getParameters(),
-                new GenericObjectType($builderClass, [$modelType]),
-                $parametersAcceptor->isVariadic()
-            );
-        }
-
-        if ($modelType instanceof ObjectType) {
-            $builderHelper = new BuilderHelper($this->getBroker());
-            $eloquentBuilderClass = $builderHelper->determineBuilderType($modelType->getClassName());
-            $returnMethodReflection = $builderHelper->getMethodReflectionFromBuilder(
-                $classReflection,
-                $methodName,
-                $modelType->getClassName(),
-                new GenericObjectType($eloquentBuilderClass, [new ObjectType($modelType->getClassName())])
-            );
-
-            if ($returnMethodReflection !== null) {
-                return $returnMethodReflection;
-            }
-        }
-
-        return new DummyMethodReflection($methodName);
+        // Returning custom reflection
+        // to ensure return type is always `EloquentBuilder<Model>`
+        return new EloquentBuilderMethodReflection(
+            $methodName, $classReflection,
+            $ref,
+            $parametersAcceptor->getParameters(),
+            new GenericObjectType($classReflection->getName(), [$modelType]),
+            $parametersAcceptor->isVariadic()
+        );
     }
 }

@@ -13,13 +13,13 @@ class CustomEloquentBuilderTest
 {
     public function testModelWithCustomBuilderReturnsCorrectModelAfterBuilderMethod(): ?ModelWithCustomBuilder
     {
-        return ModelWithCustomBuilder::where('foo', 'bar')->first();
+        return ModelWithCustomBuilder::where('email', 'bar')->first();
     }
 
     /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
     public function testEloquentBuilderMethodReturnsCustomBuilder(): CustomEloquentBuilder
     {
-        return ModelWithCustomBuilder::with('foo')->where('foo', 'bar');
+        return ModelWithCustomBuilder::with('foo')->where('email', 'bar');
     }
 
     /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
@@ -45,23 +45,23 @@ class CustomEloquentBuilderTest
     /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
     public function testCustomBuilderMethodAfterDynamicWhere(): CustomEloquentBuilder
     {
-        return ModelWithCustomBuilder::whereFoo(['bar'])->type('foo')->whereFoo(['bar']);
+        return ModelWithCustomBuilder::whereEmail(['bar'])->type('foo')->whereEmail(['bar']);
     }
 
     /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
     public function testCustomBuilderMethodWithQueryBuilderMethod(): CustomEloquentBuilder
     {
-        return ModelWithCustomBuilder::whereFoo(['bar'])->categories(['foo'])->whereFoo(['bar']);
+        return ModelWithCustomBuilder::whereEmail(['bar'])->categories(['foo'])->whereType(['bar']);
     }
 
     public function testFindAfterCustomBuilderMethodAfterDynamicWhere(): ?ModelWithCustomBuilder
     {
-        return ModelWithCustomBuilder::whereFoo(['bar'])->type('foo')->first();
+        return ModelWithCustomBuilder::whereEmail(['bar'])->type('foo')->first();
     }
 
     public function testFindAfterCustomBuilderMethodAfterDynamicWhereOnExistingVariable(): ?ModelWithCustomBuilder
     {
-        $query = ModelWithCustomBuilder::whereFoo(['bar'])->type('foo');
+        $query = ModelWithCustomBuilder::whereEmail(['bar'])->type('foo');
 
         return $query->first();
     }
@@ -112,18 +112,23 @@ class FooModel extends Model
     }
 }
 
+/**
+ * @property string $email
+ * @property string $category
+ * @property string $type
+ */
 class ModelWithCustomBuilder extends Model
 {
     /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
     public function scopeFoo(CustomEloquentBuilder $query, string $foo): CustomEloquentBuilder
     {
-        return $query->where(['foo' => $foo]);
+        return $query->where(['email' => $foo]);
     }
 
     /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
     public function testCustomBuilderReturnType(): CustomEloquentBuilder
     {
-        return $this->where('foo', 'bar');
+        return $this->where('email', 'bar');
     }
 
     /**

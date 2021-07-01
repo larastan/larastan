@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Types;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use NunoMaduro\Larastan\Concerns\HasContainer;
 use PhpParser\Node\Expr\MethodCall;
@@ -92,6 +93,15 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
         $relatedModelClassName = $this
             ->relationParserHelper
             ->findRelatedModelInRelationMethod($methodReflection);
+
+        $classReflection = $methodReflection->getDeclaringClass();
+
+        if ($returnType->isInstanceOf(BelongsTo::class)->yes()) {
+            return new GenericObjectType($returnType->getClassName(), [
+                new ObjectType($relatedModelClassName),
+                new ObjectType($classReflection->getName()),
+            ]);
+        }
 
         return new GenericObjectType($returnType->getClassName(), [new ObjectType($relatedModelClassName)]);
     }

@@ -55,12 +55,6 @@ class ModelRelationsExtension
         return $otherDummyModel->morphToRelation;
     }
 
-    /** @return mixed */
-    public function testRelationWithoutReturnType(DummyModel $dummyModel)
-    {
-        return $dummyModel->relationWithoutReturnType;
-    }
-
     public function testCollectionMethodFirstOnRelation(DummyModel $dummyModel): ?OtherDummyModel
     {
         return $dummyModel->hasManyRelation->first();
@@ -103,12 +97,6 @@ class DummyModel extends Model
     public function hasManyThroughRelation(): HasManyThrough
     {
         return $this->hasManyThrough(OtherDummyModel::class, User::class);
-    }
-
-    /** @return mixed */
-    public function relationWithoutReturnType()
-    {
-        return $this->hasMany(OtherDummyModel::class);
     }
 }
 

@@ -5,10 +5,10 @@
 </p>
 
 <p align="center">
-  <a href="https://travis-ci.org/nunomaduro/larastan"><img src="https://img.shields.io/travis/nunomaduro/larastan/master.svg" alt="Build Status"></img></a>
+  <a href="https://github.com/nunomaduro/larastan/actions"><img src="https://github.com/nunomaduro/larastan/workflows/tests/badge.svg" alt="Build Status"></a>
   <a href="https://packagist.org/packages/nunomaduro/larastan/stats"><img src="https://poser.pugx.org/nunomaduro/larastan/d/total.svg" alt="Total Downloads"></a>
   <a href="https://packagist.org/packages/nunomaduro/larastan"><img src="https://poser.pugx.org/nunomaduro/larastan/v/stable.svg" alt="Latest Version"></a>
-  <a href="https://packagist.org/packages/nunomaduro/larastan"><img src="https://poser.pugx.org/nunomaduro/larastan/license.svg" alt="License"></a>
+  <a href="https://github.com/nunomaduro/larastan/blob/master/LICENSE.md"><img src="https://poser.pugx.org/nunomaduro/larastan/license.svg" alt="License"></a>
 </p>
 
 ------
@@ -21,7 +21,7 @@ Larastan was created by [Nuno Maduro](https://github.com/nunomaduro), got artwor
 - Supports most of [Laravel](https://laravel.com)'s **beautiful magic**
 - Discovers bugs in your code without running it
 
-## ✨ Getting Started in 3 Steps
+## ✨ Getting Started In 3 Steps
 
 > **Requires:**
 - **[PHP 7.2+](https://php.net/releases/)**
@@ -51,7 +51,7 @@ parameters:
     ignoreErrors:
         - '#Unsafe usage of new static#'
 
-    excludes_analyse:
+    excludePaths:
         - ./*/*/FileToBeExcluded.php
 
     checkMissingIterableValueType: false
@@ -72,14 +72,28 @@ If you are getting the error `Allowed memory size exhausted`, then you can use t
 ```
 
 ## Rules
+
 A list of configurable rules specific to Laravel can be found [here](docs/rules.md).
+
+## Custom PHPDoc types
+
+A list of PHPDoc types specific to Larastan can be found [here](docs/custom-types.md).
+
+## Custom PHPStan config parameters
+A list of custom config parameters that you can use in your PHPStan config file can be found [here](docs/custom-config-paramaters.md).
+
+## Errors To Ignore
+
+Some parts of Laravel are currently too magical for Larastan/PHPStan to understand.
+We listed common [errors to ignore](docs/errors-to-ignore.md), add them as needed.
+
 ## 👊🏻 Contributing
 
 Thank you for considering contributing to Larastan. All the contribution guidelines are mentioned [here](CONTRIBUTING.md).
 
-You can have a look at the [CHANGELOG](CHANGELOG.md) for constant updates & detailed information about the changes. You can also follow the Twitter account for the latest announcements or just come say hi!: [@enunomaduro](https://twitter.com/enunomaduro).
+You can have a look at the [CHANGELOG](CHANGELOG.md) for constant updates & detailed information about the changes. You can also follow the Twitter account for the latest announcements or just come say hi!: [@enunomaduro](https://twitter.com/enunomaduro), [@can__vural](https://twitter.com/can__vural).
 
-## ❤️ Support the development
+## ❤️ Support The Development
 
 **Do you like this project? Support it by donating**
 

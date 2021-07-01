@@ -9,17 +9,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Tests\Application\HasManySyncable;
 
 /**
- * @property-read \App\AccountCollection $accounts
+ * @property string $propertyDefinedOnlyInAnnotation
+ * @mixin \Eloquent
  */
 class User extends Authenticatable
 {
     use Notifiable;
+    use SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -31,7 +34,7 @@ class User extends Authenticatable
     ];
 
     /** @var array<string, string> */
-    protected $casts = ['meta' => 'array', 'blocked' => 'boolean'];
+    protected $casts = ['meta' => 'array', 'blocked' => 'boolean', 'email_verified_at' => 'date'];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -57,12 +60,13 @@ class User extends Authenticatable
         return $query->where('active', 1);
     }
 
-    /** @phpstan-return BelongsTo<Group> */
+    /** @phpstan-return BelongsTo<Group, User> */
     public function group(): BelongsTo
     {
-        return $this->belongsTo(Group::class);
+        return $this->belongsTo(Group::class)->withTrashed();
     }
 
+    /** @phpstan-return HasMany<Account> */
     public function accounts(): HasMany
     {
         return $this->hasMany(Account::class);
@@ -100,6 +104,11 @@ class User extends Authenticatable
         return $this->belongsTo(get_class($this));
     }
 
+    public function posts(): BelongsToMany
+    {
+        return $this->belongsToMany(Post::class);
+    }
+
     public function hasManySyncable($related, $foreignKey = null, $localKey = null): HasManySyncable
     {
         $instance = $this->newRelatedInstance($related);
@@ -111,5 +120,20 @@ class User extends Authenticatable
         return new HasManySyncable(
             $instance->newQuery(), $this, $instance->getTable().'.'.$foreignKey, $localKey
         );
+    }
+
+    public function getOnlyAvailableWithAccessorAttribute(): string
+    {
+        return 'foo';
+    }
+
+    public function isActive(): bool
+    {
+        return $this->active === 1;
+    }
+
+    public function setActive(): void
+    {
+        $this->active = 1;
     }
 }

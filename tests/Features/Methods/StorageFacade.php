@@ -14,9 +14,9 @@ class StorageFacade
         return Storage::disk();
     }
 
-    public function testDiskGetDriver(): \League\Flysystem\FilesystemInterface
+    public function testDiskGetDriver(): bool
     {
-        return Storage::disk()->getDriver();
+        return Storage::disk()->deleteDirectory('foo');
     }
 
     /** @return string|false */

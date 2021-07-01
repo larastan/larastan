@@ -8,16 +8,15 @@ use Closure;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use function in_array;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 use NunoMaduro\Larastan\Methods\Macro;
+use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Generic\TemplateTypeMap;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\TypehintHelper;
-use ReflectionClass;
 use ReflectionFunction;
 use ReflectionParameter;
 
@@ -39,20 +38,30 @@ final class BuilderLocalMacros implements PipeContract
         $className = $classReflection->getName();
         $found = false;
 
+        if (($classReflection->isSubclassOf(Builder::class) || $classReflection->getName() === Builder::class) && $classReflection->getActiveTemplateTypeMap()->getType('TModelClass') !== null) {
+            /** @var ObjectType $modelType */
+            $modelType = $classReflection->getActiveTemplateTypeMap()->getType('TModelClass');
+
+            if ($modelType instanceof ObjectType) {
+                $classReflection = $passable->getBroker()->getClass($modelType->getClassName());
+            }
+        }
+
         if ($classReflection->isSubclassOf(Model::class) && in_array(SoftDeletes::class,
                 trait_uses_recursive($classReflection->getName()), true)) {
-            $model = new class extends Model {
-            };
+            $methods = [
+                'restore' => function (Builder $builder) {
+                },
+                'withTrashed' => function (Builder $builder, bool $withTrashed = true) {
+                },
+                'withoutTrashed' => function (Builder $builder) {
+                },
+                'onlyTrashed' => function (Builder $builder) {
+                },
+            ];
 
-            (new SoftDeletingScope)->extend($builder = $model->newQuery());
-
-            $refObject = new ReflectionClass(Builder::class);
-            $refProperty = $refObject->getProperty('localMacros');
-            $refProperty->setAccessible(true);
-            $localMacros = $refProperty->getValue($builder);
-
-            if (array_key_exists($passable->getMethodName(), $localMacros)) {
-                $reflectionFunction = new ReflectionFunction($localMacros[$passable->getMethodName()]);
+            if (array_key_exists($passable->getMethodName(), $methods)) {
+                $reflectionFunction = new ReflectionFunction($methods[$passable->getMethodName()]);
                 $parameters = $reflectionFunction->getParameters();
                 unset($parameters[0]); // The query argument.
                 $parameters = array_values($parameters);
@@ -67,7 +76,7 @@ final class BuilderLocalMacros implements PipeContract
                     $macro, TemplateTypeMap::createEmpty(),
                     array_map(function (ReflectionParameter $parameter) {
                         return TypehintHelper::decideTypeFromReflection($parameter->getType());
-                    }, $parameters), new ObjectType($classReflection->getName()),
+                    }, $parameters), new GenericObjectType(Builder::class, [new ObjectType($classReflection->getName())]),
                     null, null,
                     false, false,
                     false, null));

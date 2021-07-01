@@ -11,6 +11,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class BuilderExtension
 {
+    public function testArrayOfWheres(): Collection
+    {
+        return User::where([
+            ['active', true],
+            ['id', '>=', 5],
+            ['id', '<=', 10],
+        ])->get();
+    }
+
     /** @return Collection<User> */
     public function testCallingGetOnModelWithStaticQueryBuilder(): Collection
     {
@@ -27,8 +36,8 @@ class BuilderExtension
     public function testCallingLongGetChainOnModelWithStaticQueryBuilder(): Collection
     {
         return User::where('id', 1)
-            ->whereNotNull('active')
-            ->where('foo', 'bar')
+            ->whereNotNull('name')
+            ->where('email', 'bar')
             ->whereFoo(['bar'])
             ->get();
     }
@@ -36,8 +45,8 @@ class BuilderExtension
     /** @return Collection<User> */
     public function testCallingLongGetChainOnModelWithVariableQueryBuilder(): Collection
     {
-        return (new User)->whereNotNull('active')
-            ->where('foo', 'bar')
+        return (new User)->whereNotNull('name')
+            ->where('email', 'bar')
             ->whereFoo(['bar'])
             ->get();
     }
@@ -47,13 +56,15 @@ class BuilderExtension
     {
         $user = new User;
 
-        return $user->where('test', 1)->get();
+        return $user->where('email', 1)->get();
     }
 
     /** @return Collection<User> */
     public function testUsingCollectionMethodsAfterGet(): Collection
     {
-        return User::whereIn('id', [1, 2, 3])->get()->mapWithKeys('key');
+        return User::whereIn('id', [1, 2, 3])->get()->mapWithKeys(function ($user) {
+            return [$user->name => $user->email];
+        });
     }
 
     public function testCallingQueryBuilderMethodOnEloquentBuilderReturnsEloquentBuilder(Builder $builder): Builder
@@ -61,18 +72,19 @@ class BuilderExtension
         return $builder->whereNotNull('test');
     }
 
-    public function testMax(): int
+    /** @phpstan-return mixed */
+    public function testMax()
     {
         $user = new User;
 
-        return (int) $user->where('test', 1)->max('foo');
+        return $user->where('email', 1)->max('email');
     }
 
     public function testExists(): bool
     {
         $user = new User;
 
-        return $user->where('test', 1)->exists();
+        return $user->where('email', 1)->exists();
     }
 
     /**
@@ -80,7 +92,7 @@ class BuilderExtension
      */
     public function testWith(): Builder
     {
-        return User::with('foo')->whereNull('bar');
+        return User::with('email')->whereNull('name');
     }
 
     /**
@@ -88,14 +100,14 @@ class BuilderExtension
      */
     public function testWithWithBuilderMethods(): Builder
     {
-        return User::with('foo')
-            ->where('foo', 'bar')
-            ->orWhere('bar', 'baz');
+        return User::with('email')
+            ->where('email', 'bar')
+            ->orWhere('name', 'baz');
     }
 
     public function testFindWithInteger(): ?User
     {
-        return User::with(['foo'])->find(1);
+        return User::with(['email'])->find(1);
     }
 
     /**
@@ -103,12 +115,12 @@ class BuilderExtension
      */
     public function testFindWithArray()
     {
-        return User::with(['foo'])->find([1, 2, 3]);
+        return User::with(['email'])->find([1, 2, 3]);
     }
 
     public function testFindOrFailWithInteger(): User
     {
-        return User::with(['foo'])->findOrFail(1);
+        return User::with(['email'])->findOrFail(1);
     }
 
     /**
@@ -116,12 +128,12 @@ class BuilderExtension
      */
     public function testFindOrFailWithArray()
     {
-        return User::with(['foo'])->findOrFail([1, 2, 3]);
+        return User::with(['email'])->findOrFail([1, 2, 3]);
     }
 
     public function testFindOrNewWithInteger(): User
     {
-        return User::with(['foo'])->findOrNew(1);
+        return User::with(['email'])->findOrNew(1);
     }
 
     /**
@@ -129,7 +141,7 @@ class BuilderExtension
      */
     public function testFindWithCustom3rdPartyBuilder()
     {
-        return (new CustomBuilder(User::query()->getQuery()))->with('foo')->find(1);
+        return (new CustomBuilder(User::query()->getQuery()))->with('email')->find(1);
     }
 
     /**
@@ -137,7 +149,7 @@ class BuilderExtension
      */
     public function testFindOrNewWithArray()
     {
-        return User::with(['foo'])->findOrNew([1, 2, 3]);
+        return User::with(['email'])->findOrNew([1, 2, 3]);
     }
 
     /**
@@ -157,24 +169,27 @@ class BuilderExtension
     }
 }
 
+/**
+ * @property string $email
+ */
 class TestModel extends Model
 {
     /** @return Collection|TestModel[] */
     public function testCallingGetInsideModel(): Collection
     {
-        return $this->where('test', 1)->get();
+        return $this->where('email', 1)->get();
     }
 
     /** @phpstan-return Builder<TestModel> */
     public function testStaticQuery(): Builder
     {
-        return static::query()->where('foo', 'bar');
+        return static::query()->where('email', 'bar');
     }
 
     /** @phpstan-return Builder<TestModel> */
     public function testQuery(): Builder
     {
-        return $this->where('foo', 'bar');
+        return $this->where('email', 'bar');
     }
 }
 

@@ -9,14 +9,10 @@ use Illuminate\Support\Facades\DB;
 
 class UnnecessaryCollectionCallsQuery
 {
-    public function queryMax(): int
+    /** @phpstan-return mixed */
+    public function queryMax()
     {
         return DB::table('users')->get()->max('id');
-    }
-
-    public function queryAverageNoParam(): float
-    {
-        return DB::table('users')->pluck('id')->average();
     }
 
     public function queryNotEmpty(): bool

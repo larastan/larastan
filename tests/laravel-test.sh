@@ -3,12 +3,12 @@
 set -e
 
 echo "Install Laravel"
-travis_retry composer create-project --quiet --prefer-dist "laravel/laravel" ../laravel
+composer create-project --quiet --prefer-dist "laravel/laravel" ../laravel
 cd ../laravel/
 
 echo "Add package from source"
-sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan" } ],|' -i composer.json
-travis_retry composer require --dev "nunomaduro/larastan:*"
+sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan", "options": { "symlink": false }} ],|' -i composer.json
+composer require --dev "nunomaduro/larastan:*"
 
 echo "Fix https://github.com/laravel/framework/pull/23825"
 sed -e 's|@return \\Illuminate\\Http\\Response$|@return \\Symfony\\Component\\HttpFoundation\\Response|' \
@@ -22,13 +22,16 @@ echo "Test Laravel"
 vendor/bin/phpstan analyse app --level=5 -c vendor/nunomaduro/larastan/extension.neon
 cd -
 
+echo "Test Laravel from other working directories"
+../laravel/vendor/bin/phpstan analyse ../laravel/app --level=5 -c ../laravel/vendor/nunomaduro/larastan/extension.neon
+
 echo "Install Lumen"
-travis_retry composer create-project --quiet --prefer-dist "laravel/lumen" ../lumen
+composer create-project --quiet --prefer-dist "laravel/lumen" ../lumen
 cd ../lumen/
 
 echo "Add package from source"
-sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan" } ],|' -i composer.json
-travis_retry composer require --dev "nunomaduro/larastan:*"
+sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan", "options": { "symlink": false }} ],|' -i composer.json
+composer require --dev "nunomaduro/larastan:*"
 
 echo "Fix Handler::render return type"
 sed -e 's/@return \\Illuminate\\Http\\Response|\\Illuminate\\Http\\JsonResponse$/@return \\Symfony\\Component\\HttpFoundation\\Response/' \
@@ -60,3 +63,7 @@ EOF
 
 echo "Test Lumen"
 vendor/bin/phpstan analyse app --level=5 -c vendor/nunomaduro/larastan/extension.neon
+cd -
+
+echo "Test Lumen from other working directories"
+../lumen/vendor/bin/phpstan analyse ../lumen/app --level=5 -c ../lumen/vendor/nunomaduro/larastan/extension.neon

@@ -38,10 +38,10 @@ parameters:
 ```
 to your `phpstan.neon` file.
 
-You can also configure the collection methods which this rule 
-checks for. By default, all collection methods are checked. 
+You can also configure the collection methods which this rule
+checks for. By default, all collection methods are checked.
 To only enable a specific set of methods, you could set the
- `noUnnecessaryCollectionCallOnly` configuration key. For example:
+`noUnnecessaryCollectionCallOnly` configuration key. For example:
 ```
 parameters:
     noUnnecessaryCollectionCallOnly: ['count', 'first']
@@ -54,3 +54,86 @@ parameters:
     noUnnecessaryCollectionCallExcept: ['contains']
 ```
 
+## ModelPropertyRule
+
+---
+
+**NOTE**: This rule is currently in beta! If you want to improve it's analysis you can check out the issue [here](https://github.com/nunomaduro/larastan/issues/676) and contribute!
+
+---
+
+**default**: false
+
+### Configuration
+This rule is disabled by default. You can enable it by putting
+```
+parameters:
+    checkModelProperties: true
+```
+to your `phpstan.neon` file.
+
+This rule checks every argument of a method or a function, and if the argument has the type `model-property`, it will try to check the given value against the model properties. And if the model does not have the given property, it'll produce an error.
+
+### Basic example
+
+```php
+User::create([
+    'name' => 'John Doe',
+    'emaiil' => 'john@example.test'
+]);
+```
+
+Here we have a typo in `email` column. So if we run analysis on this file Larastan will generate the following error:
+
+```
+Property 'emaiil' does not exist in App\User model.
+```
+
+This check will be done automatically on Laravel's core methods where a property is expected. But you can also typehint the `model-property` in your own code to take advantage of this analysis.
+
+You can define a function like this:
+```php
+/**
+ * @phpstan-param model-property<\App\User> $property
+ */
+function takesOnlyUserModelProperties(string $property)
+{
+    // ...
+}
+```
+
+And if you call the function above with a property that does not exist in User model, Larastan will warn you about it.
+
+```php
+// Property 'emaiil' does not exist in App\User model.
+takesOnlyUserModelProperties('emaiil');
+```
+
+## OctaneCompatibilityRule
+
+This is an optional rule that can check your application for Laravel Octane compatibility.
+You can read more about why in [the official Octane docs](https://laravel.com/docs/octane#dependency-injection-and-octane).
+
+### Configuration
+
+This rule is disabled by default. You can enable it by adding
+```
+parameters:
+    checkOctaneCompatibility: true
+```
+to your `phpstan.neon` file.
+
+### Examples
+
+Following code
+```php
+public function register()
+{
+    $this->app->singleton(Service::class, function ($app) {
+        return new Service($app);
+    });
+}
+```
+Will result in the following error:
+
+`Consider using bind method instead or pass a closure.`

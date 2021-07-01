@@ -1,5 +1,6 @@
 - Larastan Version: #.#.#
 - `--level` used:
+- Pull request with failing test:
 
 ### Description
 

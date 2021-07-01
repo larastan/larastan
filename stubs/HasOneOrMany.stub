@@ -9,7 +9,18 @@ namespace Illuminate\Database\Eloquent\Relations;
 abstract class HasOneOrMany extends Relation
 {
     /**
-     * @param array<string, mixed> $attributes
+     * Create a new has one or many relationship instance.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder<TRelatedModel>  $query
+     * @param  TRelatedModel  $parent
+     * @param  string  $foreignKey
+     * @param  string  $localKey
+     * @return void
+     */
+    public function __construct(\Illuminate\Database\Eloquent\Builder $query, \Illuminate\Database\Eloquent\Model $parent, $foreignKey, $localKey);
+
+    /**
+     * @param array<model-property<TRelatedModel>, mixed> $attributes
      * @phpstan-return TRelatedModel
      */
     public function make(array $attributes = []);
@@ -26,7 +37,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Get the first related model record matching the attributes or instantiate it.
      *
-     * @param  array<string, mixed>  $attributes
+     * @param  array<model-property<TRelatedModel>, mixed>  $attributes
      * @param  array<mixed, mixed>  $values
      * @return TRelatedModel
      */
@@ -35,7 +46,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Get the first related record matching the attributes or create it.
      *
-     * @param  array<string, mixed>  $attributes
+     * @param  array<model-property<TRelatedModel>, mixed>  $attributes
      * @param  array<mixed, mixed>  $values
      * @return TRelatedModel
      */
@@ -44,7 +55,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create or update a related record matching the attributes, and fill it with values.
      *
-     * @param  array<string, mixed>  $attributes
+     * @param  array<model-property<TRelatedModel>, mixed>  $attributes
      * @param  array<mixed, mixed>  $values
      * @return TRelatedModel
      */
@@ -59,7 +70,7 @@ abstract class HasOneOrMany extends Relation
     public function save(\Illuminate\Database\Eloquent\Model $model);
 
     /**
-     * @param array<string, mixed> $attributes
+     * @param array<model-property<TRelatedModel>, mixed> $attributes
      *
      * @phpstan-return TRelatedModel
      */

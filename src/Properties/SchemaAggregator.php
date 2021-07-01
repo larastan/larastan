@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Properties;
 
 use PhpParser;
+use PhpParser\NodeFinder;
 
 /**
  * @see https://github.com/psalm/laravel-psalm-plugin/blob/master/src/SchemaAggregator.php
@@ -19,10 +20,13 @@ final class SchemaAggregator
      */
     public function addStatements(array $stmts): void
     {
-        foreach ($stmts as $stmt) {
-            if ($stmt instanceof PhpParser\Node\Stmt\Class_) {
-                $this->addClassStatements($stmt->stmts);
-            }
+        $nodeFinder = new NodeFinder();
+
+        /** @var PhpParser\Node\Stmt\Class_[] $classes */
+        $classes = $nodeFinder->findInstanceOf($stmts, PhpParser\Node\Stmt\Class_::class);
+
+        foreach ($classes as $stmt) {
+            $this->addClassStatements($stmt->stmts);
         }
     }
 
@@ -33,7 +37,7 @@ final class SchemaAggregator
     {
         foreach ($stmts as $stmt) {
             if ($stmt instanceof PhpParser\Node\Stmt\ClassMethod
-                && $stmt->name->name === 'up'
+                && $stmt->name->name !== 'down'
                 && $stmt->stmts
             ) {
                 $this->addUpMethodStatements($stmt->stmts);
@@ -46,12 +50,15 @@ final class SchemaAggregator
      */
     private function addUpMethodStatements(array $stmts): void
     {
-        foreach ($stmts as $stmt) {
+        $nodeFinder = new NodeFinder();
+        $methods = $nodeFinder->findInstanceOf($stmts, PhpParser\Node\Stmt\Expression::class);
+
+        foreach ($methods as $stmt) {
             if ($stmt instanceof PhpParser\Node\Stmt\Expression
                 && $stmt->expr instanceof PhpParser\Node\Expr\StaticCall
                 && ($stmt->expr->class instanceof PhpParser\Node\Name)
                 && $stmt->expr->name instanceof PhpParser\Node\Identifier
-                && ($stmt->expr->class->toCodeString() === '\\Illuminate\Support\Facades\Schema' || $stmt->expr->class->toCodeString() === '\Schema')
+                && ($stmt->expr->class->toCodeString() === '\Illuminate\Support\Facades\Schema' || $stmt->expr->class->toCodeString() === '\Schema')
             ) {
                 switch ($stmt->expr->name->name) {
                     case 'create':
@@ -205,7 +212,7 @@ final class SchemaAggregator
                         $secondArgArray = [];
 
                         foreach ($secondArg->items as $array_item) {
-                            if ($array_item->value instanceof PhpParser\Node\Scalar\String_) {
+                            if ($array_item !== null && $array_item->value instanceof PhpParser\Node\Scalar\String_) {
                                 $secondArgArray[] = $array_item->value->value;
                             }
                         }

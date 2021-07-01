@@ -18,6 +18,13 @@ class CorrectCollectionCalls
         return User::count();
     }
 
+    public function hydrate(): ?User
+    {
+        $users = [['name' => 'Daan', 'email' => 'test@test.dev']];
+
+        return User::hydrate($users)->first();
+    }
+
     public function pluckQuery(): Collection
     {
         return User::query()->pluck('id');
@@ -38,19 +45,16 @@ class CorrectCollectionCalls
         return User::firstOrFail()->accounts()->first();
     }
 
-    public function maxQuery(): int
+    /** @phpstan-return mixed */
+    public function maxQuery()
     {
         return DB::table('users')->max('id');
     }
 
-    public function collectionCalls(): int
+    /** @phpstan-return mixed */
+    public function collectionCalls()
     {
         return collect([1, 2, 3])->flip()->reverse()->sum();
-    }
-
-    public function mixedReturn(): ?Foo
-    {
-        return Foo::query()->returnMixed()->first();
     }
 
     /**
@@ -73,6 +77,26 @@ class CorrectCollectionCalls
         return User::where('id', '>', 1)->get()->first(function (User $user): bool {
             return $user->id === 2;
         });
+    }
+
+    /** @phpstan-return mixed */
+    public function testAggregateNoArgs()
+    {
+        return User::query()
+            ->select([DB::raw('COUNT(*) as temp')])
+            ->pluck('temp')
+            ->sum();
+    }
+
+    /** @phpstan-return mixed */
+    public function testRelationAggregate(User $user)
+    {
+        return $user->group()
+            ->withCount(['accounts' => function ($query) {
+                $query->where('id', '<>', 1);
+            }])
+            ->pluck('id')
+            ->avg();
     }
 }
 

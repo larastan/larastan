@@ -9,27 +9,37 @@ use App\Group;
 use App\Role;
 use App\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 class Relations
 {
-    public function testRelationWhere(): HasMany
+    public function testFirstOrCreateWithRelation(User $user): Account
     {
-        return (new User())->accounts()->where('foo', 'bar');
+        return $user->accounts()->firstOrCreate([]);
     }
 
+    /** @phpstan-return HasMany<Account> */
+    public function testRelationWhere(): HasMany
+    {
+        return (new User())->accounts()->where('name', 'bar');
+    }
+
+    /** @phpstan-return HasMany<Account> */
     public function testRelationWhereIn(): HasMany
     {
         return (new User())->accounts()->whereIn('id', [1, 2, 3]);
     }
 
+    /** @phpstan-return HasMany<Account> */
     public function testRelationDynamicWhere(): HasMany
     {
-        return (new User())->accounts()->whereFoo(['bar']);
+        return (new User())->accounts()->whereActive(true);
     }
 
     public function testCreateWithRelation(User $user): Account
@@ -49,27 +59,27 @@ class Relations
 
     public function testFirstWithRelation(): ?Account
     {
-        return (new User())->accounts()->where('foo', 'bar')->first();
+        return (new User())->accounts()->where('name', 'bar')->first();
     }
 
     public function testIncrementOnRelation(User $user): int
     {
-        return $user->accounts()->increment('counter');
+        return $user->accounts()->increment('id');
     }
 
     public function testDecrementOnRelation(User $user): int
     {
-        return $user->accounts()->decrement('counter');
+        return $user->accounts()->decrement('id');
     }
 
     public function testIncrementWithAmountOnRelation(User $user): int
     {
-        return $user->accounts()->increment('counter', 5);
+        return $user->accounts()->increment('id', 5);
     }
 
     public function testDecrementWithAmountOnRelation(User $user): int
     {
-        return $user->accounts()->decrement('counter', 5);
+        return $user->accounts()->decrement('id', 5);
     }
 
     public function testPaginate(User $user): LengthAwarePaginator
@@ -79,9 +89,10 @@ class Relations
 
     public function testMorph(User $user): MorphTo
     {
-        return $user->addressable()->where('foo', 'bar');
+        return $user->addressable()->where('name', 'bar');
     }
 
+    /** @phpstan-return HasMany<Account> */
     public function testModelScopesOnRelation(User $user): HasMany
     {
         return $user->accounts()->active();
@@ -134,16 +145,14 @@ class Relations
         return User::with('accounts')->whereHas('accounts')->firstOrFail();
     }
 
-    /**
-     * @phpstan-return BelongsTo<User>
-     */
+    /** @phpstan-return BelongsTo<User, Account> */
     public function testRelationWithTrait(Account $account): BelongsTo
     {
         return $account->ownerRelation();
     }
 
     /**
-     * @phpstan-return BelongsTo<Account>
+     * @phpstan-return BelongsTo<Account, Account>
      */
     public function testRelationInTraitWithStaticClass(Account $account): BelongsTo
     {
@@ -156,10 +165,64 @@ class Relations
         return $user->children();
     }
 
-    /** @phpstan-return BelongsTo<User> */
+    /** @phpstan-return BelongsTo<User, User> */
     public function testSameClassRelationWithGetClass(User $user): BelongsTo
     {
         return $user->parent();
+    }
+
+    public function testFirstWhereWithHasManyRelation(User $user): ?Account
+    {
+        return $user->accounts()->firstWhere('name', 'bar');
+    }
+
+    public function testFirstWhereWithBelongsToRelation(User $user): ?Group
+    {
+        return $user->group()->firstWhere('name', 'bar');
+    }
+
+    /** @phpstan-return BelongsTo<Group, User> */
+    public function testWithTrashedWithBelongsToRelation(User $user): BelongsTo
+    {
+        return $user->group()->withTrashed();
+    }
+
+    /** @phpstan-return BelongsTo<Group, User> */
+    public function testOnlyTrashedWithBelongsToRelation(User $user): BelongsTo
+    {
+        return $user->group()->onlyTrashed();
+    }
+
+    /** @phpstan-return BelongsTo<Group, User> */
+    public function testWithoutTrashedWithBelongsToRelation(User $user): BelongsTo
+    {
+        return $user->group()->withoutTrashed();
+    }
+
+    /**
+     * @phpstan-return MorphToMany<Address>
+     */
+    public function testMorphToManyWithTimestamps(Tag $tag): MorphToMany
+    {
+        return $tag->addresses();
+    }
+
+    /**
+     * @phpstan-return MorphToMany<Address>
+     */
+    public function testMorphToManyWithPivot(Tag $tag): MorphToMany
+    {
+        return $tag->addresses();
+    }
+
+    /** @phpstan-return Builder<User> */
+    public function testRelationWithWithOnModel(): Builder
+    {
+        return User::with([
+            'accounts' => function (HasMany $query) {
+                return $query->where('foo', 'bar');
+            },
+        ]);
     }
 }
 
@@ -185,20 +248,27 @@ class ModelWithoutPropertyAnnotation extends Model
     {
         return $this->hasMany(User::class);
     }
+}
 
-    public function addRelation(): User
+class Tag extends Model
+{
+    /**
+     * @phpstan-return MorphToMany<Address>
+     */
+    public function addresses(): MorphToMany
     {
-        return $this->relation()->create([]);
+        return $this->morphToMany(Address::class, 'taggable')->withTimestamps();
+    }
+
+    /**
+     * @phpstan-return MorphToMany<Address>
+     */
+    public function addressesWithPivot(): MorphToMany
+    {
+        return $this->morphToMany(Address::class, 'taggable')->withPivot('foo');
     }
 }
 
-class TestRelationCreateOnExistingModel
+class Address extends Model
 {
-    /** @var User */
-    private $user;
-
-    public function testRelationCreateOnExistingModel(): Account
-    {
-        return $this->user->accounts()->create();
-    }
 }

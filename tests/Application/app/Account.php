@@ -6,6 +6,7 @@ use App\Traits\HasOwner;
 use App\Traits\HasParent;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Account extends Model
 {

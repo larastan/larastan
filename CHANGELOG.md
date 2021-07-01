@@ -6,6 +6,248 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.6] - 2021-05-18
+
+### Fixed
+
+- Update link to Octane dependency injection docs ([#829](https://github.com/nunomaduro/larastan/pull/829)) Thanks @spawnia
+
+## [0.7.5] - 2021-04-29
+
+### Added
+
+- Support for `sole` method on Eloquent builder ([#822](https://github.com/nunomaduro/larastan/pull/822)) Thanks @ThibaudDauce
+
+### Changed
+
+- Cleanup call forwarding logic in extensions ([#816](https://github.com/nunomaduro/larastan/pull/816))
+
+### Fixed
+
+- `increment` and `decrement` methods on query builder has side effects
+
+## [0.7.4] - 2021-04-16
+
+### Fixed
+
+- Correct `when` and `unless` return value ([#807](https://github.com/nunomaduro/larastan/pull/807), [#811](https://github.com/nunomaduro/larastan/pull/811)) Thanks @netpok and @BertvanHoekelen
+
+## [0.7.3] - 2021-04-12
+
+### Added
+
+- Octane compatibility checking rule ([#809](https://github.com/nunomaduro/larastan/pull/809))
+
+## [0.7.2] - 2021-04-08
+
+### Fixed
+
+- PHPStan 0.12.82 compatibility ([#801](https://github.com/nunomaduro/larastan/pull/801))
+
+## [0.7.1] - 2021-03-19
+
+### Added
+
+- Support for HigherOrderCollectionProxy ([#781](https://github.com/nunomaduro/larastan/pull/781))
+- Support for Illuminate\Database\Query\Expression as column ([#784](https://github.com/nunomaduro/larastan/issues/784))
+- Support for `when` and `unless` methods on Eloquent builder ([#791](https://github.com/nunomaduro/larastan/pull/791))
+
+### Fixed
+
+- Fixed incorrectly inferring the return type of custom methods that return Collections ([#751](https://github.com/nunomaduro/larastan/pull/751)) Thanks @Josh-G
+
+### Changed
+
+- Locked phpstan/phpstan dependency to v0.12.81
+
+## [0.7.0] - 2021-02-01
+
+### Changed
+
+- Updated `phpstan/phpstan` from v0.12.65 to v0.12.70 ([#774](https://github.com/nunomaduro/larastan/pull/774)) Thanks @chrisp-github
+
+### Added
+
+- **BREAKING**: Changed `databaseMigrationsPath` to be an array instead of a string, so it allows multiple directories. ([#777](https://github.com/nunomaduro/larastan/pull/777)) Thanks @haringsrob
+- Support for Log facade ([#771](https://github.com/nunomaduro/larastan/pull/771)) Thanks @Pe46dro
+
+## [0.6.13] - 2021-01-22
+
+### Added
+
+- DB facade stub ([8aa4b6d](https://github.com/nunomaduro/larastan/commit/8aa4b6dc3407fad6ced8115da02f610aad55366f))
+- Queue facade stub ([d0b0909](https://github.com/nunomaduro/larastan/commit/d0b0909c3ef60d45d3db9a2cf1fb91a73711ef26))
+- Logger stub ([208df29](https://github.com/nunomaduro/larastan/commit/208df29dab0ad80cabd6dc1b4e2232fc0f1044a0))
+
+### Changed
+
+- Use updated excludePaths parameter ([#759](https://github.com/nunomaduro/larastan/pull/759)) Thanks @erikgaal
+- Improve Pipes\Facades ([#744](https://github.com/nunomaduro/larastan/pull/744)) Thanks @szepeviktor
+
+### Fixed
+
+- Fixed insertOrIgnore typehint ([#756](https://github.com/nunomaduro/larastan/pull/756)) Thanks @bistory
+- Fix BelongsToMany stub's file name ([#736](https://github.com/nunomaduro/larastan/pull/736)) Thanks @szepeviktor
+
+## [0.6.12] - 2021-01-03
+
+### Added
+
+- Support to Laravel 9 ([060aa1d](https://github.com/nunomaduro/larastan/commit/060aa1df1a63f4861ebce541257c77f4038c43c6))
+- Support for `Model::whereNotBetween()` ([#731](https://github.com/nunomaduro/larastan/pull/731))
+
+### Fixed
+- Search missing method also in templated model ([#739](https://github.com/nunomaduro/larastan/pull/739))
+
+## [0.6.11] - 2020-12-07
+
+### Added
+
+- Support for autoloaded arrays ([#725](https://github.com/nunomaduro/larastan/pull/725)) Thanks @stancl
+
+### Fixed
+
+- Changed bootstrap file path ([#727](https://github.com/nunomaduro/larastan/pull/727)) Thanks @bepsvpt
+- Removed mixin pipe class ([#704](https://github.com/nunomaduro/larastan/pull/704))
+- Don't return dummy method reflection for unknown methods ([2581f3b](https://github.com/nunomaduro/larastan/commit/2581f3b255a6ad3f38301d088557a0ddc598dbf8))
+
+## [0.6.10] - 2020-11-26
+
+### Added
+
+- Added `dd` to list of early terminating functions ([#710](https://github.com/nunomaduro/larastan/pull/710))
+
+### Fixed
+
+- Model::with() accepts array of Closure ([#713](https://github.com/nunomaduro/larastan/pull/713)) Thanks @kvas-damian
+- Use function map instead of calling newQuery on model ([#717](https://github.com/nunomaduro/larastan/pull/717))
+
+## [0.6.9] - 2020-10-30
+
+### Added
+
+- Support to PHP 8 ([#701](https://github.com/nunomaduro/larastan/pull/701))
+
+### Fixed
+
+- Corrected return type for some QueryBuilder methods ([#702](https://github.com/nunomaduro/larastan/pull/702))
+
+## [0.6.8] - 2020-10-23
+
+### Added
+
+- Dynamic return type support for `$request->file()` method call.
+
+### Fixed
+
+- Fixed an issue with running tests on Windows ([#696](https://github.com/nunomaduro/larastan/pull/696)) Thanks @kwebble
+- Fixed autoloading of autoload-dev classes during bootstrap. ([#696](https://github.com/nunomaduro/larastan/pull/696)) Thanks @kwebble
+
+## [0.6.7] - 2020-10-21
+
+### Fixed
+
+- `SoftDeletes` methods on relations are no longer marked as undefined ([#692](https://github.com/nunomaduro/larastan/pull/692)) Thanks @jdrieghe
+- Generic model type is preserved when `with` method is used on a model instance.
+
+## [0.6.6] - 2020-10-17
+
+### Added
+
+- Support for checking model properties on dynamic wheres ([#686](https://github.com/nunomaduro/larastan/pull/686))
+
+## [0.6.5] - 2020-10-15
+
+This release introduces a new rule that can check the arguments of methods that expects a model property name, and can warn you if the passed argument is not actually a property of the model. You can read the details about the rule [here](https://github.com/nunomaduro/larastan/blob/master/docs/rules.md#modelpropertyrule).
+
+**NOTE**: This rule is currently in beta! If you want to improve it's analysis, you can check out the issue [here](https://github.com/nunomaduro/larastan/issues/676) and contribute!
+
+
+### Added
+- Add a new `view-string` PHPDoc type ([#654](https://github.com/nunomaduro/larastan/pull/654))
+- Stubs for Eloquent builder `value` and `orWhere` methods
+
+### Fixed
+- Parameter type of the query builder's `where`, `orWhere` and `addArrayOfWheres` ([#651](https://github.com/nunomaduro/larastan/pull/651)).
+- Fix callback parameters for `retry` ([#663](https://github.com/nunomaduro/larastan/pull/663)).
+- Using Reflection to initiate a model in `ModelPropertyExtension` to avoid errors caused by using Model constructor. ([#666](https://github.com/nunomaduro/larastan/pull/666))
+
+### Changed
+- Made improvements to database migrations scanning. ([#670](https://github.com/nunomaduro/larastan/pull/670))
+- Improved running test suite commands and Windows compatibility ([#682](https://github.com/nunomaduro/larastan/pull/682))
+
+## [0.6.4] - 2020-09-02
+
+### Changed
+- Update `orchestra/testbench` version to allow Laravel 8 installations ([#646](https://github.com/nunomaduro/larastan/pull/646))
+
+### Fixed
+- Return type of `firstWhere` method on model, builder and relations ([#649](https://github.com/nunomaduro/larastan/pull/649))
+
+## [0.6.3] - 2020-08-31
+
+### Added
+
+- Return type extension for `validator` helper ([#641](https://github.com/nunomaduro/larastan/pull/641))
+
+### Fixed
+
+- Return type of `associate`, `dissociate` and `getChild` methods of `BelongsTo` relations ([#633](https://github.com/nunomaduro/larastan/pull/633))
+
+## [0.6.2] - 2020-07-30
+
+### Fixed
+
+- Fix false positive for NoUnnecessaryCollectionCallRule when statically calling hydrate on a Model class. ([#609](https://github.com/nunomaduro/larastan/pull/609))
+- Fixed slightly incorrect stubs for accepted $values for `whereBetween`/`orWhereBetween` and `whereRowValues`/`orWhereRowValues` ([#626](https://github.com/nunomaduro/larastan/pull/626))
+- Check if facade fake exists ([852c131](https://github.com/nunomaduro/larastan/commit/852c1313e1c94feab8da8055d0abceda97a27586))
+- Correct query builder stub ([d8d8b41](https://github.com/nunomaduro/larastan/commit/d8d8b41d91d8934fa5a1d44908b37c344af87472))
+- Dont override return type when eloquent builder returns a query builder instance ([b5f96b4](https://github.com/nunomaduro/larastan/commit/b5f96b4df2d0931a6eb00a5c6539c56df2d67bd9))
+- Handle the case when a custom query builder does not have generic annotations ([c54b517](https://github.com/nunomaduro/larastan/commit/c54b5179e72b8ea18e724c50bf6a9c36af79d52d))
+- Soft delete trait methods should return generic Eloquent builder with model ([023043b](https://github.com/nunomaduro/larastan/commit/023043b05c9ec04ef92f32960315621fdfe21100))
+
+### Added
+
+- Support for Redis facade ([#615](https://github.com/nunomaduro/larastan/issues/615)) ([a42b2f6](https://github.com/nunomaduro/larastan/commit/a42b2f65448548e725f5d4b1bf1c4fe9840c4262))
+- Auth guard with multiple dynamic auth models ([#605](https://github.com/nunomaduro/larastan/issues/605)) ([63a3934](https://github.com/nunomaduro/larastan/commit/63a393433805a1142fbffe507875f2af825d11fd))
+- Use latest version of Composer in travis ([#599](https://github.com/nunomaduro/larastan/issues/599)) ([29a9023](https://github.com/nunomaduro/larastan/commit/29a9023d19750298ae7b656e989ebef221925fb9))
+
+## [0.6.1] - 2020-06-20
+
+### Added
+- Support for dynamic auth model loading from config. Thanks @0xb4lint ([#602](https://github.com/nunomaduro/larastan/pull/602))
+- Support for Laravel 8
+
+### Fixed
+- Fix false positive when calling `tap($this)` ([#601](https://github.com/nunomaduro/larastan/pull/601))
+
+## [0.6.0] - 2020-06-10
+
+### Added
+- Document common errors for users to ignore ([#564](https://github.com/nunomaduro/larastan/pull/564))
+- Add `abort` to `earlyTerminatingFunctionCalls` config option ([#567](https://github.com/nunomaduro/larastan/pull/567))
+- Support for `tap` helper. ([#575](https://github.com/nunomaduro/larastan/pull/575))
+- Bumped minimum PHPStan version to 0.12.28
+
+### Fixed
+- Avoid false-positive when calling static builder methods such as `::find()` on Model classes where
+  the concrete subclass is not yet known ([#565](https://github.com/nunomaduro/larastan/pull/565))
+- Use correct argument order for `Str::startsWith` ([#570](https://github.com/nunomaduro/larastan/pull/570))
+
+### Changed
+- Do not overwrite PHPStan's default for `reportUnmatchedIgnoredErrors` ([#564](https://github.com/nunomaduro/larastan/pull/564))
+
+### Removed
+- Stop ignoring errors ([#564](https://github.com/nunomaduro/larastan/pull/564))
+
+## [0.5.8] - 2020-05-06
+
+### Added
+- Support for custom Eloquent collections. Thanks @timacdonald ([#537](https://github.com/nunomaduro/larastan/pull/537))
+- Added issue and PR templates for new contributors. Thanks @spawnia ([#560](https://github.com/nunomaduro/larastan/pull/560))
+### Fixed
+- Fixed some of the collection methods in stub files. Thanks @Daanra ([#556](https://github.com/nunomaduro/larastan/pull/556))
+- Fixed a bug with Composer autoloading. Thanks @ondrejmirtes ([#561](https://github.com/nunomaduro/larastan/pull/561))
 ## [0.5.7] - 2020-04-28
 
 ### Fixed
@@ -85,7 +327,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 Blogpost: [nunomaduro.com/larastan-0-5-is-out](https://nunomaduro.com/larastan-0-5-is-out)
 Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/UPGRADE.md)
 
-### Added 
+### Added
 - Support to PHPStan `0.12` [#378](https://github.com/nunomaduro/larastan/pull/378)
 - Support to Laravel 7 [#377](https://github.com/nunomaduro/larastan/pull/377)
 - Support for Facade fakes [#347](https://github.com/nunomaduro/larastan/pull/347)
@@ -328,11 +570,33 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.5.7...HEAD
-[0.5.7]: https://github.com/nunomaduro/larastan/compare/v0.5.6...HEAD
-[0.5.6]: https://github.com/nunomaduro/larastan/compare/v0.5.5...HEAD
-[0.5.5]: https://github.com/nunomaduro/larastan/compare/v0.5.4...HEAD
-[0.5.4]: https://github.com/nunomaduro/larastan/compare/v0.5.3...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.6...HEAD
+[0.7.6]: https://github.com/nunomaduro/larastan/compare/v0.7.5...0.7.6
+[0.7.5]: https://github.com/nunomaduro/larastan/compare/v0.7.4...0.7.5
+[0.7.4]: https://github.com/nunomaduro/larastan/compare/v0.7.3...0.7.4
+[0.7.3]: https://github.com/nunomaduro/larastan/compare/v0.7.2...0.7.3
+[0.7.2]: https://github.com/nunomaduro/larastan/compare/v0.7.1...0.7.2
+[0.7.1]: https://github.com/nunomaduro/larastan/compare/v0.7.0...v0.7.1
+[0.7.0]: https://github.com/nunomaduro/larastan/compare/v0.6.13...v0.7.0
+[0.6.13]: https://github.com/nunomaduro/larastan/compare/v0.6.12...v0.6.13
+[0.6.12]: https://github.com/nunomaduro/larastan/compare/v0.6.11...v0.6.12
+[0.6.11]: https://github.com/nunomaduro/larastan/compare/v0.6.10...v0.6.11
+[0.6.10]: https://github.com/nunomaduro/larastan/compare/v0.6.9...v0.6.10
+[0.6.9]: https://github.com/nunomaduro/larastan/compare/v0.6.8...v0.6.9
+[0.6.8]: https://github.com/nunomaduro/larastan/compare/v0.6.7...v0.6.8
+[0.6.7]: https://github.com/nunomaduro/larastan/compare/v0.6.6...v0.6.7
+[0.6.6]: https://github.com/nunomaduro/larastan/compare/v0.6.5...v0.6.6
+[0.6.5]: https://github.com/nunomaduro/larastan/compare/v0.6.4...v0.6.5
+[0.6.4]: https://github.com/nunomaduro/larastan/compare/v0.6.3...v0.6.4
+[0.6.3]: https://github.com/nunomaduro/larastan/compare/v0.6.2...v0.6.3
+[0.6.2]: https://github.com/nunomaduro/larastan/compare/v0.6.1...v0.6.2
+[0.6.1]: https://github.com/nunomaduro/larastan/compare/v0.6.0...v0.6.1
+[0.6.0]: https://github.com/nunomaduro/larastan/compare/v0.5.8...v0.6.0
+[0.5.8]: https://github.com/nunomaduro/larastan/compare/v0.5.7...v0.5.8
+[0.5.7]: https://github.com/nunomaduro/larastan/compare/v0.5.6...v0.5.7
+[0.5.6]: https://github.com/nunomaduro/larastan/compare/v0.5.5...v0.5.6
+[0.5.5]: https://github.com/nunomaduro/larastan/compare/v0.5.4...v0.5.5
+[0.5.4]: https://github.com/nunomaduro/larastan/compare/v0.5.3...v0.5.4
 [0.5.3]: https://github.com/nunomaduro/larastan/compare/v0.5.2...v0.5.3
 [0.5.2]: https://github.com/nunomaduro/larastan/compare/v0.5.1...v0.5.2
 [0.5.1]: https://github.com/nunomaduro/larastan/compare/v0.5.0...v0.5.1

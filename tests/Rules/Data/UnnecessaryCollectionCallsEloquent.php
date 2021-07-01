@@ -47,7 +47,7 @@ class UnnecessaryCollectionCallsEloquent
 
     public function testVarWrong(): bool
     {
-        $query = User::query()->limit(3)->where('status', 'active');
+        $query = User::query()->limit(3)->where('email', 'foo@bar.com');
 
         return $query->get()->isEmpty();
     }
@@ -88,5 +88,11 @@ class UnnecessaryCollectionCallsEloquent
     public function testContainsStrictWrong(): bool
     {
         return User::query()->get()->containsStrict('id', 1);
+    }
+
+    /** @phpstan-return mixed */
+    public function testSum()
+    {
+        return User::pluck('id')->sum();
     }
 }

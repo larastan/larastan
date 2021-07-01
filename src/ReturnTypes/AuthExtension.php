@@ -21,6 +21,7 @@ use PHPStan\Type\TypeCombinator;
 final class AuthExtension implements DynamicStaticMethodReturnTypeExtension
 {
     use Concerns\HasContainer;
+    use Concerns\LoadsAuthModel;
 
     /**
      * {@inheritdoc}
@@ -46,13 +47,17 @@ final class AuthExtension implements DynamicStaticMethodReturnTypeExtension
         StaticCall $methodCall,
         Scope $scope
     ): Type {
-        $config = $this->getContainer()
-            ->get('config');
+        $config = $this->getContainer()->get('config');
+        $authModel = null;
 
-        if ($userModel = $config->get('auth.providers.users.model')) {
-            return TypeCombinator::addNull(new ObjectType($userModel));
+        if ($config !== null) {
+            $authModel = $this->getAuthModel($config);
         }
 
-        return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+        if ($authModel === null) {
+            return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+        }
+
+        return TypeCombinator::addNull(new ObjectType($authModel));
     }
 }

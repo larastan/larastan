@@ -4,51 +4,68 @@ declare(strict_types=1);
 
 namespace Tests\Features\Methods;
 
-use App\Account;
+use App\Thread;
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 
 class ModelExtension
 {
+    public function testMakeOnInstance(User $user): User
+    {
+        return $user->make([]);
+    }
+
+    public function testGetQueryReturnsQueryBuilder(): QueryBuilder
+    {
+        return User::getQuery();
+    }
+
+    public function testToBaseReturnsQueryBuilder(): QueryBuilder
+    {
+        return User::toBase();
+    }
+
     /**
-     * @return \Illuminate\Database\Eloquent\Collection<User>
+     * @phpstan-return Collection<User>
      */
-    public function testAll()
+    public function testAll(): Collection
     {
         return User::all();
     }
 
-    public function testReturnThis(): Builder
+    /** @phpstan-return Builder<User> */
+    public function testJoin(): Builder
     {
-        $user = User::join('tickets.tickets', 'tickets.tickets.id', '=', 'tickets.sale_ticket.ticket_id')
-            ->where(['foo' => 'bar']);
-
-        return $user;
+        return User::join('tickets.tickets', 'tickets.tickets.id', '=', 'tickets.sale_ticket.ticket_id');
     }
 
+    /** @phpstan-return Builder<Thread> */
     public function testWhere(): Builder
     {
-        return (new Thread)->where(['foo' => 'bar']);
+        return (new Thread)->where(['name' => 'bar']);
     }
 
+    /** @phpstan-return Builder<Thread> */
     public function testStaticWhere(): Builder
     {
-        return Thread::where(['foo' => 'bar']);
+        return Thread::where(['name' => 'bar']);
     }
 
+    /** @phpstan-return Builder<Thread> */
     public function testDynamicWhere(): Builder
     {
-        return (new Thread)->whereFoo(['bar']);
+        return (new Thread)->whereName(['bar']);
     }
 
+    /** @phpstan-return Builder<Thread> */
     public function testStaticDynamicWhere(): Builder
     {
-        return Thread::whereFoo(['bar']);
+        return Thread::whereName(['bar']);
     }
 
+    /** @phpstan-return Builder<Thread> */
     public function testWhereIn(): Builder
     {
         return (new Thread)->whereIn('id', [1, 2, 3]);
@@ -62,6 +79,14 @@ class ModelExtension
         return $user->increment('counter');
     }
 
+    public function testIncrementOnSeperateLine(): void
+    {
+        /** @var User $user */
+        $user = new User;
+
+        $user->increment('counter');
+    }
+
     public function testDecrement(): int
     {
         /** @var User $user */
@@ -70,45 +95,12 @@ class ModelExtension
         return $user->decrement('counter');
     }
 
-    public function testFind(): ?User
+    public function testDecrementOnSeperateLine(): void
     {
-        return User::find(1);
-    }
+        /** @var User $user */
+        $user = new User;
 
-    /**
-     * @return Collection<\App\User>|null
-     */
-    public function testFindCanReturnCollection(): ?Collection
-    {
-        return User::find([1, 2, 3]);
-    }
-
-    /** @return Collection<User>|null */
-    public function testFindCanReturnCollectionWithAnnotation()
-    {
-        return User::find([1, 2, 3]);
-    }
-
-    /** @return Collection<User>|null */
-    public function testFindMany()
-    {
-        return User::findMany([1, 2, 3]);
-    }
-
-    public function testFindOrFail(): User
-    {
-        return User::findOrFail(1);
-    }
-
-    /**
-     * @return Collection<\App\User>
-     */
-    public function testFindOrFailCanReturnCollection(): Collection
-    {
-        /** @var Collection<\App\User> $users */
-        $users = User::findOrFail([1, 2, 3]);
-
-        return $users;
+        $user->decrement('counter');
     }
 
     public function testFirst(): ?User
@@ -151,92 +143,117 @@ class ModelExtension
         return User::firstOrCreate([]);
     }
 
+    /** @phpstan-return Builder<Thread> */
     public function testScope(): Builder
     {
         return Thread::valid();
     }
 
-    public function testMacro(Builder $query): void
+    /** @phpstan-return Builder<User> */
+    public function testWithAcceptsArrayOfClosures(): Builder
     {
-        $query->macro('customMacro', function () {
+        return User::with(['accounts' => function ($relation) {
+            return $relation->where('active', true);
+        }]);
+    }
+
+    /** @phpstan-return Builder<User> */
+    public function testWithGlobalScope(): Builder
+    {
+        return (new User)->withGlobalScope('test', function () {
         });
     }
 
-    /**
-     * @return Collection<User>
-     */
-    public function testChainingCollectionMethodsOnModel(): Collection
+    /** @phpstan-return Builder<User> */
+    public function testWithoutGlobalScope(): Builder
     {
-        return User::findOrFail([1, 2, 3])->makeHidden('foo');
+        return (new User)->withoutGlobalScope('test');
     }
 
-    public function testCollectionMethodWillReturnUser(): ?User
+    /** @phpstan-return Builder<User> */
+    public function testSoftDeletesOnlyTrashed(): Builder
     {
-        return User::findOrFail([1, 2, 3])->makeHidden('foo')->first();
+        return User::onlyTrashed();
     }
 
-    public function testFirstOrFailWithChain(): User
+    /** @phpstan-return Builder<User> */
+    public function testSoftDeletesWithTrashed(): Builder
     {
-        return User::with('foo')
-            ->where('foo', 'bar')
-            ->orWhere('bar', 'baz')
-            ->firstOrFail();
+        return User::withTrashed();
     }
 
-    public function testFirstWithChain(): ?User
+    /** @phpstan-return Builder<User> */
+    public function testSoftDeletesWithTrashedWithArgument(): Builder
     {
-        return User::with('foo')
-            ->where('foo', 'bar')
-            ->orWhere('bar', 'baz')
-            ->first();
+        return User::withTrashed(false);
     }
 
-    /** @return Collection<User>|null */
-    public function testFindWithCastingToArray(FormRequest $request): ?Collection
+    public function testFindOrFailWithSoftDeletesTrait(): User
     {
-        $requestData = $request->validated();
-
-        return User::find((array) $requestData['user_ids']);
+        return User::onlyTrashed()->findOrFail(5);
     }
 
-    public function testFindWithCastingToInt(): ?User
+    public function testRestore(User $user): bool
     {
-        return User::find((int) '1');
+        return $user->restore();
     }
 
-    public function testCustomAccessorOnModels(): string
+    public function testFirstWhere(): ?User
     {
-        /** @var Thread $thread */
-        $thread = Thread::findOrFail(5);
-
-        return $thread->custom_property;
+        return User::firstWhere(['email' => 'foo@bar.com']);
     }
 
-    public function testFirstOrCreateWithRelation(User $user): Account
+    /** @phpstan-return Builder<User> */
+    public function testWithOnModelVariable(User $user): Builder
     {
-        return $user->accounts()->firstOrCreate([]);
-    }
-}
-
-function foo(): string
-{
-    return 'foo';
-}
-
-class Thread extends Model
-{
-    public function scopeValid(Builder $query): Builder
-    {
-        return $query->where('valid', true);
+        return $user->with('accounts');
     }
 
-    public static function testFindOnStaticSelf(): ?Thread
+    /** @phpstan-return Builder<User> */
+    public function testMultipleWithOnModelVariable(User $user): Builder
     {
-        return self::query()->where('foo', 'bar')->first();
+        return $user->with('accounts')->with('group');
     }
 
-    public function getCustomPropertyAttribute(): string
+    /** @phpstan-return Builder<User> */
+    public function testLockForUpdate(): Builder
     {
-        return 'thread';
+        return User::lockForUpdate();
+    }
+
+    /** @phpstan-return Builder<User> */
+    public function testSharedLock(): Builder
+    {
+        return User::sharedLock();
+    }
+
+    /** @phpstan-return Builder<User> */
+    public function testNewQuery(): Builder
+    {
+        return User::query();
+    }
+
+    /** @phpstan-return Collection<User> */
+    public function testMethodReturningCollectionOfAnotherModel()
+    {
+        return Thread::methodReturningCollectionOfAnotherModel();
+    }
+
+    /** @phpstan-return Collection<Thread>|Thread */
+    public function testMethodReturningUnionWithCollection()
+    {
+        return Thread::methodReturningUnionWithCollection();
+    }
+
+    /** @phpstan-return Collection<User>|User */
+    public function testMethodReturningUnionWithCollectionOfAnotherModel()
+    {
+        return Thread::methodReturningUnionWithCollectionOfAnotherModel();
+    }
+
+    /** @phpstan-return mixed */
+    public function testMin(User $user)
+    {
+        return $user->min('id');
     }
 }
