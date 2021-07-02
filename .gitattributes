@@ -1,7 +1,7 @@
 #
 # Exclude these files from release archives.
 # This will also make them unavailable when using Composer with `--prefer-dist`.
-# https://blog.madewithlove.be/post/gitattributes/
+# https://git-scm.com/docs/gitattributes
 #
 /docs              export-ignore
 /tests             export-ignore
@@ -20,7 +20,6 @@ phpstan.neon.dist  export-ignore
 
 #
 # Auto detect text files and perform LF normalization
-# http://davidlaing.com/2012/09/19/customise-your-gitattributes-to-become-a-git-ninja/
 #
 * text=auto
 
@@ -30,9 +29,3 @@ phpstan.neon.dist  export-ignore
 *.md text
 *.php text
 *.inc text
-
-#
-# Pretty color the neon files
-#
-*.neon             linguist-language=YAML
-*.neon.dist        linguist-language=YAML
