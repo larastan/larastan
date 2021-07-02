@@ -34,8 +34,10 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/",
-            "App\\": "tests/Application/app"
+            "App\\": "tests/Application/app",
+            "Laravel8\\": "tests/Features/Laravel8/Application/app",
+            "Database\\Factories\\": "tests/Features/Laravel8/Application/database/factories",
+            "Tests\\": "tests/"
         }
     },
     "minimum-stability": "dev",

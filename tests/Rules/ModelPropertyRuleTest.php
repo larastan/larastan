@@ -47,4 +47,13 @@ class ModelPropertyRuleTest extends RulesTest
             7 => 'Property \'foo\' does not exist in ModelPropertyOnModel model.',
         ], $errors);
     }
+
+    public function testModelPropertyRuleOnModelFactory(): void
+    {
+        $errors = $this->setConfigPath(__DIR__.DIRECTORY_SEPARATOR.'Data/modelPropertyConfig.neon')->findErrorsByLine(__DIR__.'/Data/model-property-model-factory.php');
+
+        self::assertEquals([
+            4 => 'Property \'foo\' does not exist in Laravel8\Models\User model.',
+        ], $errors);
+    }
 }
