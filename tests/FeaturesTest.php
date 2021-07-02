@@ -15,10 +15,7 @@ class FeaturesTest extends TestCase
         $baseDir = __DIR__.DIRECTORY_SEPARATOR.'Features'.DIRECTORY_SEPARATOR;
 
         /** @var \Symfony\Component\Finder\SplFileInfo $file */
-        foreach ((new Finder())->in($baseDir)->files() as $file) {
-            if ($file->getExtension() !== 'php') {
-                continue;
-            }
+        foreach ((new Finder())->in($baseDir)->files()->name('*.php')->notContains('Laravel8/Application') as $file) {
             $fullPath = realpath((string) $file);
             $calls[str_replace($baseDir, '', $fullPath)] = [$fullPath];
         }
