@@ -56,7 +56,15 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension
             return true;
         }
 
-        return $methodReflection->getDeclaringClass()->hasNativeMethod($name);
+        if (! $methodReflection->getDeclaringClass()->hasNativeMethod($name)) {
+            return false;
+        }
+
+        $method = $methodReflection->getDeclaringClass()->getNativeMethod($methodReflection->getName());
+
+        $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
+
+        return (count(array_intersect([EloquentBuilder::class, QueryBuilder::class, Collection::class], $returnType->getReferencedClasses()))) > 0;
     }
 
     /**
