@@ -42,7 +42,7 @@ parameters:
     mixinExcludeClasses:
         - Eloquent
     bootstrapFiles:
-        - bootstrap.php
+        - %laravelBootstrapFile%
     checkGenericClassInNonGenericObjectType: false
     checkOctaneCompatibility: false
     noUnnecessaryCollectionCall: true
@@ -50,6 +50,7 @@ parameters:
     noUnnecessaryCollectionCallExcept: []
     databaseMigrationsPath: []
     checkModelProperties: false
+    laravelBootstrapFile: bootstrap.php
 
 parametersSchema:
     checkOctaneCompatibility: bool()
@@ -58,6 +59,7 @@ parametersSchema:
     noUnnecessaryCollectionCallExcept: listOf(string())
     databaseMigrationsPath: listOf(string())
     checkModelProperties: bool()
+    laravelBootstrapFile: string()
 
 conditionalTags:
     NunoMaduro\Larastan\Rules\NoUnnecessaryCollectionCallRule:
