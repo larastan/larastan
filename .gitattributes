@@ -29,3 +29,8 @@ phpstan.neon.dist  export-ignore
 *.md text
 *.php text
 *.inc text
+
+#
+# PHP syntax highlight for stub files
+#
+*.stub             linguist-language=PHP
