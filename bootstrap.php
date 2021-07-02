@@ -8,8 +8,6 @@ define('LARAVEL_START', microtime(true));
 
 if (file_exists($applicationPath = dirname(__DIR__, 3).'/bootstrap/app.php')) { // Applications and Local Dev
     $app = require $applicationPath;
-} elseif (file_exists($applicationPath = getcwd().'/bootstrap/app.php')) {
-    $app = require $applicationPath;
 } else { // Packages
     $app = ApplicationResolver::resolve();
 }
