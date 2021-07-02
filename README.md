@@ -15,7 +15,7 @@
 
 ## ⚗️ About Larastan
 
-Larastan was created by [Nuno Maduro](https://github.com/nunomaduro), got artwork designed by [@Caneco](http://github.com/caneco), is maintained by [Can Vural](https://github.com/canvural) and [Viktor Szépe](https://github.com/szepeviktor), and is a [PHPStan](https://phpstan.org/) wrapper for Laravel. Larastan focuses on **finding errors in your code** without actually running it. It catches whole classes of bugs even **before you write tests** for the code.
+Larastan was created by [Can Vural](https://github.com/canvural) and [Nuno Maduro](https://github.com/nunomaduro), got artwork designed by [@Caneco](http://github.com/caneco), is maintained by [Can Vural](https://github.com/canvural), [Nuno Maduro](https://github.com/nunomaduro), and [Viktor Szépe](https://github.com/szepeviktor), and is a [PHPStan](https://phpstan.org/) wrapper for Laravel. Larastan focuses on **finding errors in your code** without actually running it. It catches whole classes of bugs even **before you write tests** for the code.
 
 - Adds static typing to Laravel to improve developer productivity and **code quality**
 - Supports most of [Laravel](https://laravel.com)'s **beautiful magic**
