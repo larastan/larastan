@@ -181,12 +181,4 @@ class HigherOrderCollectionProxyMethods
     {
         return $collection->filter->isImported();
     }
-
-    /**
-     * @return SupportCollection<int, Importer>
-     */
-    public function testFilterWithSupportCollectionWithUnknownType(SupportCollection $collection): SupportCollection
-    {
-        return $collection->filter->isImported(); //Intentional typo
-    }
 }
