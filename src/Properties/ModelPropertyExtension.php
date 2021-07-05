@@ -239,7 +239,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
                     break;
                 case 'date':
                 case 'datetime':
-                    $realType = $this->dateClass;
+                    $realType = $this->getDateClass();
                     break;
                 case 'collection':
                     $realType = '\Illuminate\Support\Collection';
