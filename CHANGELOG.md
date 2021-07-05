@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.9] - 2021-07-05
+
+### Fixed
+
+- Fixed an issue where accessing `dateClass` property directly causing issues. ([#865](https://github.com/nunomaduro/larastan/pull/865))
+
+## [0.7.8] - 2021-07-02
+
+### Fixed
+
+- Revert "fix bootstrap path" ([#858](https://github.com/nunomaduro/larastan/pull/858))
+
 ## [0.7.7] - 2021-07-01
 
 ### Added
@@ -588,7 +600,9 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.7...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.9...HEAD
+[0.7.9]: https://github.com/nunomaduro/larastan/compare/v0.7.8...0.7.9
+[0.7.8]: https://github.com/nunomaduro/larastan/compare/v0.7.7...0.7.8
 [0.7.7]: https://github.com/nunomaduro/larastan/compare/v0.7.6...0.7.7
 [0.7.6]: https://github.com/nunomaduro/larastan/compare/v0.7.5...0.7.6
 [0.7.5]: https://github.com/nunomaduro/larastan/compare/v0.7.4...0.7.5
