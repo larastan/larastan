@@ -53,7 +53,7 @@ class ModelPropertyRuleTest extends RulesTest
         $errors = $this->setConfigPath(__DIR__.DIRECTORY_SEPARATOR.'Data/modelPropertyConfig.neon')->findErrorsByLine(__DIR__.'/Data/model-property-model-factory.php');
 
         self::assertEquals([
-            4 => 'Property \'foo\' does not exist in Laravel8\Models\User model.',
+            5 => 'Property \'foo\' does not exist in Laravel8\\Models\\User model.',
         ], $errors);
     }
 }
