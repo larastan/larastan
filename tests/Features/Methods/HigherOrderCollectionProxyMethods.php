@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Features\Methods;
 
-use App\Importer;
 use App\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
