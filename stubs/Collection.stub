@@ -57,7 +57,7 @@ class Collection implements \ArrayAccess, Enumerable
     public function shift() {}
 
     /**
-     * @param callable(TValue, TKey): (void|bool) $callable
+     * @param callable(TValue, TKey): (void|mixed) $callable
      * @return static<TValue>
      */
     public function each($callable) {}
