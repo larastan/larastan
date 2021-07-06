@@ -72,7 +72,7 @@ parameters:
 ```
 to your `phpstan.neon` file.
 
-This rule checks every argument of a method or a function, and if the argument has the type `model-property`, it will try to check the given value against the model properties. And if the model does not have the given property, it'll produce an error.
+This rule checks every argument of a method or a function, and if the argument has the type `model-property`, it will try to check the given value against the model properties. And if the model does not have the given property, it'll produce an error. Accessing properties on models directly (outside methods and functions) are always checked, regardless of this option. 
 
 ### Basic example
 

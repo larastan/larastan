@@ -47,4 +47,15 @@ class ModelPropertyRuleTest extends RulesTest
             7 => 'Property \'foo\' does not exist in ModelPropertyOnModel model.',
         ], $errors);
     }
+
+    public function testModelAttributes(): void
+    {
+        $errors = $this->setConfigPath(__DIR__.DIRECTORY_SEPARATOR.'../../extension.neon')->findErrorsByLine(__DIR__ . '/Data/model-attributes.php');
+
+        self::assertEquals([
+            7 => 'Access to an undefined property App\\User::$foo.',
+            11 => 'Access to an undefined property App\\User::$bar.',
+            19 => 'Access to an undefined property App\\User::$baz.'
+        ], $errors);
+    }
 }
