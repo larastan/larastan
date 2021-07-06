@@ -56,7 +56,7 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension
             return true;
         }
 
-        if(! $methodReflection->getDeclaringClass()->hasNativeMethod($name)) {
+        if (! $methodReflection->getDeclaringClass()->hasNativeMethod($name)) {
             return false;
         }
 
