@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Added the `mixed` return type for callables within a Collection's ->each statement to allow for short closures in PHP 8 ([#868](https://github.com/nunomaduro/larastan/pull/868))
+
 ## [0.7.9] - 2021-07-05
 
 ### Fixed
