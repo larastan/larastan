@@ -2,9 +2,9 @@
 
 use App\User;
 
-$user       = new User();
+$user = new User();
 $user->name = 'Foo Bar';
-$user->foo  = 'bar';
+$user->foo = 'bar';
 
 function getFoo(User $user): string
 {
@@ -16,5 +16,5 @@ function getEmail(User $user): string
     return $user->email;
 }
 
-$bar  = (new User())->baz;
+$bar = (new User())->baz;
 $boop = (new User())->meta;
