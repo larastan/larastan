@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.10] - 2021-07-07
+
+### Fixed
+
+- Fixed an issue when using `return null` in PHPDocs forced the `return` keyword on the code. ([1e85de7](https://github.com/nunomaduro/larastan/commit/1e85de7b2632bab4db09154389d309bece973c2e))
+
+
 ## [0.7.9] - 2021-07-05
 
 ### Fixed
