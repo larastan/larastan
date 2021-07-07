@@ -6,6 +6,7 @@ namespace Tests;
 
 use Illuminate\Support\Str;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 
 class FeaturesTest extends TestCase
 {
@@ -14,11 +15,8 @@ class FeaturesTest extends TestCase
         $calls = [];
         $baseDir = __DIR__.DIRECTORY_SEPARATOR.'Features'.DIRECTORY_SEPARATOR;
 
-        /** @var \Symfony\Component\Finder\SplFileInfo $file */
-        foreach ((new Finder())->in($baseDir)->files() as $file) {
-            if ($file->getExtension() !== 'php') {
-                continue;
-            }
+        /** @var SplFileInfo $file */
+        foreach ((new Finder())->in($baseDir)->files()->name('*.php') as $file) {
             $fullPath = realpath((string) $file);
             $calls[str_replace($baseDir, '', $fullPath)] = [$fullPath];
         }

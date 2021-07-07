@@ -4,6 +4,7 @@ parameters:
         - stubs/EloquentBuilder.stub
         - stubs/Collection.stub
         - stubs/EloquentCollection.stub
+        - stubs/Factory.stub
         - stubs/Model.stub
         - stubs/JsonResource.stub
         - stubs/Gate.stub
@@ -105,6 +106,10 @@ services:
         class: NunoMaduro\Larastan\Methods\Extension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
+    -
+        class: NunoMaduro\Larastan\Methods\ModelFactoryMethodsClassReflectionExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
 
     -
         class: NunoMaduro\Larastan\Properties\ModelAccessorExtension
@@ -145,6 +150,11 @@ services:
         class: NunoMaduro\Larastan\Properties\ModelRelationsExtension
         tags:
             - phpstan.broker.propertiesClassReflectionExtension
+
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\ModelFactoryDynamicStaticMethodReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicStaticMethodReturnTypeExtension
 
     -
         class: NunoMaduro\Larastan\ReturnTypes\ModelExtension
