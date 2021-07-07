@@ -50,6 +50,7 @@ parameters:
     noUnnecessaryCollectionCallExcept: []
     databaseMigrationsPath: []
     checkModelProperties: false
+    checkPhpDocMissingReturn: false
 
 parametersSchema:
     checkOctaneCompatibility: bool()
