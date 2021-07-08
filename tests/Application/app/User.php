@@ -60,6 +60,16 @@ class User extends Authenticatable
         return $query->where('active', 1);
     }
 
+    /**
+     * @param Builder<User> $query
+     *
+     * @return Builder<User>
+     */
+    public function scopeWhereActive(Builder $query): Builder
+    {
+        return $query->where('active', 1);
+    }
+
     /** @phpstan-return BelongsTo<Group, User> */
     public function group(): BelongsTo
     {
