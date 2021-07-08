@@ -64,4 +64,10 @@ class Scopes extends Model
     {
         $query->where('whyuse', 'void');
     }
+
+    /** @phpstan-return Builder<User> */
+    public function testScopeThatStartsWithWordWhere(): Builder
+    {
+        return User::query()->whereActive();
+    }
 }
