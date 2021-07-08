@@ -24,7 +24,6 @@ use PHPStan\Type\Generic\TemplateObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeWithClassName;
-use PHPStan\Type\VerbosityLevel;
 
 final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
 {
