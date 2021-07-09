@@ -27,6 +27,8 @@ Larastan was created by [Can Vural](https://github.com/canvural) and [Nuno Madur
 - **[PHP 7.2+](https://php.net/releases/)**
 - **[Laravel 6.0+](https://github.com/laravel/laravel)**
 
+**0**: To spare a lot of time please read [PHPStan's documentation](https://phpstan.org/user-guide/getting-started).
+
 **1**: First, you may use [Composer](https://getcomposer.org) to install Larastan as a development dependency into your Laravel project:
 ```bash
 composer require --dev nunomaduro/larastan
