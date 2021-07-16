@@ -6,9 +6,11 @@ namespace NunoMaduro\Larastan\ReturnTypes;
 
 use Illuminate\Database\Eloquent\Model;
 use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
+use PHPStan\Type\ErrorType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
@@ -30,9 +32,7 @@ final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements Dynami
             return false;
         }
 
-        $modelName = $methodReflection->getDeclaringClass()->getNativeReflection()->getShortName();
-
-        return class_exists('Database\\Factories\\'.$modelName.'Factory');
+        return true;
     }
 
     public function getTypeFromStaticMethodCall(
@@ -40,7 +40,17 @@ final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements Dynami
         StaticCall $methodCall,
         Scope $scope
     ): Type {
-        $modelName = $methodReflection->getDeclaringClass()->getNativeReflection()->getShortName();
+        $class = $methodCall->class;
+
+        if (! $class instanceof Name) {
+            return new ErrorType();
+        }
+
+        $modelName = basename(str_replace('\\', '/', $class->toCodeString()));
+
+        if (! class_exists('Database\\Factories\\'.$modelName.'Factory')) {
+            return new ErrorType();
+        }
 
         return new ObjectType('Database\\Factories\\'.$modelName.'Factory');
     }
