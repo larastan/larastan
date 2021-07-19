@@ -4,6 +4,7 @@ namespace Illuminate\Database\Eloquent;
 
 /**
  * @template TModelClass of Model
+ * @property-read static<TModelClass> $orWhere
  */
 class Builder
 {

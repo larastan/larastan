@@ -149,6 +149,12 @@ class ModelExtension
         return Thread::valid();
     }
 
+    /** @phpstan-return Builder<Thread> */
+    public function testScopeWithOrWhereHigherOrderBuilderProxyProperty(): Builder
+    {
+        return Thread::valid()->orWhere->valid();
+    }
+
     /** @phpstan-return Builder<User> */
     public function testWithAcceptsArrayOfClosures(): Builder
     {
