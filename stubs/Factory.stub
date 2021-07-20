@@ -8,6 +8,13 @@ namespace Illuminate\Database\Eloquent\Factories;
 class Factory
 {
     /**
+     * The name of the factory's corresponding model.
+     *
+     * @var class-string<TModel>
+     */
+    protected $model;
+
+    /**
      * Get a new factory instance for the given attributes.
      *
      * @param  callable|array<model-property<TModel>, mixed>  $attributes
@@ -64,4 +71,11 @@ class Factory
      * @return TModel
      */
     protected function makeInstance(?\Illuminate\Database\Eloquent\Model $parent) {}
+
+    /**
+     * Define the model's default state.
+     *
+     * @return array<model-property<TModel>, mixed>
+     */
+    abstract public function definition();
 }
