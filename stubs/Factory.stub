@@ -3,7 +3,7 @@
 namespace Illuminate\Database\Eloquent\Factories;
 
 /**
- * @template TModel extends \Illuminate\Database\Eloquent\Model
+ * @template TModel of \Illuminate\Database\Eloquent\Model
  */
 class Factory
 {
