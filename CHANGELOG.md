@@ -6,8 +6,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.11] - 2021-07-22
+
 ### Added
-- Support for `orWhere` HigherOrderBuilderProxy property ([#884](https://github.com/nunomaduro/larastan/pull/884))
+- Support for Laravel 8 model factories. ([#861](https://github.com/nunomaduro/larastan/pull/861), [`6a03ad7`](https://github.com/nunomaduro/larastan/commit/6a03ad7899f5b71133c459df0260e19491dc5ed4))
+- Support for `orWhere` HigherOrderBuilderProxy property. ([#884](https://github.com/nunomaduro/larastan/pull/884)) Thanks @shaffe-fr
+- Added more precise declarations to Factory stub ([#888](https://github.com/nunomaduro/larastan/pull/888)) Thanks @spawnia
+
+### Changed
+- Laravel 9 tests cannot run on PHP 7.4
 
 ## [0.7.10] - 2021-07-07
 
@@ -609,7 +616,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.10...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.11...HEAD
+[0.7.11]: https://github.com/nunomaduro/larastan/compare/v0.7.10...0.7.11
 [0.7.10]: https://github.com/nunomaduro/larastan/compare/v0.7.9...0.7.10
 [0.7.9]: https://github.com/nunomaduro/larastan/compare/v0.7.8...0.7.9
 [0.7.8]: https://github.com/nunomaduro/larastan/compare/v0.7.7...0.7.8
