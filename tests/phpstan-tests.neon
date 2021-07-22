@@ -1,6 +1,9 @@
 includes:
     - ../extension.neon
+    - ../vendor/phpstan/phpstan/conf/bleedingEdge.neon
 parameters:
+    featureToggles:
+        unusedClassElements: false
     checkExplicitMixed: true
     ignoreErrors:
         - '#Return typehint of method Tests\\Features\\ReturnTypes\\Facades::testHttpBaseUrl\(\) has invalid type Illuminate\\Http\\Client\\PendingRequest\.#'
