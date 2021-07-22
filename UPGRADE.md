@@ -1,5 +1,26 @@
 # Upgrade Guide
 
+## Upgrading to `0.7.11`
+
+### Laravel 8 Model Factory support
+
+`0.7.11` adds support for Laravel 8 model factory return types and methods. But there is one step you need to do before taking advantage of this.
+
+Because `Factory` class is markes as generic now, you need to also specify this in your model factories.
+
+So for example if you have `UserFactory` class, the following change needs to be made:
+```php
+<?php
+
+/** @extends Factory<User> */
+class UserFactory extends Factory
+{
+    // ...
+}
+```
+
+So general rule is that `@extends Factory<MODELNAME>` PHPDoc needs to be added to factory class, where `MODELNAME` is the model class name which this factory is using.
+
 ## Upgrading to `0.7.0`
 
 ### `databaseMigrationsPath` parameter is now an array
