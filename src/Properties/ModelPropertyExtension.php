@@ -215,6 +215,10 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
     {
         $casts = $modelInstance->getCasts();
         foreach ($casts as $name => $type) {
+            if (! array_key_exists($name, $this->tables[$modelInstance->getTable()]->columns)) {
+                continue;
+            }
+
             switch ($type) {
                 case 'boolean':
                 case 'bool':
@@ -256,10 +260,6 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
                 default:
                     $realType = class_exists($type) ? ('\\'.$type) : 'mixed';
                     break;
-            }
-
-            if (! array_key_exists($name, $this->tables[$modelInstance->getTable()]->columns)) {
-                continue;
             }
 
             if ($this->tables[$modelInstance->getTable()]->columns[$name]->nullable) {
