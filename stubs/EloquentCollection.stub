@@ -29,12 +29,6 @@ class Collection extends \Illuminate\Support\Collection
     public function map($callable) {}
 
     /**
-     * @param callable(TValue, int): array<mixed> $callback
-     * @return \Illuminate\Support\Collection<mixed, static<mixed>>
-     */
-    public function mapToGroups(callable $callback) {}
-
-    /**
      * @param callable(TValue, int): mixed $callback
      * @return \Illuminate\Support\Collection<mixed, mixed>
      */
@@ -45,18 +39,4 @@ class Collection extends \Illuminate\Support\Collection
      * @return static<mixed>|\Illuminate\Support\Collection<int, mixed>
      */
     public function mapSpread(callable $callback) {}
-
-    /**
-     * @param int $number
-     * @param null|callable(int, int): mixed $callback
-     * @return mixed
-     */
-    public static function times($number, callable $callback = null) {}
-
-    /**
-     * @param string|array<mixed> $value
-     * @param string|null $key
-     * @return \Illuminate\Support\Collection<int, mixed>
-     */
-    public function pluck($value, $key = null) {}
 }

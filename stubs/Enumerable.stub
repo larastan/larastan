@@ -52,13 +52,6 @@ interface Enumerable extends \Countable, \IteratorAggregate, \JsonSerializable
     public function every($key, $operator = null, $value = null);
 
     /**
-     * @template TClass
-     * @param class-string<TClass> $class
-     * @return static<TClass>
-     */
-    public function mapInto($class);
-
-    /**
      * @param  int  $size
      * @return static<static>
      */

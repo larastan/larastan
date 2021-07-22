@@ -71,13 +71,20 @@ class Collection implements \ArrayAccess, Enumerable
 
     /**
      * @param callable(TValue, TKey): array<mixed> $callback
-     * @return static<static<mixed>>
+     * @return static<mixed, mixed>
      */
     public function mapToGroups(callable $callback) {}
 
     /**
+     * @template TClass
+     * @param class-string<TClass> $class
+     * @return static<int, TClass>
+     */
+    public function mapInto($class);
+
+    /**
      * @param callable(TValue, TKey): mixed $callback
-     * @return static<mixed>
+     * @return static<mixed, mixed>
      */
     public function flatMap(callable $callback) {}
 
@@ -97,7 +104,7 @@ class Collection implements \ArrayAccess, Enumerable
     /**
      * @param string|array<mixed> $value
      * @param string|null $key
-     * @return static<mixed>
+     * @return static<int, mixed>
      */
     public function pluck($value, $key = null) {}
 }

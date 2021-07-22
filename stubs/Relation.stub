@@ -23,7 +23,7 @@ class Relation
     public function create(array $attributes = []);
 
     /**
-     * @param array<int, mixed> $attributes
+     * @param array<model-property<TRelatedModel>, mixed> $attributes
      * @phpstan-return TRelatedModel
      */
     public function make(array $attributes = []);
