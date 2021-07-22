@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Casts\AsArrayObject;
+use Illuminate\Database\Eloquent\Casts\AsCollection;
 use function get_class;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -34,7 +36,13 @@ class User extends Authenticatable
     ];
 
     /** @var array<string, string> */
-    protected $casts = ['meta' => 'array', 'blocked' => 'boolean', 'email_verified_at' => 'date'];
+    protected $casts = [
+        'meta' => 'array',
+        'blocked' => 'boolean',
+        'email_verified_at' => 'date',
+        'options' => AsArrayObject::class,
+        'properties' => AsCollection::class,
+    ];
 
     /**
      * The attributes that should be hidden for arrays.
