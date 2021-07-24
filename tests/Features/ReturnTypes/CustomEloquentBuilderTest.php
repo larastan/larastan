@@ -102,6 +102,12 @@ class CustomEloquentBuilderTest
     {
         return ModelWithCustomBuilder::findOrFail([1, 2, 3]);
     }
+
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterCustomBuilderMethodRelationChainedWithExplicitQueryMethod(): CustomEloquentBuilder
+    {
+        return ModelWithCustomBuilder::query()->whereHas('relation')->type('foo');
+    }
 }
 
 class FooModel extends Model
