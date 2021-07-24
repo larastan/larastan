@@ -104,24 +104,6 @@ class CustomEloquentBuilderTest
     }
 
     /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
-    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderWithExplicitQueryMethod(): CustomEloquentBuilder
-    {
-        return ModelWithCustomBuilder::query();
-    }
-
-    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
-    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterBuilderMethodWithExplicitQueryMethod(): CustomEloquentBuilder
-    {
-        return ModelWithCustomBuilder::query()->where('email', 'bar');
-    }
-
-    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
-    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterCustomBuilderMethodChainedWithExplicitQueryMethod(): CustomEloquentBuilder
-    {
-        return ModelWithCustomBuilder::query()->where('email', 'bar')->type('foo');
-    }
-
-    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
     public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterCustomBuilderMethodRelationChainedWithExplicitQueryMethod(): CustomEloquentBuilder
     {
         return ModelWithCustomBuilder::query()->whereHas('relation')->type('foo');
