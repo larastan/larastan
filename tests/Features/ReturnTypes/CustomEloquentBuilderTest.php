@@ -144,7 +144,7 @@ class ModelWithCustomBuilder extends Model
 
 /**
  * @template TModelClass of ModelWithCustomBuilder
- * @extends Builder<ModelWithCustomBuilder>
+ * @extends Builder<TModelClass>
  */
 class CustomEloquentBuilder extends Builder
 {
