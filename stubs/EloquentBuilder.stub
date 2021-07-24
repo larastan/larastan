@@ -191,7 +191,7 @@ class Builder
      * @param  \Closure|null  $callback
      * @param  string  $operator
      * @param  int  $count
-     * @return static<TModelClass>
+     * @return static
      */
     public function whereHas($relation, \Closure $callback = null, $operator = '>=', $count = 1);
 
