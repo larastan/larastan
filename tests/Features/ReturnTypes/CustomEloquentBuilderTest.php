@@ -102,6 +102,30 @@ class CustomEloquentBuilderTest
     {
         return ModelWithCustomBuilder::findOrFail([1, 2, 3]);
     }
+
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderWithExplicitQueryMethod(): CustomEloquentBuilder
+    {
+        return ModelWithCustomBuilder::query();
+    }
+
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterBuilderMethodWithExplicitQueryMethod(): CustomEloquentBuilder
+    {
+        return ModelWithCustomBuilder::query()->where('email', 'bar');
+    }
+
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterCustomBuilderMethodChainedWithExplicitQueryMethod(): CustomEloquentBuilder
+    {
+        return ModelWithCustomBuilder::query()->where('email', 'bar')->type('foo');
+    }
+
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterCustomBuilderMethodRelationChainedWithExplicitQueryMethod(): CustomEloquentBuilder
+    {
+        return ModelWithCustomBuilder::query()->whereHas('relation')->type('foo');
+    }
 }
 
 class FooModel extends Model
