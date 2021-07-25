@@ -28,6 +28,17 @@ trait ExecutesLarastan
         return json_decode($jsonResult[0], true);
     }
 
+    private function analyze(string $file): int
+    {
+        $result = $this->execLarastan($file);
+
+        if (! $result || $result['totals']['errors'] > 0 || $result['totals']['file_errors'] > 0) {
+            $this->fail(json_encode($result, JSON_PRETTY_PRINT));
+        }
+
+        return 0;
+    }
+
     /**
      * @param string $configPath
      *
