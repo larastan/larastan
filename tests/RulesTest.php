@@ -4,8 +4,19 @@ declare(strict_types=1);
 
 namespace Tests;
 
-abstract class RulesTest extends TestCase
+use Orchestra\Testbench\TestCase as BaseTestCase;
+
+abstract class RulesTest extends BaseTestCase
 {
+    use ExecutesLarastan;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->configPath = __DIR__.'/phpstan-tests.neon';
+    }
+
     /**
      * Returns an array of errors that were found after analyzing $filename.
      * @param string $filename

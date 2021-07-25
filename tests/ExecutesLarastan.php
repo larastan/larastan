@@ -1,27 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests;
 
-use Illuminate\Support\Facades\File;
-use Orchestra\Testbench\TestCase as BaseTestCase;
-
-class TestCase extends BaseTestCase
+trait ExecutesLarastan
 {
     /** @var string */
     private $configPath;
-
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        @File::makeDirectory(dirname(__DIR__).'/vendor/nunomaduro/larastan', 0755, true);
-        @File::copy(dirname(__DIR__).'/bootstrap.php', dirname(__DIR__).'/vendor/nunomaduro/larastan/bootstrap.php');
-        File::copyDirectory(__DIR__.'/Application/database/migrations', $this->getBasePath().'/database/migrations');
-        File::copyDirectory(__DIR__.'/Application/config', $this->getBasePath().'/config');
-        File::copyDirectory(__DIR__.'/Application/resources', $this->getBasePath().'/resources');
-
-        $this->configPath = __DIR__.'/phpstan-tests.neon';
-    }
 
     public function execLarastan(string $filename)
     {
