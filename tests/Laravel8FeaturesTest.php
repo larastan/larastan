@@ -9,7 +9,7 @@ use Orchestra\Testbench\TestCase as BaseTestCase;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
-class FeaturesTest extends BaseTestCase
+class Laravel8FeaturesTest extends BaseTestCase
 {
     use ExecutesLarastan;
 
@@ -19,9 +19,9 @@ class FeaturesTest extends BaseTestCase
 
         @File::makeDirectory(dirname(__DIR__).'/vendor/nunomaduro/larastan', 0755, true);
         @File::copy(dirname(__DIR__).'/bootstrap.php', dirname(__DIR__).'/vendor/nunomaduro/larastan/bootstrap.php');
-        File::copyDirectory(__DIR__.'/Application/database/migrations', $this->getBasePath().'/database/migrations');
-        File::copyDirectory(__DIR__.'/Application/config', $this->getBasePath().'/config');
-        File::copyDirectory(__DIR__.'/Application/resources', $this->getBasePath().'/resources');
+        File::copyDirectory(__DIR__.'/Laravel8Application/database/migrations', $this->getBasePath().'/database/migrations');
+        File::copyDirectory(__DIR__.'/Laravel8Application/config', $this->getBasePath().'/config');
+        File::copyDirectory(__DIR__.'/Laravel8Application/resources', $this->getBasePath().'/resources');
 
         $this->configPath = __DIR__.'/phpstan-tests.neon';
     }
@@ -29,10 +29,10 @@ class FeaturesTest extends BaseTestCase
     public function getFeatures(): array
     {
         $calls = [];
-        $baseDir = __DIR__.DIRECTORY_SEPARATOR.'Features'.DIRECTORY_SEPARATOR;
+        $baseDir = __DIR__.DIRECTORY_SEPARATOR.'Features'.DIRECTORY_SEPARATOR.'Laravel8';
 
         /** @var SplFileInfo $file */
-        foreach ((new Finder())->in($baseDir)->files()->name('*.php')->notContains('Laravel8') as $file) {
+        foreach ((new Finder())->in($baseDir)->files()->name('*.php') as $file) {
             $fullPath = realpath((string) $file);
             $calls[str_replace($baseDir, '', $fullPath)] = [$fullPath];
         }
@@ -45,6 +45,10 @@ class FeaturesTest extends BaseTestCase
      */
     public function testFeatures(string $file): void
     {
+        if (version_compare($this->app->version(), '8.0', '<')) {
+            $this->markTestSkipped('Test requires Laravel 8');
+        }
+
         if ($this->analyze($file) === 0) {
             $this->assertTrue(true);
         }
