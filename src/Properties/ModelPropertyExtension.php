@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Properties;
 
 use ArrayObject;
-use Illuminate\Database\Eloquent\Casts\AsArrayObject;
-use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use PHPStan\PhpDoc\TypeStringResolver;
@@ -251,10 +249,10 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
                 case 'collection':
                     $realType = '\Illuminate\Support\Collection';
                     break;
-                case AsArrayObject::class:
+                case 'Illuminate\Database\Eloquent\Casts\AsArrayObject':
                     $realType = ArrayObject::class;
                     break;
-                case AsCollection::class:
+                case 'Illuminate\Database\Eloquent\Casts\AsCollection':
                     $realType = '\Illuminate\Support\Collection<mixed, mixed>';
                     break;
                 default:
