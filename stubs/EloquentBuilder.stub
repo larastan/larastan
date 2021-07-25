@@ -185,6 +185,49 @@ class Builder
     public function orWhere($column, $operator = null, $value = null);
 
     /**
+     * Add a relationship count / exists condition to the query.
+     *
+     * @template TRelatedModel of Model
+     * @param  \Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel>|string  $relation
+     * @param  string  $operator
+     * @param  int  $count
+     * @param  string  $boolean
+     * @param  \Closure|null  $callback
+     * @return static
+     *
+     * @throws \RuntimeException
+     */
+    public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', \Closure $callback = null);
+
+    /**
+     * Add a relationship count / exists condition to the query with an "or".
+     *
+     * @param  string  $relation
+     * @param  string  $operator
+     * @param  int  $count
+     * @return static
+     */
+    public function orHas($relation, $operator = '>=', $count = 1);
+
+    /**
+     * Add a relationship count / exists condition to the query.
+     *
+     * @param  string  $relation
+     * @param  string  $boolean
+     * @param  \Closure|null  $callback
+     * @return static
+     */
+    public function doesntHave($relation, $boolean = 'and', \Closure $callback = null);
+
+    /**
+     * Add a relationship count / exists condition to the query with an "or".
+     *
+     * @param  string  $relation
+     * @return static
+     */
+    public function orDoesntHave($relation);
+
+    /**
      * Add a relationship count / exists condition to the query with where clauses.
      *
      * @param  string  $relation
@@ -194,6 +237,147 @@ class Builder
      * @return static
      */
     public function whereHas($relation, \Closure $callback = null, $operator = '>=', $count = 1);
+
+    /**
+     * Add a relationship count / exists condition to the query with where clauses and an "or".
+     *
+     * @param  string  $relation
+     * @param  \Closure|null  $callback
+     * @param  string  $operator
+     * @param  int  $count
+     * @return static
+     */
+    public function orWhereHas($relation, \Closure $callback = null, $operator = '>=', $count = 1);
+
+    /**
+     * Add a polymorphic relationship count / exists condition to the query.
+     *
+     * @template TRelatedModel of Model
+     * @template TChildModel of Model
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
+     * @param  string|array<string>  $types
+     * @param  string  $operator
+     * @param  int  $count
+     * @param  string  $boolean
+     * @param  \Closure|null  $callback
+     * @return static
+     */
+    public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', \Closure $callback = null);
+
+    /**
+     * Add a polymorphic relationship count / exists condition to the query with an "or".
+     *
+     * @template TRelatedModel of Model
+     * @template TChildModel of Model
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
+     * @param  string|array<string>  $types
+     * @param  string  $operator
+     * @param  int  $count
+     * @return static
+     */
+    public function orHasMorph($relation, $types, $operator = '>=', $count = 1);
+
+    /**
+     * Add a polymorphic relationship count / exists condition to the query.
+     *
+     * @template TRelatedModel of Model
+     * @template TChildModel of Model
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
+     * @param  string|array<string>  $types
+     * @param  string  $boolean
+     * @param  \Closure|null  $callback
+     * @return static
+     */
+    public function doesntHaveMorph($relation, $types, $boolean = 'and', \Closure $callback = null);
+
+    /**
+     * Add a polymorphic relationship count / exists condition to the query with an "or".
+     *
+     * @template TRelatedModel of Model
+     * @template TChildModel of Model
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
+     * @param  string|array<string>  $types
+     * @return static
+     */
+    public function orDoesntHaveMorph($relation, $types);
+
+    /**
+     * Add a polymorphic relationship count / exists condition to the query with where clauses.
+     *
+     * @template TRelatedModel of Model
+     * @template TChildModel of Model
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
+     * @param  string|array<string>  $types
+     * @param  \Closure|null  $callback
+     * @param  string  $operator
+     * @param  int  $count
+     * @return static
+     */
+    public function whereHasMorph($relation, $types, \Closure $callback = null, $operator = '>=', $count = 1);
+
+    /**
+     * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
+     *
+     * @template TRelatedModel of Model
+     * @template TChildModel of Model
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
+     * @param  string|array<string>  $types
+     * @param  \Closure|null  $callback
+     * @param  string  $operator
+     * @param  int  $count
+     * @return static
+     */
+    public function orWhereHasMorph($relation, $types, \Closure $callback = null, $operator = '>=', $count = 1);
+
+    /**
+     * Add a polymorphic relationship count / exists condition to the query with where clauses.
+     *
+     * @template TRelatedModel of Model
+     * @template TChildModel of Model
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
+     * @param  string|array<string>  $types
+     * @param  \Closure|null  $callback
+     * @return static
+     */
+    public function whereDoesntHaveMorph($relation, $types, \Closure $callback = null);
+
+    /**
+     * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
+     *
+     * @template TRelatedModel of Model
+     * @template TChildModel of Model
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
+     * @param  string|array<string>  $types
+     * @param  \Closure|null  $callback
+     * @return static
+     */
+    public function orWhereDoesntHaveMorph($relation, $types, \Closure $callback = null);
+
+    /**
+     * Merge the where constraints from another query to the current query.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder<TModelClass>  $from
+     * @return static
+     */
+    public function mergeConstraintsFrom(\Illuminate\Database\Eloquent\Builder $from);
+
+    /**
+     * Add a relationship count / exists condition to the query with where clauses and an "or".
+     *
+     * @param  string  $relation
+     * @param  \Closure|null  $callback
+     * @return static
+     */
+    public function orWhereDoesntHave($relation, \Closure $callback = null);
+
+    /**
+     * Add a relationship count / exists condition to the query with where clauses.
+     *
+     * @param  string  $relation
+     * @param  \Closure|null  $callback
+     * @return static
+     */
+    public function whereDoesntHave($relation, \Closure $callback = null);
 
     /**
      * Add a basic where clause to the query, and return the first result.
