@@ -104,6 +104,108 @@ class CustomEloquentBuilderTest
     }
 
     /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterHasBuilderMethod(): CustomEloquentBuilder
+    {
+        return ModelWithCustomBuilder::query()->has('relation');
+    }
+
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterOrHasBuilderMethod(): CustomEloquentBuilder
+    {
+        return ModelWithCustomBuilder::query()->orHas('relation');
+    }
+
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterDoesntHaveBuilderMethod(): CustomEloquentBuilder
+    {
+        return ModelWithCustomBuilder::query()->doesntHave('relation');
+    }
+
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterOrDoesntHaveBuilderMethod(): CustomEloquentBuilder
+    {
+        return ModelWithCustomBuilder::query()->orDoesntHave('relation');
+    }
+
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterWhereHasBuilderMethod(): CustomEloquentBuilder
+    {
+        return ModelWithCustomBuilder::query()->whereHas('relation');
+    }
+
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterOrWhereHasBuilderMethod(): CustomEloquentBuilder
+    {
+        return ModelWithCustomBuilder::query()->orWhereHas('relation');
+    }
+
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterWhereDoesntHaveBuilderMethod(): CustomEloquentBuilder
+    {
+        return ModelWithCustomBuilder::query()->whereDoesntHave('relation');
+    }
+
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterOrWhereDoesntHaveBuilderMethod(): CustomEloquentBuilder
+    {
+        return ModelWithCustomBuilder::query()->orWhereDoesntHave('relation');
+    }
+
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterHasMorphBuilderMethod(): CustomEloquentBuilder
+    {
+        return ModelWithCustomBuilder::query()->hasMorph('relation', 'types');
+    }
+
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterOrHasMorphBuilderMethod(): CustomEloquentBuilder
+    {
+        return ModelWithCustomBuilder::query()->orHasMorph('relation', 'types');
+    }
+
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterDoesntHaveMorphBuilderMethod(): CustomEloquentBuilder
+    {
+        return ModelWithCustomBuilder::query()->doesntHaveMorph('relation', 'types');
+    }
+
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterOrDoesntHaveMorphBuilderMethod(): CustomEloquentBuilder
+    {
+        return ModelWithCustomBuilder::query()->orDoesntHaveMorph('relation', 'types');
+    }
+
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterWhereHasMorphBuilderMethod(): CustomEloquentBuilder
+    {
+        return ModelWithCustomBuilder::query()->whereHasMorph('relation', 'types');
+    }
+
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterOrWhereHasMorphBuilderMethod(): CustomEloquentBuilder
+    {
+        return ModelWithCustomBuilder::query()->orWhereHasMorph('relation', 'types');
+    }
+
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterWhereDoesntHaveMorphBuilderMethod(): CustomEloquentBuilder
+    {
+        return ModelWithCustomBuilder::query()->whereDoesntHaveMorph('relation', 'types');
+    }
+
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterOrWhereDoesntHaveMorphMorphBuilderMethod(): CustomEloquentBuilder
+    {
+        return ModelWithCustomBuilder::query()->orWhereDoesntHaveMorph('relation', 'types');
+    }
+
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterMergeConstraintsFromBuilderMethod(): CustomEloquentBuilder
+    {
+        return ModelWithCustomBuilder::query()->mergeConstraintsFrom(ModelWithCustomBuilder::query());
+    }
+
+    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
     public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterCustomBuilderMethodRelationChainedWithExplicitQueryMethod(): CustomEloquentBuilder
     {
         return ModelWithCustomBuilder::query()->whereHas('relation')->type('foo');
