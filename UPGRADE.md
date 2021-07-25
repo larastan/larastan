@@ -6,7 +6,7 @@
 
 `0.7.11` adds support for Laravel 8 model factory return types and methods. But there is one step you need to do before taking advantage of this.
 
-Because `Factory` class is markes as generic now, you need to also specify this in your model factories.
+Because `Factory` class is marked as generic now, you need to also specify this in your model factories.
 
 So for example if you have `UserFactory` class, the following change needs to be made:
 ```php
