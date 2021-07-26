@@ -6,10 +6,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.12] - 2021-07-26
+
+### Added
+
+- Support for `AsArrayObject` and `AsCollection` model casts.
+- Use bleeding edge config to run tests.
+
 ### Fixed
 
-- Changed EloquentBuilder stub to fix several relation builder methods return types when custom builder is used ([#899](https://github.com/nunomaduro/larastan/pull/899)) Thanks @fragkp
-- Changed EloquentBuilder stub to fix `whereHas` return type when custom builder is used ([#896](https://github.com/nunomaduro/larastan/pull/896)) Thanks @fragkp
+- Corrected stubs from bleeding edge feedback.
+- Changed `EloquentBuilder` stub to fix several relation builder methods return types when custom builder is used. ([#899](https://github.com/nunomaduro/larastan/pull/899)) Thanks @fragkp
+- Changed `EloquentBuilder` stub to fix `whereHas` return type when custom builder is used. ([#896](https://github.com/nunomaduro/larastan/pull/896)) Thanks @fragkp
+
+### Changed
+
+- Refactored tests to separate Laravel 8 specific tests.
 
 ## [0.7.11] - 2021-07-22
 
@@ -621,7 +633,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.11...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.12...HEAD
+[0.7.12]: https://github.com/nunomaduro/larastan/compare/v0.7.11...0.7.12
 [0.7.11]: https://github.com/nunomaduro/larastan/compare/v0.7.10...0.7.11
 [0.7.10]: https://github.com/nunomaduro/larastan/compare/v0.7.9...0.7.10
 [0.7.9]: https://github.com/nunomaduro/larastan/compare/v0.7.8...0.7.9
