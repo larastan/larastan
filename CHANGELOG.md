@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+- Changed EloquentBuilder stub to fix several relation builder methods return types when custom builder is used ([#899](https://github.com/nunomaduro/larastan/pull/899)) Thanks @fragkp
 - Changed EloquentBuilder stub to fix `whereHas` return type when custom builder is used ([#896](https://github.com/nunomaduro/larastan/pull/896)) Thanks @fragkp
 
 ## [0.7.11] - 2021-07-22
