@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Tests\Features\ReturnTypes\Helpers;
 
 use App\User;
-use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Collection;
 use Traversable;
-use function PHPStan\dumpType;
 
 class CollectExtension
 {

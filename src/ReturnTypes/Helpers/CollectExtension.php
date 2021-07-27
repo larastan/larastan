@@ -69,9 +69,8 @@ final class CollectExtension implements DynamicFunctionReturnTypeExtension
 
         return new GenericObjectType(Collection::class, [
             TypeUtils::generalizeType($valueType->getIterableKeyType()),
-            TypeUtils::generalizeType($valueType->getIterableValueType())
+            TypeUtils::generalizeType($valueType->getIterableValueType()),
         ]);
-
     }
 
     private function getTypeFromEloquentCollection(TypeWithClassName $valueType): GenericObjectType
