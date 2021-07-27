@@ -107,4 +107,26 @@ class Collection implements \ArrayAccess, Enumerable
      * @return static<int, mixed>
      */
     public function pluck($value, $key = null) {}
+
+    /**
+     * @return TValue
+     */
+    public function pop() {}
+
+    /**
+     * Push one or more items onto the end of the collection.
+     *
+     * @param TValue ...$values
+     * @return static
+     */
+    public function push(...$values) {}
+
+    /**
+     * Put an item in the collection by key.
+     *
+     * @param TKey $key
+     * @param TValue $value
+     * @return static
+     */
+    public function put($key, $value) {}
 }
