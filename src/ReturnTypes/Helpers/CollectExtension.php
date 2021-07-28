@@ -106,12 +106,12 @@ final class CollectExtension implements DynamicFunctionReturnTypeExtension
             return new GenericObjectType(Collection::class, [$keyType, new MixedType()]);
         }
 
-        $templateTypeMap = $classReflection->getActiveTemplateTypeMap();
+        $templateTypes = array_values($classReflection->getActiveTemplateTypeMap()->getTypes());
 
-        if ($templateTypeMap->count() === 1) {
-            return new GenericObjectType(Collection::class, [$keyType, $templateTypeMap->getTypes()[0]]);
+        if (count($templateTypes) === 1) {
+            return new GenericObjectType(Collection::class, [$keyType, $templateTypes[0]]);
         }
 
-        return new GenericObjectType(Collection::class, $templateTypeMap->getTypes());
+        return new GenericObjectType(Collection::class, $templateTypes);
     }
 }
