@@ -72,16 +72,17 @@ If you are getting the error `Allowed memory size exhausted`, then you can use t
 ```
 
 ## Ignoring errors
-Ignoring a specific error can be done either with a php comment or in the configuration file.  
 
+Ignoring a specific error can be done either with a php comment or in the configuration file: 
 
 ```php
-/** @phpstan-ignore-next-line **/
+// @phpstan-ignore-next-line
 $test->badMethod();
+
+$test->badMethod(); // @phpstan-ignore-line
 ```
 
-When ignoring errors in PHPStans configuration file, they are ignored by writing a regex based on error messages.  
-This can be scoped to a path and amount of times it happens also. ([PHPStan Docs](https://phpstan.org/user-guide/ignoring-errors))
+When ignoring errors in PHPStans configuration file, they are ignored by writing a regex based on error messages:
 
 ```yaml
 parameters:
@@ -89,14 +90,15 @@ parameters:
         - '#Call to an undefined method .*badMethod\(\)#'
 ```
 
-## Baseline file
-In older codebases it might be hard to spend the time fixing all the code to pass a high PHPStan Level.  
+### Baseline file
+
+In older codebases it might be hard to spend the time fixing all the code to pass a high PHPStan Level. 
+
 To get around this a baseline file can be generated. The baseline file will create a configuration file with all of the current errors, so new code can be written following a higher standard than the old code. ([PHPStan Docs](https://phpstan.org/user-guide/baseline))
 
 ```bash
 ./vendor/bin/phpstan analyse --generate-baseline
 ```
-
 
 ## Rules
 
