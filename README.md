@@ -49,7 +49,7 @@ parameters:
     level: 5
 
     ignoreErrors:
-        - '#Unsafe usage of new static#'
+        - '#^Unsafe usage of new static\(\)\.$#'
 
     excludePaths:
         - ./*/*/FileToBeExcluded.php
@@ -82,12 +82,12 @@ $test->badMethod();
 $test->badMethod(); // @phpstan-ignore-line
 ```
 
-When ignoring errors in PHPStans configuration file, they are ignored by writing a regex based on error messages:
+When ignoring errors in PHPStan's configuration file, they are ignored by writing a regex based on error messages:
 
 ```yaml
 parameters:
     ignoreErrors:
-        - '#Call to an undefined method .*badMethod\(\)#'
+        - '#^Call to an undefined method .*badMethod\(\)#'
 ```
 
 ### Baseline file
