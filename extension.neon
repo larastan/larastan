@@ -217,6 +217,14 @@ services:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
+        class: NunoMaduro\Larastan\ReturnTypes\CollectionExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
+        class: NunoMaduro\Larastan\Support\CollectionHelper
+
+    -
         class: NunoMaduro\Larastan\ReturnTypes\Helpers\AuthExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
