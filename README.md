@@ -82,7 +82,7 @@ $test->badMethod();
 $test->badMethod(); // @phpstan-ignore-line
 ```
 
-When ignoring errors in PHPStans configuration file, they are ignored by writing a regex based on error messages:
+When ignoring errors in PHPStan's configuration file, they are ignored by writing a regex based on error messages:
 
 ```yaml
 parameters:
