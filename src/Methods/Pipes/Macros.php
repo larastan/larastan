@@ -70,7 +70,7 @@ final class Macros implements PipeContract
             $macroTraitProperty = 'macros';
         } elseif ($this->hasIndirectTraitUse($classReflection, CarbonMacro::class)) {
             $className = $classReflection->getName();
-            $macroTraitMethod   = 'hasMacro';
+            $macroTraitMethod = 'hasMacro';
             $macroTraitProperty = 'globalMacros';
         }
 
