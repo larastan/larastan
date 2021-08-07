@@ -6,6 +6,7 @@ namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Carbon\Traits\Macro as CarbonMacro;
 use Closure;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use NunoMaduro\Larastan\Concerns;
@@ -43,6 +44,7 @@ final class Macros implements PipeContract
         /** @var class-string $className */
         $className = null;
         $found = false;
+        $macroTraitMethod = null;
         $macroTraitProperty = null;
 
         if ($classReflection->isInterface() && Str::startsWith($classReflection->getName(), 'Illuminate\Contracts')) {
@@ -54,25 +56,32 @@ final class Macros implements PipeContract
                 if ($passable->getBroker()
                     ->getClass($className)
                     ->hasTraitUse(Macroable::class)) {
+                    $macroTraitMethod = 'hasMacro';
                     $macroTraitProperty = 'macros';
                 }
             }
         } elseif ($classReflection->hasTraitUse(Macroable::class)) {
             $className = $classReflection->getName();
+            $macroTraitMethod = 'hasMacro';
+            $macroTraitProperty = 'macros';
+        } elseif ($classReflection->getName() === Builder::class) {
+            $className = $classReflection->getName();
+            $macroTraitMethod = 'hasGlobalMacro';
             $macroTraitProperty = 'macros';
         } elseif ($this->hasIndirectTraitUse($classReflection, CarbonMacro::class)) {
             $className = $classReflection->getName();
+            $macroTraitMethod   = 'hasMacro';
             $macroTraitProperty = 'globalMacros';
         }
 
-        if ($className !== null && $macroTraitProperty) {
+        if ($className !== null && $macroTraitMethod && $macroTraitProperty) {
             $refObject = new \ReflectionClass($className);
             $refProperty = $refObject->getProperty($macroTraitProperty);
             $refProperty->setAccessible(true);
 
             $className = (string) $className;
 
-            if ($found = $className::hasMacro($passable->getMethodName())) {
+            if ($found = $className::$macroTraitMethod($passable->getMethodName())) {
                 $reflectionFunction = new \ReflectionFunction($refProperty->getValue()[$passable->getMethodName()]);
                 /** @var \PHPStan\Type\Type[] $parameters */
                 $parameters = $reflectionFunction->getParameters();
