@@ -3,6 +3,9 @@ namespace Illuminate\Database\Query;
 
 class Expression {}
 
+/**
+ * @template TModelClass of \Illuminate\Database\Eloquent\Model
+ */
 class Builder
 {
     /**
@@ -39,7 +42,7 @@ class Builder
     /**
      * Makes "from" fetch from a subquery.
      *
-     * @param  \Closure|\Illuminate\Database\Query\Builder|string  $query
+     * @param  \Closure|\Illuminate\Database\Query\Builder<TModelClass>|string  $query
      * @param  string  $as
      * @return $this
      *
@@ -61,7 +64,7 @@ class Builder
     /**
      * Creates a subquery and parse it.
      *
-     * @param  \Closure|\Illuminate\Database\Query\Builder|string  $query
+     * @param  \Closure|\Illuminate\Database\Query\Builder<TModelClass>|string  $query
      * @return array<mixed>
      */
     protected function createSub($query)
@@ -98,7 +101,7 @@ class Builder
     /**
      * Set the table which the query is targeting.
      *
-     * @param  \Closure|\Illuminate\Database\Query\Builder|string  $table
+     * @param  \Closure|\Illuminate\Database\Query\Builder<TModelClass>|string  $table
      * @param  string|null  $as
      * @return $this
      */
@@ -135,9 +138,7 @@ class Builder
     /**
      * Add a subquery join clause to the query.
      *
-     * @template TModel of \Illuminate\Database\Eloquent\Model
-     *
-     * @param  \Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<TModel>|string  $query
+     * @param  \Closure|\Illuminate\Database\Query\Builder<TModelClass>|\Illuminate\Database\Eloquent\Builder<TModelClass>|string  $query
      * @param  string  $as
      * @param  \Closure|string  $first
      * @param  string|null  $operator
@@ -178,9 +179,7 @@ class Builder
     /**
      * Add a subquery left join to the query.
      *
-     * @template TModel of \Illuminate\Database\Eloquent\Model
-     *
-     * @param  \Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<TModel>|string  $query
+     * @param  \Closure|\Illuminate\Database\Query\Builder<TModelClass>|\Illuminate\Database\Eloquent\Builder<TModelClass>|string  $query
      * @param  string  $as
      * @param  \Closure|string  $first
      * @param  string|null  $operator
@@ -217,9 +216,7 @@ class Builder
     /**
      * Add a subquery right join to the query.
      *
-     * @template TModel of \Illuminate\Database\Eloquent\Model
-     *
-     * @param  \Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<TModel>|string  $query
+     * @param  \Closure|\Illuminate\Database\Query\Builder<TModelClass>|\Illuminate\Database\Eloquent\Builder<TModelClass>|string  $query
      * @param  string  $as
      * @param  \Closure|string  $first
      * @param  string|null  $operator
@@ -732,7 +729,7 @@ class Builder
     /**
      * Add an exists clause to the query.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
+     * @param  \Illuminate\Database\Query\Builder<TModelClass>  $query
      * @param  string  $boolean
      * @param  bool  $not
      * @return $this
@@ -931,7 +928,7 @@ class Builder
     /**
      * Add an "order by" clause to the query.
      *
-     * @param  \Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Query\Expression|string  $column
+     * @param  \Closure|\Illuminate\Database\Query\Builder<TModelClass>|\Illuminate\Database\Query\Expression|string  $column
      * @param  string  $direction
      * @return $this
      *
@@ -1076,7 +1073,7 @@ class Builder
     /**
      * Add a union statement to the query.
      *
-     * @param  \Illuminate\Database\Query\Builder|\Closure  $query
+     * @param  \Illuminate\Database\Query\Builder<TModelClass>|\Closure  $query
      * @param  bool  $all
      * @return $this
      */
@@ -1086,7 +1083,7 @@ class Builder
     /**
      * Add a union all statement to the query.
      *
-     * @param  \Illuminate\Database\Query\Builder|\Closure  $query
+     * @param  \Illuminate\Database\Query\Builder<TModelClass>|\Closure  $query
      * @return $this
      */
     public function unionAll($query)
@@ -1319,7 +1316,7 @@ class Builder
      * Insert new records into the table using a subquery.
      *
      * @param  array<string>  $columns
-     * @param  \Closure|\Illuminate\Database\Query\Builder|string  $query
+     * @param  \Closure|\Illuminate\Database\Query\Builder<TModelClass>|string  $query
      * @return int
      */
     public function insertUsing(array $columns, $query)
@@ -1438,7 +1435,7 @@ class Builder
     /**
      * Merge an array of bindings into our bindings.
      *
-     * @param  \Illuminate\Database\Query\Builder  $query
+     * @param  \Illuminate\Database\Query\Builder<TModelClass>  $query
      * @return $this
      */
     public function mergeBindings(self $query)
