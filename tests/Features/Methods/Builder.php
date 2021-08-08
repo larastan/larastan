@@ -212,4 +212,22 @@ class Builder
         return User::with('foo')
             ->value(\Illuminate\Support\Facades\DB::raw('name'));
     }
+
+    public function testQueryBuilderJoinSubAcceptEloquentBuilder(): ?User {
+        return User::query()->toBase()
+            ->joinSub(User::query(), 'user', 'users.id')
+            ->first();
+    }
+
+    public function testQueryBuilderLeftJoinSubAcceptEloquentBuilder(): ?User {
+        return User::query()->toBase()
+            ->leftJoinSub(User::query(), 'user', 'users.id')
+            ->first();
+    }
+
+    public function testQueryBuilderRightJoinSubAcceptEloquentBuilder(): ?User {
+        return User::query()->toBase()
+            ->rightJoinSub(User::query(), 'user', 'users.id')
+            ->first();
+    }
 }
