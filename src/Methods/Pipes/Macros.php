@@ -73,11 +73,9 @@ final class Macros implements PipeContract
 
             $className = (string) $className;
 
-            if ($className === Builder::class) {
-                $found = $className::hasGlobalMacro($passable->getMethodName());
-            } else {
-                $found = $className::hasMacro($passable->getMethodName());
-            }
+            $found = $className === Builder::class
+                ? $className::hasGlobalMacro($passable->getMethodName())
+                : $className::hasMacro($passable->getMethodName());
 
             if ($found) {
                 $reflectionFunction = new \ReflectionFunction($refProperty->getValue()[$passable->getMethodName()]);
