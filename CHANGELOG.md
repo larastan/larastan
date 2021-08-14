@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Fixed "Dynamic call to static method `xxx()`." error for regular methods (!= macro) to work with [`phpstan-strict-rules`](https://github.com/phpstan/phpstan-strict-rules). ([#483](https://github.com/nunomaduro/larastan/issues/483), [#917](https://github.com/nunomaduro/larastan/pull/917))
+- Fixed "Dynamic call to static method `xxx()`." error for regular methods (!= `Macroable`) to work with [`phpstan-strict-rules`](https://github.com/phpstan/phpstan-strict-rules). ([#483](https://github.com/nunomaduro/larastan/issues/483), [#917](https://github.com/nunomaduro/larastan/pull/917))
 
 ### Added
 
