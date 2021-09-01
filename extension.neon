@@ -35,6 +35,7 @@ parameters:
     scopeClass: NunoMaduro\Larastan\Analyser\Scope
     universalObjectCratesClasses:
         - Illuminate\Http\Request
+        - Illuminate\Support\Fluent
     earlyTerminatingFunctionCalls:
         - abort
         - dd
