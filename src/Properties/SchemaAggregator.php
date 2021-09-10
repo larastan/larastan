@@ -160,6 +160,43 @@ final class SchemaAggregator
                     $firstArg = $firstMethodCall->args[0]->value ?? null;
                     $secondArg = $firstMethodCall->args[1]->value ?? null;
 
+                    if ($firstMethodCall->name->name === 'foreignIdFor') {
+                        if ($firstArg instanceof PhpParser\Node\Expr\ClassConstFetch
+                            && $firstArg->class instanceof PhpParser\Node\Name
+                        ) {
+                            $modelClass = $firstArg->class->toCodeString();
+                        } elseif ($firstArg instanceof PhpParser\Node\Scalar\String_) {
+                            $modelClass = $firstArg->value;
+                        } else {
+                            continue;
+                        }
+
+                        if (! class_exists($modelClass)) {
+                            continue;
+                        }
+
+                        try {
+                            $reflect = new \ReflectionClass($modelClass);
+
+                            /** @var \Illuminate\Database\Eloquent\Model $model */
+                            $model = $reflect->newInstanceWithoutConstructor();
+
+                            $columnName = $model->getForeignKey();
+                            $columnType = $model->getKeyType() === 'int' && $model->getIncrementing()
+                                ? 'int'
+                                : 'string';
+
+                            if ($secondArg instanceof PhpParser\Node\Scalar\String_) {
+                                $columnName = $secondArg->value;
+                            }
+
+                            $table->setColumn(new SchemaColumn($columnName, $columnType, $nullable));
+                        } catch (\ReflectionException $e) {
+                        }
+
+                        continue;
+                    }
+
                     if (! $firstArg instanceof PhpParser\Node\Scalar\String_) {
                         if ($firstMethodCall->name->name === 'timestamps'
                             || $firstMethodCall->name->name === 'timestampsTz'
