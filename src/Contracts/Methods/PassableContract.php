@@ -22,8 +22,7 @@ use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
 interface PassableContract
 {
     /**
-     * @param \Illuminate\Contracts\Container\Container $container
-     *
+     * @param  \Illuminate\Contracts\Container\Container  $container
      * @return void
      */
     public function setContainer(ContainerContract $container): void;
@@ -34,8 +33,7 @@ interface PassableContract
     public function getClassReflection(): ClassReflection;
 
     /**
-     * @param \PHPStan\Reflection\ClassReflection $classReflection
-     *
+     * @param  \PHPStan\Reflection\ClassReflection  $classReflection
      * @return PassableContract
      */
     public function setClassReflection(ClassReflection $classReflection): PassableContract;
@@ -51,8 +49,7 @@ interface PassableContract
     public function hasFound(): bool;
 
     /**
-     * @param  string $class
-     *
+     * @param  string  $class
      * @return bool
      */
     public function searchOn(string $class): bool;
@@ -65,15 +62,14 @@ interface PassableContract
     public function getMethodReflection(): MethodReflection;
 
     /**
-     * @param \PHPStan\Reflection\MethodReflection $methodReflection
+     * @param  \PHPStan\Reflection\MethodReflection  $methodReflection
      */
     public function setMethodReflection(MethodReflection $methodReflection): void;
 
     /**
      * Declares that the provided method can be called statically.
      *
-     * @param bool $staticAllowed
-     *
+     * @param  bool  $staticAllowed
      * @return void
      */
     public function setStaticAllowed(bool $staticAllowed): void;
@@ -86,9 +82,8 @@ interface PassableContract
     public function isStaticAllowed(): bool;
 
     /**
-     * @param string $class
-     * @param bool $staticAllowed
-     *
+     * @param  string  $class
+     * @param  bool  $staticAllowed
      * @return bool
      */
     public function sendToPipeline(string $class, $staticAllowed = false): bool;

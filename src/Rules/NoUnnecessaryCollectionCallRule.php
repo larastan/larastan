@@ -34,12 +34,14 @@ use PHPStan\Type\Type;
  * User::whereStatus('active')->get()->pluck('id')
  * could be simplified to:
  * User::whereStatus('active')->pluck('id')
+ *
  * @implements Rule<MethodCall>
  */
 class NoUnnecessaryCollectionCallRule implements Rule
 {
     /**
      * The method names that can be applied on a Collection, but should be applied on a Builder.
+     *
      * @var string[]
      */
     protected const RISKY_METHODS = [
@@ -62,6 +64,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
     /**
      * The method names that can be applied on a Collection, but should in some cases be applied
      * on a builder depending on what parameter is passed to the method.
+     *
      * @var string[]
      */
     protected const RISKY_PARAM_METHODS = [
@@ -91,10 +94,11 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
     /**
      * NoRedundantCollectionCallRule constructor.
-     * @param ReflectionProvider $reflectionProvider
-     * @param ModelPropertyExtension $propertyExtension
-     * @param string[] $onlyMethods
-     * @param string[] $excludeMethods
+     *
+     * @param  ReflectionProvider  $reflectionProvider
+     * @param  ModelPropertyExtension  $propertyExtension
+     * @param  string[]  $onlyMethods
+     * @param  string[]  $excludeMethods
      */
     public function __construct(
         ReflectionProvider $reflectionProvider,
@@ -138,8 +142,8 @@ class NoUnnecessaryCollectionCallRule implements Rule
     }
 
     /**
-     * @param Node $node
-     * @param Scope $scope
+     * @param  Node  $node
+     * @param  Scope  $scope
      * @return string[]
      */
     public function processNode(Node $node, Scope $scope): array
@@ -214,8 +218,9 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
     /**
      * Determines whether the first argument is a string and references a database column.
-     * @param Node\Expr\StaticCall|MethodCall $node
-     * @param Scope $scope
+     *
+     * @param  Node\Expr\StaticCall|MethodCall  $node
+     * @param  Scope  $scope
      * @return bool
      */
     protected function firstArgIsDatabaseColumn($node, Scope $scope): bool
@@ -268,8 +273,9 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
     /**
      * Returns whether the method call is a call on a builder instance.
-     * @param Node\Expr $call
-     * @param Scope $scope
+     *
+     * @param  Node\Expr  $call
+     * @param  Scope  $scope
      * @return bool
      */
     protected function callIsQuery(Node\Expr $call, Scope $scope): bool
@@ -297,7 +303,8 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
     /**
      * Returns whether the method is one of the risky methods.
-     * @param Identifier $name
+     *
+     * @param  Identifier  $name
      * @return bool
      */
     protected function isRiskyMethod(Identifier $name): bool
@@ -307,7 +314,8 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
     /**
      * Returns whether the method might be a risky method depending on the parameters passed.
-     * @param Identifier $name
+     *
+     * @param  Identifier  $name
      * @return bool
      */
     protected function isRiskyParamMethod(Identifier $name): bool
@@ -317,7 +325,8 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
     /**
      * Returns whether its argument is some builder instance.
-     * @param Type $type
+     *
+     * @param  Type  $type
      * @return bool
      */
     protected function isBuilder(Type $type): bool
@@ -329,8 +338,9 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
     /**
      * Returns whether the Expr was not called on a Collection instance.
-     * @param Node\Expr $expr
-     * @param Scope $scope
+     *
+     * @param  Node\Expr  $expr
+     * @param  Scope  $scope
      * @return bool
      */
     protected function isCalledOnCollection(Node\Expr $expr, Scope $scope): bool
@@ -342,7 +352,8 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
     /**
      * Formats the error.
-     * @param string $method_name
+     *
+     * @param  string  $method_name
      * @return string
      */
     protected function formatError(string $method_name): string

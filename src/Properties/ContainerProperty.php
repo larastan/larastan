@@ -31,8 +31,8 @@ final class ContainerProperty implements PropertyReflection
     /**
      * Property constructor.
      *
-     * @param \PHPStan\Reflection\ClassReflection $declaringClass
-     * @param mixed $concrete
+     * @param  \PHPStan\Reflection\ClassReflection  $declaringClass
+     * @param  mixed  $concrete
      */
     public function __construct(ClassReflection $declaringClass, $concrete)
     {

@@ -8,7 +8,8 @@ class Abort
 {
     /**
      * Tests whether we can detect that abort terminates the application.
-     * @param int $value
+     *
+     * @param  int  $value
      * @return string
      */
     public function testAbort(int $value): string

@@ -158,9 +158,8 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
     }
 
     /**
-     * @param SchemaColumn $column
-     * @param Model $modelInstance
-     *
+     * @param  SchemaColumn  $column
+     * @param  Model  $modelInstance
      * @return string[]
      * @phpstan-return array<int, string>
      */

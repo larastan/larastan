@@ -23,8 +23,7 @@ interface PassableContract
     public function getType(): Type;
 
     /**
-     * @param \PHPStan\Type\Type $type
-     *
+     * @param  \PHPStan\Type\Type  $type
      * @return void
      */
     public function setType(Type $type): void;

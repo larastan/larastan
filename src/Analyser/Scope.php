@@ -90,9 +90,9 @@ class Scope extends BaseScope
      * Checks if the provided type implements
      * the Illuminate Container Contract.
      *
-     * @param \PHPStan\Type\Type $type
-     *
+     * @param  \PHPStan\Type\Type  $type
      * @return bool
+     *
      * @throws \ReflectionException
      */
     private function isContainer(Type $type): bool

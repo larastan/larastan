@@ -53,10 +53,11 @@ final class Macro implements BuiltinMethodReflection
     /**
      * Macro constructor.
      *
-     * @param string $className
+     * @param  string  $className
      * @phpstan-param class-string $className
-     * @param string $methodName
-     * @param ReflectionFunction $reflectionFunction
+     *
+     * @param  string  $methodName
+     * @param  ReflectionFunction  $reflectionFunction
      */
     public function __construct(string $className, string $methodName, ReflectionFunction $reflectionFunction)
     {
@@ -80,6 +81,7 @@ final class Macro implements BuiltinMethodReflection
 
     /**
      * {@inheritdoc}
+     *
      * @phpstan-ignore-next-line
      */
     public function getDeclaringClass(): ReflectionClass
@@ -129,8 +131,7 @@ final class Macro implements BuiltinMethodReflection
     /**
      * Set the is static value.
      *
-     * @param bool $isStatic
-     *
+     * @param  bool  $isStatic
      * @return void
      */
     public function setIsStatic(bool $isStatic): void
@@ -173,8 +174,7 @@ final class Macro implements BuiltinMethodReflection
     /**
      * Set the parameters value.
      *
-     * @param ReflectionParameter[] $parameters
-     *
+     * @param  ReflectionParameter[]  $parameters
      * @return void
      */
     public function setParameters(array $parameters): void

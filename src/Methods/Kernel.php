@@ -26,7 +26,7 @@ final class Kernel
     /**
      * Kernel constructor.
      *
-     * @param PhpMethodReflectionFactory $methodReflectionFactory
+     * @param  PhpMethodReflectionFactory  $methodReflectionFactory
      */
     public function __construct(
         PhpMethodReflectionFactory $methodReflectionFactory
@@ -35,10 +35,9 @@ final class Kernel
     }
 
     /**
-     * @param Broker          $broker
-     * @param ClassReflection $classReflection
-     * @param string          $methodName
-     *
+     * @param  Broker  $broker
+     * @param  ClassReflection  $classReflection
+     * @param  string  $methodName
      * @return PassableContract
      */
     public function handle(Broker $broker, ClassReflection $classReflection, string $methodName): PassableContract

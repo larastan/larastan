@@ -20,7 +20,7 @@ final class Passable implements PassableContract
     /**
      * Passable constructor.
      *
-     * @param \PHPStan\Type\Type $type
+     * @param  \PHPStan\Type\Type  $type
      */
     public function __construct(Type $type)
     {
@@ -36,7 +36,7 @@ final class Passable implements PassableContract
     }
 
     /**
-     * @param \PHPStan\Type\Type $type
+     * @param  \PHPStan\Type\Type  $type
      */
     public function setType(Type $type): void
     {
