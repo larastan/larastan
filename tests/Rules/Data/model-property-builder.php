@@ -9,8 +9,7 @@ function foo(\App\User $user): \Illuminate\Database\Eloquent\Builder
 }
 
 /**
- * @param \Illuminate\Database\Eloquent\Builder<\App\User> $builder
- *
+ * @param  \Illuminate\Database\Eloquent\Builder<\App\User>  $builder
  * @return \Illuminate\Database\Eloquent\Builder<\App\User>
  */
 function bar(\Illuminate\Database\Eloquent\Builder $builder): \Illuminate\Database\Eloquent\Builder

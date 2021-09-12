@@ -23,7 +23,7 @@ class MigrationHelper
     private $currentWorkingDirectory;
 
     /**
-     * @param string[] $databaseMigrationPath
+     * @param  string[]  $databaseMigrationPath
      */
     public function __construct(CachedParser $parser, string $currentWorkingDirectory, array $databaseMigrationPath)
     {
@@ -82,7 +82,7 @@ class MigrationHelper
     }
 
     /**
-     * @param SplFileInfo[] $files
+     * @param  SplFileInfo[]  $files
      */
     private function requireFiles(array $files): void
     {

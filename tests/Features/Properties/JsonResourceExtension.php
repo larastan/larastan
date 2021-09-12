@@ -11,6 +11,7 @@ class JsonResourceExtension
 {
     /**
      * @test
+     *
      * @return JsonResource<User>
      */
     public function resources_proxy_to_underlying_model_type(): JsonResource

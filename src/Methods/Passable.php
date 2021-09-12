@@ -60,11 +60,11 @@ final class Passable implements PassableContract
     /**
      * Method constructor.
      *
-     * @param \PHPStan\Reflection\Php\PhpMethodReflectionFactory $methodReflectionFactory
-     * @param \PHPStan\Broker\Broker $broker
-     * @param \Illuminate\Contracts\Pipeline\Pipeline $pipeline
-     * @param \PHPStan\Reflection\ClassReflection $classReflection
-     * @param string $methodName
+     * @param  \PHPStan\Reflection\Php\PhpMethodReflectionFactory  $methodReflectionFactory
+     * @param  \PHPStan\Broker\Broker  $broker
+     * @param  \Illuminate\Contracts\Pipeline\Pipeline  $pipeline
+     * @param  \PHPStan\Reflection\ClassReflection  $classReflection
+     * @param  string  $methodName
      */
     public function __construct(
         PhpMethodReflectionFactory $methodReflectionFactory,

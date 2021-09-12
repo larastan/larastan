@@ -14,7 +14,7 @@ class AbortUnless
     }
 
     /**
-     * @param int|string $foo
+     * @param  int|string  $foo
      * @return int
      */
     public function testAbortUnlessWithTypeCheck($foo = 5): int

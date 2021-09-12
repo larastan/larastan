@@ -145,8 +145,7 @@ class HigherOrderCollectionProxyMethods
     }
 
     /**
-     * @param SupportCollection $collection
-     *
+     * @param  SupportCollection  $collection
      * @return SupportCollection
      */
     public function testMapWithSupportCollection(SupportCollection $collection): SupportCollection
@@ -155,7 +154,7 @@ class HigherOrderCollectionProxyMethods
     }
 
     /**
-     * @param SupportCollection $collection
+     * @param  SupportCollection  $collection
      * @return SupportCollection
      */
     public function testEachWithSupportCollection(SupportCollection $collection): SupportCollection
@@ -164,7 +163,7 @@ class HigherOrderCollectionProxyMethods
     }
 
     /**
-     * @param SupportCollection $collection
+     * @param  SupportCollection  $collection
      * @return SupportCollection
      */
     public function testKeyByWithSupportCollection(SupportCollection $collection): SupportCollection
@@ -173,7 +172,7 @@ class HigherOrderCollectionProxyMethods
     }
 
     /**
-     * @param SupportCollection $collection
+     * @param  SupportCollection  $collection
      * @return SupportCollection
      */
     public function testFilterWithSupportCollection(SupportCollection $collection): SupportCollection

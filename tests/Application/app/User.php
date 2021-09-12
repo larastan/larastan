@@ -69,8 +69,7 @@ class User extends Authenticatable
     }
 
     /**
-     * @param Builder<User> $query
-     *
+     * @param  Builder<User>  $query
      * @return Builder<User>
      */
     public function scopeWhereActive(Builder $query): Builder

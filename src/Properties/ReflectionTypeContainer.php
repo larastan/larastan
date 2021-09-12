@@ -19,7 +19,7 @@ final class ReflectionTypeContainer extends ReflectionNamedType
     /**
      * ReflectionTypeContainer constructor.
      *
-     * @param string $type
+     * @param  string  $type
      */
     public function __construct(string $type)
     {

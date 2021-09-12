@@ -59,6 +59,7 @@ class CorrectCollectionCalls
 
     /**
      * Can't analyze the closure as a parameter to contains, so should not throw any error.
+     *
      * @return bool
      */
     public function testContainsClosure(): bool
@@ -70,6 +71,7 @@ class CorrectCollectionCalls
 
     /**
      * Can't analyze the closure as a parameter to first, so should not throw any error.
+     *
      * @return User|null
      */
     public function testFirstClosure(): ?User
@@ -103,7 +105,7 @@ class CorrectCollectionCalls
 class Foo extends Model
 {
     /**
-     * @param \Illuminate\Database\Query\Builder $query
+     * @param  \Illuminate\Database\Query\Builder  $query
      * @return FooBuilder
      */
     public function newEloquentBuilder($query): FooBuilder

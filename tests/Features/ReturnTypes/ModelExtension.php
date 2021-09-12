@@ -22,7 +22,7 @@ class ModelExtension
     }
 
     /**
-     * @param class-string<Model>  $modelClass
+     * @param  class-string<Model>  $modelClass
      */
     public function testFindOnModelClassString(string $modelClass): ?Model
     {

@@ -30,8 +30,8 @@ final class Extension implements MethodsClassReflectionExtension, BrokerAwareExt
     /**
      * Extension constructor.
      *
-     * @param PhpMethodReflectionFactory $methodReflectionFactory
-     * @param Kernel|null                $kernel
+     * @param  PhpMethodReflectionFactory  $methodReflectionFactory
+     * @param  Kernel|null  $kernel
      */
     public function __construct(PhpMethodReflectionFactory $methodReflectionFactory, Kernel $kernel = null)
     {

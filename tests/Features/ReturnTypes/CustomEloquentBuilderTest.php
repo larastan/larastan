@@ -240,8 +240,7 @@ class ModelWithCustomBuilder extends Model
     }
 
     /**
-     * @param \Illuminate\Database\Query\Builder $query
-     *
+     * @param  \Illuminate\Database\Query\Builder  $query
      * @return CustomEloquentBuilder<ModelWithCustomBuilder>
      */
     public function newEloquentBuilder($query): CustomEloquentBuilder
@@ -257,8 +256,7 @@ class ModelWithCustomBuilder extends Model
 class CustomEloquentBuilder extends Builder
 {
     /**
-     * @param string $category
-     *
+     * @param  string  $category
      * @return CustomEloquentBuilder
      * @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder>
      */
@@ -268,8 +266,7 @@ class CustomEloquentBuilder extends Builder
     }
 
     /**
-     * @param string $type
-     *
+     * @param  string  $type
      * @return CustomEloquentBuilder
      * @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder>
      */
@@ -279,8 +276,7 @@ class CustomEloquentBuilder extends Builder
     }
 
     /**
-     * @param string[] $categories
-     *
+     * @param  string[]  $categories
      * @return CustomEloquentBuilder
      * @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder>
      */
@@ -325,8 +321,7 @@ class CustomEloquentBuilderTest1
 class ModelWithCustomBuilderAndDocBlocks extends Model
 {
     /**
-     * @param \Illuminate\Database\Query\Builder $query
-     *
+     * @param  \Illuminate\Database\Query\Builder  $query
      * @return CustomBuilder2<\Tests\Features\ReturnTypes\ModelWithCustomBuilderAndDocBlocks>
      */
     public function newEloquentBuilder($query): CustomBuilder2

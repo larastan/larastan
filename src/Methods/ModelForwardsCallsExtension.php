@@ -64,9 +64,8 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
     }
 
     /**
-     * @param ClassReflection $classReflection
-     * @param string          $methodName
-     *
+     * @param  ClassReflection  $classReflection
+     * @param  string  $methodName
      * @return MethodReflection
      */
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection

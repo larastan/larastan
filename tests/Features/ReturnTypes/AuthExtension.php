@@ -24,6 +24,7 @@ class AuthExtension
 
     /**
      * @return int|string|null
+     *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function testId()
