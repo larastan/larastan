@@ -6,6 +6,7 @@ namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Carbon\Traits\Macro as CarbonMacro;
 use Closure;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use NunoMaduro\Larastan\Concerns;
@@ -57,7 +58,7 @@ final class Macros implements PipeContract
                     $macroTraitProperty = 'macros';
                 }
             }
-        } elseif ($classReflection->hasTraitUse(Macroable::class)) {
+        } elseif ($classReflection->hasTraitUse(Macroable::class) || $classReflection->getName() === Builder::class) {
             $className = $classReflection->getName();
             $macroTraitProperty = 'macros';
         } elseif ($this->hasIndirectTraitUse($classReflection, CarbonMacro::class)) {
@@ -72,7 +73,11 @@ final class Macros implements PipeContract
 
             $className = (string) $className;
 
-            if ($found = $className::hasMacro($passable->getMethodName())) {
+            $found = $className === Builder::class
+                ? $className::hasGlobalMacro($passable->getMethodName())
+                : $className::hasMacro($passable->getMethodName());
+
+            if ($found) {
                 $reflectionFunction = new \ReflectionFunction($refProperty->getValue()[$passable->getMethodName()]);
                 /** @var \PHPStan\Type\Type[] $parameters */
                 $parameters = $reflectionFunction->getParameters();

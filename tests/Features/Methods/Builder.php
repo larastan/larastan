@@ -10,6 +10,10 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use stdClass;
 
+\Illuminate\Database\Eloquent\Builder::macro('globalCustomMacro', function (string $arg): string {
+    return $arg;
+});
+
 /**
  * This class tests `EloquentBuilder::__call` method.
  *
@@ -163,6 +167,11 @@ class Builder
     {
         $query->macro('customMacro', function () {
         });
+    }
+
+    public function testGlobalMacro(\Illuminate\Database\Eloquent\Builder $query): string
+    {
+        return $query->globalCustomMacro('foo');
     }
 
     public function testFirstOrFailWithChain(): User
