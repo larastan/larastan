@@ -6,9 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-## [0.7.13] - 2021-08-10
-
-### Fixed
+### Added
 
 - Support global macros on the eloquent query builder.
 
