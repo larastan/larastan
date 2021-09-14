@@ -16,7 +16,7 @@ class ThrowUnless
     }
 
     /**
-     * @param int|string $foo
+     * @param  int|string  $foo
      * @return int
      */
     public function testThrowUnlessWithTypeCheck($foo = 5): int

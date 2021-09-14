@@ -40,8 +40,7 @@ trait ExecutesLarastan
     }
 
     /**
-     * @param string $configPath
-     *
+     * @param  string  $configPath
      * @return static
      */
     public function setConfigPath(string $configPath): self

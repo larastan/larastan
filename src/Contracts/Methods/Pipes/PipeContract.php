@@ -13,9 +13,8 @@ use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 interface PipeContract
 {
     /**
-     * @param \NunoMaduro\Larastan\Contracts\Methods\PassableContract $passable
-     * @param \Closure $next
-     *
+     * @param  \NunoMaduro\Larastan\Contracts\Methods\PassableContract  $passable
+     * @param  \Closure  $next
      * @return void
      */
     public function handle(PassableContract $passable, Closure $next): void;

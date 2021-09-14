@@ -25,10 +25,10 @@ final class SchemaColumn
     public $options;
 
     /**
-     * @param string        $name
-     * @param string        $readableType
-     * @param bool          $nullable
-     * @param string[]|null $options
+     * @param  string  $name
+     * @param  string  $readableType
+     * @param  bool  $nullable
+     * @param  string[]|null  $options
      */
     public function __construct(
         string $name,

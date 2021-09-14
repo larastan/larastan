@@ -14,7 +14,7 @@ class AbortIf
     }
 
     /**
-     * @param int|string $foo
+     * @param  int|string  $foo
      * @return int
      */
     public function testAbortIfWithTypeCheck($foo = 5): int

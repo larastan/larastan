@@ -107,8 +107,7 @@ class Relations
     }
 
     /**
-     * @param User $user
-     *
+     * @param  User  $user
      * @return Collection<Account>
      */
     public function testGetOnRelationAndBuilder(User $user): Collection

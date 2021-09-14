@@ -20,7 +20,7 @@ class ThrowIf
     }
 
     /**
-     * @param int|string $foo
+     * @param  int|string  $foo
      * @return int
      */
     public function testThrowIfWithTypeCheck($foo = 5): int

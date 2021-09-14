@@ -82,7 +82,7 @@ class MigrationHelperTest extends TestCase
     }
 
     /**
-     * @param array<string, SchemaTable> $tables
+     * @param  array<string, SchemaTable>  $tables
      */
     private function assertUsersTableSchema(array $tables): void
     {

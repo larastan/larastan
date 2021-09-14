@@ -11,9 +11,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class HasManySyncable extends HasMany
 {
     /**
-     * @param mixed $data
-     * @param bool  $deleting
-     *
+     * @param  mixed  $data
+     * @param  bool  $deleting
      * @return array
      */
     public function sync($data, $deleting = true)
@@ -89,7 +88,7 @@ class HasManySyncable extends HasMany
     /**
      * Cast the given keys to integers if they are numeric and string otherwise.
      *
-     * @param  array $keys
+     * @param  array  $keys
      * @return array
      */
     protected function castKeys(array $keys)
@@ -102,7 +101,7 @@ class HasManySyncable extends HasMany
     /**
      * Cast the given key to an integer if it is numeric.
      *
-     * @param  mixed $key
+     * @param  mixed  $key
      * @return mixed
      */
     protected function castKey($key)

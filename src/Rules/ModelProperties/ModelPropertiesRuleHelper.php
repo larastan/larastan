@@ -27,11 +27,10 @@ use PHPStan\Type\UnionType;
 class ModelPropertiesRuleHelper
 {
     /**
-     * @param MethodReflection $methodReflection
-     * @param Scope            $scope
-     * @param Node\Arg[]       $args
-     * @param ClassReflection|null  $modelReflection
-     *
+     * @param  MethodReflection  $methodReflection
+     * @param  Scope  $scope
+     * @param  Node\Arg[]  $args
+     * @param  ClassReflection|null  $modelReflection
      * @return string[]
      */
     public function check(MethodReflection $methodReflection, Scope $scope, array $args, ?ClassReflection $modelReflection = null): array
@@ -134,11 +133,10 @@ class ModelPropertiesRuleHelper
     }
 
     /**
-     * @param MethodReflection $methodReflection
-     * @param Scope            $scope
-     * @param Node\Arg[]       $args
-     * @param ClassReflection|null  $modelReflection
-     *
+     * @param  MethodReflection  $methodReflection
+     * @param  Scope  $scope
+     * @param  Node\Arg[]  $args
+     * @param  ClassReflection|null  $modelReflection
      * @return array<int, int|Type>
      */
     public function hasModelPropertyParameter(

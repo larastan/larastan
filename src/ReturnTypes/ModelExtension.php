@@ -27,7 +27,7 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension
     private $builderHelper;
 
     /**
-     * @param BuilderHelper $builderHelper
+     * @param  BuilderHelper  $builderHelper
      */
     public function __construct(BuilderHelper $builderHelper)
     {
