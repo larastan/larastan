@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Properties;
 
+use Illuminate\Support\Str;
 use PhpParser;
 use PhpParser\NodeFinder;
 
@@ -171,28 +172,12 @@ final class SchemaAggregator
                             continue;
                         }
 
-                        if (! class_exists($modelClass)) {
-                            continue;
+                        $columnName = Str::snake(class_basename($modelClass)).'_id';
+                        if ($secondArg instanceof PhpParser\Node\Scalar\String_) {
+                            $columnName = $secondArg->value;
                         }
 
-                        try {
-                            $reflect = new \ReflectionClass($modelClass);
-
-                            /** @var \Illuminate\Database\Eloquent\Model $model */
-                            $model = $reflect->newInstanceWithoutConstructor();
-
-                            $columnName = $model->getForeignKey();
-                            $columnType = $model->getKeyType() === 'int' && $model->getIncrementing()
-                                ? 'int'
-                                : 'string';
-
-                            if ($secondArg instanceof PhpParser\Node\Scalar\String_) {
-                                $columnName = $secondArg->value;
-                            }
-
-                            $table->setColumn(new SchemaColumn($columnName, $columnType, $nullable));
-                        } catch (\ReflectionException $e) {
-                        }
+                        $table->setColumn(new SchemaColumn($columnName, 'mixed', $nullable));
 
                         continue;
                     }

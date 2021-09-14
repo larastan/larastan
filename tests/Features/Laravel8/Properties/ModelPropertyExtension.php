@@ -37,22 +37,26 @@ class ModelPropertyExtension
         return $user->properties->first();
     }
 
-    public function testForeignIdFor(Address $address): int
+    /** @phpstan-return mixed */
+    public function testForeignIdFor(Address $address)
     {
         return $address->user_id;
     }
 
-    public function testForeignIdForName(Address $address): int
+    /** @phpstan-return mixed */
+    public function testForeignIdForName(Address $address)
     {
         return $address->custom_foreign_id_for_name;
     }
 
-    public function testForeignIdUUID(Address $address): string
+    /** @phpstan-return mixed */
+    public function testForeignIdUUID(Address $address)
     {
         return $address->address_id;
     }
 
-    public function testForeignIdNullable(Address $address): ?string
+    /** @phpstan-return mixed */
+    public function testForeignIdNullable(Address $address)
     {
         return $address->nullable_address_id;
     }
