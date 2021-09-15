@@ -29,16 +29,12 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
     /** @var string */
     private $dateClass;
 
-    /** @var AnnotationsPropertiesClassReflectionExtension */
-    private $annotationExtension;
-
     /** @var MigrationHelper */
     private $migrationHelper;
 
-    public function __construct(TypeStringResolver $stringResolver, AnnotationsPropertiesClassReflectionExtension $annotationExtension, MigrationHelper $migrationHelper)
+    public function __construct(TypeStringResolver $stringResolver, MigrationHelper $migrationHelper)
     {
         $this->stringResolver = $stringResolver;
-        $this->annotationExtension = $annotationExtension;
         $this->migrationHelper = $migrationHelper;
     }
 
@@ -56,7 +52,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             return false;
         }
 
-        if ($this->annotationExtension->hasProperty($classReflection, $propertyName)) {
+        if (array_key_exists($propertyName, $classReflection->getPropertyTags())) {
             return false;
         }
 
