@@ -35,8 +35,9 @@ class Collection extends \Illuminate\Support\Collection
     public function flatMap(callable $callback) {}
 
     /**
-     * @param callable $callback
-     * @return static<mixed>|\Illuminate\Support\Collection<int, mixed>
+     * @template TReturn
+     * @param callable(TValue ...$values): TReturn $callback
+     * @return static<int, TReturn>|\Illuminate\Support\Collection<int, TReturn>
      */
     public function mapSpread(callable $callback) {}
 }
