@@ -72,7 +72,7 @@ class CollectionStub
     {
         return $collection->mapToGroups(function (User $user, int $key): array {
             return [$user->name => $user->id];
-        })->map(function (EloquentCollection $items, string $name) {
+        })->map(function (EloquentCollection $items, $name) {
             return $items->first();
         })->take(3);
     }
@@ -133,18 +133,18 @@ class CollectionStub
     }
 
     /**
-     * @param  SupportCollection<array<mixed>>  $collection
+     * @param  SupportCollection<array<string>>  $collection
      * @return SupportCollection<string>
      */
     public function testMapSpread(SupportCollection $collection)
     {
-        return $collection->mapSpread(function (string $x, int $y, float $z, array $t): string {
-            return $x;
+        return $collection->mapSpread(function (...$values): string {
+            return $values[0];
         });
     }
 
     /**
-     * @param  EloquentCollection<mixed>  $collection
+     * @param  EloquentCollection<User>  $collection
      * @return SupportCollection<User>
      */
     public function testFlatMap(EloquentCollection $collection)
