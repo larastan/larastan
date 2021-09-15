@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Properties;
 
 use PHPStan\File\FileHelper;
-use PHPStan\Parser\CachedParser;
+use PHPStan\Parser\Parser;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
@@ -13,23 +13,23 @@ use SplFileInfo;
 
 class MigrationHelper
 {
-    /** @var CachedParser */
+    /** @var Parser */
     private $parser;
 
     /** @var string[] */
     private $databaseMigrationPath;
 
-    /** @var string */
-    private $currentWorkingDirectory;
+    /** @var FileHelper */
+    private $fileHelper;
 
     /**
      * @param  string[]  $databaseMigrationPath
      */
-    public function __construct(CachedParser $parser, string $currentWorkingDirectory, array $databaseMigrationPath)
+    public function __construct(Parser $parser, array $databaseMigrationPath, FileHelper $fileHelper)
     {
         $this->parser = $parser;
         $this->databaseMigrationPath = $databaseMigrationPath;
-        $this->currentWorkingDirectory = $currentWorkingDirectory;
+        $this->fileHelper = $fileHelper;
     }
 
     /**
@@ -64,10 +64,12 @@ class MigrationHelper
      */
     private function getMigrationFiles(): array
     {
+        /** @var SplFileInfo[] $migrationFiles */
         $migrationFiles = [];
 
         foreach ($this->databaseMigrationPath as $additionalPath) {
-            $absolutePath = $this->getFileHelper()->absolutizePath($additionalPath);
+            $absolutePath = $this->fileHelper->absolutizePath($additionalPath);
+
             if (is_dir($absolutePath)) {
                 $migrationFiles += iterator_to_array(
                     new RegexIterator(
@@ -89,10 +91,5 @@ class MigrationHelper
         foreach ($files as $file) {
             require_once $file;
         }
-    }
-
-    private function getFileHelper(): FileHelper
-    {
-        return new FileHelper($this->currentWorkingDirectory);
     }
 }
