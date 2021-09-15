@@ -177,7 +177,7 @@ final class SchemaAggregator
                             $columnName = $secondArg->value;
                         }
 
-                        $table->setColumn(new SchemaColumn($columnName, 'mixed', $nullable));
+                        $table->setColumn(new SchemaColumn($columnName, 'int', $nullable));
 
                         continue;
                     }
