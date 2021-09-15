@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Support global macros on the eloquent query builder.
+- Partial support for defining columns with `foreignIdFor` in migrations. ([#932](https://github.com/nunomaduro/larastan/pull/932)) Thanks @Josh-G
 
 ## [0.7.12] - 2021-07-26
 
