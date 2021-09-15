@@ -1,3 +1,6 @@
+includes:
+    - extension.neon
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
 parameters:
     level: max
     phpVersion: 80000
