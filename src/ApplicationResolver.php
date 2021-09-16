@@ -91,7 +91,7 @@ final class ApplicationResolver
     private static function getProjectClasses(string $namespace, string $vendorDir): array
     {
         $projectDirs = self::getProjectSearchDirs($namespace, $vendorDir);
-        /** @var string[] $maps */
+        /** @var array<string, string> $maps */
         $maps = [];
         // Use composer's ClassMapGenerator to pull the class list out of each project search directory
         foreach ($projectDirs as $dir) {
@@ -112,8 +112,12 @@ final class ApplicationResolver
 
         // now class list of maps are assembled, use class_exists calls to explicitly autoload them,
         // while not running them
+        /**
+         * @var string $class
+         * @var string $file
+         */
         foreach ($maps as $class => $file) {
-            if (! in_array($class, $devClasses)) {
+            if (! in_array($class, $devClasses, true)) {
                 class_exists($class, true);
             }
         }

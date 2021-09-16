@@ -14,6 +14,7 @@ use PHPStan\Type\DynamicFunctionReturnTypeExtension;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use function PHPStan\dumpType;
 
 /**
  * @internal
@@ -38,8 +39,11 @@ final class AuthExtension implements DynamicFunctionReturnTypeExtension
         FuncCall $functionCall,
         Scope $scope
     ): Type {
-        if (! isset($functionCall->args[0]->value) || (isset($functionCall->args[0]->value) && $functionCall->args[0]->value === null)) {
-            return new ObjectType(get_class($this->resolve(\Illuminate\Contracts\Auth\Factory::class)));
+        if (count($functionCall->args) < 1) {
+            /** @var object $class */
+            $class = $this->resolve(\Illuminate\Contracts\Auth\Factory::class);
+
+            return new ObjectType(get_class($class));
         }
 
         return TypeCombinator::intersect(new ObjectType(Guard::class), new ObjectType(StatefulGuard::class));

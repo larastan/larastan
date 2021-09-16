@@ -28,6 +28,7 @@ final class Extension implements PropertiesClassReflectionExtension, BrokerAware
         $hasProperty = false;
 
         if ($classReflection->isInterface() && Str::startsWith($classReflection->getName(), 'Illuminate\Contracts')) {
+            /** @var object|null $concrete */
             $concrete = $this->resolve($classReflection->getName());
 
             if ($concrete !== null) {
@@ -54,6 +55,7 @@ final class Extension implements PropertiesClassReflectionExtension, BrokerAware
      */
     public function getProperty(ClassReflection $classReflection, string $propertyName): PropertyReflection
     {
+        /** @var object $concrete */
         $concrete = $this->resolve($classReflection->getName());
 
         switch ($concrete) {
