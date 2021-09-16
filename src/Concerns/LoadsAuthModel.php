@@ -8,6 +8,7 @@ use Illuminate\Config\Repository as ConfigRepository;
 
 trait LoadsAuthModel
 {
+    /** @phpstan-return class-string|null */
     private function getAuthModel(ConfigRepository $config, ?string $guard = null): ?string
     {
         if (

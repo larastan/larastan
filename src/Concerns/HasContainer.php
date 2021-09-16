@@ -16,7 +16,7 @@ use ReflectionException;
 trait HasContainer
 {
     /**
-     * @var \Illuminate\Contracts\Container\Container
+     * @var ?\Illuminate\Contracts\Container\Container
      */
     protected $container;
 

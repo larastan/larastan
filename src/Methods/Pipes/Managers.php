@@ -41,7 +41,11 @@ final class Managers implements PipeContract
             }
 
             if ($driver !== null) {
-                $found = $passable->sendToPipeline(get_class($driver));
+                $class = get_class($driver);
+
+                if ($class) {
+                    $found = $passable->sendToPipeline($class);
+                }
             }
         }
 
