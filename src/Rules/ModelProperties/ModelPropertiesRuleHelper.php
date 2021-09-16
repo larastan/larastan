@@ -23,6 +23,7 @@ use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeUtils;
 use PHPStan\Type\UnionType;
+use function PHPStan\dumpType;
 
 class ModelPropertiesRuleHelper
 {
@@ -145,7 +146,6 @@ class ModelPropertiesRuleHelper
         array $args,
         ?ClassReflection $modelReflection = null
     ): array {
-        /** @var ParameterReflection[] $parameters */
         $parameters = ParametersAcceptorSelector::selectFromArgs($scope, $args, $methodReflection->getVariants())->getParameters();
 
         foreach ($parameters as $index => $parameter) {

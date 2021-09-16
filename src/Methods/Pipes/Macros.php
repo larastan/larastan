@@ -47,12 +47,13 @@ final class Macros implements PipeContract
         $macroTraitProperty = null;
 
         if ($classReflection->isInterface() && Str::startsWith($classReflection->getName(), 'Illuminate\Contracts')) {
+            /** @var object|null $concrete */
             $concrete = $this->resolve($classReflection->getName());
 
             if ($concrete !== null) {
                 $className = get_class($concrete);
 
-                if ($passable->getBroker()
+                if ($className && $passable->getBroker()
                     ->getClass($className)
                     ->hasTraitUse(Macroable::class)) {
                     $macroTraitProperty = 'macros';
@@ -70,8 +71,6 @@ final class Macros implements PipeContract
             $refObject = new \ReflectionClass($className);
             $refProperty = $refObject->getProperty($macroTraitProperty);
             $refProperty->setAccessible(true);
-
-            $className = (string) $className;
 
             $found = $className === Builder::class
                 ? $className::hasGlobalMacro($passable->getMethodName())

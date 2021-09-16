@@ -66,6 +66,7 @@ class Scope extends BaseScope
                 return $parentType;
             }
 
+            /** @var object|scalar|null $concrete */
             $concrete = $this->resolve($dimType->getValue());
 
             if ($concrete === null) {

@@ -82,7 +82,7 @@ interface PassableContract
     public function isStaticAllowed(): bool;
 
     /**
-     * @param  string  $class
+     * @param  class-string  $class
      * @param  bool  $staticAllowed
      * @return bool
      */

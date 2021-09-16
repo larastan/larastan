@@ -43,9 +43,10 @@ class AppExtension implements DynamicFunctionReturnTypeExtension
 
         if ($expr instanceof String_) {
             try {
+                /** @var object|null $resolved */
                 $resolved = $this->resolve($expr->value);
 
-                if (is_null($resolved)) {
+                if ($resolved === null) {
                     return new ErrorType();
                 }
 

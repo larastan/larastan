@@ -39,7 +39,7 @@ final class Contracts implements PipeContract
 
     /**
      * @param  \PHPStan\Reflection\ClassReflection  $classReflection
-     * @return string[]
+     * @return class-string[]
      */
     private function concretes(ClassReflection $classReflection): array
     {
@@ -47,7 +47,11 @@ final class Contracts implements PipeContract
             $concrete = $this->resolve($classReflection->getName());
 
             if ($concrete !== null) {
-                return [get_class($concrete)];
+                $class = get_class($concrete);
+
+                if ($class) {
+                    return [$class];
+                }
             }
         }
 
