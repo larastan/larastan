@@ -40,11 +40,11 @@ class CollectionExtension implements DynamicMethodReturnTypeExtension
         MethodCall $methodCall,
         Scope $scope
     ): Type {
-        if (count($methodCall->args) < 1) {
+        if (count($methodCall->getArgs()) < 1) {
             return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
         }
 
-        $valueType = $scope->getType($methodCall->args[0]->value);
+        $valueType = $scope->getType($methodCall->getArgs()[0]->value);
 
         return $this->collectionHelper->determineGenericCollectionTypeFromType($valueType);
     }

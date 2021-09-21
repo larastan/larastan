@@ -32,16 +32,16 @@ class TapExtension implements DynamicFunctionReturnTypeExtension
         FuncCall $functionCall,
         Scope $scope
     ): Type {
-        if (count($functionCall->args) === 1) {
-            $type = $scope->getType($functionCall->args[0]->value);
+        if (count($functionCall->getArgs()) === 1) {
+            $type = $scope->getType($functionCall->getArgs()[0]->value);
 
             return new GenericObjectType(HigherOrderTapProxy::class, [
                 $type instanceof ThisType ? $type->getStaticObjectType() : $type,
             ]);
         }
 
-        if (count($functionCall->args) === 2) {
-            return $scope->getType($functionCall->args[0]->value);
+        if (count($functionCall->getArgs()) === 2) {
+            return $scope->getType($functionCall->getArgs()[0]->value);
         }
 
         return new NeverType();

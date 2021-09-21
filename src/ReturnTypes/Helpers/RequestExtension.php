@@ -37,11 +37,11 @@ final class RequestExtension implements DynamicFunctionReturnTypeExtension
         Scope $scope
     ): Type {
         // No arguments, it returns a request object from the container
-        if (count($functionCall->args) === 0) {
+        if (count($functionCall->getArgs()) === 0) {
             return new ObjectType(\Illuminate\Http\Request::class);
         }
 
-        if (isset($functionCall->args[0]->value) && $functionCall->args[0]->value instanceof Array_) {
+        if (isset($functionCall->getArgs()[0]->value) && $functionCall->getArgs()[0]->value instanceof Array_) {
             return new ArrayType(new MixedType(), new MixedType());
         }
 
