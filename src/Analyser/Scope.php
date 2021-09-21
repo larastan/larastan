@@ -4,13 +4,9 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Analyser;
 
-use function get_class;
-use function gettype;
 use Illuminate\Contracts\Container\Container;
-use function is_object;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Properties\ReflectionTypeContainer;
-use NunoMaduro\Larastan\Types\TypeResolver;
 use PhpParser\Node\Expr;
 use PHPStan\Analyser\MutatingScope as BaseScope;
 use PHPStan\ShouldNotHappenException;
@@ -19,6 +15,10 @@ use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypehintHelper;
 use ReflectionClass;
+
+use function get_class;
+use function gettype;
+use function is_object;
 
 /**
  * @internal
@@ -42,9 +42,7 @@ class Scope extends BaseScope
                 ->andReturn(TrinaryLogic::createYes());
         }
 
-        return $this->getContainer()
-            ->make(TypeResolver::class)
-            ->resolveFrom($type);
+        return $type;
     }
 
     /**
