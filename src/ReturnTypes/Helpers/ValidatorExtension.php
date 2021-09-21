@@ -28,7 +28,7 @@ final class ValidatorExtension implements DynamicFunctionReturnTypeExtension
         FuncCall $functionCall,
         Scope $scope
     ): Type {
-        if (count($functionCall->args) === 0) {
+        if (count($functionCall->getArgs()) === 0) {
             return new ObjectType(\Illuminate\Contracts\Validation\Factory::class);
         }
 

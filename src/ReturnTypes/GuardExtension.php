@@ -70,7 +70,7 @@ final class GuardExtension implements DynamicMethodReturnTypeExtension
             return null;
         }
 
-        $guardType = $scope->getType($methodCall->var->args[0]->value);
+        $guardType = $scope->getType($methodCall->var->getArgs()[0]->value);
 
         if (! $guardType instanceof ConstantStringType) {
             return null;

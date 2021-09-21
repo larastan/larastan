@@ -48,14 +48,14 @@ final class RequestExtension implements DynamicMethodReturnTypeExtension
         $uploadedFileType = new ObjectType(UploadedFile::class);
         $uploadedFileArrayType = new ArrayType(new IntegerType(), $uploadedFileType);
 
-        if (count($methodCall->args) === 0) {
+        if (count($methodCall->getArgs()) === 0) {
             return new ArrayType(new IntegerType(), $uploadedFileType);
         }
 
-        if (count($methodCall->args) === 1) {
+        if (count($methodCall->getArgs()) === 1) {
             return TypeCombinator::union($uploadedFileArrayType, TypeCombinator::addNull($uploadedFileType));
         }
 
-        return TypeCombinator::union(TypeCombinator::union($uploadedFileArrayType, $uploadedFileType), $scope->getType($methodCall->args[1]->value));
+        return TypeCombinator::union(TypeCombinator::union($uploadedFileArrayType, $uploadedFileType), $scope->getType($methodCall->getArgs()[1]->value));
     }
 }

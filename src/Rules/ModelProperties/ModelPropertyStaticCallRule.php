@@ -58,7 +58,7 @@ class ModelPropertyStaticCallRule implements Rule
             return [];
         }
 
-        if (count($node->args) === 0) {
+        if (count($node->getArgs()) === 0) {
             return [];
         }
 
@@ -158,6 +158,6 @@ class ModelPropertyStaticCallRule implements Rule
             return [];
         }
 
-        return $this->modelPropertiesRuleHelper->check($methodReflection, $scope, $node->args, $modelReflection);
+        return $this->modelPropertiesRuleHelper->check($methodReflection, $scope, $node->getArgs(), $modelReflection);
     }
 }

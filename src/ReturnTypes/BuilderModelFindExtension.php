@@ -83,7 +83,7 @@ final class BuilderModelFindExtension implements DynamicMethodReturnTypeExtensio
         /** @var ObjectType $model */
         $model = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TModelClass');
         $returnType = $methodReflection->getVariants()[0]->getReturnType();
-        $argType = $scope->getType($methodCall->args[0]->value);
+        $argType = $scope->getType($methodCall->getArgs()[0]->value);
 
         $returnType = ModelTypeHelper::replaceStaticTypeWithModel($returnType, $model->getClassName());
 

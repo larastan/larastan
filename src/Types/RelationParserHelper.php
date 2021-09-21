@@ -70,7 +70,7 @@ class RelationParserHelper
             $methodCall = $methodCall->var;
         }
 
-        if (count($methodCall->args) < 1) {
+        if (count($methodCall->getArgs()) < 1) {
             return null;
         }
 
@@ -85,7 +85,7 @@ class RelationParserHelper
             ->enterClass($methodReflection->getDeclaringClass())
             ->enterClassMethod($relationMethod, TemplateTypeMap::createEmpty(), [], null, null, null, false, false, false);
 
-        $argType = $methodScope->getType($methodCall->args[0]->value);
+        $argType = $methodScope->getType($methodCall->getArgs()[0]->value);
         $returnClass = null;
 
         if ($argType instanceof ConstantStringType) {

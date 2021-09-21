@@ -31,7 +31,7 @@ class TransExtension implements DynamicFunctionReturnTypeExtension
         Scope $scope
     ): Type {
         // No path provided, so it returns a Translator instance
-        if (count($functionCall->args) === 0) {
+        if (count($functionCall->getArgs()) === 0) {
             return new ObjectType(\Illuminate\Contracts\Translation\Translator::class);
         }
 

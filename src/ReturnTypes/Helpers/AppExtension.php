@@ -34,12 +34,12 @@ class AppExtension implements DynamicFunctionReturnTypeExtension
         FuncCall $functionCall,
         Scope $scope
     ): Type {
-        if (count($functionCall->args) === 0) {
+        if (count($functionCall->getArgs()) === 0) {
             return new ObjectType(Application::class);
         }
 
         /** @var Expr $expr */
-        $expr = $functionCall->args[0]->value;
+        $expr = $functionCall->getArgs()[0]->value;
 
         if ($expr instanceof String_) {
             try {
