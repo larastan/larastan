@@ -98,6 +98,14 @@ class Builder
     public function findOrNew($id, $columns = ['*']);
 
     /**
+     * Execute the query and get the first result.
+     *
+     * @param  array<model-property<TModelClass>|int, mixed>|string  $columns
+     * @return TModelClass|null
+     */
+    public function first($columns = ['*']);
+
+    /**
      * Get the first record matching the attributes or instantiate it.
      *
      * @param  array<model-property<TModelClass>, mixed>  $attributes
