@@ -16,16 +16,16 @@ use Illuminate\Support\Carbon;
 class ModelPropertyExtension
 {
     /** @var User */
-    private $user;
+    private $user; // @phpstan-ignore-line
 
     /** @var Account */
-    private $account;
+    private $account; // @phpstan-ignore-line
 
     /** @var Role */
-    private $role;
+    private $role; // @phpstan-ignore-line
 
     /** @var Group */
-    private $group;
+    private $group; // @phpstan-ignore-line
 
     public function testPropertyReturnType(): int
     {
