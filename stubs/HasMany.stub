@@ -9,13 +9,6 @@ namespace Illuminate\Database\Eloquent\Relations;
 class HasMany extends HasOneOrMany
 {
     /**
-     * @param array<string, mixed> $attributes
-     *
-     * @phpstan-return TRelatedModel
-     */
-    public function create(array $attributes = []);
-
-    /**
      * Get the results of the relationship.
      *
      * @phpstan-return \Illuminate\Database\Eloquent\Collection<TRelatedModel>
