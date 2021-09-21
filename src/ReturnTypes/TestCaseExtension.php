@@ -40,7 +40,7 @@ final class TestCaseExtension implements DynamicMethodReturnTypeExtension
     ): Type {
         $defaultReturnType = new ObjectType('Mockery\\MockInterface');
 
-        $classType = $scope->getType($methodCall->args[0]->value);
+        $classType = $scope->getType($methodCall->getArgs()[0]->value);
 
         if (! $classType instanceof ConstantStringType) {
             return $defaultReturnType;

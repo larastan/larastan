@@ -54,7 +54,7 @@ class ModelPropertyRule implements Rule
             return [];
         }
 
-        if (count($node->args) === 0) {
+        if (count($node->getArgs()) === 0) {
             return [];
         }
 
@@ -82,7 +82,7 @@ class ModelPropertyRule implements Rule
 
         $methodReflection = $type->getMethod($name, $scope);
 
-        return $this->modelPropertiesRuleHelper->check($methodReflection, $scope, $node->args, $modelReflection);
+        return $this->modelPropertiesRuleHelper->check($methodReflection, $scope, $node->getArgs(), $modelReflection);
     }
 
     private function findModelReflectionFromType(Type $type): ?ClassReflection

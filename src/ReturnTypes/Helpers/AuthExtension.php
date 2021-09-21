@@ -39,7 +39,7 @@ final class AuthExtension implements DynamicFunctionReturnTypeExtension
         FuncCall $functionCall,
         Scope $scope
     ): Type {
-        if (count($functionCall->args) < 1) {
+        if (count($functionCall->getArgs()) < 1) {
             /** @var object $class */
             $class = $this->resolve(\Illuminate\Contracts\Auth\Factory::class);
 

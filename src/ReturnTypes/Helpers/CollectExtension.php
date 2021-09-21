@@ -34,11 +34,11 @@ final class CollectExtension implements DynamicFunctionReturnTypeExtension
         FuncCall $functionCall,
         Scope $scope
     ): Type {
-        if (count($functionCall->args) < 1) {
+        if (count($functionCall->getArgs()) < 1) {
             return ParametersAcceptorSelector::selectSingle($functionReflection->getVariants())->getReturnType();
         }
 
-        $valueType = $scope->getType($functionCall->args[0]->value);
+        $valueType = $scope->getType($functionCall->getArgs()[0]->value);
 
         return $this->collectionHelper->determineGenericCollectionTypeFromType($valueType);
     }

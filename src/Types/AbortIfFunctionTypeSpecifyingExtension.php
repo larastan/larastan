@@ -59,7 +59,7 @@ final class AbortIfFunctionTypeSpecifyingExtension implements FunctionTypeSpecif
 
         $context = $this->negate === false ? TypeSpecifierContext::createFalsey() : TypeSpecifierContext::createTruthy();
 
-        return $this->typeSpecifier->specifyTypesInCondition($scope, $node->args[0]->value, $context);
+        return $this->typeSpecifier->specifyTypesInCondition($scope, $node->getArgs()[0]->value, $context);
     }
 
     public function setTypeSpecifier(TypeSpecifier $typeSpecifier): void

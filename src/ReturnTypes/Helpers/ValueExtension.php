@@ -35,16 +35,16 @@ final class ValueExtension implements DynamicFunctionReturnTypeExtension
         FuncCall $functionCall,
         Scope $scope
     ): Type {
-        if (count($functionCall->args) === 0) {
+        if (count($functionCall->getArgs()) === 0) {
             return new NeverType();
         }
 
-        $arg = $functionCall->args[0]->value;
+        $arg = $functionCall->getArgs()[0]->value;
         if ($arg instanceof Closure) {
             $callbackType = $scope->getType($arg);
             $callbackReturnType = ParametersAcceptorSelector::selectFromArgs(
                 $scope,
-                $functionCall->args,
+                $functionCall->getArgs(),
                 $callbackType->getCallableParametersAcceptors($scope)
             )->getReturnType();
 
