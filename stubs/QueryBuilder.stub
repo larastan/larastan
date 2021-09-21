@@ -295,7 +295,7 @@ class Builder
     /**
      * Add an "or where" clause to the query.
      *
-     * @param  \Closure|string|array<string|int, mixed>  $column
+     * @param  \Closure|model-property|array<model-property|int, mixed>  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @return $this
