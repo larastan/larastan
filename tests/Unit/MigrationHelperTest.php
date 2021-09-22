@@ -8,9 +8,9 @@ use NunoMaduro\Larastan\Properties\MigrationHelper;
 use NunoMaduro\Larastan\Properties\SchemaTable;
 use PHPStan\File\FileHelper;
 use PHPStan\Parser\CachedParser;
-use PHPStan\Testing\TestCase;
+use PHPStan\Testing\PHPStanTestCase;
 
-class MigrationHelperTest extends TestCase
+class MigrationHelperTest extends PHPStanTestCase
 {
     /** @var CachedParser */
     private $cachedParser;
