@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed `Dynamic call to static method` error for regular methods to work with [`phpstan-strict-rules`](https://github.com/phpstan/phpstan-strict-rules). ([#483](https://github.com/nunomaduro/larastan/issues/483), [#917](https://github.com/nunomaduro/larastan/pull/917))
+
 ### Added
 
 - Support global macros on the eloquent query builder.
