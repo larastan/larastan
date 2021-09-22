@@ -38,32 +38,32 @@ final class AnnotationScopeMethodParameterReflection implements ParameterReflect
         $this->defaultValue = $defaultValue;
     }
 
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function isOptional() : bool
+    public function isOptional(): bool
     {
         return $this->isOptional;
     }
 
-    public function getType() : Type
+    public function getType(): Type
     {
         return $this->type;
     }
 
-    public function passedByReference() : PassedByReference
+    public function passedByReference(): PassedByReference
     {
         return $this->passedByReference;
     }
 
-    public function isVariadic() : bool
+    public function isVariadic(): bool
     {
         return $this->isVariadic;
     }
 
-    public function getDefaultValue() : ?Type
+    public function getDefaultValue(): ?Type
     {
         return $this->defaultValue;
     }
