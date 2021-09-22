@@ -8,7 +8,6 @@ use ArrayObject;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use PHPStan\PhpDoc\TypeStringResolver;
-use PHPStan\Reflection\Annotations\AnnotationsPropertiesClassReflectionExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
