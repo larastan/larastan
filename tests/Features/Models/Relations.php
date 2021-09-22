@@ -6,6 +6,7 @@ namespace Tests\Features\Models;
 
 use App\Account;
 use App\Group;
+use App\Post;
 use App\Role;
 use App\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use function PHPStan\Testing\assertType;
 
 class Relations
 {
@@ -222,6 +224,12 @@ class Relations
                 return $query->where('foo', 'bar');
             },
         ]);
+    }
+
+    public function testBelongsToManyCreateReturnsCorrectModel(User $user): Post
+    {
+        assertType(Post::class, $user->posts()->create());
+        return $user->posts()->create();
     }
 }
 

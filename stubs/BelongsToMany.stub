@@ -94,6 +94,16 @@ class BelongsToMany extends Relation
     public function firstOrFail($columns = ['*']);
 
     /**
+     * Create a new instance of the related model.
+     *
+     * @param  array<model-property<TRelatedModel>, mixed>  $attributes
+     * @param  mixed[]  $joining
+     * @param  bool  $touch
+     * @return TRelatedModel
+     */
+    public function create(array $attributes = [], array $joining = [], $touch = true);
+
+    /**
      * Get the results of the relationship.
      *
      * @phpstan-return \Illuminate\Database\Eloquent\Collection<TRelatedModel>
