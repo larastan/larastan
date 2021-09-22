@@ -37,12 +37,12 @@ final class AnnotationScopeMethodReflection implements MethodReflection
     private $variants = null;
 
     /**
-     * @param string $name
-     * @param ClassReflection $declaringClass
-     * @param Type $returnType
-     * @param AnnotationScopeMethodParameterReflection[] $parameters
-     * @param bool $isStatic
-     * @param bool $isVariadic
+     * @param  string  $name
+     * @param  ClassReflection  $declaringClass
+     * @param  Type  $returnType
+     * @param  AnnotationScopeMethodParameterReflection[]  $parameters
+     * @param  bool  $isStatic
+     * @param  bool  $isVariadic
      */
     public function __construct(string $name, ClassReflection $declaringClass, Type $returnType, array $parameters, bool $isStatic, bool $isVariadic)
     {
@@ -54,77 +54,79 @@ final class AnnotationScopeMethodReflection implements MethodReflection
         $this->isVariadic = $isVariadic;
     }
 
-    public function getDeclaringClass() : ClassReflection
+    public function getDeclaringClass(): ClassReflection
     {
         return $this->declaringClass;
     }
 
-    public function getPrototype() : ClassMemberReflection
+    public function getPrototype(): ClassMemberReflection
     {
         return $this;
     }
 
-    public function isStatic() : bool
+    public function isStatic(): bool
     {
         return $this->isStatic;
     }
 
-    public function isPrivate() : bool
+    public function isPrivate(): bool
     {
         return false;
     }
 
-    public function isPublic() : bool
+    public function isPublic(): bool
     {
         return true;
     }
 
-    public function getName() : string
+    public function getName(): string
     {
         return $this->name;
     }
+
     /**
      * @return ParametersAcceptor[]
      */
-    public function getVariants() : array
+    public function getVariants(): array
     {
         if ($this->variants === null) {
             $this->variants = [new FunctionVariant(TemplateTypeMap::createEmpty(), null, $this->parameters, $this->isVariadic, $this->returnType)];
         }
+
         return $this->variants;
     }
 
-    public function isDeprecated() : TrinaryLogic
+    public function isDeprecated(): TrinaryLogic
     {
         return TrinaryLogic::createNo();
     }
 
-    public function getDeprecatedDescription() : ?string
+    public function getDeprecatedDescription(): ?string
     {
         return null;
     }
 
-    public function isFinal() : TrinaryLogic
+    public function isFinal(): TrinaryLogic
     {
         return TrinaryLogic::createNo();
     }
 
-    public function isInternal() : TrinaryLogic
+    public function isInternal(): TrinaryLogic
     {
         return TrinaryLogic::createNo();
     }
 
-    public function getThrowType() : ?Type
+    public function getThrowType(): ?Type
     {
         return null;
     }
 
-    public function hasSideEffects() : TrinaryLogic
+    public function hasSideEffects(): TrinaryLogic
     {
         return TrinaryLogic::createMaybe();
     }
 
-    public function getDocComment() : ?string
+    public function getDocComment(): ?string
     {
         return null;
     }
