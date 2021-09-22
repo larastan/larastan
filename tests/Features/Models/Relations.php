@@ -229,6 +229,7 @@ class Relations
     public function testBelongsToManyCreateReturnsCorrectModel(User $user): Post
     {
         assertType(Post::class, $user->posts()->create());
+
         return $user->posts()->create();
     }
 }
