@@ -7,7 +7,6 @@ namespace NunoMaduro\Larastan\Methods;
 use Illuminate\Support\HigherOrderTapProxy;
 use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\Dummy\DummyMethodReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Type\ObjectType;
