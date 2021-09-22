@@ -19,6 +19,9 @@ use Tests\Application\HasManySyncable;
 
 /**
  * @property string $propertyDefinedOnlyInAnnotation
+ *
+ * @method Builder<static> scopeSomeScope(Builder $builder)
+ *
  * @mixin \Eloquent
  */
 class User extends Authenticatable

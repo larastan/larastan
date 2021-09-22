@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use function PHPStan\Testing\assertType;
 
 class Scopes extends Model
 {
@@ -69,5 +70,13 @@ class Scopes extends Model
     public function testScopeThatStartsWithWordWhere(): Builder
     {
         return User::query()->whereActive();
+    }
+
+    public function testScopeDefinedInClassDocBlock(User $user): void
+    {
+        assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->someScope());
+        assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::query()->someScope());
+        assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->where('foo')->someScope());
+        assertType('Illuminate\Database\Eloquent\Collection<App\User>', $user->where('foo')->someScope()->get());
     }
 }

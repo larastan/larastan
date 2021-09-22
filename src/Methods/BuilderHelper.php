@@ -7,6 +7,8 @@ namespace NunoMaduro\Larastan\Methods;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
+use NunoMaduro\Larastan\Reflection\AnnotationScopeMethodParameterReflection;
+use NunoMaduro\Larastan\Reflection\AnnotationScopeMethodReflection;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\FunctionVariantWithPhpDocs;
@@ -140,6 +142,27 @@ class BuilderHelper
     public function searchOnEloquentBuilder(ClassReflection $eloquentBuilder, string $methodName, ClassReflection $model): ?MethodReflection
     {
         // Check for local query scopes
+        if (array_key_exists('scope'.ucfirst($methodName), $model->getMethodTags())) {
+            $methodTag = $model->getMethodTags()['scope'.ucfirst($methodName)];
+
+            $parameters = [];
+            foreach ($methodTag->getParameters() as $parameterName => $parameterTag) {
+                $parameters[] = new AnnotationScopeMethodParameterReflection($parameterName, $parameterTag->getType(), $parameterTag->passedByReference(), $parameterTag->isOptional(), $parameterTag->isVariadic(), $parameterTag->getDefaultValue());
+            }
+
+            // We shift the parameters,
+            // because first parameter is the Builder
+            array_shift($parameters);
+
+            return new EloquentBuilderMethodReflection(
+                'scope'.ucfirst($methodName),
+                $model,
+                new AnnotationScopeMethodReflection('scope'.ucfirst($methodName), $model, $methodTag->getReturnType(), $parameters, $methodTag->isStatic(), false),
+                $parameters,
+                $methodTag->getReturnType()
+            );
+        }
+
         if ($model->hasNativeMethod('scope'.ucfirst($methodName))) {
             $methodReflection = $model->getNativeMethod('scope'.ucfirst($methodName));
             $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
