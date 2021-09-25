@@ -71,6 +71,50 @@ If you are getting the error `Allowed memory size exhausted`, then you can use t
 ./vendor/bin/phpstan analyse --memory-limit=2G
 ```
 
+## Loading other Service Providers (for package development)
+
+When facing errors like, it's possible that even Testbench is not able to load the Service Provider you need, and you may an error like:
+
+```
+Target
+    [Spatie\ResponseCache\Serializers\Serializer]
+is not instantiable while building
+    [Spatie\ResponseCache\ResponseCacheRepository]
+```
+
+To load them you have to
+
+#### Configure Composer "type" to "library"
+
+This is the name Composer uses for packages:
+
+``` json
+{
+    "name": "area17/edge-flush",
+    "type": "library",
+    "description": "Package description",
+    ...
+}
+```
+
+#### Add the Service Provider to be autoloaded to `composer.json`'s autoload-dev:
+
+This will tell larastan to force booting those service providers during testing: 
+
+``` json
+{
+    ...
+
+    "autoload-dev": {
+        "psr-4": {
+            "Spatie\\ResponseCache\\": "vendor/spatie/laravel-responsecache/src"
+        }
+    }
+
+    ...
+}
+```
+
 ## Ignoring errors
 
 Ignoring a specific error can be done either with a php comment or in the configuration file: 
