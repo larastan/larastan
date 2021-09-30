@@ -9,6 +9,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Enumerable;
 use Iterator;
 use IteratorAggregate;
+use PHPStan\Type\GeneralizePrecision;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\MixedType;
@@ -49,8 +50,8 @@ final class CollectionHelper
         }
 
         return new GenericObjectType(Collection::class, [
-            TypeUtils::generalizeType($type->getIterableKeyType()),
-            TypeUtils::generalizeType($type->getIterableValueType()),
+            TypeUtils::generalizeType($type->getIterableKeyType(), GeneralizePrecision::lessSpecific()),
+            TypeUtils::generalizeType($type->getIterableValueType(), GeneralizePrecision::lessSpecific()),
         ]);
     }
 
