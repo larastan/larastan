@@ -150,7 +150,7 @@ final class Macro implements BuiltinMethodReflection
     /**
      * {@inheritdoc}
      */
-    public function getFileName()
+    public function getFileName(): ?string
     {
         return $this->reflectionFunction->getFileName();
     }
