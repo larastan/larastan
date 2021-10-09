@@ -6,9 +6,10 @@ use NunoMaduro\Larastan\ApplicationResolver;
 
 define('LARAVEL_START', microtime(true));
 
+$app = null;
 if (file_exists($applicationPath = getcwd().'/bootstrap/app.php')) { // Applications and Local Dev
     $app = require $applicationPath;
-} elseif (class_exists(Orchestra\Testbench\Concerns\CreatesApplication::class)) { // Packages
+} elseif (trait_exists(Orchestra\Testbench\Concerns\CreatesApplication::class)) { // Packages
     $app = ApplicationResolver::resolve();
 }
 
