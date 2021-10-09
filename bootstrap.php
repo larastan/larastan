@@ -8,7 +8,7 @@ define('LARAVEL_START', microtime(true));
 
 if (file_exists($applicationPath = getcwd().'/bootstrap/app.php')) { // Applications and Local Dev
     $app = require $applicationPath;
-} else { // Packages
+} else if (class_exists(Orchestra\Testbench\Concerns\CreatesApplication::class)) { // Packages
     $app = ApplicationResolver::resolve();
 }
 
