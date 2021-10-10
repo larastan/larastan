@@ -68,4 +68,4 @@ vendor/bin/phpstan analyse app --level=5 -c vendor/nunomaduro/larastan/extension
 cd -
 
 echo "Test Lumen from other working directories"
-../lumen/vendor/bin/phpstan analyse ../lumen/app --level=5 -c ../lumen/vendor/nunomaduro/larastan/exten
+../lumen/vendor/bin/phpstan analyse ../lumen/app --level=5 -c ../lumen/vendor/nunomaduro/larastan/extension.neon
