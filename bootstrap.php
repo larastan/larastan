@@ -13,7 +13,7 @@ if (file_exists($applicationPath = getcwd().'/bootstrap/app.php')) { // Applicat
 } elseif (trait_exists(Orchestra\Testbench\Concerns\CreatesApplication::class)) { // Packages
     $app = ApplicationResolver::resolve();
 } else {
-    throw new \Exception('Could not find Laravel bootstrap file nor Testbench is installed. Install orchestra/testbench if using larastan for Laravel packages.');
+    throw new \Exception('Could not find Laravel bootstrap file nor Testbench is installed. Install orchestra/testbench if analyzing a package.');
 }
 
 if ($app instanceof \Illuminate\Contracts\Foundation\Application) {
