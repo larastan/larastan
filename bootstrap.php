@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use Exception;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Contracts\Foundation\Application;
 use Laravel\Lumen\Application as LumenApplication;
