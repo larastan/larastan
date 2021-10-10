@@ -8,7 +8,7 @@ cd ../laravel/
 
 echo "Add package from source"
 sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan" } ],|' -i composer.json
-composer require --dev "nunomaduro/larastan:*"
+composer require --dev "nunomaduro/larastan:*" composer/composer
 
 echo "Fix https://github.com/laravel/framework/pull/23825"
 sed -e 's|@return \\Illuminate\\Http\\Response$|@return \\Symfony\\Component\\HttpFoundation\\Response|' \
