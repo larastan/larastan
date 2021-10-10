@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Exception;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Contracts\Foundation\Application;
 use Laravel\Lumen\Application as LumenApplication;
@@ -17,7 +18,7 @@ if (file_exists($applicationPath = getcwd().'/bootstrap/app.php')) { // Applicat
 } elseif (trait_exists(CreatesApplication::class)) { // Packages
     $app = ApplicationResolver::resolve();
 } else {
-    throw new \Exception('Could not find Laravel bootstrap file nor Testbench is installed. Install orchestra/testbench if analyzing a package.');
+    throw new Exception('Could not find Laravel bootstrap file nor Testbench is installed. Install orchestra/testbench if analyzing a package.');
 }
 
 if ($app instanceof Application) {
