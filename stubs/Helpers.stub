@@ -2,6 +2,19 @@
 
 /**
  * @template TValue
+ * @template TDefault
+ *
+ * @param callable(): TValue $callback
+ * @param TDefault|(callable(): TDefault) $rescue
+ * @param bool $report
+ * @return TValue|TDefault
+ */
+function rescue(callable $callback, $rescue = null, $report = true)
+{
+}
+
+/**
+ * @template TValue
  * @param int $times
  * @param callable(int): TValue $callback
  * @param int $sleep
