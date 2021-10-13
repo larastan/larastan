@@ -29,7 +29,7 @@ Larastan was created by [Can Vural](https://github.com/canvural) and [Nuno Madur
 
 **1**: First, you may use [Composer](https://getcomposer.org) to install Larastan as a development dependency into your Laravel project:
 ```bash
-composer require nunomaduro/larastan --with-all-dependencies --dev
+composer require nunomaduro/larastan --with-dependencies --dev
 ```
 
 > Using Larastan for analysing Laravel packages? You may need to install `orchestra/testbench`.
