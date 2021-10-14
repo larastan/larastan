@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.13] - 2021-10-14
+
 ### Fixed
 
 - Fixed `Dynamic call to static method` error for regular methods to work with [`phpstan-strict-rules`](https://github.com/phpstan/phpstan-strict-rules). ([#483](https://github.com/nunomaduro/larastan/issues/483), [#917](https://github.com/nunomaduro/larastan/pull/917))
@@ -14,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Support global macros on the eloquent query builder.
 - Partial support for defining columns with `foreignIdFor` in migrations. ([#932](https://github.com/nunomaduro/larastan/pull/932)) Thanks @Josh-G
+- Extension for `collect` helper and `Collection::make` ([#904](https://github.com/nunomaduro/larastan/pull/904)) 
+- Support for scopes defined in model docblocks ([88422fb](https://github.com/nunomaduro/larastan/commit/88422fb90e85385245fb1badcaf5fbd8e0a1530d))
+- `rescue` helper stub ([#961](https://github.com/nunomaduro/larastan/pull/961)) Thanks @jrmajor
+- Added `trait_exists` to ensure `orchestra/testbench` is installed for packages. ([#957](https://github.com/nunomaduro/larastan/pull/957)) Thanks @rajyan
 
 ## [0.7.12] - 2021-07-26
 
@@ -642,7 +648,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.12...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.13...HEAD
+[0.7.13]: https://github.com/nunomaduro/larastan/compare/v0.7.12...0.7.13
 [0.7.12]: https://github.com/nunomaduro/larastan/compare/v0.7.11...0.7.12
 [0.7.11]: https://github.com/nunomaduro/larastan/compare/v0.7.10...0.7.11
 [0.7.10]: https://github.com/nunomaduro/larastan/compare/v0.7.9...0.7.10
