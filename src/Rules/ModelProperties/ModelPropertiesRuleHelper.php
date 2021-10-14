@@ -16,6 +16,7 @@ use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\GeneralizePrecision;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
@@ -73,7 +74,7 @@ class ModelPropertiesRuleHelper
         if ($argType instanceof ConstantArrayType) {
             $errors = [];
 
-            $keyType = TypeUtils::generalizeType($argType->getKeyType());
+            $keyType = TypeUtils::generalizeType($argType->getKeyType(), GeneralizePrecision::moreSpecific());
 
             if ($keyType instanceof IntegerType) {
                 $valueTypes = $argType->getValuesArray()->getValueTypes();

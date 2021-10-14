@@ -150,9 +150,15 @@ final class Macro implements BuiltinMethodReflection
     /**
      * {@inheritdoc}
      */
-    public function getFileName()
+    public function getFileName(): ?string
     {
-        return $this->reflectionFunction->getFileName();
+        $fileName = $this->reflectionFunction->getFileName();
+
+        if ($fileName === false) {
+            return null;
+        }
+
+        return $fileName;
     }
 
     /**
@@ -193,17 +199,29 @@ final class Macro implements BuiltinMethodReflection
     /**
      * {@inheritdoc}
      */
-    public function getStartLine()
+    public function getStartLine(): ?int
     {
-        return $this->reflectionFunction->getStartLine();
+        $startLine = $this->reflectionFunction->getStartLine();
+
+        if ($startLine === false) {
+            return null;
+        }
+
+        return $startLine;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getEndLine()
+    public function getEndLine(): ?int
     {
-        return $this->reflectionFunction->getEndLine();
+        $endLine = $this->reflectionFunction->getEndLine();
+
+        if ($endLine === false) {
+            return null;
+        }
+
+        return $endLine;
     }
 
     /**
