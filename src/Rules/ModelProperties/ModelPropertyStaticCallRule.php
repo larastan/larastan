@@ -87,7 +87,9 @@ class ModelPropertyStaticCallRule implements Rule
                     return [];
                 }
 
-                if ($currentClassReflection->getParentClass() === false) {
+                $parentClass = $currentClassReflection->getParentClass();
+
+                if ($parentClass === null) {
                     return [];
                 }
 
@@ -95,7 +97,7 @@ class ModelPropertyStaticCallRule implements Rule
                     throw new \PHPStan\ShouldNotHappenException();
                 }
 
-                $modelReflection = $currentClassReflection->getParentClass();
+                $modelReflection = $parentClass;
             } else {
                 if (! $this->reflectionProvider->hasClass($className)) {
                     return [];
