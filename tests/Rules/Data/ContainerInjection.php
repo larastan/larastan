@@ -56,7 +56,7 @@ class Service
     /**
      * @var Application
      */
-    private $application;
+    private $application; //@phpstan-ignore-line
 
     public function __construct(Application $application)
     {
