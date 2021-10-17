@@ -74,7 +74,7 @@ class ModelPropertiesRuleHelper
         if ($argType instanceof ConstantArrayType) {
             $errors = [];
 
-            $keyType = TypeUtils::generalizeType($argType->getKeyType(), GeneralizePrecision::moreSpecific());
+            $keyType = TypeUtils::generalizeType($argType->getKeyType(), GeneralizePrecision::lessSpecific());
 
             if ($keyType instanceof IntegerType) {
                 $valueTypes = $argType->getValuesArray()->getValueTypes();
