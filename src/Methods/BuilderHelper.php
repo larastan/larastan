@@ -9,6 +9,7 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Reflection\AnnotationScopeMethodParameterReflection;
 use NunoMaduro\Larastan\Reflection\AnnotationScopeMethodReflection;
+use NunoMaduro\Larastan\Reflection\DynamicWhereParameterReflection;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\FunctionVariantWithPhpDocs;
@@ -109,18 +110,11 @@ class BuilderHelper
 
         $methodReflection = $classReflection->getNativeMethod('dynamicWhere');
 
-        /** @var FunctionVariantWithPhpDocs $originalDynamicWhereVariant */
-        $originalDynamicWhereVariant = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
-
-        $originalParameter = $originalDynamicWhereVariant->getParameters()[1];
-
-        $actualParameter = new DummyParameter($originalParameter->getName(), new MixedType(), $originalParameter->isOptional(), $originalParameter->passedByReference(), $originalParameter->isVariadic(), $originalParameter->getDefaultValue());
-
         return new EloquentBuilderMethodReflection(
             $methodName,
             $classReflection,
             $methodReflection,
-            [$actualParameter],
+            [new DynamicWhereParameterReflection],
             $returnObject,
             true
         );
