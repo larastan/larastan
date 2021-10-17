@@ -56,7 +56,7 @@ class Builder
             ->toBase();
     }
 
-    public function testQueryBuilderChainStartedWithGetQueryReturnsStdClass(): ?stdClass
+    public function testQueryBuilderChainStartedWithGetQueryReturnsObject(): ?object
     {
         return User::getQuery()
             ->select('some_model.created')
