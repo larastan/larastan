@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Types\ModelProperty;
 
-use PHPStan\Reflection\ReflectionProviderStaticAccessor;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\ClassStringType;
 use PHPStan\Type\CompoundType;
@@ -41,7 +40,7 @@ class GenericModelPropertyType extends ModelPropertyType
         return $this->type;
     }
 
-    public function isSuperTypeOf(Type $type) : TrinaryLogic
+    public function isSuperTypeOf(Type $type): TrinaryLogic
     {
         if ($type instanceof ConstantStringType) {
             return $this->getGenericType()->hasProperty($type->getValue());
