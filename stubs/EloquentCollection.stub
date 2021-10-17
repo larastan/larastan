@@ -37,7 +37,7 @@ class Collection extends \Illuminate\Support\Collection
     /**
      * @template TReturn
      * @param callable(TValue ...$values): TReturn $callback
-     * @return static<int, TReturn>|\Illuminate\Support\Collection<int, TReturn>
+     * @return static<TReturn>|\Illuminate\Support\Collection<int, TReturn>
      */
     public function mapSpread(callable $callback) {}
 }
