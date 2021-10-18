@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Features\ReturnTypes;
 
-use App\Account;
 use App\User;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection as SupportCollection;
+use function PHPStan\Testing\assertType;
 use Traversable;
 
 class CollectionStub
@@ -159,15 +159,15 @@ class CollectionStub
 
     /**
      * @param  EloquentCollection<User>  $collection
-     * @return SupportCollection<Account>
      */
-    public function testFlatMapWithCollection(EloquentCollection $collection)
+    public function testFlatMapWithCollection(EloquentCollection $collection): void
     {
-        return $collection->flatMap(function (User $user, int $id): SupportCollection {
-            return $user->accounts;
-        })->map(function (Account $account, int $id): Account {
-            return $account;
-        });
+        assertType(
+            'Illuminate\Support\Collection<int, App\Account>',
+            $collection->flatMap(function (User $user, int $id) {
+                return $user->accounts;
+            })
+        );
     }
 
     /**
