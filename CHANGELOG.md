@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Fixed template resolution when `flatMap`'s callback returns an `Enumerable`
+
 ## [0.7.13] - 2021-10-14
 
 ### Fixed

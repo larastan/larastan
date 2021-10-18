@@ -84,7 +84,7 @@ class Collection implements \ArrayAccess, Enumerable
 
     /**
      * @template TReturn
-     * @param callable(TValue, TKey): array<TReturn> $callback
+     * @param callable(TValue, TKey): (array<TReturn>|\Illuminate\Support\Enumerable<array-key, TReturn>) $callback
      * @return static<TKey, TReturn>
      */
     public function flatMap(callable $callback) {}

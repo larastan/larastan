@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Features\ReturnTypes;
 
+use App\Account;
 use App\User;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection as SupportCollection;
@@ -153,6 +154,19 @@ class CollectionStub
             return [$user];
         })->map(function (User $user, int $id): User {
             return $user;
+        });
+    }
+
+    /**
+     * @param  EloquentCollection<User>  $collection
+     * @return SupportCollection<Account>
+     */
+    public function testFlatMapWithCollection(EloquentCollection $collection)
+    {
+        return $collection->flatMap(function (User $user, int $id): SupportCollection {
+            return $user->accounts;
+        })->map(function (Account $account, int $id): Account {
+            return $account;
         });
     }
 
