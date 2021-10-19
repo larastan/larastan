@@ -81,6 +81,26 @@ class MigrationHelperTest extends TestCase
         self::assertArrayHasKey('teams', $tables);
     }
 
+    /** @test */
+    public function it_can_handle_use_of_after_method_in_migration(): void
+    {
+        $migrationHelper = new MigrationHelper($this->cachedParser, '', [
+            __DIR__.'/data/migrations_using_after_method',
+        ]);
+
+        $tables = $migrationHelper->initializeTables();
+
+        self::assertCount(1, $tables);
+        self::assertArrayHasKey('users', $tables);
+        self::assertCount(5, $tables['users']->columns);
+        self::assertSame(['id', 'name', 'created_at', 'updated_at', 'email'], array_keys($tables['users']->columns));
+        self::assertSame('int', $tables['users']->columns['id']->readableType);
+        self::assertSame('string', $tables['users']->columns['name']->readableType);
+        self::assertSame('string', $tables['users']->columns['email']->readableType);
+        self::assertSame('string', $tables['users']->columns['created_at']->readableType);
+        self::assertSame('string', $tables['users']->columns['updated_at']->readableType);
+    }
+
     /**
      * @param  array<string, SchemaTable>  $tables
      */
