@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Fixed template resolution when `flatMap`'s callback returns an `Enumerable`
 
+### Added
+
+- Detection of fields added/modified a migration $table->after() method (Added in Laravel 8.27). ([#971](https://github.com/nunomaduro/larastan/pull/971))
+
 ## [0.7.13] - 2021-10-14
 
 ### Fixed
