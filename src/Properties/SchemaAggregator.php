@@ -306,7 +306,7 @@ final class SchemaAggregator
                         case 'after':
                             if ($secondArg instanceof PhpParser\Node\Expr\Closure
                                 && $secondArg->params[0]->var instanceof PhpParser\Node\Expr\Variable
-                                && !($secondArg->params[0]->var->name instanceof PhpParser\Node\Expr)) {
+                                && ! ($secondArg->params[0]->var->name instanceof PhpParser\Node\Expr)) {
                                 $argName = $secondArg->params[0]->var->name;
                                 $this->processColumnUpdates($tableName, $argName, $secondArg->stmts);
                             }
