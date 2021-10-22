@@ -20,7 +20,7 @@ class NoModelMakeRuleTest extends RulesTest
 
         self::assertEquals([
             13 => "Called 'Model::make()' which performs unnecessary work, use 'new Model()'.",
-            19 => "Called 'Model::make()' which performs unnecessary work, use 'new Model()'.",
+            20 => "Called 'Model::make()' which performs unnecessary work, use 'new Model()'.",
         ], $errors);
     }
 }
