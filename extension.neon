@@ -355,6 +355,8 @@ services:
         arguments:
             onlyMethods: %noUnnecessaryCollectionCallOnly%
             excludeMethods: %noUnnecessaryCollectionCallExcept%
+        tags:
+            - phpstan.rules.rule
 
     -
         class: NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertyRule
