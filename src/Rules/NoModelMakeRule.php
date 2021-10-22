@@ -14,6 +14,7 @@ use PhpParser\Node\Name\FullyQualified;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
+use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\ObjectType;
 
 /**
@@ -87,7 +88,17 @@ class NoModelMakeRule implements Rule
         if ($class instanceof FullyQualified) {
             $type = new ObjectType($class->toString());
         } elseif ($class instanceof Expr) {
-            $type = $scope->getType($class);
+            $exprType = $scope->getType($class);
+
+            if (! $exprType instanceof ConstantStringType) {
+                return false;
+            }
+
+            if (! $exprType->isClassString()) {
+                return false;
+            }
+
+            $type = new ObjectType($exprType->getValue());
         } else {
             // TODO can we handle relative names, do they even occur here?
             return false;
