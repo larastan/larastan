@@ -28,6 +28,7 @@ Larastan was created by [Can Vural](https://github.com/canvural) and [Nuno Madur
 - **[Laravel 6.0+](https://github.com/laravel/laravel)**
 
 **1**: First, you may use [Composer](https://getcomposer.org) to install Larastan as a development dependency into your Laravel project:
+
 ```bash
 composer require nunomaduro/larastan --with-dependencies --dev
 ```
@@ -109,6 +110,7 @@ A list of configurable rules specific to Laravel can be found [here](docs/rules.
 A list of PHPDoc types specific to Larastan can be found [here](docs/custom-types.md).
 
 ## Custom PHPStan config parameters
+
 A list of custom config parameters that you can use in your PHPStan config file can be found [here](docs/custom-config-paramaters.md).
 
 ## Errors To Ignore
