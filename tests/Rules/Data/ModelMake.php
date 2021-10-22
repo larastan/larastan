@@ -16,6 +16,7 @@ class ModelMake
     public function makeStringClass(): User
     {
         $class = User::class;
+
         return $class::make();
     }
 }

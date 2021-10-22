@@ -38,7 +38,8 @@ class NoModelMakeRule implements Rule
     /**
      * @param  ReflectionProvider  $reflectionProvider
      */
-    public function __construct(ReflectionProvider $reflectionProvider) {
+    public function __construct(ReflectionProvider $reflectionProvider)
+    {
         $this->reflectionProvider = $reflectionProvider;
     }
 
@@ -58,7 +59,6 @@ class NoModelMakeRule implements Rule
     public function processNode(Node $node, Scope $scope): array
     {
         /** @var StaticCall $node due to @see getNodeType() */
-
         $name = $node->name;
         if (! $name instanceof Identifier) {
             return [];

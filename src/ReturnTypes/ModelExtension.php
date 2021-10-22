@@ -50,7 +50,7 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension
         $name = $methodReflection->getName();
         if (in_array($name, [
             '__construct',
-            'make' // Inefficient and better replaced by new, @see NoModelMake
+            'make', // Inefficient and better replaced by new, @see NoModelMake
         ], true)) {
             return false;
         }
