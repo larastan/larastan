@@ -3,6 +3,34 @@
 All rules that are specific to Laravel applications 
 are listed here with their configurable options.
 
+## NoModelMake
+
+Checks for calls to the static method `make()` on subclasses of `Illuminate\Database\Eloquent\Model`.
+While its usage does not result in an error, unnecessary work is performed and the
+model is needlessly instantiated twice. Simply using `new` is more efficient.
+
+#### Examples
+
+```php
+User::make()
+```
+
+Will result in the following error:
+
+```
+Called 'Model::make()' which performs unnecessary work, use 'new Model()'.
+```
+
+#### Configuration
+
+This rule is enabled by default. To disable it completely, add:
+
+```neon
+parameters:
+    noModelMake: false
+```
+
+to your `phpstan.neon` file.
 
 ## NoUnnecessaryCollectionCall
 
