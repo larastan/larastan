@@ -368,11 +368,14 @@ services:
 
     -
         class: NunoMaduro\Larastan\Types\RelationParserHelper
+        arguments:
+            parser: @currentPhpVersionSimpleDirectParser
 
     -
         class: NunoMaduro\Larastan\Properties\MigrationHelper
         arguments:
             databaseMigrationPath: %databaseMigrationsPath%
+            parser: @currentPhpVersionSimpleDirectParser
 
     -
         class: NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertiesRuleHelper
