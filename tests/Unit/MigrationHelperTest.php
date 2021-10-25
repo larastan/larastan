@@ -89,9 +89,9 @@ class MigrationHelperTest extends PHPStanTestCase
     /** @test */
     public function it_can_handle_use_of_after_method_in_migration(): void
     {
-        $migrationHelper = new MigrationHelper($this->cachedParser, '', [
+        $migrationHelper = new MigrationHelper($this->parser, [
             __DIR__.'/data/migrations_using_after_method',
-        ]);
+        ], $this->fileHelper);
 
         $tables = $migrationHelper->initializeTables();
 
