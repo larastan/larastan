@@ -61,7 +61,6 @@ final class Kernel
                     Pipes\Facades::class,
                     Pipes\Managers::class,
                     Pipes\Auths::class,
-                    Pipes\BuilderLocalMacros::class,
                     Pipes\RedirectResponseWiths::class,
                 ]
             )
