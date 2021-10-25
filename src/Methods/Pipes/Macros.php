@@ -53,7 +53,7 @@ final class Macros implements PipeContract
             if ($concrete !== null) {
                 $className = get_class($concrete);
 
-                if ($className && $passable->getBroker()
+                if ($className && $passable->getReflectionProvider()
                     ->getClass($className)
                     ->hasTraitUse(Macroable::class)) {
                     $macroTraitProperty = 'macros';
@@ -68,6 +68,7 @@ final class Macros implements PipeContract
         }
 
         if ($className !== null && $macroTraitProperty) {
+            $classReflection = $passable->getReflectionProvider()->getClass($className);
             $refObject = new \ReflectionClass($className);
             $refProperty = $refObject->getProperty($macroTraitProperty);
             $refProperty->setAccessible(true);
@@ -78,31 +79,14 @@ final class Macros implements PipeContract
 
             if ($found) {
                 $reflectionFunction = new \ReflectionFunction($refProperty->getValue()[$passable->getMethodName()]);
-                /** @var \PHPStan\Type\Type[] $parameters */
-                $parameters = $reflectionFunction->getParameters();
+
                 $methodReflection = new Macro(
-                    $className, $passable->getMethodName(), $reflectionFunction
+                    $classReflection, $passable->getMethodName(), $reflectionFunction
                 );
 
                 $methodReflection->setIsStatic(true);
 
-                $passable->setMethodReflection(
-                    $passable->getMethodReflectionFactory()
-                        ->create(
-                            $classReflection,
-                            null,
-                            $methodReflection,
-                            TemplateTypeMap::createEmpty(),
-                            $parameters,
-                            null,
-                            null,
-                            null,
-                            false,
-                            false,
-                            false,
-                            null
-                        )
-                );
+                $passable->setMethodReflection($methodReflection);
             }
         }
 
