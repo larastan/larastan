@@ -11,7 +11,6 @@ use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParameterReflection;
 use PHPStan\Reflection\PassedByReference;
-use PHPStan\Reflection\Php\PhpParameterReflection;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\Generic\TemplateTypeMap;
 use PHPStan\Type\MixedType;
@@ -135,8 +134,9 @@ final class Macro implements MethodReflection
     /** @return ParameterReflection[] */
     public function getParameters(): array
     {
-        return \array_map(function (\ReflectionParameter $reflection) : ParameterReflection {
-            return new class($reflection) implements ParameterReflection {
+        return \array_map(function (\ReflectionParameter $reflection): ParameterReflection {
+            return new class($reflection) implements ParameterReflection
+            {
                 /**
                  * @var ReflectionParameter
                  */
