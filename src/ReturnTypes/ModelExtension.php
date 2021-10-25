@@ -48,10 +48,7 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension
     public function isStaticMethodSupported(MethodReflection $methodReflection): bool
     {
         $name = $methodReflection->getName();
-        if (in_array($name, [
-            '__construct',
-            'make', // Inefficient and better replaced by new, @see NoModelMake
-        ], true)) {
+        if ($name === '__construct') {
             return false;
         }
 
