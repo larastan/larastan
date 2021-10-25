@@ -108,6 +108,11 @@ class ModelExtension
         return User::first();
     }
 
+    public function testMake(): User
+    {
+        return User::make([]);
+    }
+
     public function testCreate(): User
     {
         return User::create([]);
