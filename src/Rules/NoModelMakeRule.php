@@ -79,7 +79,7 @@ class NoModelMakeRule implements Rule
                 ->identifier('rules.noModelMake')
                 ->line($node->getLine())
                 ->file($scope->getFile())
-                ->build()
+                ->build(),
         ];
     }
 
