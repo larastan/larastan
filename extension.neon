@@ -46,6 +46,7 @@ parameters:
         - bootstrap.php
     checkGenericClassInNonGenericObjectType: false
     checkOctaneCompatibility: false
+    noModelMake: true
     noUnnecessaryCollectionCall: true
     noUnnecessaryCollectionCallOnly: []
     noUnnecessaryCollectionCallExcept: []
@@ -55,6 +56,7 @@ parameters:
 
 parametersSchema:
     checkOctaneCompatibility: bool()
+    noModelMake: bool()
     noUnnecessaryCollectionCall: bool()
     noUnnecessaryCollectionCallOnly: listOf(string())
     noUnnecessaryCollectionCallExcept: listOf(string())
@@ -62,6 +64,8 @@ parametersSchema:
     checkModelProperties: bool()
 
 conditionalTags:
+    NunoMaduro\Larastan\Rules\NoModelMakeRule:
+        phpstan.rules.rule: %noModelMake%
     NunoMaduro\Larastan\Rules\NoUnnecessaryCollectionCallRule:
         phpstan.rules.rule: %noUnnecessaryCollectionCall%
     NunoMaduro\Larastan\Rules\OctaneCompatibilityRule:
@@ -338,12 +342,21 @@ services:
 
     -
         class: NunoMaduro\Larastan\Rules\OctaneCompatibilityRule
+        tags:
+            - phpstan.rules.rule
+
+    -
+        class: NunoMaduro\Larastan\Rules\NoModelMakeRule
+        tags:
+            - phpstan.rules.rule
 
     -
         class: NunoMaduro\Larastan\Rules\NoUnnecessaryCollectionCallRule
         arguments:
             onlyMethods: %noUnnecessaryCollectionCallOnly%
             excludeMethods: %noUnnecessaryCollectionCallExcept%
+        tags:
+            - phpstan.rules.rule
 
     -
         class: NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertyRule

@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 - Detection of fields added/modified a migration $table->after() method (Added in Laravel 8.27). ([#971](https://github.com/nunomaduro/larastan/pull/971))
+- Add new rule `NoModelMake` to prevent inefficient model instantiation ([#976](https://github.com/nunomaduro/larastan/pull/976))
 
 ## [0.7.13] - 2021-10-14
 

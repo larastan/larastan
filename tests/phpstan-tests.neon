@@ -9,3 +9,11 @@ parameters:
         - '#Return typehint of method Tests\\Features\\ReturnTypes\\Facades::testHttpBaseUrl\(\) has invalid type Illuminate\\Http\\Client\\PendingRequest\.#'
         - '#Call to static method baseUrl\(\) on an unknown class Illuminate\\Support\\Facades\\Http\.#'
         - '#testDiskGetDriver\(\) has invalid type League\\Flysystem\\FilesystemInterface.#'
+
+        # This file is meant to test the correct recognition of magic methods within models.
+        # Even though Model::make() is not optimal, it does coincedentally work and thus should
+        # be recognized by the extension. We test the NoModelMake rule separately.
+        -
+            message: "#Called 'Model::make\\(\\)' which performs unnecessary work, use 'new Model\\(\\)'\\.#"
+            count: 1
+            path: Features/Methods/ModelExtension.php
