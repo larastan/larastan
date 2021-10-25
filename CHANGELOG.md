@@ -6,14 +6,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.14] - 2021-10-25
+
 ### Fixed
 
-- Fixed template resolution when `flatMap`'s callback returns an `Enumerable`
+- Fixed template resolution when `flatMap`'s callback returns an `Enumerable` ([#970](https://github.com/nunomaduro/larastan/pull/970)) Thanks @bastien-phi
 
 ### Added
 
-- Detection of fields added/modified a migration $table->after() method (Added in Laravel 8.27). ([#971](https://github.com/nunomaduro/larastan/pull/971))
-- Add new rule `NoModelMake` to prevent inefficient model instantiation ([#976](https://github.com/nunomaduro/larastan/pull/976))
+- Detection of fields added/modified a migration $table->after() method (Added in Laravel 8.27). ([#972](https://github.com/nunomaduro/larastan/pull/972)) Thanks @jimohalloran
+- Add new rule `NoModelMake` to prevent inefficient model instantiation ([#976](https://github.com/nunomaduro/larastan/pull/976)) Thanks @spawnia
 
 ## [0.7.13] - 2021-10-14
 
@@ -657,7 +659,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.13...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.14...HEAD
+[0.7.14]: https://github.com/nunomaduro/larastan/compare/v0.7.13...0.7.14
 [0.7.13]: https://github.com/nunomaduro/larastan/compare/v0.7.12...0.7.13
 [0.7.12]: https://github.com/nunomaduro/larastan/compare/v0.7.11...0.7.12
 [0.7.11]: https://github.com/nunomaduro/larastan/compare/v0.7.10...0.7.11
