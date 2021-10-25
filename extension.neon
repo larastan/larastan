@@ -32,7 +32,6 @@ parameters:
         - stubs/Redis/Connection.stub
         - stubs/Logger.stub
         - stubs/EnumeratesValues.stub
-    scopeClass: NunoMaduro\Larastan\Analyser\Scope
     universalObjectCratesClasses:
         - Illuminate\Http\Request
     earlyTerminatingFunctionCalls:
