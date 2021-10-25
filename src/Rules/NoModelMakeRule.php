@@ -14,6 +14,8 @@ use PhpParser\Node\Name\FullyQualified;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
+use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\ObjectType;
 
@@ -54,7 +56,7 @@ class NoModelMakeRule implements Rule
     /**
      * @param  Node  $node
      * @param  Scope  $scope
-     * @return array<int, string>
+     * @return array<int, RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -72,7 +74,13 @@ class NoModelMakeRule implements Rule
             return [];
         }
 
-        return ["Called 'Model::make()' which performs unnecessary work, use 'new Model()'."];
+        return [
+            RuleErrorBuilder::message("Called 'Model::make()' which performs unnecessary work, use 'new Model()'.")
+                ->identifier('rules.noModelMake')
+                ->line($node->getLine())
+                ->file($scope->getFile())
+                ->build()
+        ];
     }
 
     /**
