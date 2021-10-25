@@ -14,7 +14,6 @@ use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 use NunoMaduro\Larastan\Methods\Macro;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Type\Generic\TemplateTypeMap;
 
 /**
  * @internal

@@ -51,7 +51,7 @@ class ContainerArrayAccessDynamicMethodReturnTypeExtension implements DynamicMet
 
         $argType = $scope->getType($args[0]->value);
 
-        if (!$argType instanceof ConstantStringType) {
+        if (! $argType instanceof ConstantStringType) {
             return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
         }
 
