@@ -10,10 +10,10 @@ use Illuminate\Contracts\Session\Session;
 class Contracts
 {
     /** @var Application */
-    private $app;
+    private $app; // @phpstan-ignore-line
 
     /** @var Session */
-    private $session;
+    private $session; // @phpstan-ignore-line
 
     public function testApplicationIsLocal(): bool
     {

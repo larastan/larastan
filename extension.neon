@@ -32,7 +32,6 @@ parameters:
         - stubs/Redis/Connection.stub
         - stubs/Logger.stub
         - stubs/EnumeratesValues.stub
-    scopeClass: NunoMaduro\Larastan\Analyser\Scope
     universalObjectCratesClasses:
         - Illuminate\Http\Request
     earlyTerminatingFunctionCalls:
@@ -126,11 +125,6 @@ services:
             - phpstan.broker.propertiesClassReflectionExtension
 
     -
-        class: NunoMaduro\Larastan\Properties\Extension
-        tags:
-            - phpstan.broker.propertiesClassReflectionExtension
-
-    -
         class: NunoMaduro\Larastan\Properties\HigherOrderCollectionProxyPropertyExtension
         tags:
             - phpstan.broker.propertiesClassReflectionExtension
@@ -149,6 +143,30 @@ services:
         class: NunoMaduro\Larastan\ReturnTypes\HigherOrderTapProxyExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\ContainerArrayAccessDynamicMethodReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+        arguments:
+            className: Illuminate\Contracts\Container\Container
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\ContainerArrayAccessDynamicMethodReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+        arguments:
+            className: Illuminate\Container\Container
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\ContainerArrayAccessDynamicMethodReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+        arguments:
+            className: Illuminate\Foundation\Application
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\ContainerArrayAccessDynamicMethodReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+        arguments:
+            className: Illuminate\Contracts\Foundation\Application
 
     -
         class: NunoMaduro\Larastan\Properties\ModelRelationsExtension
@@ -382,12 +400,14 @@ services:
 
     -
         class: NunoMaduro\Larastan\Types\RelationParserHelper
+        arguments:
+            parser: @currentPhpVersionSimpleDirectParser
 
     -
         class: NunoMaduro\Larastan\Properties\MigrationHelper
         arguments:
             databaseMigrationPath: %databaseMigrationsPath%
-            currentWorkingDirectory: %currentWorkingDirectory%
+            parser: @currentPhpVersionSimpleDirectParser
 
     -
         class: NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertiesRuleHelper

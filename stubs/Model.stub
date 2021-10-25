@@ -10,7 +10,7 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
     /**
      * Update the model in the database.
      *
-     * @param  array<model-property, mixed>  $attributes
+     * @param  array<model-property<static>, mixed>  $attributes
      * @param  array<int|string, mixed>  $options
      * @return bool
      */

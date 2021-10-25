@@ -56,7 +56,7 @@ abstract class HasOneOrMany extends Relation
      * Create or update a related record matching the attributes, and fill it with values.
      *
      * @param  array<model-property<TRelatedModel>, mixed>  $attributes
-     * @param  array<mixed, mixed>  $values
+     * @param  array<array-key, mixed>  $values
      * @return TRelatedModel
      */
     public function updateOrCreate(array $attributes, array $values = []);
@@ -70,7 +70,7 @@ abstract class HasOneOrMany extends Relation
     public function save(\Illuminate\Database\Eloquent\Model $model);
 
     /**
-     * @param array<model-property<TRelatedModel>, mixed> $attributes
+     * @phpstan-param array<model-property<TRelatedModel>, mixed> $attributes
      *
      * @phpstan-return TRelatedModel
      */

@@ -11,8 +11,6 @@ use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Methods\BuilderHelper;
 use NunoMaduro\Larastan\Types\RelationParserHelper;
 use PHPStan\Analyser\OutOfClassScope;
-use PHPStan\Reflection\Annotations\AnnotationsPropertiesClassReflectionExtension;
-use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
@@ -27,27 +25,21 @@ use PHPStan\Type\UnionType;
 /**
  * @internal
  */
-final class ModelRelationsExtension implements PropertiesClassReflectionExtension, BrokerAwareExtension
+final class ModelRelationsExtension implements PropertiesClassReflectionExtension
 {
-    use Concerns\HasBroker;
     use Concerns\HasContainer;
 
     /** @var RelationParserHelper */
     private $relationParserHelper;
-
-    /** @var AnnotationsPropertiesClassReflectionExtension */
-    private $annotationExtension;
 
     /** @var BuilderHelper */
     private $builderHelper;
 
     public function __construct(
         RelationParserHelper $relationParserHelper,
-        AnnotationsPropertiesClassReflectionExtension $annotationExtension,
         BuilderHelper $builderHelper)
     {
         $this->relationParserHelper = $relationParserHelper;
-        $this->annotationExtension = $annotationExtension;
         $this->builderHelper = $builderHelper;
     }
 
@@ -57,7 +49,7 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
             return false;
         }
 
-        if ($this->annotationExtension->hasProperty($classReflection, $propertyName)) {
+        if (array_key_exists($propertyName, $classReflection->getPropertyTags())) {
             return false;
         }
 

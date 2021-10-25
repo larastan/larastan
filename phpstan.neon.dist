@@ -1,5 +1,8 @@
+includes:
+    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+    - phpstan-baseline.neon
 parameters:
-    level: max
+    level: 8
     phpVersion: 80000
     paths:
         - src

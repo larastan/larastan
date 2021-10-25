@@ -6,23 +6,28 @@ namespace Tests\Unit;
 
 use NunoMaduro\Larastan\Properties\MigrationHelper;
 use NunoMaduro\Larastan\Properties\SchemaTable;
-use PHPStan\Parser\CachedParser;
-use PHPStan\Testing\TestCase;
+use PHPStan\File\FileHelper;
+use PHPStan\Parser\Parser;
+use PHPStan\Testing\PHPStanTestCase;
 
-class MigrationHelperTest extends TestCase
+class MigrationHelperTest extends PHPStanTestCase
 {
-    /** @var CachedParser */
-    private $cachedParser;
+    /** @var Parser */
+    private $parser;
+
+    /** @var FileHelper */
+    private $fileHelper;
 
     public function setUp(): void
     {
-        $this->cachedParser = self::getContainer()->getByType(CachedParser::class);
+        $this->parser = self::getContainer()->getService('currentPhpVersionSimpleDirectParser');
+        $this->fileHelper = self::getContainer()->getByType(FileHelper::class);
     }
 
     /** @test */
     public function it_will_return_empty_array_if_migrations_path_is_not_a_directory()
     {
-        $migrationHelper = new MigrationHelper($this->cachedParser, '', ['foobar']);
+        $migrationHelper = new MigrationHelper($this->parser, ['foobar'], $this->fileHelper);
 
         self::assertSame([], $migrationHelper->initializeTables());
     }
@@ -30,7 +35,7 @@ class MigrationHelperTest extends TestCase
     /** @test */
     public function it_can_read_basic_migrations_and_create_table_structure()
     {
-        $migrationHelper = new MigrationHelper($this->cachedParser, '', [__DIR__.'/data/basic_migration']);
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__.'/data/basic_migration'], $this->fileHelper);
 
         $tables = $migrationHelper->initializeTables();
 
@@ -40,7 +45,7 @@ class MigrationHelperTest extends TestCase
     /** @test */
     public function it_can_read_schema_definitions_from_any_method_in_class()
     {
-        $migrationHelper = new MigrationHelper($this->cachedParser, '', [__DIR__.'/data/migrations_with_different_methods']);
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__.'/data/migrations_with_different_methods'], $this->fileHelper);
 
         $tables = $migrationHelper->initializeTables();
 
@@ -50,7 +55,7 @@ class MigrationHelperTest extends TestCase
     /** @test */
     public function it_can_read_schema_definitions_with_multiple_create_and_drop_methods_for_one_table()
     {
-        $migrationHelper = new MigrationHelper($this->cachedParser, '', [__DIR__.'/data/complex_migrations']);
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__.'/data/complex_migrations'], $this->fileHelper);
 
         $tables = $migrationHelper->initializeTables();
 
@@ -69,10 +74,10 @@ class MigrationHelperTest extends TestCase
     /** @test */
     public function it_can_read_additional_directories(): void
     {
-        $migrationHelper = new MigrationHelper($this->cachedParser, '', [
+        $migrationHelper = new MigrationHelper($this->parser, [
             __DIR__.'/data/basic_migration',
             __DIR__.'/data/additional_migrations',
-        ]);
+        ], $this->fileHelper);
 
         $tables = $migrationHelper->initializeTables();
 
@@ -84,9 +89,9 @@ class MigrationHelperTest extends TestCase
     /** @test */
     public function it_can_handle_use_of_after_method_in_migration(): void
     {
-        $migrationHelper = new MigrationHelper($this->cachedParser, '', [
+        $migrationHelper = new MigrationHelper($this->parser, [
             __DIR__.'/data/migrations_using_after_method',
-        ]);
+        ], $this->fileHelper);
 
         $tables = $migrationHelper->initializeTables();
 

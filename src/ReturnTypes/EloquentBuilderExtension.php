@@ -69,7 +69,7 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
         MethodCall $methodCall,
         Scope $scope
     ): Type {
-        $returnType = ParametersAcceptorSelector::selectFromArgs($scope, $methodCall->args, $methodReflection->getVariants())->getReturnType();
+        $returnType = ParametersAcceptorSelector::selectFromArgs($scope, $methodCall->getArgs(), $methodReflection->getVariants())->getReturnType();
         $templateTypeMap = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap();
 
         /** @var Type|ObjectType|TemplateMixedType $modelType */

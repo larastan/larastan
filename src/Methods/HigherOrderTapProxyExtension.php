@@ -7,7 +7,6 @@ namespace NunoMaduro\Larastan\Methods;
 use Illuminate\Support\HigherOrderTapProxy;
 use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\Dummy\DummyMethodReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Type\ObjectType;
@@ -28,6 +27,10 @@ final class HigherOrderTapProxyExtension implements MethodsClassReflectionExtens
             return false;
         }
 
+        if ($templateType->getClassReflection() === null) {
+            return false;
+        }
+
         return $templateType->hasMethod($methodName)->yes();
     }
 
@@ -38,12 +41,9 @@ final class HigherOrderTapProxyExtension implements MethodsClassReflectionExtens
         /** @var ObjectType $templateType */
         $templateType = $classReflection->getActiveTemplateTypeMap()->getType('TClass');
 
+        /** @var ClassReflection $reflection */
         $reflection = $templateType->getClassReflection();
 
-        if ($reflection !== null) {
-            return $reflection->getMethod($methodName, new OutOfClassScope());
-        }
-
-        return new DummyMethodReflection($methodName);
+        return $reflection->getMethod($methodName, new OutOfClassScope());
     }
 }

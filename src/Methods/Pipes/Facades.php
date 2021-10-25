@@ -28,13 +28,18 @@ final class Facades implements PipeContract
             $facadeClass = $classReflection->getName();
 
             if ($concrete = $facadeClass::getFacadeRoot()) {
-                $found = $passable->sendToPipeline(get_class($concrete), true);
+                $class = get_class($concrete);
+
+                if ($class) {
+                    $found = $passable->sendToPipeline($class, true);
+                }
             }
 
             if (! $found && Str::startsWith($passable->getMethodName(), 'assert')) {
                 $fakeFacadeClass = $this->getFake($facadeClass);
 
-                if ($passable->getBroker()->hasClass($fakeFacadeClass)) {
+                if ($passable->getReflectionProvider()->hasClass($fakeFacadeClass)) {
+                    assert(class_exists($fakeFacadeClass));
                     $found = $passable->sendToPipeline($fakeFacadeClass, true);
                 }
             }

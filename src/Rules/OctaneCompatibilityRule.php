@@ -35,7 +35,7 @@ class OctaneCompatibilityRule implements Rule
             return [];
         }
 
-        $args = $node->args;
+        $args = $node->getArgs();
 
         if (count($args) < 2) {
             return [];
@@ -86,34 +86,34 @@ class OctaneCompatibilityRule implements Rule
                 return false;
             }
 
-            if (count($node->args) < 1) {
+            if (count($node->getArgs()) < 1) {
                 return false;
             }
 
-            if (! $node->args[0]->value instanceof Node\Expr\Variable && ! $node->args[0]->value instanceof Node\Expr\ArrayDimFetch) {
+            if (! $node->getArgs()[0]->value instanceof Node\Expr\Variable && ! $node->getArgs()[0]->value instanceof Node\Expr\ArrayDimFetch) {
                 return false;
             }
 
-            if ($node->args[0]->value instanceof Node\Expr\ArrayDimFetch) {
+            if ($node->getArgs()[0]->value instanceof Node\Expr\ArrayDimFetch) {
                 /** @var Node\Expr\Variable $var */
-                $var = $node->args[0]->value->var;
+                $var = $node->getArgs()[0]->value->var;
 
                 if ($var->name !== $containerParameterName) {
                     return false;
                 }
 
-                if ($node->args[0]->value->dim === null) {
+                if ($node->getArgs()[0]->value->dim === null) {
                     return false;
                 }
 
-                if (! $node->args[0]->value->dim instanceof Node\Scalar\String_) {
+                if (! $node->getArgs()[0]->value->dim instanceof Node\Scalar\String_) {
                     return false;
                 }
 
-                return in_array($node->args[0]->value->dim->value, ['request', 'config'], true);
+                return in_array($node->getArgs()[0]->value->dim->value, ['request', 'config'], true);
             }
 
-            if ($node->args[0]->value->name !== $containerParameterName) {
+            if ($node->getArgs()[0]->value->name !== $containerParameterName) {
                 return false;
             }
 

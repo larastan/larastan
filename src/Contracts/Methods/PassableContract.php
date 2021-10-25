@@ -11,10 +11,10 @@
 namespace NunoMaduro\Larastan\Contracts\Methods;
 
 use Illuminate\Contracts\Container\Container as ContainerContract;
-use PHPStan\Broker\Broker;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
+use PHPStan\Reflection\ReflectionProvider;
 
 /**
  * @internal
@@ -82,16 +82,13 @@ interface PassableContract
     public function isStaticAllowed(): bool;
 
     /**
-     * @param  string  $class
+     * @param  class-string  $class
      * @param  bool  $staticAllowed
      * @return bool
      */
     public function sendToPipeline(string $class, $staticAllowed = false): bool;
 
-    /**
-     * @return \PHPStan\Broker\Broker
-     */
-    public function getBroker(): Broker;
+    public function getReflectionProvider(): ReflectionProvider;
 
     /**
      * @return \PHPStan\Reflection\Php\PhpMethodReflectionFactory

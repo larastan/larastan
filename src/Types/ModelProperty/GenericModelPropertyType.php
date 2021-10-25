@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Types\ModelProperty;
 
+use PHPStan\TrinaryLogic;
 use PHPStan\Type\ClassStringType;
+use PHPStan\Type\CompoundType;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\TemplateType;
 use PHPStan\Type\Generic\TemplateTypeMap;
@@ -23,6 +25,8 @@ class GenericModelPropertyType extends ModelPropertyType
 
     public function __construct(Type $type)
     {
+        parent::__construct();
+
         $this->type = $type;
     }
 
@@ -34,6 +38,27 @@ class GenericModelPropertyType extends ModelPropertyType
     public function getGenericType(): Type
     {
         return $this->type;
+    }
+
+    public function isSuperTypeOf(Type $type): TrinaryLogic
+    {
+        if ($type instanceof ConstantStringType) {
+            return $this->getGenericType()->hasProperty($type->getValue());
+        }
+
+        if ($type instanceof self) {
+            return TrinaryLogic::createYes();
+        }
+
+        if ($type instanceof parent) {
+            return TrinaryLogic::createMaybe();
+        }
+
+        if ($type instanceof CompoundType) {
+            return $type->isSubTypeOf($this);
+        }
+
+        return TrinaryLogic::createNo();
     }
 
     public function traverse(callable $cb): Type

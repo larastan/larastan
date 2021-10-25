@@ -37,11 +37,11 @@ final class ApplicationResolver
             self::$composer = json_decode((string) file_get_contents($composerFile), true);
             $namespace = (string) key(self::$composer['autoload']['psr-4']);
             $vendorDir = self::$composer['config']['vendor-dir'] ?? dirname($composerFile).DIRECTORY_SEPARATOR.'vendor';
-            $serviceProviders = array_values(array_filter(self::getProjectClasses($namespace, $vendorDir), function (string $class) use (
+            $serviceProviders = array_values(array_filter(self::getProjectClasses($namespace, $vendorDir), static function (string $class) use (
                 $namespace
             ) {
                 /** @var class-string $class */
-                return substr($class, 0, strlen($namespace)) === $namespace && self::isServiceProvider($class);
+                return strpos($class, $namespace) === 0 && self::isServiceProvider($class);
             }));
 
             foreach ($serviceProviders as $serviceProvider) {
@@ -91,7 +91,7 @@ final class ApplicationResolver
     private static function getProjectClasses(string $namespace, string $vendorDir): array
     {
         $projectDirs = self::getProjectSearchDirs($namespace, $vendorDir);
-        /** @var string[] $maps */
+        /** @var array<string, string> $maps */
         $maps = [];
         // Use composer's ClassMapGenerator to pull the class list out of each project search directory
         foreach ($projectDirs as $dir) {
@@ -112,8 +112,12 @@ final class ApplicationResolver
 
         // now class list of maps are assembled, use class_exists calls to explicitly autoload them,
         // while not running them
+        /**
+         * @var string $class
+         * @var string $file
+         */
         foreach ($maps as $class => $file) {
-            if (! in_array($class, $devClasses)) {
+            if (! in_array($class, $devClasses, true)) {
                 class_exists($class, true);
             }
         }

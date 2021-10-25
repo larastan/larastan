@@ -15,12 +15,6 @@ class Relation
      */
     public function get($columns = ['*']);
 
-    /**
-     * @param array<string, mixed> $attributes
-     *
-     * @phpstan-return TRelatedModel
-     */
-    public function create(array $attributes = []);
 
     /**
      * @param array<model-property<TRelatedModel>, mixed> $attributes

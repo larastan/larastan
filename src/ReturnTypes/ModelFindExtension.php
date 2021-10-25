@@ -75,13 +75,13 @@ final class ModelFindExtension implements DynamicStaticMethodReturnTypeExtension
         StaticCall $methodCall,
         Scope $scope
     ): Type {
-        if (count($methodCall->args) < 1) {
+        if (count($methodCall->getArgs()) < 1) {
             return new ErrorType();
         }
 
         $modelName = $methodReflection->getDeclaringClass()->getName();
         $returnType = $methodReflection->getVariants()[0]->getReturnType();
-        $argType = $scope->getType($methodCall->args[0]->value);
+        $argType = $scope->getType($methodCall->getArgs()[0]->value);
 
         if ($argType->isIterable()->yes()) {
             if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {

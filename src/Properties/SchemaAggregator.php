@@ -85,33 +85,33 @@ final class SchemaAggregator
     private function alterTable(PhpParser\Node\Expr\StaticCall $call, bool $creating): void
     {
         if (! isset($call->args[0])
-            || ! $call->args[0]->value instanceof PhpParser\Node\Scalar\String_
+            || ! $call->getArgs()[0]->value instanceof PhpParser\Node\Scalar\String_
         ) {
             return;
         }
 
-        $tableName = $call->args[0]->value->value;
+        $tableName = $call->getArgs()[0]->value->value;
 
         if ($creating) {
             $this->tables[$tableName] = new SchemaTable($tableName);
         }
 
         if (! isset($call->args[1])
-            || ! $call->args[1]->value instanceof PhpParser\Node\Expr\Closure
-            || count($call->args[1]->value->params) < 1
-            || ($call->args[1]->value->params[0]->type instanceof PhpParser\Node\Name
-                && $call->args[1]->value->params[0]->type->toCodeString()
+            || ! $call->getArgs()[1]->value instanceof PhpParser\Node\Expr\Closure
+            || count($call->getArgs()[1]->value->params) < 1
+            || ($call->getArgs()[1]->value->params[0]->type instanceof PhpParser\Node\Name
+                && $call->getArgs()[1]->value->params[0]->type->toCodeString()
                 !== '\\Illuminate\Database\Schema\Blueprint')
         ) {
             return;
         }
 
-        $updateClosure = $call->args[1]->value;
+        $updateClosure = $call->getArgs()[1]->value;
 
-        if ($call->args[1]->value->params[0]->var instanceof PhpParser\Node\Expr\Variable
-            && is_string($call->args[1]->value->params[0]->var->name)
+        if ($call->getArgs()[1]->value->params[0]->var instanceof PhpParser\Node\Expr\Variable
+            && is_string($call->getArgs()[1]->value->params[0]->var->name)
         ) {
-            $argName = $call->args[1]->value->params[0]->var->name;
+            $argName = $call->getArgs()[1]->value->params[0]->var->name;
 
             $this->processColumnUpdates($tableName, $argName, $updateClosure->stmts);
         }
@@ -158,8 +158,8 @@ final class SchemaAggregator
                     && $rootVar->name === $argName
                     && $firstMethodCall->name instanceof PhpParser\Node\Identifier
                 ) {
-                    $firstArg = $firstMethodCall->args[0]->value ?? null;
-                    $secondArg = $firstMethodCall->args[1]->value ?? null;
+                    $firstArg = $firstMethodCall->getArgs()[0]->value ?? null;
+                    $secondArg = $firstMethodCall->getArgs()[1]->value ?? null;
 
                     if ($firstMethodCall->name->name === 'foreignIdFor') {
                         if ($firstArg instanceof PhpParser\Node\Expr\ClassConstFetch
@@ -395,12 +395,12 @@ final class SchemaAggregator
     private function dropTable(PhpParser\Node\Expr\StaticCall $call): void
     {
         if (! isset($call->args[0])
-            || ! $call->args[0]->value instanceof PhpParser\Node\Scalar\String_
+            || ! $call->getArgs()[0]->value instanceof PhpParser\Node\Scalar\String_
         ) {
             return;
         }
 
-        $tableName = $call->args[0]->value->value;
+        $tableName = $call->getArgs()[0]->value->value;
 
         unset($this->tables[$tableName]);
     }
@@ -408,14 +408,14 @@ final class SchemaAggregator
     private function renameTable(PhpParser\Node\Expr\StaticCall $call): void
     {
         if (! isset($call->args[0], $call->args[1])
-            || ! $call->args[0]->value instanceof PhpParser\Node\Scalar\String_
-            || ! $call->args[1]->value instanceof PhpParser\Node\Scalar\String_
+            || ! $call->getArgs()[0]->value instanceof PhpParser\Node\Scalar\String_
+            || ! $call->getArgs()[1]->value instanceof PhpParser\Node\Scalar\String_
         ) {
             return;
         }
 
-        $oldTableName = $call->args[0]->value->value;
-        $newTableName = $call->args[1]->value->value;
+        $oldTableName = $call->getArgs()[0]->value->value;
+        $newTableName = $call->getArgs()[1]->value->value;
 
         if (! isset($this->tables[$oldTableName])) {
             return;

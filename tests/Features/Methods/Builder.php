@@ -8,7 +8,6 @@ use App\User;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
-use stdClass;
 
 \Illuminate\Database\Eloquent\Builder::macro('globalCustomMacro', function (string $arg): string {
     return $arg;
@@ -56,7 +55,7 @@ class Builder
             ->toBase();
     }
 
-    public function testQueryBuilderChainStartedWithGetQueryReturnsStdClass(): ?stdClass
+    public function testQueryBuilderChainStartedWithGetQueryReturnsObject(): ?object
     {
         return User::getQuery()
             ->select('some_model.created')

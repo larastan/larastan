@@ -33,7 +33,7 @@ final class RedirectExtension implements DynamicFunctionReturnTypeExtension
         FuncCall $functionCall,
         Scope $scope
     ): Type {
-        if (count($functionCall->args) === 0) {
+        if (count($functionCall->getArgs()) === 0) {
             return new ObjectType(\Illuminate\Routing\Redirector::class);
         }
 

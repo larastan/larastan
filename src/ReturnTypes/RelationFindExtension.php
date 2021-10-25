@@ -78,7 +78,7 @@ final class RelationFindExtension implements DynamicMethodReturnTypeExtension
         /** @var ObjectType $modelType */
         $modelType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TRelatedModel');
 
-        $argType = $scope->getType($methodCall->args[0]->value);
+        $argType = $scope->getType($methodCall->getArgs()[0]->value);
 
         $returnType = $methodReflection->getVariants()[0]->getReturnType();
 

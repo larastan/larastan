@@ -7,10 +7,8 @@ namespace NunoMaduro\Larastan\Methods;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Analyser\OutOfClassScope;
-use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
@@ -25,10 +23,8 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeWithClassName;
 
-final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
+final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflectionExtension
 {
-    use Concerns\HasBroker;
-
     /** @var array<string, MethodReflection> */
     private $cache = [];
 

@@ -39,7 +39,7 @@ class ModelFactoryMethodsClassReflectionExtension implements MethodsClassReflect
 
         $parent = $classReflection->getParentClass();
 
-        if ($parent === false) {
+        if ($parent === null) {
             return false;
         }
 

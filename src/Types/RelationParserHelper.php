@@ -9,7 +9,7 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\NodeFinder;
 use PHPStan\Analyser\ScopeContext;
 use PHPStan\Analyser\ScopeFactory;
-use PHPStan\Parser\CachedParser;
+use PHPStan\Parser\Parser;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\Constant\ConstantStringType;
@@ -19,7 +19,7 @@ use PHPStan\Type\ObjectType;
 
 class RelationParserHelper
 {
-    /** @var CachedParser */
+    /** @var Parser */
     private $parser;
 
     /** @var ScopeFactory */
@@ -28,7 +28,7 @@ class RelationParserHelper
     /** @var ReflectionProvider */
     private $reflectionProvider;
 
-    public function __construct(CachedParser $parser, ScopeFactory $scopeFactory, ReflectionProvider $reflectionProvider)
+    public function __construct(Parser $parser, ScopeFactory $scopeFactory, ReflectionProvider $reflectionProvider)
     {
         $this->parser = $parser;
         $this->scopeFactory = $scopeFactory;
@@ -70,7 +70,7 @@ class RelationParserHelper
             $methodCall = $methodCall->var;
         }
 
-        if (count($methodCall->args) < 1) {
+        if (count($methodCall->getArgs()) < 1) {
             return null;
         }
 
@@ -85,7 +85,7 @@ class RelationParserHelper
             ->enterClass($methodReflection->getDeclaringClass())
             ->enterClassMethod($relationMethod, TemplateTypeMap::createEmpty(), [], null, null, null, false, false, false);
 
-        $argType = $methodScope->getType($methodCall->args[0]->value);
+        $argType = $methodScope->getType($methodCall->getArgs()[0]->value);
         $returnClass = null;
 
         if ($argType instanceof ConstantStringType) {

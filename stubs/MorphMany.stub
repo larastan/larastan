@@ -9,7 +9,7 @@ namespace Illuminate\Database\Eloquent\Relations;
 class MorphMany extends MorphOneOrMany
 {
     /**
-     * @param array<string, mixed> $attributes
+     * @param array<model-property<TRelatedModel>, mixed> $attributes
      *
      * @phpstan-return TRelatedModel
      */
