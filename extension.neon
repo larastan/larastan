@@ -121,11 +121,6 @@ services:
             - phpstan.broker.propertiesClassReflectionExtension
 
     -
-        class: NunoMaduro\Larastan\Properties\Extension
-        tags:
-            - phpstan.broker.propertiesClassReflectionExtension
-
-    -
         class: NunoMaduro\Larastan\Properties\HigherOrderCollectionProxyPropertyExtension
         tags:
             - phpstan.broker.propertiesClassReflectionExtension
