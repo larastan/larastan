@@ -26,9 +26,8 @@ use PHPStan\Type\UnionType;
 /**
  * @internal
  */
-final class ModelRelationsExtension implements PropertiesClassReflectionExtension, BrokerAwareExtension
+final class ModelRelationsExtension implements PropertiesClassReflectionExtension
 {
-    use Concerns\HasBroker;
     use Concerns\HasContainer;
 
     /** @var RelationParserHelper */

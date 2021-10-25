@@ -25,10 +25,8 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeWithClassName;
 
-final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflectionExtension, BrokerAwareExtension
+final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflectionExtension
 {
-    use Concerns\HasBroker;
-
     /** @var array<string, MethodReflection> */
     private $cache = [];
 
