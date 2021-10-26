@@ -37,7 +37,7 @@ final class ApplicationResolver
             self::$composer = json_decode((string) file_get_contents($composerFile), true);
             $namespace = (string) key(self::$composer['autoload']['psr-4']);
             $vendorDir = self::$composer['config']['vendor-dir'] ?? dirname($composerFile).DIRECTORY_SEPARATOR.'vendor';
-            $serviceProviders = array_values(array_filter(self::getProjectClasses($namespace, $vendorDir), static function (string $class) use (
+            $serviceProviders = array_values(array_filter(self::getProjectClasses($namespace, $vendorDir), static function ($class) use (
                 $namespace
             ) {
                 /** @var class-string $class */

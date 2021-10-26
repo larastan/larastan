@@ -297,6 +297,11 @@ services:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
 
     -
+        class: NunoMaduro\Larastan\ReturnTypes\CollectionDynamicReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
         class: NunoMaduro\Larastan\Types\AbortIfFunctionTypeSpecifyingExtension
         tags:
             - phpstan.typeSpecifier.functionTypeSpecifyingExtension
