@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [0.7.15] - 2021-10-26
+
+### Fixed
+
+- Removed tags from conditional rules.
+
 ## [0.7.14] - 2021-10-25
 
 ### Fixed
@@ -659,7 +665,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.14...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.15...HEAD
+[0.7.15]: https://github.com/nunomaduro/larastan/compare/v0.7.14...0.7.15
 [0.7.14]: https://github.com/nunomaduro/larastan/compare/v0.7.13...0.7.14
 [0.7.13]: https://github.com/nunomaduro/larastan/compare/v0.7.12...0.7.13
 [0.7.12]: https://github.com/nunomaduro/larastan/compare/v0.7.11...0.7.12
