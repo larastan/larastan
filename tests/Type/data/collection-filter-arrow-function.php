@@ -2,7 +2,6 @@
 
 namespace CollectionFilter;
 
-use App\Account;
 use App\User;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
