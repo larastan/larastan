@@ -10,7 +10,6 @@ use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Return_;
-use PHPStan\Analyser\MutatingScope;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
@@ -79,7 +78,7 @@ class CollectionDynamicReturnTypeExtension implements DynamicMethodReturnTypeExt
         }
 
         if ($var !== null && $expr !== null) {
-            if (!$var instanceof Variable || !is_string($var->name)) {
+            if (! $var instanceof Variable || ! is_string($var->name)) {
                 throw new \PHPStan\ShouldNotHappenException();
             }
 

@@ -11,7 +11,7 @@ class CollectionDynamicReturnTypeExtensionTest extends \PHPStan\Testing\TypeInfe
      */
     public function dataFileAsserts(): iterable
     {
-        yield from $this->gatherAssertTypes(__DIR__ . '/data/collection-filter.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/collection-filter.php');
     }
 
     /**
@@ -21,13 +21,12 @@ class CollectionDynamicReturnTypeExtensionTest extends \PHPStan\Testing\TypeInfe
         string $assertType,
         string $file,
         ...$args
-    ): void
-    {
+    ): void {
         $this->assertFileAsserts($assertType, $file, ...$args);
     }
 
     public static function getAdditionalConfigFiles(): array
     {
-        return [__DIR__ . '/../../extension.neon'];
+        return [__DIR__.'/../../extension.neon'];
     }
 }
