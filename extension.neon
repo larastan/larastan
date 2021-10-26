@@ -360,31 +360,21 @@ services:
 
     -
         class: NunoMaduro\Larastan\Rules\OctaneCompatibilityRule
-        tags:
-            - phpstan.rules.rule
 
     -
         class: NunoMaduro\Larastan\Rules\NoModelMakeRule
-        tags:
-            - phpstan.rules.rule
 
     -
         class: NunoMaduro\Larastan\Rules\NoUnnecessaryCollectionCallRule
         arguments:
             onlyMethods: %noUnnecessaryCollectionCallOnly%
             excludeMethods: %noUnnecessaryCollectionCallExcept%
-        tags:
-            - phpstan.rules.rule
 
     -
         class: NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertyRule
-        tags:
-            - phpstan.rules.rule
 
     -
         class: NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertyStaticCallRule
-        tags:
-            - phpstan.rules.rule
 
     -
         class: NunoMaduro\Larastan\Types\GenericEloquentBuilderTypeNodeResolverExtension
