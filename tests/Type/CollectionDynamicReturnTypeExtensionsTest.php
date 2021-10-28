@@ -11,9 +11,9 @@ class CollectionDynamicReturnTypeExtensionsTest extends \PHPStan\Testing\TypeInf
      */
     public function dataFileAsserts(): iterable
     {
-        yield from $this->gatherAssertTypes(__DIR__ . '/data/collection-helper.php');
-        yield from $this->gatherAssertTypes(__DIR__ . '/data/collection-make-static.php');
-        yield from $this->gatherAssertTypes(__DIR__ . '/data/collection-stubs.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/collection-helper.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/collection-make-static.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/collection-stubs.php');
     }
 
     /**
@@ -23,13 +23,12 @@ class CollectionDynamicReturnTypeExtensionsTest extends \PHPStan\Testing\TypeInf
         string $assertType,
         string $file,
         ...$args
-    ): void
-    {
+    ): void {
         $this->assertFileAsserts($assertType, $file, ...$args);
     }
 
     public static function getAdditionalConfigFiles(): array
     {
-        return [__DIR__ . '/../../extension.neon'];
+        return [__DIR__.'/../../extension.neon'];
     }
 }

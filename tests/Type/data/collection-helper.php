@@ -17,6 +17,8 @@ assertType('Illuminate\Support\Collection<int, int>', collect([1, 2, 3]));
 assertType('Illuminate\Support\Collection<int, string>', collect(['foo', 'bar', 'baz']));
 assertType('Illuminate\Support\Collection<int, float>', collect([1.0, 2.0, 3.0]));
 assertType('Illuminate\Support\Collection<int, float|int|string>', collect([1, 'foo', 1.0]));
+assertType("Illuminate\Support\Collection<int, non-empty-array<int, string>>", collect([['a', 'b', 'c']]));
+assertType("Illuminate\Support\Collection<int, non-empty-array<int, string>>", collect([['a', 'b', 'c']])->push(array_fill(0, 3, 'x')));
 
 /**  @phpstan-param EloquentCollection<int> $eloquentCollection */
 function eloquentCollectionInteger(EloquentCollection $eloquentCollection): void
@@ -29,7 +31,6 @@ function eloquentCollectionUser(EloquentCollection $eloquentCollection): void
 {
     assertType('Illuminate\Support\Collection<int, App\User>', collect($eloquentCollection));
 }
-
 
 /**
  * @phpstan-param \Traversable<int, int> $foo
