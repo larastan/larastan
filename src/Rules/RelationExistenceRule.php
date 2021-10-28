@@ -38,7 +38,8 @@ class RelationExistenceRule implements Rule
 
     /**
      * @inheritDoc
-     * @param MethodCall $node
+     *
+     * @param  MethodCall  $node
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -55,7 +56,7 @@ class RelationExistenceRule implements Rule
             'orWhereHas',
             'whereDoesntHave',
             'orWhereDoesntHave',
-            ],
+        ],
             true)
         ) {
             return [];
@@ -86,7 +87,7 @@ class RelationExistenceRule implements Rule
 
             if (! $modelReflection->hasMethod($relationName)) {
                 return [
-                    $this->getRuleError($relationName, $modelReflection, $node)
+                    $this->getRuleError($relationName, $modelReflection, $node),
                 ];
             }
 
@@ -94,7 +95,7 @@ class RelationExistenceRule implements Rule
 
             if (! (new ObjectType(Relation::class))->isSuperTypeOf(ParametersAcceptorSelector::selectSingle($relationMethod->getVariants())->getReturnType())->yes()) {
                 return [
-                    $this->getRuleError($relationName, $modelReflection, $node)
+                    $this->getRuleError($relationName, $modelReflection, $node),
                 ];
             }
 
@@ -116,6 +117,7 @@ class RelationExistenceRule implements Rule
 
                 if ($modelReflection === null) {
                     dd('ERROR');
+
                     return [];
                 }
 

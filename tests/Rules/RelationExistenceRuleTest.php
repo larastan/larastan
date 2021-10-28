@@ -18,7 +18,7 @@ class RelationExistenceRuleTest extends RuleTestCase
 
     public function testRule(): void
     {
-        $this->analyse([__DIR__ . '/Data/relation-existence-rule.php'], [
+        $this->analyse([__DIR__.'/Data/relation-existence-rule.php'], [
             [
                 'Relation \'foo\' is not found in App\User model.',
                 5,
@@ -150,10 +150,10 @@ class RelationExistenceRuleTest extends RuleTestCase
         ]);
     }
 
-    public static function getAdditionalConfigFiles() : array
+    public static function getAdditionalConfigFiles(): array
     {
         return [
-            __DIR__ . '/phpstan-rules.neon',
+            __DIR__.'/phpstan-rules.neon',
         ];
     }
 }
