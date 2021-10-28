@@ -12,6 +12,7 @@ class CollectionDynamicReturnTypeExtensionsTest extends \PHPStan\Testing\TypeInf
     public function dataFileAsserts(): iterable
     {
         yield from $this->gatherAssertTypes(__DIR__ . '/data/collection-helper.php');
+        yield from $this->gatherAssertTypes(__DIR__ . '/data/collection-make-static.php');
     }
 
     /**
