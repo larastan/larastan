@@ -6,14 +6,14 @@ namespace NunoMaduro\Larastan\ReturnTypes;
 
 use Illuminate\Support\Collection;
 use NunoMaduro\Larastan\Support\CollectionHelper;
-use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
-use PHPStan\Type\DynamicMethodReturnTypeExtension;
+use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\Type;
 
-class CollectionExtension implements DynamicMethodReturnTypeExtension
+class CollectionMakeDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
 {
     /**
      * @var CollectionHelper
@@ -30,14 +30,14 @@ class CollectionExtension implements DynamicMethodReturnTypeExtension
         return Collection::class;
     }
 
-    public function isMethodSupported(MethodReflection $methodReflection): bool
+    public function isStaticMethodSupported(MethodReflection $methodReflection): bool
     {
         return $methodReflection->getName() === 'make';
     }
 
-    public function getTypeFromMethodCall(
+    public function getTypeFromStaticMethodCall(
         MethodReflection $methodReflection,
-        MethodCall $methodCall,
+        StaticCall $methodCall,
         Scope $scope
     ): Type {
         if (count($methodCall->getArgs()) < 1) {
