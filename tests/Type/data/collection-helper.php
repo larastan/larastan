@@ -32,7 +32,6 @@ function eloquentCollectionUser(EloquentCollection $eloquentCollection): void
     assertType('Illuminate\Support\Collection<int, App\User>', collect($eloquentCollection));
 }
 
-
 /**
  * @phpstan-param \Traversable<int, int> $foo
  * @phpstan-return Collection<int, int>
