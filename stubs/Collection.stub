@@ -70,10 +70,24 @@ class Collection implements \ArrayAccess, Enumerable
     public function map($callable) {}
 
     /**
-     * @param callable(TValue, TKey): array<mixed> $callback
-     * @return static<mixed, static<mixed>>
+     * Run a grouping map over the items.
+     *
+     * The callback should return an associative array with a single key/value pair.
+     *
+     * @template TMapToGroupsKey of array-key
+     * @template TMapToGroupsValue
+     *
+     * @param  callable(TValue, TKey): array<TMapToGroupsKey, TMapToGroupsValue>  $callback
+     * @return static<TMapToGroupsKey, static<int, TMapToGroupsValue>>
      */
     public function mapToGroups(callable $callback) {}
+
+    /**
+     * @param array<mixed>|string|callable(TValue, TKey): mixed $groupBy
+     * @param bool $preserveKeys
+     * @return static<int, static<mixed>>
+     */
+    public function groupBy($groupBy, $preserveKeys = false);
 
     /**
      * @template TClass
