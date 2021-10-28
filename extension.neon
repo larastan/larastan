@@ -408,6 +408,16 @@ services:
         class: NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertiesRuleHelper
 
     -
+        class: NunoMaduro\Larastan\Rules\ModelRuleHelper
+
+    -
         class: NunoMaduro\Larastan\Methods\BuilderHelper
         arguments:
             checkProperties: %checkModelProperties%
+
+    -
+        class: NunoMaduro\Larastan\Rules\RelationExistenceRule
+        tags:
+            - phpstan.rule
+rules:
+    - NunoMaduro\Larastan\Rules\RelationExistenceRule
