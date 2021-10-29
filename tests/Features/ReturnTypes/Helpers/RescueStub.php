@@ -6,6 +6,7 @@ namespace Tests\Features\ReturnTypes\Helpers;
 
 use Exception;
 use function PHPStan\Testing\assertType;
+use Throwable;
 
 class RescueStub
 {
@@ -50,7 +51,22 @@ class RescueStub
         assertType('int|string', $rescued);
     }
 
-    public function testRetryWithoutReporting(): void
+    public function testRescueWithClosureDefaultThrowable(): void
+    {
+        $rescued = rescue(function () {
+            if (mt_rand(0, 1)) {
+                throw new Exception();
+            }
+
+            return 'ok';
+        }, function (Throwable $e) {
+            return 0;
+        });
+
+        assertType('int|string', $rescued);
+    }
+
+    public function testRescueWithoutReporting(): void
     {
         $rescued = rescue(function () {
             if (mt_rand(0, 1)) {

@@ -5,7 +5,7 @@
  * @template TDefault
  *
  * @param callable(): TValue $callback
- * @param TDefault|(callable(): TDefault) $rescue
+ * @param TDefault|(callable(\Throwable): TDefault) $rescue
  * @param bool $report
  * @return TValue|TDefault
  */
