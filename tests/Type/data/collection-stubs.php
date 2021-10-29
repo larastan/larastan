@@ -38,4 +38,5 @@ assertType(
         return $user->accounts;
     })
 );
-assertType('Illuminate\Database\Eloquent\Collection<App\User>', $collection->tap(function ($collection): void {}));
+assertType('Illuminate\Database\Eloquent\Collection<App\User>', $collection->tap(function ($collection): void {
+}));
