@@ -12,5 +12,5 @@ assertType('Illuminate\Support\Collection<int, int<3, max>>', collect([1, 2, 3, 
 /** @param EloquentCollection<User> $foo */
 function bar(Collection $foo): void
 {
-    assertType("Illuminate\Database\Eloquent\Collection<int, App\User>", $foo->filter(fn (User $user) => ! $user->blocked));
+    assertType("Illuminate\Database\Eloquent\Collection<App\User>", $foo->filter(fn (User $user) => ! $user->blocked));
 }

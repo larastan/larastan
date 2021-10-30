@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Enumerable;
 use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\Closure;
@@ -21,11 +22,12 @@ use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\NullType;
+use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\UnionType;
 
-class CollectionDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
+class CollectionFilterDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
     public function getClass(): string
     {
@@ -58,7 +60,13 @@ class CollectionDynamicReturnTypeExtension implements DynamicMethodReturnTypeExt
         if (count($methodCall->getArgs()) < 1) {
             $falseyTypes = $this->getFalseyTypes();
 
-            return new GenericObjectType($calledOnType->getClassName(), [$keyType, TypeCombinator::remove($valueType, $falseyTypes)]);
+            $nonFalseyTypes = TypeCombinator::remove($valueType, $falseyTypes);
+
+            if ((new ObjectType(Collection::class))->isSuperTypeOf($calledOnType)->yes()) {
+                return new GenericObjectType($calledOnType->getClassName(), [$nonFalseyTypes]);
+            }
+
+            return new GenericObjectType($calledOnType->getClassName(), [$keyType, $nonFalseyTypes]);
         }
 
         $callbackArg = $methodCall->getArgs()[0]->value;
@@ -88,6 +96,10 @@ class CollectionDynamicReturnTypeExtension implements DynamicMethodReturnTypeExt
             $scope = $scope->assignVariable($itemVariableName, $valueType);
             $scope = $scope->filterByTruthyValue($expr);
             $valueType = $scope->getVariableType($itemVariableName);
+        }
+
+        if ((new ObjectType(Collection::class))->isSuperTypeOf($calledOnType)->yes()) {
+            return new GenericObjectType($calledOnType->getClassName(), [$valueType]);
         }
 
         return new GenericObjectType($calledOnType->getClassName(), [$keyType, $valueType]);

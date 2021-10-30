@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use function PHPStan\Testing\assertType;
 
+/** @var User $user */
+
 assertType('Illuminate\Support\Collection<int, non-empty-string>', collect(['foo', null, '', 'bar', null])->filter());
 
 /** @param Collection<int, mixed> $foo */
@@ -43,7 +45,30 @@ assertType('Illuminate\Support\Collection<int, int<3, max>>', collect([1, 2, 3, 
 /** @param EloquentCollection<User> $foo */
 function bar(Collection $foo): void
 {
-    assertType("Illuminate\Database\Eloquent\Collection<int, App\User>", $foo->filter(function (User $user) {
+    assertType("Illuminate\Database\Eloquent\Collection<App\User>", $foo->filter(function (User $user) {
         return ! $user->blocked;
     }));
+}
+
+$accounts = $user->accounts()->active()->get();
+assertType('App\AccountCollection<App\Account>', $accounts);
+
+assertType('App\AccountCollection<App\Account>', $accounts->filter(function ($account) {
+    return \CollectionStubs\dummyFilter($account);
+}));
+
+$accounts->filter(function ($account) {
+    return dummyFilter($account);
+})
+->map(function ($account) {
+    assertType('App\Account', $account);
+});
+
+function dummyFilter($value)
+{
+    if ($value instanceof User) {
+        return true;
+    }
+
+    return random_int(0, 1) > 1;
 }
