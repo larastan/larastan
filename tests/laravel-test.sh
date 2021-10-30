@@ -31,8 +31,10 @@ echo "Install Lumen"
 composer create-project --quiet --prefer-dist "laravel/lumen" ../lumen
 cd ../lumen/
 
-echo "Fix types in User.php"
-sed -i -e 's#@var array#@var string[]#' app/Models/User.php
+if [ -f app/Models/User.php ]; then
+    echo "Fix types in User.php"
+    sed -i -e 's#@var array#@var string[]#' app/Models/User.php
+fi
 
 echo "Add package from source"
 sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan", "options": { "symlink": false }} ],|' -i composer.json
