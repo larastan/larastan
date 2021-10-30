@@ -27,45 +27,48 @@ cd -
 echo "Test Laravel from other working directories"
 ../laravel/vendor/bin/phpstan analyse ../laravel/app --level=5 -c ../laravel/vendor/nunomaduro/larastan/extension.neon
 
-#echo "Install Lumen"
-#composer create-project --quiet --prefer-dist "laravel/lumen" ../lumen
-#cd ../lumen/
-#
-#echo "Add package from source"
-#sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan", "options": { "symlink": false }} ],|' -i composer.json
-#composer require --dev "nunomaduro/larastan:*"
-#
-#echo "Fix Handler::render return type"
-#sed -e 's/@return \\Illuminate\\Http\\Response|\\Illuminate\\Http\\JsonResponse$/@return \\Symfony\\Component\\HttpFoundation\\Response/' \
-#    -i app/Exceptions/Handler.php
-#
-#echo "Add Larastan to Lumen"
-#cat <<"EOF" | patch -p 0
-#--- bootstrap/app.php     2019-02-15 12:31:48.469773495 +0000
-#+++ bootstrap/app.php     2019-02-15 12:27:43.358369317 +0000
-#@@ -23,6 +23,9 @@
-#     dirname(__DIR__)
-# );
-#
-#+$app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');
-#+$app->configure('view');
-#+
-# // $app->withFacades();
-#
-# // $app->withEloquent();
-#@@ -78,6 +80,7 @@
-# |
-# */
-#
-#+
-# // $app->register(App\Providers\AppServiceProvider::class);
-# // $app->register(App\Providers\AuthServiceProvider::class);
-# // $app->register(App\Providers\EventServiceProvider::class);
-#EOF
-#
-#echo "Test Lumen"
-#vendor/bin/phpstan analyse app --level=5 -c vendor/nunomaduro/larastan/extension.neon
-#cd -
-#
-#echo "Test Lumen from other working directories"
-#../lumen/vendor/bin/phpstan analyse ../lumen/app --level=5 -c ../lumen/vendor/nunomaduro/larastan/extension.neon
+echo "Install Lumen"
+composer create-project --quiet --prefer-dist "laravel/lumen" ../lumen
+cd ../lumen/
+
+echo "Fix types in User.php"
+sed -i -e 's#@var array#@var string[]#' app/Models/User.php
+
+echo "Add package from source"
+sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan", "options": { "symlink": false }} ],|' -i composer.json
+composer require --dev "nunomaduro/larastan:*"
+
+echo "Fix Handler::render return type"
+sed -e 's/@return \\Illuminate\\Http\\Response|\\Illuminate\\Http\\JsonResponse$/@return \\Symfony\\Component\\HttpFoundation\\Response/' \
+    -i app/Exceptions/Handler.php
+
+echo "Add Larastan to Lumen"
+cat <<"EOF" | patch -p 0
+--- bootstrap/app.php     2019-02-15 12:31:48.469773495 +0000
++++ bootstrap/app.php     2019-02-15 12:27:43.358369317 +0000
+@@ -23,6 +23,9 @@
+     dirname(__DIR__)
+ );
+
++$app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');
++$app->configure('view');
++
+ // $app->withFacades();
+
+ // $app->withEloquent();
+@@ -78,6 +80,7 @@
+ |
+ */
+
++
+ // $app->register(App\Providers\AppServiceProvider::class);
+ // $app->register(App\Providers\AuthServiceProvider::class);
+ // $app->register(App\Providers\EventServiceProvider::class);
+EOF
+
+echo "Test Lumen"
+vendor/bin/phpstan analyse app --level=5 -c vendor/nunomaduro/larastan/extension.neon
+cd -
+
+echo "Test Lumen from other working directories"
+../lumen/vendor/bin/phpstan analyse ../lumen/app --level=5 -c ../lumen/vendor/nunomaduro/larastan/extension.neon
