@@ -22,6 +22,7 @@ class CheckJobDispatchArgumentTypesCompatibleWithClassConstructorRuleTest extend
     protected function getRule(): Rule
     {
         $broker = $this->createReflectionProvider();
+
         return new CheckJobDispatchArgumentTypesCompatibleWithClassConstructorRule(
             $broker,
             new FunctionCallParametersCheck(new RuleLevelHelper($broker, true, false, true, false), new NullsafeCheck(), new PhpVersion(80000), new UnresolvableTypeHelper(), true, true, true, true)
@@ -30,7 +31,7 @@ class CheckJobDispatchArgumentTypesCompatibleWithClassConstructorRuleTest extend
 
     public function testRule(): void
     {
-        $this->analyse([__DIR__ . '/Data/job-dispatch.php'], [
+        $this->analyse([__DIR__.'/Data/job-dispatch.php'], [
             ['Job class Tests\Rules\Data\LaravelJob constructor invoked with 0 parameters in Tests\Rules\Data\LaravelJob::dispatch(), 2 required.', 5],
             ['Job class Tests\Rules\Data\LaravelJob constructor invoked with 0 parameters in Tests\Rules\Data\LaravelJob::dispatchSync(), 2 required.', 6],
             ['Job class Tests\Rules\Data\LaravelJob constructor invoked with 0 parameters in Tests\Rules\Data\LaravelJob::dispatchNow(), 2 required.', 7],

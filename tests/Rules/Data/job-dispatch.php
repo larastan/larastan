@@ -24,7 +24,7 @@ LaravelJob::dispatchAfterResponse(1, 'foo');
 LaravelJob::dispatchAfterResponse(true, false);
 
 LaravelJob::dispatchIf(true, 1, 'foo');
-LaravelJob::dispatchUnless( true, 1, 1);
+LaravelJob::dispatchUnless(true, 1, 1);
 
 LaravelJobWithoutConstructor::dispatch();
 LaravelJobWithoutConstructor::dispatch('foo');
@@ -36,4 +36,4 @@ LaravelJobWithoutConstructor::dispatchAfterResponse();
 LaravelJobWithoutConstructor::dispatchAfterResponse('foo');
 
 LaravelJobWithoutConstructor::dispatchIf(true);
-LaravelJobWithoutConstructor::dispatchUnless( true, 'foo');
+LaravelJobWithoutConstructor::dispatchUnless(true, 'foo');

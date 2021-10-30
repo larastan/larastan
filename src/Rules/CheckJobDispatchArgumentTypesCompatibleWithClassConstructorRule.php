@@ -25,12 +25,10 @@ class CheckJobDispatchArgumentTypesCompatibleWithClassConstructorRule implements
     /** @var FunctionCallParametersCheck */
     private $check;
 
-
     public function __construct(
         ReflectionProvider $reflectionProvider,
         FunctionCallParametersCheck $check
-    )
-    {
+    ) {
         $this->reflectionProvider = $reflectionProvider;
         $this->check = $check;
     }
@@ -73,7 +71,7 @@ class CheckJobDispatchArgumentTypesCompatibleWithClassConstructorRule implements
 
         $jobClassReflection = $this->reflectionProvider->getClass($scope->resolveName($node->class));
 
-        if(! $jobClassReflection->hasTraitUse(Dispatchable::class)) {
+        if (! $jobClassReflection->hasTraitUse(Dispatchable::class)) {
             return [];
         }
 
@@ -129,19 +127,19 @@ class CheckJobDispatchArgumentTypesCompatibleWithClassConstructorRule implements
             $constructorReflection->getDeclaringClass()->isBuiltin(),
             $node,
             [
-                'Job class ' . $classDisplayName . ' constructor invoked with %d parameter in ' . $classDisplayName . '::' . $methodName . '(), %d required.',
-                'Job class ' . $classDisplayName . ' constructor invoked with %d parameters in ' . $classDisplayName . '::' . $methodName . '(), %d required.',
-                'Job class ' . $classDisplayName . ' constructor invoked with %d parameter in ' . $classDisplayName . '::' . $methodName . '(), at least %d required.',
-                'Job class ' . $classDisplayName . ' constructor invoked with %d parameters in ' . $classDisplayName . '::' . $methodName . '(), at least %d required.',
-                'Job class ' . $classDisplayName . ' constructor invoked with %d parameter in ' . $classDisplayName . '::' . $methodName . '(), %d-%d required.',
-                'Job class ' . $classDisplayName . ' constructor invoked with %d parameters in ' . $classDisplayName . '::' . $methodName . '(), %d-%d required.',
-                'Parameter %s of class ' . $classDisplayName . ' constructor expects %s in ' . $classDisplayName . '::' . $methodName . '(), %s given.',
+                'Job class '.$classDisplayName.' constructor invoked with %d parameter in '.$classDisplayName.'::'.$methodName.'(), %d required.',
+                'Job class '.$classDisplayName.' constructor invoked with %d parameters in '.$classDisplayName.'::'.$methodName.'(), %d required.',
+                'Job class '.$classDisplayName.' constructor invoked with %d parameter in '.$classDisplayName.'::'.$methodName.'(), at least %d required.',
+                'Job class '.$classDisplayName.' constructor invoked with %d parameters in '.$classDisplayName.'::'.$methodName.'(), at least %d required.',
+                'Job class '.$classDisplayName.' constructor invoked with %d parameter in '.$classDisplayName.'::'.$methodName.'(), %d-%d required.',
+                'Job class '.$classDisplayName.' constructor invoked with %d parameters in '.$classDisplayName.'::'.$methodName.'(), %d-%d required.',
+                'Parameter %s of class '.$classDisplayName.' constructor expects %s in '.$classDisplayName.'::'.$methodName.'(), %s given.',
                 '', // constructor does not have a return type
-                'Parameter %s of class ' . $classDisplayName . ' constructor is passed by reference, so it expects variables only',
-                'Unable to resolve the template type %s in instantiation of class ' . $classDisplayName,
-                'Missing parameter $%s in call to ' . $classDisplayName . ' constructor.',
-                'Unknown parameter $%s in call to ' . $classDisplayName . ' constructor.',
-                'Return type of call to ' . $classDisplayName . ' constructor contains unresolvable type.',
+                'Parameter %s of class '.$classDisplayName.' constructor is passed by reference, so it expects variables only',
+                'Unable to resolve the template type %s in instantiation of class '.$classDisplayName,
+                'Missing parameter $%s in call to '.$classDisplayName.' constructor.',
+                'Unknown parameter $%s in call to '.$classDisplayName.' constructor.',
+                'Return type of call to '.$classDisplayName.' constructor contains unresolvable type.',
             ]
         );
     }
