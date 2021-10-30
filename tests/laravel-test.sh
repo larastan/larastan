@@ -28,7 +28,7 @@ echo "Test Laravel from other working directories"
 ../laravel/vendor/bin/phpstan analyse ../laravel/app --level=5 -c ../laravel/vendor/nunomaduro/larastan/extension.neon
 
 echo "Install Lumen"
-composer create-project --quiet --prefer-dist "laravel/lumen" ../lumen
+composer create-project --quiet --prefer-dist --stability=dev "laravel/lumen:8.x" ../lumen
 cd ../lumen/
 
 echo "Add package from source"
