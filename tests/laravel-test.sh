@@ -28,12 +28,12 @@ echo "Test Laravel from other working directories"
 ../laravel/vendor/bin/phpstan analyse ../laravel/app --level=5 -c ../laravel/vendor/nunomaduro/larastan/extension.neon
 
 echo "Install Lumen"
-composer create-project --quiet --prefer-dist --stability=dev "laravel/lumen:8.x" ../lumen
+composer create-project --quiet --prefer-dist --stability=dev --ignore-platform-reqs "laravel/lumen:8.x" ../lumen
 cd ../lumen/
 
 echo "Add package from source"
 sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan", "options": { "symlink": false }} ],|' -i composer.json
-composer require --dev "nunomaduro/larastan:*"
+composer require --dev --ignore-platform-reqs "nunomaduro/larastan:*"
 
 echo "Fix Handler::render return type"
 sed -e 's/@return \\Illuminate\\Http\\Response|\\Illuminate\\Http\\JsonResponse$/@return \\Symfony\\Component\\HttpFoundation\\Response/' \
