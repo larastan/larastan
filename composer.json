@@ -38,9 +38,11 @@
             "App\\": "tests/Application/app/",
             "Laravel8\\": "tests/Laravel8Application/app/",
             "Database\\Factories\\": "tests/Laravel8Application/database/factories/",
-            "Database\\Migrations\\": "tests/Laravel8Application/database/migrations/",
-            "Tests\\": "tests/"
-        }
+            "Database\\Migrations\\": "tests/Laravel8Application/database/migrations/"
+        },
+      "classmap": [
+        "tests/"
+      ]
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
