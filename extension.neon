@@ -421,3 +421,4 @@ services:
             - phpstan.rule
 rules:
     - NunoMaduro\Larastan\Rules\RelationExistenceRule
+    - NunoMaduro\Larastan\Rules\CheckJobDispatchArgumentTypesCompatibleWithClassConstructorRule
