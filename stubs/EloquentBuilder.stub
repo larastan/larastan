@@ -19,7 +19,7 @@ class Builder
     /**
      * Register a new global scope.
      *
-     * @param  string  $identifier
+     * @param  non-empty-string  $identifier
      * @param  \Illuminate\Database\Eloquent\Scope|\Closure  $scope
      * @return static<TModelClass>
      */
@@ -28,7 +28,7 @@ class Builder
     /**
      * Remove a registered global scope.
      *
-     * @param  \Illuminate\Database\Eloquent\Scope|string  $scope
+     * @param  \Illuminate\Database\Eloquent\Scope|non-empty-string  $scope
      * @return static<TModelClass>
      */
     public function withoutGlobalScope($scope);
@@ -53,7 +53,7 @@ class Builder
     /**
      * Create a collection of models from a raw query.
      *
-     * @param  string  $query
+     * @param  non-empty-string  $query
      * @param  array<mixed>  $bindings
      * @phpstan-return \Illuminate\Database\Eloquent\Collection<TModelClass>
      */
@@ -100,7 +100,7 @@ class Builder
     /**
      * Execute the query and get the first result.
      *
-     * @param  array<model-property<TModelClass>|int, mixed>|string  $columns
+     * @param  array<model-property<TModelClass>|int, mixed>|non-empty-string  $columns
      * @return TModelClass|null
      */
     public function first($columns = ['*']);
@@ -177,7 +177,7 @@ class Builder
      * @param  \Closure|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
-     * @param  string  $boolean
+     * @param  non-empty-string  $boolean
      * @return static
      */
     public function where($column, $operator = null, $value = null, $boolean = 'and');
@@ -196,10 +196,10 @@ class Builder
      * Add a relationship count / exists condition to the query.
      *
      * @template TRelatedModel of Model
-     * @param  \Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel>|string  $relation
-     * @param  string  $operator
+     * @param  \Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel>|non-empty-string  $relation
+     * @param  non-empty-string  $operator
      * @param  int  $count
-     * @param  string  $boolean
+     * @param  non-empty-string  $boolean
      * @param  \Closure|null  $callback
      * @return static
      *
@@ -210,8 +210,8 @@ class Builder
     /**
      * Add a relationship count / exists condition to the query with an "or".
      *
-     * @param  string  $relation
-     * @param  string  $operator
+     * @param  non-empty-string  $relation
+     * @param  non-empty-string  $operator
      * @param  int  $count
      * @return static
      */
@@ -220,8 +220,8 @@ class Builder
     /**
      * Add a relationship count / exists condition to the query.
      *
-     * @param  string  $relation
-     * @param  string  $boolean
+     * @param  non-empty-string  $relation
+     * @param  non-empty-string  $boolean
      * @param  \Closure|null  $callback
      * @return static
      */
@@ -230,7 +230,7 @@ class Builder
     /**
      * Add a relationship count / exists condition to the query with an "or".
      *
-     * @param  string  $relation
+     * @param  non-empty-string  $relation
      * @return static
      */
     public function orDoesntHave($relation);
@@ -238,9 +238,9 @@ class Builder
     /**
      * Add a relationship count / exists condition to the query with where clauses.
      *
-     * @param  string  $relation
+     * @param  non-empty-string  $relation
      * @param  \Closure|null  $callback
-     * @param  string  $operator
+     * @param  non-empty-string  $operator
      * @param  int  $count
      * @return static
      */
@@ -249,9 +249,9 @@ class Builder
     /**
      * Add a relationship count / exists condition to the query with where clauses and an "or".
      *
-     * @param  string  $relation
+     * @param  non-empty-string  $relation
      * @param  \Closure|null  $callback
-     * @param  string  $operator
+     * @param  non-empty-string  $operator
      * @param  int  $count
      * @return static
      */
@@ -262,11 +262,11 @@ class Builder
      *
      * @template TRelatedModel of Model
      * @template TChildModel of Model
-     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
-     * @param  string|array<string>  $types
-     * @param  string  $operator
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|non-empty-string $relation
+     * @param  non-empty-string|array<string>  $types
+     * @param  non-empty-string  $operator
      * @param  int  $count
-     * @param  string  $boolean
+     * @param  non-empty-string  $boolean
      * @param  \Closure|null  $callback
      * @return static
      */
@@ -277,9 +277,9 @@ class Builder
      *
      * @template TRelatedModel of Model
      * @template TChildModel of Model
-     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
-     * @param  string|array<string>  $types
-     * @param  string  $operator
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|non-empty-string $relation
+     * @param  non-empty-string|array<string>  $types
+     * @param  non-empty-string  $operator
      * @param  int  $count
      * @return static
      */
@@ -290,9 +290,9 @@ class Builder
      *
      * @template TRelatedModel of Model
      * @template TChildModel of Model
-     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
-     * @param  string|array<string>  $types
-     * @param  string  $boolean
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|non-empty-string $relation
+     * @param  non-empty-string|array<string>  $types
+     * @param  non-empty-string  $boolean
      * @param  \Closure|null  $callback
      * @return static
      */
@@ -303,8 +303,8 @@ class Builder
      *
      * @template TRelatedModel of Model
      * @template TChildModel of Model
-     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
-     * @param  string|array<string>  $types
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|non-empty-string $relation
+     * @param  non-empty-string|array<string>  $types
      * @return static
      */
     public function orDoesntHaveMorph($relation, $types);
@@ -314,10 +314,10 @@ class Builder
      *
      * @template TRelatedModel of Model
      * @template TChildModel of Model
-     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
-     * @param  string|array<string>  $types
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|non-empty-string $relation
+     * @param  non-empty-string|array<string>  $types
      * @param  \Closure|null  $callback
-     * @param  string  $operator
+     * @param  non-empty-string  $operator
      * @param  int  $count
      * @return static
      */
@@ -328,10 +328,10 @@ class Builder
      *
      * @template TRelatedModel of Model
      * @template TChildModel of Model
-     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
-     * @param  string|array<string>  $types
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|non-empty-string $relation
+     * @param  non-empty-string|array<string>  $types
      * @param  \Closure|null  $callback
-     * @param  string  $operator
+     * @param  non-empty-string  $operator
      * @param  int  $count
      * @return static
      */
@@ -342,8 +342,8 @@ class Builder
      *
      * @template TRelatedModel of Model
      * @template TChildModel of Model
-     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
-     * @param  string|array<string>  $types
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|non-empty-string $relation
+     * @param  non-empty-string|array<string>  $types
      * @param  \Closure|null  $callback
      * @return static
      */
@@ -354,8 +354,8 @@ class Builder
      *
      * @template TRelatedModel of Model
      * @template TChildModel of Model
-     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
-     * @param  string|array<string>  $types
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|non-empty-string $relation
+     * @param  non-empty-string|array<string>  $types
      * @param  \Closure|null  $callback
      * @return static
      */
@@ -372,7 +372,7 @@ class Builder
     /**
      * Add a relationship count / exists condition to the query with where clauses and an "or".
      *
-     * @param  string  $relation
+     * @param  non-empty-string  $relation
      * @param  \Closure|null  $callback
      * @return static
      */
@@ -381,7 +381,7 @@ class Builder
     /**
      * Add a relationship count / exists condition to the query with where clauses.
      *
-     * @param  string  $relation
+     * @param  non-empty-string  $relation
      * @param  \Closure|null  $callback
      * @return static
      */
@@ -393,7 +393,7 @@ class Builder
      * @param  \Closure|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
-     * @param  string  $boolean
+     * @param  non-empty-string  $boolean
      * @phpstan-return TModelClass|null
      */
     public function firstWhere($column, $operator = null, $value = null, $boolean = 'and');
