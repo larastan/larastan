@@ -6,7 +6,6 @@ parameters:
         - stubs/EloquentCollection.stub
         - stubs/Factory.stub
         - stubs/Model.stub
-        - stubs/JsonResource.stub
         - stubs/Gate.stub
         - stubs/Relation.stub
         - stubs/BelongsTo.stub

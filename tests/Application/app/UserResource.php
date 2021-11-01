@@ -4,9 +4,7 @@ namespace App;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/**
- * @extends JsonResource<User>
- */
+/** @mixin \App\User */
 class UserResource extends JsonResource
 {
     /**

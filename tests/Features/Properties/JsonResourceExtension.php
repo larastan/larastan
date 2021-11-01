@@ -9,11 +9,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class JsonResourceExtension
 {
-    /**
-     * @test
-     *
-     * @return JsonResource<User>
-     */
     public function resources_proxy_to_underlying_model_type(): JsonResource
     {
         $user = new User();
@@ -25,7 +20,6 @@ class JsonResourceExtension
         return $resource;
     }
 
-    /** @test */
     public function resource_property_types_are_correct(): int
     {
         $user = new User();
