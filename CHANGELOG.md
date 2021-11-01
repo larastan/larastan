@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.0] - 2021-01-11
+
+### Added
+- Dynamic method return type extension for `Enumerable::filter` in https://github.com/nunomaduro/larastan/pull/981
+- New rule to check for relation existence  in https://github.com/nunomaduro/larastan/pull/985
+- `rescue` parameter of `rescue` function now accepts the `Throwable` by @sebdesign in https://github.com/nunomaduro/larastan/pull/989
+- New `CheckJobDispatchArgumentTypesCompatibleWithClassConstructorRule` rule in https://github.com/nunomaduro/larastan/pull/991
+- Added `non-empty-string` types in stubs. https://github.com/nunomaduro/larastan/commit/c5b81cfee07686e2ce0ea557f8e32f2f022d47eb
+
+### Fixed
+- PHPStan 1.0 compatibility in https://github.com/nunomaduro/larastan/pull/968
+
+### BC breaking changes
+- `JsonResource` class is no longer generic. You can remove `@template` tags from your resource classes and directly add `@mixin Model` tags to your resource classes. https://github.com/nunomaduro/larastan/commit/37f9ce80890a67a02b1d55bf79eb73604880c6b9
+
 ## [0.7.15] - 2021-10-26
 
 ### Fixed
@@ -665,7 +680,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v0.7.15...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/1.0.0...HEAD
+[1.0.0]: https://github.com/nunomaduro/larastan/compare/v0.7.15...1.0.0
 [0.7.15]: https://github.com/nunomaduro/larastan/compare/v0.7.14...0.7.15
 [0.7.14]: https://github.com/nunomaduro/larastan/compare/v0.7.13...0.7.14
 [0.7.13]: https://github.com/nunomaduro/larastan/compare/v0.7.12...0.7.13
