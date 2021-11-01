@@ -9,7 +9,7 @@ cd ../laravel/
 echo "Add package from source"
 sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan", "options": { "symlink": false }} ],|' -i composer.json
 # Work-around for conflicting psr/log versions
-composer require --dev --no-update "nunomaduro/larastan:*"
+composer require --dev --no-update "nunomaduro/larastan:*" "phpstan/extension-installer" "phpstan/phpstan-strict-rules"
 composer update
 
 echo "Fix https://github.com/laravel/framework/pull/23825"
@@ -38,7 +38,7 @@ fi
 
 echo "Add package from source"
 sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan", "options": { "symlink": false }} ],|' -i composer.json
-composer require --dev "nunomaduro/larastan:*"
+composer require --dev "nunomaduro/larastan:*" "phpstan/extension-installer" "phpstan/phpstan-strict-rules"
 
 echo "Fix Handler::render return type"
 sed -e 's/@return \\Illuminate\\Http\\Response|\\Illuminate\\Http\\JsonResponse$/@return \\Symfony\\Component\\HttpFoundation\\Response/' \
