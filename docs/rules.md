@@ -165,3 +165,71 @@ public function register()
 Will result in the following error:
 
 `Consider using bind method instead or pass a closure.`
+
+## RelationExistenceRule
+
+This rule will check if the given relations to some Eloquent builder methods exists. It also supports nested relations.
+
+Supported Eloquent builder methods are:
+- `has`
+- `orHas`
+- `doesntHave`
+- `orDoesntHave`
+- `whereHas`
+- `orWhereHas`
+- `whereDoesntHave`
+- `orWhereDoesntHave`
+
+This rule is not optional.
+
+### Examples
+
+For the following code:
+```php
+\App\User::query()->has('foo');
+\App\Post::query()->has('users.transactions.foo');
+```
+
+Larastan will report two errors:
+```
+Relation 'foo' is not found in App\User model.
+Relation 'foo' is not found in App\Transaction model.
+```
+## CheckJobDispatchArgumentTypesCompatibleWithClassConstructorRule
+
+This rule will check if your job dispatch argument types are compatible with the constructor of the job class.
+
+## Examples
+
+Given the following job:
+```php
+class ExampleJob implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    /** @var int */
+    protected $foo;
+    
+    /** @var string */
+    protected $bar;
+    
+    public function __construct(int $foo, string $bar)
+    {
+        $this->foo = $foo;
+        $this->bar = $bar;
+    }
+
+    // Rest of the job class
+}
+```
+dispatching the job with the following examples
+```php
+ExampleJob::dispatch(1);
+ExampleJob::dispatch('bar', 1);
+```
+will result in errors:
+```
+Job class ExampleJob constructor invoked with 1 parameter in ExampleJob::dispatch(), 2 required.
+Parameter #1 $foo of job class ExampleJob constructor expects int in ExampleJob::dispatch(), string given.
+Parameter #2 $bar of job class ExampleJob constructor expects string in ExampleJob::dispatch(), int given.
+```
