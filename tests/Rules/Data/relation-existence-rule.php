@@ -11,14 +11,14 @@ declare(strict_types=1);
 \App\User::query()->whereDoesntHave('foo');
 \App\User::query()->orWhereDoesntHave('foo');
 
-\App\User::group()->has('foo');
-\App\User::group()->orHas('foo');
-\App\User::group()->doesntHave('foo');
-\App\User::group()->orDoesntHave('foo');
-\App\User::group()->whereHas('foo');
-\App\User::group()->orWhereHas('foo');
-\App\User::group()->whereDoesntHave('foo');
-\App\User::group()->orWhereDoesntHave('foo');
+\App\User::first()->group()->has('foo');
+\App\User::first()->group()->orHas('foo');
+\App\User::first()->group()->doesntHave('foo');
+\App\User::first()->group()->orDoesntHave('foo');
+\App\User::first()->group()->whereHas('foo');
+\App\User::first()->group()->orWhereHas('foo');
+\App\User::first()->group()->whereDoesntHave('foo');
+\App\User::first()->group()->orWhereDoesntHave('foo');
 
 \App\User::query()->has('accounts.foo');
 \App\User::query()->orHas('accounts.foo');
