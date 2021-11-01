@@ -21,7 +21,7 @@ sed -e 's/string/string|void/' -i app/Http/Middleware/Authenticate.php
 sed '0,/}/s/}/}\nreturn;/' -i app/Http/Middleware/Authenticate.php
 
 echo "Test Laravel"
-vendor/bin/phpstan analyse app --level=5 -c vendor/nunomaduro/larastan/extension.neon
+vendor/bin/phpstan analyse app --level=5
 cd -
 
 echo "Test Laravel from other working directories"
@@ -69,7 +69,7 @@ cat <<"EOF" | patch -p 0
 EOF
 
 echo "Test Lumen"
-vendor/bin/phpstan analyse app --level=5 -c vendor/nunomaduro/larastan/extension.neon
+vendor/bin/phpstan analyse app --level=5
 cd -
 
 echo "Test Lumen from other working directories"
