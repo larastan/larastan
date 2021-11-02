@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Rules;
 
-use NunoMaduro\Larastan\Rules\CheckJobDispatchArgumentTypesCompatibleWithClassConstructorRule;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Foundation\Events\Dispatchable as EventDispatchable;
+use NunoMaduro\Larastan\Rules\CheckDispatchArgumentTypesCompatibleWithClassConstructorRule;
 use PHPStan\Php\PhpVersion;
 use PHPStan\Rules\FunctionCallParametersCheck;
 use PHPStan\Rules\NullsafeCheck;
@@ -13,9 +15,12 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleLevelHelper;
 use PHPStan\Testing\RuleTestCase;
 
-/** @extends RuleTestCase<CheckJobDispatchArgumentTypesCompatibleWithClassConstructorRule> */
-class CheckJobDispatchArgumentTypesCompatibleWithClassConstructorRuleTest extends RuleTestCase
+/** @extends RuleTestCase<CheckDispatchArgumentTypesCompatibleWithClassConstructorRule> */
+class CheckDispatchArgumentTypesCompatibleWithClassConstructorRuleTest extends RuleTestCase
 {
+    /** @var string */
+    private $dispatchableClass;
+
     /**
      * @inheritDoc
      */
@@ -23,14 +28,17 @@ class CheckJobDispatchArgumentTypesCompatibleWithClassConstructorRuleTest extend
     {
         $broker = $this->createReflectionProvider();
 
-        return new CheckJobDispatchArgumentTypesCompatibleWithClassConstructorRule(
+        return new CheckDispatchArgumentTypesCompatibleWithClassConstructorRule(
             $broker,
-            new FunctionCallParametersCheck(new RuleLevelHelper($broker, true, false, true, false), new NullsafeCheck(), new PhpVersion(80000), new UnresolvableTypeHelper(), true, true, true, true)
+            new FunctionCallParametersCheck(new RuleLevelHelper($broker, true, false, true, false), new NullsafeCheck(), new PhpVersion(80000), new UnresolvableTypeHelper(), true, true, true, true),
+            $this->dispatchableClass
         );
     }
 
-    public function testRule(): void
+    public function testJobDispatch(): void
     {
+        $this->dispatchableClass = Dispatchable::class;
+
         $this->analyse([__DIR__.'/Data/job-dispatch.php'], [
             ['Job class Tests\Rules\Data\LaravelJob constructor invoked with 0 parameters in Tests\Rules\Data\LaravelJob::dispatch(), 2 required.', 5],
             ['Job class Tests\Rules\Data\LaravelJob constructor invoked with 0 parameters in Tests\Rules\Data\LaravelJob::dispatchSync(), 2 required.', 6],
@@ -64,6 +72,25 @@ class CheckJobDispatchArgumentTypesCompatibleWithClassConstructorRuleTest extend
             ['Job class Tests\Rules\Data\LaravelJobWithoutConstructor does not have a constructor and must be dispatched without any parameters.', 34],
             ['Job class Tests\Rules\Data\LaravelJobWithoutConstructor does not have a constructor and must be dispatched without any parameters.', 36],
             ['Job class Tests\Rules\Data\LaravelJobWithoutConstructor does not have a constructor and must be dispatched without any parameters.', 39],
+        ]);
+    }
+
+    public function testEventDispatch(): void
+    {
+        $this->dispatchableClass = EventDispatchable::class;
+
+        $this->analyse([__DIR__.'/Data/event-dispatch.php'], [
+            ['Event class Tests\Rules\Data\LaravelEvent constructor invoked with 0 parameters in Tests\Rules\Data\LaravelEvent::dispatch(), 2 required.', 5],
+            ['Event class Tests\Rules\Data\LaravelEvent constructor invoked with 1 parameter in Tests\Rules\Data\LaravelEvent::dispatch(), 2 required.', 7],
+            ['Parameter #1 $foo of event class Tests\Rules\Data\LaravelEvent constructor expects string in Tests\Rules\Data\LaravelEvent::dispatch(), int given.', 8],
+            ['Parameter #2 $bar of event class Tests\Rules\Data\LaravelEvent constructor expects int in Tests\Rules\Data\LaravelEvent::dispatch(), string given.', 8],
+            ['Parameter #1 $foo of event class Tests\Rules\Data\LaravelEvent constructor expects string in Tests\Rules\Data\LaravelEvent::dispatch(), true given.', 9],
+            ['Parameter #2 $bar of event class Tests\Rules\Data\LaravelEvent constructor expects int in Tests\Rules\Data\LaravelEvent::dispatch(), false given.', 9],
+            ['Parameter #1 $foo of event class Tests\Rules\Data\LaravelEvent constructor expects string in Tests\Rules\Data\LaravelEvent::dispatchIf(), int given.', 11],
+            ['Parameter #2 $bar of event class Tests\Rules\Data\LaravelEvent constructor expects int in Tests\Rules\Data\LaravelEvent::dispatchIf(), string given.', 11],
+            ['Parameter #1 $foo of event class Tests\Rules\Data\LaravelEvent constructor expects string in Tests\Rules\Data\LaravelEvent::dispatchUnless(), int given.', 12],
+            ['Event class Tests\Rules\Data\LaravelEventWithoutConstructor does not have a constructor and must be dispatched without any parameters.', 15],
+            ['Event class Tests\Rules\Data\LaravelEventWithoutConstructor does not have a constructor and must be dispatched without any parameters.', 18],
         ]);
     }
 

@@ -418,6 +418,18 @@ services:
         class: NunoMaduro\Larastan\Rules\RelationExistenceRule
         tags:
             - phpstan.rule
+
+    -
+        class: NunoMaduro\Larastan\Rules\CheckDispatchArgumentTypesCompatibleWithClassConstructorRule
+        arguments:
+            dispatchableClass: Illuminate\Foundation\Bus\Dispatchable
+        tags:
+            - phpstan.rules.rule
+    -
+        class: NunoMaduro\Larastan\Rules\CheckDispatchArgumentTypesCompatibleWithClassConstructorRule
+        arguments:
+            dispatchableClass: Illuminate\Foundation\Events\Dispatchable
+        tags:
+            - phpstan.rules.rule
 rules:
     - NunoMaduro\Larastan\Rules\RelationExistenceRule
-    - NunoMaduro\Larastan\Rules\CheckJobDispatchArgumentTypesCompatibleWithClassConstructorRule

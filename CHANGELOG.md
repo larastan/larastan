@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+- Renamed `CheckJobDispatchArgumentTypesCompatibleWithClassConstructorRule` to `CheckDispatchArgumentTypesCompatibleWithClassConstructorRule`
+- `CheckDispatchArgumentTypesCompatibleWithClassConstructorRule` now checks for argument types compatibility with the class constructor for both Event and Job classes.
+
 ## [1.0.0] - 2021-01-11
 
 ### Added
