@@ -90,7 +90,7 @@ class CheckDispatchArgumentTypesCompatibleWithClassConstructorRuleTest extends R
             ['Parameter #2 $bar of event class Tests\Rules\Data\LaravelEvent constructor expects int in Tests\Rules\Data\LaravelEvent::dispatchIf(), string given.', 11],
             ['Parameter #1 $foo of event class Tests\Rules\Data\LaravelEvent constructor expects string in Tests\Rules\Data\LaravelEvent::dispatchUnless(), int given.', 12],
             ['Event class Tests\Rules\Data\LaravelEventWithoutConstructor does not have a constructor and must be dispatched without any parameters.', 15],
-            ['Event class Tests\Rules\Data\LaravelEventWithoutConstructor does not have a constructor and must be dispatched without any parameters.', 18]
+            ['Event class Tests\Rules\Data\LaravelEventWithoutConstructor does not have a constructor and must be dispatched without any parameters.', 18],
         ]);
     }
 
