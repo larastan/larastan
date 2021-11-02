@@ -195,7 +195,7 @@ Larastan will report two errors:
 Relation 'foo' is not found in App\User model.
 Relation 'foo' is not found in App\Transaction model.
 ```
-## CheckJobDispatchArgumentTypesCompatibleWithClassConstructorRule
+## CheckDispatchArgumentTypesCompatibleWithClassConstructorRule
 
 This rule will check if your job dispatch argument types are compatible with the constructor of the job class.
 
