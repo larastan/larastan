@@ -85,7 +85,7 @@ class Collection implements \ArrayAccess, Enumerable
     /**
      * @param array<mixed>|string|callable(TValue, TKey): mixed $groupBy
      * @param bool $preserveKeys
-     * @return static<int, static<mixed>>
+     * @return static<array-key, static<TKey, TValue>>
      */
     public function groupBy($groupBy, $preserveKeys = false);
 
