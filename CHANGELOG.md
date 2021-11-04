@@ -579,7 +579,7 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 
 ## [0.3.0] - 2018-10-04
 ### Added
-- Support for static analysis in Laravel Packages
+- Support for code analysis in Laravel Packages
 
 ## [0.2.12] - 2018-09-27
 ### Added
