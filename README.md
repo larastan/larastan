@@ -21,7 +21,7 @@ Larastan was created by [Can Vural](https://github.com/canvural) and [Nuno Madur
 - Supports most of [Laravel](https://laravel.com)'s **beautiful magic**
 - Discovers bugs in your code
 
-> While by definition, "static analysis" doesn't load any of your application's code. Larastan boots your application's container, so it can resolve types that are only possible to compute at runtime.
+> While by definition, "static analysis" doesn't load any of your application's code. Larastan boots your application's container, so it can resolve types that are only possible to compute at runtime. That's why we use the term "code analysis" instead of "static analysis".
 
 ## ✨ Getting Started In 3 Steps
 
@@ -118,11 +118,7 @@ A list of custom config parameters that you can use in your PHPStan config file 
 ## Errors To Ignore
 
 Some parts of Laravel are currently too magical for Larastan/PHPStan to understand.
-We listed common [errors to ignore](docs/errors-to-ignore.md), add them as needed.
-
-## Static Analysis
-
-This tool is a wrapper for PHPStan, which is by itself a [static analysis tool](https://en.wikipedia.org/wiki/Static_program_analysis). However, since Larastan loads some of the code it is analysing, this is not a static analysis tool.
+We listed common [errors to ignore](docs/errors-to-ignore.md), add them as needed
 
 ## 👊🏻 Contributing
 
