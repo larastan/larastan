@@ -21,6 +21,8 @@ Larastan was created by [Can Vural](https://github.com/canvural) and [Nuno Madur
 - Supports most of [Laravel](https://laravel.com)'s **beautiful magic**
 - Discovers bugs in your code without running it
 
+> While by definition, "static analysis" doesn't load any of your application's code. Larastan boots your application's container, so it can resolve types that are only possible to compute at runtime.
+
 ## ✨ Getting Started In 3 Steps
 
 > **Requires:**
