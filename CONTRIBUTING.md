@@ -31,7 +31,7 @@ Run all tests:
 
     composer test
 
-Static analysis:
+Code analysis:
 
     composer test:types
 

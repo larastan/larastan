@@ -15,11 +15,11 @@
 
 ## ⚗️ About Larastan
 
-Larastan was created by [Can Vural](https://github.com/canvural) and [Nuno Maduro](https://github.com/nunomaduro), got artwork designed by [@Caneco](http://github.com/caneco), is maintained by [Can Vural](https://github.com/canvural), [Nuno Maduro](https://github.com/nunomaduro), and [Viktor Szépe](https://github.com/szepeviktor), and is a [PHPStan](https://phpstan.org/) wrapper for Laravel. Larastan focuses on **finding errors in your code** without actually running it. It catches whole classes of bugs even **before you write tests** for the code.
+Larastan was created by [Can Vural](https://github.com/canvural) and [Nuno Maduro](https://github.com/nunomaduro), got artwork designed by [@Caneco](http://github.com/caneco), is maintained by [Can Vural](https://github.com/canvural), [Nuno Maduro](https://github.com/nunomaduro), and [Viktor Szépe](https://github.com/szepeviktor), and is a [PHPStan](https://phpstan.org/) wrapper for Laravel. Larastan focuses on **finding errors in your code**. It catches whole classes of bugs even **before you write tests** for the code.
 
 - Adds static typing to Laravel to improve developer productivity and **code quality**
 - Supports most of [Laravel](https://laravel.com)'s **beautiful magic**
-- Discovers bugs in your code without running it
+- Discovers bugs in your code
 
 > While by definition, "static analysis" doesn't load any of your application's code. Larastan boots your application's container, so it can resolve types that are only possible to compute at runtime.
 
@@ -119,6 +119,10 @@ A list of custom config parameters that you can use in your PHPStan config file 
 
 Some parts of Laravel are currently too magical for Larastan/PHPStan to understand.
 We listed common [errors to ignore](docs/errors-to-ignore.md), add them as needed.
+
+## Static Analysis
+
+This tool is a wrapper for PHPStan, which is by itself a [static analysis tool](https://en.wikipedia.org/wiki/Static_program_analysis). However, since Larastan loads some of the code it is analysing, this is not a static analysis tool.
 
 ## 👊🏻 Contributing
 
