@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * Fix `groupBy` Collection method signature
 * Renamed `CheckJobDispatchArgumentTypesCompatibleWithClassConstructorRule` to `CheckDispatchArgumentTypesCompatibleWithClassConstructorRule` by @canvural in https://github.com/nunomaduro/larastan/pull/1003
 * `CheckDispatchArgumentTypesCompatibleWithClassConstructorRule` now checks for argument types compatibility with the class constructor for both Event and Job classes. by @canvural in https://github.com/nunomaduro/larastan/pull/1003
+* Improved return type for Collection::first, last, get, pull when giving a  default value.
 
 ### Improvements
 * Clarified "static analysis" wording in docs and logo by @asgrim in https://github.com/nunomaduro/larastan/pull/1008
