@@ -6,11 +6,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-### Changed
-- Renamed `CheckJobDispatchArgumentTypesCompatibleWithClassConstructorRule` to `CheckDispatchArgumentTypesCompatibleWithClassConstructorRule`
-- `CheckDispatchArgumentTypesCompatibleWithClassConstructorRule` now checks for argument types compatibility with the class constructor for both Event and Job classes.
+## [1.0.1] - 2021-11-06
 
-## [1.0.0] - 2021-01-11
+### Changed
+* Fix `groupBy` Collection method signature
+* Renamed `CheckJobDispatchArgumentTypesCompatibleWithClassConstructorRule` to `CheckDispatchArgumentTypesCompatibleWithClassConstructorRule` by @canvural in https://github.com/nunomaduro/larastan/pull/1003
+* `CheckDispatchArgumentTypesCompatibleWithClassConstructorRule` now checks for argument types compatibility with the class constructor for both Event and Job classes. by @canvural in https://github.com/nunomaduro/larastan/pull/1003
+
+### Improvements
+* Clarified "static analysis" wording in docs and logo by @asgrim in https://github.com/nunomaduro/larastan/pull/1008
+
+## [1.0.0] - 2021-11-01
 
 ### Added
 - Dynamic method return type extension for `Enumerable::filter` in https://github.com/nunomaduro/larastan/pull/981
@@ -684,7 +690,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/1.0.0...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/1.0.1...HEAD
+[1.0.1]: https://github.com/nunomaduro/larastan/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/nunomaduro/larastan/compare/v0.7.15...1.0.0
 [0.7.15]: https://github.com/nunomaduro/larastan/compare/v0.7.14...0.7.15
 [0.7.14]: https://github.com/nunomaduro/larastan/compare/v0.7.13...0.7.14
