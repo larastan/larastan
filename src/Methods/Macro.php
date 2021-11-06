@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
+use function array_map;
 use Closure;
 use ErrorException;
 use Illuminate\Validation\ValidationException;
@@ -23,8 +24,6 @@ use ReflectionFunction;
 use ReflectionParameter;
 use ReflectionType;
 use stdClass;
-
-use function array_map;
 
 final class Macro implements MethodReflection
 {

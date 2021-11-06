@@ -39,7 +39,7 @@ class MacroMethodsClassReflectionExtensionTest extends PHPStanTestCase
      *
      * @dataProvider methodAndClassProvider
      */
-    function it_can_find_macros_on_a_class(string $class, string $methodName)
+    public function it_can_find_macros_on_a_class(string $class, string $methodName)
     {
         $requestClass = $this->reflectionProvider->getClass($class);
 
@@ -51,7 +51,7 @@ class MacroMethodsClassReflectionExtensionTest extends PHPStanTestCase
      *
      * @dataProvider methodAndThrowTypeProvider
      */
-    function it_can_set_throw_type_for_macros(string $class, string $methodName, string $exceptionClass)
+    public function it_can_set_throw_type_for_macros(string $class, string $methodName, string $exceptionClass)
     {
         $requestClass = $this->reflectionProvider->getClass($class);
 
