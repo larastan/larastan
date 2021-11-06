@@ -25,3 +25,5 @@ if ($app instanceof Application) {
 } elseif ($app instanceof LumenApplication) {
     $app->boot();
 }
+
+define('LARAVEL_VERSION', $app->version());
