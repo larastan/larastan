@@ -48,7 +48,7 @@ parameters:
     paths:
         - app
 
-    # The level 8 is the highest level
+    # The level 9 is the highest level
     level: 5
 
     ignoreErrors:
