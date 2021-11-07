@@ -112,6 +112,10 @@ services:
         class: NunoMaduro\Larastan\Methods\ModelFactoryMethodsClassReflectionExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
+    -
+        class: NunoMaduro\Larastan\Methods\RedirectResponseMethodsClassReflectionExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
 
     -
         class: NunoMaduro\Larastan\Properties\ModelAccessorExtension
