@@ -60,7 +60,6 @@ final class Kernel
                     Pipes\Facades::class,
                     Pipes\Managers::class,
                     Pipes\Auths::class,
-                    Pipes\RedirectResponseWiths::class,
                 ]
             )
             ->then(
