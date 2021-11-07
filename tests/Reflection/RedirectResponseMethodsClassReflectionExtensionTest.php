@@ -2,14 +2,11 @@
 
 namespace Reflection;
 
-use Generator;
 use Illuminate\Http\RedirectResponse;
 use NunoMaduro\Larastan\Methods\RedirectResponseMethodsClassReflectionExtension;
-use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Testing\PHPStanTestCase;
-use PHPStan\Type\MixedType;
 use PHPStan\Type\VerbosityLevel;
 
 class RedirectResponseMethodsClassReflectionExtensionTest extends PHPStanTestCase
