@@ -29,7 +29,7 @@ class Collection implements \ArrayAccess, Enumerable
 
     /**
      * @template TDefault
-     * @param    mixed  $key
+     * @param    TKey  $key
      * @param    TDefault  $default
      * @return   TValue|TDefault
      */
@@ -42,7 +42,7 @@ class Collection implements \ArrayAccess, Enumerable
 
     /**
      * @template TDefault
-     * @param    mixed  $key
+     * @param    TKey  $key
      * @param    TDefault  $default
      * @return   TValue|TDefault
      */
