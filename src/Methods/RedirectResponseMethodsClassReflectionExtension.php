@@ -2,8 +2,14 @@
 
 namespace NunoMaduro\Larastan\Methods;
 
+use Illuminate\Http\RedirectResponse;
 use PHPStan\Reflection;
+use PHPStan\Reflection\ClassMemberReflection;
+use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\FunctionVariant;
+use PHPStan\Reflection\MethodsClassReflectionExtension;
+use PHPStan\Reflection\MethodReflection;
+use PHPStan\Reflection\PassedByReference;
 use PHPStan\Reflection\ParameterReflection;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\Generic\TemplateTypeMap;
@@ -11,11 +17,11 @@ use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
-class RedirectResponseMethodsClassReflectionExtension implements Reflection\MethodsClassReflectionExtension
+class RedirectResponseMethodsClassReflectionExtension implements MethodsClassReflectionExtension
 {
-    public function hasMethod(Reflection\ClassReflection $classReflection, string $methodName): bool
+    public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        if ($classReflection->getName() !== 'Illuminate\Http\RedirectResponse') {
+        if ($classReflection->getName() !== RedirectResponse::class) {
             return false;
         }
 
@@ -27,24 +33,24 @@ class RedirectResponseMethodsClassReflectionExtension implements Reflection\Meth
     }
 
     public function getMethod(
-        Reflection\ClassReflection $classReflection,
+        ClassReflection $classReflection,
         string $methodName
-    ): Reflection\MethodReflection {
-        return new class($classReflection, $methodName) implements Reflection\MethodReflection
+    ): MethodReflection {
+        return new class($classReflection, $methodName) implements MethodReflection
         {
-            /** @var Reflection\ClassReflection */
+            /** @var \PHPStan\Reflection\ClassReflection */
             private $classReflection;
 
             /** @var string */
             private $methodName;
 
-            public function __construct(Reflection\ClassReflection $classReflection, string $methodName)
+            public function __construct(ClassReflection $classReflection, string $methodName)
             {
                 $this->classReflection = $classReflection;
                 $this->methodName = $methodName;
             }
 
-            public function getDeclaringClass(): Reflection\ClassReflection
+            public function getDeclaringClass(): ClassReflection
             {
                 return $this->classReflection;
             }
@@ -74,7 +80,7 @@ class RedirectResponseMethodsClassReflectionExtension implements Reflection\Meth
                 return $this->methodName;
             }
 
-            public function getPrototype(): Reflection\ClassMemberReflection
+            public function getPrototype(): ClassMemberReflection
             {
                 return $this;
             }
@@ -98,14 +104,14 @@ class RedirectResponseMethodsClassReflectionExtension implements Reflection\Meth
                                     return false;
                                 }
 
-                                public function getType(): \PHPStan\Type\Type
+                                public function getType(): Type
                                 {
                                     return new MixedType();
                                 }
 
-                                public function passedByReference(): \PHPStan\Reflection\PassedByReference
+                                public function passedByReference(): PassedByReference
                                 {
-                                    return Reflection\PassedByReference::createNo();
+                                    return PassedByReference::createNo();
                                 }
 
                                 public function isVariadic(): bool
@@ -113,7 +119,7 @@ class RedirectResponseMethodsClassReflectionExtension implements Reflection\Meth
                                     return false;
                                 }
 
-                                public function getDefaultValue(): ?\PHPStan\Type\Type
+                                public function getDefaultValue(): ?Type
                                 {
                                     return null;
                                 }
