@@ -11,24 +11,27 @@ namespace Illuminate\Support;
 class Collection implements \ArrayAccess, Enumerable
 {
     /**
-     * @param  callable|null  $callback
-     * @param  mixed  $default
-     * @return TValue|null
+     * @template TDefault
+     * @param    callable|null  $callback
+     * @param    TDefault  $default
+     * @return   TValue|TDefault
      */
     public function first(callable $callback = null, $default = null){}
 
     /**
-     * @param  callable|null  $callback
-     * @param  mixed  $default
-     * @return TValue|null
+     * @template TDefault
+     * @param    callable|null  $callback
+     * @param    TDefault  $default
+     * @return   TValue|TDefault
      */
     public function last(callable $callback = null, $default = null){}
 
 
     /**
-     * @param  mixed  $key
-     * @param  mixed  $default
-     * @return TValue|null
+     * @template TDefault
+     * @param    TKey  $key
+     * @param    TDefault  $default
+     * @return   TValue|TDefault
      */
     public function get($key, $default = null) {}
 
@@ -38,9 +41,10 @@ class Collection implements \ArrayAccess, Enumerable
     public function pop() {}
 
     /**
-     * @param  mixed  $key
-     * @param  mixed  $default
-     * @return TValue|null
+     * @template TDefault
+     * @param    TKey  $key
+     * @param    TDefault  $default
+     * @return   TValue|TDefault
      */
     public function pull($key, $default = null) {}
 

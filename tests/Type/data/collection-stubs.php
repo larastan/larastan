@@ -68,3 +68,15 @@ $foo
     ->map(function ($grouped, $groupKey): array {
         assertType('(int|string)', $groupKey);
     });
+
+assertType('App\User|null', $collection->first());
+assertType('App\User', $collection->first(null, new User()));
+
+assertType('App\User|null', $collection->last());
+assertType('App\User', $collection->last(null, new User()));
+
+assertType('App\User|null', $collection->get(1));
+assertType('App\User', $collection->get(1, new User()));
+
+assertType('App\User|null', $collection->pull(1));
+assertType('App\User', $collection->pull(1, new User()));
