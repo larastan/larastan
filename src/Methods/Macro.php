@@ -254,6 +254,6 @@ final class Macro implements MethodReflection
 
     public function hasSideEffects(): TrinaryLogic
     {
-        return TrinaryLogic::createNo();
+        return TrinaryLogic::createMaybe();
     }
 }
