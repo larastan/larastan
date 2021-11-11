@@ -70,10 +70,32 @@ $foo
     });
 
 assertType('App\User|null', $collection->first());
-assertType('App\User', $collection->first(null, new User()));
+assertType('App\User|bool', $collection->first(null, false));
+assertType('App\User|null', $collection->first(function ($user) {
+    assertType('App\User', $user);
+    return $user->id > 1;
+}));
+assertType('App\User|bool', $collection->first(function (User $user) {
+    assertType('App\User', $user);
+    return $user->id > 1;
+}, function () {
+    return false;
+}));
+
+assertType('App\User|null', $collection->firstWhere('blocked'));
+assertType('App\User|null', $collection->firstWhere('blocked', true));
+assertType('App\User|null', $collection->firstWhere('blocked', '=', true));
 
 assertType('App\User|null', $collection->last());
-assertType('App\User', $collection->last(null, new User()));
+assertType('App\User|bool', $collection->last(null, false));
+assertType('App\User|null', $collection->last(function (User $user) {
+    return $user->id > 1;
+}));
+assertType('App\User|bool', $collection->last(function (User $user) {
+    return $user->id > 1;
+}, function () {
+    return false;
+}));
 
 assertType('App\User|null', $collection->get(1));
 assertType('App\User', $collection->get(1, new User()));
