@@ -27,13 +27,13 @@ assertType('Illuminate\Database\Eloquent\Collection<App\User>', $collection->key
 assertType('Illuminate\Support\Collection<string, Illuminate\Support\Collection<int, int>>', $collection->mapToGroups(function (User $user, int $key): array {
     return ['foo' => $user->id];
 }));
-assertType('Illuminate\Support\Collection<(int|string), Illuminate\Support\Collection<int, App\User>>', $collection->groupBy('id'));
+assertType('Illuminate\Support\Collection<(int|string), Illuminate\Support\Collection<(int|string), App\User>>', $collection->groupBy('id'));
 assertType('Illuminate\Support\Collection<int, App\User>', User::all()->mapInto(User::class));
-assertType('Illuminate\Support\Collection<int, App\User>', $collection->flatMap(function (User $user, int $id): array {
+assertType('Illuminate\Support\Collection<(int|string), App\User>', $collection->flatMap(function (User $user, int $id): array {
     return [$user];
 }));
 assertType(
-    'Illuminate\Support\Collection<int, App\Account>',
+    'Illuminate\Support\Collection<(int|string), App\Account>',
     $collection->flatMap(function (User $user, int $id) {
         return $user->accounts;
     })
