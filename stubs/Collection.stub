@@ -3,7 +3,7 @@
 namespace Illuminate\Support;
 
 /**
- * @template TKey
+ * @template TKey of array-key
  * @template TValue
  * @implements \ArrayAccess<TKey, TValue>
  * @implements Enumerable<TKey, TValue>

@@ -6,7 +6,7 @@ use Illuminate\Support\Traits\EnumeratesValues;
 
 /**
  * @template TValue
- * @extends \Illuminate\Support\Collection<int, TValue>
+ * @extends \Illuminate\Support\Collection<array-key, TValue>
  */
 class Collection extends \Illuminate\Support\Collection
 {
@@ -30,7 +30,7 @@ class Collection extends \Illuminate\Support\Collection
 
     /**
      * @param callable(TValue, int): mixed $callback
-     * @return \Illuminate\Support\Collection<mixed, mixed>
+     * @return \Illuminate\Support\Collection<array-key, mixed>
      */
     public function flatMap(callable $callback) {}
 
