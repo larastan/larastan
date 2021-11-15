@@ -30,7 +30,7 @@ function retry($times, callable $callback, $sleep = 0, $when = null)
 /**
  * @template TValue
  * @param TValue $value
- * @param null|callable(TValue): void $callback
+ * @param null|callable(TValue): mixed $callback
  * @return mixed
  */
 function tap($value, $callback = null)

@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+* No return type should be enforced for closure of tap helper 
+
 ### Changed
 * Improved return type for Collection::first, last, get, pull when giving a  default value.
 
