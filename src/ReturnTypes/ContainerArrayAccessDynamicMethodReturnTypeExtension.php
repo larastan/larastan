@@ -13,6 +13,7 @@ use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\Type;
 
 class ContainerArrayAccessDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
@@ -42,7 +43,7 @@ class ContainerArrayAccessDynamicMethodReturnTypeExtension implements DynamicMet
         MethodReflection $methodReflection,
         MethodCall $methodCall,
         Scope $scope
-    ): \PHPStan\Type\Type {
+    ): Type {
         $args = $methodCall->getArgs();
 
         if (count($args) === 0) {
@@ -55,18 +56,18 @@ class ContainerArrayAccessDynamicMethodReturnTypeExtension implements DynamicMet
             return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
         }
 
-        $resolvedObject = $this->resolve($argType->getValue());
+        $resolvedValue = $this->resolve($argType->getValue());
 
-        if ($resolvedObject === null) {
+        if ($resolvedValue === null) {
             return new ErrorType();
         }
 
-        $class = get_class($resolvedObject);
+        if (is_object($resolvedValue)) {
+            $class = get_class($resolvedValue);
 
-        if ($class === false) {
-            return new ErrorType();
+            return new ObjectType($class);
         }
 
-        return new ObjectType($class);
+        return $scope->getTypeFromValue($resolvedValue);
     }
 }
