@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 * No return type should be enforced for closure of tap helper 
+* Ensure the model extensions considers PHPDoc `@property` tags from ancestors, not just the model class itself
 
 ### Changed
 * Improved return type for Collection::first, last, get, pull when giving a  default value.
