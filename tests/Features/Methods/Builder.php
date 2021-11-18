@@ -220,4 +220,10 @@ class Builder
         return User::with('foo')
             ->value(\Illuminate\Support\Facades\DB::raw('name'));
     }
+
+    /** @phpstan-return bool */
+    public function testRestore()
+    {
+        return User::query()->onlyTrashed()->restore();
+    }
 }
