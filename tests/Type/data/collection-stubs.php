@@ -73,10 +73,12 @@ assertType('App\User|null', $collection->first());
 assertType('App\User|bool', $collection->first(null, false));
 assertType('App\User|null', $collection->first(function ($user) {
     assertType('App\User', $user);
+
     return $user->id > 1;
 }));
 assertType('App\User|bool', $collection->first(function (User $user) {
     assertType('App\User', $user);
+
     return $user->id > 1;
 }, function () {
     return false;
