@@ -50,7 +50,7 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
             return false;
         }
 
-        if (array_key_exists($propertyName, ReflectionHelper::collectPropertyTags($classReflection))) {
+        if (ReflectionHelper::hasPropertyTag($classReflection, $propertyName)) {
             return false;
         }
 

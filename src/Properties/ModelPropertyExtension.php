@@ -52,7 +52,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             return false;
         }
 
-        if (array_key_exists($propertyName, ReflectionHelper::collectPropertyTags($classReflection))) {
+        if (ReflectionHelper::hasPropertyTag($classReflection, $propertyName)) {
             return false;
         }
 

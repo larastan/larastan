@@ -4,27 +4,25 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Reflection;
 
-use PHPStan\PhpDoc\Tag\PropertyTag;
 use PHPStan\Reflection\ClassReflection;
 
 final class ReflectionHelper
 {
     /**
-     * Returns all property tags of the given class and its ancestors.
-     *
-     * In case of duplicates, the tags of the class itself have precedence.
-     * TODO consider the hierarchy to ensure correct precedence between ancestors
-     *
-     * @return array<string, PropertyTag>
+     * Does the given class or any of its ancestors have an `@property*` annotation with the given name?
      */
-    public static function collectPropertyTags(ClassReflection $classReflection): array
+    public static function hasPropertyTag(ClassReflection $classReflection, string $propertyName): bool
     {
-        $allPropertyTags = $classReflection->getPropertyTags();
-
-        foreach ($classReflection->getAncestors() as $ancestor) {
-            $allPropertyTags += $ancestor->getPropertyTags();
+        if (array_key_exists($propertyName, $classReflection->getPropertyTags())) {
+            return true;
         }
 
-        return $allPropertyTags;
+        foreach ($classReflection->getAncestors() as $ancestor) {
+            if (array_key_exists($propertyName, $ancestor->getPropertyTags())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
