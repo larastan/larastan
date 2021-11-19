@@ -12,20 +12,27 @@ class Collection implements \ArrayAccess, Enumerable
 {
     /**
      * @template TDefault
-     * @param    callable|null  $callback
-     * @param    TDefault  $default
+     * @param    null|callable(TValue, TKey): bool  $callback
+     * @param    TDefault|callable(): TDefault  $default
      * @return   TValue|TDefault
      */
     public function first(callable $callback = null, $default = null){}
 
     /**
+     * @param  string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return TValue|null
+     */
+    public function firstWhere($key, $operator = null, $value = null){}
+
+    /**
      * @template TDefault
-     * @param    callable|null  $callback
-     * @param    TDefault  $default
-     * @return   TValue|TDefault
+     * @param  null|callable(TValue, TKey): bool  $callback
+     * @param  TDefault|callable(): TDefault  $default
+     * @return TValue|TDefault
      */
     public function last(callable $callback = null, $default = null){}
-
 
     /**
      * @template TDefault
