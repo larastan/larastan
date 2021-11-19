@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use function PHPStan\Testing\assertType;
@@ -232,6 +233,26 @@ class Relations
 
         return $user->posts()->create();
     }
+
+    public function testNullableUser(ExtendsModelWithPropertyAnnotations $model): bool
+    {
+        return $model->nullableUser === null;
+    }
+
+    public function testNonNullableUser(ExtendsModelWithPropertyAnnotations $model): User
+    {
+        return $model->nonNullableUser;
+    }
+
+    public function testNullableFoo(ExtendsModelWithPropertyAnnotations $model): bool
+    {
+        return $model->nullableFoo === null;
+    }
+
+    public function testNonNullableFoo(ExtendsModelWithPropertyAnnotations $model): string
+    {
+        return $model->nonNullableFoo;
+    }
 }
 
 /**
@@ -256,6 +277,39 @@ class ModelWithoutPropertyAnnotation extends Model
     {
         return $this->hasMany(User::class);
     }
+}
+
+/**
+ * @property-read User|null $nullableUser
+ * @property-read User $nonNullableUser
+ * @property-read string|null $nullableFoo
+ * @property-read string $nonNullableFoo
+ */
+class ModelWithPropertyAnnotations extends Model
+{
+    public function nullableUser(): HasOne
+    {
+        return $this->hasOne(User::class);
+    }
+
+    public function nonNullableUser(): HasOne
+    {
+        return $this->hasOne(User::class);
+    }
+
+    public function getNullableFooAttribute(): ?string
+    {
+        return rand() ? 'foo' : null;
+    }
+
+    public function getNonNullableFooAttribute(): string
+    {
+        return 'foo';
+    }
+}
+
+class ExtendsModelWithPropertyAnnotations extends ModelWithPropertyAnnotations
+{
 }
 
 class Tag extends Model

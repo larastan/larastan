@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Methods\BuilderHelper;
+use NunoMaduro\Larastan\Reflection\ReflectionHelper;
 use NunoMaduro\Larastan\Types\RelationParserHelper;
 use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\ClassReflection;
@@ -49,7 +50,7 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
             return false;
         }
 
-        if (array_key_exists($propertyName, $classReflection->getPropertyTags())) {
+        if (ReflectionHelper::hasPropertyTag($classReflection, $propertyName)) {
             return false;
         }
 

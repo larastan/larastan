@@ -7,6 +7,7 @@ namespace NunoMaduro\Larastan\Properties;
 use ArrayObject;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use NunoMaduro\Larastan\Reflection\ReflectionHelper;
 use PHPStan\PhpDoc\TypeStringResolver;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
@@ -19,7 +20,7 @@ use PHPStan\Type\IntegerType;
  */
 final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 {
-    /** @var SchemaTable[] */
+    /** @var array<string, SchemaTable> */
     private $tables = [];
 
     /** @var TypeStringResolver */
@@ -51,7 +52,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             return false;
         }
 
-        if (array_key_exists($propertyName, $classReflection->getPropertyTags())) {
+        if (ReflectionHelper::hasPropertyTag($classReflection, $propertyName)) {
             return false;
         }
 
