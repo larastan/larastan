@@ -104,3 +104,11 @@ assertType('App\User', $collection->get(1, new User()));
 
 assertType('App\User|null', $collection->pull(1));
 assertType('App\User', $collection->pull(1, new User()));
+
+$partitions = collect(['foo' => 1])->partition(function ($item, $key): bool {
+    assertType('int', $item);
+    assertType('string', $key);
+
+    return true;
+});
+assertType('Illuminate\Support\Enumerable<int<0, 1>, Illuminate\Support\Enumerable<string, int>>', $partitions);

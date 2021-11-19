@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * Ensure the model extensions considers PHPDoc `@property` tags from ancestors, not just the model class itself
 
 ### Changed
-* Improved return type for Collection::first, last, get, pull when giving a  default value.
+* Improved return type for Collection::first, last, get, pull when giving a default value.
+* Precise return type for `Enumerable::partition()`
 
 ## [1.0.1] - 2021-11-06
 
