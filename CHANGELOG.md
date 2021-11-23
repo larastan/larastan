@@ -6,12 +6,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [1.0.2] - 2021-11-23
+
+### Added
+* Throw types for macros by @canvural in https://github.com/nunomaduro/larastan/pull/1013
+* Improve return types for Collection::first, last, get and pull when default value is given. by @bastien-phi in https://github.com/nunomaduro/larastan/pull/1010
+
 ### Fixed
-* No return type should be enforced for closure of tap helper 
-* Ensure the model extensions considers PHPDoc `@property` tags from ancestors, not just the model class itself
+* Respect ancestor property tags in model extensions by @spawnia in https://github.com/nunomaduro/larastan/pull/1037
+* Correct method reflection for magic `with*` calls on `RedirectResponse` by @canvural in https://github.com/nunomaduro/larastan/pull/1016
+* Eloquent collection has array-key for the key type by @canvural in https://github.com/nunomaduro/larastan/pull/1027
+* Laravel container can have scalar bindings by @canvural in https://github.com/nunomaduro/larastan/pull/1028
+* `tap` helper should not enforce any return type for the callback by @tpetry in https://github.com/nunomaduro/larastan/pull/1031
 
 ### Changed
-* Improved return type for Collection::first, last, get, pull when giving a  default value.
+* Improve return types for Collection `first`, `firstWhere`, `last` by @sebdesign in https://github.com/nunomaduro/larastan/pull/1025
+* Update default config to match new highest level by @felixdorn in https://github.com/nunomaduro/larastan/pull/1014
 
 ## [1.0.1] - 2021-11-06
 
@@ -697,7 +707,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/1.0.1...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/1.0.2...HEAD
+[1.0.2]: https://github.com/nunomaduro/larastan/compare/1.0.1...1.0.2
 [1.0.1]: https://github.com/nunomaduro/larastan/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/nunomaduro/larastan/compare/v0.7.15...1.0.0
 [0.7.15]: https://github.com/nunomaduro/larastan/compare/v0.7.14...0.7.15
