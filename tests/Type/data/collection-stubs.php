@@ -41,16 +41,47 @@ assertType(
 assertType('Illuminate\Database\Eloquent\Collection<App\User>', $collection->tap(function ($collection): void {
 }));
 
-assertType('Illuminate\Support\Collection<(int|string), Illuminate\Support\Collection<int, non-empty-array<string, int|string>>>', collect([
-    [
-        'id'   => 1,
-        'type' => 'A',
-    ],
-    [
-        'id'   => 1,
-        'type' => 'B',
-    ],
-])->groupBy('type'));
+assertType(
+    'Illuminate\Support\Collection<(int|string), Illuminate\Support\Collection<int, non-empty-array<string, int|string>>>',
+    collect([
+        [
+            'id'   => 1,
+            'type' => 'A',
+        ],
+        [
+            'id'   => 1,
+            'type' => 'B',
+        ],
+    ])->groupBy('type')
+);
+
+assertType(
+    'Illuminate\Support\Collection<(int|string), Illuminate\Support\Collection<int, non-empty-array<string, int|string>>>',
+    (new SupportCollection([
+        [
+            'id'   => 1,
+            'type' => 'A',
+        ],
+        [
+            'id'   => 1,
+            'type' => 'B',
+        ],
+    ]))->groupBy('type')
+);
+
+assertType(
+    'Illuminate\Database\Eloquent\Collection<(int|string), Illuminate\Database\Eloquent\Collection<int, non-empty-array<string, int|string>>>',
+    (new EloquentCollection([
+        [
+            'id'   => 1,
+            'type' => 'A',
+        ],
+        [
+            'id'   => 1,
+            'type' => 'B',
+        ],
+    ]))->groupBy('type')
+);
 
 $foo = collect([
     [
