@@ -128,7 +128,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             return new ModelProperty(
                 $classReflection,
                 $this->stringResolver->resolve($modelInstance->getKeyType()),
-                $this->stringResolver->resolve($modelInstance->getKeyType()),
+                $this->stringResolver->resolve($modelInstance->getKeyType())
             );
         }
 
