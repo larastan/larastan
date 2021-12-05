@@ -120,8 +120,8 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
         if (
             (
-                ! array_key_exists($tableName, $this->tables) ||
-                ! array_key_exists($propertyName, $this->tables[$tableName]->columns)
+                ! array_key_exists($tableName, $this->tables)
+                || ! array_key_exists($propertyName, $this->tables[$tableName]->columns)
             )
             && $propertyName === 'id'
         ) {
