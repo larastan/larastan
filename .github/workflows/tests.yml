@@ -30,6 +30,9 @@ jobs:
             laravel: "^9.0"
           - php: "7.4"
             laravel: "^9.0"
+          # Avoid #1059
+          - php: "8.0"
+            laravel: "^6.0"
 
     name: "P${{ matrix.php }} - L${{ matrix.laravel }}"
 
