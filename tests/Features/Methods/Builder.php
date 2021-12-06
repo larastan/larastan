@@ -221,7 +221,7 @@ class Builder
             ->value(\Illuminate\Support\Facades\DB::raw('name'));
     }
 
-    /** @phpstan-return integer */
+    /** @phpstan-return int */
     public function testRestore()
     {
         return User::query()->restore();
