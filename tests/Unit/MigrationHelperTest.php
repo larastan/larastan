@@ -120,7 +120,6 @@ class MigrationHelperTest extends PHPStanTestCase
         self::assertArrayHasKey('accounts', $tables);
     }
 
-
     /**
      * @param  array<string, SchemaTable>  $tables
      */
