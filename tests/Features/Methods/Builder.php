@@ -220,4 +220,10 @@ class Builder
         return User::with('foo')
             ->value(\Illuminate\Support\Facades\DB::raw('name'));
     }
+
+    /** @phpstan-return int */
+    public function testRestore()
+    {
+        return User::query()->restore();
+    }
 }

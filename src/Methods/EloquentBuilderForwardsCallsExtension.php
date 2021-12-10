@@ -19,6 +19,7 @@ use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Generic\TemplateMixedType;
 use PHPStan\Type\Generic\TemplateObjectType;
+use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeWithClassName;
@@ -107,10 +108,21 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
         if ($ref === null) {
             // Special case for `SoftDeletes` trait
             if (
-                in_array($methodName, ['withTrashed', 'onlyTrashed', 'withoutTrashed'], true) &&
+                in_array($methodName, ['withTrashed', 'onlyTrashed', 'withoutTrashed', 'restore'], true) &&
                 in_array(SoftDeletes::class, array_keys($modelReflection->getTraits(true)))
             ) {
                 $ref = $this->reflectionProvider->getClass(SoftDeletes::class)->getMethod($methodName, new OutOfClassScope());
+
+                if ($methodName === 'restore') {
+                    return new EloquentBuilderMethodReflection(
+                        $methodName,
+                        $classReflection,
+                        $ref,
+                        ParametersAcceptorSelector::selectSingle($ref->getVariants())->getParameters(),
+                        new IntegerType(),
+                        ParametersAcceptorSelector::selectSingle($ref->getVariants())->isVariadic()
+                    );
+                }
 
                 return new EloquentBuilderMethodReflection(
                     $methodName,
