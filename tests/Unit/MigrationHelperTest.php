@@ -106,6 +106,20 @@ class MigrationHelperTest extends PHPStanTestCase
         self::assertSame('string', $tables['users']->columns['updated_at']->readableType);
     }
 
+    /** @test */
+    public function it_can_handle_alter_table_rename()
+    {
+        $migrationHelper = new MigrationHelper($this->parser, [
+            __DIR__.'/data/rename_migrations',
+        ], $this->fileHelper);
+
+        $tables = $migrationHelper->initializeTables();
+
+        self::assertCount(1, $tables);
+        self::assertArrayNotHasKey('users', $tables);
+        self::assertArrayHasKey('accounts', $tables);
+    }
+
     /**
      * @param  array<string, SchemaTable>  $tables
      */

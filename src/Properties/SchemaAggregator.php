@@ -76,7 +76,7 @@ final class SchemaAggregator
                         break;
 
                     case 'rename':
-                        $this->renameTable($stmt->expr);
+                        $this->renameTableThroughStaticCall($stmt->expr);
                 }
             }
         }
@@ -359,6 +359,9 @@ final class SchemaAggregator
                             break;
 
                         case 'rename':
+                            $this->renameTableThroughMethodCall($table, $stmt->expr);
+                            break;
+
                         case 'renamecolumn':
                             if ($secondArg instanceof PhpParser\Node\Scalar\String_) {
                                 $table->renameColumn($columnName, $secondArg->value);
@@ -405,7 +408,7 @@ final class SchemaAggregator
         unset($this->tables[$tableName]);
     }
 
-    private function renameTable(PhpParser\Node\Expr\StaticCall $call): void
+    private function renameTableThroughStaticCall(PhpParser\Node\Expr\StaticCall $call): void
     {
         if (! isset($call->args[0], $call->args[1])
             || ! $call->getArgs()[0]->value instanceof PhpParser\Node\Scalar\String_
@@ -417,6 +420,28 @@ final class SchemaAggregator
         $oldTableName = $call->getArgs()[0]->value->value;
         $newTableName = $call->getArgs()[1]->value->value;
 
+        $this->renameTable($oldTableName, $newTableName);
+    }
+
+    private function renameTableThroughMethodCall(SchemaTable $oldTable, PhpParser\Node\Expr\MethodCall $call): void
+    {
+        if (! isset($call->args[0])
+            || ! $call->getArgs()[0]->value instanceof PhpParser\Node\Scalar\String_
+        ) {
+            return;
+        }
+
+        /** @var PhpParser\Node\Scalar\String_ $methodCallArgument */
+        $methodCallArgument = $call->getArgs()[0]->value;
+
+        $oldTableName = $oldTable->name;
+        $newTableName = $methodCallArgument->value;
+
+        $this->renameTable($oldTableName, $newTableName);
+    }
+
+    private function renameTable(string $oldTableName, string $newTableName): void
+    {
         if (! isset($this->tables[$oldTableName])) {
             return;
         }
