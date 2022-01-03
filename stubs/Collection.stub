@@ -27,6 +27,11 @@ class Collection implements \ArrayAccess, Enumerable
     public function firstWhere($key, $operator = null, $value = null){}
 
     /**
+     * @return static<int, TKey>
+     */
+    public function keys();
+
+    /**
      * @template TDefault
      * @param  null|callable(TValue, TKey): bool  $callback
      * @param  TDefault|callable(): TDefault  $default

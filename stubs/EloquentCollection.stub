@@ -40,4 +40,9 @@ class Collection extends \Illuminate\Support\Collection
      * @return static<TReturn>|\Illuminate\Support\Collection<int, TReturn>
      */
     public function mapSpread(callable $callback) {}
+
+    /**
+     * @return \Illuminate\Support\Collection<int, array-key>
+     */
+    public function keys();
 }

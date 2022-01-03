@@ -104,3 +104,6 @@ assertType('App\User', $collection->get(1, new User()));
 
 assertType('App\User|null', $collection->pull(1));
 assertType('App\User', $collection->pull(1, new User()));
+
+assertType('Illuminate\Support\Collection<int, string>', $items->keys());
+assertType('Illuminate\Support\Collection<int, (int|string)>', $collection->keys());
