@@ -75,12 +75,12 @@ class ModelRelationsExtension
 
         return null;
     }
-
+/* Disabled. Please see #1073
     public function testModelWithRelationDefinedInTrait(Account $account): ?User
     {
         return $account->ownerRelation;
     }
-
+*/
     public function testRelationCanbeOverridenWithAnnotation(OtherDummyModel $dummyModel): DummyModel
     {
         return $dummyModel->belongsToRelation;
