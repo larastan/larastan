@@ -100,8 +100,8 @@ assertType('App\User|bool', $collection->last(function (User $user) {
 }));
 
 assertType('App\User|null', $collection->get(1));
-assertType('App\User', $collection->get(1, new User()));
+assertType('App\User|string', $collection->get(1, 'string'));
 
 assertType('App\User|null', $collection->pull(1));
-assertType('App\User', $collection->pull(1, new User()));
+assertType('App\User|string', $collection->pull(1, 'string'));
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::all()->filter());

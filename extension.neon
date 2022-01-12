@@ -28,6 +28,7 @@ parameters:
         - stubs/Facades.stub
         - stubs/Pagination.stub
         - stubs/Contracts/Pagination.stub
+        - stubs/Contracts/Queue.stub
         - stubs/Contracts/Support.stub
         - stubs/Redis/Connection.stub
         - stubs/Logger.stub

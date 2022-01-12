@@ -10,4 +10,5 @@ namespace Illuminate\Support;
  */
 interface Enumerable extends \Countable, \IteratorAggregate, \JsonSerializable
 {
+    // ..
 }

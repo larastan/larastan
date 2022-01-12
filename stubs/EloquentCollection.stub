@@ -2,14 +2,16 @@
 
 namespace Illuminate\Database\Eloquent;
 
-use Illuminate\Support\Traits\EnumeratesValues;
+use Illuminate\Contracts\Queue\QueueableCollection;
+use Illuminate\Support\Collection as BaseCollection;
 
 /**
  * @template TKey of array-key
- * @template TModel
+ * @template TModel of \Illuminate\Database\Eloquent\Model
  *
  * @extends \Illuminate\Support\Collection<TKey, TModel>
  */
-class Collection extends \Illuminate\Support\Collection
+class Collection extends BaseCollection implements QueueableCollection
 {
+    // ..
 }

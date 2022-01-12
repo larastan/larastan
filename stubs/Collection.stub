@@ -2,6 +2,10 @@
 
 namespace Illuminate\Support;
 
+use ArrayAccess;
+use Illuminate\Contracts\Support\CanBeEscapedWhenCastToString;
+use Illuminate\Support\Traits\EnumeratesValues;
+
 /**
  * @template TKey of array-key
  * @template TValue
@@ -9,6 +13,12 @@ namespace Illuminate\Support;
  * @implements \ArrayAccess<TKey, TValue>
  * @implements \Illuminate\Support\Enumerable<TKey, TValue>
  */
-class Collection implements \ArrayAccess, Enumerable
+class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerable
 {
+    /**
+     * @use \Illuminate\Support\Traits\EnumeratesValues<TKey, TValue>
+     */
+    use EnumeratesValues;
+
+   // ..
 }
