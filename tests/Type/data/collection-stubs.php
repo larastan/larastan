@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection as SupportCollection;
 use function PHPStan\Testing\assertType;
 
-/** @var EloquentCollection<User> $collection */
+/** @var EloquentCollection<int, User> $collection */
 /** @var SupportCollection<string, int> $items */
-assertType('Illuminate\Database\Eloquent\Collection<App\User>', User::all()->each(function (User $user, int $key): void {
+assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::all()->each(function (User $user, int $key): void {
 }));
 
 assertType('Illuminate\Support\Collection<string, int>', $items->each(function (): bool {
@@ -21,13 +21,13 @@ assertType('Illuminate\Support\Collection<string, string>', $items->map(function
 }));
 
 assertType('Illuminate\Support\Collection<int, mixed>', $collection->pluck('id'));
-assertType('Illuminate\Database\Eloquent\Collection<App\User>', $collection->keyBy(function (User $user, int $key): string {
+assertType('Illuminate\Database\Eloquent\Collection<string, App\User>', $collection->keyBy(function (User $user, int $key): string {
     return $user->email;
 }));
 assertType('Illuminate\Support\Collection<string, Illuminate\Support\Collection<int, int>>', $collection->mapToGroups(function (User $user, int $key): array {
     return ['foo' => $user->id];
 }));
-assertType('Illuminate\Support\Collection<(int|string), Illuminate\Support\Collection<(int|string), App\User>>', $collection->groupBy('id'));
+assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $collection->groupBy('id'));
 assertType('Illuminate\Support\Collection<int, App\User>', User::all()->mapInto(User::class));
 assertType('Illuminate\Support\Collection<(int|string), App\User>', $collection->flatMap(function (User $user, int $id): array {
     return [$user];
@@ -38,7 +38,7 @@ assertType(
         return $user->accounts;
     })
 );
-assertType('Illuminate\Database\Eloquent\Collection<App\User>', $collection->tap(function ($collection): void {
+assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->tap(function ($collection): void {
 }));
 
 assertType('Illuminate\Support\Collection<(int|string), Illuminate\Support\Collection<int, non-empty-array<string, int|string>>>', collect([
@@ -104,3 +104,4 @@ assertType('App\User', $collection->get(1, new User()));
 
 assertType('App\User|null', $collection->pull(1));
 assertType('App\User', $collection->pull(1, new User()));
+assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::all()->filter());

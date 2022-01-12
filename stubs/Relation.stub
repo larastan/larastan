@@ -7,6 +7,9 @@ namespace Illuminate\Database\Eloquent\Relations;
  */
 class Relation
 {
+    /** @phpstan-use \Illuminate\Database\Eloquent\Concerns\DecoratesQueryBuilder<TModelClass> */
+    use \Illuminate\Database\Eloquent\Concerns\DecoratesQueryBuilder;
+
     /**
      * Execute the query as a "select" statement.
      *

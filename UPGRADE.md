@@ -166,7 +166,7 @@ public function newEloquentBuilder($query): CustomBuilder
 If your IDE complains about the return type annotation you may also use the PHPStan specific return type `@phpstan-return`
 
 #### Collection generics
-Generic stubs added to Eloquent and Support collections. Larastan is able to take advantage of this and returns the correct collection with its items defined. For example `Collection<User>` represents collection of users. But in case Larastan fails to do so in any case, you can assist with adding a typehint with the appropriate annotation like `@var`, `@param` or `@return` using the syntax `Collection<Model>`
+Generic stubs added to Eloquent and Support collections. Larastan is able to take advantage of this and returns the correct collection with its items defined. For example `Collection<int, User>` represents collection of users. But in case Larastan fails to do so in any case, you can assist with adding a typehint with the appropriate annotation like `@var`, `@param` or `@return` using the syntax `Collection<Model>`
 
 ## Upgrading To 0.5 From 0.4
 

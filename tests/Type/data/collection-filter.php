@@ -41,7 +41,7 @@ assertType('Illuminate\Support\Collection<int, int<3, max>>', collect([1, 2, 3, 
     return $value > 2;
 }));
 
-/** @param EloquentCollection<User> $foo */
+/** @param EloquentCollection<int, User> $foo */
 function bar(Collection $foo): void
 {
     assertType("Illuminate\Database\Eloquent\Collection<App\User>", $foo->filter(function (User $user) {

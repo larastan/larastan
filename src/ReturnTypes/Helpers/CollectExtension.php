@@ -35,7 +35,7 @@ final class CollectExtension implements DynamicFunctionReturnTypeExtension
         Scope $scope
     ): Type {
         if (count($functionCall->getArgs()) < 1) {
-            return ParametersAcceptorSelector::selectSingle($functionReflection->getVariants())->getReturnType();
+            return new GenericObjectType(Collection::class, [new IntegerType(), new MixedType()]);
         }
 
         $valueType = $scope->getType($functionCall->getArgs()[0]->value);

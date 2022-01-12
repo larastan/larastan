@@ -90,6 +90,7 @@ class Relations
         return $user->accounts()->paginate(5);
     }
 
+    /** @return MorphTo<User, Model> */
     public function testMorph(User $user): MorphTo
     {
         return $user->addressable()->where('name', 'bar');
@@ -102,7 +103,7 @@ class Relations
     }
 
     /**
-     * @return Collection<Role>
+     * @return Collection<int, Role>
      */
     public function testRelationWithPivot(User $user): Collection
     {
@@ -111,7 +112,7 @@ class Relations
 
     /**
      * @param  User  $user
-     * @return Collection<Account>
+     * @return Collection<int, Account>
      */
     public function testGetOnRelationAndBuilder(User $user): Collection
     {
@@ -273,6 +274,7 @@ class RelationCreateExample extends Model
 
 class ModelWithoutPropertyAnnotation extends Model
 {
+    /** @return HasMany<User> */
     public function relation(): HasMany
     {
         return $this->hasMany(User::class);
@@ -287,11 +289,13 @@ class ModelWithoutPropertyAnnotation extends Model
  */
 class ModelWithPropertyAnnotations extends Model
 {
+    /** @return HasOne<User> */
     public function nullableUser(): HasOne
     {
         return $this->hasOne(User::class);
     }
 
+    /** @return HasOne<User> */
     public function nonNullableUser(): HasOne
     {
         return $this->hasOne(User::class);

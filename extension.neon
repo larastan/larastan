@@ -5,6 +5,7 @@ parameters:
         - stubs/EloquentBuilderContract.stub
         - stubs/Collection.stub
         - stubs/EloquentCollection.stub
+        - stubs/DecoratesQueryBuilder.stub
         - stubs/Factory.stub
         - stubs/Model.stub
         - stubs/Gate.stub

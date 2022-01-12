@@ -102,6 +102,7 @@ class Builder
             ->toBase();
     }
 
+    /** @phpstan-return Collection<int, User> */
     public function testPluckToBaseWithQueryExpression(): ?Collection
     {
         return User::query()
@@ -162,13 +163,15 @@ class Builder
         });
     }
 
-    public function testMacro(\Illuminate\Database\Eloquent\Builder $query): void
+    /** @param EloquentBuilder<User> $query */
+    public function testMacro(EloquentBuilder $query): void
     {
         $query->macro('customMacro', function () {
         });
     }
 
-    public function testGlobalMacro(\Illuminate\Database\Eloquent\Builder $query): string
+    /** @param EloquentBuilder<User> $query */
+    public function testGlobalMacro(EloquentBuilder $query): string
     {
         return $query->globalCustomMacro('foo');
     }

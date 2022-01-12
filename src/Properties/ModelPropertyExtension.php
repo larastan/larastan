@@ -242,7 +242,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
                     $realType = $this->getDateClass();
                     break;
                 case 'collection':
-                    $realType = '\Illuminate\Support\Collection';
+                    $realType = '\Illuminate\Support\Collection<array-key, mixed>';
                     break;
                 case 'Illuminate\Database\Eloquent\Casts\AsArrayObject':
                     $realType = ArrayObject::class;

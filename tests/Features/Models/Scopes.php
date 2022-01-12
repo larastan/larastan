@@ -77,6 +77,6 @@ class Scopes extends Model
         assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->someScope());
         assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::query()->someScope());
         assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->where('foo')->someScope());
-        assertType('Illuminate\Database\Eloquent\Collection<App\User>', $user->where('foo')->someScope()->get());
+        assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $user->where('foo')->someScope()->get());
     }
 }

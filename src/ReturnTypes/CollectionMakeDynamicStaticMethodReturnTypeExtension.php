@@ -11,6 +11,9 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
+use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\IntegerType;
+use PHPStan\Type\MixedType;
 use PHPStan\Type\Type;
 
 class CollectionMakeDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
@@ -41,7 +44,7 @@ class CollectionMakeDynamicStaticMethodReturnTypeExtension implements DynamicSta
         Scope $scope
     ): Type {
         if (count($methodCall->getArgs()) < 1) {
-            return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+            return new GenericObjectType(Collection::class, [new IntegerType(), new MixedType()]);
         }
 
         $valueType = $scope->getType($methodCall->getArgs()[0]->value);
