@@ -4,7 +4,7 @@ parameters:
         - stubs/EloquentBuilder.stub
         - stubs/Collection.stub
         - stubs/EloquentCollection.stub
-        - stubs/DecoratesQueryBuilder.stub
+        - stubs/EloquentBuilderContract.stub
         - stubs/Factory.stub
         - stubs/Model.stub
         - stubs/Gate.stub

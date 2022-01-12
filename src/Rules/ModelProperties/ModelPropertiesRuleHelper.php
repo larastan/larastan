@@ -122,7 +122,7 @@ class ModelPropertiesRuleHelper
         if (! $modelReflection->hasProperty($argType->getValue())) {
             $error = sprintf('Property \'%s\' does not exist in %s model.', $argType->getValue(), $modelReflection->getName());
 
-            if ($methodReflection->getDeclaringClass()->getName() === BelongsToMany::class) {
+            if ((new ObjectType(BelongsToMany::class))->isSuperTypeOf(ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType())->yes()) {
                 $error .= sprintf(" If '%s' exists as a column on the pivot table, consider using 'wherePivot' or prefix the column with table name instead.", $argType->getValue());
             }
 

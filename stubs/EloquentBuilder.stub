@@ -5,12 +5,11 @@ namespace Illuminate\Database\Eloquent;
 /**
  * @template TModelClass of Model
  * @property-read static<TModelClass> $orWhere
+ *
+ * @implements \Illuminate\Contracts\Database\Query\Builder<TModelClass>
  */
-class Builder
+class Builder implements \Illuminate\Contracts\Database\Query\Builder
 {
-    /** @phpstan-use \Illuminate\Database\Eloquent\Concerns\DecoratesQueryBuilder<TModelClass> */
-    use \Illuminate\Database\Eloquent\Concerns\DecoratesQueryBuilder;
-
     /**
      * Create and return an un-saved model instance.
      *
@@ -74,7 +73,7 @@ class Builder
     /**
      * Find multiple models by their primary keys.
      *
-     * @param  \Illuminate\Contracts\Support\Arrayable|array<mixed>  $ids
+     * @param  \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>  $ids
      * @param  array<int, (model-property<TModelClass>|'*')>|model-property<TModelClass>|'*'  $columns
      * @phpstan-return \Illuminate\Database\Eloquent\Collection<int, TModelClass>
      */

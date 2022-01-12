@@ -25,16 +25,19 @@ class CorrectCollectionCalls
         return User::hydrate($users)->first();
     }
 
+    /** @return Collection<int, mixed> */
     public function pluckQuery(): Collection
     {
         return User::query()->pluck('id');
     }
 
+    /** @return Collection<int, mixed> */
     public function pluckComputed(): Collection
     {
         return User::all()->pluck('allCapsName');
     }
 
+    /** @return Collection<int, mixed> */
     public function pluckRelation(): Collection
     {
         return User::with(['accounts'])->get()->pluck('accounts');

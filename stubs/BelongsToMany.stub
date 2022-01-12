@@ -12,7 +12,7 @@ class BelongsToMany extends Relation
      * Find a related model by its primary key or return new instance of the related model.
      *
      * @param  mixed  $id
-     * @param  array<int, mixed>  $columns
+     * @param  array<int, (model-property<TRelatedModel>|'*')>|model-property<TRelatedModel>|'*'  $columns
      * @return \Illuminate\Support\Collection<int, TRelatedModel>|TRelatedModel
      */
     public function findOrNew($id, $columns = ['*']);
@@ -58,7 +58,7 @@ class BelongsToMany extends Relation
     /**
      * Find multiple related models by their primary keys.
      *
-     * @param  \Illuminate\Contracts\Support\Arrayable|int[]  $ids
+     * @param  \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|int[]  $ids
      * @param  array<int, mixed>  $columns
      * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */

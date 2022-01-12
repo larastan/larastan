@@ -62,10 +62,6 @@ class CollectionFilterDynamicReturnTypeExtension implements DynamicMethodReturnT
 
             $nonFalseyTypes = TypeCombinator::remove($valueType, $falseyTypes);
 
-            if ((new ObjectType(Collection::class))->isSuperTypeOf($calledOnType)->yes()) {
-                return new GenericObjectType($calledOnType->getClassName(), [$nonFalseyTypes]);
-            }
-
             return new GenericObjectType($calledOnType->getClassName(), [$keyType, $nonFalseyTypes]);
         }
 

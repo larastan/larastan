@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Tests\Rules\Data;
 
+use App\AccountCollection;
 use App\User;
 use Illuminate\Support\Collection;
+use \Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Facades\DB;
+use function PHPStan\dumpType;
 
 class UnnecessaryCollectionCallsEloquent
 {
+    /** @return Collection<int, mixed> */
     public function pluckId(): Collection
     {
         return User::all()->pluck('id');
@@ -20,6 +24,7 @@ class UnnecessaryCollectionCallsEloquent
         return User::where('id', '>', 5)->get()->count();
     }
 
+    /** @return Collection<int, mixed> */
     public function testCallGetPluckWrong(): Collection
     {
         return User::query()->get()->pluck('id');
@@ -35,7 +40,8 @@ class UnnecessaryCollectionCallsEloquent
         return User::all()->first();
     }
 
-    public function testCallRelationTakeWrongly(): \Illuminate\Database\Eloquent\Collection
+    /** @return AccountCollection<int, \App\Account> */
+    public function testCallRelationTakeWrongly(): EloquentCollection
     {
         return User::firstOrFail()->accounts()->get()->take(2);
     }
@@ -67,14 +73,16 @@ class UnnecessaryCollectionCallsEloquent
         return User::query()->pluck('id')->count();
     }
 
-    public function testCallWhereWrong(): Collection
+    /** @return EloquentCollection<int, User> */
+    public function testCallWhereWrong(): EloquentCollection
     {
         return User::all()->where('id', '<', 4);
     }
 
-    public function testCallDiffWrong(): Collection
+    /** @return EloquentCollection<int, User> */
+    public function testCallDiffWrong(): EloquentCollection
     {
-        return User::all()->diff([1, 2, 3]);
+        return User::all()->diff([new User]);
     }
 
     /**

@@ -1,11 +1,11 @@
 <?php
 
-namespace Illuminate\Database\Eloquent\Concerns;
+namespace Illuminate\Contracts\Database\Query;
 
 /**
  * @template TModelClass of \Illuminate\Database\Eloquent\Model
  */
-trait DecoratesQueryBuilder
+interface Builder
 {
     /**
      * Add a basic where clause to the query.

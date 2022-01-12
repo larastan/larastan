@@ -4,12 +4,11 @@ namespace Illuminate\Database\Eloquent\Relations;
 
 /**
  * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ *
+ * @implements \Illuminate\Contracts\Database\Query\Builder<TRelatedModel>
  */
-class Relation
+abstract class Relation implements \Illuminate\Contracts\Database\Query\Builder
 {
-    /** @phpstan-use \Illuminate\Database\Eloquent\Concerns\DecoratesQueryBuilder<TRelatedModel> */
-    use \Illuminate\Database\Eloquent\Concerns\DecoratesQueryBuilder;
-
     /**
      * Execute the query as a "select" statement.
      *

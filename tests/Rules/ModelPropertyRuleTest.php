@@ -29,12 +29,12 @@ class ModelPropertyRuleTest extends RulesTest
         $errors = $this->setConfigPath(__DIR__.DIRECTORY_SEPARATOR.'Data/modelPropertyConfig.neon')->findErrorsByLine(__DIR__.'/Data/model-property-relation.php');
 
         self::assertEquals([
+            5 => 'Property \'foo\' does not exist in App\\Account model.',
             6 => 'Property \'foo\' does not exist in App\\Account model.',
             7 => 'Property \'foo\' does not exist in App\\Account model.',
             8 => 'Property \'foo\' does not exist in App\\Account model.',
             9 => 'Property \'foo\' does not exist in App\\Account model.',
-            10 => 'Property \'foo\' does not exist in App\\Account model.',
-            12 => 'Property \'foo\' does not exist in App\\Post model. If \'foo\' exists as a column on the pivot table, consider using \'wherePivot\' or prefix the column with table name instead.',
+            11 => 'Property \'foo\' does not exist in App\\Post model. If \'foo\' exists as a column on the pivot table, consider using \'wherePivot\' or prefix the column with table name instead.',
         ], $errors);
     }
 
