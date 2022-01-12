@@ -37,7 +37,6 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-
         $variants = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
 
         $returnType = $variants->getReturnType();
@@ -64,7 +63,6 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
             'hasMany', 'hasManyThrough', 'morphMany',
             'belongsToMany', 'morphToMany', 'morphedByMany',
         ], true)) {
-
             return false;
         }
 

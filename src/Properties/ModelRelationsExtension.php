@@ -102,14 +102,12 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
             );
         }
 
-
         if (Str::endsWith($returnType->getClassName(), 'MorphTo')) {
             return new ModelProperty($classReflection, new UnionType([
                 new ObjectType(Model::class),
                 new MixedType(),
             ]), new NeverType(), false);
         }
-
 
         return new ModelProperty($classReflection, new UnionType([
             $relatedModel,
