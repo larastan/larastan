@@ -1,7 +1,6 @@
 <?php
 
 /** @var \App\User $user */
-
 $user->accounts()->where('foo', 'bar');
 $user->accounts()->create(['foo' => 'bar']);
 $user->accounts()->firstOrNew(['foo' => 'bar']);
