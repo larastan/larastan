@@ -20,7 +20,7 @@ function foo(Collection $foo): void
 /**
  * @param  array<int, User>  $attachments
  */
-function storeAttachments(array $attachments)
+function storeAttachments(array $attachments): void
 {
     assertType(
         'Illuminate\Support\Collection<int, App\Account>',
@@ -41,18 +41,18 @@ assertType('Illuminate\Support\Collection<int, int<3, max>>', collect([1, 2, 3, 
     return $value > 2;
 }));
 
-/** @param EloquentCollection<User> $foo */
+/** @param EloquentCollection<int, User> $foo */
 function bar(Collection $foo): void
 {
-    assertType("Illuminate\Database\Eloquent\Collection<App\User>", $foo->filter(function (User $user) {
+    assertType("Illuminate\Database\Eloquent\Collection<int, App\User>", $foo->filter(function (User $user): bool {
         return ! $user->blocked;
     }));
 }
 
 $accounts = $user->accounts()->active()->get();
-assertType('App\AccountCollection<App\Account>', $accounts);
+assertType('App\AccountCollection<int, App\Account>', $accounts);
 
-assertType('App\AccountCollection<App\Account>', $accounts->filter(function ($account) {
+assertType('App\AccountCollection<int, App\Account>', $accounts->filter(function ($account) {
     return \CollectionStubs\dummyFilter($account);
 }));
 

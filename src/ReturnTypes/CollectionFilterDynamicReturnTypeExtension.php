@@ -94,10 +94,6 @@ class CollectionFilterDynamicReturnTypeExtension implements DynamicMethodReturnT
             $valueType = $scope->getVariableType($itemVariableName);
         }
 
-        if ((new ObjectType(Collection::class))->isSuperTypeOf($calledOnType)->yes()) {
-            return new GenericObjectType($calledOnType->getClassName(), [$valueType]);
-        }
-
         return new GenericObjectType($calledOnType->getClassName(), [$keyType, $valueType]);
     }
 
