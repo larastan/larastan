@@ -65,7 +65,7 @@ final class CollectionHelper
             return new GenericObjectType(Collection::class, [$keyType, new MixedType()]);
         }
 
-        $innerValueType = $classReflection->getActiveTemplateTypeMap()->getType('TValue');
+        $innerValueType = $classReflection->getActiveTemplateTypeMap()->getType('TModel');
 
         if ($classReflection->getName() === EloquentCollection::class || $classReflection->isSubclassOf(EloquentCollection::class)) {
             $keyType = new IntegerType();

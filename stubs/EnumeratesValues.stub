@@ -5,7 +5,9 @@ namespace Illuminate\Support\Traits;
 use Illuminate\Support\HigherOrderCollectionProxy;
 
 /**
+ * @template TKey of array-key
  * @template TValue
+ *
  * @property-read HigherOrderCollectionProxy<'average', TValue> $average
  * @property-read HigherOrderCollectionProxy<'avg', TValue> $avg
  * @property-read HigherOrderCollectionProxy<'contains', TValue> $contains

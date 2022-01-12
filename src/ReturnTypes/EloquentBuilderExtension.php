@@ -16,8 +16,10 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Generic\TemplateMixedType;
+use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use function PHPStan\dumpType;
 
 final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
 {
@@ -78,7 +80,7 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
         if ($modelType instanceof ObjectType && in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
             $collectionClassName = $this->builderHelper->determineCollectionClassName($modelType->getClassName());
 
-            return new GenericObjectType($collectionClassName, [$modelType]);
+            return new GenericObjectType($collectionClassName, [new IntegerType(), $modelType]);
         }
 
         return $returnType;

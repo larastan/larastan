@@ -30,20 +30,14 @@ class ModelExtension
     }
 
     /**
-     * @phpstan-return Collection<User>|null
+     * @phpstan-return Collection<int, User>
      */
-    public function testFindCanReturnCollection(): ?Collection
+    public function testFindCanReturnCollection(): Collection
     {
         return User::find([1, 2, 3]);
     }
 
-    /** @phpstan-return Collection<User>|null */
-    public function testFindCanReturnCollectionWithAnnotation()
-    {
-        return User::find([1, 2, 3]);
-    }
-
-    /** @phpstan-return Collection<User>|null */
+    /** @phpstan-return Collection<int, User>|null */
     public function testFindMany()
     {
         return User::findMany([1, 2, 3]);
@@ -55,18 +49,18 @@ class ModelExtension
     }
 
     /**
-     * @phpstan-return Collection<\App\User>
+     * @phpstan-return Collection<int, \App\User>
      */
     public function testFindOrFailCanReturnCollection(): Collection
     {
-        /** @var Collection<\App\User> $users */
+        /** @var Collection<int, \App\User> $users */
         $users = User::findOrFail([1, 2, 3]);
 
         return $users;
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testChainingCollectionMethodsOnModel(): Collection
     {
@@ -78,7 +72,7 @@ class ModelExtension
         return User::findOrFail([1, 2, 3])->makeHidden('foo')->first();
     }
 
-    /** @phpstan-return Collection<User>|null */
+    /** @phpstan-return Collection<int, User>|null */
     public function testFindWithCastingToArray(FormRequest $request): ?Collection
     {
         /** @var array<string, string> $requestData */

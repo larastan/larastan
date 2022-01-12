@@ -7,11 +7,14 @@ namespace Illuminate\Database\Eloquent\Relations;
  */
 class Relation
 {
+    /** @phpstan-use \Illuminate\Database\Eloquent\Concerns\DecoratesQueryBuilder<TRelatedModel> */
+    use \Illuminate\Database\Eloquent\Concerns\DecoratesQueryBuilder;
+
     /**
      * Execute the query as a "select" statement.
      *
      * @param array<int, string> $columns
-     * @phpstan-return \Illuminate\Database\Eloquent\Collection<TRelatedModel>
+     * @phpstan-return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function get($columns = ['*']);
 

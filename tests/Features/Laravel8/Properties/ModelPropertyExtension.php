@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
 
 class ModelPropertyExtension
 {
+    /** @return ArrayObject<array-key, mixed> */
     public function testAsArrayObjectCast(User $user): ArrayObject
     {
         return $user->options;
@@ -21,6 +22,7 @@ class ModelPropertyExtension
         return count($user->options);
     }
 
+    /** @return Collection<array-key, mixed> */
     public function testAsCollectionCast(User $user): Collection
     {
         return $user->properties;

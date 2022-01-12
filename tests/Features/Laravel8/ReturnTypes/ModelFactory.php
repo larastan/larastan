@@ -27,13 +27,13 @@ class ModelFactory
         return User::factory()->createOne();
     }
 
-    /** @phpstan-return Collection<User> */
+    /** @phpstan-return Collection<int, User> */
     public function testCreateManyWithParentModelUsingFactory(): Collection
     {
         return User::factory()->createMany([]);
     }
 
-    /** @phpstan-return Collection<User>|User */
+    /** @phpstan-return Collection<int, User>|User */
     public function testCreateWithParentModelUsingFactory()
     {
         return User::factory()->create();
@@ -44,7 +44,7 @@ class ModelFactory
         return User::factory()->makeOne();
     }
 
-    /** @phpstan-return Collection<User>|User */
+    /** @phpstan-return Collection<int, User>|User */
     public function testMakeWithParentModelUsingFactory()
     {
         return User::factory()->make();
@@ -70,13 +70,13 @@ class ModelFactory
         return Post::factory()->createOne();
     }
 
-    /** @phpstan-return Collection<Post> */
+    /** @phpstan-return Collection<int, Post> */
     public function testCreateMany(): Collection
     {
         return Post::factory()->createMany([]);
     }
 
-    /** @phpstan-return Collection<Post>|Post */
+    /** @phpstan-return Collection<int, Post>|Post */
     public function testCreate()
     {
         return Post::factory()->create();
@@ -87,7 +87,7 @@ class ModelFactory
         return Post::factory()->makeOne();
     }
 
-    /** @phpstan-return Collection<Post>|Post */
+    /** @phpstan-return Collection<int, Post>|Post */
     public function testMake()
     {
         return Post::factory()->make();
