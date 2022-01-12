@@ -19,7 +19,6 @@ use PHPStan\Type\Generic\TemplateMixedType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
-use function PHPStan\dumpType;
 
 final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
 {

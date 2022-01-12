@@ -237,7 +237,7 @@ class ModelWithCustomBuilder extends Model
     }
 
     /**
-     * @param CustomEloquentBuilder<ModelWithCustomBuilder> $query
+     * @param  CustomEloquentBuilder<ModelWithCustomBuilder>  $query
      * @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder>
      */
     public function scopeFoo(CustomEloquentBuilder $query, string $foo): CustomEloquentBuilder

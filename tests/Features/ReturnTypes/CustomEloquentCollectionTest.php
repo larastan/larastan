@@ -12,7 +12,6 @@ use App\TransactionCollection;
 use App\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use function PHPStan\dumpType;
 use function PHPStan\Testing\assertType;
 
 class CustomEloquentCollectionTest
