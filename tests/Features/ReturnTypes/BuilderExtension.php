@@ -7,10 +7,8 @@ namespace Tests\Features\ReturnTypes;
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Database\Eloquent\Model;
-use function PHPStan\dumpType;
-use function PHPStan\Testing\assertType;
+use Illuminate\Support\Collection as SupportCollection;
 
 class BuilderExtension
 {
@@ -72,8 +70,7 @@ class BuilderExtension
     }
 
     /**
-     * @param Builder<User> $builder
-     *
+     * @param  Builder<User>  $builder
      * @return Builder<User>
      */
     public function testCallingQueryBuilderMethodOnEloquentBuilderReturnsEloquentBuilder(Builder $builder): Builder
