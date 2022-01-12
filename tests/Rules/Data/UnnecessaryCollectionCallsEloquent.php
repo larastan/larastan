@@ -6,10 +6,9 @@ namespace Tests\Rules\Data;
 
 use App\AccountCollection;
 use App\User;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
-use \Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Facades\DB;
-use function PHPStan\dumpType;
 
 class UnnecessaryCollectionCallsEloquent
 {
