@@ -25,7 +25,7 @@ class Account extends Model
 
     /**
      * @param  array<int, Account>  $models
-     * @return AccountCollection<Account>
+     * @return AccountCollection<int, Account>
      */
     public function newCollection(array $models = []): AccountCollection
     {

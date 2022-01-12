@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Model;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Reflection\ClassReflection;
@@ -179,6 +180,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
         }
 
         $builderReflection = $this->reflectionProvider->getClass($builderName)->withTypes([new ObjectType($classReflection->getName())]);
+
         $genericBuilderAndModelType = new GenericObjectType($builderName, [new ObjectType($classReflection->getName())]);
 
         if ($builderReflection->hasNativeMethod($methodName)) {
@@ -187,7 +189,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
             $parametersAcceptor = ParametersAcceptorSelector::selectSingle($reflection->getVariants());
 
             $returnType = TypeTraverser::map($parametersAcceptor->getReturnType(), static function (Type $type, callable $traverse) use ($genericBuilderAndModelType) {
-                if ($type instanceof TypeWithClassName && $type->getClassName() === Builder::class) {
+                if ($type instanceof TypeWithClassName && $type->getClassName() !== QueryBuilder::class && $type->getClassReflection()->getNativeReflection()->implementsInterface(Builder::class)) {
                     return $genericBuilderAndModelType;
                 }
 

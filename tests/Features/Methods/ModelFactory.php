@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Tests\Features\Laravel8\Methods;
+namespace Tests\Features\Methods;
 
 use Database\Factories\UserFactory;
-use Laravel8\Models\User;
+use App\User;
 
 class ModelFactory
 {

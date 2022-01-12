@@ -223,6 +223,7 @@ class BuilderHelper
         $returnType = ParametersAcceptorSelector::selectSingle($newCollectionMethod->getVariants())->getReturnType();
 
         if ($returnType instanceof ObjectType) {
+
             return $returnType->getClassName();
         }
 

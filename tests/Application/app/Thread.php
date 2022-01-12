@@ -35,7 +35,7 @@ class Thread extends Model
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public static function methodReturningCollectionOfAnotherModel(): Collection
     {
@@ -51,7 +51,7 @@ class Thread extends Model
     }
 
     /**
-     * @phpstan-return Collection<User>|User
+     * @phpstan-return Collection<array-key, User>|User
      */
     public static function methodReturningUnionWithCollectionOfAnotherModel()
     {

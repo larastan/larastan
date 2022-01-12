@@ -17,6 +17,7 @@ use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\IntegerType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\NullType;
@@ -96,10 +97,11 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
         if (Str::contains($returnType->getClassName(), 'Many')) {
             return new ModelProperty(
                 $classReflection,
-                new GenericObjectType($collectionClass, [$relatedModel]),
+                new GenericObjectType($collectionClass, [new IntegerType(), $relatedModel]),
                 new NeverType(), false
             );
         }
+
 
         if (Str::endsWith($returnType->getClassName(), 'MorphTo')) {
             return new ModelProperty($classReflection, new UnionType([
@@ -107,6 +109,7 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
                 new MixedType(),
             ]), new NeverType(), false);
         }
+
 
         return new ModelProperty($classReflection, new UnionType([
             $relatedModel,

@@ -5,15 +5,17 @@ namespace Illuminate\Contracts\Support;
 interface Htmlable
 {}
 
+/**
+ * @template TKey of array-key
+ * @template TValue
+ */
 interface Arrayable
 {
-    /**
-     * Get the instance as an array.
-     *
-     * @return array<mixed>
-     */
-    public function toArray();
+    // ..
 }
 
 interface Jsonable
+{}
+
+interface CanBeEscapedWhenCastToString
 {}

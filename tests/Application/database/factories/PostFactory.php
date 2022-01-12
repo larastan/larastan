@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Laravel8\Models\Post;
-use Laravel8\Models\User;
+use App\Post;
+use App\User;
 
 /**
  * @extends Factory<Post>

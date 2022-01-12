@@ -27,11 +27,6 @@ final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements Dynami
             return false;
         }
 
-        // Class only available on Laravel 8
-        if (! class_exists('\Illuminate\Database\Eloquent\Factories\Factory')) {
-            return false;
-        }
-
         return true;
     }
 

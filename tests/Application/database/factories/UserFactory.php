@@ -6,7 +6,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use Laravel8\Models\User;
+use App\User;
 
 /**
  * @extends Factory<User>

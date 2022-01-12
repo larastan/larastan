@@ -16,6 +16,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Tests\Application\HasManySyncable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
  * @property string $propertyDefinedOnlyInAnnotation
@@ -28,6 +29,7 @@ class User extends Authenticatable
 {
     use Notifiable;
     use SoftDeletes;
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.

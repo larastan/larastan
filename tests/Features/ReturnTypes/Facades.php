@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Features\Laravel8\ReturnTypes;
+namespace Tests\Features\ReturnTypes;
 
 use function PHPStan\Testing\assertType;
 

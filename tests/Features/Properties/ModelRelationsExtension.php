@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Features\Properties;
 
 use App\Account;
+use App\Address;
 use App\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -15,103 +16,55 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class ModelRelationsExtension
 {
-    /** @return Collection<OtherDummyModel> */
-    public function testHasMany()
-    {
-        /** @var DummyModel $dummyModel */
-        $dummyModel = DummyModel::firstOrFail();
-
-        return $dummyModel->hasManyRelation;
-    }
-
-    public function testHasManyForEach(): OtherDummyModel
-    {
-        /** @var DummyModel $dummyModel */
-        $dummyModel = DummyModel::firstOrFail();
-
-        foreach ($dummyModel->hasManyRelation as $related) {
-            if (random_int(0, 1)) {
-                return $related;
-            }
-        }
-
-        return new OtherDummyModel;
-    }
-
-    /** @return Collection<OtherDummyModel> */
-    public function testHasManyThroughRelation(DummyModel $dummyModel)
-    {
-        return $dummyModel->hasManyThroughRelation;
-    }
-
-    public function testBelongsTo(OtherDummyModel $otherDummyModel): ?DummyModel
-    {
-        return $otherDummyModel->belongsToRelation;
-    }
-
-    /** @return mixed */
-    public function testMorphTo(OtherDummyModel $otherDummyModel)
-    {
-        return $otherDummyModel->morphToRelation;
-    }
-
-    public function testCollectionMethodFirstOnRelation(DummyModel $dummyModel): ?OtherDummyModel
-    {
-        return $dummyModel->hasManyRelation->first();
-    }
-
-    public function testCollectionMethodFindOnRelation(DummyModel $dummyModel): ?OtherDummyModel
-    {
-        return $dummyModel->hasManyRelation->find(1);
-    }
-
-    public function testModelRelationForeach(DummyModel $dummyModel): ?OtherDummyModel
-    {
-        foreach ($dummyModel->hasManyRelation as $item) {
-            if (random_int(0, 1)) {
-                return $item;
-            }
-        }
-
-        return null;
-    }
-
     public function testModelWithRelationDefinedInTrait(Account $account): ?User
     {
         return $account->ownerRelation;
     }
 
-    public function testRelationCanbeOverridenWithAnnotation(OtherDummyModel $dummyModel): DummyModel
+    public function testAsArrayObjectCast(User $user): ArrayObject
     {
-        return $dummyModel->belongsToRelation;
+        return $user->options;
+    }
+
+    public function testAsArrayObjectCastCount(User $user): int
+    {
+        return count($user->options);
+    }
+
+    public function testAsCollectionCast(User $user): \Illuminate\Support\Collection
+    {
+        return $user->properties;
+    }
+
+    public function testAsCollectionCastCount(User $user): int
+    {
+        return count($user->properties);
+    }
+
+    /** @phpstan-return mixed */
+    public function testAsCollectionCastElements(User $user)
+    {
+        return $user->properties->first();
+    }
+
+    public function testForeignIdFor(Address $address): int
+    {
+        return $address->user_id;
+    }
+
+    public function testForeignIdForName(Address $address): int
+    {
+        return $address->custom_foreign_id_for_name;
+    }
+
+    public function testForeignIdUUID(Address $address): string
+    {
+        return $address->address_id;
+    }
+
+    public function testForeignIdNullable(Address $address): ?string
+    {
+        return $address->nullable_address_id;
     }
 }
 
-class DummyModel extends Model
-{
-    public function hasManyRelation(): HasMany
-    {
-        return $this->hasMany(OtherDummyModel::class);
-    }
-
-    public function hasManyThroughRelation(): HasManyThrough
-    {
-        return $this->hasManyThrough(OtherDummyModel::class, User::class);
-    }
-}
-
-/**
- * @property DummyModel $belongsToRelation
- */
-class OtherDummyModel extends Model
-{
-    public function belongsToRelation(): BelongsTo
-    {
-        return $this->belongsTo(DummyModel::class);
-    }
-
-    public function morphToRelation(): MorphTo
-    {
-        return $this->morphTo('foo');
-    }
-}

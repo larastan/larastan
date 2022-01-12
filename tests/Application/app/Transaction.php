@@ -8,7 +8,7 @@ class Transaction extends Model
 {
     /**
      * @param  array<int, Transaction>  $models
-     * @return TransactionCollection<Transaction>
+     * @return TransactionCollection<int, Transaction>
      */
     public function newCollection(array $models = []): TransactionCollection
     {

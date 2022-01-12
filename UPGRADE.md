@@ -88,7 +88,7 @@ Also in your model file where you are overriding the `newCollection` method, you
 /**
  * @param array<int, YourModel> $models
  *
- * @return CustomCollection<YourModel>
+ * @return CustomCollection<int, YourModel>
  */
 public function newCollection(array $models = []): CustomCollection
 {

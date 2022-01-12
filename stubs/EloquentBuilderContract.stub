@@ -1,12 +1,12 @@
 <?php
 
-namespace Illuminate\Database\Eloquent;
+namespace Illuminate\Contracts\Database\Query;
 
 /**
- * @template TModelClass of Model
+ * @template TModelClass of \Illuminate\Database\Eloquent\Model
  * @property-read static<TModelClass> $orWhere
  */
-class Builder
+interface Builder
 {
     /**
      * Create and return an un-saved model instance.
@@ -43,7 +43,7 @@ class Builder
     public function create(array $attributes = []);
 
     /**
-     * Create a collection of models from plain arrays.
+     * Create a collection of \Illuminate\Database\Eloquent\Models from plain arrays.
      *
      * @param  array<mixed>  $items
      * @phpstan-return \Illuminate\Database\Eloquent\Collection<int, TModelClass>
@@ -51,7 +51,7 @@ class Builder
     public function hydrate(array $items);
 
     /**
-     * Create a collection of models from a raw query.
+     * Create a collection of \Illuminate\Database\Eloquent\Models from a raw query.
      *
      * @param  string  $query
      * @param  array<mixed>  $bindings
@@ -195,7 +195,7 @@ class Builder
     /**
      * Add a relationship count / exists condition to the query.
      *
-     * @template TRelatedModel of Model
+     * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
      * @param  \Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel>|string  $relation
      * @param  string  $operator
      * @param  int  $count
@@ -260,8 +260,8 @@ class Builder
     /**
      * Add a polymorphic relationship count / exists condition to the query.
      *
-     * @template TRelatedModel of Model
-     * @template TChildModel of Model
+     * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+     * @template TChildModel of \Illuminate\Database\Eloquent\Model
      * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
      * @param  string|array<string>  $types
      * @param  string  $operator
@@ -275,8 +275,8 @@ class Builder
     /**
      * Add a polymorphic relationship count / exists condition to the query with an "or".
      *
-     * @template TRelatedModel of Model
-     * @template TChildModel of Model
+     * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+     * @template TChildModel of \Illuminate\Database\Eloquent\Model
      * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
      * @param  string|array<string>  $types
      * @param  string  $operator
@@ -288,8 +288,8 @@ class Builder
     /**
      * Add a polymorphic relationship count / exists condition to the query.
      *
-     * @template TRelatedModel of Model
-     * @template TChildModel of Model
+     * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+     * @template TChildModel of \Illuminate\Database\Eloquent\Model
      * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
      * @param  string|array<string>  $types
      * @param  string  $boolean
@@ -301,8 +301,8 @@ class Builder
     /**
      * Add a polymorphic relationship count / exists condition to the query with an "or".
      *
-     * @template TRelatedModel of Model
-     * @template TChildModel of Model
+     * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+     * @template TChildModel of \Illuminate\Database\Eloquent\Model
      * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
      * @param  string|array<string>  $types
      * @return static
@@ -312,8 +312,8 @@ class Builder
     /**
      * Add a polymorphic relationship count / exists condition to the query with where clauses.
      *
-     * @template TRelatedModel of Model
-     * @template TChildModel of Model
+     * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+     * @template TChildModel of \Illuminate\Database\Eloquent\Model
      * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
      * @param  string|array<string>  $types
      * @param  \Closure|null  $callback
@@ -326,8 +326,8 @@ class Builder
     /**
      * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
      *
-     * @template TRelatedModel of Model
-     * @template TChildModel of Model
+     * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+     * @template TChildModel of \Illuminate\Database\Eloquent\Model
      * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
      * @param  string|array<string>  $types
      * @param  \Closure|null  $callback
@@ -340,8 +340,8 @@ class Builder
     /**
      * Add a polymorphic relationship count / exists condition to the query with where clauses.
      *
-     * @template TRelatedModel of Model
-     * @template TChildModel of Model
+     * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+     * @template TChildModel of \Illuminate\Database\Eloquent\Model
      * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
      * @param  string|array<string>  $types
      * @param  \Closure|null  $callback
@@ -352,8 +352,8 @@ class Builder
     /**
      * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
      *
-     * @template TRelatedModel of Model
-     * @template TChildModel of Model
+     * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+     * @template TChildModel of \Illuminate\Database\Eloquent\Model
      * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
      * @param  string|array<string>  $types
      * @param  \Closure|null  $callback
@@ -442,13 +442,3 @@ class Builder
      */
     public function unless($value, $callback, $default = null);
 }
-
-class Scope {}
-
-/**
- * @method static \Illuminate\Database\Eloquent\Builder<static> withTrashed(bool $withTrashed = true)
- * @method static \Illuminate\Database\Eloquent\Builder<static> onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder<static> withoutTrashed()
- * @method static bool restore()
- */
-trait SoftDeletes {}

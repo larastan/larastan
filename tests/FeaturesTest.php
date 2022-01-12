@@ -32,7 +32,7 @@ class FeaturesTest extends BaseTestCase
         $baseDir = __DIR__.DIRECTORY_SEPARATOR.'Features'.DIRECTORY_SEPARATOR;
 
         /** @var SplFileInfo $file */
-        foreach ((new Finder())->in($baseDir)->files()->name('*.php')->notContains('Laravel8') as $file) {
+        foreach ((new Finder())->in($baseDir)->files()->name('*.php') as $file) {
             $fullPath = realpath((string) $file);
             $calls[str_replace($baseDir, '', $fullPath)] = [$fullPath];
         }
