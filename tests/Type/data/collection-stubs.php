@@ -21,7 +21,7 @@ assertType('Illuminate\Support\Collection<string, string>', $items->map(function
 }));
 
 assertType('Illuminate\Support\Collection<int, mixed>', $collection->pluck('id'));
-assertType('Illuminate\Database\Eloquent\Collection<string, App\User>', $collection->keyBy(function (User $user, int $key): string {
+assertType('Illuminate\Support\Collection<(int|string), App\User>', $collection->keyBy(function (User $user, int $key): string {
     return $user->email;
 }));
 assertType('Illuminate\Support\Collection<string, Illuminate\Support\Collection<int, int>>', $collection->mapToGroups(function (User $user, int $key): array {
