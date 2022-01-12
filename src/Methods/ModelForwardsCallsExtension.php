@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods;
 
 use Illuminate\Contracts\Database\Query\Builder;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;

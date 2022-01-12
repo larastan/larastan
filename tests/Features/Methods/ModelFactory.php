@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Features\Methods;
 
-use Database\Factories\UserFactory;
 use App\User;
+use Database\Factories\UserFactory;
 
 class ModelFactory
 {
