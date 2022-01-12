@@ -27,13 +27,13 @@ assertType('Illuminate\Support\Collection<(int|string), App\User>', $collection-
 assertType('Illuminate\Support\Collection<string, Illuminate\Support\Collection<int, int>>', $collection->mapToGroups(function (User $user, int $key): array {
     return ['foo' => $user->id];
 }));
-assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $collection->groupBy('id'));
+assertType('Illuminate\Support\Collection<(int|string), Illuminate\Support\Collection<(int|string), App\User>>', $collection->groupBy('id'));
 assertType('Illuminate\Support\Collection<int, App\User>', User::all()->mapInto(User::class));
-assertType('Illuminate\Support\Collection<(int|string), App\User>', $collection->flatMap(function (User $user, int $id): array {
+assertType('Illuminate\Support\Collection<int, mixed>', $collection->flatMap(function (User $user, int $id): array {
     return [$user];
 }));
 assertType(
-    'Illuminate\Support\Collection<(int|string), App\Account>',
+    'Illuminate\Support\Collection<int, mixed>',
     $collection->flatMap(function (User $user, int $id) {
         return $user->accounts;
     })
@@ -41,7 +41,7 @@ assertType(
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->tap(function ($collection): void {
 }));
 
-assertType('Illuminate\Support\Collection<(int|string), Illuminate\Support\Collection<int, non-empty-array<string, int|string>>>', collect([
+assertType('Illuminate\Support\Collection<(int|string), Illuminate\Support\Collection<(int|string), non-empty-array<string, int|string>>>', collect([
     [
         'id'   => 1,
         'type' => 'A',
