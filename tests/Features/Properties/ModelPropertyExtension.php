@@ -10,10 +10,10 @@ use App\GuardedModel;
 use App\Role;
 use App\Thread;
 use App\User;
-use Carbon\Carbon as BaseCarbon;
 use ArrayObject;
-use Illuminate\Support\Collection;
+use Carbon\Carbon as BaseCarbon;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 class ModelPropertyExtension
 {

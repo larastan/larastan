@@ -15,7 +15,6 @@ use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\PhpDocParser\Ast\Type\UnionTypeNode;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntegerType;
-
 use PHPStan\Type\Type;
 
 /**
