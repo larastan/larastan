@@ -20,6 +20,9 @@ echo "Fix https://github.com/nunomaduro/larastan/pull/378#issuecomment-565706907
 sed -e 's/string/string|void/' -i app/Http/Middleware/Authenticate.php
 sed '0,/}/s/}/}\nreturn;/' -i app/Http/Middleware/Authenticate.php
 
+echo "Uncomment namespace in RouteServiceProvider"
+sed -e 's|// protected $namespace|protected $namespace|' -i app/Providers/RouteServiceProvider.php
+
 echo "Test Laravel"
 vendor/bin/phpstan analyse app --level=5 -c vendor/nunomaduro/larastan/extension.neon
 cd -
