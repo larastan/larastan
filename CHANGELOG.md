@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+* PHPStan minimum version is 1.4
+
 ## [1.0.2] - 2021-11-23
 
 ### Added
