@@ -15,91 +15,91 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class ModelRelationsExtension
 {
-    /** @return Collection<int, OtherDummyModel> */
-    public function testHasMany()
-    {
-        /** @var DummyModel $dummyModel */
-        $dummyModel = DummyModel::firstOrFail();
-
-        return $dummyModel->hasManyRelation;
-    }
-
-    public function testHasManyForEach(): OtherDummyModel
-    {
-        /** @var DummyModel $dummyModel */
-        $dummyModel = DummyModel::firstOrFail();
-
-        foreach ($dummyModel->hasManyRelation as $related) {
-            if (random_int(0, 1)) {
-                return $related;
-            }
-        }
-
-        return new OtherDummyModel;
-    }
-
-    /** @return Collection<int, OtherDummyModel> */
-    public function testHasManyThroughRelation(DummyModel $dummyModel)
-    {
-        return $dummyModel->hasManyThroughRelation;
-    }
-
-    public function testBelongsTo(OtherDummyModel $otherDummyModel): ?DummyModel
-    {
-        return $otherDummyModel->belongsToRelation;
-    }
-
-    /** @return mixed */
-    public function testMorphTo(OtherDummyModel $otherDummyModel)
-    {
-        return $otherDummyModel->morphToRelation;
-    }
-
-    public function testCollectionMethodFirstOnRelation(DummyModel $dummyModel): ?OtherDummyModel
-    {
-        return $dummyModel->hasManyRelation->first();
-    }
-
-    public function testCollectionMethodFindOnRelation(DummyModel $dummyModel): ?OtherDummyModel
-    {
-        return $dummyModel->hasManyRelation()->find(1);
-    }
-
-    public function testModelRelationForeach(DummyModel $dummyModel): ?OtherDummyModel
-    {
-        foreach ($dummyModel->hasManyRelation as $item) {
-            if (random_int(0, 1)) {
-                return $item;
-            }
-        }
-
-        return null;
-    }
-
-    public function testModelWithRelationDefinedInTrait(Account $account): ?User
-    {
-        return $account->ownerRelation;
-    }
-
-    public function testRelationCanbeOverridenWithAnnotation(OtherDummyModel $dummyModel): DummyModel
-    {
-        return $dummyModel->belongsToRelation;
-    }
+//    /** @return Collection<int, OtherDummyModel> */
+//    public function testHasMany()
+//    {
+//        /** @var DummyModel $dummyModel */
+//        $dummyModel = DummyModel::firstOrFail();
+//
+//        return $dummyModel->hasManyRelation;
+//    }
+//
+//    public function testHasManyForEach(): OtherDummyModel
+//    {
+//        /** @var DummyModel $dummyModel */
+//        $dummyModel = DummyModel::firstOrFail();
+//
+//        foreach ($dummyModel->hasManyRelation as $related) {
+//            if (random_int(0, 1)) {
+//                return $related;
+//            }
+//        }
+//
+//        return new OtherDummyModel;
+//    }
+//
+//    /** @return Collection<int, OtherDummyModel> */
+//    public function testHasManyThroughRelation(DummyModel $dummyModel)
+//    {
+//        return $dummyModel->hasManyThroughRelation;
+//    }
+//
+//    public function testBelongsTo(OtherDummyModel $otherDummyModel): ?DummyModel
+//    {
+//        return $otherDummyModel->belongsToRelation;
+//    }
+//
+//    /** @return mixed */
+//    public function testMorphTo(OtherDummyModel $otherDummyModel)
+//    {
+//        return $otherDummyModel->morphToRelation;
+//    }
+//
+//    public function testCollectionMethodFirstOnRelation(DummyModel $dummyModel): ?OtherDummyModel
+//    {
+//        return $dummyModel->hasManyRelation->first();
+//    }
+//
+//    public function testCollectionMethodFindOnRelation(DummyModel $dummyModel): ?OtherDummyModel
+//    {
+//        return $dummyModel->hasManyRelation()->find(1);
+//    }
+//
+//    public function testModelRelationForeach(DummyModel $dummyModel): ?OtherDummyModel
+//    {
+//        foreach ($dummyModel->hasManyRelation as $item) {
+//            if (random_int(0, 1)) {
+//                return $item;
+//            }
+//        }
+//
+//        return null;
+//    }
+//
+//    public function testModelWithRelationDefinedInTrait(Account $account): ?User
+//    {
+//        return $account->ownerRelation;
+//    }
+//
+//    public function testRelationCanbeOverridenWithAnnotation(OtherDummyModel $dummyModel): DummyModel
+//    {
+//        return $dummyModel->belongsToRelation;
+//    }
 }
 
 class DummyModel extends Model
 {
-    /** @return HasMany<OtherDummyModel> */
-    public function hasManyRelation(): HasMany
-    {
-        return $this->hasMany(OtherDummyModel::class);
-    }
-
-    /** @return HasManyThrough<OtherDummyModel> */
-    public function hasManyThroughRelation(): HasManyThrough
-    {
-        return $this->hasManyThrough(OtherDummyModel::class, User::class);
-    }
+//    /** @return HasMany<OtherDummyModel> */
+//    public function hasManyRelation(): HasMany
+//    {
+//        return $this->hasMany(OtherDummyModel::class);
+//    }
+//
+//    /** @return HasManyThrough<OtherDummyModel> */
+//    public function hasManyThroughRelation(): HasManyThrough
+//    {
+//        return $this->hasManyThrough(OtherDummyModel::class, User::class);
+//    }
 }
 
 /**
@@ -107,13 +107,13 @@ class DummyModel extends Model
  */
 class OtherDummyModel extends Model
 {
-    /** @return BelongsTo<OtherDummyModel, DummyModel> */
+    /** @return BelongsTo<DummyModel, OtherDummyModel> */
     public function belongsToRelation(): BelongsTo
     {
         return $this->belongsTo(DummyModel::class);
     }
 
-    /** @return MorphTo<DummyModel, Model> */
+    /** @return MorphTo<Model, OtherDummyModel> */
     public function morphToRelation(): MorphTo
     {
         return $this->morphTo('foo');

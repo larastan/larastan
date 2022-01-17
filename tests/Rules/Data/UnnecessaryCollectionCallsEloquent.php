@@ -40,7 +40,7 @@ class UnnecessaryCollectionCallsEloquent
     }
 
     /** @return AccountCollection<int, \App\Account> */
-    public function testCallRelationTakeWrongly(): EloquentCollection
+    public function testCallRelationTakeWrongly(): AccountCollection
     {
         return User::firstOrFail()->accounts()->get()->take(2);
     }
@@ -94,7 +94,7 @@ class UnnecessaryCollectionCallsEloquent
 
     public function testContainsStrictWrong(): bool
     {
-        return User::query()->get()->containsStrict('id', 1);
+        return User::query()->get()->containsStrict('id');
     }
 
     /** @phpstan-return mixed */

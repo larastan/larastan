@@ -7,6 +7,7 @@ namespace Tests\Features\Properties;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use function PHPStan\Testing\assertType;
 
 class HigherOrderCollectionProxyProperties
 {
@@ -55,18 +56,15 @@ class HigherOrderCollectionProxyProperties
         return $this->users->flatMap->email;
     }
 
-    /** @return Collection<int, Collection<int, User>> */
-    public function testGroupBy(): Collection
+    public function testGroupBy(): void
     {
-        // Does not make too much sense, but it should work
-        return $this->users->groupBy->email;
+        assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $this->users->groupBy->email);
     }
 
-    /** @return Collection<int, User> */
-    public function testKeyBy(): Collection
+    public function testKeyBy(): void
     {
         // Does not make too much sense, but it should work
-        return $this->users->keyBy->email;
+        assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', $this->users->keyBy->email);
     }
 
     /** @return \Illuminate\Support\Collection<int, string> */
@@ -120,10 +118,9 @@ class HigherOrderCollectionProxyProperties
         return $this->users->min->created_at;
     }
 
-    /** @return Collection<int, Collection<int, User>> */
-    public function testPartition(): Collection
+    public function testPartition(): void
     {
-        return $this->users->partition->email;
+        assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $this->users->partition->email);
     }
 
     /** @return Collection<int, User> */

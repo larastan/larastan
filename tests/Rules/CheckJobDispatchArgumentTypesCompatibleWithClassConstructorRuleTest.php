@@ -11,6 +11,7 @@ use PHPStan\Php\PhpVersion;
 use PHPStan\Rules\FunctionCallParametersCheck;
 use PHPStan\Rules\NullsafeCheck;
 use PHPStan\Rules\PhpDoc\UnresolvableTypeHelper;
+use PHPStan\Rules\Properties\PropertyReflectionFinder;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleLevelHelper;
 use PHPStan\Testing\RuleTestCase;
@@ -30,7 +31,17 @@ class CheckDispatchArgumentTypesCompatibleWithClassConstructorRuleTest extends R
 
         return new CheckDispatchArgumentTypesCompatibleWithClassConstructorRule(
             $broker,
-            new FunctionCallParametersCheck(new RuleLevelHelper($broker, true, false, true, false), new NullsafeCheck(), new PhpVersion(80000), new UnresolvableTypeHelper(), true, true, true, true),
+            new FunctionCallParametersCheck(
+                new RuleLevelHelper($broker, true, false, true, false),
+                new NullsafeCheck(),
+                new PhpVersion(80000),
+                new UnresolvableTypeHelper(),
+                new PropertyReflectionFinder(),
+                true,
+                true,
+                true,
+                true
+            ),
             $this->dispatchableClass
         );
     }

@@ -10,6 +10,7 @@ use App\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection as SupportCollection;
+use function PHPStan\Testing\assertType;
 
 class HigherOrderCollectionProxyMethods
 {
@@ -54,10 +55,9 @@ class HigherOrderCollectionProxyMethods
         return $this->users->flatMap->isActive();
     }
 
-    /** @return Collection<int, Collection<int, User>> */
-    public function testGroupBy(): SupportCollection
+    public function testGroupBy(): void
     {
-        return $this->users->groupBy->isActive();
+        assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $this->users->groupBy->isActive());
     }
 
     /** @return Collection<int, User> */
@@ -100,10 +100,9 @@ class HigherOrderCollectionProxyMethods
         return $this->users->min->id();
     }
 
-    /** @return Collection<int, Collection<int, User>> */
-    public function testPartition(): Collection
+    public function testPartition(): void
     {
-        return $this->users->partition->isActive();
+        assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $this->users->partition->isActive());
     }
 
     /** @return Collection<int, User> */

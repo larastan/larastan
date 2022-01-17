@@ -83,11 +83,7 @@ class HigherOrderCollectionProxyHelper
                 $returnType = new Type\Generic\GenericObjectType($collectionType, $types);
                 break;
             case 'keyBy':
-                if ($collectionType === SupportCollection::class) {
-                    $returnType = new Type\Generic\GenericObjectType($collectionType, [$methodOrPropertyReturnType, $valueType]);
-                } else {
-                    $returnType = new Type\Generic\GenericObjectType($collectionType, $types);
-                }
+                $returnType = new Type\Generic\GenericObjectType($collectionType, [new Type\BenevolentUnionType([new Type\IntegerType(), new Type\StringType()]), $valueType]);
                 break;
             case 'first':
                 $returnType = Type\TypeCombinator::addNull($valueType);

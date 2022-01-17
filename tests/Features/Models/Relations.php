@@ -16,8 +16,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use function PHPStan\dumpType;
 use function PHPStan\Testing\assertType;
 
 class Relations
@@ -90,10 +92,17 @@ class Relations
         return $user->accounts()->paginate(5);
     }
 
-    /** @return MorphTo<User, Model> */
-    public function testMorph(User $user): MorphTo
+    /** @return MorphTo<Model, \App\Address> */
+    public function testMorphTo(\App\Address $address): MorphTo
     {
-        return $user->addressable()->where('name', 'bar');
+        assertType('Illuminate\Database\Eloquent\Relations\MorphTo<Illuminate\Database\Eloquent\Model, App\Address>', $address->addressable());
+        return $address->addressable()->where('name', 'bar');
+    }
+
+    /** @return MorphMany<\App\Address> */
+    public function testMorphMany(User $user): MorphMany
+    {
+        return $user->address()->where('name', 'bar');
     }
 
     /** @phpstan-return HasMany<Account> */

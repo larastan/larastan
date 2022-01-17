@@ -4,11 +4,9 @@ namespace Illuminate\Database\Eloquent;
 
 /**
  * @template TModelClass of Model
- * @property-read static<TModelClass> $orWhere
- *
- * @implements \Illuminate\Contracts\Database\Query\Builder<TModelClass>
+ * @property-read static $orWhere
  */
-class Builder implements \Illuminate\Contracts\Database\Query\Builder
+class Builder
 {
     /**
      * Create and return an un-saved model instance.
@@ -217,6 +215,27 @@ class Builder implements \Illuminate\Contracts\Database\Query\Builder
      * @return static
      */
     public function orDoesntHave($relation);
+
+    /**
+     * Add a basic where clause to the query.
+     *
+     * @param  \Closure|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @param  string  $boolean
+     * @return static
+     */
+    public function where($column, $operator = null, $value = null, $boolean = 'and');
+
+    /**
+     * Add an "or where" clause to the query.
+     *
+     * @param  \Closure|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return $this
+     */
+    public function orWhere($column, $operator = null, $value = null);
 
     /**
      * Add a relationship count / exists condition to the query with where clauses.

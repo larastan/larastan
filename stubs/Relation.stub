@@ -4,10 +4,8 @@ namespace Illuminate\Database\Eloquent\Relations;
 
 /**
  * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
- *
- * @implements \Illuminate\Contracts\Database\Query\Builder<TRelatedModel>
  */
-abstract class Relation implements \Illuminate\Contracts\Database\Query\Builder
+abstract class Relation
 {
     /**
      * Execute the query as a "select" statement.

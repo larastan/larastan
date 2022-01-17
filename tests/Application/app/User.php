@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use function get_class;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
@@ -102,9 +103,9 @@ class User extends Authenticatable
         return $this->hasManySyncable(Account::class);
     }
 
-    public function addressable(): MorphTo
+    public function address(): MorphMany
     {
-        return $this->morphTo(null, 'model_type', 'model_id');
+        return $this->morphMany(Address::class, 'addressable');
     }
 
     public function roles(): BelongsToMany
