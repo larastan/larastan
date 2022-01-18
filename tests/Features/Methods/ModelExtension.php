@@ -262,4 +262,9 @@ class ModelExtension
     {
         return $user->min('id');
     }
+
+    public function testSole(): User
+    {
+        return User::sole();
+    }
 }

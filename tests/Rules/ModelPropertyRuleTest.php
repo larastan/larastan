@@ -50,14 +50,10 @@ class ModelPropertyRuleTest extends RulesTest
 
     public function testModelPropertyRuleOnModelFactory(): void
     {
-        if (version_compare(app()->version(), '8.0.0', '<')) {
-            $this->markTestSkipped('Test required Laravel 8');
-        }
-
         $errors = $this->setConfigPath(__DIR__.DIRECTORY_SEPARATOR.'Data/modelPropertyConfig.neon')->findErrorsByLine(__DIR__.'/Data/model-property-model-factory.php');
 
         self::assertEquals([
-            5 => 'Property \'foo\' does not exist in Laravel8\\Models\\User model.',
+            5 => 'Property \'foo\' does not exist in App\\User model.',
         ], $errors);
     }
 }

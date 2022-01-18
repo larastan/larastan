@@ -2,31 +2,31 @@
 
 declare(strict_types=1);
 
-namespace Tests\Features\Laravel8\Methods;
+namespace Tests\Features\Methods;
 
+use App\User;
 use Database\Factories\UserFactory;
-use Laravel8\Models\User;
 
 class ModelFactory
 {
     public function testHasRelation(): UserFactory
     {
-        return User::factory()->hasAccounts();
+        return User::factory()->hasPosts();
     }
 
     public function testHasRelationWithCount(): UserFactory
     {
-        return User::factory()->hasAccounts(3);
+        return User::factory()->hasPosts(3);
     }
 
     public function testHasRelationWithState(): UserFactory
     {
-        return User::factory()->hasAccounts(['active' => 0]);
+        return User::factory()->hasPosts(['active' => 0]);
     }
 
     public function testHasRelationWithCountAndState(): User
     {
-        return User::factory()->hasAccounts(3, ['active' => 1])->createOne();
+        return User::factory()->hasPosts(3, ['active' => 1])->createOne();
     }
 
     public function testForRelation(): UserFactory

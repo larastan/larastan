@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Tests\Features\Laravel8\ReturnTypes;
+namespace Tests\Features\ReturnTypes;
 
 use Database\Factories\PostFactory;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Collection;
-use Laravel8\Models\Post;
-use Laravel8\Models\User;
+use App\Post;
+use App\User;
 
 class ModelFactory
 {
