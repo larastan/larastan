@@ -21,7 +21,7 @@ class Builder
      *
      * @param  string  $identifier
      * @param  \Illuminate\Database\Eloquent\Scope|\Closure  $scope
-     * @return static<TModelClass>
+     * @return static
      */
     public function withGlobalScope($identifier, $scope);
 
@@ -29,7 +29,7 @@ class Builder
      * Remove a registered global scope.
      *
      * @param  \Illuminate\Database\Eloquent\Scope|string  $scope
-     * @return static<TModelClass>
+     * @return static
      */
     public function withoutGlobalScope($scope);
 

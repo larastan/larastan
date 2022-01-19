@@ -242,11 +242,6 @@ services:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\CollectionMakeDynamicStaticMethodReturnTypeExtension
-        tags:
-            - phpstan.broker.dynamicStaticMethodReturnTypeExtension
-
-    -
         class: NunoMaduro\Larastan\Support\CollectionHelper
 
     -
@@ -303,6 +298,16 @@ services:
         class: NunoMaduro\Larastan\ReturnTypes\CollectionFilterDynamicReturnTypeExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\CollectionGenericStaticMethodDynamicMethodReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\CollectionGenericStaticMethodDynamicStaticMethodReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicStaticMethodReturnTypeExtension
 
     -
         class: NunoMaduro\Larastan\Types\AbortIfFunctionTypeSpecifyingExtension
