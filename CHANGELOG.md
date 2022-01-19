@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+* Automatically discover packages via `Orchestra\Testbench`
+
 ## [1.0.2] - 2021-11-23
 
 ### Added
