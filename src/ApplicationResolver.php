@@ -20,7 +20,7 @@ final class ApplicationResolver
     /** @var mixed */
     public static $composer;
     
-    /** $var bool */
+    /** @var bool */
     protected $enablesPackageDiscoveries = true;
 
     /**
