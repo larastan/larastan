@@ -33,7 +33,7 @@ class CollectionGenericStaticMethodDynamicStaticMethodReturnTypeExtension implem
     public function isStaticMethodSupported(MethodReflection $methodReflection): bool
     {
         return in_array($methodReflection->getName(), [
-            'make', 'wrap', 'times', 'range'
+            'make', 'wrap', 'times', 'range',
         ], true);
     }
 
@@ -90,7 +90,7 @@ class CollectionGenericStaticMethodDynamicStaticMethodReturnTypeExtension implem
         $genericTypes = $returnTypeClassReflection->typeMapToList($returnTypeClassReflection->getActiveTemplateTypeMap());
 
         $genericTypes = array_map(static function (Type $type) use ($classReflection) {
-            return TypeTraverser::map($type, static function (Type $type, callable $traverse) use($classReflection) : Type {
+            return TypeTraverser::map($type, static function (Type $type, callable $traverse) use ($classReflection): Type {
                 if ($type instanceof UnionType || $type instanceof IntersectionType) {
                     return $traverse($type);
                 }

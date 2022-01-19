@@ -19,7 +19,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use function PHPStan\dumpType;
 use function PHPStan\Testing\assertType;
 
 class Relations
@@ -96,6 +95,7 @@ class Relations
     public function testMorphTo(\App\Address $address): MorphTo
     {
         assertType('Illuminate\Database\Eloquent\Relations\MorphTo<Illuminate\Database\Eloquent\Model, App\Address>', $address->addressable());
+
         return $address->addressable()->where('name', 'bar');
     }
 

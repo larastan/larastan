@@ -38,7 +38,7 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
             'mapToDictionary', 'mapToGroups',
             'mapWithKeys', 'mergeRecursive', 'pad', 'pluck',
             'pop', 'random', 'shift', 'sliding', 'split',
-            'splitIn', 'values', 'wrap', 'zip'
+            'splitIn', 'values', 'wrap', 'zip',
         ], true);
     }
 
@@ -96,7 +96,7 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
         $genericTypes = $returnTypeClassReflection->typeMapToList($returnTypeClassReflection->getActiveTemplateTypeMap());
 
         $genericTypes = array_map(static function (Type $type) use ($classReflection) {
-            return TypeTraverser::map($type, static function (Type $type, callable $traverse) use($classReflection) : Type {
+            return TypeTraverser::map($type, static function (Type $type, callable $traverse) use ($classReflection): Type {
                 if ($type instanceof UnionType || $type instanceof IntersectionType) {
                     return $traverse($type);
                 }

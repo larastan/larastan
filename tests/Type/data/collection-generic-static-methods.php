@@ -1,8 +1,8 @@
 <?php
 
 use App\Transaction;
-use App\User;
 use App\TransactionCollection;
+use App\User;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection as SupportCollection;
 use function PHPStan\Testing\assertType;
@@ -10,7 +10,6 @@ use function PHPStan\Testing\assertType;
 /** @var EloquentCollection<int, User> $collection */
 /** @var SupportCollection<string, int> $items */
 /** @var App\TransactionCollection<int, Transaction> $customEloquentCollection */
-
 assertType('Illuminate\Database\Eloquent\Collection<int, int>', EloquentCollection::range(1, 10));
 
 assertType('Illuminate\Support\Collection<int, mixed>', $collection->collapse());
@@ -27,7 +26,7 @@ assertType('Illuminate\Support\Collection<int, string>', $items->flip());
 assertType('Illuminate\Database\Eloquent\Collection<(int|string), Illuminate\Database\Eloquent\Collection<(int|string), App\User>>', $collection->groupBy('id'));
 assertType('Illuminate\Support\Collection<(int|string), Illuminate\Support\Collection<(int|string), int>>', $items->groupBy('id'));
 
-assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', $collection->keyBy(fn(User $user, int $key): string => $user->email));
+assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', $collection->keyBy(fn (User $user, int $key): string => $user->email));
 
 assertType('Illuminate\Support\Collection<int, int>', $collection->keys());
 assertType('Illuminate\Support\Collection<int, string>', $items->keys());
@@ -35,17 +34,17 @@ assertType('Illuminate\Support\Collection<int, string>', $items->keys());
 assertType('Illuminate\Support\Collection<int, mixed>', $collection->pluck(['email']));
 assertType('Illuminate\Support\Collection<int, mixed>', $items->pluck('1'));
 
-assertType('Illuminate\Support\Collection<int, int>', $customEloquentCollection->map(fn(Transaction $transaction): int => $transaction->id));
-assertType('Illuminate\Support\Collection<int, int>', $collection->map(fn(User $user): int => $user->id));
-assertType('Illuminate\Support\Collection<string, int>', $items->map(fn(int $value, string $key): int => $value));
+assertType('Illuminate\Support\Collection<int, int>', $customEloquentCollection->map(fn (Transaction $transaction): int => $transaction->id));
+assertType('Illuminate\Support\Collection<int, int>', $collection->map(fn (User $user): int => $user->id));
+assertType('Illuminate\Support\Collection<string, int>', $items->map(fn (int $value, string $key): int => $value));
 
-assertType('Illuminate\Database\Eloquent\Collection<int, array<int, string>>', $collection->mapToDictionary(fn(User $u) => [$u->id => $u->email]));
-assertType('App\TransactionCollection<string, array<int, int>>', $customEloquentCollection->mapToDictionary(fn(Transaction $t) => ['foo'=> $t->id]));
-assertType('Illuminate\Support\Collection<string, array<int, int>>', $items->mapToDictionary(fn(int $v) => ['foo' => $v]));
+assertType('Illuminate\Database\Eloquent\Collection<int, array<int, string>>', $collection->mapToDictionary(fn (User $u) => [$u->id => $u->email]));
+assertType('App\TransactionCollection<string, array<int, int>>', $customEloquentCollection->mapToDictionary(fn (Transaction $t) => ['foo'=> $t->id]));
+assertType('Illuminate\Support\Collection<string, array<int, int>>', $items->mapToDictionary(fn (int $v) => ['foo' => $v]));
 
-assertType('Illuminate\Support\Collection<int, string>', $customEloquentCollection->mapWithKeys(fn(Transaction $transaction): array => [$transaction->id => 'foo']));
-assertType('Illuminate\Support\Collection<int, string>', $collection->mapWithKeys(fn(User $user): array => [$user->id => $user->email]));
-assertType('Illuminate\Support\Collection<string, int>', $items->mapWithKeys(fn(int $value, string $key): array => ['foo' => $value]));
+assertType('Illuminate\Support\Collection<int, string>', $customEloquentCollection->mapWithKeys(fn (Transaction $transaction): array => [$transaction->id => 'foo']));
+assertType('Illuminate\Support\Collection<int, string>', $collection->mapWithKeys(fn (User $user): array => [$user->id => $user->email]));
+assertType('Illuminate\Support\Collection<string, int>', $items->mapWithKeys(fn (int $value, string $key): array => ['foo' => $value]));
 
 // Should be fixed in Laravel
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User|string>', $collection->mergeRecursive([2 => 'foo']));
@@ -84,9 +83,9 @@ assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Elo
 assertType('App\TransactionCollection<int, App\TransactionCollection<int, App\Transaction>>', $customEloquentCollection->chunk(2));
 assertType('Illuminate\Support\Collection<int, Illuminate\Support\Collection<string, int>>', $items->chunk(3));
 
-assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $collection->chunkWhile(fn(User $u) => $u->id > 5));
-assertType('App\TransactionCollection<int, App\TransactionCollection<int, App\Transaction>>', $customEloquentCollection->chunkWhile(fn(Transaction $t) => $t->id > 5));
-assertType('Illuminate\Support\Collection<int, Illuminate\Support\Collection<int, int>>', $items->chunkWhile(fn($v) => $v > 5));
+assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $collection->chunkWhile(fn (User $u) => $u->id > 5));
+assertType('App\TransactionCollection<int, App\TransactionCollection<int, App\Transaction>>', $customEloquentCollection->chunkWhile(fn (Transaction $t) => $t->id > 5));
+assertType('Illuminate\Support\Collection<int, Illuminate\Support\Collection<int, int>>', $items->chunkWhile(fn ($v) => $v > 5));
 
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->values());
 assertType('App\TransactionCollection<int, App\Transaction>', $customEloquentCollection->values());
@@ -117,17 +116,16 @@ assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', EloquentCol
 assertType('App\TransactionCollection<int, App\Transaction>', TransactionCollection::wrap([new Transaction()]));
 assertType('Illuminate\Support\Collection<int, int>', SupportCollection::wrap([1, 2, 3]));
 
-assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', EloquentCollection::times(10, fn($int) => new User));
-assertType('App\TransactionCollection<int, App\Transaction>', TransactionCollection::times(10, fn($int) => new Transaction));
-assertType('Illuminate\Support\Collection<int, int>', SupportCollection::times(10, fn($int) => 5));
+assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', EloquentCollection::times(10, fn ($int) => new User));
+assertType('App\TransactionCollection<int, App\Transaction>', TransactionCollection::times(10, fn ($int) => new Transaction));
+assertType('Illuminate\Support\Collection<int, int>', SupportCollection::times(10, fn ($int) => 5));
 
 // In runtime it returns `Illuminate\Support\Collection<string, Illuminate\Database\Eloquent\Collection<int, int>>`
 // Might be fixed in Laravel or needs a separate extension
 assertType(
     'Illuminate\Database\Eloquent\Collection<string, Illuminate\Database\Eloquent\Collection<int, int>>',
-    $collection->mapToGroups(fn(User $user, int $key): array => ['foo' => $user->id])
+    $collection->mapToGroups(fn (User $user, int $key): array => ['foo' => $user->id])
 );
-
 
 assertType(
     'Illuminate\Database\Eloquent\Collection<int, mixed>',

@@ -9,7 +9,6 @@ use function PHPStan\Testing\assertType;
 
 /** @var EloquentCollection<int, User> $collection */
 /** @var SupportCollection<string, int> $items */
-
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::all()->each(function (User $user, int $key): void {
 }));
 
