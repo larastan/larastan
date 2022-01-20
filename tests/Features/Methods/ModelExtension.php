@@ -28,7 +28,7 @@ class ModelExtension
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testAll(): Collection
     {
@@ -239,19 +239,19 @@ class ModelExtension
         return User::query();
     }
 
-    /** @phpstan-return Collection<User> */
+    /** @phpstan-return Collection<int, User> */
     public function testMethodReturningCollectionOfAnotherModel()
     {
         return Thread::methodReturningCollectionOfAnotherModel();
     }
 
-    /** @phpstan-return Collection<Thread>|Thread */
+    /** @phpstan-return Collection<int, Thread>|Thread */
     public function testMethodReturningUnionWithCollection()
     {
         return Thread::methodReturningUnionWithCollection();
     }
 
-    /** @phpstan-return Collection<User>|User */
+    /** @phpstan-return Collection<int, User>|User */
     public function testMethodReturningUnionWithCollectionOfAnotherModel()
     {
         return Thread::methodReturningUnionWithCollectionOfAnotherModel();
@@ -261,5 +261,10 @@ class ModelExtension
     public function testMin(User $user)
     {
         return $user->min('id');
+    }
+
+    public function testSole(): User
+    {
+        return User::sole();
     }
 }

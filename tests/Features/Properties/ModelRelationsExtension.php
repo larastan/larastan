@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class ModelRelationsExtension
 {
-    /** @return Collection<OtherDummyModel> */
+    /** @return Collection<int, OtherDummyModel> */
     public function testHasMany()
     {
         /** @var DummyModel $dummyModel */
@@ -38,7 +38,7 @@ class ModelRelationsExtension
         return new OtherDummyModel;
     }
 
-    /** @return Collection<OtherDummyModel> */
+    /** @return Collection<int, OtherDummyModel> */
     public function testHasManyThroughRelation(DummyModel $dummyModel)
     {
         return $dummyModel->hasManyThroughRelation;
@@ -62,7 +62,7 @@ class ModelRelationsExtension
 
     public function testCollectionMethodFindOnRelation(DummyModel $dummyModel): ?OtherDummyModel
     {
-        return $dummyModel->hasManyRelation->find(1);
+        return $dummyModel->hasManyRelation()->find(1);
     }
 
     public function testModelRelationForeach(DummyModel $dummyModel): ?OtherDummyModel
@@ -89,11 +89,13 @@ class ModelRelationsExtension
 
 class DummyModel extends Model
 {
+    /** @return HasMany<OtherDummyModel> */
     public function hasManyRelation(): HasMany
     {
         return $this->hasMany(OtherDummyModel::class);
     }
 
+    /** @return HasManyThrough<OtherDummyModel> */
     public function hasManyThroughRelation(): HasManyThrough
     {
         return $this->hasManyThrough(OtherDummyModel::class, User::class);
@@ -105,11 +107,13 @@ class DummyModel extends Model
  */
 class OtherDummyModel extends Model
 {
+    /** @return BelongsTo<DummyModel, OtherDummyModel> */
     public function belongsToRelation(): BelongsTo
     {
         return $this->belongsTo(DummyModel::class);
     }
 
+    /** @return MorphTo<Model, OtherDummyModel> */
     public function morphToRelation(): MorphTo
     {
         return $this->morphTo('foo');

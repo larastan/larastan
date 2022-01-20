@@ -8,9 +8,11 @@ use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection as SupportCollection;
 
 class BuilderExtension
 {
+    /** @return Collection<int, User> */
     public function testArrayOfWheres(): Collection
     {
         return User::where([
@@ -20,19 +22,19 @@ class BuilderExtension
         ])->get();
     }
 
-    /** @return Collection<User> */
+    /** @return Collection<int, User> */
     public function testCallingGetOnModelWithStaticQueryBuilder(): Collection
     {
         return User::where('id', 1)->get();
     }
 
-    /** @return Collection<User> */
+    /** @return Collection<int, User> */
     public function testCallingGetOnModelWithVariableQueryBuilder(): Collection
     {
         return (new User)->where('id', 1)->get();
     }
 
-    /** @return Collection<User> */
+    /** @return Collection<int, User> */
     public function testCallingLongGetChainOnModelWithStaticQueryBuilder(): Collection
     {
         return User::where('id', 1)
@@ -42,7 +44,7 @@ class BuilderExtension
             ->get();
     }
 
-    /** @return Collection<User> */
+    /** @return Collection<int, User> */
     public function testCallingLongGetChainOnModelWithVariableQueryBuilder(): Collection
     {
         return (new User)->whereNotNull('name')
@@ -51,7 +53,7 @@ class BuilderExtension
             ->get();
     }
 
-    /** @return Collection<User> */
+    /** @return Collection<int, User> */
     public function testCallingGetOnModelWithVariableQueryBuilder2(): Collection
     {
         $user = new User;
@@ -59,14 +61,18 @@ class BuilderExtension
         return $user->where('email', 1)->get();
     }
 
-    /** @return Collection<User> */
-    public function testUsingCollectionMethodsAfterGet(): Collection
+    /** @return SupportCollection<string, string> */
+    public function testUsingCollectionMethodsAfterGet(): SupportCollection
     {
-        return User::whereIn('id', [1, 2, 3])->get()->mapWithKeys(function ($user) {
+        return User::whereIn('id', [1, 2, 3])->get()->mapWithKeys(function (User $user): array {
             return [$user->name => $user->email];
         });
     }
 
+    /**
+     * @param  Builder<User>  $builder
+     * @return Builder<User>
+     */
     public function testCallingQueryBuilderMethodOnEloquentBuilderReturnsEloquentBuilder(Builder $builder): Builder
     {
         return $builder->whereNotNull('test');
@@ -111,7 +117,7 @@ class BuilderExtension
     }
 
     /**
-     * @return Collection<User>|null
+     * @return Collection<int, User>
      */
     public function testFindWithArray()
     {
@@ -124,7 +130,7 @@ class BuilderExtension
     }
 
     /**
-     * @return Collection<User>
+     * @return Collection<int, User>
      */
     public function testFindOrFailWithArray()
     {
@@ -145,7 +151,7 @@ class BuilderExtension
     }
 
     /**
-     * @return Collection<User>
+     * @return Collection<int, User>
      */
     public function testFindOrNewWithArray()
     {
@@ -153,7 +159,7 @@ class BuilderExtension
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testHydrate(): Collection
     {
@@ -161,7 +167,7 @@ class BuilderExtension
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testFromQuery(): Collection
     {
@@ -174,7 +180,7 @@ class BuilderExtension
  */
 class TestModel extends Model
 {
-    /** @return Collection|TestModel[] */
+    /** @return Collection<int, TestModel> */
     public function testCallingGetInsideModel(): Collection
     {
         return $this->where('email', 1)->get();
@@ -193,6 +199,7 @@ class TestModel extends Model
     }
 }
 
+/** @extends Builder<Model> */
 class CustomBuilder extends Builder
 {
 }

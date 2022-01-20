@@ -78,7 +78,7 @@ class CustomEloquentBuilderTest
     }
 
     /**
-     * @return Collection<ModelWithCustomBuilder>
+     * @return Collection<int, ModelWithCustomBuilder>
      */
     public function testWeirdErrorMessage(): Collection
     {
@@ -98,7 +98,7 @@ class CustomEloquentBuilderTest
         return ModelWithCustomBuilder::findOrFail(1);
     }
 
-    /** @phpstan-return Collection<ModelWithCustomBuilder> */
+    /** @phpstan-return Collection<int, ModelWithCustomBuilder> */
     public function testFindOrFailWithCustomBuilderWithCollection(): Collection
     {
         return ModelWithCustomBuilder::findOrFail([1, 2, 3]);
@@ -215,6 +215,7 @@ class CustomEloquentBuilderTest
 
 class FooModel extends Model
 {
+    /** @return HasMany<ModelWithCustomBuilder> */
     public function customModels(): HasMany
     {
         return $this->hasMany(ModelWithCustomBuilder::class);
@@ -229,12 +230,16 @@ class FooModel extends Model
 class ModelWithCustomBuilder extends Model
 {
     // Dummy relation
+    /** @return HasMany<User> */
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
     }
 
-    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    /**
+     * @param  CustomEloquentBuilder<ModelWithCustomBuilder>  $query
+     * @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder>
+     */
     public function scopeFoo(CustomEloquentBuilder $query, string $foo): CustomEloquentBuilder
     {
         return $query->where(['email' => $foo]);
@@ -296,7 +301,7 @@ class CustomEloquentBuilder extends Builder
 class CustomEloquentBuilderTest1
 {
     /**
-     * @return \Illuminate\Database\Eloquent\Collection<\Tests\Features\ReturnTypes\ModelWithCustomBuilderAndDocBlocks>
+     * @return \Illuminate\Database\Eloquent\Collection<int, \Tests\Features\ReturnTypes\ModelWithCustomBuilderAndDocBlocks>
      */
     public function testGetModelFromModelWithCustomBuilderQuery()
     {
@@ -304,7 +309,7 @@ class CustomEloquentBuilderTest1
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection<\Tests\Features\ReturnTypes\ModelWithCustomBuilderAndDocBlocks>
+     * @return \Illuminate\Database\Eloquent\Collection<int, \Tests\Features\ReturnTypes\ModelWithCustomBuilderAndDocBlocks>
      */
     public function testAllModelFromModelWithCustomBuilderQuery()
     {
