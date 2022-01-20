@@ -18,8 +18,11 @@ sed -e 's|@return \\Illuminate\\Http\\Response$|@return \\Symfony\\Component\\Ht
 
 echo "Fix https://github.com/nunomaduro/larastan/pull/378#issuecomment-565706907"
 sed -e 's/string/string|void/' -i app/Http/Middleware/Authenticate.php
-sed '0,/}/s/}/}\nreturn;/' -i app/Http/Middleware/Authenticate.php
+sed -e '0,/}/s/}/}\nreturn;/' -i app/Http/Middleware/Authenticate.php
 
+echo "Fix commented namespae property in RouteServiceProvider"
+sed -e 's|^\(\s*\)// \(protected \$namespace =\).*$|\1\2 null;|' -i app/Providers/RouteServiceProvider.php
+    
 echo "Test Laravel"
 vendor/bin/phpstan analyse app --level=5 -c vendor/nunomaduro/larastan/extension.neon
 cd -
