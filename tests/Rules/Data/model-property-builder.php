@@ -3,6 +3,7 @@
 \App\User::query()->firstWhere('foo', 'bar');
 \App\User::query()->where('foo', 'bar')->get();
 
+/** @return \Illuminate\Database\Eloquent\Builder<\App\User> */
 function foo(\App\User $user): \Illuminate\Database\Eloquent\Builder
 {
     return $user->where('foo', 'bar');
