@@ -14,6 +14,7 @@ use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\PhpDocParser\Ast\Type\UnionTypeNode;
 use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\IntegerType;
 use PHPStan\Type\Type;
 
 /**
@@ -26,7 +27,7 @@ use PHPStan\Type\Type;
  *
  * and transforms them into:
  *
- * \Illuminate\Database\Eloquent\Collection<\App\Account> $accounts
+ * \Illuminate\Database\Eloquent\Collection<int, \App\Account> $accounts
  *
  * Now IDE's can benefit from auto-completion, and we can benefit from the correct type passed to the generic collection
  */
@@ -78,6 +79,7 @@ class GenericEloquentCollectionTypeNodeResolverExtension implements TypeNodeReso
         $resolvedInnerArrayType = $this->typeNodeResolver->resolve($innerArrayTypeNode, $nameScope);
 
         return new GenericObjectType($identifierTypeName, [
+            new IntegerType(),
             $resolvedInnerArrayType,
         ]);
     }

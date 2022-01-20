@@ -14,6 +14,7 @@ use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
@@ -78,7 +79,7 @@ final class RelationCollectionExtension implements DynamicMethodReturnTypeExtens
         if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
             $collectionClassName = $this->builderHelper->determineCollectionClassName($modelType->getClassname());
 
-            return new GenericObjectType($collectionClassName, [$modelType]);
+            return new GenericObjectType($collectionClassName, [new IntegerType(), $modelType]);
         }
 
         return $returnType;

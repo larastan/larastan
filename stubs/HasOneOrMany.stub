@@ -80,7 +80,7 @@ abstract class HasOneOrMany extends Relation
      * Create a Collection of new instances of the related model.
      *
      * @param  iterable<mixed>  $records
-     * @return \Illuminate\Database\Eloquent\Collection<TRelatedModel>
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function createMany(iterable $records);
 }

@@ -17,6 +17,7 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\IntegerType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
@@ -86,7 +87,7 @@ final class RelationFindExtension implements DynamicMethodReturnTypeExtension
             if ($argType->isIterable()->yes()) {
                 $collectionClassName = $this->builderHelper->determineCollectionClassName($modelType->getClassname());
 
-                return new GenericObjectType($collectionClassName, [$modelType]);
+                return new GenericObjectType($collectionClassName, [new IntegerType(), $modelType]);
             }
 
             $returnType = TypeCombinator::remove($returnType, new ObjectType(Collection::class));

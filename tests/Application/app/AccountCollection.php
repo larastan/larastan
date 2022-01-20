@@ -5,13 +5,14 @@ namespace App;
 use Illuminate\Database\Eloquent\Collection;
 
 /**
- * @template TModel
- * @extends Collection<TModel>
+ * @template TKey of array-key
+ * @template TValue
+ * @extends Collection<TKey, TValue>
  */
 class AccountCollection extends Collection
 {
     /**
-     * @return self<TModel>
+     * @return self<TKey, TValue>
      */
     public function filterByActive(): self
     {

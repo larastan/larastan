@@ -12,7 +12,7 @@ class BelongsToMany extends Relation
      * Find a related model by its primary key or return new instance of the related model.
      *
      * @param  mixed  $id
-     * @param  array<int, mixed>  $columns
+     * @param  array<int, (model-property<TRelatedModel>|'*')>|model-property<TRelatedModel>|'*'  $columns
      * @return \Illuminate\Support\Collection<int, TRelatedModel>|TRelatedModel
      */
     public function findOrNew($id, $columns = ['*']);
@@ -51,16 +51,16 @@ class BelongsToMany extends Relation
      *
      * @param  mixed  $id
      * @param  array<int, mixed>  $columns
-     * @return TRelatedModel|\Illuminate\Database\Eloquent\Collection<TRelatedModel>|null
+     * @return TRelatedModel|\Illuminate\Database\Eloquent\Collection<int, TRelatedModel>|null
      */
     public function find($id, $columns = ['*']);
 
     /**
      * Find multiple related models by their primary keys.
      *
-     * @param  \Illuminate\Contracts\Support\Arrayable|int[]  $ids
+     * @param  \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|int[]  $ids
      * @param  array<int, mixed>  $columns
-     * @return \Illuminate\Database\Eloquent\Collection<TRelatedModel>
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function findMany($ids, $columns = ['*']);
 
@@ -69,7 +69,7 @@ class BelongsToMany extends Relation
      *
      * @param  mixed  $id
      * @param  array<int, mixed>  $columns
-     * @return TRelatedModel|\Illuminate\Database\Eloquent\Collection<TRelatedModel>
+     * @return TRelatedModel|\Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */
@@ -106,7 +106,7 @@ class BelongsToMany extends Relation
     /**
      * Get the results of the relationship.
      *
-     * @phpstan-return \Illuminate\Database\Eloquent\Collection<TRelatedModel>
+     * @phpstan-return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function getResults();
 }

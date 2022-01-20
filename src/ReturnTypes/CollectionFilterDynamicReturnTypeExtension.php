@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes;
 
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Enumerable;
 use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\Closure;
@@ -22,7 +21,6 @@ use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\NullType;
-use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\UnionType;
@@ -62,10 +60,6 @@ class CollectionFilterDynamicReturnTypeExtension implements DynamicMethodReturnT
 
             $nonFalseyTypes = TypeCombinator::remove($valueType, $falseyTypes);
 
-            if ((new ObjectType(Collection::class))->isSuperTypeOf($calledOnType)->yes()) {
-                return new GenericObjectType($calledOnType->getClassName(), [$nonFalseyTypes]);
-            }
-
             return new GenericObjectType($calledOnType->getClassName(), [$keyType, $nonFalseyTypes]);
         }
 
@@ -96,10 +90,6 @@ class CollectionFilterDynamicReturnTypeExtension implements DynamicMethodReturnT
             $scope = $scope->assignVariable($itemVariableName, $valueType);
             $scope = $scope->filterByTruthyValue($expr);
             $valueType = $scope->getVariableType($itemVariableName);
-        }
-
-        if ((new ObjectType(Collection::class))->isSuperTypeOf($calledOnType)->yes()) {
-            return new GenericObjectType($calledOnType->getClassName(), [$valueType]);
         }
 
         return new GenericObjectType($calledOnType->getClassName(), [$keyType, $valueType]);

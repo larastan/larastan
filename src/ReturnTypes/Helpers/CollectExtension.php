@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes\Helpers;
 
+use Illuminate\Support\Collection;
 use NunoMaduro\Larastan\Support\CollectionHelper;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\FunctionReflection;
-use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
+use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\IntegerType;
+use PHPStan\Type\MixedType;
 use PHPStan\Type\Type;
 
 final class CollectExtension implements DynamicFunctionReturnTypeExtension
@@ -35,7 +38,7 @@ final class CollectExtension implements DynamicFunctionReturnTypeExtension
         Scope $scope
     ): Type {
         if (count($functionCall->getArgs()) < 1) {
-            return ParametersAcceptorSelector::selectSingle($functionReflection->getVariants())->getReturnType();
+            return new GenericObjectType(Collection::class, [new IntegerType(), new MixedType()]);
         }
 
         $valueType = $scope->getType($functionCall->getArgs()[0]->value);

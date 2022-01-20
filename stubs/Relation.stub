@@ -5,13 +5,13 @@ namespace Illuminate\Database\Eloquent\Relations;
 /**
  * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
  */
-class Relation
+abstract class Relation
 {
     /**
      * Execute the query as a "select" statement.
      *
      * @param array<int, string> $columns
-     * @phpstan-return \Illuminate\Database\Eloquent\Collection<TRelatedModel>
+     * @phpstan-return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function get($columns = ['*']);
 

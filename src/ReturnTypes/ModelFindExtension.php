@@ -18,6 +18,7 @@ use PHPStan\Type\ArrayType;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\IntegerType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
@@ -87,7 +88,7 @@ final class ModelFindExtension implements DynamicStaticMethodReturnTypeExtension
             if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
                 $collectionClassName = $this->builderHelper->determineCollectionClassName($modelName);
 
-                return new GenericObjectType($collectionClassName, [new ObjectType($modelName)]);
+                return new GenericObjectType($collectionClassName, [new IntegerType(), new ObjectType($modelName)]);
             }
 
             return TypeCombinator::remove($returnType, new ObjectType($modelName));
