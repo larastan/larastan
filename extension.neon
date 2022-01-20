@@ -42,7 +42,6 @@ parameters:
         - Eloquent
     bootstrapFiles:
         - bootstrap.php
-    checkGenericClassInNonGenericObjectType: false
     checkOctaneCompatibility: false
     noModelMake: true
     noUnnecessaryCollectionCall: true
