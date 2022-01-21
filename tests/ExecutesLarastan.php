@@ -15,7 +15,7 @@ trait ExecutesLarastan
 
         exec(
             sprintf(
-                '%s %s analyse --no-progress --level=max --error-format=%s --configuration=%s %s',
+                '%s %s analyse --no-progress --memory-limit=-1 --level=max --error-format=%s --configuration=%s %s',
                 escapeshellarg(PHP_BINARY),
                 $command,
                 'json',

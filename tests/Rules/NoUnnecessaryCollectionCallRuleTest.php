@@ -19,22 +19,22 @@ class NoUnnecessaryCollectionCallRuleTest extends RulesTest
         $errors = $this->findErrorsByLine(__DIR__.'/Data/UnnecessaryCollectionCallsEloquent.php');
 
         $this->assertEquals([
-            15 => 'Called \'pluck\' on Laravel collection, but could have been retrieved as a query.',
-            20 => 'Called \'count\' on Laravel collection, but could have been retrieved as a query.',
-            25 => 'Called \'pluck\' on Laravel collection, but could have been retrieved as a query.',
-            30 => 'Called \'count\' on Laravel collection, but could have been retrieved as a query.',
-            35 => 'Called \'first\' on Laravel collection, but could have been retrieved as a query.',
-            40 => 'Called \'take\' on Laravel collection, but could have been retrieved as a query.',
-            45 => 'Called \'count\' on Laravel collection, but could have been retrieved as a query.',
-            52 => 'Called \'isEmpty\' on Laravel collection, but could have been retrieved as a query.',
-            57 => 'Called \'first\' on Laravel collection, but could have been retrieved as a query.',
-            62 => 'Called \'contains\' on Laravel collection, but could have been retrieved as a query.',
-            67 => 'Called \'count\' on Laravel collection, but could have been retrieved as a query.',
-            72 => 'Called \'where\' on Laravel collection, but could have been retrieved as a query.',
-            77 => 'Called \'diff\' on Laravel collection, but could have been retrieved as a query.',
-            85 => 'Called \'modelKeys\' on Laravel collection, but could have been retrieved as a query.',
-            90 => 'Called \'containsStrict\' on Laravel collection, but could have been retrieved as a query.',
-            96 => 'Called \'sum\' on Laravel collection, but could have been retrieved as a query.',
+            18 => 'Called \'pluck\' on Laravel collection, but could have been retrieved as a query.',
+            23 => 'Called \'count\' on Laravel collection, but could have been retrieved as a query.',
+            29 => 'Called \'pluck\' on Laravel collection, but could have been retrieved as a query.',
+            34 => 'Called \'count\' on Laravel collection, but could have been retrieved as a query.',
+            39 => 'Called \'first\' on Laravel collection, but could have been retrieved as a query.',
+            45 => 'Called \'take\' on Laravel collection, but could have been retrieved as a query.',
+            50 => 'Called \'count\' on Laravel collection, but could have been retrieved as a query.',
+            57 => 'Called \'isEmpty\' on Laravel collection, but could have been retrieved as a query.',
+            62 => 'Called \'first\' on Laravel collection, but could have been retrieved as a query.',
+            67 => 'Called \'contains\' on Laravel collection, but could have been retrieved as a query.',
+            72 => 'Called \'count\' on Laravel collection, but could have been retrieved as a query.',
+            78 => 'Called \'where\' on Laravel collection, but could have been retrieved as a query.',
+            84 => 'Called \'diff\' on Laravel collection, but could have been retrieved as a query.',
+            92 => 'Called \'modelKeys\' on Laravel collection, but could have been retrieved as a query.',
+            97 => 'Called \'containsStrict\' on Laravel collection, but could have been retrieved as a query.',
+            103 => 'Called \'sum\' on Laravel collection, but could have been retrieved as a query.',
         ], $errors);
     }
 

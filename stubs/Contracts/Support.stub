@@ -5,6 +5,10 @@ namespace Illuminate\Contracts\Support;
 interface Htmlable
 {}
 
+/**
+ * @template TKey of array-key
+ * @template TValue
+ */
 interface Arrayable
 {
     /**
@@ -17,3 +21,7 @@ interface Arrayable
 
 interface Jsonable
 {}
+
+interface CanBeEscapedWhenCastToString
+{}
+

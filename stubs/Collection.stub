@@ -2,158 +2,23 @@
 
 namespace Illuminate\Support;
 
+use ArrayAccess;
+use Illuminate\Contracts\Support\CanBeEscapedWhenCastToString;
+use Illuminate\Support\Traits\EnumeratesValues;
+
 /**
  * @template TKey of array-key
  * @template TValue
+ *
  * @implements \ArrayAccess<TKey, TValue>
- * @implements Enumerable<TKey, TValue>
+ * @implements \Illuminate\Support\Enumerable<TKey, TValue>
  */
-class Collection implements \ArrayAccess, Enumerable
+class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerable
 {
     /**
-     * @template TDefault
-     * @param    null|callable(TValue, TKey): bool  $callback
-     * @param    TDefault|callable(): TDefault  $default
-     * @return   TValue|TDefault
+     * @use \Illuminate\Support\Traits\EnumeratesValues<TKey, TValue>
      */
-    public function first(callable $callback = null, $default = null){}
+    use EnumeratesValues;
 
-    /**
-     * @param  string  $key
-     * @param  mixed  $operator
-     * @param  mixed  $value
-     * @return TValue|null
-     */
-    public function firstWhere($key, $operator = null, $value = null){}
-
-    /**
-     * @template TDefault
-     * @param  null|callable(TValue, TKey): bool  $callback
-     * @param  TDefault|callable(): TDefault  $default
-     * @return TValue|TDefault
-     */
-    public function last(callable $callback = null, $default = null){}
-
-    /**
-     * @template TDefault
-     * @param    TKey  $key
-     * @param    TDefault  $default
-     * @return   TValue|TDefault
-     */
-    public function get($key, $default = null) {}
-
-    /**
-     * @return TValue|null
-     */
-    public function pop() {}
-
-    /**
-     * @template TDefault
-     * @param    TKey  $key
-     * @param    TDefault  $default
-     * @return   TValue|TDefault
-     */
-    public function pull($key, $default = null) {}
-
-    /**
-     * @param mixed $value
-     * @param bool  $strict
-     * @return TKey|false
-     */
-    public function search($value, $strict = false) {}
-
-    /**
-     * @return TValue|null
-     */
-    public function shift() {}
-
-    /**
-     * @param callable(TValue, TKey): (void|bool) $callable
-     * @return static<TValue>
-     */
-    public function each($callable) {}
-
-    /**
-     * @template TReturn
-     * @param callable(TValue, TKey): TReturn $callable
-     * @return static<TKey, TReturn>
-     */
-    public function map($callable) {}
-
-    /**
-     * Run a grouping map over the items.
-     *
-     * The callback should return an associative array with a single key/value pair.
-     *
-     * @template TMapToGroupsKey of array-key
-     * @template TMapToGroupsValue
-     *
-     * @param  callable(TValue, TKey): array<TMapToGroupsKey, TMapToGroupsValue>  $callback
-     * @return static<TMapToGroupsKey, static<int, TMapToGroupsValue>>
-     */
-    public function mapToGroups(callable $callback) {}
-
-    /**
-     * @param array<mixed>|string|callable(TValue, TKey): mixed $groupBy
-     * @param bool $preserveKeys
-     * @return static<array-key, static<TKey, TValue>>
-     */
-    public function groupBy($groupBy, $preserveKeys = false);
-
-    /**
-     * @template TClass
-     * @param class-string<TClass> $class
-     * @return static<int, TClass>
-     */
-    public function mapInto($class);
-
-    /**
-     * @template TReturn
-     * @param callable(TValue, TKey): (array<TReturn>|\Illuminate\Support\Enumerable<array-key, TReturn>) $callback
-     * @return static<TKey, TReturn>
-     */
-    public function flatMap(callable $callback) {}
-
-    /**
-     * @template TReturn
-     * @param callable(TValue ...$values): TReturn $callback
-     * @return static<int, TReturn>
-     */
-    public function mapSpread(callable $callback) {}
-
-    /**
-     * @param int $number
-     * @param null|callable(int, int): mixed $callback
-     * @return static<mixed>
-     */
-    public static function times($number, callable $callback = null) {}
-
-    /**
-     * @param string|array<mixed> $value
-     * @param string|null $key
-     * @return static<int, mixed>
-     */
-    public function pluck($value, $key = null) {}
-
-    /**
-     * @return TValue
-     */
-    public function pop() {}
-
-    /**
-     * Push one or more items onto the end of the collection.
-     *
-     * @param TValue ...$values
-     * @return static
-     */
-    public function push(...$values) {}
-
-    /**
-     * Put an item in the collection by key.
-     *
-     * @param TKey $key
-     * @param TValue $value
-     * @return static
-     */
-    public function put($key, $value) {}
+   // ..
 }

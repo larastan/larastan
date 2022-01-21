@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace Tests\Features\Methods;
 
+use App\Account;
+use App\Importer;
 use App\User;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection as SupportCollection;
+use function PHPStan\Testing\assertType;
 
 class HigherOrderCollectionProxyMethods
 {
-    /** @var Collection<User> */
+    /** @var Collection<int, User> */
     public $users;
 
     public function testAverage(): float
@@ -23,7 +27,7 @@ class HigherOrderCollectionProxyMethods
         return $this->users->contains->isActive();
     }
 
-    /** @return Collection<User> */
+    /** @return Collection<int, User> */
     public function testEach(): Collection
     {
         return $this->users->each->delete();
@@ -34,7 +38,7 @@ class HigherOrderCollectionProxyMethods
         return $this->users->every->isActive();
     }
 
-    /** @return Collection<User> */
+    /** @return Collection<int, User> */
     public function testFilter(): Collection
     {
         return $this->users->filter->isActive();
@@ -45,37 +49,36 @@ class HigherOrderCollectionProxyMethods
         return $this->users->first->isActive();
     }
 
-    /** @return SupportCollection */
+    /** @return SupportCollection<int, User> */
     public function testFlatMap(): SupportCollection
     {
         return $this->users->flatMap->isActive();
     }
 
-    /** @return Collection<Collection<User>> */
-    public function testGroupBy(): Collection
+    public function testGroupBy(): void
     {
-        return $this->users->groupBy->isActive();
+        assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $this->users->groupBy->isActive());
     }
 
-    /** @return Collection<User> */
+    /** @return Collection<int, User> */
     public function testKeyBy(): Collection
     {
         return $this->users->keyBy->isActive();
     }
 
-    /** @return SupportCollection */
+    /** @return SupportCollection<int, bool> */
     public function testMapWithBoolMethod(): SupportCollection
     {
         return $this->users->map->isActive();
     }
 
-    /** @return SupportCollection */
+    /** @return SupportCollection<int, HasMany<Account>> */
     public function testMapWithRelationMethod(): SupportCollection
     {
         return $this->users->map->accounts();
     }
 
-    /** @return SupportCollection */
+    /** @return SupportCollection<int, int> */
     public function testMapWithIntegerMethod(): SupportCollection
     {
         return $this->users->map->id();
@@ -97,25 +100,24 @@ class HigherOrderCollectionProxyMethods
         return $this->users->min->id();
     }
 
-    /** @return Collection<Collection<User>> */
-    public function testPartition(): Collection
+    public function testPartition(): void
     {
-        return $this->users->partition->isActive();
+        assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $this->users->partition->isActive());
     }
 
-    /** @return Collection<User> */
+    /** @return Collection<int, User> */
     public function testReject(): Collection
     {
         return $this->users->reject->isActive();
     }
 
-    /** @return Collection<User> */
+    /** @return Collection<int, User> */
     public function testSkipUntil(): Collection
     {
         return $this->users->skipUntil->isActive();
     }
 
-    /** @return Collection<User> */
+    /** @return Collection<int, User> */
     public function testSkipWhile(): Collection
     {
         return $this->users->skipWhile->isActive();
@@ -126,27 +128,27 @@ class HigherOrderCollectionProxyMethods
         return $this->users->sum->id();
     }
 
-    /** @return Collection<User> */
+    /** @return Collection<int, User> */
     public function testTakeUntil(): Collection
     {
         return $this->users->takeUntil->isActive();
     }
 
-    /** @return Collection<User> */
+    /** @return Collection<int, User> */
     public function testTakeWhile(): Collection
     {
         return $this->users->takeWhile->isActive();
     }
 
-    /** @return Collection<User> */
+    /** @return Collection<int, User> */
     public function testUnique(): Collection
     {
         return $this->users->unique->isActive();
     }
 
     /**
-     * @param  SupportCollection  $collection
-     * @return SupportCollection
+     * @param  SupportCollection<int, Importer>  $collection
+     * @return SupportCollection<int, bool>
      */
     public function testMapWithSupportCollection(SupportCollection $collection): SupportCollection
     {
@@ -154,8 +156,8 @@ class HigherOrderCollectionProxyMethods
     }
 
     /**
-     * @param  SupportCollection  $collection
-     * @return SupportCollection
+     * @param  SupportCollection<int, Importer>  $collection
+     * @return SupportCollection<int, Importer>
      */
     public function testEachWithSupportCollection(SupportCollection $collection): SupportCollection
     {
@@ -163,8 +165,8 @@ class HigherOrderCollectionProxyMethods
     }
 
     /**
-     * @param  SupportCollection  $collection
-     * @return SupportCollection
+     * @param  SupportCollection<int, User>  $collection
+     * @return SupportCollection<int, User>
      */
     public function testKeyByWithSupportCollection(SupportCollection $collection): SupportCollection
     {
@@ -172,8 +174,8 @@ class HigherOrderCollectionProxyMethods
     }
 
     /**
-     * @param  SupportCollection  $collection
-     * @return SupportCollection
+     * @param  SupportCollection<int, Importer>  $collection
+     * @return SupportCollection<int, Importer>
      */
     public function testFilterWithSupportCollection(SupportCollection $collection): SupportCollection
     {

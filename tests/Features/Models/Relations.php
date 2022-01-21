@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use function PHPStan\Testing\assertType;
@@ -90,9 +91,18 @@ class Relations
         return $user->accounts()->paginate(5);
     }
 
-    public function testMorph(User $user): MorphTo
+    /** @return MorphTo<Model, \App\Address> */
+    public function testMorphTo(\App\Address $address): MorphTo
     {
-        return $user->addressable()->where('name', 'bar');
+        assertType('Illuminate\Database\Eloquent\Relations\MorphTo<Illuminate\Database\Eloquent\Model, App\Address>', $address->addressable());
+
+        return $address->addressable()->where('name', 'bar');
+    }
+
+    /** @return MorphMany<\App\Address> */
+    public function testMorphMany(User $user): MorphMany
+    {
+        return $user->address()->where('name', 'bar');
     }
 
     /** @phpstan-return HasMany<Account> */
@@ -102,7 +112,7 @@ class Relations
     }
 
     /**
-     * @return Collection<Role>
+     * @return Collection<int, Role>
      */
     public function testRelationWithPivot(User $user): Collection
     {
@@ -111,7 +121,7 @@ class Relations
 
     /**
      * @param  User  $user
-     * @return Collection<Account>
+     * @return Collection<int, Account>
      */
     public function testGetOnRelationAndBuilder(User $user): Collection
     {
@@ -260,6 +270,7 @@ class Relations
  */
 class RelationCreateExample extends Model
 {
+    /** @return HasMany<User> */
     public function relation(): HasMany
     {
         return $this->hasMany(User::class);
@@ -273,6 +284,7 @@ class RelationCreateExample extends Model
 
 class ModelWithoutPropertyAnnotation extends Model
 {
+    /** @return HasMany<User> */
     public function relation(): HasMany
     {
         return $this->hasMany(User::class);
@@ -287,11 +299,13 @@ class ModelWithoutPropertyAnnotation extends Model
  */
 class ModelWithPropertyAnnotations extends Model
 {
+    /** @return HasOne<User> */
     public function nullableUser(): HasOne
     {
         return $this->hasOne(User::class);
     }
 
+    /** @return HasOne<User> */
     public function nonNullableUser(): HasOne
     {
         return $this->hasOne(User::class);

@@ -248,7 +248,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
                     $realType = ArrayObject::class;
                     break;
                 case 'Illuminate\Database\Eloquent\Casts\AsCollection':
-                    $realType = '\Illuminate\Support\Collection<mixed, mixed>';
+                    $realType = '\Illuminate\Support\Collection<array-key, mixed>';
                     break;
                 default:
                     $realType = class_exists($type) ? ('\\'.$type) : 'mixed';

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * @property string $address_id
@@ -13,4 +14,10 @@ use Illuminate\Database\Eloquent\Model;
 class Address extends Model
 {
     protected $keyType = 'uuid';
+
+    /** @return MorphTo<Model, Address> */
+    public function addressable(): MorphTo
+    {
+        return $this->morphTo();
+    }
 }

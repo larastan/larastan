@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use function PHPStan\Testing\assertType;
 
-assertType('Illuminate\Support\Collection', collect());
+assertType('Illuminate\Support\Collection<int, mixed>', collect());
 assertType('Illuminate\Support\Collection<0, 1>', collect(1));
 assertType('Illuminate\Support\Collection<0, \'foo\'>', collect('foo'));
 assertType('Illuminate\Support\Collection<0, 3.14>', collect(3.14));
@@ -20,13 +20,13 @@ assertType('Illuminate\Support\Collection<int, float|int|string>', collect([1, '
 assertType("Illuminate\Support\Collection<int, non-empty-array<int, string>>", collect([['a', 'b', 'c']]));
 assertType("Illuminate\Support\Collection<int, non-empty-array<int, string>>", collect([['a', 'b', 'c']])->push(array_fill(0, 3, 'x')));
 
-/**  @phpstan-param EloquentCollection<int> $eloquentCollection */
+/**  @phpstan-param EloquentCollection<int, int> $eloquentCollection */
 function eloquentCollectionInteger(EloquentCollection $eloquentCollection): void
 {
     assertType('Illuminate\Support\Collection<int, int>', collect($eloquentCollection));
 }
 
-/**  @phpstan-param EloquentCollection<User> $eloquentCollection */
+/**  @phpstan-param EloquentCollection<int, User> $eloquentCollection */
 function eloquentCollectionUser(EloquentCollection $eloquentCollection): void
 {
     assertType('Illuminate\Support\Collection<int, App\User>', collect($eloquentCollection));

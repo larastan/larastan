@@ -112,7 +112,7 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
         $types = [$relatedModel];
 
         // BelongsTo relation needs second generic type
-        if ($classReflection->getName() === BelongsTo::class) {
+        if ((new ObjectType(BelongsTo::class))->isSuperTypeOf(new ObjectType($classReflection->getName()))->yes()) {
             $childType = $classReflection->getActiveTemplateTypeMap()->getType('TChildModel');
 
             if ($childType !== null) {

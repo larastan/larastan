@@ -54,11 +54,12 @@ class HigherOrderCollectionProxyHelper
     {
         if ((new Type\ObjectType(Model::class))->isSuperTypeOf($valueType)->yes()) {
             $collectionType = Collection::class;
-            $types = [$valueType];
         } else {
             $collectionType = SupportCollection::class;
-            $types = [new Type\IntegerType(), $valueType];
         }
+
+        $types = [new Type\IntegerType(), $valueType];
+
         switch ($name) {
             case 'average':
             case 'avg':
@@ -82,11 +83,7 @@ class HigherOrderCollectionProxyHelper
                 $returnType = new Type\Generic\GenericObjectType($collectionType, $types);
                 break;
             case 'keyBy':
-                if ($collectionType === SupportCollection::class) {
-                    $returnType = new Type\Generic\GenericObjectType($collectionType, [$methodOrPropertyReturnType, $valueType]);
-                } else {
-                    $returnType = new Type\Generic\GenericObjectType($collectionType, $types);
-                }
+                $returnType = new Type\Generic\GenericObjectType($collectionType, [new Type\BenevolentUnionType([new Type\IntegerType(), new Type\StringType()]), $valueType]);
                 break;
             case 'first':
                 $returnType = Type\TypeCombinator::addNull($valueType);
@@ -97,12 +94,9 @@ class HigherOrderCollectionProxyHelper
             case 'groupBy':
             case 'partition':
                 $innerTypes = [
+                    new Type\IntegerType(),
                     new Type\Generic\GenericObjectType($collectionType, $types),
                 ];
-
-                if ($collectionType === SupportCollection::class) {
-                    array_unshift($innerTypes, new Type\IntegerType());
-                }
 
                 $returnType = new Type\Generic\GenericObjectType($collectionType, $innerTypes);
                 break;

@@ -15,6 +15,7 @@ use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
@@ -96,7 +97,7 @@ final class ModelExtension implements DynamicStaticMethodReturnTypeExtension
         ) {
             $collectionClassName = $this->builderHelper->determineCollectionClassName($scope->resolveName($methodCall->class));
 
-            return new GenericObjectType($collectionClassName, [new ObjectType($scope->resolveName($methodCall->class))]);
+            return new GenericObjectType($collectionClassName, [new IntegerType(), new ObjectType($scope->resolveName($methodCall->class))]);
         }
 
         return $returnType;

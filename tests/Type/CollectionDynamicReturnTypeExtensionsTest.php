@@ -14,6 +14,7 @@ class CollectionDynamicReturnTypeExtensionsTest extends \PHPStan\Testing\TypeInf
         yield from $this->gatherAssertTypes(__DIR__.'/data/collection-helper.php');
         yield from $this->gatherAssertTypes(__DIR__.'/data/collection-make-static.php');
         yield from $this->gatherAssertTypes(__DIR__.'/data/collection-stubs.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/collection-generic-static-methods.php');
     }
 
     /**
@@ -29,6 +30,6 @@ class CollectionDynamicReturnTypeExtensionsTest extends \PHPStan\Testing\TypeInf
 
     public static function getAdditionalConfigFiles(): array
     {
-        return [__DIR__.'/../../extension.neon'];
+        return [__DIR__.'/../phpstan-tests.neon'];
     }
 }

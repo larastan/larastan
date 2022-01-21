@@ -11,24 +11,23 @@
         }
     ],
     "require": {
-        "php": "^7.2 || ^8.0",
+        "php": "^8.0.2",
         "ext-json": "*",
-        "composer/composer": "^1.0 || ^2.0",
-        "illuminate/console": "^6.0 || ^7.0 || ^8.0 || ^9.0",
-        "illuminate/container": "^6.0 || ^7.0 || ^8.0 || ^9.0",
-        "illuminate/contracts": "^6.0 || ^7.0 || ^8.0 || ^9.0",
-        "illuminate/database": "^6.0 || ^7.0 || ^8.0 || ^9.0",
-        "illuminate/http": "^6.0 || ^7.0 || ^8.0 || ^9.0",
-        "illuminate/pipeline": "^6.0 || ^7.0 || ^8.0 || ^9.0",
-        "illuminate/support": "^6.0 || ^7.0 || ^8.0 || ^9.0",
-        "mockery/mockery": "^0.9 || ^1.0",
-        "phpstan/phpstan": "^1.0",
-        "symfony/process": "^4.3 || ^5.0 || ^6.0"
+        "composer/composer": "^2.2.4",
+        "illuminate/console": "^9",
+        "illuminate/container": "^9",
+        "illuminate/contracts": "^9",
+        "illuminate/database": "^9",
+        "illuminate/http": "^9",
+        "illuminate/pipeline": "^9",
+        "illuminate/support": "^9",
+        "mockery/mockery": "^1.4.4",
+        "phpstan/phpstan": "^1.4.2"
     },
     "require-dev": {
-        "nikic/php-parser": "^4.13.0",
-        "orchestra/testbench": "^4.0 || ^5.0 || ^6.0 || ^7.0",
-        "phpunit/phpunit": "^7.3 || ^8.2 || ^9.3"
+        "nikic/php-parser": "^4.13.2",
+        "orchestra/testbench": "^7.0.0",
+        "phpunit/phpunit": "^9.5.11"
     },
     "suggest": {
         "orchestra/testbench": "Using Larastan for analysing a package needs Testbench"
@@ -36,9 +35,8 @@
     "autoload-dev": {
         "psr-4": {
             "App\\": "tests/Application/app/",
-            "Laravel8\\": "tests/Laravel8Application/app/",
-            "Database\\Factories\\": "tests/Laravel8Application/database/factories/",
-            "Database\\Migrations\\": "tests/Laravel8Application/database/migrations/"
+            "Database\\Factories\\": "tests/Application/database/factories/",
+            "Database\\Migrations\\": "tests/Application/database/migrations/"
         },
       "classmap": [
         "tests/"
@@ -57,7 +55,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.0-dev"
+            "dev-master": "2.0-dev"
         },
         "phpstan": {
             "includes": [

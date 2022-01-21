@@ -11,6 +11,7 @@ abstract class AbstractPaginator implements \Illuminate\Contracts\Support\Htmlab
 /**
  * @implements \ArrayAccess<mixed, mixed>
  * @implements \IteratorAggregate<mixed, mixed>
+ * @implements \Illuminate\Contracts\Support\Arrayable<array-key, mixed>
  */
 class Paginator extends AbstractPaginator implements \Illuminate\Contracts\Support\Arrayable, \ArrayAccess, \Countable, \IteratorAggregate, \Illuminate\Contracts\Support\Jsonable, \JsonSerializable, \Illuminate\Contracts\Pagination\Paginator
 {}
@@ -18,6 +19,7 @@ class Paginator extends AbstractPaginator implements \Illuminate\Contracts\Suppo
 /**
  * @implements \ArrayAccess<mixed, mixed>
  * @implements \IteratorAggregate<mixed, mixed>
+ * @implements \Illuminate\Contracts\Support\Arrayable<array-key, mixed>
  */
 class LengthAwarePaginator extends AbstractPaginator implements \Illuminate\Contracts\Support\Arrayable, \ArrayAccess, \Countable, \IteratorAggregate, \Illuminate\Contracts\Support\Jsonable, \JsonSerializable, \Illuminate\Contracts\Pagination\LengthAwarePaginator
 {}

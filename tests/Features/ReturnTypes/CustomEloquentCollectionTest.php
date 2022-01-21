@@ -12,13 +12,14 @@ use App\TransactionCollection;
 use App\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use function PHPStan\Testing\assertType;
 
 class CustomEloquentCollectionTest
 {
     // Query builder...
 
     /**
-     * @phpstan-return AccountCollection<Account>
+     * @phpstan-return AccountCollection<int, Account>
      */
     public function testQueryBuilderFromQueryViaQueryReturnsCustomCollection(): AccountCollection
     {
@@ -26,7 +27,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testQueryBuilderFromQueryViaQueryReturnsEloquentCollection(): Collection
     {
@@ -34,7 +35,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return AccountCollection<Account>
+     * @phpstan-return AccountCollection<int, Account>
      */
     public function testQueryBuilderFromQueryViaStaticCallOnModelReturnsCustomCollection(): AccountCollection
     {
@@ -42,7 +43,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testQueryBuilderFromQueryViaStaticCallOnModelReturnsEloquentCollection(): Collection
     {
@@ -50,7 +51,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return AccountCollection<Account>
+     * @phpstan-return AccountCollection<int, Account>
      */
     public function testQueryBuilderHydrateViaQueryReturnsCustomCollection(): AccountCollection
     {
@@ -61,7 +62,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testQueryBuilderHydrateViaQueryReturnsEloquentCollection(): Collection
     {
@@ -72,7 +73,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return AccountCollection<Account>
+     * @phpstan-return AccountCollection<int, Account>
      */
     public function testQueryBuilderHydrateViaStaticCallOnModelReturnsCustomCollection(): AccountCollection
     {
@@ -83,7 +84,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testQueryBuilderHydrateViaStaticCallOnModelReturnsEloquentCollection(): Collection
     {
@@ -94,7 +95,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return AccountCollection<Account>
+     * @phpstan-return AccountCollection<int, Account>
      */
     public function testQueryBuilderFindViaQueryReturnsCustomCollection(): AccountCollection
     {
@@ -102,7 +103,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testQueryBuilderFindViaQueryReturnsEloquentCollection(): Collection
     {
@@ -110,7 +111,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return AccountCollection<Account>
+     * @phpstan-return AccountCollection<int, Account>
      */
     public function testQueryBuilderFindViaStaticCallOnModelReturnsCustomCollection(): AccountCollection
     {
@@ -118,7 +119,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testQueryBuilderFindViaStaticCallOnModelReturnsEloquentCollection(): Collection
     {
@@ -126,7 +127,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return AccountCollection<Account>
+     * @phpstan-return AccountCollection<int, Account>
      */
     public function testQueryBuilderFindManyViaQueryReturnsCustomCollection(): AccountCollection
     {
@@ -134,7 +135,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testQueryBuilderFindManyViaQueryReturnsEloquentCollection(): Collection
     {
@@ -142,7 +143,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return AccountCollection<Account>
+     * @phpstan-return AccountCollection<int, Account>
      */
     public function testQueryBuilderFindManyViaStaticCallOnModelReturnsCustomCollection(): AccountCollection
     {
@@ -150,7 +151,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testQueryBuilderFindManyViaStaticCallOnModelReturnsEloquentCollection(): Collection
     {
@@ -158,7 +159,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return AccountCollection<Account>
+     * @phpstan-return AccountCollection<int, Account>
      */
     public function testQueryBuilderFindOrFailViaQueryReturnsCustomCollection(): AccountCollection
     {
@@ -166,7 +167,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testQueryBuilderFindOrFailViaQueryReturnsEloquentCollection(): Collection
     {
@@ -174,7 +175,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return AccountCollection<Account>
+     * @phpstan-return AccountCollection<int, Account>
      */
     public function testQueryBuilderFindOrFailViaStaticCallOnModelCallReturnsCustomCollection(): AccountCollection
     {
@@ -182,7 +183,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testQueryBuilderFindOrFailViaStaticCallOnModelCallReturnsEloquentCollection(): Collection
     {
@@ -200,7 +201,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return AccountCollection<Account>
+     * @phpstan-return AccountCollection<int, Account>
      */
     public function testQueryBuilderGetViaQueryReturnsCustomCollection(): AccountCollection
     {
@@ -208,7 +209,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testQueryBuilderGetViaQueryReturnsEloquentCollection(): Collection
     {
@@ -216,7 +217,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return AccountCollection<Account>
+     * @phpstan-return AccountCollection<int, Account>
      */
     public function testQueryBuilderGetViaStaticOnModelCallReturnsCustomCollection(): AccountCollection
     {
@@ -224,7 +225,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testQueryBuilderGetViaStaticOnModelCallReturnsEloquentCollection(): Collection
     {
@@ -234,7 +235,7 @@ class CustomEloquentCollectionTest
     // Model...
 
     /**
-     * @phpstan-return AccountCollection<Account>
+     * @phpstan-return AccountCollection<int, Account>
      */
     public function testModelAllReturnsCustomCollection(): AccountCollection
     {
@@ -242,7 +243,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testModelAllReturnsEloquentCollection(): Collection
     {
@@ -252,7 +253,7 @@ class CustomEloquentCollectionTest
     // Relation...
 
     /**
-     * @phpstan-return AccountCollection<Account>
+     * @phpstan-return AccountCollection<int, Account>
      */
     public function testRelationGetReturnsCustomCollection(): AccountCollection
     {
@@ -260,7 +261,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testRelationGetReturnsEloquentCollection(): Collection
     {
@@ -268,7 +269,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return AccountCollection<Account>
+     * @phpstan-return AccountCollection<int, Account>
      */
     public function testRelationGetEagerReturnsCustomCollection(): AccountCollection
     {
@@ -276,7 +277,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testRelationGetEagerReturnsEloquentCollection(): Collection
     {
@@ -284,7 +285,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return AccountCollection<Account>
+     * @phpstan-return AccountCollection<int, Account>
      */
     public function testRelationCreateManyReturnsCustomCollection(): AccountCollection
     {
@@ -294,7 +295,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testRelationCreateManyReturnsEloquentCollection(): Collection
     {
@@ -304,7 +305,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return AccountCollection<Account>
+     * @phpstan-return AccountCollection<int, Account>
      */
     public function testRelationQueryWithWhereReturnsCustomCollection(): AccountCollection
     {
@@ -312,7 +313,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testRelationQueryWithWhereReturnsEloquentCollection(): Collection
     {
@@ -320,7 +321,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return AccountCollection<Account>
+     * @phpstan-return AccountCollection<int, Account>
      */
     public function testRelationAttributeReturnsCustomCollection(): AccountCollection
     {
@@ -328,7 +329,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testRelationAttributeReturnsEloquentCollection(): Collection
     {
@@ -336,7 +337,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return RoleCollection<Role>
+     * @phpstan-return RoleCollection<int, Role>
      */
     public function testRelationBelongsToManyFindReturnsCustomCollection(): RoleCollection
     {
@@ -344,7 +345,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testRelationBelongsToManyFindReturnsEloquentCollection(): Collection
     {
@@ -357,7 +358,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return RoleCollection<Role>
+     * @phpstan-return RoleCollection<int, Role>
      */
     public function testRelationBelongsToManyFindOrFailReturnsCustomCollection(): RoleCollection
     {
@@ -365,7 +366,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testRelationBelongsToManyFindOrFailReturnsEloquentCollection(): Collection
     {
@@ -378,7 +379,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return RoleCollection<Role>
+     * @phpstan-return RoleCollection<int, Role>
      */
     public function testRelationBelongsToManyFindManyReturnsCustomCollection(): RoleCollection
     {
@@ -386,7 +387,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testRelationBelongsToManyFindManyReturnsEloquentCollection(): Collection
     {
@@ -394,7 +395,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return TransactionCollection<Transaction>
+     * @phpstan-return TransactionCollection<int, Transaction>
      */
     public function testRelationHasManyThroughManyFindReturnsCustomCollection(): TransactionCollection
     {
@@ -402,7 +403,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testRelationHasManyThroughManyFindReturnsEloquentCollection(): Collection
     {
@@ -415,7 +416,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return TransactionCollection<Transaction>
+     * @phpstan-return TransactionCollection<int, Transaction>
      */
     public function testRelationHasManyThroughManyFindOrFailReturnsCustomCollection(): TransactionCollection
     {
@@ -423,7 +424,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testRelationHasManyThroughManyFindOrFailReturnsEloquentCollection(): Collection
     {
@@ -436,7 +437,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return TransactionCollection<Transaction>
+     * @phpstan-return TransactionCollection<int, Transaction>
      */
     public function testRelationHasManyThroughManyFindManyReturnsCustomCollection(): TransactionCollection
     {
@@ -444,7 +445,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testRelationHasManyThroughManyFindManyReturnsEloquentCollection(): Collection
     {
@@ -452,7 +453,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return AccountCollection<Account>
+     * @phpstan-return AccountCollection<int, Account>
      */
     public function testRelationHasManyFindReturnsCustomCollection(): AccountCollection
     {
@@ -460,7 +461,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testRelationHasManyFindReturnsEloquentCollection(): Collection
     {
@@ -473,7 +474,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return AccountCollection<Account>
+     * @phpstan-return AccountCollection<int, Account>
      */
     public function testRelationHasManyFindOrFailReturnsCustomCollection(): AccountCollection
     {
@@ -481,7 +482,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testRelationHasManyFindOrFailReturnsEloquentCollection(): Collection
     {
@@ -494,7 +495,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return AccountCollection<Account>
+     * @phpstan-return AccountCollection<int, Account>
      */
     public function testRelationHasManyFindManyReturnsCustomCollection(): AccountCollection
     {
@@ -502,7 +503,7 @@ class CustomEloquentCollectionTest
     }
 
     /**
-     * @phpstan-return Collection<User>
+     * @phpstan-return Collection<int, User>
      */
     public function testRelationHasManyFindManyReturnsEloquentCollection(): Collection
     {
@@ -511,27 +512,18 @@ class CustomEloquentCollectionTest
 
     // Collection...
 
-    /**
-     * @phpstan-return AccountCollection<Account>
-     */
-    public function testCustomCollectionWhereReturnsCustomCollection(): AccountCollection
+    public function testCustomCollectionWhereReturnsCustomCollection(): void
     {
-        return (new User)->accounts->where('active', true);
+        assertType('App\AccountCollection<int, App\Account>', (new User)->accounts->where('active', true));
     }
 
-    /**
-     * @phpstan-return AccountCollection<Account>
-     */
-    public function testCustomMethodInCustomCollection(User $user): AccountCollection
+    public function testCustomMethodInCustomCollection(User $user): void
     {
-        return $user->accounts->filterByActive();
+        assertType('App\AccountCollection<int, App\Account>', $user->accounts->filterByActive());
     }
 
-    /**
-     * @phpstan-return Collection<User>
-     */
-    public function testEloquentCollectionWhereReturnsEloquentCollection(): Collection
+    public function testEloquentCollectionWhereReturnsEloquentCollection(): void
     {
-        return (new User)->children->where('active', true);
+        assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', (new User)->children->where('active', true));
     }
 }

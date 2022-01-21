@@ -2,42 +2,16 @@
 
 namespace Illuminate\Database\Eloquent;
 
-use Illuminate\Support\Traits\EnumeratesValues;
+use Illuminate\Contracts\Queue\QueueableCollection;
+use Illuminate\Support\Collection as BaseCollection;
 
 /**
- * @template TValue
- * @extends \Illuminate\Support\Collection<array-key, TValue>
+ * @template TKey of array-key
+ * @template TModel of \Illuminate\Database\Eloquent\Model
+ *
+ * @extends \Illuminate\Support\Collection<TKey, TModel>
  */
-class Collection extends \Illuminate\Support\Collection
+class Collection extends BaseCollection implements QueueableCollection
 {
-
-    /** @phpstan-use EnumeratesValues<TValue> */
-    use EnumeratesValues;
-
-    /**
-     * @param  mixed  $key
-     * @param  mixed  $default
-     * @phpstan-return TValue|null
-     */
-    public function find($key, $default = null) {}
-
-    /**
-     * @template TReturn
-     * @param callable(TValue, int): TReturn $callable
-     * @return static<TReturn>|\Illuminate\Support\Collection<int, TReturn>
-     */
-    public function map($callable) {}
-
-    /**
-     * @param callable(TValue, int): mixed $callback
-     * @return \Illuminate\Support\Collection<array-key, mixed>
-     */
-    public function flatMap(callable $callback) {}
-
-    /**
-     * @template TReturn
-     * @param callable(TValue ...$values): TReturn $callback
-     * @return static<TReturn>|\Illuminate\Support\Collection<int, TReturn>
-     */
-    public function mapSpread(callable $callback) {}
+    // ..
 }

@@ -39,7 +39,7 @@ function tap($value, $callback = null)
 
 /**
  * @param  view-string|null  $view
- * @param  \Illuminate\Contracts\Support\Arrayable|array<string, mixed>  $data
+ * @param  \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<string, mixed>  $data
  * @param  array<string, mixed>  $mergeData
  * @return mixed
  */
