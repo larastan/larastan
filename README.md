@@ -15,6 +15,8 @@
 
 ## ⚗️ About Larastan
 
+> If you are using a Laravel version older than 9.x, please refer to [Larastan v1.x](https://github.com/nunomaduro/larastan/tree/1.x).
+
 Larastan was created by [Can Vural](https://github.com/canvural) and [Nuno Maduro](https://github.com/nunomaduro), got artwork designed by [@Caneco](http://github.com/caneco), is maintained by [Can Vural](https://github.com/canvural), [Nuno Maduro](https://github.com/nunomaduro), and [Viktor Szépe](https://github.com/szepeviktor), and is a [PHPStan](https://phpstan.org/) wrapper for Laravel. Larastan focuses on **finding errors in your code**. It catches whole classes of bugs even **before you write tests** for the code.
 
 - Adds static typing to Laravel to improve developer productivity and **code quality**
@@ -26,13 +28,13 @@ Larastan was created by [Can Vural](https://github.com/canvural) and [Nuno Madur
 ## ✨ Getting Started In 3 Steps
 
 > **Requires:**
-- **[PHP 7.2+](https://php.net/releases/)**
-- **[Laravel 6.0+](https://github.com/laravel/laravel)**
+- **[PHP 8.0+](https://php.net/releases/)**
+- **[Laravel 9.0+](https://github.com/laravel/laravel)**
 
 **1**: First, you may use [Composer](https://getcomposer.org) to install Larastan as a development dependency into your Laravel project:
 
 ```bash
-composer require nunomaduro/larastan --dev
+composer require nunomaduro/larastan:^2.0 --dev
 ```
 
 > Using Larastan for analysing Laravel packages? You may need to install `orchestra/testbench`.
@@ -125,13 +127,6 @@ We listed common [errors to ignore](docs/errors-to-ignore.md), add them as neede
 Thank you for considering contributing to Larastan. All the contribution guidelines are mentioned [here](CONTRIBUTING.md).
 
 You can have a look at the [CHANGELOG](CHANGELOG.md) for constant updates & detailed information about the changes. You can also follow the Twitter account for the latest announcements or just come say hi!: [@enunomaduro](https://twitter.com/enunomaduro), [@can__vural](https://twitter.com/can__vural).
-
-## ❤️ Support The Development
-
-**Do you like this project? Support it by donating**
-
-- PayPal: [Donate](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=66BYDWAT92N6L)
-- Patreon: [Donate](https://www.patreon.com/nunomaduro)
 
 ## 📖 License
 
