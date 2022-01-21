@@ -13,7 +13,6 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\ShouldNotHappenException;
-use PHPStan\Type\IntegerType;
 
 /**
  * @internal
@@ -119,15 +118,16 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
         }
 
         if (
-            (! array_key_exists($tableName, $this->tables)
+            (
+                ! array_key_exists($tableName, $this->tables)
                 || ! array_key_exists($propertyName, $this->tables[$tableName]->columns)
             )
             && $propertyName === 'id'
         ) {
             return new ModelProperty(
                 $classReflection,
-                new IntegerType(),
-                new IntegerType()
+                $this->stringResolver->resolve($modelInstance->getKeyType()),
+                $this->stringResolver->resolve($modelInstance->getKeyType())
             );
         }
 

@@ -8,6 +8,7 @@ use App\Account;
 use App\Group;
 use App\GuardedModel;
 use App\Role;
+use App\Team;
 use App\Thread;
 use App\User;
 use Carbon\Carbon as BaseCarbon;
@@ -26,6 +27,9 @@ class ModelPropertyExtension
 
     /** @var Group */
     private $group; // @phpstan-ignore-line
+
+    /** @var Team */
+    private $team; // @phpstan-ignore-line
 
     public function testPropertyReturnType(): int
     {
@@ -112,6 +116,19 @@ class ModelPropertyExtension
         $group->id = 5;
 
         return $group->save();
+    }
+
+    public function testReadIdPropertyWhenMigrationsCouldntBeReadAndKeyTypeIsString(): string
+    {
+        return $this->team->id;
+    }
+
+    public function testWriteIdPropertyWhenMigrationsCouldntBeReadAndKeyTypeIsString(): bool
+    {
+        $team = new Team();
+        $team->id = 'five';
+
+        return $team->save();
     }
 
     public function testModelWithGuardedProperties(GuardedModel $guardedModel): string
