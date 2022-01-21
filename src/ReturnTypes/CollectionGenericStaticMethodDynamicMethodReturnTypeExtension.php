@@ -36,7 +36,8 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
             'groupBy', 'keyBy', 'keys',
             'make', 'map', 'mapInto',
             'mapToDictionary', 'mapToGroups',
-            'mapWithKeys', 'mergeRecursive', 'pad', 'pluck',
+            'mapWithKeys', 'mergeRecursive',
+            'pad', 'partition', 'pluck',
             'pop', 'random', 'shift', 'sliding', 'split',
             'splitIn', 'values', 'wrap', 'zip',
         ], true);
