@@ -10,6 +10,7 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
+use PHPStan\Type\ErrorType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntersectionType;
 use PHPStan\Type\ObjectType;
@@ -37,7 +38,7 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
             'make', 'map', 'mapInto',
             'mapToDictionary', 'mapToGroups',
             'mapWithKeys', 'mergeRecursive',
-            'pad', 'partition', 'pluck',
+                'pad', 'partition', 'pluck',
             'pop', 'random', 'shift', 'sliding', 'split',
             'splitIn', 'values', 'wrap', 'zip',
         ], true);
@@ -58,8 +59,11 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
             return $returnType;
         }
 
-        /** @var ObjectType $calledOnType */
         $calledOnType = $scope->getType($methodCall->var);
+
+        if (! $calledOnType instanceof ObjectType) {
+            return $returnType;
+        }
 
         $classReflection = $calledOnType->getClassReflection();
 
