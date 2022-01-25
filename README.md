@@ -54,7 +54,7 @@ parameters:
     level: 5
 
     ignoreErrors:
-        - '#Unsafe usage of new static#'
+        - '#PHPDoc tag @var#'
 
     excludePaths:
         - ./*/*/FileToBeExcluded.php
