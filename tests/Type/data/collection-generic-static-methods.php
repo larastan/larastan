@@ -38,12 +38,12 @@ assertType('Illuminate\Support\Collection<int, int>', $customEloquentCollection-
 assertType('Illuminate\Support\Collection<int, int>', $collection->map(fn (User $user): int => $user->id));
 assertType('Illuminate\Support\Collection<string, int>', $items->map(fn (int $value, string $key): int => $value));
 
-assertType('Illuminate\Database\Eloquent\Collection<int, array<int, string>>', $collection->mapToDictionary(fn (User $u) => [$u->id => $u->email]));
+assertType('Illuminate\Database\Eloquent\Collection<int, array<int, int>>', $collection->mapToDictionary(fn (User $u) => [$u->id => $u->id]));
 assertType('App\TransactionCollection<string, array<int, int>>', $customEloquentCollection->mapToDictionary(fn (Transaction $t) => ['foo'=> $t->id]));
 assertType('Illuminate\Support\Collection<string, array<int, int>>', $items->mapToDictionary(fn (int $v) => ['foo' => $v]));
 
 assertType('Illuminate\Support\Collection<int, string>', $customEloquentCollection->mapWithKeys(fn (Transaction $transaction): array => [$transaction->id => 'foo']));
-assertType('Illuminate\Support\Collection<int, string>', $collection->mapWithKeys(fn (User $user): array => [$user->id => $user->email]));
+assertType('Illuminate\Support\Collection<int, int>', $collection->mapWithKeys(fn (User $user): array => [$user->id => $user->id]));
 assertType('Illuminate\Support\Collection<string, int>', $items->mapWithKeys(fn (int $value, string $key): array => ['foo' => $value]));
 
 // Should be fixed in Laravel
