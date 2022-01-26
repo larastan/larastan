@@ -6,11 +6,12 @@ echo "Install Laravel"
 composer create-project --quiet --prefer-dist "laravel/laravel:dev-master" ../laravel
 cd ../laravel/
 
-echo "Add package from source"
+echo "Add Larastan from source"
 sed -i -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan", "options": { "symlink": false }} ],|' composer.json
-composer require --dev "nunomaduro/larastan:dev-master"
+# No version information with "type":"path"
+composer require --dev "nunomaduro/larastan:*"
 
-echo >phpstan.neon <<<"EOF"
+echo >phpstan.neon <<"EOF"
 includes:
     - ./vendor/nunomaduro/larastan/extension.neon
 
