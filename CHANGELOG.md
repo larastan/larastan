@@ -6,8 +6,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.0.0] - 2022-01-26
+
+### Changed
+
+- Dropped support for Laravel versions older than 9.
+- Moved all Collection stubs to Laravel core.
 ### Added
-* Automatically discover packages via `Orchestra\Testbench`
+* Infer type of model `id` without migrations by @sebdesign in https://github.com/nunomaduro/larastan/pull/1057
+* Enable Testbench package discovery by @mewejo in https://github.com/nunomaduro/larastan/pull/1093
+
+## [1.0.3] - 2022-01-20
+
+* Avoid #1059 by @szepeviktor in https://github.com/nunomaduro/larastan/pull/1062
+* Fix SchemaAggregation when renaming tables through non-static method call by @N-Silbernagel in https://github.com/nunomaduro/larastan/pull/1065
+* fix: Call to an undefined method Eloquent\Builder::restore by @ryo-imai-bit in https://github.com/nunomaduro/larastan/pull/1061
+* fix: check for trait with getDeclaringTrait if method is declared in a trait
+* fix: use container to get the FunctionCallParametersCheck class in test
 
 ## [1.0.2] - 2021-11-23
 
@@ -710,7 +725,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/1.0.2...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/1.0.3...HEAD
+[1.0.3]: https://github.com/nunomaduro/larastan/compare/1.0.2...1.0.3
 [1.0.2]: https://github.com/nunomaduro/larastan/compare/1.0.1...1.0.2
 [1.0.1]: https://github.com/nunomaduro/larastan/compare/1.0.0...1.0.1
 [1.0.0]: https://github.com/nunomaduro/larastan/compare/v0.7.15...1.0.0

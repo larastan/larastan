@@ -1,5 +1,15 @@
 # Upgrade Guide
 
+## Upgrading to `2.0.0` from `1.x`
+
+### Eloquent Collection now requires 2 generic types
+
+In Larastan 1.x, Eloquent Collection was defined with only one generic type. Just the model type. But starting with Laravel 9, all collection stubs are now moved into the Laravel core. And as part of that migration process, the collection type is now defined with 2 generic types. First is collection item key, second is collection item value. So if you had a docblock like this `Collection<User>` now you should change it to `Collection<int, User>`.
+
+### Removed configuration `checkGenericClassInNonGenericObjectType: false` from default config
+
+In Larastan 1.x, we set the `checkGenericClassInNonGenericObjectType` to `false` by default. In 2.0.0, this is removed from the config. If you want to keep the same behavior, you can set it to `false` in your config.
+
 ## Upgrading to `0.7.11`
 
 ### Laravel 8 Model Factory support
