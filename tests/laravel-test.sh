@@ -11,7 +11,7 @@ sed -i -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": ".
 # No version information with "type":"path"
 composer require --dev "nunomaduro/larastan:*"
 
-echo >phpstan.neon <<"EOF"
+cat >phpstan.neon <<"EOF"
 includes:
     - ./vendor/nunomaduro/larastan/extension.neon
 
