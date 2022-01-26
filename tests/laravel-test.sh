@@ -11,6 +11,9 @@ sed -i -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": ".
 # No version information with "type":"path"
 composer require --dev "nunomaduro/larastan:*"
 
+echo "Fix commented namespace property in RouteServiceProvider"
+sed -i -e 's|^\(\s*\)// \(protected \$namespace =\).*$|\1\2 null;|' app/Providers/RouteServiceProvider.php
+
 cat >phpstan.neon <<"EOF"
 includes:
     - ./vendor/nunomaduro/larastan/extension.neon
@@ -25,9 +28,6 @@ parameters:
         - app/
     #excludePaths:
     #    - ./*/*/FileToBeExcluded.php
-
-    ignoreErrors:
-        - '#PHPDoc tag @var#'
 EOF
 
 echo "Test Laravel"
