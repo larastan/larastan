@@ -26,8 +26,8 @@ parameters:
     #excludePaths:
     #    - ./*/*/FileToBeExcluded.php
 
-    ignoreErrors:
-        - '#PHPDoc tag @var#'
+    #ignoreErrors:
+    #    - '#PHPDoc tag @var#'
 EOF
 
 echo "Test Laravel"
