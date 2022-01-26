@@ -3,39 +3,36 @@
 set -e
 
 echo "Install Laravel"
-composer create-project --quiet --prefer-dist "laravel/laravel=dev-master" ../laravel
+composer create-project --quiet --prefer-dist "laravel/laravel:dev-master" ../laravel
 cd ../laravel/
 
-echo "Add package from source"
-sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan", "options": { "symlink": false }} ],|' -i composer.json
-# Work-around for conflicting psr/log versions
-composer require --dev --no-update "nunomaduro/larastan:dev-master"
-composer update
+echo "Add Larastan from source"
+sed -i -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan", "options": { "symlink": false }} ],|' composer.json
+# No version information with "type":"path"
+composer require --dev "nunomaduro/larastan:*"
 
-echo "
+cat >phpstan.neon <<"EOF"
 includes:
     - ./vendor/nunomaduro/larastan/extension.neon
 
 parameters:
-
-    paths:
-        - app
-
     # The level 9 is the highest level
     level: 5
 
+    checkMissingIterableValueType: false
+
+    paths:
+        - app/
+    #excludePaths:
+    #    - ./*/*/FileToBeExcluded.php
+
     ignoreErrors:
         - '#PHPDoc tag @var#'
-
-    excludePaths:
-        - ./*/*/FileToBeExcluded.php
-
-    checkMissingIterableValueType: false
-" > phpstan.neon
+EOF
 
 echo "Test Laravel"
-vendor/bin/phpstan analyse app
+vendor/bin/phpstan analyse
 cd -
 
 echo "Test Laravel from other working directories"
-../laravel/vendor/bin/phpstan analyse ../laravel/app -c ../laravel/phpstan.neon
+../laravel/vendor/bin/phpstan analyse --configuration=../laravel/phpstan.neon ../laravel/app
