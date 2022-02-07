@@ -19,7 +19,7 @@ use PHPStan\Type\TypeCombinator;
 /**
  * @internal
  */
-final class RequestExtension implements DynamicMethodReturnTypeExtension
+final class RequestFileExtension implements DynamicMethodReturnTypeExtension
 {
     /**
      * {@inheritdoc}
