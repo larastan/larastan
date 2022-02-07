@@ -49,9 +49,9 @@ final class RequestRouteExtension implements DynamicMethodReturnTypeExtension
         }
 
         return ParametersAcceptorSelector::selectFromArgs(
-			$scope,
-			$methodCall->getArgs(),
-			$methodReflection->getVariants()
-		)->getReturnType();
+            $scope,
+            $methodCall->getArgs(),
+            $methodReflection->getVariants()
+        )->getReturnType();
     }
 }
