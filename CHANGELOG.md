@@ -6,6 +6,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+* Fix incorrect return type by `route` on Request class https://github.com/nunomaduro/larastan/issues/1112 https://github.com/nunomaduro/larastan/pull/1109
+
+## [1.0.3] - 2022-01-20
+
+### Fixed
+* Avoid https://github.com/nunomaduro/larastan/issues/1059 by @szepeviktor in https://github.com/nunomaduro/larastan/pull/1062
+* Fix SchemaAggregation when renaming tables through non-static method call by @N-Silbernagel in https://github.com/nunomaduro/larastan/pull/1065
+* Call to an undefined method Eloquent\Builder::restore by @ryo-imai-bit in https://github.com/nunomaduro/larastan/pull/1061
+* check for trait with getDeclaringTrait if method is declared in a trait
+* use container to get the FunctionCallParametersCheck class in test
+
 ## [1.0.2] - 2021-11-23
 
 ### Added
