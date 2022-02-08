@@ -7,7 +7,7 @@ namespace Tests\Features\ReturnTypes;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 
-class RequestExtension
+class RequestFileExtension
 {
     /** @phpstan-return UploadedFile[] */
     public function testRequestFileWithNoArguments(Request $request): array
