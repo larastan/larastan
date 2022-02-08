@@ -20,6 +20,7 @@ class FeaturesTest extends BaseTestCase
         @File::makeDirectory(dirname(__DIR__).'/vendor/nunomaduro/larastan', 0755, true);
         @File::copy(dirname(__DIR__).'/bootstrap.php', dirname(__DIR__).'/vendor/nunomaduro/larastan/bootstrap.php');
         File::copyDirectory(__DIR__.'/Application/database/migrations', $this->getBasePath().'/database/migrations');
+        File::copyDirectory(__DIR__.'/Application/database/schema', $this->getBasePath().'/database/schema');
         File::copyDirectory(__DIR__.'/Application/config', $this->getBasePath().'/config');
         File::copyDirectory(__DIR__.'/Application/resources', $this->getBasePath().'/resources');
 

@@ -48,6 +48,8 @@ parameters:
     noUnnecessaryCollectionCall: true
     noUnnecessaryCollectionCallOnly: []
     noUnnecessaryCollectionCallExcept: []
+    scanSquashedMigrations: false
+    squashedMigrationsPath: []
     databaseMigrationsPath: []
     checkModelProperties: false
     checkPhpDocMissingReturn: false
@@ -59,6 +61,8 @@ parametersSchema:
     noUnnecessaryCollectionCallOnly: listOf(string())
     noUnnecessaryCollectionCallExcept: listOf(string())
     databaseMigrationsPath: listOf(string())
+    scanSquashedMigrations: bool()
+    squashedMigrationsPath: listOf(string())
     checkModelProperties: bool()
 
 conditionalTags:
