@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-* Fix incorrect return type by `route` on Request class https://github.com/nunomaduro/larastan/issues/1112 https://github.com/nunomaduro/larastan/pull/1109
+* Fix incorrect return type by `route` on Request class by @fragkp in https://github.com/nunomaduro/larastan/pull/1113
 
 ## [2.0.0] - 2022-01-26
 
