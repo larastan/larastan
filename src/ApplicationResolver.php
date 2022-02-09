@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan;
 
-use Composer\Autoload\ClassMapGenerator;
+use NunoMaduro\Larastan\Support\ClassMapGenerator;
 use const DIRECTORY_SEPARATOR;
 use Illuminate\Contracts\Foundation\Application;
 use function in_array;
