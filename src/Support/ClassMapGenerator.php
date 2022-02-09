@@ -22,7 +22,7 @@ use Composer\Pcre\Preg;
 use Symfony\Component\Finder\Finder;
 
 /**
- * ClassMapGenerator
+ * ClassMapGenerator.
  *
  * @author Gyula Sallai <salla016@gmail.com>
  * @author Jordi Boggiano <j.boggiano@seld.be>
@@ -36,10 +36,10 @@ class ClassMapGenerator
     private static $restPattern;
 
     /**
-     * Generate a class map file
+     * Generate a class map file.
      *
-     * @param \Traversable<string>|array<string> $dirs Directories or a single path to search in
-     * @param string                     $file The name of the class map file
+     * @param  \Traversable<string>|array<string>  $dirs  Directories or a single path to search in
+     * @param  string  $file  The name of the class map file
      * @return void
      */
     public static function dump($dirs, $file)
@@ -54,12 +54,13 @@ class ClassMapGenerator
     }
 
     /**
-     * Checks if the given path is absolute
+     * Checks if the given path is absolute.
      *
-     * @param  string $path
+     * @param  string  $path
      * @return bool
      *
      * @see \Composer\Util\Filesystem
+     *
      * @author Jordi Boggiano <j.boggiano@seld.be>
      * @author Johannes M. Schmitt <schmittjoh@gmail.com>
      */
@@ -72,10 +73,11 @@ class ClassMapGenerator
      * Normalize a path. This replaces backslashes with slashes, removes ending
      * slash and collapses redundant separators and up-level references.
      *
-     * @param  string $path Path to the file or directory
+     * @param  string  $path  Path to the file or directory
      * @return string
      *
      * @see \Composer\Util\Filesystem
+     *
      * @author Jordi Boggiano <j.boggiano@seld.be>
      * @author Johannes M. Schmitt <schmittjoh@gmail.com>
      */
@@ -101,26 +103,27 @@ class ClassMapGenerator
         foreach (explode('/', $path) as $chunk) {
             if ('..' === $chunk && ($absolute || $up)) {
                 array_pop($parts);
-                $up = !(empty($parts) || '..' === end($parts));
+                $up = ! (empty($parts) || '..' === end($parts));
             } elseif ('.' !== $chunk && '' !== $chunk) {
                 $parts[] = $chunk;
                 $up = '..' !== $chunk;
             }
         }
 
-        return $prefix . ($absolute ? '/' : '') . implode('/', $parts);
+        return $prefix.($absolute ? '/' : '').implode('/', $parts);
     }
 
     /**
-     * Iterate over all files in the given directory searching for classes
+     * Iterate over all files in the given directory searching for classes.
      *
-     * @param \Traversable<\SplFileInfo>|string|array<string> $path The path to search in or an iterator
-     * @param string              $excluded     Regex that matches file paths to be excluded from the classmap
-     * @param ?\Composer\IO\IOInterface        $io           IO object
-     * @param ?string             $namespace    Optional namespace prefix to filter by
-     * @param ?string             $autoloadType psr-0|psr-4 Optional autoload standard to use mapping rules
-     * @param array<string, true> $scannedFiles
+     * @param  \Traversable<\SplFileInfo>|string|array<string>  $path  The path to search in or an iterator
+     * @param  string  $excluded  Regex that matches file paths to be excluded from the classmap
+     * @param  ?\Composer\IO\IOInterface  $io  IO object
+     * @param  ?string  $namespace  Optional namespace prefix to filter by
+     * @param  ?string  $autoloadType  psr-0|psr-4 Optional autoload standard to use mapping rules
+     * @param  array<string, true>  $scannedFiles
      * @return array<class-string, string> A class map array
+     *
      * @throws \RuntimeException When the path is neither an existing file nor directory
      */
     public static function createMap($path, $excluded = null, $io = null, $namespace = null, $autoloadType = null, &$scannedFiles = [])
@@ -133,7 +136,7 @@ class ClassMapGenerator
                 $path = Finder::create()->files()->followLinks()->name('/\.(php|inc|hh)$/')->in($path);
             } else {
                 throw new \RuntimeException(
-                    'Could not scan for classes inside "' . $path .
+                    'Could not scan for classes inside "'.$path.
                     '" which does not appear to be a file nor a folder'
                 );
             }
@@ -146,12 +149,12 @@ class ClassMapGenerator
 
         foreach ($path as $file) {
             $filePath = $file->getPathname();
-            if (!in_array(pathinfo($filePath, PATHINFO_EXTENSION), ['php', 'inc', 'hh'])) {
+            if (! in_array(pathinfo($filePath, PATHINFO_EXTENSION), ['php', 'inc', 'hh'])) {
                 continue;
             }
 
-            if (!self::isAbsolutePath($filePath)) {
-                $filePath = $cwd . '/' . $filePath;
+            if (! self::isAbsolutePath($filePath)) {
+                $filePath = $cwd.'/'.$filePath;
                 $filePath = self::normalizePath($filePath);
             } else {
                 $filePath = Preg::replace('{[\\\\/]{2,}}', '/', $filePath);
@@ -193,12 +196,12 @@ class ClassMapGenerator
                     continue;
                 }
 
-                if (!isset($map[$class])) {
+                if (! isset($map[$class])) {
                     $map[$class] = $filePath;
-                } elseif ($io && $map[$class] !== $filePath && !Preg::isMatch('{/(test|fixture|example|stub)s?/}i', strtr($map[$class] . ' ' . $filePath, '\\', '/'))) {
+                } elseif ($io && $map[$class] !== $filePath && ! Preg::isMatch('{/(test|fixture|example|stub)s?/}i', strtr($map[$class].' '.$filePath, '\\', '/'))) {
                     $io->writeError(
-                        '<warning>Warning: Ambiguous class resolution, "' . $class . '"' .
-                        ' was found in both "' . $map[$class] . '" and "' . $filePath . '", the first will be used.</warning>'
+                        '<warning>Warning: Ambiguous class resolution, "'.$class.'"'.
+                        ' was found in both "'.$map[$class].'" and "'.$filePath.'", the first will be used.</warning>'
                     );
                 }
             }
@@ -208,14 +211,14 @@ class ClassMapGenerator
     }
 
     /**
-     * Remove classes which could not have been loaded by namespace autoloaders
+     * Remove classes which could not have been loaded by namespace autoloaders.
      *
-     * @param  array<int, class-string> $classes       found classes in given file
-     * @param  string                   $filePath      current file
-     * @param  string                   $baseNamespace prefix of given autoload mapping
-     * @param  string                   $namespaceType psr-0|psr-4
-     * @param  string                   $basePath      root directory of given autoload mapping
-     * @param  ?\Composer\IO\IOInterface             $io            IO object
+     * @param  array<int, class-string>  $classes  found classes in given file
+     * @param  string  $filePath  current file
+     * @param  string  $baseNamespace  prefix of given autoload mapping
+     * @param  string  $namespaceType  psr-0|psr-4
+     * @param  string  $basePath  root directory of given autoload mapping
+     * @param  ?\Composer\IO\IOInterface  $io  IO object
      * @return array<int, class-string> valid classes
      */
     private static function filterByNamespace($classes, $filePath, $baseNamespace, $namespaceType, $basePath, $io)
@@ -239,7 +242,7 @@ class ClassMapGenerator
                     $namespace = substr($class, 0, $namespaceLength + 1);
                     $className = substr($class, $namespaceLength + 1);
                     $subPath = str_replace('\\', DIRECTORY_SEPARATOR, $namespace)
-                        . str_replace('_', DIRECTORY_SEPARATOR, $className);
+                        .str_replace('_', DIRECTORY_SEPARATOR, $className);
                 } else {
                     $subPath = str_replace('_', DIRECTORY_SEPARATOR, $class);
                 }
@@ -259,7 +262,7 @@ class ClassMapGenerator
         if (empty($validClasses)) {
             foreach ($rejectedClasses as $class) {
                 if ($io) {
-                    $io->writeError("<warning>Class $class located in " . Preg::replace('{^' . preg_quote(getcwd()) . '}', '.', $filePath, 1) . " does not comply with $namespaceType autoloading standard. Skipping.</warning>");
+                    $io->writeError("<warning>Class $class located in ".Preg::replace('{^'.preg_quote(getcwd()).'}', '.', $filePath, 1)." does not comply with $namespaceType autoloading standard. Skipping.</warning>");
                 }
             }
 
@@ -270,11 +273,12 @@ class ClassMapGenerator
     }
 
     /**
-     * Extract the classes in the given file
+     * Extract the classes in the given file.
      *
-     * @param  string            $path The file to check
-     * @throws \RuntimeException
+     * @param  string  $path  The file to check
      * @return array<int, class-string> The found classes
+     *
+     * @throws \RuntimeException
      */
     private static function findClasses($path)
     {
@@ -283,10 +287,10 @@ class ClassMapGenerator
         // Use @ here instead of Silencer to actively suppress 'unhelpful' output
         // @link https://github.com/composer/composer/pull/4886
         $contents = @php_strip_whitespace($path);
-        if (!$contents) {
-            if (!file_exists($path)) {
+        if (! $contents) {
+            if (! file_exists($path)) {
                 $message = 'File at "%s" does not exist, check your classmap definitions';
-            } elseif (!is_readable($path)) {
+            } elseif (! is_readable($path)) {
                 $message = 'File at "%s" is not readable, check its permissions';
             } elseif ('' === trim((string) file_get_contents($path))) {
                 // The input file was really empty and thus contains no classes
@@ -296,14 +300,14 @@ class ClassMapGenerator
             }
             $error = error_get_last();
             if (isset($error['message'])) {
-                $message .= PHP_EOL . 'The following message may be helpful:' . PHP_EOL . $error['message'];
+                $message .= PHP_EOL.'The following message may be helpful:'.PHP_EOL.$error['message'];
             }
             throw new \RuntimeException(sprintf($message, $path));
         }
 
         // return early if there is no chance of matching anything in this file
-        Preg::matchAll('{\b(?:class|interface|trait' . $extraTypes . ')\s}i', $contents, $matches);
-        if (!$matches) {
+        Preg::matchAll('{\b(?:class|interface|trait'.$extraTypes.')\s}i', $contents, $matches);
+        if (! $matches) {
             return [];
         }
 
@@ -332,7 +336,7 @@ class ClassMapGenerator
 
         Preg::matchAll('{
             (?:
-                 \b(?<![\$:>])(?P<type>class|interface|trait' . $extraTypes . ') \s++ (?P<name>[a-zA-Z_\x7f-\xff:][a-zA-Z0-9_\x7f-\xff:\-]*+)
+                 \b(?<![\$:>])(?P<type>class|interface|trait'.$extraTypes.') \s++ (?P<name>[a-zA-Z_\x7f-\xff:][a-zA-Z0-9_\x7f-\xff:\-]*+)
                | \b(?<![\$:>])(?P<ns>namespace) (?P<nsname>\s++[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*+(?:\s*+\\\\\s*+[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*+)*+)? \s*+ [\{;]
             )
         }ix', $contents, $matches);
@@ -341,8 +345,8 @@ class ClassMapGenerator
         $namespace = '';
 
         for ($i = 0, $len = count($matches['type']); $i < $len; $i++) {
-            if (!empty($matches['ns'][$i])) {
-                $namespace = str_replace([' ', "\t", "\r", "\n"], '', $matches['nsname'][$i]) . '\\';
+            if (! empty($matches['ns'][$i])) {
+                $namespace = str_replace([' ', "\t", "\r", "\n"], '', $matches['nsname'][$i]).'\\';
             } else {
                 $name = $matches['name'][$i];
                 // skip anon classes extending/implementing
@@ -351,7 +355,7 @@ class ClassMapGenerator
                 }
                 if ($name[0] === ':') {
                     // This is an XHP class, https://github.com/facebook/xhp
-                    $name = 'xhp' . substr(str_replace(['-', ':'], ['_', '__'], $name), 1);
+                    $name = 'xhp'.substr(str_replace(['-', ':'], ['_', '__'], $name), 1);
                 } elseif ($matches['type'][$i] === 'enum') {
                     // something like:
                     //   enum Foo: int { HERP = '123'; }
@@ -366,7 +370,7 @@ class ClassMapGenerator
                         $name = substr($name, 0, $colonPos);
                     }
                 }
-                $classes[] = ltrim($namespace . $name, '\\');
+                $classes[] = ltrim($namespace.$name, '\\');
             }
         }
 
@@ -393,10 +397,11 @@ class ClassMapGenerator
     }
 
     /**
-     * @param string[] $types
+     * @param  string[]  $types
      * @return void
      *
      * @see \Composer\Autoload\PhpFileCleaner
+     *
      * @author Jordi Boggiano <j.boggiano@seld.be>
      * @author Johannes M. Schmitt <schmittjoh@gmail.com>
      */
@@ -406,10 +411,10 @@ class ClassMapGenerator
             self::$typeConfig[$type[0]] = [
                 'name' => $type,
                 'length' => strlen($type),
-                'pattern' => '{.\b(?<![\$:>])' . $type . '\s++[a-zA-Z_\x7f-\xff:][a-zA-Z0-9_\x7f-\xff:\-]*+}Ais',
+                'pattern' => '{.\b(?<![\$:>])'.$type.'\s++[a-zA-Z_\x7f-\xff:][a-zA-Z0-9_\x7f-\xff:\-]*+}Ais',
             ];
         }
 
-        self::$restPattern = '{[^?"\'</' . implode('', array_keys(self::$typeConfig)) . ']+}A';
+        self::$restPattern = '{[^?"\'</'.implode('', array_keys(self::$typeConfig)).']+}A';
     }
 }
