@@ -13,7 +13,7 @@
     "require": {
         "php": "^8.0.2",
         "ext-json": "*",
-        "composer/composer": "^2.2.4",
+        "composer/pcre": "^1.0",
         "illuminate/console": "^9",
         "illuminate/container": "^9",
         "illuminate/contracts": "^9",
