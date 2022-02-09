@@ -6,7 +6,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.0.1] - 2022-02-09
+
+### Added
+
 * Fix incorrect return type by `route` on Request class by @fragkp in https://github.com/nunomaduro/larastan/pull/1113
+
+### Changed
+
+* refactor: replace composer with copy of ClassMapGenerator by @canvural in https://github.com/nunomaduro/larastan/pull/1119
 
 ## [2.0.0] - 2022-01-26
 
@@ -727,7 +735,9 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/1.0.3...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/2.0.1...HEAD
+[2.0.1]: https://github.com/nunomaduro/larastan/compare/2.0.0...2.0.1
+[2.0.0]: https://github.com/nunomaduro/larastan/compare/1.0.3...2.0.0
 [1.0.3]: https://github.com/nunomaduro/larastan/compare/1.0.2...1.0.3
 [1.0.2]: https://github.com/nunomaduro/larastan/compare/1.0.1...1.0.2
 [1.0.1]: https://github.com/nunomaduro/larastan/compare/1.0.0...1.0.1
