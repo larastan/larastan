@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Properties;
 
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 use PhpParser;
 use PhpParser\NodeFinder;
-use Carbon\Carbon;
 
 /**
  * @see https://github.com/psalm/laravel-psalm-plugin/blob/master/src/SchemaAggregator.php
@@ -381,7 +381,7 @@ final class SchemaAggregator
 
                         case 'softdeletestz':
                         case 'softdeletes':
-                            $table->setColumn(new SchemaColumn($columnName, Carbon::class, true));
+                            $table->setColumn(new SchemaColumn($columnName, get_class(Date::now()), true));
                             break;
 
                         case 'uuidmorphs':
