@@ -7,6 +7,7 @@ namespace NunoMaduro\Larastan\Properties;
 use Illuminate\Support\Str;
 use PhpParser;
 use PhpParser\NodeFinder;
+use Carbon\Carbon;
 
 /**
  * @see https://github.com/psalm/laravel-psalm-plugin/blob/master/src/SchemaAggregator.php
@@ -372,12 +373,15 @@ final class SchemaAggregator
                             $table->setColumn(new SchemaColumn($columnName, 'set', $nullable, $secondArgArray));
                             break;
 
-                        case 'softdeletestz':
                         case 'timestamptz':
                         case 'timetz':
                         case 'year':
-                        case 'softdeletes':
                             $table->setColumn(new SchemaColumn($columnName, 'string', true));
+                            break;
+
+                        case 'softdeletestz':
+                        case 'softdeletes':
+                            $table->setColumn(new SchemaColumn($columnName, Carbon::class, true));
                             break;
 
                         case 'uuidmorphs':

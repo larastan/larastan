@@ -9,6 +9,7 @@ use NunoMaduro\Larastan\Properties\SchemaTable;
 use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
 use PHPStan\Testing\PHPStanTestCase;
+use Carbon\Carbon;
 
 class MigrationHelperTest extends PHPStanTestCase
 {
@@ -134,5 +135,31 @@ class MigrationHelperTest extends PHPStanTestCase
         self::assertSame('string', $tables['users']->columns['email']->readableType);
         self::assertSame('string', $tables['users']->columns['created_at']->readableType);
         self::assertSame('string', $tables['users']->columns['updated_at']->readableType);
+    }
+
+    /** @test */
+    public function it_can_handle_migrations_with_soft_deletes()
+    {
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migrations_using_soft_deletes'], $this->fileHelper);
+
+        $tables = $migrationHelper->initializeTables();
+
+        self::assertCount(1, $tables);
+        self::assertArrayHasKey('users', $tables);
+        self::assertCount(6, $tables['users']->columns);
+        self::assertSame(Carbon::class, $tables['users']->columns['deleted_at']->readableType);
+    }
+
+    /** @test */
+    public function it_can_handle_migrations_with_soft_deletes_tz()
+    {
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migrations_using_soft_deletes_tz'], $this->fileHelper);
+
+        $tables = $migrationHelper->initializeTables();
+
+        self::assertCount(1, $tables);
+        self::assertArrayHasKey('users', $tables);
+        self::assertCount(6, $tables['users']->columns);
+        self::assertSame(Carbon::class, $tables['users']->columns['deleted_at']->readableType);
     }
 }
