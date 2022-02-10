@@ -28,6 +28,7 @@ class CreateUsersTable extends Migration
             $table->unknownColumnType('unknown_column');
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 }

@@ -184,6 +184,11 @@ class ModelPropertyExtension
         return $user->properties->first();
     }
 
+    public function testSoftDeletesCastDateTimeAndNullable(User $user): ?string
+    {
+        return $user->deleted_at->format('d/m/Y');
+    }
+
     public function testForeignIdFor(Address $address): int
     {
         return $address->user_id;
