@@ -140,7 +140,7 @@ class MigrationHelperTest extends PHPStanTestCase
     /** @test */
     public function it_can_handle_migrations_with_soft_deletes()
     {
-        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migrations_using_soft_deletes'], $this->fileHelper);
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__.'/data/migrations_using_soft_deletes'], $this->fileHelper);
 
         $tables = $migrationHelper->initializeTables();
 
@@ -153,7 +153,7 @@ class MigrationHelperTest extends PHPStanTestCase
     /** @test */
     public function it_can_handle_migrations_with_soft_deletes_tz()
     {
-        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migrations_using_soft_deletes_tz'], $this->fileHelper);
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__.'/data/migrations_using_soft_deletes_tz'], $this->fileHelper);
 
         $tables = $migrationHelper->initializeTables();
 
