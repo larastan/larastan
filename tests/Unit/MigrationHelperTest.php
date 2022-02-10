@@ -147,7 +147,7 @@ class MigrationHelperTest extends PHPStanTestCase
         self::assertCount(1, $tables);
         self::assertArrayHasKey('users', $tables);
         self::assertCount(6, $tables['users']->columns);
-        self::assertSame(get_class(Date::now()), $tables['users']->columns['deleted_at']->readableType);
+        self::assertSame('?'.get_class(Date::now()), $tables['users']->columns['deleted_at']->readableType);
     }
 
     /** @test */
@@ -160,6 +160,6 @@ class MigrationHelperTest extends PHPStanTestCase
         self::assertCount(1, $tables);
         self::assertArrayHasKey('users', $tables);
         self::assertCount(6, $tables['users']->columns);
-        self::assertSame(get_class(Date::now()), $tables['users']->columns['deleted_at']->readableType);
+        self::assertSame('?'.get_class(Date::now()), $tables['users']->columns['deleted_at']->readableType);
     }
 }

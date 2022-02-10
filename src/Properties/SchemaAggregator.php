@@ -381,7 +381,7 @@ final class SchemaAggregator
 
                         case 'softdeletestz':
                         case 'softdeletes':
-                            $table->setColumn(new SchemaColumn($columnName, get_class(Date::now()), true));
+                            $table->setColumn(new SchemaColumn($columnName, '?'.get_class(Date::now()), true));
                             break;
 
                         case 'uuidmorphs':

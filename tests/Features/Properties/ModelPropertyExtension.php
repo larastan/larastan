@@ -186,7 +186,7 @@ class ModelPropertyExtension
 
     public function testSoftDeletesCastDateTimeAndNullable(User $user): ?string
     {
-        return $user->deleted_at->format('d/m/Y');
+        return $user->deleted_at?->format('d/m/Y');
     }
 
     public function testForeignIdFor(Address $address): int
