@@ -20,6 +20,13 @@ assertType('Illuminate\Support\Collection<int, float|int|string>', collect([1, '
 assertType("Illuminate\Support\Collection<int, non-empty-array<int, string>>", collect([['a', 'b', 'c']]));
 assertType("Illuminate\Support\Collection<int, non-empty-array<int, string>>", collect([['a', 'b', 'c']])->push(array_fill(0, 3, 'x')));
 
+assertType('mixed', collect()->max());
+assertType('int|null', collect([1, 2, 3, 4, 5])->max());
+assertType('float|int|null', collect([['id' => 1], ['id' => 2], ['id' => 3]])->max('id'));
+assertType('float|int|null', collect([['id' => 1], ['id' => 2], ['id' => 3]])->max(function ($object) {
+    return $object['id'];
+}));
+
 /**  @phpstan-param EloquentCollection<int, int> $eloquentCollection */
 function eloquentCollectionInteger(EloquentCollection $eloquentCollection): void
 {
