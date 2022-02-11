@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan;
 
-use const DIRECTORY_SEPARATOR;
 use Illuminate\Contracts\Foundation\Application;
-use function in_array;
 use NunoMaduro\Larastan\Support\ClassMapGenerator;
 use Orchestra\Testbench\Concerns\CreatesApplication;
+use function in_array;
+use const DIRECTORY_SEPARATOR;
 
 /**
  * @internal
@@ -49,6 +49,28 @@ final class ApplicationResolver
 
             foreach ($serviceProviders as $serviceProvider) {
                 $app->register($serviceProvider);
+            }
+            $composerInstalledFile = $vendorDir.DIRECTORY_SEPARATOR.'/composer/installed.json';
+            if (file_exists($composerInstalledFile)) {
+                $installed = json_decode((string) file_get_contents($composerInstalledFile), true);
+                $packages = $installed['packages'] ?? $installed;
+                $ignoreAll = in_array('*', $ignore = self::$composer['extra']['laravel']['dont-discover'] ?? [], true);
+                $allInclude = collect($packages)->mapWithKeys(function ($package) use ($vendorDir) {
+                    return [
+                        str_replace(
+                            $vendorDir.DIRECTORY_SEPARATOR, '', $package['name']
+                        ) => $package['extra']['laravel'] ?? [],
+                    ];
+                })->each(function ($configuration) use (&$ignore) {
+                    $ignore = array_merge($ignore, $configuration['dont-discover'] ?? []);
+                })->reject(function ($configuration, $package) use ($ignore, $ignoreAll) {
+                    return $ignoreAll || in_array($package, $ignore, true);
+                })->filter()->all();
+                foreach ($allInclude as $include) {
+                    foreach ($include['providers'] as $serviceProvider) {
+                        $app->register($serviceProvider);
+                    }
+                }
             }
         }
 
