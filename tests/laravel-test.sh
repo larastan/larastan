@@ -3,7 +3,7 @@
 set -e
 
 echo "Install Laravel"
-composer create-project --quiet --prefer-dist "laravel/laravel:dev-master" ../laravel
+composer create-project --quiet --prefer-dist "laravel/laravel:^9" ../laravel
 cd ../laravel/
 
 echo "Add Larastan from source"
