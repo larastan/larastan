@@ -48,7 +48,6 @@ parameters:
     noUnnecessaryCollectionCall: true
     noUnnecessaryCollectionCallOnly: []
     noUnnecessaryCollectionCallExcept: []
-    scanSquashedMigrations: false
     squashedMigrationsPath: []
     databaseMigrationsPath: []
     checkModelProperties: false
@@ -61,7 +60,6 @@ parametersSchema:
     noUnnecessaryCollectionCallOnly: listOf(string())
     noUnnecessaryCollectionCallExcept: listOf(string())
     databaseMigrationsPath: listOf(string())
-    scanSquashedMigrations: bool()
     squashedMigrationsPath: listOf(string())
     checkModelProperties: bool()
 
@@ -427,6 +425,11 @@ services:
             parser: @currentPhpVersionSimpleDirectParser
 
     -
+        class: NunoMaduro\Larastan\Properties\SquashedMigrationHelper
+        arguments:
+            schemaPaths: %squashedMigrationsPath%
+
+    -
         class: NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertiesRuleHelper
 
     -
@@ -454,5 +457,6 @@ services:
             dispatchableClass: Illuminate\Foundation\Events\Dispatchable
         tags:
             - phpstan.rules.rule
+    - NunoMaduro\Larastan\Properties\Schema\PhpMyAdminDataTypeToPhpTypeConverter
 rules:
     - NunoMaduro\Larastan\Rules\RelationExistenceRule

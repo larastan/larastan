@@ -14,7 +14,13 @@ use PhpParser\NodeFinder;
 final class SchemaAggregator
 {
     /** @var array<string, SchemaTable> */
-    public $tables = [];
+    public array $tables = [];
+
+    /** @param array<string, SchemaTable> $tables */
+    public function __construct(array $tables = [])
+    {
+        $this->tables = $tables;
+    }
 
     /**
      * @param  array<int, PhpParser\Node\Stmt>  $stmts
