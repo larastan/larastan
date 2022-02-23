@@ -34,7 +34,7 @@ class MigrationHelper
     }
 
     /**
-     * @param array<string, SchemaTable> $tables
+     * @param  array<string, SchemaTable>  $tables
      * @return array<string, SchemaTable>
      */
     public function initializeTables(array $tables = []): array

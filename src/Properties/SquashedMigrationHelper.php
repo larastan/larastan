@@ -17,7 +17,7 @@ use SplFileInfo;
 final class SquashedMigrationHelper
 {
     /**
-     * @param string[] $schemaPaths
+     * @param  string[]  $schemaPaths
      */
     public function __construct(
         private array $schemaPaths,
@@ -60,7 +60,7 @@ final class SquashedMigrationHelper
             }
 
             /** @var CreateStatement[] $createStatements */
-            $createStatements = array_filter($parser->statements, static fn(Statement $statement) => $statement instanceof CreateStatement);
+            $createStatements = array_filter($parser->statements, static fn (Statement $statement) => $statement instanceof CreateStatement);
 
             foreach ($createStatements as $createStatement) {
                 $table = new SchemaTable($createStatement->name->table);

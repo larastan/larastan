@@ -14,7 +14,7 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
     public function it_can_parse_schema_dump_for_a_basic_schema(): void
     {
         $schemaParser = new SquashedMigrationHelper(
-            [__DIR__ . '/data/schema/basic_schema'],
+            [__DIR__.'/data/schema/basic_schema'],
             self::getContainer()->getByType(FileHelper::class),
             new PhpMyAdminDataTypeToPhpTypeConverter()
         );
