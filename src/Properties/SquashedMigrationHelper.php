@@ -74,7 +74,7 @@ final class SquashedMigrationHelper
                         continue;
                     }
 
-                    if ($field->name === null) {
+                    if ($field->name === null || $field->type === null) {
                         continue;
                     }
 
