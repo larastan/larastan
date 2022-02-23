@@ -2,7 +2,9 @@
 
 namespace NunoMaduro\Larastan\Properties;
 
+use NunoMaduro\Larastan\Properties\Schema\PhpMyAdminDataTypeToPhpTypeConverter;
 use PhpMyAdmin\SqlParser\Components\CreateDefinition;
+use PhpMyAdmin\SqlParser\Exceptions\ParserException;
 use PhpMyAdmin\SqlParser\Parser;
 use PhpMyAdmin\SqlParser\Statement;
 use PhpMyAdmin\SqlParser\Statements\CreateStatement;
@@ -19,7 +21,8 @@ final class SquashedMigrationHelper
      */
     public function __construct(
         private array $schemaPaths,
-        private FileHelper $fileHelper
+        private FileHelper $fileHelper,
+        private PhpMyAdminDataTypeToPhpTypeConverter $converter,
     ) {
     }
 
@@ -42,14 +45,29 @@ final class SquashedMigrationHelper
         $tables = [];
 
         foreach ($filesArray as $file) {
-            $parser = new Parser(file_get_contents($file->getPathname()));
-            $parser->parse();
+            $fileContents = file_get_contents($file->getPathname());
+
+            if ($fileContents === false) {
+                continue;
+            }
+
+            $parser = new Parser($fileContents);
+            try {
+                $parser->parse();
+            } catch (ParserException $exception) {
+                // TODO: re-throw the exception with a clear message?
+                throw $exception;
+            }
 
             /** @var CreateStatement[] $createStatements */
-            $createStatements = array_filter($parser->statements, fn(Statement $statement) => $statement instanceof CreateStatement);
+            $createStatements = array_filter($parser->statements, static fn(Statement $statement) => $statement instanceof CreateStatement);
 
             foreach ($createStatements as $createStatement) {
                 $table = new SchemaTable($createStatement->name->table);
+
+                if (! is_array($createStatement->fields)) {
+                    continue;
+                }
 
                 foreach ($createStatement->fields as $field) {
                     if (! $field instanceof CreateDefinition) {
@@ -60,10 +78,10 @@ final class SquashedMigrationHelper
                         continue;
                     }
 
-                    dd($field);
-
-                    $table->setColumn(new SchemaColumn($field->name));
+                    $table->setColumn(new SchemaColumn($field->name, $this->converter->convert($field->type), $this->isNullable($field)));
                 }
+
+                $tables[$createStatement->name->table] = $table;
             }
         }
 
@@ -92,5 +110,14 @@ final class SquashedMigrationHelper
         }
 
         return $schemaFiles;
+    }
+
+    private function isNullable(CreateDefinition $definition): bool
+    {
+        if ($definition->options->has('NOT NULL')) {
+            return false;
+        }
+
+        return true;
     }
 }
