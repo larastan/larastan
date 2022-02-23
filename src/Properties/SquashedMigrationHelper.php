@@ -56,7 +56,7 @@ final class SquashedMigrationHelper
                 $parser->parse();
             } catch (ParserException $exception) {
                 // TODO: re-throw the exception with a clear message?
-                throw $exception;
+                continue;
             }
 
             /** @var CreateStatement[] $createStatements */
