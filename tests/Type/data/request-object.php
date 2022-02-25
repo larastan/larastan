@@ -7,7 +7,6 @@ namespace RequestObject;
 use function PHPStan\Testing\assertType;
 
 /** @var \Illuminate\Http\Request $request */
-
 assertType('array<int, Illuminate\Http\UploadedFile>', $request->file());
 assertType('array<int, Illuminate\Http\UploadedFile>|Illuminate\Http\UploadedFile|null', $request->file('foo'));
 assertType('array<int, Illuminate\Http\UploadedFile>|Illuminate\Http\UploadedFile|stdClass', $request->file('foo', new \stdClass()));
