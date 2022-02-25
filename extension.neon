@@ -217,6 +217,11 @@ services:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
+        class: NunoMaduro\Larastan\ReturnTypes\RequestUserExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
         class: NunoMaduro\Larastan\ReturnTypes\EloquentBuilderExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
