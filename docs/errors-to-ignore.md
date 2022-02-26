@@ -12,12 +12,3 @@ Although Larastan has support for [HigherOrderCollectionProxy](https://laravel.c
 ```neon
 - '#Call to an undefined method Illuminate\\Support\\HigherOrder#'
 ```
-
-### Factories
-
-This comes up when you add `database/factories` to your analysed paths.
-
-```neon
-- path: database/factories/*
-  message: '#Undefined variable: \$factory#'
-```
