@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use function PHPStan\Testing\assertType;
 
-assertType('Illuminate\Support\Collection<int, mixed>', collect());
+assertType('Illuminate\Support\Collection<(int|string), mixed>', collect());
 assertType('Illuminate\Support\Collection<0, 1>', collect(1));
 assertType('Illuminate\Support\Collection<0, \'foo\'>', collect('foo'));
 assertType('Illuminate\Support\Collection<0, 3.14>', collect(3.14));

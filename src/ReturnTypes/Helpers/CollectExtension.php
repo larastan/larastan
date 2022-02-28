@@ -9,10 +9,12 @@ use NunoMaduro\Larastan\Support\CollectionHelper;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\FunctionReflection;
+use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\MixedType;
+use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 
 final class CollectExtension implements DynamicFunctionReturnTypeExtension
@@ -38,7 +40,7 @@ final class CollectExtension implements DynamicFunctionReturnTypeExtension
         Scope $scope
     ): Type {
         if (count($functionCall->getArgs()) < 1) {
-            return new GenericObjectType(Collection::class, [new IntegerType(), new MixedType()]);
+            return new GenericObjectType(Collection::class, [new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()]);
         }
 
         $valueType = $scope->getType($functionCall->getArgs()[0]->value);
