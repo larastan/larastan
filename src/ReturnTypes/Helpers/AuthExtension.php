@@ -39,8 +39,12 @@ final class AuthExtension implements DynamicFunctionReturnTypeExtension
         Scope $scope
     ): Type {
         if (count($functionCall->getArgs()) < 1) {
-            /** @var object $class */
+            /** @var ?object $class */
             $class = $this->resolve(\Illuminate\Contracts\Auth\Factory::class);
+
+            if ($class === null) {
+                return new ObjectType(\Illuminate\Contracts\Auth\Factory::class);
+            }
 
             return new ObjectType(get_class($class));
         }
