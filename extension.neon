@@ -273,6 +273,11 @@ services:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
 
     -
+        class: NunoMaduro\Larastan\ReturnTypes\Helpers\NowAndTodayExtension
+        tags:
+            - phpstan.broker.dynamicFunctionReturnTypeExtension
+
+    -
         class: NunoMaduro\Larastan\ReturnTypes\Helpers\ResponseExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
