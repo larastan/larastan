@@ -54,7 +54,7 @@ class FeaturesTest extends BaseTestCase
      */
     public function testFeatures(string $file): void
     {
-        $configFile = dirname($file) . '/phpstan-tests.neon';
+        $configFile = dirname($file).'/phpstan-tests.neon';
         if (file_exists($configFile)) {
             $this->configPath = $configFile;
         }

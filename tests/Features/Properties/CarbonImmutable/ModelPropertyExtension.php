@@ -4,17 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Features\Properties\CarbonImmutable;
 
-use App\Account;
-use App\Address;
-use App\Group;
-use App\GuardedModel;
-use App\Role;
-use App\Team;
-use App\Thread;
 use App\User;
-use ArrayObject;
 use Carbon\CarbonImmutable;
-use Illuminate\Support\Collection;
 
 class ModelPropertyExtension
 {
