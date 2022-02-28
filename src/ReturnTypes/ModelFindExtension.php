@@ -11,6 +11,7 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Methods\BuilderHelper;
 use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ReflectionProvider;
@@ -80,7 +81,13 @@ final class ModelFindExtension implements DynamicStaticMethodReturnTypeExtension
             return new ErrorType();
         }
 
-        $modelName = $methodReflection->getDeclaringClass()->getName();
+        $class = $methodCall->class;
+
+        if (! $class instanceof Name) {
+            return new ErrorType();
+        }
+
+        $modelName = $class->toString();
         $returnType = $methodReflection->getVariants()[0]->getReturnType();
         $argType = $scope->getType($methodCall->getArgs()[0]->value);
 
