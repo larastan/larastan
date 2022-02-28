@@ -14,6 +14,8 @@ class GeneralTypeTest extends TypeInferenceTestCase
     public function dataFileAsserts(): iterable
     {
         yield from $this->gatherAssertTypes(__DIR__.'/data/request-object.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/eloquent-builder.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/paginator-extension.php');
     }
 
     /**
