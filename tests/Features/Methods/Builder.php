@@ -102,8 +102,8 @@ class Builder
             ->toBase();
     }
 
-    /** @phpstan-return Collection<int, User> */
-    public function testPluckToBaseWithQueryExpression(): ?Collection
+    /** @phpstan-return Collection<array-key, mixed> */
+    public function testPluckToBaseWithQueryExpression(): Collection
     {
         return User::query()
             ->whereNull('name')

@@ -219,7 +219,7 @@ class Builder
     /**
      * Add a basic where clause to the query.
      *
-     * @param  \Closure|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
+     * @param  (\Closure(static<TModelClass>): void)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
@@ -230,7 +230,7 @@ class Builder
     /**
      * Add an "or where" clause to the query.
      *
-     * @param  \Closure|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
+     * @param  (\Closure(static<TModelClass>): void)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @return $this
@@ -392,7 +392,7 @@ class Builder
     /**
      * Add a basic where clause to the query, and return the first result.
      *
-     * @param  \Closure|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
+     * @param  (\Closure(static<TModelClass>): void)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
@@ -443,6 +443,30 @@ class Builder
      * @return mixed|$this
      */
     public function unless($value, $callback, $default = null);
+
+    /**
+     * Paginate the given query.
+     *
+     * @param  int|null  $perPage
+     * @param  array<array-key, mixed>  $columns
+     * @param  string  $pageName
+     * @param  int|null  $page
+     * @return \Illuminate\Pagination\LengthAwarePaginator
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null);
+
+    /**
+     * Paginate the given query into a simple paginator.
+     *
+     * @param  int|null  $perPage
+     * @param  array<array-key, mixed>  $columns
+     * @param  string  $pageName
+     * @param  int|null  $page
+     * @return \Illuminate\Pagination\Paginator
+     */
+    public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null);
 }
 
 class Scope {}

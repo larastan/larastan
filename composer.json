@@ -22,7 +22,7 @@
         "illuminate/pipeline": "^9",
         "illuminate/support": "^9",
         "mockery/mockery": "^1.4.4",
-        "phpstan/phpstan": "^1.4.2"
+        "phpstan/phpstan": "^1.4.7"
     },
     "require-dev": {
         "nikic/php-parser": "^4.13.2",
