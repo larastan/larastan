@@ -146,7 +146,9 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
                 ? '\\'.get_class(\Illuminate\Support\Facades\Date::now())
                 : '\Illuminate\Support\Carbon';
 
-            $this->dateClass .= '|\Carbon\Carbon';
+            if ($this->dateClass === '\Illuminate\Support\Carbon') {
+                $this->dateClass .= '|\Carbon\Carbon';
+            }
         }
 
         return $this->dateClass;
