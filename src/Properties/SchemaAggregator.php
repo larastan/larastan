@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Properties;
 
-use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 use PhpParser;
 use PhpParser\NodeFinder;
@@ -373,15 +372,12 @@ final class SchemaAggregator
                             $table->setColumn(new SchemaColumn($columnName, 'set', $nullable, $secondArgArray));
                             break;
 
+                        case 'softdeletestz':
                         case 'timestamptz':
                         case 'timetz':
                         case 'year':
-                            $table->setColumn(new SchemaColumn($columnName, 'string', true));
-                            break;
-
-                        case 'softdeletestz':
                         case 'softdeletes':
-                            $table->setColumn(new SchemaColumn($columnName, '?'.get_class(Date::now()), true));
+                            $table->setColumn(new SchemaColumn($columnName, 'string', true));
                             break;
 
                         case 'uuidmorphs':
