@@ -184,6 +184,19 @@ class ModelPropertyExtension
         return $user->properties->first();
     }
 
+    public function testSoftDeletesCastDateTimeAndNullable(User $user): ?string
+    {
+        return $user->deleted_at?->format('d/m/Y');
+    }
+
+    public function testWriteToSoftDeletesColumn(): void
+    {
+        $this->user->deleted_at = 'test';
+        $this->user->deleted_at = now();
+        $this->user->deleted_at = null;
+        $this->user->deleted_at = BaseCarbon::now();
+    }
+
     public function testForeignIdFor(Address $address): int
     {
         return $address->user_id;

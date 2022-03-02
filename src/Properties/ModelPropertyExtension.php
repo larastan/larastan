@@ -154,6 +154,22 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
     }
 
     /**
+     * @param  Model  $modelInstance
+     * @return string[]
+     * @phpstan-return array<int, string>
+     */
+    private function getModelDateColumns(Model $modelInstance): array
+    {
+        $dateColumns = $modelInstance->getDates();
+
+        if (method_exists($modelInstance, 'getDeletedAtColumn')) {
+            $dateColumns[] = $modelInstance->getDeletedAtColumn();
+        }
+
+        return $dateColumns;
+    }
+
+    /**
      * @param  SchemaColumn  $column
      * @param  Model  $modelInstance
      * @return string[]
@@ -164,7 +180,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
         $readableType = $column->readableType;
         $writableType = $column->writeableType;
 
-        if (in_array($column->name, $modelInstance->getDates(), true)) {
+        if (in_array($column->name, $this->getModelDateColumns($modelInstance), true)) {
             return [$this->getDateClass().($column->nullable ? '|null' : ''), $this->getDateClass().'|string'.($column->nullable ? '|null' : '')];
         }
 
