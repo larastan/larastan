@@ -162,11 +162,11 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
     {
         $dateColumns = $modelInstance->getDates();
 
-        if (! method_exists($modelInstance, 'getDeletedAtColumn')) {
-            return $dateColumns;
+        if (method_exists($modelInstance, 'getDeletedAtColumn')) {
+            $dateColumns[] = $modelInstance->getDeletedAtColumn();
         }
 
-        return [...$dateColumns, $modelInstance->getDeletedAtColumn()];
+        return $dateColumns;
     }
 
     /**
