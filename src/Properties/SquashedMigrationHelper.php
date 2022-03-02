@@ -4,6 +4,7 @@ namespace NunoMaduro\Larastan\Properties;
 
 use NunoMaduro\Larastan\Properties\Schema\PhpMyAdminDataTypeToPhpTypeConverter;
 use PhpMyAdmin\SqlParser\Components\CreateDefinition;
+use PhpMyAdmin\SqlParser\Context;
 use PhpMyAdmin\SqlParser\Exceptions\ParserException;
 use PhpMyAdmin\SqlParser\Parser;
 use PhpMyAdmin\SqlParser\Statement;
@@ -63,6 +64,10 @@ final class SquashedMigrationHelper
             $createStatements = array_filter($parser->statements, static fn (Statement $statement) => $statement instanceof CreateStatement);
 
             foreach ($createStatements as $createStatement) {
+                if (array_key_exists($createStatement->name->table, $tables)) {
+                    continue;
+                }
+
                 $table = new SchemaTable($createStatement->name->table);
 
                 if (! is_array($createStatement->fields)) {
