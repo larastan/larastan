@@ -154,7 +154,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
     }
 
     /**
-     * @param Model $modelInstance
+     * @param  Model  $modelInstance
      * @return string[]
      * @phpstan-return array<int, string>
      */
@@ -162,7 +162,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
     {
         $dateColumns = $modelInstance->getDates();
 
-        if(! method_exists($modelInstance, 'getDeletedAtColumn')) {
+        if (! method_exists($modelInstance, 'getDeletedAtColumn')) {
             return $dateColumns;
         }
 

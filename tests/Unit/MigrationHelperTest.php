@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use Illuminate\Support\Facades\Date;
 use NunoMaduro\Larastan\Properties\MigrationHelper;
 use NunoMaduro\Larastan\Properties\SchemaTable;
 use PHPStan\File\FileHelper;
