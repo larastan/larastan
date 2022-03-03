@@ -22,6 +22,7 @@
         "illuminate/pipeline": "^9",
         "illuminate/support": "^9",
         "mockery/mockery": "^1.4.4",
+        "phpmyadmin/sql-parser": "^5.5",
         "phpstan/phpstan": "^1.4.7"
     },
     "require-dev": {

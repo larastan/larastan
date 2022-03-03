@@ -22,19 +22,11 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
     /** @var array<string, SchemaTable> */
     private $tables = [];
 
-    /** @var TypeStringResolver */
-    private $stringResolver;
-
     /** @var string */
     private $dateClass;
 
-    /** @var MigrationHelper */
-    private $migrationHelper;
-
-    public function __construct(TypeStringResolver $stringResolver, MigrationHelper $migrationHelper)
+    public function __construct(private TypeStringResolver $stringResolver, private MigrationHelper $migrationHelper, private SquashedMigrationHelper $squashedMigrationHelper)
     {
-        $this->stringResolver = $stringResolver;
-        $this->migrationHelper = $migrationHelper;
     }
 
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
@@ -56,7 +48,11 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
         }
 
         if (count($this->tables) === 0) {
-            $this->tables = $this->migrationHelper->initializeTables();
+            // First try to create tables from squashed migrations, if there are any
+            // Then scan the normal migration files for further changes to tables.
+            $tables = $this->squashedMigrationHelper->initializeTables();
+
+            $this->tables = $this->migrationHelper->initializeTables($tables);
         }
 
         if ($propertyName === 'id') {
@@ -205,6 +201,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
                 }
                 break;
             case 'enum':
+            case 'set':
                 if (! $column->options) {
                     $readableType = $writableType = 'string';
                 } else {

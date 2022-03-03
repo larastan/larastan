@@ -20,6 +20,18 @@ parameters:
         - app/Domain/DomainB/migrations
 ```
 
+## `squashedMigrationsPath`
+
+By default, Larastan will check `database/schema` directory to find schema dumps. If you have them in other locations or if you have multiple folders, you can use this config option to add them.
+
+#### Example
+```neon
+parameters:
+    squashedMigrationsPath:
+        - app/Domain/DomainA/schema
+        - app/Domain/DomainB/schema
+```
+
 ## `checkModelProperties`
 **default**: `false`
 
