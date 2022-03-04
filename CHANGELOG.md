@@ -6,7 +6,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-* Fix: the `deleted_at` column created with `SoftDeletes` is now treated as a `Carbon` instance
+## [2.1.0] - 2022-03-04
+
+### Added
+
+* feat: add return type support for `$request->user()` call by @canvural in https://github.com/nunomaduro/larastan/pull/1136
+* feat: schema dump parsing by @canvural in https://github.com/nunomaduro/larastan/pull/1147
+* feat: add support for migrations using `Schema::connection` by @canvural in https://github.com/nunomaduro/larastan/pull/1151
+
+### Fixed
+* fix: collect() returns collection which can have array-key as key type in https://github.com/nunomaduro/larastan/commit/b0a50dfe2d21c44c9f2577aa5d7c9825b6b9d5b2
+* fix: `Query::whereBetween` typehint by @gitetsu in https://github.com/nunomaduro/larastan/pull/1123
+* fix: update PHPStan version and stubs by @canvural in https://github.com/nunomaduro/larastan/pull/1144
+* fix: `deleted_at` column has date type rather than `string` by @totov in https://github.com/nunomaduro/larastan/pull/1124
+
 
 ## [2.0.1] - 2022-02-09
 
@@ -737,7 +750,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/2.0.1...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/2.1.0...HEAD
+[2.1.0]: https://github.com/nunomaduro/larastan/compare/2.0.1...2.1.0
 [2.0.1]: https://github.com/nunomaduro/larastan/compare/2.0.0...2.0.1
 [2.0.0]: https://github.com/nunomaduro/larastan/compare/1.0.3...2.0.0
 [1.0.3]: https://github.com/nunomaduro/larastan/compare/1.0.2...1.0.3
