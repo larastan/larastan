@@ -39,7 +39,7 @@ class MigrationHelper
      */
     public function initializeTables(array $tables = []): array
     {
-        if (empty($this->databaseMigrationPath)) {
+        if (count($this->databaseMigrationPath) === 0) {
             $this->databaseMigrationPath = [database_path('migrations')];
         }
 

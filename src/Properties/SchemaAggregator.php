@@ -62,33 +62,50 @@ final class SchemaAggregator
 
         foreach ($methods as $stmt) {
             if ($stmt instanceof PhpParser\Node\Stmt\Expression
+                && $stmt->expr instanceof PhpParser\Node\Expr\MethodCall
+                && $stmt->expr->var instanceof PhpParser\Node\Expr\StaticCall
+                && $stmt->expr->var->class instanceof PhpParser\Node\Name
+                && $stmt->expr->var->name instanceof PhpParser\Node\Identifier
+                && ($stmt->expr->var->name->toString() === 'connection' || $stmt->expr->var->name->toString() === 'setConnection')
+                && ($stmt->expr->var->class->toCodeString() === '\Illuminate\Support\Facades\Schema' || $stmt->expr->var->class->toCodeString() === '\Schema')
+            ) {
+                $statement = $stmt->expr;
+            } elseif ($stmt instanceof PhpParser\Node\Stmt\Expression
                 && $stmt->expr instanceof PhpParser\Node\Expr\StaticCall
-                && ($stmt->expr->class instanceof PhpParser\Node\Name)
+                && $stmt->expr->class instanceof PhpParser\Node\Name
                 && $stmt->expr->name instanceof PhpParser\Node\Identifier
                 && ($stmt->expr->class->toCodeString() === '\Illuminate\Support\Facades\Schema' || $stmt->expr->class->toCodeString() === '\Schema')
             ) {
-                switch ($stmt->expr->name->name) {
-                    case 'create':
-                        $this->alterTable($stmt->expr, true);
-                        break;
+                $statement = $stmt->expr;
+            } else {
+                continue;
+            }
 
-                    case 'table':
-                        $this->alterTable($stmt->expr, false);
-                        break;
+            if (! $statement->name instanceof PhpParser\Node\Identifier) {
+                continue;
+            }
 
-                    case 'drop':
-                    case 'dropIfExists':
-                        $this->dropTable($stmt->expr);
-                        break;
+            switch ($statement->name->name) {
+                case 'create':
+                    $this->alterTable($statement, true);
+                    break;
 
-                    case 'rename':
-                        $this->renameTableThroughStaticCall($stmt->expr);
-                }
+                case 'table':
+                    $this->alterTable($statement, false);
+                    break;
+
+                case 'drop':
+                case 'dropIfExists':
+                    $this->dropTable($statement);
+                    break;
+
+                case 'rename':
+                    $this->renameTableThroughStaticCall($statement);
             }
         }
     }
 
-    private function alterTable(PhpParser\Node\Expr\StaticCall $call, bool $creating): void
+    private function alterTable(PhpParser\Node\Expr\StaticCall|PhpParser\Node\Expr\MethodCall $call, bool $creating): void
     {
         if (! isset($call->args[0])
             || ! $call->getArgs()[0]->value instanceof PhpParser\Node\Scalar\String_
@@ -401,7 +418,7 @@ final class SchemaAggregator
         }
     }
 
-    private function dropTable(PhpParser\Node\Expr\StaticCall $call): void
+    private function dropTable(PhpParser\Node\Expr\StaticCall|PhpParser\Node\Expr\MethodCall $call): void
     {
         if (! isset($call->args[0])
             || ! $call->getArgs()[0]->value instanceof PhpParser\Node\Scalar\String_
@@ -414,7 +431,7 @@ final class SchemaAggregator
         unset($this->tables[$tableName]);
     }
 
-    private function renameTableThroughStaticCall(PhpParser\Node\Expr\StaticCall $call): void
+    private function renameTableThroughStaticCall(PhpParser\Node\Expr\StaticCall|PhpParser\Node\Expr\MethodCall $call): void
     {
         if (! isset($call->args[0], $call->args[1])
             || ! $call->getArgs()[0]->value instanceof PhpParser\Node\Scalar\String_
