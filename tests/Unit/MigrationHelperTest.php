@@ -147,7 +147,7 @@ class MigrationHelperTest extends PHPStanTestCase
     }
 
     /** @test */
-    function it_can_handle_connection_before_schema_create()
+    public function it_can_handle_connection_before_schema_create()
     {
         $migrationHelper = new MigrationHelper($this->parser, [__DIR__.'/data/migration_with_schema_connection'], $this->fileHelper);
 
