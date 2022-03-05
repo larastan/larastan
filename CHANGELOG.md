@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 * Fix: the `deleted_at` column created with `SoftDeletes` is now treated as a `Carbon` instance
+* Add support for the `foreignId` column in migrations
 
 ## [2.0.1] - 2022-02-09
 
