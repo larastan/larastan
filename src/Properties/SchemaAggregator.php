@@ -280,6 +280,7 @@ final class SchemaAggregator
                         case 'unsignedsmallinteger':
                         case 'unsignedtinyinteger':
                         case 'bigincrements':
+                        case 'foreignid':
                             $table->setColumn(new SchemaColumn($columnName, 'int', $nullable));
                             break;
 

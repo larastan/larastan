@@ -216,4 +216,14 @@ class ModelPropertyExtension
     {
         return $address->nullable_address_id;
     }
+
+    public function testForeignIdConstrained(Address $address): int
+    {
+        return $address->foreign_id_constrained;
+    }
+
+    public function testForeignIdConstrainedNullable(Address $address): ?int
+    {
+        return $address->nullable_foreign_id_constrained;
+    }
 }

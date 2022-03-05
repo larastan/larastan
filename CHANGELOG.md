@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-* fix: Updated `composer/pcre` to new PHP relevant version
+* fix: updated `composer/pcre` to new PHP relevant version
+* feat: add support for the `foreignId` column in migrations
 
 ## [2.1.0] - 2022-03-04
 
