@@ -6,6 +6,7 @@ use function get_class;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -157,5 +158,35 @@ class User extends Authenticatable
     public function setActive(): void
     {
         $this->active = 1;
+    }
+
+    /**
+     * @return Attribute<int, never>
+     */
+    protected function newStyleAttribute(): Attribute
+    {
+        return Attribute::make(
+            fn ($value) => 5,
+        );
+    }
+
+    /**
+     * @return Attribute<int, string>
+     */
+    protected function stringButInt(): Attribute
+    {
+        return Attribute::make(
+            fn ($value) => 5,
+            fn (string $value) => strtolower($value)
+        );
+    }
+
+    /** This will not take any effect because it's public and does not specify generic types at return type. */
+    public function email(): Attribute
+    {
+        return Attribute::make(
+            fn ($value) => 5,
+            fn (string $value) => strtolower($value)
+        );
     }
 }
