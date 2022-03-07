@@ -47,7 +47,7 @@ final class ModelAccessorExtension implements PropertiesClassReflectionExtension
             return true;
         }
 
-        return $classReflection->hasNativeMethod('get' . Str::studly($propertyName) . 'Attribute');
+        return $classReflection->hasNativeMethod('get'.Str::studly($propertyName).'Attribute');
     }
 
     public function getProperty(
@@ -58,7 +58,6 @@ final class ModelAccessorExtension implements PropertiesClassReflectionExtension
 
         if ($classReflection->hasNativeMethod($studlyName)) {
             $methodReflection = $classReflection->getNativeMethod($studlyName);
-
 
             /** @var GenericObjectType $returnType */
             $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();

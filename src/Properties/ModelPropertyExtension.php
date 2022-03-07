@@ -282,7 +282,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
     private function hasAttribute(ClassReflection $classReflection, string $propertyName): bool
     {
-        if ($classReflection->hasNativeMethod('get'. Str::studly($propertyName) .'Attribute')) {
+        if ($classReflection->hasNativeMethod('get'.Str::studly($propertyName).'Attribute')) {
             return true;
         }
 
