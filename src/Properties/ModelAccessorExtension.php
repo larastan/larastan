@@ -4,11 +4,15 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Properties;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
+use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\ObjectType;
 
 /**
  * @internal
@@ -21,6 +25,28 @@ final class ModelAccessorExtension implements PropertiesClassReflectionExtension
             return false;
         }
 
+        $camelCase = Str::camel($propertyName);
+
+        if ($classReflection->hasNativeMethod($camelCase)) {
+            $methodReflection = $classReflection->getNativeMethod($camelCase);
+
+            if ($methodReflection->isPublic() || $methodReflection->isPrivate()) {
+                return false;
+            }
+
+            $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+
+            if (! $returnType instanceof GenericObjectType) {
+                return false;
+            }
+
+            if (! (new ObjectType(Attribute::class))->isSuperTypeOf($returnType)->yes()) {
+                return false;
+            }
+
+            return true;
+        }
+
         return $classReflection->hasNativeMethod('get'.Str::studly($propertyName).'Attribute');
     }
 
@@ -28,6 +54,21 @@ final class ModelAccessorExtension implements PropertiesClassReflectionExtension
         ClassReflection $classReflection,
         string $propertyName
     ): PropertyReflection {
+        $studlyName = Str::studly($propertyName);
+
+        if ($classReflection->hasNativeMethod($studlyName)) {
+            $methodReflection = $classReflection->getNativeMethod($studlyName);
+
+            /** @var GenericObjectType $returnType */
+            $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+
+            return new ModelProperty(
+                $classReflection,
+                $returnType->getTypes()[0],
+                $returnType->getTypes()[1]
+            );
+        }
+
         $method = $classReflection->getNativeMethod('get'.Str::studly($propertyName).'Attribute');
 
         return new ModelProperty(

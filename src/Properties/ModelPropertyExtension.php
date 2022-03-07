@@ -5,14 +5,18 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Properties;
 
 use ArrayObject;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Reflection\ReflectionHelper;
 use PHPStan\PhpDoc\TypeStringResolver;
 use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\ShouldNotHappenException;
+use PHPStan\Type\ObjectType;
+use function PHPStan\dumpType;
 
 /**
  * @internal
@@ -39,7 +43,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             return false;
         }
 
-        if ($classReflection->hasNativeMethod('get'.Str::studly($propertyName).'Attribute')) {
+        if ($this->hasAttribute($classReflection, $propertyName)) {
             return false;
         }
 
@@ -275,5 +279,33 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             $this->tables[$modelInstance->getTable()]->columns[$name]->readableType = $realType;
             $this->tables[$modelInstance->getTable()]->columns[$name]->writeableType = $realType;
         }
+    }
+
+    private function hasAttribute(ClassReflection $classReflection, string $propertyName): bool
+    {
+        if ($classReflection->hasNativeMethod('get'.Str::studly($propertyName).'Attribute')) {
+            return true;
+        }
+
+        $camelCase = Str::camel($propertyName);
+
+        if ($classReflection->hasNativeMethod($camelCase)) {
+            $methodReflection = $classReflection->getNativeMethod($camelCase);
+
+            if ($methodReflection->isPublic() || $methodReflection->isPrivate()) {
+                dumpType($propertyName);
+                return false;
+            }
+
+            $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+
+            if (! (new ObjectType(Attribute::class))->isSuperTypeOf($returnType)->yes()) {
+                return false;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 }
