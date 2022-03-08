@@ -8,7 +8,7 @@ namespace Illuminate\Database\Eloquent;
 abstract class Model implements \JsonSerializable, \ArrayAccess
 {
     /**
-     * @var array<string, string|class-string>
+     * @var array<string, string>
      */
     protected $casts = [];
 
