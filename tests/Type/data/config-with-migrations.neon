@@ -1,0 +1,5 @@
+includes:
+    - ../../phpstan-tests.neon
+parameters:
+    databaseMigrationsPath:
+        - %rootDir%/../../../tests/Application/database/migrations
