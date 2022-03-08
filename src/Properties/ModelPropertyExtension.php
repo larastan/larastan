@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Reflection\ReflectionHelper;
-use function PHPStan\dumpType;
 use PHPStan\PhpDoc\TypeStringResolver;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
