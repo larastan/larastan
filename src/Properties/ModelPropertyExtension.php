@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Reflection\ReflectionHelper;
+use function PHPStan\dumpType;
 use PHPStan\PhpDoc\TypeStringResolver;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
@@ -16,7 +17,6 @@ use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\ObjectType;
-use function PHPStan\dumpType;
 
 /**
  * @internal
@@ -294,6 +294,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
             if ($methodReflection->isPublic() || $methodReflection->isPrivate()) {
                 dumpType($propertyName);
+
                 return false;
             }
 
