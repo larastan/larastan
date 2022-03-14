@@ -23,15 +23,18 @@ use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeUtils;
 use PHPStan\Type\UnionType;
+use PHPStan\Type\VerbosityLevel;
 
 class ModelPropertiesRuleHelper
 {
     /**
-     * @param  MethodReflection  $methodReflection
-     * @param  Scope  $scope
-     * @param  Node\Arg[]  $args
-     * @param  ClassReflection|null  $modelReflection
+     * @param MethodReflection     $methodReflection
+     * @param Scope                $scope
+     * @param Node\Arg[]           $args
+     * @param ClassReflection|null $modelReflection
+     *
      * @return string[]
+     * @throws \PHPStan\ShouldNotHappenException
      */
     public function check(MethodReflection $methodReflection, Scope $scope, array $args, ?ClassReflection $modelReflection = null): array
     {
@@ -42,20 +45,10 @@ class ModelPropertiesRuleHelper
         }
 
         /** @var int $parameterIndex */
-        /** @var ObjectType $modelType */
+        /** @var Type $modelType */
         [$parameterIndex, $modelType] = $modelPropertyParameter;
 
-        $modelReflection = $modelType->getClassReflection();
-
-        if ($modelReflection === null) {
-            return [];
-        }
-
-        if ($modelReflection->isAbstract()) {
-            return [];
-        }
-
-        if ($modelReflection->getName() === Model::class || ! $modelReflection->isSubclassOf(Model::class)) {
+        if (! (new ObjectType(Model::class))->isSuperTypeOf($modelType)->yes()) {
             return [];
         }
 
@@ -96,8 +89,8 @@ class ModelPropertiesRuleHelper
                     continue;
                 }
 
-                if (! $modelReflection->hasProperty($valueType->getValue())) {
-                    $error = sprintf('Property \'%s\' does not exist in %s model.', $valueType->getValue(), $modelReflection->getName());
+                if (! $modelType->hasProperty($valueType->getValue())->yes()) {
+                    $error = sprintf('Property \'%s\' does not exist in %s model.', $valueType->getValue(), $modelType->describe(VerbosityLevel::typeOnly()));
 
                     if ($methodReflection->getDeclaringClass()->getName() === BelongsToMany::class) {
                         $error .= sprintf(" If '%s' exists as a column on the pivot table, consider using 'wherePivot' or prefix the column with table name instead.", $valueType->getValue());
@@ -119,8 +112,8 @@ class ModelPropertiesRuleHelper
             return [];
         }
 
-        if (! $modelReflection->hasProperty($argType->getValue())) {
-            $error = sprintf('Property \'%s\' does not exist in %s model.', $argType->getValue(), $modelReflection->getName());
+        if (! $modelType->hasProperty($argType->getValue())->yes()) {
+            $error = sprintf('Property \'%s\' does not exist in %s model.', $argType->getValue(), $modelType->describe(VerbosityLevel::typeOnly()));
 
             if ((new ObjectType(BelongsToMany::class))->isSuperTypeOf(ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType())->yes()) {
                 $error .= sprintf(" If '%s' exists as a column on the pivot table, consider using 'wherePivot' or prefix the column with table name instead.", $argType->getValue());

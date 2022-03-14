@@ -44,7 +44,9 @@ class ModelPropertyRuleTest extends RulesTest
         $errors = $this->setConfigPath(__DIR__.DIRECTORY_SEPARATOR.'Data/modelPropertyConfig.neon')->findErrorsByLine(__DIR__.'/Data/model-property-model.php');
 
         self::assertEquals([
-            7 => 'Property \'foo\' does not exist in ModelPropertyOnModel model.',
+            9 => 'Property \'foo\' does not exist in ModelPropertyModel\ModelPropertyOnModel model.',
+            16 => 'Property \'foo\' does not exist in App\Account|App\User model.',
+            23 => 'Property \'name\' does not exist in App\Account|App\User model.',
         ], $errors);
     }
 
