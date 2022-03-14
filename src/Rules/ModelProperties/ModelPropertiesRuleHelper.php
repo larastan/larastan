@@ -28,12 +28,12 @@ use PHPStan\Type\VerbosityLevel;
 class ModelPropertiesRuleHelper
 {
     /**
-     * @param MethodReflection     $methodReflection
-     * @param Scope                $scope
-     * @param Node\Arg[]           $args
-     * @param ClassReflection|null $modelReflection
-     *
+     * @param  MethodReflection  $methodReflection
+     * @param  Scope  $scope
+     * @param  Node\Arg[]  $args
+     * @param  ClassReflection|null  $modelReflection
      * @return string[]
+     *
      * @throws \PHPStan\ShouldNotHappenException
      */
     public function check(MethodReflection $methodReflection, Scope $scope, array $args, ?ClassReflection $modelReflection = null): array
