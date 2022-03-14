@@ -2,6 +2,7 @@
 
 namespace NunoMaduro\Larastan\ReturnTypes;
 
+use App\UserCollection;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use PhpParser\Node\Expr\MethodCall;
@@ -95,8 +96,12 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
         return $this->handleGenericObjectType($classReflection, $returnTypeClassReflection);
     }
 
-    private function handleGenericObjectType(ClassReflection $classReflection, ClassReflection $returnTypeClassReflection): GenericObjectType
+    private function handleGenericObjectType(ClassReflection $classReflection, ClassReflection $returnTypeClassReflection): ObjectType
     {
+        if($classReflection->getActiveTemplateTypeMap()->count() !== $returnTypeClassReflection->getActiveTemplateTypeMap()->count()) {
+            return new ObjectType($classReflection->getName());
+        }
+
         $genericTypes = $returnTypeClassReflection->typeMapToList($returnTypeClassReflection->getActiveTemplateTypeMap());
 
         $genericTypes = array_map(static function (Type $type) use ($classReflection) {
