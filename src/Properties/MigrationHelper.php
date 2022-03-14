@@ -52,8 +52,6 @@ class MigrationHelper
 
         ksort($filesArray);
 
-        $this->requireFiles($filesArray);
-
         foreach ($filesArray as $file) {
             try {
                 $schemaAggregator->addStatements($this->parser->parseFile($file->getPathname()));
@@ -87,15 +85,5 @@ class MigrationHelper
         }
 
         return $migrationFiles;
-    }
-
-    /**
-     * @param  SplFileInfo[]  $files
-     */
-    private function requireFiles(array $files): void
-    {
-        foreach ($files as $file) {
-            require_once $file;
-        }
     }
 }
