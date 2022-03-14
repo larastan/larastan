@@ -11,7 +11,6 @@ use function PHPStan\Testing\assertType;
 /** @var SupportCollection<string, int> $items */
 /** @var App\TransactionCollection<int, Transaction> $customEloquentCollection */
 /** @var App\UserCollection $secondCustomEloquentCollection */
-
 assertType('Illuminate\Database\Eloquent\Collection<int, int>', EloquentCollection::range(1, 10));
 
 assertType('Illuminate\Support\Collection<int, mixed>', $collection->collapse());

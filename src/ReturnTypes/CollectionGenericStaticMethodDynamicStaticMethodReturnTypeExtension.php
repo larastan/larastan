@@ -87,7 +87,7 @@ class CollectionGenericStaticMethodDynamicStaticMethodReturnTypeExtension implem
 
     private function handleGenericObjectType(ClassReflection $classReflection, ClassReflection $returnTypeClassReflection): ObjectType
     {
-        if($classReflection->getActiveTemplateTypeMap()->count() !== $returnTypeClassReflection->getActiveTemplateTypeMap()->count()) {
+        if ($classReflection->getActiveTemplateTypeMap()->count() !== $returnTypeClassReflection->getActiveTemplateTypeMap()->count()) {
             return new ObjectType($classReflection->getName());
         }
 
