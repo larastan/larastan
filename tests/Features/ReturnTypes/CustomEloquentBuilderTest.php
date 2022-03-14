@@ -20,7 +20,7 @@ class CustomEloquentBuilderTest
     /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
     public function testEloquentBuilderMethodReturnsCustomBuilder(): CustomEloquentBuilder
     {
-        return ModelWithCustomBuilder::with('foo')->where('email', 'bar');
+        return ModelWithCustomBuilder::query()->where('email', 'bar');
     }
 
     /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
