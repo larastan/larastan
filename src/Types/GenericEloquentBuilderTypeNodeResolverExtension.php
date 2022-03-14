@@ -12,12 +12,17 @@ use PHPStan\PhpDoc\TypeNodeResolverExtension;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\PhpDocParser\Ast\Type\UnionTypeNode;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
 class GenericEloquentBuilderTypeNodeResolverExtension implements TypeNodeResolverExtension
 {
+    public function __construct(private ReflectionProvider $provider)
+    {
+    }
+
     public function resolve(TypeNode $typeNode, NameScope $nameScope): ?Type
     {
         if (! $typeNode instanceof UnionTypeNode || count($typeNode->types) !== 2) {
@@ -28,7 +33,8 @@ class GenericEloquentBuilderTypeNodeResolverExtension implements TypeNodeResolve
         $builderTypeNode = null;
         foreach ($typeNode->types as $innerTypeNode) {
             if ($innerTypeNode instanceof IdentifierTypeNode
-                && is_subclass_of($nameScope->resolveStringName($innerTypeNode->name), Model::class)
+                && $this->provider->hasClass($nameScope->resolveStringName($innerTypeNode->name))
+                && (new ObjectType(Model::class))->isSuperTypeOf(new ObjectType($nameScope->resolveStringName($innerTypeNode->name)))->yes()
             ) {
                 $modelTypeNode = $innerTypeNode;
                 continue;
@@ -36,7 +42,8 @@ class GenericEloquentBuilderTypeNodeResolverExtension implements TypeNodeResolve
 
             if (
                 $innerTypeNode instanceof IdentifierTypeNode
-                && ($nameScope->resolveStringName($innerTypeNode->name) === Builder::class || is_subclass_of($nameScope->resolveStringName($innerTypeNode->name), Builder::class))
+                && $this->provider->hasClass($nameScope->resolveStringName($innerTypeNode->name))
+                && ($nameScope->resolveStringName($innerTypeNode->name) === Builder::class || (new ObjectType(Builder::class))->isSuperTypeOf(new ObjectType($nameScope->resolveStringName($innerTypeNode->name)))->yes())
             ) {
                 $builderTypeNode = $innerTypeNode;
             }
