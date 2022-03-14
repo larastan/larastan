@@ -27,6 +27,14 @@ class FeaturesTest extends BaseTestCase
         $this->configPath = __DIR__.'/phpstan-tests.neon';
     }
 
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+
+        File::deleteDirectory($this->getBasePath().'/database/migrations');
+        File::deleteDirectory($this->getBasePath().'/database/schema');
+    }
+
     public function getFeatures(): array
     {
         $calls = [];
