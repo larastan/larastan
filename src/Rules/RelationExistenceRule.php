@@ -15,7 +15,7 @@ use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
-/** @implements Rule<Node\Expr\MethodCall> */
+/** @implements Rule<Node\Expr\CallLike> */
 class RelationExistenceRule implements Rule
 {
     /**
@@ -33,7 +33,7 @@ class RelationExistenceRule implements Rule
      */
     public function getNodeType(): string
     {
-        return Node\Expr\MethodCall::class;
+        return Node\Expr\CallLike::class;
     }
 
     /**
@@ -41,12 +41,17 @@ class RelationExistenceRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
+        if (! $node instanceof MethodCall && ! $node instanceof Node\Expr\StaticCall) {
+            return [];
+        }
+
         if (! $node->name instanceof Node\Identifier) {
             return [];
         }
 
         if (! in_array($node->name->name, [
             'has',
+            'with',
             'orHas',
             'doesntHave',
             'orDoesntHave',
@@ -74,7 +79,14 @@ class RelationExistenceRule implements Rule
 
         $relationName = $valueType->getValue();
 
-        $calledOnType = $scope->getType($node->var);
+        $calledOnNode = $node instanceof MethodCall ? $node->var : $node->class;
+
+        if ($calledOnNode instanceof Node\Name) {
+            $calledOnType = new ObjectType($calledOnNode->toString());
+        } else {
+            $calledOnType = $scope->getType($calledOnNode);
+        }
+
 
         $closure = function (Type $calledOnType, string $relationName, Node $node) use ($scope): array {
             $modelReflection = $this->modelRuleHelper->findModelReflectionFromType($calledOnType);
