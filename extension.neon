@@ -205,6 +205,11 @@ services:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
+        class: NunoMaduro\Larastan\ReturnTypes\DateExtension
+        tags:
+            - phpstan.broker.dynamicStaticMethodReturnTypeExtension
+
+    -
         class: NunoMaduro\Larastan\ReturnTypes\GuardExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension

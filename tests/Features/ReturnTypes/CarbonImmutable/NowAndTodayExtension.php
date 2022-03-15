@@ -1,6 +1,6 @@
 <?php
 
-namespace Features\ReturnTypes\Helpers\CarbonImmutable;
+namespace Features\ReturnTypes\CarbonImmutable;
 
 use Carbon\CarbonImmutable;
 
