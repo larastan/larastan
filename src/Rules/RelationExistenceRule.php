@@ -11,6 +11,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
+use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
@@ -18,14 +19,8 @@ use PHPStan\Type\Type;
 /** @implements Rule<Node\Expr\CallLike> */
 class RelationExistenceRule implements Rule
 {
-    /**
-     * @var ModelRuleHelper
-     */
-    private $modelRuleHelper;
-
-    public function __construct(ModelRuleHelper $modelRuleHelper)
+    public function __construct(private ModelRuleHelper $modelRuleHelper)
     {
-        $this->modelRuleHelper = $modelRuleHelper;
     }
 
     /**
@@ -73,71 +68,87 @@ class RelationExistenceRule implements Rule
 
         $valueType = $scope->getType($args[0]->value);
 
-        if (! $valueType instanceof ConstantStringType) {
+        if (! $valueType instanceof ConstantStringType && ! $valueType instanceof ConstantArrayType) {
             return [];
         }
 
-        $relationName = $valueType->getValue();
-
-        $calledOnNode = $node instanceof MethodCall ? $node->var : $node->class;
-
-        if ($calledOnNode instanceof Node\Name) {
-            $calledOnType = new ObjectType($calledOnNode->toString());
+        if ($valueType instanceof ConstantStringType) {
+            $relations = [$valueType];
         } else {
-            $calledOnType = $scope->getType($calledOnNode);
+            $relations = $valueType->getValueTypes();
         }
 
+        $errors = [];
 
-        $closure = function (Type $calledOnType, string $relationName, Node $node) use ($scope): array {
-            $modelReflection = $this->modelRuleHelper->findModelReflectionFromType($calledOnType);
-
-            if ($modelReflection === null) {
-                return [];
+        foreach ($relations as $relationType) {
+            if (! $relationType instanceof ConstantStringType) {
+                continue;
             }
 
-            if (! $modelReflection->hasMethod($relationName)) {
-                return [
-                    $this->getRuleError($relationName, $modelReflection, $node),
-                ];
+            $relationName = $relationType->getValue();
+
+            $calledOnNode = $node instanceof MethodCall ? $node->var : $node->class;
+
+            if ($calledOnNode instanceof Node\Name) {
+                $calledOnType = new ObjectType($calledOnNode->toString());
+            } else {
+                $calledOnType = $scope->getType($calledOnNode);
             }
 
-            $relationMethod = $modelReflection->getMethod($relationName, $scope);
 
-            if (! (new ObjectType(Relation::class))->isSuperTypeOf(ParametersAcceptorSelector::selectSingle($relationMethod->getVariants())->getReturnType())->yes()) {
-                return [
-                    $this->getRuleError($relationName, $modelReflection, $node),
-                ];
-            }
-
-            return [];
-        };
-
-        if (strpos($relationName, '.') !== false) {
-            // Nested relations
-            $relations = explode('.', $relationName);
-
-            foreach ($relations as $relation) {
-                $result = $closure($calledOnType, $relation, $node);
-
-                if ($result !== []) {
-                    return $result;
-                }
-
+            $closure = function (Type $calledOnType, string $relationName, Node $node) use ($scope): array {
                 $modelReflection = $this->modelRuleHelper->findModelReflectionFromType($calledOnType);
 
                 if ($modelReflection === null) {
                     return [];
                 }
 
-                // Dynamic method return type extensions are not taken into account here.
-                // So we simulate a method call to the relation here to get the return type.
-                $calledOnType = $scope->getType(new MethodCall(new Node\Expr\New_(new Node\Name($modelReflection->getName())), new Node\Identifier($relation)));
+                if (! $modelReflection->hasMethod($relationName)) {
+                    return [
+                        $this->getRuleError($relationName, $modelReflection, $node),
+                    ];
+                }
+
+                $relationMethod = $modelReflection->getMethod($relationName, $scope);
+
+                if (! (new ObjectType(Relation::class))->isSuperTypeOf(ParametersAcceptorSelector::selectSingle($relationMethod->getVariants())->getReturnType())->yes()) {
+                    return [
+                        $this->getRuleError($relationName, $modelReflection, $node),
+                    ];
+                }
+
+                return [];
+            };
+
+            if (str_contains($relationName, '.')) {
+                // Nested relations
+                $relations = explode('.', $relationName);
+
+                foreach ($relations as $relation) {
+                    $result = $closure($calledOnType, $relation, $node);
+
+                    if ($result !== []) {
+                        return $result;
+                    }
+
+                    $modelReflection = $this->modelRuleHelper->findModelReflectionFromType($calledOnType);
+
+                    if ($modelReflection === null) {
+                        return [];
+                    }
+
+                    // Dynamic method return type extensions are not taken into account here.
+                    // So we simulate a method call to the relation here to get the return type.
+                    $calledOnType = $scope->getType(new MethodCall(new Node\Expr\New_(new Node\Name($modelReflection->getName())), new Node\Identifier($relation)));
+                }
+
+                return [];
             }
 
-            return [];
+            $errors += $closure($calledOnType, $relationName, $node);
         }
 
-        return $closure($calledOnType, $relationName, $node);
+        return $errors;
     }
 
     private function getRuleError(

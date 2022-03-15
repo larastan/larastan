@@ -178,7 +178,7 @@ class Builder
 
     public function testFirstOrFailWithChain(): User
     {
-        return User::with('foo')
+        return User::with('accounts')
             ->where('email', 'bar')
             ->orWhere('name', 'baz')
             ->firstOrFail();
@@ -186,7 +186,7 @@ class Builder
 
     public function testFirstWithChain(): ?User
     {
-        return User::with('foo')
+        return User::with('accounts')
             ->where('email', 'bar')
             ->orWhere('name', 'baz')
             ->first();
@@ -199,28 +199,28 @@ class Builder
 
     public function testOrWhereWithQueryExpression(): ?User
     {
-        return User::with('foo')
+        return User::with('accounts')
             ->orWhere(\Illuminate\Support\Facades\DB::raw('name'), 'like', '%john%')
             ->first();
     }
 
     public function testWhereWithQueryExpression(): ?User
     {
-        return User::with('foo')
+        return User::with('accounts')
             ->where(\Illuminate\Support\Facades\DB::raw('name'), 'like', '%john%')
             ->first();
     }
 
     public function testFirstWhereWithQueryExpression(): ?User
     {
-        return User::with('foo')
+        return User::with('accounts')
             ->firstWhere(\Illuminate\Support\Facades\DB::raw('name'), 'like', '%john%');
     }
 
     /** @phpstan-return mixed */
     public function testValueWithQueryExpression()
     {
-        return User::with('foo')
+        return User::with('accounts')
             ->value(\Illuminate\Support\Facades\DB::raw('name'));
     }
 

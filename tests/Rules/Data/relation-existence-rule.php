@@ -40,5 +40,5 @@ declare(strict_types=1);
 
 \App\User::with('foo');
 \App\User::query()->with('foo');
-\App\User::with(['foo']);
-\App\User::query()->with(['foo']);
+\App\User::with(['foo', 'accounts']);
+\App\User::query()->with(['foo', 'accounts']);
