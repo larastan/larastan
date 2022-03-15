@@ -95,7 +95,6 @@ class RelationExistenceRule implements Rule
                 $calledOnType = $scope->getType($calledOnNode);
             }
 
-
             $closure = function (Type $calledOnType, string $relationName, Node $node) use ($scope): array {
                 $modelReflection = $this->modelRuleHelper->findModelReflectionFromType($calledOnType);
 
