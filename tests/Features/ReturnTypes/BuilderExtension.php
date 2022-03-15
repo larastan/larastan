@@ -98,7 +98,7 @@ class BuilderExtension
      */
     public function testWith(): Builder
     {
-        return User::with('email')->whereNull('name');
+        return User::with('accounts')->whereNull('name');
     }
 
     /**
@@ -106,14 +106,14 @@ class BuilderExtension
      */
     public function testWithWithBuilderMethods(): Builder
     {
-        return User::with('email')
+        return User::with('accounts')
             ->where('email', 'bar')
             ->orWhere('name', 'baz');
     }
 
     public function testFindWithInteger(): ?User
     {
-        return User::with(['email'])->find(1);
+        return User::with(['accounts'])->find(1);
     }
 
     /**
@@ -121,12 +121,12 @@ class BuilderExtension
      */
     public function testFindWithArray()
     {
-        return User::with(['email'])->find([1, 2, 3]);
+        return User::with(['accounts'])->find([1, 2, 3]);
     }
 
     public function testFindOrFailWithInteger(): User
     {
-        return User::with(['email'])->findOrFail(1);
+        return User::with(['accounts'])->findOrFail(1);
     }
 
     /**
@@ -134,12 +134,12 @@ class BuilderExtension
      */
     public function testFindOrFailWithArray()
     {
-        return User::with(['email'])->findOrFail([1, 2, 3]);
+        return User::with(['accounts'])->findOrFail([1, 2, 3]);
     }
 
     public function testFindOrNewWithInteger(): User
     {
-        return User::with(['email'])->findOrNew(1);
+        return User::with(['accounts'])->findOrNew(1);
     }
 
     /**
@@ -155,7 +155,7 @@ class BuilderExtension
      */
     public function testFindOrNewWithArray()
     {
-        return User::with(['email'])->findOrNew([1, 2, 3]);
+        return User::with(['accounts'])->findOrNew([1, 2, 3]);
     }
 
     /**
