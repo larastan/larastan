@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes;
 
+use function get_class;
 use Illuminate\Support\Facades\Date;
+use function in_array;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
@@ -13,8 +15,6 @@ use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use function get_class;
-use function in_array;
 
 class DateExtension implements DynamicStaticMethodReturnTypeExtension
 {
