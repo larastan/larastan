@@ -171,8 +171,6 @@ class Builder
      */
     public function firstOr($columns = ['*'], \Closure $callback = null);
 
-
-
     /**
      * Add a relationship count / exists condition to the query.
      *
@@ -181,7 +179,7 @@ class Builder
      * @param  string  $operator
      * @param  int  $count
      * @param  string  $boolean
-     * @param  \Closure|null  $callback
+     * @param  (\Closure(static): void)|(\Closure(static): static)|null  $callback
      * @return static
      *
      * @throws \RuntimeException
@@ -203,7 +201,7 @@ class Builder
      *
      * @param  string  $relation
      * @param  string  $boolean
-     * @param  \Closure|null  $callback
+     * @param  (\Closure(static): void)|(\Closure(static): static)|null  $callback
      * @return static
      */
     public function doesntHave($relation, $boolean = 'and', \Closure $callback = null);
@@ -219,7 +217,7 @@ class Builder
     /**
      * Add a basic where clause to the query.
      *
-     * @param  (\Closure(static<TModelClass>): void)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
+     * @param  (\Closure(static): void)|(\Closure(static): static)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
@@ -230,7 +228,7 @@ class Builder
     /**
      * Add an "or where" clause to the query.
      *
-     * @param  (\Closure(static<TModelClass>): void)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
+     * @param  (\Closure(static): void)|(\Closure(static): static)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @return $this
@@ -241,7 +239,7 @@ class Builder
      * Add a relationship count / exists condition to the query with where clauses.
      *
      * @param  string  $relation
-     * @param  \Closure|null  $callback
+     * @param  (\Closure(static): void)|(\Closure(static): static)|null  $callback
      * @param  string  $operator
      * @param  int  $count
      * @return static
@@ -252,7 +250,7 @@ class Builder
      * Add a relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param  string  $relation
-     * @param  \Closure|null  $callback
+     * @param  (\Closure(static): void)|(\Closure(static): static)|null  $callback
      * @param  string  $operator
      * @param  int  $count
      * @return static
@@ -269,7 +267,7 @@ class Builder
      * @param  string  $operator
      * @param  int  $count
      * @param  string  $boolean
-     * @param  \Closure|null  $callback
+     * @param  (\Closure(static): void)|(\Closure(static): static)|null  $callback
      * @return static
      */
     public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', \Closure $callback = null);
@@ -295,7 +293,7 @@ class Builder
      * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
      * @param  string|array<string>  $types
      * @param  string  $boolean
-     * @param  \Closure|null  $callback
+     * @param  (\Closure(static): void)|(\Closure(static): static)|null  $callback
      * @return static
      */
     public function doesntHaveMorph($relation, $types, $boolean = 'and', \Closure $callback = null);
@@ -318,7 +316,7 @@ class Builder
      * @template TChildModel of Model
      * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
      * @param  string|array<string>  $types
-     * @param  \Closure|null  $callback
+     * @param  (\Closure(static): void)|(\Closure(static): static)|null  $callback
      * @param  string  $operator
      * @param  int  $count
      * @return static
@@ -332,7 +330,7 @@ class Builder
      * @template TChildModel of Model
      * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
      * @param  string|array<string>  $types
-     * @param  \Closure|null  $callback
+     * @param  (\Closure(static): void)|(\Closure(static): static)|null  $callback
      * @param  string  $operator
      * @param  int  $count
      * @return static
@@ -346,7 +344,7 @@ class Builder
      * @template TChildModel of Model
      * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
      * @param  string|array<string>  $types
-     * @param  \Closure|null  $callback
+     * @param  (\Closure(static): void)|(\Closure(static): static)|null  $callback
      * @return static
      */
     public function whereDoesntHaveMorph($relation, $types, \Closure $callback = null);
@@ -358,7 +356,7 @@ class Builder
      * @template TChildModel of Model
      * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
      * @param  string|array<string>  $types
-     * @param  \Closure|null  $callback
+     * @param  (\Closure(static): void)|(\Closure(static): static)|null  $callback
      * @return static
      */
     public function orWhereDoesntHaveMorph($relation, $types, \Closure $callback = null);
@@ -375,7 +373,7 @@ class Builder
      * Add a relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param  string  $relation
-     * @param  \Closure|null  $callback
+     * @param  (\Closure(static): void)|(\Closure(static): static)|null  $callback
      * @return static
      */
     public function orWhereDoesntHave($relation, \Closure $callback = null);
@@ -384,7 +382,7 @@ class Builder
      * Add a relationship count / exists condition to the query with where clauses.
      *
      * @param  string  $relation
-     * @param  \Closure|null  $callback
+     * @param  (\Closure(static): void)|(\Closure(static): static)|null  $callback
      * @return static
      */
     public function whereDoesntHave($relation, \Closure $callback = null);
@@ -392,7 +390,7 @@ class Builder
     /**
      * Add a basic where clause to the query, and return the first result.
      *
-     * @param  (\Closure(static<TModelClass>): void)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
+     * @param  (\Closure(static): void)|(\Closure(static): static)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
