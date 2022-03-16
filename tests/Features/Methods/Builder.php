@@ -10,7 +10,6 @@ use App\User;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
-
 use function PHPStan\Testing\assertType;
 
 \Illuminate\Database\Eloquent\Builder::macro('globalCustomMacro', function (string $arg): string {
