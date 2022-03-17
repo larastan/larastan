@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
+use function array_map;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
@@ -26,7 +27,6 @@ use PHPStan\Type\StaticType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeTraverser;
 use PHPStan\Type\TypeWithClassName;
-use function array_map;
 
 final class ModelForwardsCallsExtension implements MethodsClassReflectionExtension
 {
@@ -230,12 +230,13 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
         }, $method->getVariants());
     }
 
-    private function transformStaticType(Type $type, GenericObjectType $builder) : Type
+    private function transformStaticType(Type $type, GenericObjectType $builder): Type
     {
         return TypeTraverser::map($type, function (Type $type, callable $traverse) use ($builder): Type {
             if ($type instanceof StaticType) {
                 return $builder;
             }
+
             return $traverse($type);
         });
     }
