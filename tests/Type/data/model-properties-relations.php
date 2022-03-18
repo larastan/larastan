@@ -11,7 +11,8 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use function PHPStan\Testing\assertType;
 
-function foo(Foo $foo, Bar $bar, Account $account): void {
+function foo(Foo $foo, Bar $bar, Account $account): void
+{
     assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelations\Bar>', $foo->hasManyRelation);
     assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelations\Bar>', $foo->hasManyThroughRelation);
     assertType('ModelPropertiesRelations\Foo', $bar->belongsToRelation);
@@ -68,4 +69,6 @@ class Bar extends Model
     }
 }
 
-class Baz extends Model {}
+class Baz extends Model
+{
+}
