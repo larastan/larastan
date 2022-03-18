@@ -221,6 +221,7 @@ class BuilderHelper
             if ($returnType instanceof ObjectType) {
                 return $returnType->getClassName();
             }
+
             return $returnType->describe(VerbosityLevel::value());
         } catch (MissingMethodFromReflectionException|ShouldNotHappenException $e) {
             return Collection::class;
