@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Reflection\AnnotationScopeMethodParameterReflection;
@@ -212,20 +213,18 @@ class BuilderHelper
         return $returnType->describe(VerbosityLevel::value());
     }
 
-    /**
-     * @throws MissingMethodFromReflectionException
-     * @throws ShouldNotHappenException
-     */
     public function determineCollectionClassName(string $modelClassName): string
     {
-        $newCollectionMethod = $this->reflectionProvider->getClass($modelClassName)->getNativeMethod('newCollection');
+        try {
+            $newCollectionMethod = $this->reflectionProvider->getClass($modelClassName)->getNativeMethod('newCollection');
+            $returnType = ParametersAcceptorSelector::selectSingle($newCollectionMethod->getVariants())->getReturnType();
+            if ($returnType instanceof ObjectType) {
+                return $returnType->getClassName();
+            }
 
-        $returnType = ParametersAcceptorSelector::selectSingle($newCollectionMethod->getVariants())->getReturnType();
-
-        if ($returnType instanceof ObjectType) {
-            return $returnType->getClassName();
+            return $returnType->describe(VerbosityLevel::value());
+        } catch (MissingMethodFromReflectionException|ShouldNotHappenException $e) {
+            return Collection::class;
         }
-
-        return $returnType->describe(VerbosityLevel::value());
     }
 }

@@ -18,10 +18,14 @@ use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntegerType;
+use PHPStan\Type\IntersectionType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\Type;
+use PHPStan\Type\TypeTraverser;
+use PHPStan\Type\TypeWithClassName;
 use PHPStan\Type\UnionType;
 
 /**
@@ -74,7 +78,6 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
     {
         $method = $classReflection->getMethod($propertyName, new OutOfClassScope());
 
-        /** @var ObjectType $returnType */
         $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
 
         if ($returnType instanceof GenericObjectType) {
@@ -92,26 +95,38 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
         }
 
         $relatedModel = new ObjectType($relatedModelClassName);
-        $collectionClass = $this->builderHelper->determineCollectionClassName($relatedModelClassName);
 
-        if (Str::contains($returnType->getClassName(), 'Many')) {
-            return new ModelProperty(
-                $classReflection,
-                new GenericObjectType($collectionClass, [new IntegerType(), $relatedModel]),
-                new NeverType(), false
-            );
-        }
+        $relationType = TypeTraverser::map($returnType, function (Type $type, callable $traverse) use ($relatedModelClassName, $relatedModel) {
+            if ($type instanceof UnionType || $type instanceof IntersectionType) {
+                return $traverse($type);
+            }
 
-        if (Str::endsWith($returnType->getClassName(), 'MorphTo')) {
-            return new ModelProperty($classReflection, new UnionType([
-                new ObjectType(Model::class),
-                new MixedType(),
-            ]), new NeverType(), false);
-        }
+            if ($type instanceof TypeWithClassName) {
+                if ($type instanceof GenericObjectType) {
+                    /** @var ObjectType $relatedModel */
+                    $relatedModel = $type->getTypes()[0];
+                    $relatedModelClassName = $relatedModel->getClassName();
+                }
 
-        return new ModelProperty($classReflection, new UnionType([
-            $relatedModel,
-            new NullType(),
-        ]), new NeverType(), false);
+                if (Str::contains($type->getClassName(), 'Many')) {
+                    $collectionClass = $this->builderHelper->determineCollectionClassName($relatedModelClassName);
+
+                    return new GenericObjectType($collectionClass, [new IntegerType(), $relatedModel]);
+                }
+
+                if (Str::endsWith($type->getClassName(), 'MorphTo')) {
+                    return new MixedType();
+                }
+
+                return new UnionType([
+                    $relatedModel,
+                    new NullType(),
+                ]);
+            }
+
+            return $traverse($type);
+        });
+
+        return new ModelProperty($classReflection, $relationType, new NeverType(), false);
     }
 }

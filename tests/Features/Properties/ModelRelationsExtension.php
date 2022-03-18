@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Features\Properties;
 
-use App\Account;
 use App\User;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,15 +13,6 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class ModelRelationsExtension
 {
-    /** @return Collection<int, OtherDummyModel> */
-    public function testHasMany()
-    {
-        /** @var DummyModel $dummyModel */
-        $dummyModel = DummyModel::firstOrFail();
-
-        return $dummyModel->hasManyRelation;
-    }
-
     public function testHasManyForEach(): OtherDummyModel
     {
         /** @var DummyModel $dummyModel */
@@ -38,33 +27,6 @@ class ModelRelationsExtension
         return new OtherDummyModel;
     }
 
-    /** @return Collection<int, OtherDummyModel> */
-    public function testHasManyThroughRelation(DummyModel $dummyModel)
-    {
-        return $dummyModel->hasManyThroughRelation;
-    }
-
-    public function testBelongsTo(OtherDummyModel $otherDummyModel): ?DummyModel
-    {
-        return $otherDummyModel->belongsToRelation;
-    }
-
-    /** @return mixed */
-    public function testMorphTo(OtherDummyModel $otherDummyModel)
-    {
-        return $otherDummyModel->morphToRelation;
-    }
-
-    public function testCollectionMethodFirstOnRelation(DummyModel $dummyModel): ?OtherDummyModel
-    {
-        return $dummyModel->hasManyRelation->first();
-    }
-
-    public function testCollectionMethodFindOnRelation(DummyModel $dummyModel): ?OtherDummyModel
-    {
-        return $dummyModel->hasManyRelation()->find(1);
-    }
-
     public function testModelRelationForeach(DummyModel $dummyModel): ?OtherDummyModel
     {
         foreach ($dummyModel->hasManyRelation as $item) {
@@ -74,16 +36,6 @@ class ModelRelationsExtension
         }
 
         return null;
-    }
-
-    public function testModelWithRelationDefinedInTrait(Account $account): ?User
-    {
-        return $account->ownerRelation;
-    }
-
-    public function testRelationCanbeOverridenWithAnnotation(OtherDummyModel $dummyModel): DummyModel
-    {
-        return $dummyModel->belongsToRelation;
     }
 }
 
