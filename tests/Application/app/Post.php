@@ -14,4 +14,21 @@ class Post extends Model
     {
         return $this->belongsToMany(User::class);
     }
+
+    /**
+     * @return PostBuilder<Post>
+     */
+    public static function query(): PostBuilder
+    {
+        return parent::query();
+    }
+
+    /**
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @return PostBuilder<Post>
+     */
+    public function newEloquentBuilder($query): PostBuilder
+    {
+        return new PostBuilder($query);
+    }
 }

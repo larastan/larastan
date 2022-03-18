@@ -171,8 +171,6 @@ class Builder
      */
     public function firstOr($columns = ['*'], \Closure $callback = null);
 
-
-
     /**
      * Add a relationship count / exists condition to the query.
      *
@@ -219,7 +217,7 @@ class Builder
     /**
      * Add a basic where clause to the query.
      *
-     * @param  (\Closure(static<TModelClass>): void)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
+     * @param  (\Closure(static): void)|(\Closure(static): static)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
@@ -230,7 +228,7 @@ class Builder
     /**
      * Add an "or where" clause to the query.
      *
-     * @param  (\Closure(static<TModelClass>): void)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
+     * @param  (\Closure(static): void)|(\Closure(static): static)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @return $this
@@ -392,7 +390,7 @@ class Builder
     /**
      * Add a basic where clause to the query, and return the first result.
      *
-     * @param  (\Closure(static<TModelClass>): void)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
+     * @param  (\Closure(static): void)|(\Closure(static): static)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
