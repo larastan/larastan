@@ -48,7 +48,7 @@ class ModelPropertiesRuleHelper
         /** @var Type $modelType */
         [$parameterIndex, $modelType] = $modelPropertyParameter;
 
-        if (! (new ObjectType(Model::class))->isSuperTypeOf($modelType)->yes()) {
+        if (! (new ObjectType(Model::class))->isSuperTypeOf($modelType)->yes() || $modelType->equals(new ObjectType(Model::class))) {
             return [];
         }
 
