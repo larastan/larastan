@@ -32,6 +32,13 @@ function bar(\Illuminate\Database\Eloquent\Builder $builder): \Illuminate\Databa
 \App\User::query()->where('propertyDefinedOnlyInAnnotation', 'foo');
 \App\User::query()->where('only_available_with_accessor', 'foo');
 
+// Currently, there is no way to change the type of `$query` inside the callback.
+// So until we have a way to do that, we will ignore errors for `Builder<Model>`
+// @see https://github.com/phpstan/phpstan/discussions/6850
+\App\User::query()->whereHas('accounts', function (\Illuminate\Database\Eloquent\Builder $query) {
+    $query->where('foo', 'bar');
+});
+
 function getKey(): string
 {
     if (random_int(0, 1)) {
