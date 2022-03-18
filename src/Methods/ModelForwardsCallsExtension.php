@@ -225,7 +225,14 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
         return array_map(function (ParametersAcceptor $acceptor) use ($builder): ParametersAcceptor {
             return new FunctionVariant($acceptor->getTemplateTypeMap(), $acceptor->getResolvedTemplateTypeMap(), array_map(function (
                 ParameterReflection $parameter) use ($builder): ParameterReflection {
-                return new DummyParameter($parameter->getName(), $this->transformStaticType($parameter->getType(), $builder), $parameter->isOptional(), $parameter->passedByReference(), $parameter->isVariadic(), $parameter->getDefaultValue());
+                return new DummyParameter(
+                    $parameter->getName(),
+                    $this->transformStaticType($parameter->getType(), $builder),
+                    $parameter->isOptional(),
+                    $parameter->passedByReference(),
+                    $parameter->isVariadic(),
+                    $parameter->getDefaultValue()
+                );
             }, $acceptor->getParameters()), $acceptor->isVariadic(), $this->transformStaticType($acceptor->getReturnType(), $builder));
         }, $method->getVariants());
     }
