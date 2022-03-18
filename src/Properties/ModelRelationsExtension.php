@@ -92,9 +92,10 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
         }
 
         $relatedModel = new ObjectType($relatedModelClassName);
-        $collectionClass = $this->builderHelper->determineCollectionClassName($relatedModelClassName);
 
         if (Str::contains($returnType->getClassName(), 'Many')) {
+            $collectionClass = $this->builderHelper->determineCollectionClassName($relatedModelClassName);
+
             return new ModelProperty(
                 $classReflection,
                 new GenericObjectType($collectionClass, [new IntegerType(), $relatedModel]),
@@ -103,10 +104,7 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
         }
 
         if (Str::endsWith($returnType->getClassName(), 'MorphTo')) {
-            return new ModelProperty($classReflection, new UnionType([
-                new ObjectType(Model::class),
-                new MixedType(),
-            ]), new NeverType(), false);
+            return new ModelProperty($classReflection, new MixedType(), new NeverType(), false);
         }
 
         return new ModelProperty($classReflection, new UnionType([
