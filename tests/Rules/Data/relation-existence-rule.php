@@ -42,3 +42,11 @@ declare(strict_types=1);
 \App\User::query()->with('foo');
 \App\User::with(['foo', 'accounts']);
 \App\User::query()->with(['foo', 'accounts']);
+\App\User::query()->with(['foo', 'accounts.foo']);
+\App\User::query()->with(['foo' => static function () {
+}, 'accounts']);
+
+\App\User::with('foo:id,name');
+\App\User::query()->with('foo:id,name');
+\App\User::with(['foo:id', 'accounts']);
+\App\User::query()->with(['foo:id', 'accounts']);
