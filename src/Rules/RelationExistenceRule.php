@@ -13,8 +13,12 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\GeneralizePrecision;
+use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeTraverser;
+use PHPStan\Type\UnionType;
 
 /** @implements Rule<Node\Expr\CallLike> */
 class RelationExistenceRule implements Rule
@@ -75,17 +79,33 @@ class RelationExistenceRule implements Rule
         if ($valueType instanceof ConstantStringType) {
             $relations = [$valueType];
         } else {
-            $relations = $valueType->getValueTypes();
+            if ($valueType->getKeyType()->generalize(GeneralizePrecision::lessSpecific()) instanceof IntegerType) {
+                $relations = $valueType->getValueTypes();
+            } else {
+                $relations = $valueType->getKeyTypes();
+            }
         }
 
         $errors = [];
 
         foreach ($relations as $relationType) {
+            $relationType = TypeTraverser::map($relationType, static function (Type $type, callable $traverse) {
+                if ($type instanceof UnionType) {
+                    return $traverse($type);
+                }
+
+                if ($type instanceof ConstantStringType) {
+                    return $type;
+                }
+
+                return $traverse($type);
+            });
+
             if (! $relationType instanceof ConstantStringType) {
                 continue;
             }
 
-            $relationName = $relationType->getValue();
+            $relationName = explode(':', $relationType->getValue())[0];
 
             $calledOnNode = $node instanceof MethodCall ? $node->var : $node->class;
 
