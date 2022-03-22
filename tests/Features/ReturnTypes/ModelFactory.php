@@ -55,6 +55,16 @@ class ModelFactory
         return User::factory()->unverified();
     }
 
+    public function testAfterMakingWithParentModelUsingFactory(): UserFactory
+    {
+        return User::factory()->afterMaking();
+    }
+
+    public function testAfterCreatingWithParentModelUsingFactory(): UserFactory
+    {
+        return User::factory()->afterCreating();
+    }
+
     public function testFactory(): PostFactory
     {
         return Post::factory();
@@ -91,5 +101,15 @@ class ModelFactory
     public function testMake()
     {
         return Post::factory()->make();
+    }
+
+    public function testAfterMaking(): PostFactory
+    {
+        return Post::factory()->afterMaking();
+    }
+
+    public function testAfterCreating(): PostFactory
+    {
+        return Post::factory()->afterCreating();
     }
 }
