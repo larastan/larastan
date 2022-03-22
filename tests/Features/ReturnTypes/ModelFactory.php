@@ -57,12 +57,12 @@ class ModelFactory
 
     public function testAfterMakingWithParentModelUsingFactory(): UserFactory
     {
-        return User::factory()->afterMaking();
+        return User::factory()->afterMaking(fn(User $user) => $user);
     }
 
     public function testAfterCreatingWithParentModelUsingFactory(): UserFactory
     {
-        return User::factory()->afterCreating();
+        return User::factory()->afterCreating(fn(User $user) => $user);
     }
 
     public function testFactory(): PostFactory
@@ -105,11 +105,11 @@ class ModelFactory
 
     public function testAfterMaking(): PostFactory
     {
-        return Post::factory()->afterMaking();
+        return Post::factory()->afterMaking(fn(Post $post) => $post);
     }
 
     public function testAfterCreating(): PostFactory
     {
-        return Post::factory()->afterCreating();
+        return Post::factory()->afterCreating(fn(Post $post) => $post);
     }
 }
