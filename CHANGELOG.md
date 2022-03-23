@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.1.3] - 2022-03-23
+
+### Improvements
+* feat: add exact typehints for `Model` `casts`, `hidden` and `visible` properties by @Magiczne in https://github.com/nunomaduro/larastan/pull/1158
+* feat: support `with` in RelationExistenceRule  by @canvural in https://github.com/nunomaduro/larastan/pull/1175
+* feat: update Eloquent Builder stubs to be more specific by @canvural in https://github.com/nunomaduro/larastan/pull/1178
+* Break long line in transformStaticParameters by @szepeviktor in https://github.com/nunomaduro/larastan/pull/1183
+* feat: improve model factory `after*` methods by @mdpoulter in https://github.com/nunomaduro/larastan/pull/1195
+
+### Fixes
+* fix: use custom collection if it does not have template types by @canvural in https://github.com/nunomaduro/larastan/pull/1170
+* fix: ignore Model in ModelPropertyRule by @canvural in https://github.com/nunomaduro/larastan/pull/1184
+* fix: use TypeTraverser to handle Union and Intersection types in `ModelRelationsExtension` by @canvural in https://github.com/nunomaduro/larastan/pull/1187
+
+
 * fix: updated `composer/pcre` to new PHP relevant version
 * feat: add support for the `foreignId` column in migrations
 
@@ -753,7 +768,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/2.1.0...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v2.1.3...HEAD
+[2.1.3]: https://github.com/nunomaduro/larastan/compare/v2.1.2...v2.1.3
 [2.1.0]: https://github.com/nunomaduro/larastan/compare/2.0.1...2.1.0
 [2.0.1]: https://github.com/nunomaduro/larastan/compare/2.0.0...2.0.1
 [2.0.0]: https://github.com/nunomaduro/larastan/compare/1.0.3...2.0.0
