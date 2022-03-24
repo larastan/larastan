@@ -15,3 +15,10 @@ interface Paginator
  */
 interface LengthAwarePaginator extends Paginator
 {}
+
+/**
+ * @mixin \Illuminate\Support\Collection
+ * @mixin \Illuminate\Pagination\CursorPaginator
+ */
+interface CursorPaginator extends Paginator
+{}
