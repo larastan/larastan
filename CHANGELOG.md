@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+* feat: add support for the `cursorPaginate()` paginator
+
 ## [2.1.3] - 2022-03-23
 
 ### Improvements
@@ -23,7 +25,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 * fix: updated `composer/pcre` to new PHP relevant version
 * feat: add support for the `foreignId` column in migrations
-* feat: add support for the `cursorPaginate()` paginator
 
 ## [2.1.0] - 2022-03-04
 
