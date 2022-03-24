@@ -23,3 +23,17 @@ class Paginator extends AbstractPaginator implements \Illuminate\Contracts\Suppo
  */
 class LengthAwarePaginator extends AbstractPaginator implements \Illuminate\Contracts\Support\Arrayable, \ArrayAccess, \Countable, \IteratorAggregate, \Illuminate\Contracts\Support\Jsonable, \JsonSerializable, \Illuminate\Contracts\Pagination\LengthAwarePaginator
 {}
+
+/**
+ * @implements \ArrayAccess<mixed, mixed>
+ * @implements \IteratorAggregate<mixed, mixed>
+ * @implements \Illuminate\Contracts\Support\Arrayable<array-key, mixed>
+ */
+class CursorPaginator extends AbstractPaginator implements \Illuminate\Contracts\Support\Arrayable, \ArrayAccess, \Countable, \IteratorAggregate, \Illuminate\Contracts\Support\Jsonable, \JsonSerializable, \Illuminate\Contracts\Pagination\CursorPaginator
+{}
+
+/**
+ * @implements \Illuminate\Contracts\Support\Arrayable<array-key, mixed>
+ */
+class Cursor implements \Illuminate\Contracts\Support\Arrayable
+{}
