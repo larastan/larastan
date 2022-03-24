@@ -78,4 +78,20 @@ class Factory
      * @return array<model-property<TModel>, mixed>
      */
     abstract public function definition();
+
+    /**
+     * Add a new "after making" callback to the model definition.
+     *
+     * @param  \Closure(TModel): mixed  $callback
+     * @return static
+     */
+    public function afterMaking(\Closure $callback) {}
+
+    /**
+     * Add a new "after creating" callback to the model definition.
+     *
+     * @param  \Closure(TModel): mixed  $callback
+     * @return static
+     */
+    public function afterCreating(\Closure $callback) {}
 }
