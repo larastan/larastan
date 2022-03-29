@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 * feat: add support for the `cursorPaginate()` paginator
-* fix: when/unless default values can return void
+* fix: when/unless callback for default value can return void
 
 ## [2.1.3] - 2022-03-23
 
