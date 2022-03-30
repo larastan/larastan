@@ -6,7 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-* feat: add support for the `cursorPaginate()` paginator
+## [2.1.4] - 2022-03-30
+
+### Improvements
+* feat: add cursorPaginate() support by @BramVanBerkel in https://github.com/nunomaduro/larastan/pull/1198
+
+### Fixes
+* fix: inverted check in the ModelRuleHelper by @mad-briller in https://github.com/nunomaduro/larastan/pull/1207
 
 ## [2.1.3] - 2022-03-23
 
@@ -770,7 +776,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v2.1.3...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v2.1.4...HEAD
+[2.1.4]: https://github.com/nunomaduro/larastan/compare/v2.1.3...v2.1.4
 [2.1.3]: https://github.com/nunomaduro/larastan/compare/v2.1.2...v2.1.3
 [2.1.0]: https://github.com/nunomaduro/larastan/compare/2.0.1...2.1.0
 [2.0.1]: https://github.com/nunomaduro/larastan/compare/2.0.0...2.0.1
