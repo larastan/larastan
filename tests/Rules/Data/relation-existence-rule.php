@@ -50,3 +50,6 @@ declare(strict_types=1);
 \App\User::query()->with('foo:id,name');
 \App\User::with(['foo:id', 'accounts']);
 \App\User::query()->with(['foo:id', 'accounts']);
+
+$mock = \Mockery::mock(\StdClass::class);
+$mock->expects('foo')->with('bar');

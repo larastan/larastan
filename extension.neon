@@ -1,3 +1,5 @@
+includes:
+  - ./vendor/phpstan/phpstan-mockery/extension.neon
 parameters:
     stubFiles:
         - stubs/Attribute.stub

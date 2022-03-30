@@ -42,11 +42,13 @@ jobs:
       - name: "Install dependencies"
         run: "composer update --with='illuminate/contracts:${{ matrix.laravel }}' --prefer-dist --no-interaction --no-progress"
 
+      - run: "composer require --dev phpstan/phpstan-mockery"
+
       - name: "Execute static analysis"
         run: "composer run-script test:types"
 
       - name: "Execute unit tests"
-        run: "composer run-script test:unit"
+        run: "composer run-script test:unit -- tests/Rules/RelationExistenceRuleTest.php"
 
       - name: "Run Larastan on Laravel and Lumen sample applications"
         run: "tests/laravel-test.sh"
