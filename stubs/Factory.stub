@@ -18,7 +18,7 @@ class Factory
      * Get a new factory instance for the given attributes.
      *
      * @param  callable|array<model-property<TModel>, mixed>  $attributes
-     * @return static
+     * @return static<TModel>
      */
     public static function new($attributes = []) {}
 
@@ -76,7 +76,7 @@ class Factory
      * Add a new state transformation to the model definition.
      *
      * @param  (callable(array<string, mixed>, \Illuminate\Database\Eloquent\Model|null=): array<string, mixed>)|array<string, mixed>  $state
-     * @return static
+     * @return static<TModel>
      */
     public function state($state) {}
 
@@ -91,7 +91,7 @@ class Factory
      * Add a new "after making" callback to the model definition.
      *
      * @param  \Closure(TModel): mixed  $callback
-     * @return static
+     * @return static<TModel>
      */
     public function afterMaking(\Closure $callback) {}
 
@@ -99,7 +99,7 @@ class Factory
      * Add a new "after creating" callback to the model definition.
      *
      * @param  \Closure(TModel): mixed  $callback
-     * @return static
+     * @return static<TModel>
      */
     public function afterCreating(\Closure $callback) {}
 }
