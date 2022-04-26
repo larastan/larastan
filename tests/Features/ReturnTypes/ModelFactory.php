@@ -75,6 +75,11 @@ class ModelFactory
         return Post::factory()->new();
     }
 
+    public function testState(): PostFactory
+    {
+        return Post::factory()->state([]);
+    }
+
     public function testCreateOne(): Post
     {
         return Post::factory()->createOne();
