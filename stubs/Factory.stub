@@ -73,6 +73,14 @@ class Factory
     protected function makeInstance(?\Illuminate\Database\Eloquent\Model $parent) {}
 
     /**
+     * Add a new state transformation to the model definition.
+     *
+     * @param  (callable(array<string, mixed>, \Illuminate\Database\Eloquent\Model|null=): array<string, mixed>)|array<string, mixed>  $state
+     * @return static
+     */
+    public function state($state) {}
+
+    /**
      * Define the model's default state.
      *
      * @return array<model-property<TModel>, mixed>
