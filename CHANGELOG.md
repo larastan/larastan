@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixes
+
+* fix: Change QueryBuilder::newQuery() @return from `$this` to `static`
+
 ## [2.1.4] - 2022-03-30
 
 ### Improvements
