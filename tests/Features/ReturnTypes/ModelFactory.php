@@ -65,6 +65,11 @@ class ModelFactory
         return User::factory()->afterCreating(fn (User $user) => $user);
     }
 
+    public function testFactoryWithModelInNestedNamespace(): \Database\Factories\Domain\Foo\UserFactory
+    {
+        return \App\Domain\Foo\User::factory();
+    }
+
     public function testFactory(): PostFactory
     {
         return Post::factory();

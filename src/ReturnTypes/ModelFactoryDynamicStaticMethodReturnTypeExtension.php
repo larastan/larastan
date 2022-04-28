@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\ReturnTypes;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
@@ -23,16 +24,7 @@ final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements Dynami
 
     public function isStaticMethodSupported(MethodReflection $methodReflection): bool
     {
-        if ($methodReflection->getName() !== 'factory') {
-            return false;
-        }
-
-        // Class only available on Laravel 8
-        if (! class_exists('\Illuminate\Database\Eloquent\Factories\Factory')) {
-            return false;
-        }
-
-        return true;
+        return $methodReflection->getName() === 'factory';
     }
 
     public function getTypeFromStaticMethodCall(
@@ -44,6 +36,12 @@ final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements Dynami
 
         if (! $class instanceof Name) {
             return new ErrorType();
+        }
+
+        $factoryName = Factory::resolveFactoryName($class->toCodeString()); // @phpstan-ignore-line
+
+        if (class_exists($factoryName)) {
+            return new ObjectType($factoryName);
         }
 
         $modelName = basename(str_replace('\\', '/', $class->toCodeString()));
