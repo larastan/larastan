@@ -1384,7 +1384,7 @@ class Builder
     /**
      * Get a new instance of the query builder.
      *
-     * @return $this
+     * @return static
      */
     public function newQuery()
     {}
