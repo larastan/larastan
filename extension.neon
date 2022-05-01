@@ -190,6 +190,11 @@ services:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
 
     -
+        class: NunoMaduro\Larastan\ReturnTypes\AppMakeDynamicReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicStaticMethodReturnTypeExtension
+
+    -
         class: NunoMaduro\Larastan\ReturnTypes\AuthExtension
         tags:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
