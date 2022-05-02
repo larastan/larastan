@@ -258,6 +258,17 @@ class Builder
     public function orWhereHas($relation, \Closure $callback = null, $operator = '>=', $count = 1);
 
     /**
+     * Add an "or where" clause to a relationship query.
+     *
+     * @param  string  $relation
+     * @param  \Closure|string|array<int, string>|\Illuminate\Database\Query\Expression  $column
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return static
+     */
+    public function orWhereRelation($relation, $column, $operator = null, $value = null);
+
+    /**
      * Add a polymorphic relationship count / exists condition to the query.
      *
      * @template TRelatedModel of Model

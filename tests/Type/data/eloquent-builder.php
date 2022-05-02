@@ -8,6 +8,7 @@ use App\Post;
 use App\PostBuilder;
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use function PHPStan\Testing\assertType;
 
 User::query()->has('accounts', '=', 1, 'and', function (Builder $query) {
@@ -136,4 +137,10 @@ User::query()->firstWhere(function (Builder $query) {
 
 Post::query()->firstWhere(function (PostBuilder $query) {
     assertType('App\PostBuilder<App\Post>', $query);
+});
+
+Post::query()->where(static function (PostBuilder $query) {
+    assertType('App\PostBuilder<App\Post>', $query
+        ->orWhere('bar', 'LIKE', "%foo%")
+        ->orWhereRelation('users', 'name', 'LIKE', "%foo%"));
 });
