@@ -137,3 +137,9 @@ User::query()->firstWhere(function (Builder $query) {
 Post::query()->firstWhere(function (PostBuilder $query) {
     assertType('App\PostBuilder<App\Post>', $query);
 });
+
+Post::query()->where(static function (PostBuilder $query) {
+    assertType('App\PostBuilder<App\Post>', $query
+        ->orWhere('bar', 'LIKE', '%foo%')
+        ->orWhereRelation('users', 'name', 'LIKE', '%foo%'));
+});
