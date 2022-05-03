@@ -54,8 +54,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Improvements
 * feat: add cursorPaginate() support by @BramVanBerkel in https://github.com/nunomaduro/larastan/pull/1198
 * feat: add App::make() support by @PrinsFrank in https://github.com/nunomaduro/larastan/pull/1222
-* feat: add Rule checking for useless 'with()' function calls by @PrinsFrank
-* feat: add Rule checking for useless 'value()' function calls by @PrinsFrank
+* feat: add Rule checking for useless 'with()' function calls by @PrinsFrank in https://github.com/nunomaduro/larastan/pull/1226
+* feat: add Rule checking for useless 'value()' function calls by @PrinsFrank in https://github.com/nunomaduro/larastan/pull/1226
 
 ### Fixes
 * fix: inverted check in the ModelRuleHelper by @mad-briller in https://github.com/nunomaduro/larastan/pull/1207
