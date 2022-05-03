@@ -17,6 +17,7 @@ class ValueExtension
 
     public function testInt(): int
     {
+        // @phpstan-ignore-line
         return value(5);
     }
 }
