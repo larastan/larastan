@@ -22,7 +22,7 @@ class NoUselessWithFunctionCallsRule implements Rule
     public function processNode(Node $node, Scope $scope): array
     {
         /** @var FuncCall $node */
-        if (!$node->name instanceof Node\Name) {
+        if (! $node->name instanceof Node\Name) {
             return [];
         }
 
