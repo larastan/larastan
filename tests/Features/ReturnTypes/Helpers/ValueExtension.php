@@ -17,7 +17,6 @@ class ValueExtension
 
     public function testInt(): int
     {
-        // @phpstan-ignore-line
-        return value(5);
+        return value(5); // @phpstan-ignore-line as this violates the NoUselessValueFunctionCallsRule but is still usefull to test
     }
 }
