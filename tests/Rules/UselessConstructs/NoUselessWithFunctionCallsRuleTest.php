@@ -19,8 +19,8 @@ class NoUselessWithFunctionCallsRuleTest extends RulesTest
         $errors = $this->findErrorsByLine(dirname(__DIR__).'/Data/UselessConstructs/UselessWithFunctionCall.php');
 
         self::assertEquals([
-            12 => "Calling the helper function 'with()' with only one argument simply returns the value itself. if you want to chain methods on a construct, use '(new ClassName())->foo()' instead",
-            17 => "Calling the helper function 'with()' without a closure as the second argument simply returns the value without doing anything",
+            11 => "Calling the helper function 'with()' with only one argument simply returns the value itself. if you want to chain methods on a construct, use '(new ClassName())->foo()' instead",
+            16 => "Calling the helper function 'with()' without a closure as the second argument simply returns the value without doing anything",
         ], $errors);
     }
 }
