@@ -5,10 +5,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
-* fix: Resolve correct model factory instance when application namespace is empty
+
+### Improvements
+* feat: add Rule checking for useless 'with()' and 'value()' function calls by @PrinsFrank in https://github.com/nunomaduro/larastan/pull/1226
 
 ### Fixed
-
+* fix: Resolve correct model factory instance when application namespace is empty
 * fix: Remove stubs for `having()` and `orHaving()` QueryBuilder methods by @Maxoulak in [#1258](https://github.com/nunomaduro/larastan/pull/1258)
 * added: Support for `__()` helper and simplified existing `trans()` helper by @niekbr in [#1296](https://github.com/nunomaduro/larastan/pull/1296).
 
