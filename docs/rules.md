@@ -256,6 +256,8 @@ Calling the helper function 'value()' without a closure as the first argument si
 
 ## NoUselessWithFunctionCallsRuleTest
 
+This rule will check if unnecessary calls to the 'with()' function are made
+
 ### Examples
 
 Calling the following functions;
