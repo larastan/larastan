@@ -19,7 +19,7 @@ class NoUselessValueFunctionCallsRuleTest extends RulesTest
         $errors = $this->findErrorsByLine(dirname(__DIR__).'/Data/UselessConstructs/UselessValueFunctionCall.php');
 
         self::assertEquals([
-            12 => "Calling the helper function 'value()' without a closure as the first argument simply returns the first argument without doing anything",
+            11 => "Calling the helper function 'value()' without a closure as the first argument simply returns the first argument without doing anything",
         ], $errors);
     }
 }
