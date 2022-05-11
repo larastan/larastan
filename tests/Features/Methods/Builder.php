@@ -233,6 +233,16 @@ class Builder
         return User::query()->restore();
     }
 
+    public function testJoinSubAllowsEloquentBuilder(): void
+    {
+        User::query()->joinSub(
+            User::query()->whereIn('id', [1, 2, 3]),
+            'users',
+            'users.id',
+            'users.id'
+        );
+    }
+
     public function testRelationMethods(): void
     {
         User::query()->has('accounts', '=', 1, 'and', function (EloquentBuilder $query) {
