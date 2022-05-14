@@ -26,7 +26,7 @@ class AuthExtension
         return auth('web');
     }
 
-    public function testUser(): ?User
+    public function testUser(): User|Admin|null
     {
         return auth()->user();
     }

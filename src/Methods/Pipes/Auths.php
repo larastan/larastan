@@ -43,10 +43,14 @@ final class Auths implements PipeContract
         $config = $this->resolve('config');
 
         if ($config !== null && in_array($classReflectionName, $this->classes, true)) {
-            $authModel = $this->getAuthModel($config);
+            $authModels = $this->getAuthModels($config);
 
-            if ($authModel !== null) {
-                $found = $passable->sendToPipeline($authModel);
+            if (! empty($authModels)) {
+                foreach ($authModels as $authModel) {
+                    if ($found = $passable->sendToPipeline($authModel)) {
+                        break;
+                    }
+                }
             }
         } elseif ($classReflectionName === \Illuminate\Contracts\Auth\Factory::class || $classReflectionName === \Illuminate\Auth\AuthManager::class) {
             $found = $passable->sendToPipeline(
