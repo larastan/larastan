@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixes
 
 * fix: Change QueryBuilder::newQuery() @return from `$this` to `static`
+* feat: Auth::user() returns all possible auth models when no $guard parameter specified by @mirucon in https://github.com/nunomaduro/larastan/pull/1232
 
 ## [2.1.4] - 2022-03-30
 
