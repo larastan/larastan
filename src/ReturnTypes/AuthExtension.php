@@ -54,7 +54,7 @@ final class AuthExtension implements DynamicStaticMethodReturnTypeExtension
             $authModels = $this->getAuthModels($config);
         }
 
-        if (empty($authModels)) {
+        if (count($authModels) === 0) {
             return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
         }
 

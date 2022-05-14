@@ -49,7 +49,7 @@ final class GuardExtension implements DynamicMethodReturnTypeExtension
             $authModels = $this->getAuthModels($config, $guard);
         }
 
-        if (empty($authModels)) {
+        if (count($authModels) === 0) {
             return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
         }
 
