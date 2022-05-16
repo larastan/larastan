@@ -20,6 +20,9 @@ final class ApplicationResolver
     /** @var mixed */
     public static $composer;
 
+    /** @var bool */
+    protected $enablesPackageDiscoveries = true;
+
     /**
      * Creates an application and registers service providers found.
      *
