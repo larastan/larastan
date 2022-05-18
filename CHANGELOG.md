@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Improvements
+* feat: Added conditional return types
+
 ### Fixes
 
 * fix: Change QueryBuilder::newQuery() @return from `$this` to `static`
