@@ -25,7 +25,7 @@ class StorageDynamicStaticMethodReturnTypeExtension implements DynamicStaticMeth
 
     public function isStaticMethodSupported(MethodReflection $methodReflection): bool
     {
-        return $methodReflection->getName() === 'disk';
+        return $methodReflection->getName() === 'disk' || $methodReflection->getName() === 'drive';
     }
 
     public function getTypeFromStaticMethodCall(
