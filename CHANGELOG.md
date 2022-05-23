@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Improvements
+* feat: add Storage::drive() support by @PrinsFrank in https://github.com/nunomaduro/larastan/pull/1241
+
 ### Fixes
 
 * fix: Change QueryBuilder::newQuery() @return from `$this` to `static`

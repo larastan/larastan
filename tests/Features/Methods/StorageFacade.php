@@ -14,9 +14,19 @@ class StorageFacade
         return Storage::disk();
     }
 
+    public function testDrive(): Filesystem
+    {
+        return Storage::drive();
+    }
+
     public function testDiskGetDriver(): bool
     {
         return Storage::disk()->deleteDirectory('foo');
+    }
+
+    public function testDriveGetDriver(): bool
+    {
+        return Storage::drive()->deleteDirectory('foo');
     }
 
     /** @return string|false */
