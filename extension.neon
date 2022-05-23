@@ -210,6 +210,11 @@ services:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
+        class: NunoMaduro\Larastan\ReturnTypes\DateExtension
+        tags:
+            - phpstan.broker.dynamicStaticMethodReturnTypeExtension
+
+    -
         class: NunoMaduro\Larastan\ReturnTypes\GuardExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
@@ -274,6 +279,11 @@ services:
 
     -
         class: NunoMaduro\Larastan\ReturnTypes\Helpers\CookieExtension
+        tags:
+            - phpstan.broker.dynamicFunctionReturnTypeExtension
+
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\Helpers\NowAndTodayExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
 
