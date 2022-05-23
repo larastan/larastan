@@ -5,20 +5,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
-* fix: when/unless callback for default value can return void
 
-### Improvements
-* feat: Added conditional return types
+## [2.1.5] - 2022-05-23
 
-### Improvements
-* feat: add Storage::drive() support by @PrinsFrank in https://github.com/nunomaduro/larastan/pull/1241
+### Added
 
-### Improvements
-* feat: Detect actual date class in Date facade, model attributes, now and today helpers by @bastien-phi in https://github.com/nunomaduro/larastan/pull/1142
+* feat: add dynamic return type extension for `App::make` by @PrinsFrank in https://github.com/nunomaduro/larastan/pull/1222
+* Improve DX: specify memory limits for tests (custom composer scripts) by @lptn in https://github.com/nunomaduro/larastan/pull/1220
+* Allow Builder-s in Builder::union* $query parameter by @fagai in https://github.com/nunomaduro/larastan/pull/1231
+* Added conditional return types by @ricklambrechts in https://github.com/nunomaduro/larastan/pull/1236
+* Add support for Storage::drive besides Storage::disk by @PrinsFrank in https://github.com/nunomaduro/larastan/pull/1241
+* Date type extension by @bastien-phi in https://github.com/nunomaduro/larastan/pull/1142
 
-### Fixes
-
-* fix: Change QueryBuilder::newQuery() @return from `$this` to `static`
+### Fixed
+* fix: typo in doc file name by @mnastalski in https://github.com/nunomaduro/larastan/pull/1208
+* fix: fix: change `QueryBuilder::newQuery()` @return from `$this` to `static` by @dotdash in https://github.com/nunomaduro/larastan/pull/1221
+* Update joinSub docblock by @harmenjanssen in https://github.com/nunomaduro/larastan/pull/1212
+* When unless void default by @BertvanHoekelen in https://github.com/nunomaduro/larastan/pull/1203
+* Fix Model property types by @szepeviktor in https://github.com/nunomaduro/larastan/pull/1234
 
 ## [2.1.4] - 2022-03-30
 
@@ -791,7 +795,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v2.1.4...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v2.1.5...HEAD
+[2.1.5]: https://github.com/nunomaduro/larastan/compare/v2.1.4...v2.1.5
 [2.1.4]: https://github.com/nunomaduro/larastan/compare/v2.1.3...v2.1.4
 [2.1.3]: https://github.com/nunomaduro/larastan/compare/v2.1.2...v2.1.3
 [2.1.0]: https://github.com/nunomaduro/larastan/compare/2.0.1...2.1.0
