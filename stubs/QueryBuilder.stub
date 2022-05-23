@@ -1071,7 +1071,7 @@ class Builder
     /**
      * Add a union statement to the query.
      *
-	 * @template TModelClass of \Illuminate\Database\Eloquent\Model
+     * @template TModelClass of \Illuminate\Database\Eloquent\Model
      * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<TModelClass>|\Closure  $query
      * @param  bool  $all
      * @return $this
@@ -1082,7 +1082,7 @@ class Builder
     /**
      * Add a union all statement to the query.
      *
-	 * @template TModelClass of \Illuminate\Database\Eloquent\Model
+     * @template TModelClass of \Illuminate\Database\Eloquent\Model
      * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<TModelClass>|\Closure  $query
      * @return $this
      */
