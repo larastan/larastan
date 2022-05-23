@@ -13,12 +13,12 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
     protected $casts = [];
 
     /**
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $hidden = [];
 
     /**
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $visible = [];
 
