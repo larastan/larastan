@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.1.6] - 2022-05-23
+
+### Changed
+
+* Increased minimum PHPStan version to 1.7.0
+
 ## [2.1.5] - 2022-05-23
 
 ### Added
@@ -795,7 +801,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v2.1.5...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v2.1.6...HEAD
+[2.1.6]: https://github.com/nunomaduro/larastan/compare/v2.1.5...v2.1.6
 [2.1.5]: https://github.com/nunomaduro/larastan/compare/v2.1.4...v2.1.5
 [2.1.4]: https://github.com/nunomaduro/larastan/compare/v2.1.3...v2.1.4
 [2.1.3]: https://github.com/nunomaduro/larastan/compare/v2.1.2...v2.1.3
