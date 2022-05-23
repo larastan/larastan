@@ -12,10 +12,6 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use function PHPStan\Testing\assertType;
 
-\Illuminate\Database\Eloquent\Builder::macro('globalCustomMacro', function (string $arg): string {
-    return $arg;
-});
-
 /**
  * This class tests `EloquentBuilder::__call` method.
  *

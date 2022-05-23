@@ -1,6 +1,9 @@
 includes:
     - ../extension.neon
 parameters:
+    bootstrapFiles:
+        - ../bootstrap.php
+        - bootstrap.php
     checkGenericClassInNonGenericObjectType: true
     checkExplicitMixed: true
     ignoreErrors:
