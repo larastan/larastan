@@ -438,7 +438,7 @@ class Builder
      *
      * @param mixed  $value
      * @param callable($this, mixed): (void|Builder<TModelClass>) $callback
-     * @param callable($this, mixed): (null|Builder<TModelClass>)|null  $default
+     * @param (callable($this, mixed): Builder<TModelClass>)|(callable($this, mixed): void)  $default
      * @return mixed|$this
      */
     public function when($value, $callback, $default = null);
@@ -448,7 +448,7 @@ class Builder
      *
      * @param  mixed  $value
      * @param  callable($this, mixed): (void|Builder<TModelClass>)  $callback
-     * @param  callable($this, mixed): (null|Builder<TModelClass>)|null  $default
+     * @param  (callable($this, mixed): Builder<TModelClass>)|(callable($this, mixed): void)  $default
      * @return mixed|$this
      */
     public function unless($value, $callback, $default = null);

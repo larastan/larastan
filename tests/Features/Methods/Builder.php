@@ -145,6 +145,13 @@ class Builder
         });
     }
 
+    public function testWhenDefaultVoid(bool $foo): void
+    {
+        User::query()->when($foo, null, static function (EloquentBuilder $query) {
+            $query->whereNull('name');
+        });
+    }
+
     /** @phpstan-return null|EloquentBuilder<User> */
     public function testUnless(bool $foo): ?EloquentBuilder
     {
@@ -162,6 +169,13 @@ class Builder
     public function testUnlessVoid(bool $foo): void
     {
         User::query()->unless($foo, static function (EloquentBuilder $query) {
+            $query->whereNull('name');
+        });
+    }
+
+    public function testUnlessDefaultVoid(bool $foo): void
+    {
+        User::query()->unless($foo, null, static function (EloquentBuilder $query) {
             $query->whereNull('name');
         });
     }
