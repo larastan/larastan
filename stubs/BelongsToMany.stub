@@ -13,7 +13,7 @@ class BelongsToMany extends Relation
      *
      * @param  mixed  $id
      * @param  array<int, (model-property<TRelatedModel>|'*')>|model-property<TRelatedModel>|'*'  $columns
-     * @return \Illuminate\Support\Collection<int, TRelatedModel>|TRelatedModel
+     * @return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Support\Collection<int, TRelatedModel> : TRelatedModel)
      */
     public function findOrNew($id, $columns = ['*']);
 
@@ -51,7 +51,7 @@ class BelongsToMany extends Relation
      *
      * @param  mixed  $id
      * @param  array<int, mixed>  $columns
-     * @return TRelatedModel|\Illuminate\Database\Eloquent\Collection<int, TRelatedModel>|null
+     * @return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> : TRelatedModel)|null
      */
     public function find($id, $columns = ['*']);
 
@@ -69,7 +69,7 @@ class BelongsToMany extends Relation
      *
      * @param  mixed  $id
      * @param  array<int, mixed>  $columns
-     * @return TRelatedModel|\Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
+     * @return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> : TRelatedModel)
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */

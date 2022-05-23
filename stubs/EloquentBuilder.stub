@@ -64,7 +64,7 @@ class Builder
      *
      * @param  mixed  $id
      * @param  array<int, (model-property<TModelClass>|'*')>|model-property<TModelClass>|'*'  $columns
-     * @phpstan-return TModelClass|\Illuminate\Database\Eloquent\Collection<int, TModelClass>|null
+     * @phpstan-return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TModelClass> : TModelClass)|null
      */
     public function find($id, $columns = ['*']);
 
@@ -82,7 +82,7 @@ class Builder
      *
      * @param  mixed  $id
      * @param  array<int, (model-property<TModelClass>|'*')>|model-property<TModelClass>|'*'  $columns
-     * @phpstan-return TModelClass|\Illuminate\Database\Eloquent\Collection<int, TModelClass>
+     * @phpstan-return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TModelClass> : TModelClass)
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
      */

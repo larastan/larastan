@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 * fix: when/unless callback for default value can return void
 
+### Improvements
+* feat: Added conditional return types
+
 ### Fixes
 
 * fix: Change QueryBuilder::newQuery() @return from `$this` to `static`
