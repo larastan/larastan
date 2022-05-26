@@ -33,6 +33,7 @@ parameters:
         - stubs/Redis/Connection.stub
         - stubs/Logger.stub
         - stubs/EnumeratesValues.stub
+        - stubs/Route.stub
     universalObjectCratesClasses:
         - Illuminate\Http\Request
     earlyTerminatingFunctionCalls:
