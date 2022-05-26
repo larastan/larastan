@@ -18,6 +18,7 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from $this->gatherAssertTypes(__DIR__.'/data/paginator-extension.php');
         yield from $this->gatherAssertTypes(__DIR__.'/data/model-properties.php');
         yield from $this->gatherAssertTypes(__DIR__.'/data/model-properties-relations.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/route.php');
     }
 
     /**
