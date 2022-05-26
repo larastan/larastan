@@ -10,7 +10,8 @@ use function PHPStan\Testing\assertType;
 
 assertType('Illuminate\Routing\Route', RouteFacade::get('/awesome', 'foobar')->middleware('foobar'));
 
-function foo(Route $route) {
+function foo(Route $route)
+{
     assertType('Illuminate\Routing\Route', $route->middleware('foobar'));
     assertType('array<string>', $route->middleware());
 }
