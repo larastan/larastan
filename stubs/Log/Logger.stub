@@ -11,4 +11,6 @@ namespace Illuminate\Log {
      * @mixin \Monolog\Logger
      */
     class Logger implements \Psr\Log\LoggerInterface {}
+
+    class LogManager implements \Psr\Log\LoggerInterface {}
 }
