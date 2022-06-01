@@ -1,39 +1,4 @@
 parameters:
-    stubFiles:
-        - stubs/Attribute.stub
-        - stubs/Enumerable.stub
-        - stubs/EloquentBuilder.stub
-        - stubs/Collection.stub
-        - stubs/EloquentCollection.stub
-        - stubs/Factory.stub
-        - stubs/Model.stub
-        - stubs/Gate.stub
-        - stubs/Relation.stub
-        - stubs/BelongsTo.stub
-        - stubs/BelongsToMany.stub
-        - stubs/HasOneOrMany.stub
-        - stubs/HasMany.stub
-        - stubs/HasOne.stub
-        - stubs/HasOneThrough.stub
-        - stubs/HasManyThrough.stub
-        - stubs/Mailable.stub
-        - stubs/MorphOne.stub
-        - stubs/MorphOneOrMany.stub
-        - stubs/MorphTo.stub
-        - stubs/MorphToMany.stub
-        - stubs/MorphMany.stub
-        - stubs/Helpers.stub
-        - stubs/HigherOrderProxies.stub
-        - stubs/QueryBuilder.stub
-        - stubs/Facades.stub
-        - stubs/Pagination.stub
-        - stubs/Contracts/Pagination.stub
-        - stubs/Contracts/Queue.stub
-        - stubs/Contracts/Support.stub
-        - stubs/Redis/Connection.stub
-        - stubs/Logger.stub
-        - stubs/EnumeratesValues.stub
-        - stubs/Route.stub
     universalObjectCratesClasses:
         - Illuminate\Http\Request
     earlyTerminatingFunctionCalls:
@@ -279,32 +244,12 @@ services:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\Helpers\CookieExtension
-        tags:
-            - phpstan.broker.dynamicFunctionReturnTypeExtension
-
-    -
         class: NunoMaduro\Larastan\ReturnTypes\Helpers\NowAndTodayExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
 
     -
         class: NunoMaduro\Larastan\ReturnTypes\Helpers\ResponseExtension
-        tags:
-            - phpstan.broker.dynamicFunctionReturnTypeExtension
-
-    -
-        class: NunoMaduro\Larastan\ReturnTypes\Helpers\RequestExtension
-        tags:
-            - phpstan.broker.dynamicFunctionReturnTypeExtension
-
-    -
-        class: NunoMaduro\Larastan\ReturnTypes\Helpers\RedirectExtension
-        tags:
-            - phpstan.broker.dynamicFunctionReturnTypeExtension
-
-    -
-        class: NunoMaduro\Larastan\ReturnTypes\Helpers\UrlExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
 
@@ -475,5 +420,9 @@ services:
         tags:
             - phpstan.rules.rule
     - NunoMaduro\Larastan\Properties\Schema\PhpMyAdminDataTypeToPhpTypeConverter
+
+    -
+        class: NunoMaduro\Larastan\LarastanStubFilesExtension
+        tags: [phpstan.stubFilesExtension]
 rules:
     - NunoMaduro\Larastan\Rules\RelationExistenceRule
