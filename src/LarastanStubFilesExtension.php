@@ -16,7 +16,7 @@ final class LarastanStubFilesExtension implements StubFilesExtension
     {
         $files = [];
 
-        $finder = Finder::create()->files()->name('*.stub')->in(__DIR__ . '/../stubs');
+        $finder = Finder::create()->files()->name('*.stub')->in(__DIR__.'/../stubs');
 
         foreach ($finder as $file) {
             $files[] = $file->getPathname();
