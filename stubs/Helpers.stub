@@ -1,6 +1,91 @@
 <?php
 
 /**
+ * Get / set the specified configuration value.
+ *
+ * If an array is passed as the key, we will assume you want to set an array of values.
+ *
+ * @param  string[]|string|null  $key
+ * @param  mixed  $default
+ * @return ($key is null ? \Illuminate\Config\Repository : ($key is array ? null : mixed))
+ */
+function config($key = null, $default = null) {}
+
+/**
+ * Create a new cookie instance.
+ *
+ * @param  non-empty-string|null  $name
+ * @param  string|null  $value
+ * @param  int  $minutes
+ * @param  string|null  $path
+ * @param  string|null  $domain
+ * @param  bool|null  $secure
+ * @param  bool  $httpOnly
+ * @param  bool  $raw
+ * @param  string|null  $sameSite
+ * @return ($name is null ? \Illuminate\Cookie\CookieJar : \Symfony\Component\HttpFoundation\Cookie)
+ */
+function cookie($name = null, $value = null, $minutes = 0, $path = null, $domain = null, $secure = null, $httpOnly = true, $raw = false, $sameSite = null) {}
+
+/**
+ * Log a debug message to the logs.
+ *
+ * @param  string|null  $message
+ * @param  mixed[]  $context
+ * @return ($message is null ? \Illuminate\Log\LogManager : null)
+ */
+function logger($message = null, array $context = []) {}
+
+/**
+ * Get a log driver instance.
+ *
+ * @param  string|null  $driver
+ * @return ($driver is null ? \Illuminate\Log\LogManager : \Psr\Log\LoggerInterface&\Illuminate\Log\Logger )
+ */
+function logs($driver = null) {}
+
+/**
+ * Get an instance of the redirector.
+ *
+ * @param  string|null  $to
+ * @param  int  $status
+ * @param  array<string, mixed>  $headers
+ * @param  bool|null  $secure
+ * @return ($to is null ? \Illuminate\Routing\Redirector : \Illuminate\Http\RedirectResponse)
+ */
+function redirect($to = null, $status = 302, $headers = [], $secure = null) {}
+
+/**
+ * Get an instance of the current request or an input item from the request.
+ *
+ * @param  string[]|string|null  $key
+ * @param  mixed  $default
+ * @return ($key is null ? \Illuminate\Http\Request : ($key is array ? string[] : mixed))
+ */
+function request($key = null, $default = null) {}
+
+/**
+ * Get / set the specified session value.
+ *
+ * If an array is passed as the key, we will assume you want to set an array of values.
+ *
+ * @param  mixed[]|string|null  $key
+ * @param  mixed  $default
+ * @return ($key is null ? \Illuminate\Session\SessionManager : ($key is array ? null : mixed))
+ */
+function session($key = null, $default = null) {}
+
+/**
+ * Generate a url for the application.
+ *
+ * @param  string|null  $path
+ * @param  mixed  $parameters
+ * @param  bool|null  $secure
+ * @return ($path is null ? \Illuminate\Contracts\Routing\UrlGenerator : string)
+ */
+function url($path = null, $parameters = [], $secure = null) {}
+
+/**
  * @template TValue
  * @template TDefault
  *

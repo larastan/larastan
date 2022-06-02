@@ -1,0 +1,6 @@
+<?php
+
+namespace Illuminate\Config;
+
+class Repository
+{}
