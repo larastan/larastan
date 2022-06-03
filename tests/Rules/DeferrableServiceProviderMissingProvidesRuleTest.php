@@ -37,7 +37,7 @@ class DeferrableServiceProviderMissingProvidesRuleTest extends RuleTestCase
                 __DIR__.'/Data/IncorrectDeferrableProvider.php',
             ],
             [
-                ['ServiceProviders that implement the "DeferrableProvider" interface should implement the "provides" method that returns an array of strings or class-strings', 9],
+                ['ServiceProviders that implement the "DeferrableProvider" interface should implement the "provides" method that returns an array of strings or class-strings', 10],
             ]
         );
     }
