@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Rules\UselessConstructs;
 
+use NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessValueFunctionCallsRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
-use NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessValueFunctionCallsRule;
 
 class NoUselessValueFunctionCallsRuleTest extends RuleTestCase
 {
@@ -14,7 +14,7 @@ class NoUselessValueFunctionCallsRuleTest extends RuleTestCase
     {
         $this->analyse(
             [
-                dirname(__DIR__).'/Data/UselessConstructs/CorrectValueFunctionCall.php'
+                dirname(__DIR__).'/Data/UselessConstructs/CorrectValueFunctionCall.php',
             ],
             []
         );
@@ -24,10 +24,10 @@ class NoUselessValueFunctionCallsRuleTest extends RuleTestCase
     {
         $this->analyse(
             [
-                dirname(__DIR__).'/Data/UselessConstructs/UselessValueFunctionCall.php'
+                dirname(__DIR__).'/Data/UselessConstructs/UselessValueFunctionCall.php',
             ],
             [
-                ["Calling the helper function 'value()' without a closure as the first argument simply returns the first argument without doing anything", 11]
+                ["Calling the helper function 'value()' without a closure as the first argument simply returns the first argument without doing anything", 11],
             ]
         );
     }

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Rules\UselessConstructs;
 
+use NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
-use NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule;
 
 class NoUselessWithFunctionCallsRuleTest extends RuleTestCase
 {
@@ -14,7 +14,7 @@ class NoUselessWithFunctionCallsRuleTest extends RuleTestCase
     {
         $this->analyse(
             [
-                dirname(__DIR__).'/Data/UselessConstructs/CorrectWithFunctionCall.php'
+                dirname(__DIR__).'/Data/UselessConstructs/CorrectWithFunctionCall.php',
             ],
             []
         );
@@ -24,7 +24,7 @@ class NoUselessWithFunctionCallsRuleTest extends RuleTestCase
     {
         $this->analyse(
             [
-                dirname(__DIR__).'/Data/UselessConstructs/UselessWithFunctionCall.php'
+                dirname(__DIR__).'/Data/UselessConstructs/UselessWithFunctionCall.php',
             ],
             [
                 ["Calling the helper function 'with()' with only one argument simply returns the value itself. if you want to chain methods on a construct, use '(new ClassName())->foo()' instead", 11],
