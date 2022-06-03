@@ -6,6 +6,9 @@ namespace Tests;
 
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
+/**
+ * @deprecated Please extend from PHPStan\Testing\RuleTestCase instead
+ */
 abstract class RulesTest extends BaseTestCase
 {
     use ExecutesLarastan;
