@@ -8,7 +8,7 @@ use NunoMaduro\Larastan\Rules\DeferrableServiceProviderMissingProvidesRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
-class DeferrableServiceProviderMissingProvidesRuleTest extends RuleTestCase
+class ServiceProviderDeferrableMissingProvidesRuleTest extends RuleTestCase
 {
     public function testNoFalsePositivesDirectExistingMethod(): void
     {
