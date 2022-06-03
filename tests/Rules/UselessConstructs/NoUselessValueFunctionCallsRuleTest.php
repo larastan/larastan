@@ -4,22 +4,36 @@ declare(strict_types=1);
 
 namespace Rules\UselessConstructs;
 
-use Tests\RulesTest;
+use PHPStan\Rules\Rule;
+use PHPStan\Testing\RuleTestCase;
+use NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessValueFunctionCallsRule;
 
-class NoUselessValueFunctionCallsRuleTest extends RulesTest
+class NoUselessValueFunctionCallsRuleTest extends RuleTestCase
 {
     public function testNoFalsePositives(): void
     {
-        $errors = $this->findErrorsByLine(dirname(__DIR__).'/Data/UselessConstructs/CorrectValueFunctionCall.php');
-        $this->assertEquals([], $errors, 'The rule should not result in any errors for this data set.');
+        $this->analyse(
+            [
+                dirname(__DIR__).'/Data/UselessConstructs/CorrectValueFunctionCall.php'
+            ],
+            []
+        );
     }
 
     public function testUselessWithCalls(): void
     {
-        $errors = $this->findErrorsByLine(dirname(__DIR__).'/Data/UselessConstructs/UselessValueFunctionCall.php');
+        $this->analyse(
+            [
+                dirname(__DIR__).'/Data/UselessConstructs/UselessValueFunctionCall.php'
+            ],
+            [
+                ["Calling the helper function 'value()' without a closure as the first argument simply returns the first argument without doing anything", 11]
+            ]
+        );
+    }
 
-        self::assertEquals([
-            11 => "Calling the helper function 'value()' without a closure as the first argument simply returns the first argument without doing anything",
-        ], $errors);
+    protected function getRule(): Rule
+    {
+        return new NoUselessValueFunctionCallsRule();
     }
 }

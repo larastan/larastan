@@ -4,23 +4,37 @@ declare(strict_types=1);
 
 namespace Rules\UselessConstructs;
 
-use Tests\RulesTest;
+use PHPStan\Rules\Rule;
+use PHPStan\Testing\RuleTestCase;
+use NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule;
 
-class NoUselessWithFunctionCallsRuleTest extends RulesTest
+class NoUselessWithFunctionCallsRuleTest extends RuleTestCase
 {
     public function testNoFalsePositives(): void
     {
-        $errors = $this->findErrorsByLine(dirname(__DIR__).'/Data/UselessConstructs/CorrectWithFunctionCall.php');
-        $this->assertEquals([], $errors, 'The rule should not result in any errors for this data set.');
+        $this->analyse(
+            [
+                dirname(__DIR__).'/Data/UselessConstructs/CorrectWithFunctionCall.php'
+            ],
+            []
+        );
     }
 
     public function testUselessWithCalls(): void
     {
-        $errors = $this->findErrorsByLine(dirname(__DIR__).'/Data/UselessConstructs/UselessWithFunctionCall.php');
+        $this->analyse(
+            [
+                dirname(__DIR__).'/Data/UselessConstructs/UselessWithFunctionCall.php'
+            ],
+            [
+                ["Calling the helper function 'with()' with only one argument simply returns the value itself. if you want to chain methods on a construct, use '(new ClassName())->foo()' instead", 11],
+                ["Calling the helper function 'with()' without a closure as the second argument simply returns the value without doing anything", 16],
+            ]
+        );
+    }
 
-        self::assertEquals([
-            11 => "Calling the helper function 'with()' with only one argument simply returns the value itself. if you want to chain methods on a construct, use '(new ClassName())->foo()' instead",
-            16 => "Calling the helper function 'with()' without a closure as the second argument simply returns the value without doing anything",
-        ], $errors);
+    protected function getRule(): Rule
+    {
+        return new NoUselessWithFunctionCallsRule();
     }
 }
