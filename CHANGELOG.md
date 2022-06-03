@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Improvements
 * feat: add Rule checking for useless 'with()' and 'value()' function calls by @PrinsFrank in https://github.com/nunomaduro/larastan/pull/1226
+* feat: Add rule for missing 'provides' method in Deferrable ServiceProviders
 
 ### Fixed
 * fix: Resolve correct model factory instance when application namespace is empty
