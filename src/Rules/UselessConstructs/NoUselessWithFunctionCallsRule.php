@@ -43,8 +43,9 @@ class NoUselessWithFunctionCallsRule implements Rule
             ];
         }
 
-        $secondArgumentType = $scope->getType($args[1]->value);
-        if ($secondArgumentType->isSuperTypeOf(new ClosureType([], new MixedType(), true))->no() === false || ($secondArgumentType->isSuperTypeOf(new StringType())->no() === false && function_exists($args[1]->value->value))) {
+        $secondArgument = $args[1];
+        $secondArgumentType = $scope->getType($secondArgument->value);
+        if ($secondArgumentType->isSuperTypeOf(new ClosureType([], new MixedType(), true))->no() === false || ($secondArgumentType->isSuperTypeOf(new StringType())->no() === false && property_exists($secondArgument->value, 'value') && function_exists($secondArgument->value->value))) {
             return [];
         }
 
