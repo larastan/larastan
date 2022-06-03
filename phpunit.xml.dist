@@ -3,6 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
     beStrictAboutOutputDuringTests="true"
+    beStrictAboutChangesToGlobalState="true"
     bootstrap="vendor/autoload.php"
     colors="true"
     failOnRisky="true"
@@ -11,7 +12,7 @@
 >
   <testsuites>
     <testsuite name="Test Suite">
-      <directory suffix="Test.php">./tests</directory>
+      <directory>./tests</directory>
     </testsuite>
   </testsuites>
 </phpunit>
