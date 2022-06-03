@@ -2,20 +2,11 @@
 <phpunit
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-    backupGlobals="false"
-    backupStaticAttributes="false"
-    beStrictAboutTestsThatDoNotTestAnything="true"
     beStrictAboutOutputDuringTests="true"
     bootstrap="vendor/autoload.php"
     colors="true"
-    convertErrorsToExceptions="true"
-    convertNoticesToExceptions="true"
-    convertWarningsToExceptions="true"
     failOnRisky="true"
     failOnWarning="true"
-    processIsolation="false"
-    stopOnError="false"
-    stopOnFailure="false"
     verbose="true"
 >
   <testsuites>
