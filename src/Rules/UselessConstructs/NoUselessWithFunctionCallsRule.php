@@ -30,7 +30,7 @@ class NoUselessWithFunctionCallsRule implements Rule
             return [];
         }
 
-        if ($node->name->toString() !== 'with') {
+        if (strtolower($node->name->toString()) !== 'with') {
             return [];
         }
 
