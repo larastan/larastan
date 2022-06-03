@@ -7,7 +7,6 @@ namespace Tests\Rules;
 use NunoMaduro\Larastan\Rules\ModelRuleHelper;
 use NunoMaduro\Larastan\Rules\RelationExistenceRule;
 use PHPStan\Rules\Rule;
-use Rules\AbstractRuleTestCase;
 
 /** @extends AbstractRuleTestCase<RelationExistenceRule> */
 class RelationExistenceRuleTest extends AbstractRuleTestCase

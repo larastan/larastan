@@ -9,7 +9,6 @@ use Illuminate\Foundation\Events\Dispatchable as EventDispatchable;
 use NunoMaduro\Larastan\Rules\CheckDispatchArgumentTypesCompatibleWithClassConstructorRule;
 use PHPStan\Rules\FunctionCallParametersCheck;
 use PHPStan\Rules\Rule;
-use Rules\AbstractRuleTestCase;
 
 /** @extends AbstractRuleTestCase<CheckDispatchArgumentTypesCompatibleWithClassConstructorRule> */
 class CheckDispatchArgumentTypesCompatibleWithClassConstructorRuleTest extends AbstractRuleTestCase

@@ -6,7 +6,6 @@ namespace Tests\Rules;
 
 use NunoMaduro\Larastan\Rules\DeferrableServiceProviderMissingProvidesRule;
 use PHPStan\Rules\Rule;
-use Rules\AbstractRuleTestCase;
 
 /** @extends AbstractRuleTestCase<DeferrableServiceProviderMissingProvidesRule> */
 class DeferrableServiceProviderMissingProvidesRuleTest extends AbstractRuleTestCase
