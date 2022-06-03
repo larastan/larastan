@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Rules;
 
-use NunoMaduro\Larastan\Rules\DeferrableServiceProviderMissingProvidesRule;
+use NunoMaduro\Larastan\Rules\ServiceProviderDeferrableMissingProvidesRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
@@ -44,6 +44,6 @@ class ServiceProviderDeferrableMissingProvidesRuleTest extends RuleTestCase
 
     protected function getRule(): Rule
     {
-        return new DeferrableServiceProviderMissingProvidesRule();
+        return new ServiceProviderDeferrableMissingProvidesRule();
     }
 }

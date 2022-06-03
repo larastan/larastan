@@ -274,7 +274,7 @@ Calling the helper function 'with()' with only one argument simply returns the v
 Calling the helper function 'with()' without a closure as the second argument simply returns the value without doing anything
 ```
 
-## DeferrableServiceProviderMissingProvidesRule
+## ServiceProviderDeferrableMissingProvidesRule
 
 This rule will check for a missing 'provides' method in deferrable ServiceProviders.
 

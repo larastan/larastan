@@ -432,4 +432,4 @@ rules:
     - NunoMaduro\Larastan\Rules\RelationExistenceRule
     - NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule
     - NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessValueFunctionCallsRule
-    - NunoMaduro\Larastan\Rules\DeferrableServiceProviderMissingProvidesRule
+    - NunoMaduro\Larastan\Rules\ServiceProviderDeferrableMissingProvidesRule

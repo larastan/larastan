@@ -17,7 +17,7 @@ use PHPStan\ShouldNotHappenException;
 /**
  * @implements Rule<InClassNode>
  */
-class DeferrableServiceProviderMissingProvidesRule implements Rule
+class ServiceProviderDeferrableMissingProvidesRule implements Rule
 {
     public function getNodeType(): string
     {
