@@ -33,11 +33,11 @@ class DeferrableServiceProviderMissingProvidesRule implements Rule
         /** @var \PHPStan\Node\InClassNode $node */
         $classReflection = $node->getClassReflection();
         // This rule is only applicable to deferrable serviceProviders
-        if (!$classReflection->isSubclassOf(ServiceProvider::class) || !$classReflection->implementsInterface(DeferrableProvider::class)) {
+        if (! $classReflection->isSubclassOf(ServiceProvider::class) || ! $classReflection->implementsInterface(DeferrableProvider::class)) {
             return [];
         }
 
-        if (!$classReflection->hasNativeMethod('provides')) {
+        if (! $classReflection->hasNativeMethod('provides')) {
             throw new ShouldNotHappenException('If this scenario happens, the "provides" method is removed from the base laravel serviceProvider and this rule can be removed.');
         }
 
