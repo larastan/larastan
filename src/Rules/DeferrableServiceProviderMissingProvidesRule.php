@@ -10,7 +10,6 @@ use PhpParser\Node;
 use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\InClassNode;
-use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\ShouldNotHappenException;
@@ -26,15 +25,16 @@ class DeferrableServiceProviderMissingProvidesRule implements Rule
     }
 
     /**
-     * @throws ShouldNotHappenException
-     * @throws MissingMethodFromReflectionException
+     * @throws \PHPStan\ShouldNotHappenException
+     * @throws \PHPStan\Reflection\MissingMethodFromReflectionException
      */
     public function processNode(Node $node, Scope $scope): array
     {
-        /** @var InClassNode $node */
+        /** @var \PHPStan\Node\InClassNode $node */
         $classReflection = $node->getClassReflection();
+        // This rule is only applicable to deferrable serviceProviders
         if ($classReflection->isSubclassOf(ServiceProvider::class) === false || $classReflection->implementsInterface(DeferrableProvider::class) === false) {
-            return []; // This rule is only applicable to deferrable serviceProviders
+            return [];
         }
 
         if ($classReflection->hasNativeMethod('provides') === false) {
@@ -42,8 +42,9 @@ class DeferrableServiceProviderMissingProvidesRule implements Rule
         }
 
         $method = $classReflection->getMethod('provides', new OutOfClassScope());
+        // The provides method is overwritten somewhere in the class hierarchy
         if ($method->getDeclaringClass()->getName() !== ServiceProvider::class) {
-            return []; // The provides method is overwritten somewhere in the class hierarchy
+            return [];
         }
 
         return [
