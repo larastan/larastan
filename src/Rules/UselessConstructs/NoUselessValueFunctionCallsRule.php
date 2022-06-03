@@ -8,6 +8,9 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleErrorBuilder;
+use PHPStan\Type\ClosureType;
+use PHPStan\Type\MixedType;
 
 /**
  * @implements Rule<FuncCall>
@@ -26,15 +29,19 @@ class NoUselessValueFunctionCallsRule implements Rule
             return [];
         }
 
-        if ($node->name->toString() !== 'value') {
+        if (strtolower($node->name->toString()) !== 'value') {
             return [];
         }
 
         $args = $node->getArgs();
-        if ($args[0]->value instanceof Node\Expr\Closure) {
+        if (array_key_exists(0, $args) && $scope->getType($args[0]->value)->isSuperTypeOf(new ClosureType([], new MixedType(), true))->no() === false) {
             return [];
         }
 
-        return ["Calling the helper function 'value()' without a closure as the first argument simply returns the first argument without doing anything"];
+        return [
+            RuleErrorBuilder::message("Calling the helper function 'value()' without a closure as the first argument simply returns the first argument without doing anything")
+                ->line($node->getLine())
+                ->build()
+        ];
     }
 }

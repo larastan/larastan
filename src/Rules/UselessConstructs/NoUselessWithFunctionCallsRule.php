@@ -8,6 +8,10 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleErrorBuilder;
+use PHPStan\Type\ClosureType;
+use PHPStan\Type\MixedType;
+use PHPStan\Type\StringType;
 
 /**
  * @implements Rule<FuncCall>
@@ -31,14 +35,23 @@ class NoUselessWithFunctionCallsRule implements Rule
         }
 
         $args = $node->getArgs();
-        if (count($args) === 1) {
-            return ["Calling the helper function 'with()' with only one argument simply returns the value itself. if you want to chain methods on a construct, use '(new ClassName())->foo()' instead"];
+        if (array_key_exists(1, $args) === false) {
+            return [
+                RuleErrorBuilder::message("Calling the helper function 'with()' with only one argument simply returns the value itself. if you want to chain methods on a construct, use '(new ClassName())->foo()' instead")
+                    ->line($node->getLine())
+                    ->build()
+            ];
         }
 
-        if ($args[1]->value instanceof Node\Expr\Closure || ($args[1]->value instanceof Node\Scalar\String_ && function_exists($args[1]->value->value))) {
+        $secondArgumentType = $scope->getType($args[1]->value);
+        if ($secondArgumentType->isSuperTypeOf(new ClosureType([], new MixedType(), true))->no() === false || ($secondArgumentType->isSuperTypeOf(new StringType())->no() === false && function_exists($args[1]->value->value))) {
             return [];
         }
 
-        return ["Calling the helper function 'with()' without a closure as the second argument simply returns the value without doing anything"];
+        return [
+            RuleErrorBuilder::message("Calling the helper function 'with()' without a closure as the second argument simply returns the value without doing anything")
+                ->line($node->getLine())
+                ->build()
+        ];
     }
 }
