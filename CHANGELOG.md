@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.1.7] - 2022-06-03
+
+### Added
+* Conditional return types to some global helper functions by @canvural in https://github.com/nunomaduro/larastan/pull/1260
+* Conditional return types for `Conditionable` trait by @canvural in https://github.com/nunomaduro/larastan/pull/1261
+* Conditional return type for `Route::middleware` by @canvural in https://github.com/nunomaduro/larastan/commit/0543c454896f07079d86145afbc318a947ee72c1
+
 ## [2.1.6] - 2022-05-23
 
 ### Changed
@@ -801,7 +808,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v2.1.6...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v2.1.7...HEAD
+[2.1.7]: https://github.com/nunomaduro/larastan/compare/v2.1.6...v2.1.7
 [2.1.6]: https://github.com/nunomaduro/larastan/compare/v2.1.5...v2.1.6
 [2.1.5]: https://github.com/nunomaduro/larastan/compare/v2.1.4...v2.1.5
 [2.1.4]: https://github.com/nunomaduro/larastan/compare/v2.1.3...v2.1.4
