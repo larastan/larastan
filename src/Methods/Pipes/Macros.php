@@ -14,6 +14,7 @@ use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 use NunoMaduro\Larastan\Methods\Macro;
 use PHPStan\Reflection\ClassReflection;
+use function array_key_exists;
 
 /**
  * @internal
@@ -73,9 +74,7 @@ final class Macros implements PipeContract
                 $refProperty = $classReflection->getNativeReflection()->getProperty($macroTraitProperty);
                 $refProperty->setAccessible(true);
 
-                $found = $className === Builder::class
-                    ? $className::hasGlobalMacro($passable->getMethodName())
-                    : $className::hasMacro($passable->getMethodName());
+                $found = array_key_exists($passable->getMethodName(), $refProperty->getValue());
 
                 if ($found) {
                     $reflectionFunction = new \ReflectionFunction($refProperty->getValue()[$passable->getMethodName()]);
