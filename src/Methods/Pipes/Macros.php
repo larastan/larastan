@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods\Pipes;
 
+use function array_key_exists;
 use Carbon\Traits\Macro as CarbonMacro;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
@@ -73,9 +74,7 @@ final class Macros implements PipeContract
                 $refProperty = $classReflection->getNativeReflection()->getProperty($macroTraitProperty);
                 $refProperty->setAccessible(true);
 
-                $found = $className === Builder::class
-                    ? $className::hasGlobalMacro($passable->getMethodName())
-                    : $className::hasMacro($passable->getMethodName());
+                $found = array_key_exists($passable->getMethodName(), $refProperty->getValue());
 
                 if ($found) {
                     $reflectionFunction = new \ReflectionFunction($refProperty->getValue()[$passable->getMethodName()]);
