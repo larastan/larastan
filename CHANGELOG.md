@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+## [2.1.8] - 2022-06-04
+
+### Fixed
+* Don't use `ReflectionClass` directly https://github.com/nunomaduro/larastan/commit/2404fa8d9e27d726bb9e42ec754b323d6727bdfd
+* Don't try to invoke methods on classes https://github.com/nunomaduro/larastan/commit/2a0b2dade387bc19bdf070650c1ba1e035c709da
+
 ## [2.1.7] - 2022-06-03
 
 ### Added
@@ -808,7 +814,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v2.1.7...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v2.1.8...HEAD
+[2.1.8]: https://github.com/nunomaduro/larastan/compare/v2.1.7...v2.1.8
 [2.1.7]: https://github.com/nunomaduro/larastan/compare/v2.1.6...v2.1.7
 [2.1.6]: https://github.com/nunomaduro/larastan/compare/v2.1.5...v2.1.6
 [2.1.5]: https://github.com/nunomaduro/larastan/compare/v2.1.4...v2.1.5
