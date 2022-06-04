@@ -68,24 +68,26 @@ final class Macros implements PipeContract
 
         if ($className !== null && $macroTraitProperty) {
             $classReflection = $passable->getReflectionProvider()->getClass($className);
-            $refObject = new \ReflectionClass($className);
-            $refProperty = $refObject->getProperty($macroTraitProperty);
-            $refProperty->setAccessible(true);
 
-            $found = $className === Builder::class
-                ? $className::hasGlobalMacro($passable->getMethodName())
-                : $className::hasMacro($passable->getMethodName());
+            if ($classReflection->getNativeReflection()->hasProperty($macroTraitProperty)) {
+                $refProperty = $classReflection->getNativeReflection()->getProperty($macroTraitProperty);
+                $refProperty->setAccessible(true);
 
-            if ($found) {
-                $reflectionFunction = new \ReflectionFunction($refProperty->getValue()[$passable->getMethodName()]);
+                $found = $className === Builder::class
+                    ? $className::hasGlobalMacro($passable->getMethodName())
+                    : $className::hasMacro($passable->getMethodName());
 
-                $methodReflection = new Macro(
-                    $classReflection, $passable->getMethodName(), $reflectionFunction
-                );
+                if ($found) {
+                    $reflectionFunction = new \ReflectionFunction($refProperty->getValue()[$passable->getMethodName()]);
 
-                $methodReflection->setIsStatic(true);
+                    $methodReflection = new Macro(
+                        $classReflection, $passable->getMethodName(), $reflectionFunction
+                    );
 
-                $passable->setMethodReflection($methodReflection);
+                    $methodReflection->setIsStatic(true);
+
+                    $passable->setMethodReflection($methodReflection);
+                }
             }
         }
 
