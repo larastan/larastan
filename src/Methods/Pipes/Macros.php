@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods\Pipes;
 
+use function array_key_exists;
 use Carbon\Traits\Macro as CarbonMacro;
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
@@ -14,7 +15,6 @@ use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 use NunoMaduro\Larastan\Methods\Macro;
 use PHPStan\Reflection\ClassReflection;
-use function array_key_exists;
 
 /**
  * @internal
