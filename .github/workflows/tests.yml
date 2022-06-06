@@ -48,5 +48,5 @@ jobs:
       - name: "Execute unit tests"
         run: "composer run-script test:unit"
 
-      - name: "Run Larastan on Laravel and Lumen sample applications"
+      - name: "Run Larastan on Laravel sample applications"
         run: "tests/laravel-test.sh"
