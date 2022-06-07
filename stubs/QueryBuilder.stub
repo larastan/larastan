@@ -868,29 +868,6 @@ class Builder
     {}
 
     /**
-     * Add a "having" clause to the query.
-     *
-     * @param  string  $column
-     * @param  string|null  $operator
-     * @param  string|null  $value
-     * @param  string  $boolean
-     * @return $this
-     */
-    public function having($column, $operator = null, $value = null, $boolean = 'and')
-    {}
-
-    /**
-     * Add a "or having" clause to the query.
-     *
-     * @param  string  $column
-     * @param  string|null  $operator
-     * @param  string|null  $value
-     * @return $this
-     */
-    public function orHaving($column, $operator = null, $value = null)
-    {}
-
-    /**
      * Add a "having between " clause to the query.
      *
      * @param  string  $column

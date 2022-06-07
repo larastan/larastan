@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+* fix: Remove stubs for `having()` and `orHaving()` QueryBuilder methods by @Maxoulak in [#1258](https://github.com/nunomaduro/larastan/pull/1258)
+
 ## [2.1.8] - 2022-06-04
 
 ### Fixed
@@ -182,7 +186,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - Support global macros on the eloquent query builder.
 - Partial support for defining columns with `foreignIdFor` in migrations. ([#932](https://github.com/nunomaduro/larastan/pull/932)) Thanks @Josh-G
-- Extension for `collect` helper and `Collection::make` ([#904](https://github.com/nunomaduro/larastan/pull/904)) 
+- Extension for `collect` helper and `Collection::make` ([#904](https://github.com/nunomaduro/larastan/pull/904))
 - Support for scopes defined in model docblocks ([88422fb](https://github.com/nunomaduro/larastan/commit/88422fb90e85385245fb1badcaf5fbd8e0a1530d))
 - `rescue` helper stub ([#961](https://github.com/nunomaduro/larastan/pull/961)) Thanks @jrmajor
 - Added `trait_exists` to ensure `orchestra/testbench` is installed for packages. ([#957](https://github.com/nunomaduro/larastan/pull/957)) Thanks @rajyan
