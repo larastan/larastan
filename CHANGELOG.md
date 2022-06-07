@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-* fix: type hinting for `having()` and `orHaving()` QueryBuilder methods by @Maxoulak in [#1258](https://github.com/nunomaduro/larastan/pull/1258)
+* fix: Remove stubs for `having()` and `orHaving()` QueryBuilder methods by @Maxoulak in [#1258](https://github.com/nunomaduro/larastan/pull/1258)
 
 ## [2.1.8] - 2022-06-04
 
