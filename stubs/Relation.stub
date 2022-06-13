@@ -2,19 +2,132 @@
 
 namespace Illuminate\Database\Eloquent\Relations;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+
 /**
- * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TRelatedModel of Model
+ * @template TDeclaringModel of Model
+ * @template TResult
  */
 abstract class Relation
 {
     /**
+     * @var Builder<TRelatedModel>
+     */
+    protected $query;
+
+    /**
+     * @var TDeclaringModel
+     */
+    protected $parent;
+
+    /**
+     * @var TRelatedModel
+     */
+    protected $related;
+
+    /**
+     * @param Builder<TRelatedModel> $query
+     * @param TDeclaringModel $parent
+     */
+    public function __construct(Builder $query, Model $parent);
+
+    /**
+     * @param  array<TDeclaringModel>  $models
+     * @return void
+     */
+    abstract public function addEagerConstraints(array $models);
+
+    /**
+     * Initialize the relation on a set of models.
+     *
+     * @param  array<TDeclaringModel> $models
+     * @param  model-property<TDeclaringModel> $relation
+     * @return array<TDeclaringModel>
+     */
+    abstract public function initRelation(array $models, $relation);
+
+    /**
+     * @param array<TDeclaringModel> $models
+     * @param Collection<int, TRelatedModel> $results
+     * @param string $relation
+     * @return array<TDeclaringModel>
+     */
+    abstract public function match(array $models, Collection $results, $relation);
+
+    /**
+     * @return TResult
+     */
+    abstract public function getResults();
+
+    /**
+     * @return Collection<int, TRelatedModel>
+     */
+    public function getEager();
+
+    /**
+     * @param  array<model-property<TRelatedModel>|'*'> $columns
+     * @return TRelatedModel
+     */
+    public function sole($columns = ['*']);
+
+    /**
      * Execute the query as a "select" statement.
      *
-     * @param array<int, string> $columns
-     * @phpstan-return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
+     * @param array<model-property<TRelatedModel>|'*'> $columns
+     * @phpstan-return Collection<int, TRelatedModel>
      */
     public function get($columns = ['*']);
 
+    /**
+     * @param  array<model-property<TRelatedModel>, mixed>  $attributes
+     * @return int
+     */
+    public function rawUpdate(array $attributes = []);
+
+    /**
+     * @param  Builder<TRelatedModel>  $query
+     * @param  Builder<TDeclaringModel>  $parentQuery
+     * @return Builder<TRelatedModel>
+     */
+    public function getRelationExistenceCountQuery(Builder $query, Builder $parentQuery);
+
+    /**
+     * @param  Builder<TRelatedModel> $query
+     * @param  Builder<TDeclaringModel> $parentQuery
+     * @param  array<model-property<TRelatedModel>|'*'> $columns
+     * @return Builder<TRelatedModel>
+     */
+    public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*']);
+
+    /**
+     * @param  array<TRelatedModel>  $models
+     * @param  model-property<TRelatedModel>|null  $key
+     * @return array<int, mixed>
+     */
+    protected function getKeys(array $models, $key = null);
+
+    /**
+     * @return Builder<TRelatedModel>
+     */
+    protected function getRelationQuery();
+
+    /**
+     * @return Builder<TRelatedModel>
+     */
+    public function getQuery();
+
+    /**
+     * @return TDeclaringModel
+     */
+    public function getParent();
+
+    /**
+     * @return TRelatedModel
+     */
+    public function getRelated();
 
     /**
      * @param array<model-property<TRelatedModel>, mixed> $attributes
