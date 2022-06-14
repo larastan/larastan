@@ -16,6 +16,9 @@ jobs:
       matrix:
         php: ["8.0", "8.1"]
         laravel: ["^9.0"]
+        dependencies:
+            - "lowest"
+            - "highest"
 
     name: "P${{ matrix.php }} - L${{ matrix.laravel }}"
 
@@ -38,9 +41,14 @@ jobs:
 
       - name: "Check file permissions"
         run: "test \"$(find . -type f -not -path './.git/*' -executable)\" == ./tests/laravel-test.sh"
+        
+      - name: "Install lowest dependencies from composer.json"
+        if: "matrix.dependencies == 'lowest'"
+        run: "composer update --with='illuminate/contracts:${{ matrix.laravel }}' --no-interaction --no-progress --no-suggest --prefer-lowest"
 
-      - name: "Install dependencies"
-        run: "composer update --with='illuminate/contracts:${{ matrix.laravel }}' --prefer-dist --no-interaction --no-progress"
+      - name: "Install highest dependencies from composer.json"
+        if: "matrix.dependencies == 'highest'"
+        run: "composer update --with='illuminate/contracts:${{ matrix.laravel }}' --no-interaction --no-progress --no-suggest"
 
       - name: "Execute static analysis"
         run: "composer run-script test:types"
