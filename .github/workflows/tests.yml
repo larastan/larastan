@@ -44,11 +44,11 @@ jobs:
         
       - name: "Install lowest dependencies from composer.json"
         if: "matrix.dependencies == 'lowest'"
-        run: "composer update --with='illuminate/contracts:${{ matrix.laravel }}' --no-interaction --no-progress --no-suggest --prefer-lowest"
+        run: "composer update --with='illuminate/contracts:${{ matrix.laravel }}' --no-interaction --no-progress --prefer-lowest"
 
       - name: "Install highest dependencies from composer.json"
         if: "matrix.dependencies == 'highest'"
-        run: "composer update --with='illuminate/contracts:${{ matrix.laravel }}' --no-interaction --no-progress --no-suggest"
+        run: "composer update --with='illuminate/contracts:${{ matrix.laravel }}' --no-interaction --no-progress"
 
       - name: "Execute static analysis"
         run: "composer run-script test:types"
