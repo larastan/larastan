@@ -292,7 +292,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
             if ($class instanceof Node\Name) {
                 $modelClassName = $class->toCodeString();
 
-                return is_subclass_of($modelClassName, Model::class)
+                return (new ObjectType(Model::class))->isSuperTypeOf(new ObjectType($modelClassName))->yes()
                     && $call->name instanceof Identifier
                     && in_array($call->name->toLowerString(), ['get', 'all', 'pluck'], true);
             }
