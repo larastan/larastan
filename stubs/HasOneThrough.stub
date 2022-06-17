@@ -14,11 +14,4 @@ class HasOneThrough extends HasManyThrough
      * @phpstan-return TRelatedModel
      */
     public function create(array $attributes = []);
-
-    /**
-     * Get the results of the relationship.
-     *
-     * @phpstan-return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
-     */
-    public function getResults();
 }
