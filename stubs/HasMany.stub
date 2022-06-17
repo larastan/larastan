@@ -8,4 +8,10 @@ namespace Illuminate\Database\Eloquent\Relations;
  */
 class HasMany extends HasOneOrMany
 {
+    /**
+     * Get the results of the relationship.
+     *
+     * @phpstan-return \Traversable<int, TRelatedModel>
+     */
+    public function getResults();
 }

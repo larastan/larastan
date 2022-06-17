@@ -14,4 +14,11 @@ class MorphMany extends MorphOneOrMany
      * @phpstan-return TRelatedModel
      */
     public function create(array $attributes = []);
+
+    /**
+     * Get the results of the relationship.
+     *
+     * @phpstan-return \Traversable<int, TRelatedModel>
+     */
+    public function getResults();
 }

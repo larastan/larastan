@@ -8,4 +8,10 @@ namespace Illuminate\Database\Eloquent\Relations;
  */
 class HasManyThrough extends Relation
 {
+    /**
+     * Get the results of the relationship.
+     *
+     * @phpstan-return \Traversable<int, TRelatedModel>
+     */
+    public function getResults();
 }
