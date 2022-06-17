@@ -9,11 +9,13 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Reflection\ReflectionHelper;
+use PHPStan\Broker\ClassNotFoundException;
 use PHPStan\PhpDoc\TypeStringResolver;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\ObjectType;
 
@@ -28,7 +30,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
     /** @var string */
     private $dateClass;
 
-    public function __construct(private TypeStringResolver $stringResolver, private MigrationHelper $migrationHelper, private SquashedMigrationHelper $squashedMigrationHelper)
+    public function __construct(private TypeStringResolver $stringResolver, private MigrationHelper $migrationHelper, private SquashedMigrationHelper $squashedMigrationHelper, private ReflectionProvider $reflectionProvider)
     {
     }
 
@@ -65,13 +67,13 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
         $modelName = $classReflection->getNativeReflection()->getName();
 
         try {
-            $reflect = new \ReflectionClass($modelName);
+            $reflect = $this->reflectionProvider->getClass($modelName);
 
             /** @var Model $modelInstance */
-            $modelInstance = $reflect->newInstanceWithoutConstructor();
+            $modelInstance = $reflect->getNativeReflection()->newInstanceWithoutConstructor();
 
             $tableName = $modelInstance->getTable();
-        } catch (\ReflectionException $e) {
+        } catch (ClassNotFoundException|\ReflectionException $e) {
             return false;
         }
 
@@ -104,13 +106,13 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
         $modelName = $classReflection->getNativeReflection()->getName();
 
         try {
-            $reflect = new \ReflectionClass($modelName);
+            $reflect = $this->reflectionProvider->getClass($modelName);
 
             /** @var Model $modelInstance */
-            $modelInstance = $reflect->newInstanceWithoutConstructor();
+            $modelInstance = $reflect->getNativeReflection()->newInstanceWithoutConstructor();
 
             $tableName = $modelInstance->getTable();
-        } catch (\ReflectionException $e) {
+        } catch (ClassNotFoundException|\ReflectionException $e) {
             // `hasProperty` should return false if there was a reflection exception.
             // so this should never happen
             throw new ShouldNotHappenException();
