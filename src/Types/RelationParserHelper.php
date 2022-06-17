@@ -39,7 +39,7 @@ class RelationParserHelper
     public function findRelatedModelInRelationMethod(
         MethodReflection $methodReflection
     ): ?string {
-        if ($methodReflection instanceof PhpMethodReflection && $methodReflection->getDeclaringTrait() !== null) {
+        if (method_exists($methodReflection, 'getDeclaringTrait') && $methodReflection->getDeclaringTrait() !== null) {
             $fileName = $methodReflection->getDeclaringTrait()->getFileName();
         } else {
             $fileName = $methodReflection
