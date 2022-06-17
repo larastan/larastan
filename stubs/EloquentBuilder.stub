@@ -434,26 +434,6 @@ class Builder
     public function value($column);
 
     /**
-     * Apply the callback's query changes if the given "value" is true.
-     *
-     * @param mixed  $value
-     * @param callable($this, mixed): (void|Builder<TModelClass>) $callback
-     * @param (callable($this, mixed): Builder<TModelClass>)|(callable($this, mixed): void)  $default
-     * @return mixed|$this
-     */
-    public function when($value, $callback, $default = null);
-
-    /**
-     * Apply the callback's query changes if the given "value" is false.
-     *
-     * @param  mixed  $value
-     * @param  callable($this, mixed): (void|Builder<TModelClass>)  $callback
-     * @param  (callable($this, mixed): Builder<TModelClass>)|(callable($this, mixed): void)  $default
-     * @return mixed|$this
-     */
-    public function unless($value, $callback, $default = null);
-
-    /**
      * Paginate the given query.
      *
      * @param  int|null  $perPage
