@@ -120,62 +120,6 @@ class Builder
         return User::query()->decrement(\Illuminate\Support\Facades\DB::raw('counter'));
     }
 
-    /** @phpstan-return null|EloquentBuilder<User> */
-    public function testWhen(bool $foo): ?EloquentBuilder
-    {
-        $innerQuery = null;
-        User::query()->when($foo, static function (EloquentBuilder $query) use (&$innerQuery) {
-            /** @phpstan-var EloquentBuilder<User> $query */
-            $innerQuery = $query;
-
-            return $query->whereNull('name');
-        });
-
-        return $innerQuery;
-    }
-
-    public function testWhenVoid(bool $foo): void
-    {
-        User::query()->when($foo, static function (EloquentBuilder $query) {
-            $query->whereNull('name');
-        });
-    }
-
-    public function testWhenDefaultVoid(bool $foo): void
-    {
-        User::query()->when($foo, null, static function (EloquentBuilder $query) {
-            $query->whereNull('name');
-        });
-    }
-
-    /** @phpstan-return null|EloquentBuilder<User> */
-    public function testUnless(bool $foo): ?EloquentBuilder
-    {
-        $innerQuery = null;
-        User::query()->unless($foo, static function (EloquentBuilder $query) use (&$innerQuery) {
-            /** @phpstan-var EloquentBuilder<User> $query */
-            $innerQuery = $query;
-
-            return $query->whereNull('name');
-        });
-
-        return $innerQuery;
-    }
-
-    public function testUnlessVoid(bool $foo): void
-    {
-        User::query()->unless($foo, static function (EloquentBuilder $query) {
-            $query->whereNull('name');
-        });
-    }
-
-    public function testUnlessDefaultVoid(bool $foo): void
-    {
-        User::query()->unless($foo, null, static function (EloquentBuilder $query) {
-            $query->whereNull('name');
-        });
-    }
-
     /** @param EloquentBuilder<User> $query */
     public function testMacro(EloquentBuilder $query): void
     {
