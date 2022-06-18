@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
- * @extends HasMany<TRelatedModel>
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ * @extends HasMany<TRelatedModel, TDeclaringModel>
  */
 class HasManySyncable extends HasMany
 {

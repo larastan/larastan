@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -89,12 +90,13 @@ class User extends Authenticatable
         return $this->belongsTo(Group::class)->withTrashed();
     }
 
-    /** @phpstan-return HasMany<Account> */
+    /** @phpstan-return HasMany<Account, User> */
     public function accounts(): HasMany
     {
         return $this->hasMany(Account::class);
     }
 
+    /** @phpstan-return HasManyThrough<Transaction, User, Account, Collection<Transaction>> */
     public function transactions(): HasManyThrough
     {
         return $this->hasManyThrough(Transaction::class, Account::class);
