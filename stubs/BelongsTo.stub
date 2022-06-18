@@ -2,26 +2,66 @@
 
 namespace Illuminate\Database\Eloquent\Relations;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
 /**
- * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
- * @template TChildModel of \Illuminate\Database\Eloquent\Model
- * @extends Relation<TRelatedModel>
+ * @template TRelatedModel of Model
+ * @template TDeclaringModel of Model
+ * @extends Relation<TRelatedModel, TDeclaringModel, TRelatedModel>
  */
 class BelongsTo extends Relation
 {
-    /** @phpstan-return TChildModel */
-    public function associate();
+    /** @var TDeclaringModel */
+    protected $child;
 
-    /** @phpstan-return TChildModel */
+    /**
+     * @param  Builder<TRelatedModel>  $query
+     * @param  TDeclaringModel  $child
+     * @param  string  $foreignKey
+     * @param  string  $ownerKey
+     * @param  string  $relationName
+     */
+    public function __construct(Builder $query, Model $child, $foreignKey, $ownerKey, $relationName);
+
+    /**
+     * Gather the keys from an array of related models.
+     *
+     * @param  array<TDeclaringModel> $models
+     * @return array<model-property<TDeclaringModel>>
+     */
+    protected function getEagerModelKeys(array $models);
+
+    /**
+     * @param  TRelatedModel|int|string|null  $model
+     * @phpstan-return TDeclaringModel
+     */
+    public function associate($model);
+
+    /** @phpstan-return TDeclaringModel */
     public function dissociate();
 
-    /** @phpstan-return TChildModel */
+    /** @phpstan-return TDeclaringModel */
+    public function disassociate();
+
+    /**
+     * @param  TDeclaringModel  $parent
+     * @return TRelatedModel
+     */
+    protected function newRelatedInstanceFor(Model $parent);
+
+    /** @phpstan-return TDeclaringModel */
     public function getChild();
 
     /**
-     * Get the results of the relationship.
-     *
-     * @phpstan-return ?TRelatedModel
+     * @param  TRelatedModel $model
+     * @return string|int
      */
-    public function getResults();
+    protected function getRelatedKeyFrom(Model $model);
+
+    /**
+     * @param  TDeclaringModel $parent
+     * @return TRelatedModel|null
+     */
+    protected function getDefaultFor(Model $parent);
 }
