@@ -2,10 +2,23 @@
 
 namespace Illuminate\Database\Eloquent\Relations;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
 /**
- * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
- * @template TChildModel of \Illuminate\Database\Eloquent\Model
- * @extends BelongsTo<TRelatedModel, TChildModel>
+ * @template TRelatedModel of Model
+ * @template TDeclaringModel of Model
+ * @extends BelongsTo<TRelatedModel, TDeclaringModel>
  */
 class MorphTo extends BelongsTo
-{}
+{
+    /**
+     * @param  Builder<TRelatedModel>  $query
+     * @param  TDeclaringModel  $parent
+     * @param  string  $foreignKey
+     * @param  string  $ownerKey
+     * @param  string  $type
+     * @param  string  $relation
+     */
+    public function __construct(Builder $query, Model $parent, $foreignKey, $ownerKey, $type, $relation);
+}
