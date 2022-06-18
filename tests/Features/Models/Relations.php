@@ -28,19 +28,19 @@ class Relations
         return $user->accounts()->firstOrCreate([]);
     }
 
-    /** @phpstan-return HasMany<Account> */
+    /** @phpstan-return HasMany<Account, User> */
     public function testRelationWhere(): HasMany
     {
         return (new User())->accounts()->where('name', 'bar');
     }
 
-    /** @phpstan-return HasMany<Account> */
+    /** @phpstan-return HasMany<Account, User> */
     public function testRelationWhereIn(): HasMany
     {
         return (new User())->accounts()->whereIn('id', [1, 2, 3]);
     }
 
-    /** @phpstan-return HasMany<Account> */
+    /** @phpstan-return HasMany<Account, User> */
     public function testRelationDynamicWhere(): HasMany
     {
         return (new User())->accounts()->whereActive(true);
@@ -99,13 +99,13 @@ class Relations
         return $address->addressable()->where('name', 'bar');
     }
 
-    /** @return MorphMany<\App\Address> */
+    /** @return MorphMany<\App\Address, User> */
     public function testMorphMany(User $user): MorphMany
     {
         return $user->address()->where('name', 'bar');
     }
 
-    /** @phpstan-return HasMany<Account> */
+    /** @phpstan-return HasMany<Account, User> */
     public function testModelScopesOnRelation(User $user): HasMany
     {
         return $user->accounts()->active();
@@ -171,7 +171,7 @@ class Relations
         return $account->parent();
     }
 
-    /** @phpstan-return HasMany<User> */
+    /** @phpstan-return HasMany<User, User> */
     public function testSameClassRelation(User $user): HasMany
     {
         return $user->children();
@@ -212,7 +212,7 @@ class Relations
     }
 
     /**
-     * @phpstan-return MorphToMany<Address>
+     * @phpstan-return MorphToMany<Address, Tag>
      */
     public function testMorphToManyWithTimestamps(Tag $tag): MorphToMany
     {
@@ -220,7 +220,7 @@ class Relations
     }
 
     /**
-     * @phpstan-return MorphToMany<Address>
+     * @phpstan-return MorphToMany<Address, Tag>
      */
     public function testMorphToManyWithPivot(Tag $tag): MorphToMany
     {
@@ -270,7 +270,7 @@ class Relations
  */
 class RelationCreateExample extends Model
 {
-    /** @return HasMany<User> */
+    /** @return HasMany<User, RelationCreateExample> */
     public function relation(): HasMany
     {
         return $this->hasMany(User::class);
@@ -284,7 +284,7 @@ class RelationCreateExample extends Model
 
 class ModelWithoutPropertyAnnotation extends Model
 {
-    /** @return HasMany<User> */
+    /** @return HasMany<User, ModelWithoutPropertyAnnotation> */
     public function relation(): HasMany
     {
         return $this->hasMany(User::class);
@@ -299,13 +299,13 @@ class ModelWithoutPropertyAnnotation extends Model
  */
 class ModelWithPropertyAnnotations extends Model
 {
-    /** @return HasOne<User> */
+    /** @return HasOne<User, ModelWithPropertyAnnotations> */
     public function nullableUser(): HasOne
     {
         return $this->hasOne(User::class);
     }
 
-    /** @return HasOne<User> */
+    /** @return HasOne<User, ModelWithPropertyAnnotations> */
     public function nonNullableUser(): HasOne
     {
         return $this->hasOne(User::class);
@@ -329,7 +329,7 @@ class ExtendsModelWithPropertyAnnotations extends ModelWithPropertyAnnotations
 class Tag extends Model
 {
     /**
-     * @phpstan-return MorphToMany<Address>
+     * @phpstan-return MorphToMany<Address, Tag>
      */
     public function addresses(): MorphToMany
     {
@@ -337,7 +337,7 @@ class Tag extends Model
     }
 
     /**
-     * @phpstan-return MorphToMany<Address>
+     * @phpstan-return MorphToMany<Address, Tag>
      */
     public function addressesWithPivot(): MorphToMany
     {

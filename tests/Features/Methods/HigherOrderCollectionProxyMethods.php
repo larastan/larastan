@@ -72,7 +72,7 @@ class HigherOrderCollectionProxyMethods
         return $this->users->map->isActive();
     }
 
-    /** @return SupportCollection<int, HasMany<Account>> */
+    /** @return SupportCollection<int, HasMany<Account, User>> */
     public function testMapWithRelationMethod(): SupportCollection
     {
         return $this->users->map->accounts();

@@ -16,13 +16,13 @@ class Scopes extends Model
     /** @var User */
     private $user;
 
-    /** @phpstan-return HasOne<User> */
+    /** @phpstan-return HasOne<User, Scopes> */
     public function testScopeAfterRelation(): HasOne
     {
         return $this->hasOne(User::class)->active();
     }
 
-    /** @phpstan-return HasMany<User> */
+    /** @phpstan-return HasMany<User, Scopes> */
     public function testScopeAfterRelationWithHasMany(): HasMany
     {
         return $this->hasMany(User::class)->active();

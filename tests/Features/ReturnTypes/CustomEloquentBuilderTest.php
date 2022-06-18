@@ -35,7 +35,7 @@ class CustomEloquentBuilderTest
         return ModelWithCustomBuilder::type('foo');
     }
 
-    /** @phpstan-return HasMany<ModelWithCustomBuilder> */
+    /** @phpstan-return HasMany<ModelWithCustomBuilder, FooModel> */
     public function testCustomBuilderMethodThroughRelation(): HasMany
     {
         $foo = new FooModel();
@@ -215,7 +215,7 @@ class CustomEloquentBuilderTest
 
 class FooModel extends Model
 {
-    /** @return HasMany<ModelWithCustomBuilder> */
+    /** @return HasMany<ModelWithCustomBuilder, FooModel> */
     public function customModels(): HasMany
     {
         return $this->hasMany(ModelWithCustomBuilder::class);
@@ -230,7 +230,7 @@ class FooModel extends Model
 class ModelWithCustomBuilder extends Model
 {
     // Dummy relation
-    /** @return HasMany<User> */
+    /** @return HasMany<User, ModelWithCustomBuilder> */
     public function users(): HasMany
     {
         return $this->hasMany(User::class);

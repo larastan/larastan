@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Features\Properties;
 
 use App\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -41,13 +42,13 @@ class ModelRelationsExtension
 
 class DummyModel extends Model
 {
-    /** @return HasMany<OtherDummyModel> */
+    /** @return HasMany<OtherDummyModel, DummyModel> */
     public function hasManyRelation(): HasMany
     {
         return $this->hasMany(OtherDummyModel::class);
     }
 
-    /** @return HasManyThrough<OtherDummyModel> */
+    /** @return HasManyThrough<OtherDummyModel, DummyModel, User, Collection<int, OtherDummyModel>> */
     public function hasManyThroughRelation(): HasManyThrough
     {
         return $this->hasManyThrough(OtherDummyModel::class, User::class);
