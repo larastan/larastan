@@ -2,16 +2,14 @@
 
 namespace Illuminate\Database\Eloquent\Relations;
 
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+
 /**
- * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
- * @extends HasOneOrMany<TRelatedModel>
+ * @template TRelatedModel of Model
+ * @template TDeclaringModel of Model
+ * @extends HasOneOrMany<TRelatedModel, TDeclaringModel, Collection<int, TRelatedModel>>
  */
 class HasMany extends HasOneOrMany
 {
-    /**
-     * Get the results of the relationship.
-     *
-     * @phpstan-return \Traversable<int, TRelatedModel>
-     */
-    public function getResults();
 }
