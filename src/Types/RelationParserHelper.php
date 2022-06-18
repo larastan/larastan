@@ -38,6 +38,19 @@ class RelationParserHelper
     public function findRelatedModelInRelationMethod(
         MethodReflection $methodReflection
     ): ?string {
+        return $this->findNthModelInRelationMethod($methodReflection, 0);
+    }
+
+    public function findIntermediateModelInRelationMethod(
+        MethodReflection $methodReflection
+    ): ?string {
+        return $this->findNthModelInRelationMethod($methodReflection, 1);
+    }
+
+    private function findNthModelInRelationMethod(
+        MethodReflection $methodReflection,
+        int $argIndex
+    ): ?string {
         if (method_exists($methodReflection, 'getDeclaringTrait') && $methodReflection->getDeclaringTrait() !== null) {
             $fileName = $methodReflection->getDeclaringTrait()->getFileName();
         } else {
@@ -74,7 +87,7 @@ class RelationParserHelper
             $methodCall = $methodCall->var;
         }
 
-        if (count($methodCall->getArgs()) < 1) {
+        if (count($methodCall->getArgs()) < $argIndex + 1) {
             return null;
         }
 
@@ -89,7 +102,7 @@ class RelationParserHelper
             ->enterClass($methodReflection->getDeclaringClass())
             ->enterClassMethod($relationMethod, TemplateTypeMap::createEmpty(), [], null, null, null, false, false, false);
 
-        $argType = $methodScope->getType($methodCall->getArgs()[0]->value);
+        $argType = $methodScope->getType($methodCall->getArgs()[$argIndex]->value);
         $returnClass = null;
 
         if ($argType instanceof ConstantStringType) {
