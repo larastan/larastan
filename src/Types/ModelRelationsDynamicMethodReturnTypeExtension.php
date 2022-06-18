@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Types;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use NunoMaduro\Larastan\Concerns\HasContainer;
+use NunoMaduro\Larastan\Methods\BuilderHelper;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
@@ -15,6 +15,7 @@ use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
@@ -22,12 +23,19 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
 {
     use HasContainer;
 
+    /** @var BuilderHelper */
+    private $builderHelper;
+
     /** @var RelationParserHelper */
     private $relationParserHelper;
 
-    public function __construct(RelationParserHelper $relationParserHelper)
+    public function __construct(
+        RelationParserHelper $relationParserHelper,
+        BuilderHelper $builderHelper
+    )
     {
         $this->relationParserHelper = $relationParserHelper;
+        $this->builderHelper = $builderHelper;
     }
 
     public function getClass(): string
@@ -89,20 +97,44 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
         /** @var ObjectType $returnType */
         $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
 
+        $relationClassName = $returnType->getClassName();
+
         /** @var string $relatedModelClassName */
         $relatedModelClassName = $this
             ->relationParserHelper
             ->findRelatedModelInRelationMethod($methodReflection);
 
-        $classReflection = $methodReflection->getDeclaringClass();
+        $declaringModelClassName = $methodReflection->getDeclaringClass()->getName();
 
-        if ($returnType->isInstanceOf(BelongsTo::class)->yes()) {
-            return new GenericObjectType($returnType->getClassName(), [
-                new ObjectType($relatedModelClassName),
-                new ObjectType($classReflection->getName()),
-            ]);
+        $templateTypes = [
+            new ObjectType($relatedModelClassName),
+            new ObjectType($declaringModelClassName),
+        ];
+
+        if (in_array($relationClassName, ['HasOneThrough', 'HasManyThrough'])) {
+            /** @var string $intermediateModelClassName */
+            $intermediateModelClassName = $this
+                ->relationParserHelper
+                ->findIntermediateModelInRelationMethod($methodReflection);
+            $templateTypes[] = new ObjectType($intermediateModelClassName);
         }
 
-        return new GenericObjectType($returnType->getClassName(), [new ObjectType($relatedModelClassName)]);
+        // Work-around for a Laravel bug
+        // Opposed to other `HasOne...` and `HasMany...` methods,
+        // `HasOneThrough` and `HasManyThrough` do not extend a common
+        // `HasOneOrManyThrough` base class, but `HasOneThrough` directly
+        // extends `HasManyThrough`.
+        // This does not only violate Liskov's Substitution Principle but also
+        // has the unfortunate side effect that `HasManyThrough` cannot
+        // bind the template parameter `TResult` to a Collection, but needs
+        // to keep it unbound for `HasOneThrough` to overwrite it.
+        // Hence, if `HasManyTrough` is used directly, we must bind the
+        // fourth template parameter `TResult` here.
+        if ($relationClassName === 'HasManyThrough') {
+            $collectionClassName = $this->builderHelper->determineCollectionClassName($relatedModelClassName);
+            $templateTypes[] = new GenericObjectType($collectionClassName, [new IntegerType(), new ObjectType($relatedModelClassName)]);
+        }
+
+        return new GenericObjectType($relationClassName, $templateTypes);
     }
 }
