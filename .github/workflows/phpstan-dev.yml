@@ -1,0 +1,40 @@
+name: "PHPStan dev"
+
+on:
+  schedule:
+    - cron: "1 0 * * *"
+
+jobs:
+  phpstan-dev:
+    strategy:
+      matrix:
+        php: ["8.1"]
+        laravel: ["^9.0"]
+        dependencies:
+            - "highest"
+
+    name: "P${{ matrix.php }} - L${{ matrix.laravel }}"
+
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout code"
+        uses: "actions/checkout@v2"
+
+      - name: "Setup PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php }}"
+          extensions: "dom, curl, libxml, mbstring, zip"
+          tools: "composer:v2"
+          coverage: "none"
+
+      - name: "Require PHPStan dev version"
+        run: "composer require phpstan/phpstan:@dev --no-update --no-interaction --no-progress"
+
+      - name: "Install highest dependencies from composer.json"
+        if: "matrix.dependencies == 'highest'"
+        run: "composer update --with='illuminate/contracts:${{ matrix.laravel }}' --no-interaction --no-progress"
+
+      - name: "Execute static analysis"
+        run: "composer run-script test:types"
