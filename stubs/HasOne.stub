@@ -2,16 +2,39 @@
 
 namespace Illuminate\Database\Eloquent\Relations;
 
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
 /**
- * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
- * @extends HasOneOrMany<TRelatedModel>
+ * @template TRelatedModel of Model
+ * @template TDeclaringModel of Model
+ * @extends HasOneOrMany<TRelatedModel, TDeclaringModel, ?TRelatedModel>
  */
 class HasOne extends HasOneOrMany
 {
     /**
-     * Get the results of the relationship.
+     * Add constraints for inner join subselect for one of many relationships.
      *
-     * @phpstan-return ?TRelatedModel
+     * @param  Builder<TRelatedModel>  $query
+     * @param  model-property<TRelatedModel>|null  $column
+     * @param  string|null  $aggregate
+     * @return void
      */
-    public function getResults();
+    public function addOneOfManySubQueryConstraints(Builder $query, $column = null, $aggregate = null);
+
+    /**
+     * Make a new related instance for the given model.
+     *
+     * @param  TDeclaringModel  $parent
+     * @return TRelatedModel
+     */
+    public function newRelatedInstanceFor(Model $parent);
+
+    /**
+     * Get the value of the model's foreign key.
+     *
+     * @param  TRelatedModel $model
+     * @return mixed
+     */
+    protected function getRelatedKeyFrom(Model $model);
 }
