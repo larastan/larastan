@@ -6,7 +6,6 @@ namespace NunoMaduro\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Reflection\ClassReflection;
@@ -109,14 +108,12 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
         $parametersAcceptor = ParametersAcceptorSelector::selectSingle($reflection->getVariants());
         $returnType = $parametersAcceptor->getReturnType();
 
-        $types = [$relatedModel];
-
-        // BelongsTo relation needs second generic type
-        if ((new ObjectType(BelongsTo::class))->isSuperTypeOf(new ObjectType($classReflection->getName()))->yes()) {
-            $childType = $classReflection->getActiveTemplateTypeMap()->getType('TChildModel');
-
-            if ($childType !== null) {
-                $types[] = $childType;
+        // Copy template parameters with generic types of relation
+        $types = [];
+        foreach (['TRelatedModel', 'TDeclaringModel', 'TIntermediateModel', 'TResult'] as $templateParameter) {
+            $type = $classReflection->getActiveTemplateTypeMap()->getType($templateParameter);
+            if ($type !== null) {
+                $types[] = $type;
             }
         }
 
