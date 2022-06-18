@@ -5,7 +5,7 @@ on:
     # Prevent duplicating jobs on PR-s from local branches
     branches:
       - "master"
-  pull_request:
+  pull_request: null
   schedule:
     - cron: "0 0 * * *"
 
@@ -41,7 +41,7 @@ jobs:
 
       - name: "Check file permissions"
         run: "test \"$(find . -type f -not -path './.git/*' -executable)\" == ./tests/laravel-test.sh"
-        
+
       - name: "Install lowest dependencies from composer.json"
         if: "matrix.dependencies == 'lowest'"
         run: "composer update --with='illuminate/contracts:${{ matrix.laravel }}' --no-interaction --no-progress --prefer-lowest"
