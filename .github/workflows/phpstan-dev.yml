@@ -1,9 +1,9 @@
 name: "PHPStan dev"
 
 on:
-  push: null
-  pull_request: null
-  
+  schedule:
+    - cron: "1 0 * * *"
+
 jobs:
   phpstan-dev:
     strategy:
