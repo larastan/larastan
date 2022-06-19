@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Types;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use NunoMaduro\Larastan\Concerns\HasContainer;
 use NunoMaduro\Larastan\Methods\BuilderHelper;
@@ -32,8 +33,7 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
     public function __construct(
         RelationParserHelper $relationParserHelper,
         BuilderHelper $builderHelper
-    )
-    {
+    ) {
         $this->relationParserHelper = $relationParserHelper;
         $this->builderHelper = $builderHelper;
     }
@@ -97,8 +97,6 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
         /** @var ObjectType $returnType */
         $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
 
-        $relationClassName = $returnType->getClassName();
-
         /** @var string $relatedModelClassName */
         $relatedModelClassName = $this
             ->relationParserHelper
@@ -111,7 +109,8 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
             new ObjectType($declaringModelClassName),
         ];
 
-        if (in_array($relationClassName, ['HasOneThrough', 'HasManyThrough'])) {
+        $hasManyThroughType = new ObjectType(HasManyThrough::class);
+        if ($hasManyThroughType->isSuperTypeOf($returnType)->yes()) {
             /** @var string $intermediateModelClassName */
             $intermediateModelClassName = $this
                 ->relationParserHelper
@@ -130,11 +129,11 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
         // to keep it unbound for `HasOneThrough` to overwrite it.
         // Hence, if `HasManyTrough` is used directly, we must bind the
         // fourth template parameter `TResult` here.
-        if ($relationClassName === 'HasManyThrough') {
+        if ($hasManyThroughType->equals($returnType)) {
             $collectionClassName = $this->builderHelper->determineCollectionClassName($relatedModelClassName);
             $templateTypes[] = new GenericObjectType($collectionClassName, [new IntegerType(), new ObjectType($relatedModelClassName)]);
         }
 
-        return new GenericObjectType($relationClassName, $templateTypes);
+        return new GenericObjectType($returnType->getClassName(), $templateTypes);
     }
 }

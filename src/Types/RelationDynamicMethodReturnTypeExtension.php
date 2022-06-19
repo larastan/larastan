@@ -69,7 +69,7 @@ class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTyp
 
         if (
             // Special case for MorphTo. `morphTo` can be called without arguments.
-            ($methodName !== 'morphTo' && $numArgs < 1 ) ||
+            ($methodName !== 'morphTo' && $numArgs < 1) ||
             // Special case for "...Through". `has...Through` must be called with a 2nd parameter for the intermediate model
             (in_array($methodName, ['hasOneThrough', 'hasManyThrough']) && $numArgs < 2)
         ) {
