@@ -10,8 +10,6 @@ jobs:
       matrix:
         php: ["8.1"]
         laravel: ["^9.0"]
-        dependencies:
-            - "highest"
 
     name: "P${{ matrix.php }} - L${{ matrix.laravel }}"
 
@@ -29,12 +27,20 @@ jobs:
           tools: "composer:v2"
           coverage: "none"
 
+      - name: "Install highest dependencies from composer.json"
+        run: "composer update --with='illuminate/contracts:${{ matrix.laravel }}' --no-interaction --no-progress"
+
       - name: "Require PHPStan dev version"
         run: "composer require phpstan/phpstan:@dev --no-update --no-interaction --no-progress"
 
-      - name: "Install highest dependencies from composer.json"
-        if: "matrix.dependencies == 'highest'"
-        run: "composer update --with='illuminate/contracts:${{ matrix.laravel }}' --no-interaction --no-progress"
+      - name: "Change composer config minimum-stability"
+        run: "composer config minimum-stability stable"
+
+      - name: "Change composer config prefer-stable"
+        run: "composer config prefer-stable false"
+
+      - name: "Switch to PHPStan dev version"
+        run: "composer update phpstan/phpstan --no-interaction --no-progress"
 
       - name: "Execute static analysis"
         run: "composer run-script test:types"
