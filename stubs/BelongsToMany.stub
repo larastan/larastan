@@ -86,8 +86,7 @@ class BelongsToMany extends Relation
     /**
      * Execute the query and get the first result.
      *
-     * @psalm-param  array<int, string>  $columns
-     * @param  array<int, model-property<TRelatedModel>> $columns
+     * @psalm-param  array<int, string>|string  $columns
      * @param  array<int, (model-property<TRelatedModel>|'*')>|model-property<TRelatedModel>|'*'  $columns
      * @return TRelatedModel|null
      */
@@ -96,9 +95,8 @@ class BelongsToMany extends Relation
     /**
      * Execute the query and get the first result or throw an exception.
      *
-     * @psalm-param  array<int, string>  $columns
-     * @param  array<int, model-property<TRelatedModel>> $columns
-     * @param  array<int, (model-property<TRelatedModel>|'*')>|model-property<TRelatedModel>|'*'  $attributes
+     * @psalm-param  array<int, string>|string  $columns
+     * @param  array<int, (model-property<TRelatedModel>|'*')>|model-property<TRelatedModel>|'*'  $columns
      * @return TRelatedModel
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException

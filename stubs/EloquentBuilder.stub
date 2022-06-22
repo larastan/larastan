@@ -436,7 +436,6 @@ class Builder
      *
      * @psalm-param array<int, string>|string $columns
      * @param  array<int, (model-property<TModelClass>|'*')>|model-property<TModelClass>|'*'  $columns
-     * @param  array<int, mixed>|string|'*'  $columns
      * @return \Illuminate\Database\Eloquent\Collection<int, TModelClass>
      */
     public function get($columns = ['*']);
