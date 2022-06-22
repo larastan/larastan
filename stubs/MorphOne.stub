@@ -11,7 +11,7 @@ class MorphOne extends MorphOneOrMany
     /**
      * Get the results of the relationship.
      *
-     * @phpstan-return ?TRelatedModel
+     * @return ?TRelatedModel
      */
     public function getResults();
 }

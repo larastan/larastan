@@ -9,16 +9,17 @@ namespace Illuminate\Database\Eloquent\Relations;
 class MorphMany extends MorphOneOrMany
 {
     /**
+     * @psalm-param array<string, mixed> $attributes
      * @param array<model-property<TRelatedModel>, mixed> $attributes
      *
-     * @phpstan-return TRelatedModel
+     * @return TRelatedModel
      */
     public function create(array $attributes = []);
 
     /**
      * Get the results of the relationship.
      *
-     * @phpstan-return \Traversable<int, TRelatedModel>
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function getResults();
 }

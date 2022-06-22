@@ -9,9 +9,10 @@ namespace Illuminate\Database\Eloquent\Relations;
 abstract class MorphOneOrMany extends HasOneOrMany
 {
     /**
+     * @psalm-param array<string, mixed> $attributes
      * @param array<model-property<TRelatedModel>, mixed> $attributes
      *
-     * @phpstan-return TRelatedModel
+     * @return TRelatedModel
      */
     public function create(array $attributes = []);
 }

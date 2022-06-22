@@ -12,6 +12,7 @@ class BelongsToMany extends Relation
      * Find a related model by its primary key or return new instance of the related model.
      *
      * @param  mixed  $id
+     * @psalm-param  array<int, string>|string  $columns
      * @param  array<int, (model-property<TRelatedModel>|'*')>|model-property<TRelatedModel>|'*'  $columns
      * @return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Support\Collection<int, TRelatedModel> : TRelatedModel)
      */
@@ -20,7 +21,8 @@ class BelongsToMany extends Relation
     /**
      * Get the first related model record matching the attributes or instantiate it.
      *
-     * @param  array<string, mixed>  $attributes
+     * @psalm-param  array<string, mixed>  $attributes
+     * @param  array<model-property<TRelatedModel>, mixed> $attributes
      * @return TRelatedModel
      */
     public function firstOrNew(array $attributes);
@@ -28,7 +30,8 @@ class BelongsToMany extends Relation
     /**
      * Get the first related record matching the attributes or create it.
      *
-     * @param  array<string, mixed>  $attributes
+     * @psalm-param  array<string, mixed>  $attributes
+     * @param  array<model-property<TRelatedModel>, mixed> $attributes
      * @param  array<mixed>  $joining
      * @param  bool  $touch
      * @return TRelatedModel
@@ -38,8 +41,10 @@ class BelongsToMany extends Relation
     /**
      * Create or update a related record matching the attributes, and fill it with values.
      *
-     * @param  array<string, mixed>  $attributes
-     * @param  array<mixed>  $values
+     * @psalm-param  array<string, mixed>  $attributes
+     * @param  array<model-property<TRelatedModel>, mixed> $attributes
+     * @psalm-param  array<string, mixed>  $values
+     * @param  array<model-property<TRelatedModel>, mixed> $values
      * @param  array<mixed>  $joining
      * @param  bool  $touch
      * @return TRelatedModel
@@ -50,7 +55,8 @@ class BelongsToMany extends Relation
      * Find a related model by its primary key.
      *
      * @param  mixed  $id
-     * @param  array<int, mixed>  $columns
+     * @psalm-param  array<int, string>  $columns
+     * @param  array<int, model-property<TRelatedModel>> $columns
      * @return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> : TRelatedModel)|null
      */
     public function find($id, $columns = ['*']);
@@ -59,7 +65,8 @@ class BelongsToMany extends Relation
      * Find multiple related models by their primary keys.
      *
      * @param  \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|int[]  $ids
-     * @param  array<int, mixed>  $columns
+     * @psalm-param  array<int, string>  $columns
+     * @param  array<int, model-property<TRelatedModel>> $columns
      * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function findMany($ids, $columns = ['*']);
@@ -68,7 +75,8 @@ class BelongsToMany extends Relation
      * Find a related model by its primary key or throw an exception.
      *
      * @param  mixed  $id
-     * @param  array<int, mixed>  $columns
+     * @psalm-param  array<int, string>  $columns
+     * @param  array<int, model-property<TRelatedModel>> $columns
      * @return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> : TRelatedModel)
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
@@ -78,7 +86,9 @@ class BelongsToMany extends Relation
     /**
      * Execute the query and get the first result.
      *
-     * @param  array<int, mixed>  $columns
+     * @psalm-param  array<int, string>  $columns
+     * @param  array<int, model-property<TRelatedModel>> $columns
+     * @param  array<int, (model-property<TRelatedModel>|'*')>|model-property<TRelatedModel>|'*'  $columns
      * @return TRelatedModel|null
      */
     public function first($columns = ['*']);
@@ -86,7 +96,9 @@ class BelongsToMany extends Relation
     /**
      * Execute the query and get the first result or throw an exception.
      *
-     * @param  array<int, mixed>  $columns
+     * @psalm-param  array<int, string>  $columns
+     * @param  array<int, model-property<TRelatedModel>> $columns
+     * @param  array<int, (model-property<TRelatedModel>|'*')>|model-property<TRelatedModel>|'*'  $attributes
      * @return TRelatedModel
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
@@ -96,6 +108,7 @@ class BelongsToMany extends Relation
     /**
      * Create a new instance of the related model.
      *
+     * @psalm-param  array<string, mixed>  $attributes
      * @param  array<model-property<TRelatedModel>, mixed>  $attributes
      * @param  mixed[]  $joining
      * @param  bool  $touch
@@ -106,7 +119,7 @@ class BelongsToMany extends Relation
     /**
      * Get the results of the relationship.
      *
-     * @phpstan-return \Traversable<int, TRelatedModel>
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function getResults();
 }

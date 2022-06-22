@@ -20,8 +20,9 @@ abstract class HasOneOrMany extends Relation
     public function __construct(\Illuminate\Database\Eloquent\Builder $query, \Illuminate\Database\Eloquent\Model $parent, $foreignKey, $localKey);
 
     /**
+     * @psalm-param array<string, mixed> $attributes
      * @param array<model-property<TRelatedModel>, mixed> $attributes
-     * @phpstan-return TRelatedModel
+     * @return TRelatedModel
      */
     public function make(array $attributes = []);
 
@@ -37,6 +38,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Get the first related model record matching the attributes or instantiate it.
      *
+     * @psalm-param  array<string, mixed>  $attributes
      * @param  array<model-property<TRelatedModel>, mixed>  $attributes
      * @param  array<mixed, mixed>  $values
      * @return TRelatedModel
@@ -46,6 +48,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Get the first related record matching the attributes or create it.
      *
+     * @psalm-param  array<string, mixed>  $attributes
      * @param  array<model-property<TRelatedModel>, mixed>  $attributes
      * @param  array<mixed, mixed>  $values
      * @return TRelatedModel
@@ -55,6 +58,7 @@ abstract class HasOneOrMany extends Relation
     /**
      * Create or update a related record matching the attributes, and fill it with values.
      *
+     * @psalm-param  array<string, mixed>  $attributes
      * @param  array<model-property<TRelatedModel>, mixed>  $attributes
      * @param  array<array-key, mixed>  $values
      * @return TRelatedModel
@@ -70,9 +74,9 @@ abstract class HasOneOrMany extends Relation
     public function save(\Illuminate\Database\Eloquent\Model $model);
 
     /**
-     * @phpstan-param array<model-property<TRelatedModel>, mixed> $attributes
-     *
-     * @phpstan-return TRelatedModel
+     * @psalm-param  array<string, mixed>  $attributes
+     * @param  array<model-property<TRelatedModel>, mixed>  $attributes
+     * @return TRelatedModel
      */
     public function create(array $attributes = []);
 

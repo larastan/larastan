@@ -17,6 +17,7 @@ class Factory
     /**
      * Get a new factory instance for the given attributes.
      *
+     * @psalm-param  callable|array<string, mixed>  $attributes
      * @param  callable|array<model-property<TModel>, mixed>  $attributes
      * @return static
      */
@@ -25,6 +26,7 @@ class Factory
     /**
      * Create a single model and persist it to the database.
      *
+     * @psalm-param  array<string, mixed>  $attributes
      * @param  array<model-property<TModel>, mixed> $attributes
      * @return TModel
      */
@@ -33,6 +35,7 @@ class Factory
     /**
      * Create a collection of models and persist them to the database.
      *
+     * @psalm-param  iterable<callable|array<string, mixed>>  $attributes
      * @param  iterable<callable|array<model-property<TModel>, mixed>>  $records
      * @return \Illuminate\Database\Eloquent\Collection<int, TModel>
      */
@@ -41,6 +44,7 @@ class Factory
     /**
      * Create a collection of models and persist them to the database.
      *
+     * @psalm-param  array<string, mixed>  $attributes
      * @param  array<model-property<TModel>, mixed>  $attributes
      * @param  \Illuminate\Database\Eloquent\Model|null  $parent
      * @return \Illuminate\Database\Eloquent\Collection<int, TModel>|TModel
@@ -50,6 +54,7 @@ class Factory
     /**
      * Make a single instance of the model.
      *
+     * @psalm-param  callable|array<string, mixed>  $attributes
      * @param  callable|array<model-property<TModel>, mixed>  $attributes
      * @return TModel
      */
@@ -58,6 +63,7 @@ class Factory
     /**
      * Create a collection of models.
      *
+     * @psalm-param  array<string, mixed>  $attributes
      * @param  array<model-property<TModel>, mixed>  $attributes
      * @param  \Illuminate\Database\Eloquent\Model|null  $parent
      * @return \Illuminate\Database\Eloquent\Collection<int, TModel>|TModel
@@ -75,6 +81,7 @@ class Factory
     /**
      * Define the model's default state.
      *
+     * @psalm-return array<string, mixed>
      * @return array<model-property<TModel>, mixed>
      */
     abstract public function definition();

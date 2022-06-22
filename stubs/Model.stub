@@ -25,8 +25,9 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
     /**
      * Update the model in the database.
      *
-     * @param  array<model-property<static>, mixed>  $attributes
-     * @param  array<int|string, mixed>  $options
+     * @psalm-param array<string, mixed> $attributes
+     * @param array<model-property<static>, mixed> $attributes
+     * @param array<array-key, mixed>  $options
      * @return bool
      */
     public function update(array $attributes = [], array $options = []);
@@ -34,7 +35,7 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
     /**
      * Begin querying a model with eager loading.
      *
-     * @param  string|array<int|string, (\Closure)|string>  $relations
+     * @param string|array<int|string, (\Closure)|string>  $relations
      * @return \Illuminate\Database\Eloquent\Builder<static>
      */
     public static function with($relations);

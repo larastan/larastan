@@ -296,6 +296,7 @@ class Builder
     /**
      * Add an "or where" clause to the query.
      *
+     * @psalm-param  \Closure|string|array<array-key, mixed>  $column
      * @param  \Closure|model-property|array<model-property|int, mixed>  $column
      * @param  mixed  $operator
      * @param  mixed  $value
@@ -307,6 +308,7 @@ class Builder
     /**
      * Add a "where" clause comparing two columns to the query.
      *
+     * @psalm-param  string|array<array-key, mixed>  $first
      * @param  model-property|array<model-property|int, mixed>  $first
      * @param  string|null  $operator
      * @param  string|null  $second

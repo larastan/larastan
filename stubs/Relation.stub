@@ -10,15 +10,17 @@ abstract class Relation
     /**
      * Execute the query as a "select" statement.
      *
-     * @param array<int, string> $columns
-     * @phpstan-return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
+     * @psalm-param array<int, string> $columns
+     * @param array<int, model-property<TRelatedModel>> $columns
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function get($columns = ['*']);
 
 
     /**
+     * @psalm-param array<string, mixed> $attributes
      * @param array<model-property<TRelatedModel>, mixed> $attributes
-     * @phpstan-return TRelatedModel
+     * @return TRelatedModel
      */
     public function make(array $attributes = []);
 }
