@@ -24,7 +24,7 @@
         "illuminate/support": "^9",
         "mockery/mockery": "^1.4.4",
         "phpmyadmin/sql-parser": "^5.5",
-        "phpstan/phpstan": "^1.7.12"
+        "phpstan/phpstan": "^1.8.1"
     },
     "require-dev": {
         "nikic/php-parser": "^4.13.2",
