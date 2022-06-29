@@ -5,7 +5,6 @@ namespace Reflection;
 use Generator;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use NunoMaduro\Larastan\Methods\Extension;
 use NunoMaduro\Larastan\Methods\MacroMethodsClassReflectionExtension;
 use PHPStan\Reflection\InitializerExprTypeResolver;
 use PHPStan\Reflection\ReflectionProvider;

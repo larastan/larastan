@@ -41,7 +41,7 @@ class MacroMethodsClassReflectionExtension implements \PHPStan\Reflection\Method
                     $macroTraitProperty = 'macros';
                 }
             }
-        }  elseif ($classReflection->hasTraitUse(Macroable::class) || $classReflection->getName() === Builder::class) {
+        } elseif ($classReflection->hasTraitUse(Macroable::class) || $classReflection->getName() === Builder::class) {
             $className = $classReflection->getName();
             $macroTraitProperty = 'macros';
         } elseif ($this->hasIndirectTraitUse($classReflection, CarbonMacro::class)) {
@@ -67,7 +67,7 @@ class MacroMethodsClassReflectionExtension implements \PHPStan\Reflection\Method
 
                     $methodReflection->setIsStatic(true);
 
-                    $this->methods[$classReflection->getName() . '-' . $methodName] = $methodReflection;
+                    $this->methods[$classReflection->getName().'-'.$methodName] = $methodReflection;
                 }
             }
         }
@@ -79,7 +79,7 @@ class MacroMethodsClassReflectionExtension implements \PHPStan\Reflection\Method
         ClassReflection $classReflection,
         string $methodName
     ): MethodReflection {
-        return $this->methods[$classReflection->getName() . '-' . $methodName];
+        return $this->methods[$classReflection->getName().'-'.$methodName];
     }
 
     private function hasIndirectTraitUse(ClassReflection $class, string $traitName): bool

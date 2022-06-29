@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
-use PHPStan\Reflection\InitializerExprContext;
-use PHPStan\Reflection\InitializerExprTypeResolver;
 use function array_map;
 use Closure;
 use ErrorException;
@@ -13,6 +11,8 @@ use Illuminate\Validation\ValidationException;
 use PHPStan\Reflection\ClassMemberReflection;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\FunctionVariant;
+use PHPStan\Reflection\InitializerExprContext;
+use PHPStan\Reflection\InitializerExprTypeResolver;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParameterReflection;
 use PHPStan\Reflection\PassedByReference;
