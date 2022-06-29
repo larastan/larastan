@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
+use PHPStan\Reflection\InitializerExprContext;
+use PHPStan\Reflection\InitializerExprTypeResolver;
 use function array_map;
 use Closure;
 use ErrorException;
@@ -28,25 +30,6 @@ use stdClass;
 final class Macro implements MethodReflection
 {
     /**
-     * @var ClassReflection
-     */
-    private $classReflection;
-
-    /**
-     * The method name.
-     *
-     * @var string
-     */
-    private $methodName;
-
-    /**
-     * The reflection function.
-     *
-     * @var ReflectionFunction
-     */
-    private $reflectionFunction;
-
-    /**
      * The parameters.
      *
      * @var ReflectionParameter[]
@@ -69,12 +52,11 @@ final class Macro implements MethodReflection
         'validate' => ValidationException::class,
         'validateWithBag' => ValidationException::class,
     ];
+    private InitializerExprTypeResolver $exprTypeResolver;
 
-    public function __construct(ClassReflection $classReflection, string $methodName, ReflectionFunction $reflectionFunction)
+    public function __construct(private ClassReflection $classReflection, private string $methodName, private ReflectionFunction $reflectionFunction, InitializerExprTypeResolver $exprTypeResolver)
     {
-        $this->classReflection = $classReflection;
-        $this->methodName = $methodName;
-        $this->reflectionFunction = $reflectionFunction;
+        $this->exprTypeResolver = $exprTypeResolver;
         $this->parameters = $this->reflectionFunction->getParameters();
 
         if ($this->reflectionFunction->isClosure()) {
@@ -151,16 +133,20 @@ final class Macro implements MethodReflection
     public function getParameters(): array
     {
         return array_map(function (ReflectionParameter $reflection): ParameterReflection {
-            return new class($reflection) implements ParameterReflection
+            return new class($reflection, $this->reflectionFunction, $this->exprTypeResolver) implements ParameterReflection
             {
                 /**
                  * @var ReflectionParameter
                  */
                 private $reflection;
+                private ReflectionFunction $function;
+                private InitializerExprTypeResolver $exprTypeResolver;
 
-                public function __construct(ReflectionParameter $reflection)
+                public function __construct(ReflectionParameter $reflection, \ReflectionFunction $function, InitializerExprTypeResolver $exprTypeResolver)
                 {
                     $this->reflection = $reflection;
+                    $this->function = $function;
+                    $this->exprTypeResolver = $exprTypeResolver;
                 }
 
                 public function getName(): string
@@ -186,7 +172,9 @@ final class Macro implements MethodReflection
 
                 public function passedByReference(): PassedByReference
                 {
-                    return PassedByReference::createNo();
+                    return $this->reflection->isPassedByReference()
+                        ? PassedByReference::createCreatesNewVariable()
+                        : PassedByReference::createNo();
                 }
 
                 public function isVariadic(): bool
@@ -196,7 +184,13 @@ final class Macro implements MethodReflection
 
                 public function getDefaultValue(): ?Type
                 {
-                    return null;
+                    if (! $this->reflection->isDefaultValueAvailable()) {
+                        return null;
+                    }
+
+                    $betterReflection = \PHPStan\BetterReflection\Reflection\ReflectionParameter::createFromClosure($this->function->getClosure(), $this->getName());
+
+                    return $this->exprTypeResolver->getType($betterReflection->getDefaultValueExpr(), InitializerExprContext::fromReflectionParameter(new \PHPStan\BetterReflection\Reflection\Adapter\ReflectionParameter($betterReflection)));
                 }
             };
         }, $this->parameters);

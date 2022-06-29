@@ -55,7 +55,6 @@ final class Kernel
             ->through(
                 [
                     Pipes\SelfClass::class,
-                    Pipes\Macros::class,
                     Pipes\Contracts::class,
                     Pipes\Facades::class,
                     Pipes\Managers::class,

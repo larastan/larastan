@@ -1,6 +1,16 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Parameter \\#1 \\$closure of static method PHPStan\\\\BetterReflection\\\\Reflection\\\\ReflectionParameter\\:\\:createFromClosure\\(\\) expects Closure, Closure\\|null given\\.$#"
+			count: 1
+			path: src/Methods/Macro.php
+
+		-
+			message: "#^Creating new ReflectionFunction is a runtime reflection concept that might not work in PHPStan because it uses fully static reflection engine\\. Use objects retrieved from ReflectionProvider instead\\.$#"
+			count: 1
+			path: src/Methods/MacroMethodsClassReflectionExtension.php
+
+		-
 			message: "#^Creating new PHPStan\\\\Reflection\\\\Php\\\\DummyParameter is not covered by backward compatibility promise\\. The class might change in a minor PHPStan version\\.$#"
 			count: 1
 			path: src/Methods/ModelForwardsCallsExtension.php

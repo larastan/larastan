@@ -6,7 +6,8 @@ use Generator;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use NunoMaduro\Larastan\Methods\Extension;
-use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
+use NunoMaduro\Larastan\Methods\MacroMethodsClassReflectionExtension;
+use PHPStan\Reflection\InitializerExprTypeResolver;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Testing\PHPStanTestCase;
 use PHPStan\Type\ObjectType;
@@ -19,7 +20,7 @@ class MacroMethodsClassReflectionExtensionTest extends PHPStanTestCase
     private $reflectionProvider;
 
     /**
-     * @var Extension
+     * @var MacroMethodsClassReflectionExtension
      */
     private $reflectionExtension;
 
@@ -28,10 +29,7 @@ class MacroMethodsClassReflectionExtensionTest extends PHPStanTestCase
         parent::setUp();
 
         $this->reflectionProvider = $this->createReflectionProvider();
-        $this->reflectionExtension = new Extension(
-            self::getContainer()->getByType(PhpMethodReflectionFactory::class),
-            $this->reflectionProvider
-        );
+        $this->reflectionExtension = new MacroMethodsClassReflectionExtension($this->reflectionProvider, self::getContainer()->getByType(InitializerExprTypeResolver::class));
     }
 
     /**
