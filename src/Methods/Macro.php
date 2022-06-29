@@ -4,55 +4,19 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
-use function array_map;
-use Closure;
-use ErrorException;
 use Illuminate\Validation\ValidationException;
 use PHPStan\Reflection\ClassMemberReflection;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\ParameterReflection;
-use PHPStan\Reflection\PassedByReference;
 use PHPStan\TrinaryLogic;
+use PHPStan\Type\ClosureType;
 use PHPStan\Type\Generic\TemplateTypeMap;
-use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
-use PHPStan\Type\TypehintHelper;
-use ReflectionFunction;
-use ReflectionParameter;
-use ReflectionType;
-use stdClass;
 
 final class Macro implements MethodReflection
 {
-    /**
-     * @var ClassReflection
-     */
-    private $classReflection;
-
-    /**
-     * The method name.
-     *
-     * @var string
-     */
-    private $methodName;
-
-    /**
-     * The reflection function.
-     *
-     * @var ReflectionFunction
-     */
-    private $reflectionFunction;
-
-    /**
-     * The parameters.
-     *
-     * @var ReflectionParameter[]
-     */
-    private $parameters;
-
     /**
      * The is static.
      *
@@ -70,24 +34,8 @@ final class Macro implements MethodReflection
         'validateWithBag' => ValidationException::class,
     ];
 
-    public function __construct(ClassReflection $classReflection, string $methodName, ReflectionFunction $reflectionFunction)
+    public function __construct(private ClassReflection $classReflection, private string $methodName, private ClosureType $closureType)
     {
-        $this->classReflection = $classReflection;
-        $this->methodName = $methodName;
-        $this->reflectionFunction = $reflectionFunction;
-        $this->parameters = $this->reflectionFunction->getParameters();
-
-        if ($this->reflectionFunction->isClosure()) {
-            try {
-                /** @var Closure $closure */
-                $closure = $this->reflectionFunction->getClosure();
-                Closure::bind($closure, new stdClass);
-                // The closure can be bound so it was not explicitly marked as static
-            } catch (ErrorException $e) {
-                // The closure was explicitly marked as static
-                $this->isStatic = true;
-            }
-        }
     }
 
     public function getDeclaringClass(): ClassReflection
@@ -136,7 +84,7 @@ final class Macro implements MethodReflection
      */
     public function getDocComment(): ?string
     {
-        return $this->reflectionFunction->getDocComment() ?: null;
+        return null;
     }
 
     /**
@@ -147,80 +95,9 @@ final class Macro implements MethodReflection
         return $this->methodName;
     }
 
-    /** @return ParameterReflection[] */
-    public function getParameters(): array
-    {
-        return array_map(function (ReflectionParameter $reflection): ParameterReflection {
-            return new class($reflection) implements ParameterReflection
-            {
-                /**
-                 * @var ReflectionParameter
-                 */
-                private $reflection;
-
-                public function __construct(ReflectionParameter $reflection)
-                {
-                    $this->reflection = $reflection;
-                }
-
-                public function getName(): string
-                {
-                    return $this->reflection->getName();
-                }
-
-                public function isOptional(): bool
-                {
-                    return $this->reflection->isOptional();
-                }
-
-                public function getType(): Type
-                {
-                    $type = $this->reflection->getType();
-
-                    if ($type === null) {
-                        return new MixedType();
-                    }
-
-                    return TypehintHelper::decideTypeFromReflection($this->reflection->getType());
-                }
-
-                public function passedByReference(): PassedByReference
-                {
-                    return PassedByReference::createNo();
-                }
-
-                public function isVariadic(): bool
-                {
-                    return $this->reflection->isVariadic();
-                }
-
-                public function getDefaultValue(): ?Type
-                {
-                    return null;
-                }
-            };
-        }, $this->parameters);
-    }
-
-    /**
-     * Set the parameters value.
-     *
-     * @param  ReflectionParameter[]  $parameters
-     * @return void
-     */
-    public function setParameters(array $parameters): void
-    {
-        $this->parameters = $parameters;
-    }
-
-    public function getReturnType(): ?ReflectionType
-    {
-        return $this->reflectionFunction->getReturnType();
-    }
-
     public function isDeprecated(): TrinaryLogic
     {
-        return TrinaryLogic::createFromBoolean($this->reflectionFunction->isDeprecated());
+        return TrinaryLogic::createNo();
     }
 
     public function getPrototype(): ClassMemberReflection
@@ -234,7 +111,7 @@ final class Macro implements MethodReflection
     public function getVariants(): array
     {
         return [
-            new FunctionVariant(TemplateTypeMap::createEmpty(), null, $this->getParameters(), $this->reflectionFunction->isVariadic(), TypehintHelper::decideTypeFromReflection($this->getReturnType())),
+            new FunctionVariant(TemplateTypeMap::createEmpty(), null, $this->closureType->getParameters(), $this->closureType->isVariadic(), $this->closureType->getReturnType()),
         ];
     }
 
