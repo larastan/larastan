@@ -85,6 +85,14 @@ class Builder
             ->toBase();
     }
 
+    public function testOrderByToBaseWithEloquentExpression(): ?QueryBuilder
+    {
+        return User::query()
+            ->whereNull('name')
+            ->orderBy(User::whereNotNull('name'))
+            ->toBase();
+    }
+
     public function testLatestToBaseWithQueryExpression(): ?QueryBuilder
     {
         return User::query()
