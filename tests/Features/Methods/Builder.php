@@ -9,6 +9,7 @@ use App\PostBuilder;
 use App\User;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Illuminate\Support\Collection;
 use function PHPStan\Testing\assertType;
 
@@ -82,6 +83,14 @@ class Builder
         return User::query()
             ->whereNull('name')
             ->orderBy(\Illuminate\Support\Facades\DB::raw('name'))
+            ->toBase();
+    }
+
+    public function testOrderByToBaseWithEloquentExpression(): ?QueryBuilder
+    {
+        return User::query()
+            ->whereNull('name')
+            ->orderBy(User::whereNotNull('name'))
             ->toBase();
     }
 
