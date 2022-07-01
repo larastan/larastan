@@ -144,7 +144,8 @@ Post::query()->where(static function (PostBuilder $query) {
         ->orWhereRelation('users', 'name', 'LIKE', '%foo%'));
 });
 
-function doFoo(User $user, Post $post): void {
+function doFoo(User $user, Post $post): void
+{
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->newQuery());
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->newModelQuery());
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->newQueryWithoutRelationships());
