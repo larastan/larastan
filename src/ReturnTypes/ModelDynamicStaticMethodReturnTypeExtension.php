@@ -22,7 +22,7 @@ use PHPStan\Type\Type;
 /**
  * @internal
  */
-final class ModelExtension implements DynamicStaticMethodReturnTypeExtension
+final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
 {
     /** @var BuilderHelper */
     private $builderHelper;
