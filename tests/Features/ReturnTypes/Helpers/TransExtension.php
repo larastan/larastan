@@ -16,8 +16,24 @@ class TransExtension
         return trans('foo');
     }
 
+    /**
+     * @return mixed
+     */
+    public function testUnderscoreTrans()
+    {
+        return __('foo');
+    }
+
     public function testTranslator(): Translator
     {
         return trans();
+    }
+
+    /**
+     * @return null
+     */
+    public function testNull()
+    {
+        return __();
     }
 }
