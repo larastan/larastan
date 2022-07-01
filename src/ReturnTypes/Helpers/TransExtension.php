@@ -9,6 +9,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
 use PHPStan\Type\MixedType;
+use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
@@ -19,7 +20,7 @@ class TransExtension implements DynamicFunctionReturnTypeExtension
      */
     public function isFunctionSupported(FunctionReflection $functionReflection): bool
     {
-        return $functionReflection->getName() === 'trans';
+        return in_array($functionReflection->getName(), ['trans', '__'], true);
     }
 
     /**
@@ -30,9 +31,11 @@ class TransExtension implements DynamicFunctionReturnTypeExtension
         FuncCall $functionCall,
         Scope $scope
     ): Type {
-        // No path provided, so it returns a Translator instance
+        // No path provided, so it returns a Translator instance or null
         if (count($functionCall->getArgs()) === 0) {
-            return new ObjectType(\Illuminate\Contracts\Translation\Translator::class);
+            return $functionReflection->getName() === 'trans'
+                ? (new ObjectType(\Illuminate\Contracts\Translation\Translator::class))
+                : (new NullType());
         }
 
         return new MixedType();
