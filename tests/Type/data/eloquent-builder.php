@@ -8,6 +8,7 @@ use App\Post;
 use App\PostBuilder;
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use function PHPStan\Testing\assertType;
 
 User::query()->has('accounts', '=', 1, 'and', function (Builder $query) {
@@ -160,3 +161,19 @@ function doFoo(User $user, Post $post): void
     assertType('App\PostBuilder<App\Post>', $post->newQueryWithoutScope('foo'));
     assertType('App\PostBuilder<App\Post>', $post->newQueryForRestoration([1]));
 };
+
+class Foo extends Model
+{
+    /** @phpstan-use FooTrait<Foo> */
+    use FooTrait;
+}
+
+/** @template TModelClass of Model */
+trait FooTrait
+{
+    /** @return Builder<TModelClass> */
+    public function doFoo(): Builder
+    {
+        return $this->newQuery();
+    }
+}

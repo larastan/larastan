@@ -11,6 +11,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeWithClassName;
 
@@ -46,6 +47,6 @@ class NewModelQueryDynamicMethodReturnTypeExtension implements DynamicMethodRetu
 
         $builderName = $this->builderHelper->determineBuilderName($calledOnType->getClassName());
 
-        return new GenericObjectType($builderName, [$calledOnType]);
+        return new GenericObjectType($builderName, [new ObjectType($calledOnType->getClassName())]);
     }
 }
