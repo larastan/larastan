@@ -8,7 +8,6 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use NunoMaduro\Larastan\Concerns\HasContainer;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\InitializerExprTypeResolver;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ClosureTypeFactory;

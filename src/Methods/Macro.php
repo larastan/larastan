@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
-use Closure;
 use Illuminate\Validation\ValidationException;
-use PHPStan\BetterReflection\Reflection\ReflectionFunction;
 use PHPStan\Reflection\ClassMemberReflection;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\FunctionVariant;
@@ -16,11 +14,9 @@ use PHPStan\Type\ClosureType;
 use PHPStan\Type\Generic\TemplateTypeMap;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
-use stdClass;
 
 final class Macro implements MethodReflection
 {
-
     /**
      * The is static.
      *
