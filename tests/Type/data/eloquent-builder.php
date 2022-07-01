@@ -143,3 +143,20 @@ Post::query()->where(static function (PostBuilder $query) {
         ->orWhere('bar', 'LIKE', '%foo%')
         ->orWhereRelation('users', 'name', 'LIKE', '%foo%'));
 });
+
+function doFoo(User $user, Post $post): void
+{
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->newQuery());
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->newModelQuery());
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->newQueryWithoutRelationships());
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->newQueryWithoutScopes());
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->newQueryWithoutScope('foo'));
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->newQueryForRestoration([1]));
+
+    assertType('App\PostBuilder<App\Post>', $post->newQuery());
+    assertType('App\PostBuilder<App\Post>', $post->newModelQuery());
+    assertType('App\PostBuilder<App\Post>', $post->newQueryWithoutRelationships());
+    assertType('App\PostBuilder<App\Post>', $post->newQueryWithoutScopes());
+    assertType('App\PostBuilder<App\Post>', $post->newQueryWithoutScope('foo'));
+    assertType('App\PostBuilder<App\Post>', $post->newQueryForRestoration([1]));
+};
