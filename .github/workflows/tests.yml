@@ -20,7 +20,7 @@ jobs:
             - "lowest"
             - "highest"
 
-    name: "P${{ matrix.php }} - L${{ matrix.laravel }}"
+    name: "P${{ matrix.php }} - L${{ matrix.laravel }} ${{ matrix.dependencies == 'highest' && '↑' || '↓' }}"
 
     runs-on: "ubuntu-latest"
 
