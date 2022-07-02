@@ -103,8 +103,8 @@ abstract class Relation
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*']);
 
     /**
-     * @param  array<TRelatedModel>  $models
-     * @param  model-property<TRelatedModel>|null  $key
+     * @param  array<TDeclaringModel>  $models
+     * @param  model-property<TDeclaringModel>|null  $key
      * @return array<int, mixed>
      */
     protected function getKeys(array $models, $key = null);
