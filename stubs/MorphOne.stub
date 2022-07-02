@@ -2,12 +2,10 @@
 
 namespace Illuminate\Database\Eloquent\Relations;
 
-use Illuminate\Database\Eloquent\Model;
-
 /**
- * @template TRelatedModel of Model
- * @template TDeclaringModel of Model
- * @extends MorphOneOrMany<TRelatedModel, TDeclaringModel, ?TRelatedModel>
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ * @extends \Illuminate\Database\Eloquent\Relations\MorphOneOrMany<TRelatedModel, TDeclaringModel, ?TRelatedModel>
  */
 class MorphOne extends MorphOneOrMany
 {

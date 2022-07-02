@@ -3,16 +3,14 @@
 namespace Illuminate\Database\Eloquent\Relations;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
- * @template TRelatedModel of Model
- * @template TDeclaringModel of Model
- * @template TIntermediateModel of Model
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ * @template TIntermediateModel of \Illuminate\Database\Eloquent\Model
  * @template TResult
- * @extends Relation<TRelatedModel, TIntermediateModel, TResult>
+ * @extends \Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, TIntermediateModel, TResult>
  */
 class HasManyThrough extends Relation
 {
@@ -27,30 +25,33 @@ class HasManyThrough extends Relation
     protected $farParent;
 
     /**
-     * @param  Builder<TRelatedModel>  $query
-     * @param  TDeclaringModel  $farParent
-     * @param  TIntermediateModel  $throughParent
-     * @param  string  $firstKey
-     * @param  string  $secondKey
-     * @param  string  $localKey
-     * @param  string  $secondLocalKey
+     * @param  \Illuminate\Database\Eloquent\Builder<TRelatedModel>  $query
+     * @param  TDeclaringModel                                       $farParent
+     * @param  TIntermediateModel                                    $throughParent
+     * @param  string                                                $firstKey
+     * @param  string                                                $secondKey
+     * @param  string                                                $localKey
+     * @param  string                                                $secondLocalKey
      */
     public function __construct(Builder $query, Model $farParent, Model $throughParent, $firstKey, $secondKey, $localKey, $secondLocalKey);
 
     /**
-     * @param  Builder<TRelatedModel>|null  $query
+     * @param  \Illuminate\Database\Eloquent\Builder<TRelatedModel>|null  $query
+     *
      * @return void
      */
     protected function performJoin(Builder $query = null);
 
     /**
-     * @param  Collection<int, TRelatedModel>  $results
+     * @param  \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>  $results
+     *
      * @return array<array<TRelatedModel>>
      */
-    protected function buildDictionary(Collection $results);
+    protected function buildDictionary(\Illuminate\Database\Eloquent\Collection $results);
 
     /**
      * @param  array<model-property<TRelatedModel>, mixed> $attributes
+     *
      * @return TRelatedModel
      */
     public function firstOrNew(array $attributes);
@@ -64,23 +65,27 @@ class HasManyThrough extends Relation
 
     /**
      * @param  \Closure|model-property<TRelatedModel>|'*'|array<int, (model-property<TRelatedModel>|'*')>  $column
-     * @param  mixed  $operator
-     * @param  mixed  $value
-     * @param  'and'|'or' $boolean
+     * @param  mixed                                                                                       $operator
+     * @param  mixed                                                                                       $value
+     * @param  'and'|'or'                                                                                  $boolean
+     *
      * @return TRelatedModel|null
      */
     public function firstWhere($column, $operator = null, $value = null, $boolean = 'and');
 
     /**
      * @param  array<int, (model-property<TRelatedModel>|'*')> $columns
+     *
      * @return TRelatedModel|null
      */
     public function first($columns = ['*']);
 
     /**
      * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
+     *
      * @return TRelatedModel
-     * @throws ModelNotFoundException<TRelatedModel>
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TRelatedModel>
      */
     public function firstOrFail($columns = ['*']);
 
@@ -88,40 +93,46 @@ class HasManyThrough extends Relation
      * Execute the query and get the first result or call a callback.
      *
      * @param  \Closure|array<int, (model-property<TRelatedModel>|'*')>  $columns
-     * @param  \Closure|null  $callback
+     * @param  \Closure|null                                             $callback
+     *
      * @return TRelatedModel|mixed
      */
     public function firstOr($columns = ['*'], \Closure $callback = null);
 
     /**
-     * @param  mixed  $id
+     * @param  mixed                                            $id
      * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
-     * @phpstan-return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? Collection<int, TRelatedModel> : TRelatedModel)|null
+     *
+     * @return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> : TRelatedModel)|null
      */
     public function find($id, $columns = ['*']);
 
     /**
      * @param  \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>  $ids
-     * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
-     * @return Collection<int, TRelatedModel>
+     * @param  array<int, (model-property<TRelatedModel>|'*')>                         $columns
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function findMany($ids, $columns = ['*']);
 
     /**
-     * @param  mixed  $id
+     * @param  mixed                                            $id
      * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
-     * @phpstan-return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? Collection<int, TRelatedModel> : TRelatedModel)
-     * @throws ModelNotFoundException<TRelatedModel>
+     *
+     * @return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> : TRelatedModel)
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TRelatedModel>
      */
     public function findOrFail($id, $columns = ['*']);
 
     /**
      * Find a related model by its primary key or call a callback.
      *
-     * @param  mixed  $id
+     * @param  mixed                                                     $id
      * @param  \Closure|array<int, (model-property<TRelatedModel>|'*')>  $columns
-     * @param  \Closure|null  $callback
-     * @phpstan-return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? Collection<int, TRelatedModel> : TRelatedModel)|mixed
+     * @param  \Closure|null                                             $callback
+     *
+     * @return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> : TRelatedModel)|mixed
      */
     public function findOr($id, $columns = ['*'], \Closure $callback = null);
 }

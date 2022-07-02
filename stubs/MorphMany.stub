@@ -3,22 +3,21 @@
 namespace Illuminate\Database\Eloquent\Relations;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @template TRelatedModel of Model
- * @template TDeclaringModel of Model
- * @extends MorphOneOrMany<TRelatedModel, TDeclaringModel, Collection<int, TRelatedModel>>
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ * @extends \Illuminate\Database\Eloquent\Relations\MorphOneOrMany<TRelatedModel, TDeclaringModel, \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>>
  */
 class MorphMany extends MorphOneOrMany
 {
     /**
-     * @param  Builder<TRelatedModel>  $query
-     * @param  TDeclaringModel  $parent
-     * @param  string  $type
-     * @param  string  $id
-     * @param  string  $localKey
+     * @param  \Illuminate\Database\Eloquent\Builder<TRelatedModel>  $query
+     * @param  TDeclaringModel                                       $parent
+     * @param  string                                                $type
+     * @param  string                                                $id
+     * @param  string                                                $localKey
      */
     public function __construct(Builder $query, Model $parent, $type, $id, $localKey);
 }

@@ -8,27 +8,28 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
- * @template TRelatedModel of Model
- * @template TDeclaringModel of Model
- * @extends Relation<TRelatedModel, TDeclaringModel, Collection<int, TRelatedModel>>
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ * @extends \Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, TDeclaringModel, \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>>
  */
 class BelongsToMany extends Relation
 {
     /**
-     * @param  Builder<TRelatedModel>  $query
-     * @param  TDeclaringModel  $parent
-     * @param  string  $table
-     * @param  string  $foreignPivotKey
-     * @param  string  $relatedPivotKey
-     * @param  string  $parentKey
-     * @param  string  $relatedKey
-     * @param  string|null  $relationName
+     * @param  \Illuminate\Database\Eloquent\Builder<TRelatedModel> $query
+     * @param  TDeclaringModel                                      $parent
+     * @param  string                                               $table
+     * @param  string                                               $foreignPivotKey
+     * @param  string                                               $relatedPivotKey
+     * @param  string                                               $parentKey
+     * @param  string                                               $relatedKey
+     * @param  string|null                                          $relationName
      */
     public function __construct(Builder $query, Model $parent, $table, $foreignPivotKey,
                                 $relatedPivotKey, $parentKey, $relatedKey, $relationName = null);
 
     /**
-     * @param Collection<int, TRelatedModel> $results
+     * @param  \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> $results
+     *
      * @return array<string, TRelatedModel>
      */
     protected function buildDictionary(Collection $results);
@@ -36,9 +37,10 @@ class BelongsToMany extends Relation
     /**
      * Find a related model by its primary key or return new instance of the related model.
      *
-     * @param  mixed  $id
+     * @param  mixed                                            $id
      * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
-     * @phpstan-return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Support\Collection<int, TRelatedModel> : TRelatedModel)
+     *
+     * @return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Support\Collection<int, TRelatedModel> : TRelatedModel)
      */
     public function findOrNew($id, $columns = ['*']);
 
@@ -47,6 +49,7 @@ class BelongsToMany extends Relation
      *
      * @param  array<model-property<TRelatedModel>, mixed>  $attributes
      * @param  array<model-property<TRelatedModel>, mixed>  $values
+     *
      * @return TRelatedModel
      */
     public function firstOrNew(array $attributes = [], array $values = []);
@@ -56,8 +59,9 @@ class BelongsToMany extends Relation
      *
      * @param  array<model-property<TRelatedModel>, mixed>  $attributes
      * @param  array<model-property<TRelatedModel>, mixed>  $values
-     * @param  array<mixed>  $joining
-     * @param  bool  $touch
+     * @param  array<mixed>                                 $joining
+     * @param  bool                                         $touch
+     *
      * @return TRelatedModel
      */
     public function firstOrCreate(array $attributes = [], array $values = [], array $joining = [], $touch = true);
@@ -67,8 +71,9 @@ class BelongsToMany extends Relation
      *
      * @param  array<model-property<TRelatedModel>, mixed>  $attributes
      * @param  array<model-property<TRelatedModel>, mixed>  $values
-     * @param  array<mixed>  $joining
-     * @param  bool  $touch
+     * @param  array<mixed>                                 $joining
+     * @param  bool                                         $touch
+     *
      * @return TRelatedModel
      */
     public function updateOrCreate(array $attributes, array $values = [], array $joining = [], $touch = true);
@@ -76,9 +81,10 @@ class BelongsToMany extends Relation
     /**
      * Find a related model by its primary key.
      *
-     * @param  mixed  $id
+     * @param  mixed                                            $id
      * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
-     * @phpstan-return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? Collection<int, TRelatedModel> : TRelatedModel)|null
+     *
+     * @return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> : TRelatedModel)|null
      */
     public function find($id, $columns = ['*']);
 
@@ -86,18 +92,21 @@ class BelongsToMany extends Relation
      * Find multiple related models by their primary keys.
      *
      * @param  \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>  $ids
-     * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
-     * @return Collection<int, TRelatedModel>
+     * @param  array<int, (model-property<TRelatedModel>|'*')>                         $columns
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function findMany($ids, $columns = ['*']);
 
     /**
      * Find a related model by its primary key or throw an exception.
      *
-     * @param  mixed  $id
+     * @param  mixed                                            $id
      * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
-     * @phpstan-return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? Collection<int, TRelatedModel> : TRelatedModel)
-     * @throws ModelNotFoundException<TRelatedModel>
+     *
+     * @return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> : TRelatedModel)
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TRelatedModel>
      */
     public function findOrFail($id, $columns = ['*']);
 
@@ -106,8 +115,9 @@ class BelongsToMany extends Relation
      *
      * @param  mixed  $id
      * @param  \Closure|array<int, (model-property<TRelatedModel>|'*')>  $columns
-     * @param  \Closure|null  $callback
-     * @phpstan-return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? Collection<int, TRelatedModel> : TRelatedModel)|mixed
+     * @param  \Closure|null                                             $callback
+     *
+     * @return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> : TRelatedModel)|mixed
      */
     public function findOr($id, $columns = ['*'], \Closure $callback = null);
 
@@ -115,9 +125,10 @@ class BelongsToMany extends Relation
      * Add a basic where clause to the query, and return the first result.
      *
      * @param  \Closure|model-property<TRelatedModel>|'*'|array<int, (model-property<TRelatedModel>|'*')>  $column
-     * @param  mixed  $operator
-     * @param  mixed  $value
-     * @param  'and'|'or'  $boolean
+     * @param  mixed                                                                                       $operator
+     * @param  mixed                                                                                       $value
+     * @param  'and'|'or'                                                                                  $boolean
+     *
      * @return TRelatedModel|null
      */
     public function firstWhere($column, $operator = null, $value = null, $boolean = 'and');
@@ -126,6 +137,7 @@ class BelongsToMany extends Relation
      * Execute the query and get the first result.
      *
      * @param  array<int, (model-property<TRelatedModel>|'*')> $columns
+     *
      * @return TRelatedModel|null
      */
     public function first($columns = ['*']);
@@ -134,8 +146,10 @@ class BelongsToMany extends Relation
      * Execute the query and get the first result or throw an exception.
      *
      * @param  array<int, (model-property<TRelatedModel>|'*')> $columns
+     *
      * @return TRelatedModel
-     * @throws ModelNotFoundException<TRelatedModel>
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TRelatedModel>
      */
     public function firstOrFail($columns = ['*']);
 
@@ -143,8 +157,9 @@ class BelongsToMany extends Relation
      * Save a new model and attach it to the parent model.
      *
      * @param  TRelatedModel  $model
-     * @param  array<mixed>  $pivotAttributes
-     * @param  bool  $touch
+     * @param  array<mixed>   $pivotAttributes
+     * @param  bool           $touch
+     *
      * @return TRelatedModel
      */
     public function save(Model $model, array $pivotAttributes = [], $touch = true);
@@ -153,8 +168,9 @@ class BelongsToMany extends Relation
      * Save a new model without raising any events and attach it to the parent model.
      *
      * @param  TRelatedModel  $model
-     * @param  array<mixed>  $pivotAttributes
-     * @param  bool  $touch
+     * @param  array<mixed>   $pivotAttributes
+     * @param  bool           $touch
+     *
      * @return TRelatedModel
      */
     public function saveQuietly(Model $model, array $pivotAttributes = [], $touch = true);
@@ -163,7 +179,8 @@ class BelongsToMany extends Relation
      * Save an array of new models and attach them to the parent model.
      *
      * @param  \Illuminate\Support\Collection<int, TRelatedModel>|array<TRelatedModel>  $models
-     * @param  array<mixed>  $pivotAttributes
+     * @param  array<mixed>                                                             $pivotAttributes
+     *
      * @return \Illuminate\Support\Collection<int, TRelatedModel>|array<TRelatedModel>
      */
     public function saveMany($models, array $pivotAttributes = []);
@@ -172,8 +189,9 @@ class BelongsToMany extends Relation
      * Create a new instance of the related model.
      *
      * @param  array<model-property<TRelatedModel>, mixed>  $attributes
-     * @param  mixed[]  $joining
-     * @param  bool  $touch
+     * @param  mixed[]                                      $joining
+     * @param  bool                                         $touch
+     *
      * @return TRelatedModel
      */
     public function create(array $attributes = [], array $joining = [], $touch = true);
@@ -182,7 +200,8 @@ class BelongsToMany extends Relation
      * Create an array of new instances of the related models.
      *
      * @param  iterable<array<model-property<TRelatedModel>, mixed>>  $records
-     * @param  mixed[]  $joinings
+     * @param  mixed[]                                                $joinings
+     *
      * @return array<TRelatedModel>
      */
     public function createMany(iterable $records, array $joinings = []);

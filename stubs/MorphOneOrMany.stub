@@ -6,28 +6,29 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @template TRelatedModel of Model
- * @template TDeclaringModel of Model
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
  * @template TResult
- * @extends HasOneOrMany<TRelatedModel, TDeclaringModel, TResult>
+ * @extends \Illuminate\Database\Eloquent\Relations\HasOneOrMany<TRelatedModel, TDeclaringModel, TResult>
  */
 abstract class MorphOneOrMany extends HasOneOrMany
 {
    /**
-    * @param  Builder<TRelatedModel>  $query
-    * @param  TDeclaringModel  $parent
-    * @param  string  $type
-    * @param  string  $id
-    * @param  string  $localKey
+    * @param  \Illuminate\Database\Eloquent\Builder<TRelatedModel>  $query
+    * @param  TDeclaringModel                                       $parent
+    * @param  string                                                $type
+    * @param  string                                                $id
+    * @param  string                                                $localKey
     */
    public function __construct(Builder $query, Model $parent, $type, $id, $localKey);
 
     /**
      * Add constraints for inner join subselect for one of many relationships.
      *
-     * @param  Builder<TRelatedModel>  $query
-     * @param  model-property<TRelatedModel>|null  $column
-     * @param  string|null  $aggregate
+     * @param  \Illuminate\Database\Eloquent\Builder<TRelatedModel>  $query
+     * @param  model-property<TRelatedModel>|null                    $column
+     * @param  string|null                                           $aggregate
+     *
      * @return void
      */
     public function addOneOfManySubQueryConstraints(Builder $query, $column = null, $aggregate = null);
@@ -36,6 +37,7 @@ abstract class MorphOneOrMany extends HasOneOrMany
      * Make a new related instance for the given model.
      *
      * @param  TDeclaringModel  $parent
+     *
      * @return TRelatedModel
      */
     public function newRelatedInstanceFor(Model $parent);
@@ -43,7 +45,8 @@ abstract class MorphOneOrMany extends HasOneOrMany
     /**
      * Get the value of the model's foreign key.
      *
-     * @param  TRelatedModel $model
+     * @param  TRelatedModel  $model
+     *
      * @return mixed
      */
     protected function getRelatedKeyFrom(Model $model);

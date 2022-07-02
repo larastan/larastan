@@ -6,19 +6,19 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @template TRelatedModel of Model
- * @template TDeclaringModel of Model
- * @extends BelongsTo<TRelatedModel, TDeclaringModel>
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ * @extends \Illuminate\Database\Eloquent\Relations\BelongsTo<TRelatedModel, TDeclaringModel>
  */
 class MorphTo extends BelongsTo
 {
     /**
-     * @param  Builder<TRelatedModel>  $query
-     * @param  TDeclaringModel  $parent
-     * @param  string  $foreignKey
-     * @param  string  $ownerKey
-     * @param  string  $type
-     * @param  string  $relation
+     * @param  \Illuminate\Database\Eloquent\Builder<TRelatedModel>  $query
+     * @param  TDeclaringModel                                       $parent
+     * @param  string                                                $foreignKey
+     * @param  string                                                $ownerKey
+     * @param  string                                                $type
+     * @param  string                                                $relation
      */
     public function __construct(Builder $query, Model $parent, $foreignKey, $ownerKey, $type, $relation);
 }

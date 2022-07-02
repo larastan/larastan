@@ -7,48 +7,54 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @template TRelatedModel of Model
- * @template TDeclaringModel of Model
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
  * @template TResult
- * @extends Relation<TRelatedModel, TDeclaringModel, TResult>
+ *
+ * @extends \Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, TDeclaringModel, TResult>
  */
 abstract class HasOneOrMany extends Relation
 {
     /**
      * Create a new has one or many relationship instance.
      *
-     * @param  Builder<TRelatedModel>  $query
-     * @param  TDeclaringModel  $parent
-     * @param  string  $foreignKey
-     * @param  string  $localKey
+     * @param  \Illuminate\Database\Eloquent\Builder<TRelatedModel>  $query
+     * @param  TDeclaringModel                                       $parent
+     * @param  string                                                $foreignKey
+     * @param  string                                                $localKey
+     *
      * @return void
      */
     public function __construct(Builder $query, Model $parent, $foreignKey, $localKey);
 
     /**
      * @param array<model-property<TRelatedModel>, mixed> $attributes
-     * @phpstan-return TRelatedModel
+     *
+     * @return TRelatedModel
      */
     public function make(array $attributes = []);
 
     /**
      * @param  iterable<array<model-property<TRelatedModel>, mixed>>  $records
-     * @return Collection<int, TRelatedModel>
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function makeMany($records);
 
     /**
-     * @param  array<TDeclaringModel>  $models
-     * @param  Collection<int, TRelatedModel>  $results
-     * @param  string  $relation
+     * @param  array<TDeclaringModel>                                        $models
+     * @param  \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>  $results
+     * @param  string                                                        $relation
+     *
      * @return array<TDeclaringModel>
      */
     public function matchOne(array $models, Collection $results, $relation);
 
     /**
-     * @param  array<TDeclaringModel>  $models
-     * @param  Collection<int, TRelatedModel>  $results
-     * @param  string  $relation
+     * @param  array<TDeclaringModel>                                        $models
+     * @param  \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>  $results
+     * @param  string                                                        $relation
+     *
      * @return array<TDeclaringModel>
      */
     public function matchMany(array $models, Collection $results, $relation);
@@ -56,10 +62,11 @@ abstract class HasOneOrMany extends Relation
     /**
      * Match the eagerly loaded results to their many parents.
      *
-     * @param  array<TDeclaringModel>  $models
-     * @param  Collection<int, TRelatedModel>  $results
-     * @param  string  $relation
-     * @phpstan-param  'one'|'many'  $type
+     * @param  array<TDeclaringModel>                                        $models
+     * @param  \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>  $results
+     * @param  string                                                        $relation
+     * @param  'one'|'many'                                                  $type
+     *
      * @return array<TDeclaringModel>
      */
     protected function matchOneOrMany(array $models, Collection $results, $relation, $type);
@@ -67,7 +74,8 @@ abstract class HasOneOrMany extends Relation
     /**
      * Build model dictionary keyed by the relation's foreign key.
      *
-     * @param  Collection<int, TRelatedModel> $results
+     * @param  \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> $results
+     *
      * @return array<array<TRelatedModel>>
      */
     protected function buildDictionary(Collection $results);
@@ -75,9 +83,10 @@ abstract class HasOneOrMany extends Relation
     /**
      * Find a model by its primary key or return new instance of the related model.
      *
-     * @param  mixed  $id
+     * @param  mixed                                            $id
      * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
-     * @phpstan-return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Support\Collection<int, TRelatedModel> : TRelatedModel)
+     *
+     * @return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Support\Collection<int, TRelatedModel> : TRelatedModel)
      */
     public function findOrNew($id, $columns = ['*']);
 
@@ -86,6 +95,7 @@ abstract class HasOneOrMany extends Relation
      *
      * @param  array<model-property<TRelatedModel>, mixed>  $attributes
      * @param  array<model-property<TRelatedModel>, mixed>  $values
+     *
      * @return TRelatedModel
      */
     public function firstOrNew(array $attributes = [], array $values = []);
@@ -95,6 +105,7 @@ abstract class HasOneOrMany extends Relation
      *
      * @param  array<model-property<TRelatedModel>, mixed>  $attributes
      * @param  array<model-property<TRelatedModel>, mixed>  $values
+     *
      * @return TRelatedModel
      */
     public function firstOrCreate(array $attributes = [], array $values = []);
@@ -104,6 +115,7 @@ abstract class HasOneOrMany extends Relation
      *
      * @param  array<model-property<TRelatedModel>, mixed>  $attributes
      * @param  array<model-property<TRelatedModel>, mixed>  $values
+     *
      * @return TRelatedModel
      */
     public function updateOrCreate(array $attributes, array $values = []);
@@ -112,6 +124,7 @@ abstract class HasOneOrMany extends Relation
      * Attach a model instance to the parent model.
      *
      * @param  TRelatedModel  $model
+     *
      * @return TRelatedModel|false
      */
     public function save(Model $model);
@@ -120,6 +133,7 @@ abstract class HasOneOrMany extends Relation
      * Attach a model instance without raising any events to the parent model.
      *
      * @param  TRelatedModel  $model
+     *
      * @return TRelatedModel|false
      */
     public function saveQuietly(Model $model);
@@ -128,14 +142,15 @@ abstract class HasOneOrMany extends Relation
      * Attach a collection of models to the parent instance.
      *
      * @param  iterable<TRelatedModel>  $models
+     *
      * @return iterable<TRelatedModel>
      */
     public function saveMany($models);
 
     /**
-     * @phpstan-param array<model-property<TRelatedModel>, mixed> $attributes
+     * @param array<model-property<TRelatedModel>, mixed> $attributes
      *
-     * @phpstan-return TRelatedModel
+     * @return TRelatedModel
      */
     public function create(array $attributes = []);
 
@@ -143,6 +158,7 @@ abstract class HasOneOrMany extends Relation
      * Create a new instance of the related model. Allow mass-assignment.
      *
      * @param  array<model-property<TRelatedModel>, mixed> $attributes
+     *
      * @return TRelatedModel
      */
     public function forceCreate(array $attributes = []);
@@ -151,7 +167,8 @@ abstract class HasOneOrMany extends Relation
      * Create a Collection of new instances of the related model.
      *
      * @param  iterable<array<model-property<TRelatedModel>, mixed>>  $records
-     * @return Collection<int, TRelatedModel>
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function createMany(iterable $records);
 
@@ -159,6 +176,7 @@ abstract class HasOneOrMany extends Relation
      * Set the foreign ID for creating a related model.
      *
      * @param  TRelatedModel  $model
+     *
      * @return void
      */
     protected function setForeignAttributesForCreate(Model $model);

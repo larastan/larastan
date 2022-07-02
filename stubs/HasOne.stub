@@ -8,16 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @template TRelatedModel of Model
  * @template TDeclaringModel of Model
- * @extends HasOneOrMany<TRelatedModel, TDeclaringModel, ?TRelatedModel>
+ * @extends \Illuminate\Database\Eloquent\Relations\HasOneOrMany<TRelatedModel, TDeclaringModel, ?TRelatedModel>
  */
 class HasOne extends HasOneOrMany
 {
     /**
      * Add constraints for inner join subselect for one of many relationships.
      *
-     * @param  Builder<TRelatedModel>  $query
-     * @param  model-property<TRelatedModel>|null  $column
-     * @param  string|null  $aggregate
+     * @param  \Illuminate\Database\Eloquent\Builder<TRelatedModel>  $query
+     * @param  model-property<TRelatedModel>|null                    $column
+     * @param  string|null                                           $aggregate
+     *
      * @return void
      */
     public function addOneOfManySubQueryConstraints(Builder $query, $column = null, $aggregate = null);
@@ -26,6 +27,7 @@ class HasOne extends HasOneOrMany
      * Make a new related instance for the given model.
      *
      * @param  TDeclaringModel  $parent
+     *
      * @return TRelatedModel
      */
     public function newRelatedInstanceFor(Model $parent);
@@ -34,6 +36,7 @@ class HasOne extends HasOneOrMany
      * Get the value of the model's foreign key.
      *
      * @param  TRelatedModel $model
+     *
      * @return mixed
      */
     protected function getRelatedKeyFrom(Model $model);
