@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+
+* added: The `Relation`-related classes now required up to four template parameters instead of one: `TRelatedModel` (required as before), `TDeclaringModel` (required), `TResult` (required by base classes like `HasOneOrMany`, not required by user-facing classes like `HasMany`) and `TIntermediateModel` (only required by `...Through...`-relations) https://github.com/nunomaduro/larastan/pull/1285  
 * fix: Resolve correct model factory instance when application namespace is empty
 
 ### Fixed
