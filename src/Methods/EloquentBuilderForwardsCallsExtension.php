@@ -18,9 +18,7 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Generic\TemplateMixedType;
-use PHPStan\Type\Generic\TemplateObjectType;
 use PHPStan\Type\IntegerType;
-use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeWithClassName;
 
@@ -87,14 +85,6 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
         // Generic type is not specified
         if ($modelType === null) {
             return null;
-        }
-
-        if ($modelType instanceof TemplateObjectType) {
-            $modelType = $modelType->getBound();
-
-            if ($modelType->equals(new ObjectType(Model::class))) {
-                return null;
-            }
         }
 
         if ($modelType instanceof TypeWithClassName) {
