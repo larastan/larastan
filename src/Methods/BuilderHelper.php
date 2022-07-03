@@ -74,11 +74,11 @@ class BuilderHelper
             $returnClassReflection = $returnObject->getClassReflection();
 
             if ($returnClassReflection !== null) {
-                $modelType = $returnClassReflection->getActiveTemplateTypeMap()->getType('TModelClass');
-
-                if ($modelType === null) {
-                    $modelType = $returnClassReflection->getActiveTemplateTypeMap()->getType('TRelatedModel');
-                }
+                $templateTypeMap = $returnClassReflection->getActiveTemplateTypeMap();
+                $modelType =
+                    $templateTypeMap->getType('TModelClass') ??
+                    $templateTypeMap->getType('TRelatedModel') ??
+                    $templateTypeMap->getType('TDeclaringModel');
 
                 if ($modelType !== null) {
                     $finder = substr($methodName, 5);

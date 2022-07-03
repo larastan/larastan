@@ -57,8 +57,12 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
         }
 
         $templateTypeMap = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap();
+        $model =
+            $templateTypeMap->getType('TModelClass') ??
+            $templateTypeMap->getType('TRelatedModel') ??
+            $templateTypeMap->getType('TDeclaringModel');
 
-        if (! $templateTypeMap->getType('TModelClass') instanceof ObjectType) {
+        if (! $model instanceof ObjectType) {
             return false;
         }
 
@@ -74,7 +78,10 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
         $templateTypeMap = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap();
 
         /** @var Type|ObjectType|TemplateMixedType $modelType */
-        $modelType = $templateTypeMap->getType('TModelClass');
+        $modelType =
+            $templateTypeMap->getType('TModelClass') ??
+            $templateTypeMap->getType('TRelatedModel') ??
+            $templateTypeMap->getType('TDeclaringModel');
 
         if ($modelType instanceof ObjectType && in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
             $collectionClassName = $this->builderHelper->determineCollectionClassName($modelType->getClassName());

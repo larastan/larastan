@@ -59,9 +59,13 @@ final class BuilderModelFindExtension implements DynamicMethodReturnTypeExtensio
             return false;
         }
 
-        $model = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TModelClass');
+        $templateTypeMap = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap();
+        $model =
+            $templateTypeMap->getType('TModelClass') ??
+            $templateTypeMap->getType('TRelatedModel') ??
+            $templateTypeMap->getType('TDeclaringModel');
 
-        if ($model === null || ! $model instanceof ObjectType) {
+        if (! $model instanceof ObjectType) {
             return false;
         }
 
@@ -81,8 +85,12 @@ final class BuilderModelFindExtension implements DynamicMethodReturnTypeExtensio
         MethodCall $methodCall,
         Scope $scope
     ): Type {
+        $templateTypeMap = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap();
         /** @var ObjectType $model */
-        $model = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TModelClass');
+        $model =
+            $templateTypeMap->getType('TModelClass') ??
+            $templateTypeMap->getType('TRelatedModel') ??
+            $templateTypeMap->getType('TDeclaringModel');
         $returnType = $methodReflection->getVariants()[0]->getReturnType();
         $argType = $scope->getType($methodCall->getArgs()[0]->value);
 

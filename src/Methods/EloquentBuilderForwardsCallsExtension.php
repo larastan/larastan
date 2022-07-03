@@ -77,8 +77,12 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             return null;
         }
 
+        $templateTypeMap = $classReflection->getActiveTemplateTypeMap();
         /** @var Type|TemplateMixedType|null $modelType */
-        $modelType = $classReflection->getActiveTemplateTypeMap()->getType('TModelClass');
+        $modelType =
+            $templateTypeMap->getType('TModelClass') ??
+            $templateTypeMap->getType('TRelatedModel') ??
+            $templateTypeMap->getType('TDeclaringModel');
 
         // Generic type is not specified
         if ($modelType === null) {
