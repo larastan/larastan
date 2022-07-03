@@ -47,7 +47,7 @@ final class BlankFunctionTypeSpecifyingExtension implements FunctionTypeSpecifyi
 
         if ($this->isCalledOnIterable($typeBefore)) {
             if ($context->falsey()) {
-                $typeBefore = TypeCombinator::remove($typeBefore, new NullType());
+                $typeBefore = TypeCombinator::removeNull($typeBefore);
             }
 
             return $this->typeSpecifier->create($expr, $typeBefore, TypeSpecifierContext::createTruthy());
