@@ -339,6 +339,11 @@ services:
             negate: true
 
     -
+        class: NunoMaduro\Larastan\Types\BlankFunctionTypeSpecifyingExtension
+        tags:
+            - phpstan.typeSpecifier.functionTypeSpecifyingExtension
+            
+    -
         class: NunoMaduro\Larastan\ReturnTypes\Helpers\AppExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
