@@ -142,11 +142,6 @@ function view($view = null, $data = [], $mergeData = [])
  */
 function trans($key = null, $replace = [], $locale = null)
 {
-    if (is_null($key)) {
-        return app('translator');
-    }
-
-    return app('translator')->get($key, $replace, $locale);
 }
 
  /**
