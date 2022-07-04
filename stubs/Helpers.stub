@@ -136,7 +136,7 @@ function view($view = null, $data = [], $mergeData = [])
  * Translate the given message.
  *
  * @param  string|null  $key
- * @param  array<string, string>  $replace
+ * @param  array<string, scalar>  $replace
  * @param  string|null  $locale
  * @return ($key is null ? \Illuminate\Contracts\Translation\Translator : mixed)
  */
@@ -148,7 +148,7 @@ function trans($key = null, $replace = [], $locale = null)
  * Translate the given message.
  *
  * @param  string|null  $key
- * @param  array<string, string>  $replace
+ * @param  array<string, scalar>  $replace
  * @param  string|null  $locale
  * @return ($key is null ? null : mixed)
  */
