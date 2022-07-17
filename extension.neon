@@ -85,6 +85,10 @@ services:
         class: NunoMaduro\Larastan\Methods\RedirectResponseMethodsClassReflectionExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
+    -
+        class: NunoMaduro\Larastan\Methods\MacroMethodsClassReflectionExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
 
     -
         class: NunoMaduro\Larastan\Properties\ModelAccessorExtension
