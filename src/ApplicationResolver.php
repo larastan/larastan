@@ -36,7 +36,7 @@ final class ApplicationResolver
     {
         $app = (new self)->createApplication();
 
-        $vendorDir = $this->getVendorDir() ?? getcwd().DIRECTORY_SEPARATOR.'vendor';
+        $vendorDir = self::getVendorDir() ?? getcwd().DIRECTORY_SEPARATOR.'vendor';
         $composerConfigPath = dirname($vendorDir).DIRECTORY_SEPARATOR.'composer.json';
 
         if (file_exists($composerConfigPath)) {
@@ -57,7 +57,7 @@ final class ApplicationResolver
         return $app;
     }
 
-    protected function getVendorDir(): ?string
+    protected static function getVendorDir(): ?string
     {
         $reflector = new ReflectionClass(ClassLoader::class);
         $classLoaderPath = $reflector->getFileName();
