@@ -40,7 +40,7 @@ jobs:
         run: "composer validate --strict"
 
       - name: "Check file permissions"
-        run: "test \"$(find . -type f -not -path './.git/*' -executable)\" == ./tests/laravel-test.sh"
+        run: "test \"$(find . -type f -not -path './.git/*' -executable)\" = ./tests/laravel-test.sh"
 
       - name: "Install lowest dependencies from composer.json"
         if: "matrix.dependencies == 'lowest'"
