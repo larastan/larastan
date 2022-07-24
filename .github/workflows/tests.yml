@@ -39,9 +39,6 @@ jobs:
       - name: "Check Composer configuration"
         run: "composer validate --strict"
 
-      - name: "Check file permissions"
-        run: "test \"$(find . -type f -not -path \"./.git/*\" -executable)\" = ./tests/laravel-test.sh"
-
       - name: "Install lowest dependencies from composer.json"
         if: "matrix.dependencies == 'lowest'"
         run: "composer update --with='illuminate/contracts:${{ matrix.laravel }}' --no-interaction --no-progress --prefer-lowest"
