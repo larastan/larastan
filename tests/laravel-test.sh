@@ -7,7 +7,7 @@ composer create-project --quiet --prefer-dist "laravel/laravel:^9" ../laravel
 cd ../laravel/
 
 echo "Add Larastan from source"
-sed -i -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan", "options": { "symlink": false }} ],|' composer.json
+composer config repositories.0 '{ "type": "path", "url": "../larastan", "options": { "symlink": false } }'
 # No version information with "type":"path"
 composer require --dev "nunomaduro/larastan:*"
 
