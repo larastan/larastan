@@ -1,6 +1,6 @@
 <?php
 
-namespace BlankHelper;
+namespace EnvironmentHelper;
 
 use function PHPStan\Testing\assertType;
 
