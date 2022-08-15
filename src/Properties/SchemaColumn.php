@@ -12,10 +12,10 @@ final class SchemaColumn
     /** @var string */
     public $name;
 
-    /** @var string */
+    /** @var string|\PHPStan\Type\Type */
     public $readableType;
 
-    /** @var string */
+    /** @var string|\PHPStan\Type\Type */
     public $writeableType;
 
     /** @var bool */

@@ -26,6 +26,7 @@ class CreateUsersTable extends Migration
             $table->json('meta');
             $table->json('options');
             $table->json('properties');
+            $table->json('favorites');
             $table->boolean('blocked');
             $table->unknownColumnType('unknown_column');
             $table->rememberToken();

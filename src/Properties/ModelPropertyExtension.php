@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Properties;
 
 use ArrayObject;
+use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -18,6 +19,8 @@ use PHPStan\Reflection\PropertyReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
 
 /**
  * @internal
@@ -136,8 +139,8 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
         return new ModelProperty(
             $classReflection,
-            $this->stringResolver->resolve($column->readableType),
-            $this->stringResolver->resolve($column->writeableType)
+            $column->readableType instanceof Type ? $column->readableType : $this->stringResolver->resolve($column->readableType),
+            $column->writeableType instanceof Type ? $column->writeableType : $this->stringResolver->resolve($column->writeableType),
         );
     }
 
@@ -176,7 +179,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
      * @param  SchemaColumn  $column
      * @param  Model  $modelInstance
      * @return string[]
-     * @phpstan-return array<int, string>
+     * @phpstan-return array<int, Type|string>
      */
     private function getReadableAndWritableTypes(SchemaColumn $column, Model $modelInstance): array
     {
@@ -191,7 +194,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             case 'string':
             case 'int':
             case 'float':
-                $readableType = $writableType = $column->readableType.($column->nullable ? '|null' : '');
+                $readableType = $writableType = $column->readableType instanceof Type ? TypeCombinator::addNull($column->readableType) : $column->readableType.($column->nullable ? '|null' : '');
                 break;
 
             case 'boolean':
@@ -280,12 +283,22 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
                     $realType = '\Illuminate\Support\Collection<array-key, mixed>';
                     break;
                 default:
-                    $realType = class_exists($type) ? ('\\'.$type) : 'mixed';
+                    if (! class_exists($type)) {
+                        $realType = 'mixed';
+                    } elseif ($this->reflectionProvider->getClass($type)->isSubclassOf(CastsAttributes::class)) {
+                        $classReflection = $this->reflectionProvider->getClass($type);
+                        $methodReflection = $classReflection->getNativeMethod('get');
+                        $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+
+                        $realType = $returnType;
+                    } else {
+                        $realType = ('\\'.$type);
+                    }
                     break;
             }
 
             if ($this->tables[$modelInstance->getTable()]->columns[$name]->nullable) {
-                $realType .= '|null';
+                $realType = $realType instanceof Type ? TypeCombinator::addNull($realType) : $realType . '|null';
             }
 
             $this->tables[$modelInstance->getTable()]->columns[$name]->readableType = $realType;

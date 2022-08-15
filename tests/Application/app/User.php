@@ -18,6 +18,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Tests\Application\HasManySyncable;
+use App\Casts\Favorites;
 
 /**
  * @property string $propertyDefinedOnlyInAnnotation
@@ -38,7 +39,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password'
     ];
 
     /** @var array<string, string> */
@@ -50,6 +51,7 @@ class User extends Authenticatable
         'floatButRoundedDecimalString' => 'decimal:1',
         'options' => AsArrayObject::class,
         'properties' => AsCollection::class,
+        'favorites' => Favorites::class,
     ];
 
     /**

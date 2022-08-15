@@ -6,6 +6,7 @@ namespace Tests\Features\Properties;
 
 use App\Account;
 use App\Address;
+use App\DTO\Favorites;
 use App\Group;
 use App\GuardedModel;
 use App\Role;
@@ -16,6 +17,7 @@ use ArrayObject;
 use Carbon\Carbon as BaseCarbon;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
+use function PHPStan\dumpType;
 use function PHPStan\Testing\assertType;
 
 class ModelPropertyExtension
@@ -238,5 +240,10 @@ class ModelPropertyExtension
     public function testForeignIdConstrainedNullable(Address $address): ?int
     {
         return $address->nullable_foreign_id_constrained;
+    }
+
+    public function testCustomCast(): Favorites
+    {
+        return $this->user->favorites;
     }
 }
