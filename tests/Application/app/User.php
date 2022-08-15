@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Casts\Favorites;
 use function get_class;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
@@ -18,7 +19,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Tests\Application\HasManySyncable;
-use App\Casts\Favorites;
 
 /**
  * @property string $propertyDefinedOnlyInAnnotation
@@ -39,7 +39,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password'
+        'name', 'email', 'password',
     ];
 
     /** @var array<string, string> */

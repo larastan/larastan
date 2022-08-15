@@ -17,7 +17,6 @@ use ArrayObject;
 use Carbon\Carbon as BaseCarbon;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
-use function PHPStan\dumpType;
 use function PHPStan\Testing\assertType;
 
 class ModelPropertyExtension
