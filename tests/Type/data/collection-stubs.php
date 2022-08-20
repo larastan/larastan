@@ -83,3 +83,6 @@ assertType('App\User', $collection->get(1, new User()));
 assertType('App\User|null', $collection->pull(1));
 assertType('App\User', $collection->pull(1, new User()));
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::all()->filter());
+
+assertType('App\User', $collection->random());
+assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->random(5));

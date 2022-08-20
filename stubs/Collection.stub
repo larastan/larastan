@@ -20,5 +20,13 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      */
     use EnumeratesValues;
 
-   // ..
+   /**
+    * Get one or a specified number of items randomly from the collection.
+    *
+    * @param  (callable(TValue): int)|int|null  $number
+    * @return ($number is null ? TValue : static<int, TValue>)
+    *
+    * @throws \InvalidArgumentException
+    */
+    public function random($number = null) {}
 }

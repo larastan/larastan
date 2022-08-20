@@ -3,6 +3,7 @@
 namespace NunoMaduro\Larastan\ReturnTypes;
 
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
@@ -72,6 +73,11 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
 
         // If it's called on Support collection, just return.
         if ($classReflection->getName() === Collection::class) {
+            return $returnType;
+        }
+
+        // Special cases for methods returning single models
+        if ($classReflection->getName() === EloquentCollection::class && (new ObjectType(Model::class))->isSuperTypeOf($returnType)->yes()) {
             return $returnType;
         }
 
