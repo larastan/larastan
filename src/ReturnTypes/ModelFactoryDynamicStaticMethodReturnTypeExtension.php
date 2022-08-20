@@ -56,7 +56,7 @@ final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements Dynami
                 new IntersectionType([
                     new StringType(),
                     new AccessoryNumericStringType(),
-                ])
+                ]),
             ];
 
             $isSingleModel = (new UnionType($numericTypes))->isSuperTypeOf($argType)->negate();

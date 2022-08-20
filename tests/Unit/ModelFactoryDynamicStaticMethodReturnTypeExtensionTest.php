@@ -45,6 +45,7 @@ class ModelFactoryDynamicStaticMethodReturnTypeExtensionTest extends PHPStanTest
         $this->assertInstanceOf(ModelFactoryType::class, $type);
         $this->assertTrue((TrinaryLogic::createYes())->equals($type->isSingleModel()));
     }
+
     /**
      * @test
      * @dataProvider argumentProvider
@@ -85,7 +86,6 @@ class ModelFactoryDynamicStaticMethodReturnTypeExtensionTest extends PHPStanTest
             new AccessoryNumericStringType(),
         ]), TrinaryLogic::createNo()];
         yield [new UnionType([new FloatType(), new ConstantIntegerType(1)]), TrinaryLogic::createNo()];
-
 
         yield [new NullType(), TrinaryLogic::createYes()];
         yield [new ObjectType('App\\User'), TrinaryLogic::createYes()];

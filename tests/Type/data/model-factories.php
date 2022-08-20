@@ -2,7 +2,6 @@
 
 namespace ModelFactories;
 
-use App\Post;
 use App\User;
 use function PHPStan\Testing\assertType;
 

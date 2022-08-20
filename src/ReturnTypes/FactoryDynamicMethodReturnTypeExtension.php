@@ -21,7 +21,6 @@ use PHPStan\Type\TypeCombinator;
 
 class FactoryDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
-
     public function getClass(): string
     {
         return Factory::class;
@@ -38,7 +37,7 @@ class FactoryDynamicMethodReturnTypeExtension implements DynamicMethodReturnType
         Scope $scope
     ): ?Type {
         $calledOnType = $scope->getType($methodCall->var);
-        $originalReturnType = ParametersAcceptorSelector::selectFromArgs($scope, $methodCall->getArgs(),$methodReflection->getVariants())->getReturnType();
+        $originalReturnType = ParametersAcceptorSelector::selectFromArgs($scope, $methodCall->getArgs(), $methodReflection->getVariants())->getReturnType();
 
         if (! $calledOnType instanceof ModelFactoryType) {
             return null;
