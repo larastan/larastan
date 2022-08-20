@@ -13,14 +13,15 @@ class GeneralTypeTest extends TypeInferenceTestCase
      */
     public function dataFileAsserts(): iterable
     {
-        yield from $this->gatherAssertTypes(__DIR__.'/data/request-object.php');
-        yield from $this->gatherAssertTypes(__DIR__.'/data/eloquent-builder.php');
-        yield from $this->gatherAssertTypes(__DIR__.'/data/paginator-extension.php');
-        yield from $this->gatherAssertTypes(__DIR__.'/data/model-properties.php');
-        yield from $this->gatherAssertTypes(__DIR__.'/data/model-properties-relations.php');
-        yield from $this->gatherAssertTypes(__DIR__.'/data/route.php');
-        yield from $this->gatherAssertTypes(__DIR__.'/data/conditionable.php');
-        yield from $this->gatherAssertTypes(__DIR__.'/data/translate.php');
+//        yield from $this->gatherAssertTypes(__DIR__.'/data/request-object.php');
+//        yield from $this->gatherAssertTypes(__DIR__.'/data/eloquent-builder.php');
+//        yield from $this->gatherAssertTypes(__DIR__.'/data/paginator-extension.php');
+//        yield from $this->gatherAssertTypes(__DIR__.'/data/model-properties.php');
+//        yield from $this->gatherAssertTypes(__DIR__.'/data/model-properties-relations.php');
+//        yield from $this->gatherAssertTypes(__DIR__.'/data/route.php');
+//        yield from $this->gatherAssertTypes(__DIR__.'/data/conditionable.php');
+//        yield from $this->gatherAssertTypes(__DIR__.'/data/translate.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/model-factories.php');
     }
 
     /**
