@@ -15,7 +15,7 @@ class NoUselessWithFunctionCallsRuleTest extends RuleTestCase
     {
         $this->analyse(
             [
-                __DIR__ . '/../Data/UselessConstructs/CorrectWithFunctionCall.php',
+                __DIR__.'/../Data/UselessConstructs/CorrectWithFunctionCall.php',
             ],
             []
         );
@@ -25,7 +25,7 @@ class NoUselessWithFunctionCallsRuleTest extends RuleTestCase
     {
         $this->analyse(
             [
-                __DIR__ . '/../Data/UselessConstructs/UselessWithFunctionCall.php',
+                __DIR__.'/../Data/UselessConstructs/UselessWithFunctionCall.php',
             ],
             [
                 ["Calling the helper function 'with()' with only one argument simply returns the value itself. If you want to chain methods on a construct, use '(new ClassName())->foo()' instead", 11],
