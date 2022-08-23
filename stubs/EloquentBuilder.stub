@@ -467,6 +467,40 @@ class Builder
      * @return \Illuminate\Pagination\CursorPaginator
      */
      public function cursorPaginate($perPage = null, $columns = ['*'], $cursorName = 'cursor', $cursor = null);
+
+     /**
+      * Query lazily, by chunks of the given size.
+      *
+      * @param  int  $chunkSize
+      * @return \Illuminate\Support\LazyCollection<int, TModelClass>
+      *
+      * @throws \InvalidArgumentException
+      */
+     public function lazy($chunkSize = 1000);
+
+     /**
+      * Query lazily, by chunking the results of a query by comparing IDs.
+      *
+      * @param  int  $chunkSize
+      * @param  string|null  $column
+      * @param  string|null  $alias
+      * @return \Illuminate\Support\LazyCollection<int, TModelClass>
+      *
+      * @throws \InvalidArgumentException
+      */
+     public function lazyById($chunkSize = 1000, $column = null, $alias = null);
+
+     /**
+      * Query lazily, by chunking the results of a query by comparing IDs in descending order.
+      *
+      * @param  int  $chunkSize
+      * @param  string|null  $column
+      * @param  string|null  $alias
+      * @return \Illuminate\Support\LazyCollection<int, TModelClass>
+      *
+      * @throws \InvalidArgumentException
+      */
+     public function lazyByIdDesc($chunkSize = 1000, $column = null, $alias = null);
 }
 
 class Scope {}

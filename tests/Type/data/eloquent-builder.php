@@ -160,6 +160,13 @@ function doFoo(User $user, Post $post): void
     assertType('App\PostBuilder<App\Post>', $post->newQueryWithoutScopes());
     assertType('App\PostBuilder<App\Post>', $post->newQueryWithoutScope('foo'));
     assertType('App\PostBuilder<App\Post>', $post->newQueryForRestoration([1]));
+
+    assertType('Illuminate\Support\LazyCollection<int, App\User>', User::query()->lazy());
+    assertType('Illuminate\Support\LazyCollection<int, App\User>', User::query()->lazyById());
+    assertType('Illuminate\Support\LazyCollection<int, App\User>', User::query()->lazyByIdDesc());
+    assertType('Illuminate\Support\LazyCollection<int, App\Post>', $post->newQuery()->lazy());
+    assertType('Illuminate\Support\LazyCollection<int, App\Post>', $post->newQuery()->lazyById());
+    assertType('Illuminate\Support\LazyCollection<int, App\Post>', $post->newQuery()->lazyByIdDesc());
 };
 
 class Foo extends Model
