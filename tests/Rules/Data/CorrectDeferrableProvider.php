@@ -7,6 +7,10 @@ namespace Tests\Rules\Data;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 
+class NormalProvider extends ServiceProvider
+{
+}
+
 class CorrectDeferrableProvider extends ServiceProvider implements DeferrableProvider
 {
     public function provides(): array

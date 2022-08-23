@@ -7,7 +7,6 @@ namespace NunoMaduro\Larastan\Rules;
 use Illuminate\Contracts\Support\DeferrableProvider;
 use Illuminate\Support\ServiceProvider;
 use PhpParser\Node;
-use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\InClassNode;
 use PHPStan\Rules\Rule;
@@ -30,18 +29,19 @@ class DeferrableServiceProviderMissingProvidesRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
-        /** @var \PHPStan\Node\InClassNode $node */
         $classReflection = $node->getClassReflection();
+
         // This rule is only applicable to deferrable serviceProviders
         if (! $classReflection->isSubclassOf(ServiceProvider::class) || ! $classReflection->implementsInterface(DeferrableProvider::class)) {
             return [];
         }
 
         if (! $classReflection->hasNativeMethod('provides')) {
-            throw new ShouldNotHappenException('If this scenario happens, the "provides" method is removed from the base laravel serviceProvider and this rule can be removed.');
+            throw new ShouldNotHappenException('If this scenario happens, the "provides" method is removed from the base Laravel ServiceProvider and this rule can be removed.');
         }
 
-        $method = $classReflection->getMethod('provides', new OutOfClassScope());
+        $method = $classReflection->getNativeMethod('provides');
+
         // The provides method is overwritten somewhere in the class hierarchy
         if ($method->getDeclaringClass()->getName() !== ServiceProvider::class) {
             return [];

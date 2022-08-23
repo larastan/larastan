@@ -7,9 +7,10 @@ namespace Tests\Rules;
 use NunoMaduro\Larastan\Rules\ModelRuleHelper;
 use NunoMaduro\Larastan\Rules\RelationExistenceRule;
 use PHPStan\Rules\Rule;
+use PHPStan\Testing\RuleTestCase;
 
-/** @extends AbstractRuleTestCase<RelationExistenceRule> */
-class RelationExistenceRuleTest extends AbstractRuleTestCase
+/** @extends RuleTestCase<RelationExistenceRule> */
+class RelationExistenceRuleTest extends RuleTestCase
 {
     protected function getRule(): Rule
     {
@@ -189,5 +190,12 @@ class RelationExistenceRuleTest extends AbstractRuleTestCase
                 52,
             ],
         ]);
+    }
+
+    public static function getAdditionalConfigFiles(): array
+    {
+        return [
+            __DIR__.'/phpstan-rules.neon',
+        ];
     }
 }

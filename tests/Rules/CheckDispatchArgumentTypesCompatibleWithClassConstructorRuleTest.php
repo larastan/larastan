@@ -9,9 +9,10 @@ use Illuminate\Foundation\Events\Dispatchable as EventDispatchable;
 use NunoMaduro\Larastan\Rules\CheckDispatchArgumentTypesCompatibleWithClassConstructorRule;
 use PHPStan\Rules\FunctionCallParametersCheck;
 use PHPStan\Rules\Rule;
+use PHPStan\Testing\RuleTestCase;
 
-/** @extends AbstractRuleTestCase<CheckDispatchArgumentTypesCompatibleWithClassConstructorRule> */
-class CheckDispatchArgumentTypesCompatibleWithClassConstructorRuleTest extends AbstractRuleTestCase
+/** @extends RuleTestCase<CheckDispatchArgumentTypesCompatibleWithClassConstructorRule> */
+class CheckDispatchArgumentTypesCompatibleWithClassConstructorRuleTest extends RuleTestCase
 {
     /** @var string */
     private $dispatchableClass;
@@ -87,5 +88,12 @@ class CheckDispatchArgumentTypesCompatibleWithClassConstructorRuleTest extends A
             ['Event class Tests\Rules\Data\LaravelEventWithoutConstructor does not have a constructor and must be dispatched without any parameters.', 15],
             ['Event class Tests\Rules\Data\LaravelEventWithoutConstructor does not have a constructor and must be dispatched without any parameters.', 18],
         ]);
+    }
+
+    public static function getAdditionalConfigFiles(): array
+    {
+        return [
+            __DIR__.'/phpstan-rules.neon',
+        ];
     }
 }

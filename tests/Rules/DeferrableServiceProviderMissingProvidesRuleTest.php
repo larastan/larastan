@@ -6,9 +6,10 @@ namespace Tests\Rules;
 
 use NunoMaduro\Larastan\Rules\DeferrableServiceProviderMissingProvidesRule;
 use PHPStan\Rules\Rule;
+use PHPStan\Testing\RuleTestCase;
 
-/** @extends AbstractRuleTestCase<DeferrableServiceProviderMissingProvidesRule> */
-class DeferrableServiceProviderMissingProvidesRuleTest extends AbstractRuleTestCase
+/** @extends RuleTestCase<DeferrableServiceProviderMissingProvidesRule> */
+class DeferrableServiceProviderMissingProvidesRuleTest extends RuleTestCase
 {
     public function testNoFalsePositivesDirectExistingMethod(): void
     {
@@ -45,5 +46,12 @@ class DeferrableServiceProviderMissingProvidesRuleTest extends AbstractRuleTestC
     protected function getRule(): Rule
     {
         return new DeferrableServiceProviderMissingProvidesRule();
+    }
+
+    public static function getAdditionalConfigFiles(): array
+    {
+        return [
+            __DIR__.'/phpstan-rules.neon',
+        ];
     }
 }
