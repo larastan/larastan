@@ -8,13 +8,14 @@ use NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessValueFunctionCallsRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
+/** @extends RuleTestCase<NoUselessValueFunctionCallsRule> */
 class NoUselessValueFunctionCallsRuleTest extends RuleTestCase
 {
     public function testNoFalsePositives(): void
     {
         $this->analyse(
             [
-                dirname(__DIR__).'/Data/UselessConstructs/CorrectValueFunctionCall.php',
+                __DIR__.'/../Data/UselessConstructs/CorrectValueFunctionCall.php',
             ],
             []
         );
@@ -24,7 +25,7 @@ class NoUselessValueFunctionCallsRuleTest extends RuleTestCase
     {
         $this->analyse(
             [
-                dirname(__DIR__).'/Data/UselessConstructs/UselessValueFunctionCall.php',
+                __DIR__.'/../Data/UselessConstructs/UselessValueFunctionCall.php',
             ],
             [
                 ["Calling the helper function 'value()' without a closure as the first argument simply returns the first argument without doing anything", 11],
