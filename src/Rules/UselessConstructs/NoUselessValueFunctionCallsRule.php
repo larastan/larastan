@@ -24,7 +24,6 @@ class NoUselessValueFunctionCallsRule implements Rule
 
     public function processNode(Node $node, Scope $scope): array
     {
-        /** @var FuncCall $node */
         if (! $node->name instanceof Node\Name) {
             return [];
         }
@@ -34,7 +33,12 @@ class NoUselessValueFunctionCallsRule implements Rule
         }
 
         $args = $node->getArgs();
-        if (array_key_exists(0, $args) && $scope->getType($args[0]->value)->isSuperTypeOf(new ClosureType([], new MixedType(), true))->no() === false) {
+
+        if (count($args) < 1) {
+            return [];
+        }
+
+        if ($scope->getType($args[0]->value)->isSuperTypeOf(new ClosureType([], new MixedType(), true))->no() === false) {
             return [];
         }
 
