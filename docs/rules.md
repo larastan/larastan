@@ -233,3 +233,43 @@ Job class ExampleJob constructor invoked with 1 parameter in ExampleJob::dispatc
 Parameter #1 $foo of job class ExampleJob constructor expects int in ExampleJob::dispatch(), string given.
 Parameter #2 $bar of job class ExampleJob constructor expects string in ExampleJob::dispatch(), int given.
 ```
+
+## NoUselessValueFunctionCallsRule
+
+This rule will check if unnecessary calls to the 'value()' function are made
+
+### Examples
+
+Calling the following functions;
+
+```php
+$foo = value('foo');
+$bar = value(true);
+```
+
+will result in errors:
+
+```
+Calling the helper function 'value()' without a closure as the first argument simply returns the first argument without doing anything
+Calling the helper function 'value()' without a closure as the first argument simply returns the first argument without doing anything
+```
+
+## NoUselessWithFunctionCallsRuleTest
+
+This rule will check if unnecessary calls to the 'with()' function are made
+
+### Examples
+
+Calling the following functions;
+
+```php
+$foo = with('foo');
+$bar = with('bar', null);
+```
+
+will result in errors;
+
+```
+Calling the helper function 'with()' with only one argument simply returns the value itself. if you want to chain methods on a construct, use '(new ClassName())->foo()' instead
+Calling the helper function 'with()' without a closure as the second argument simply returns the value without doing anything
+```

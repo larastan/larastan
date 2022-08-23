@@ -430,3 +430,5 @@ services:
         tags: [phpstan.stubFilesExtension]
 rules:
     - NunoMaduro\Larastan\Rules\RelationExistenceRule
+    - NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule
+    - NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessValueFunctionCallsRule
