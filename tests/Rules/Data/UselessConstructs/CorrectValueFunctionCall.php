@@ -8,7 +8,7 @@ class CorrectValueFunctionCall
 {
     public function foo(): string
     {
-        return value(static function () {
+        return value(static function (int $foo) {
             return 'foo';
         });
     }
