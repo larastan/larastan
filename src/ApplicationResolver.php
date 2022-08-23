@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan;
 
+use Composer\Autoload\ClassLoader;
 use Composer\ClassMapGenerator\ClassMapGenerator;
 use const DIRECTORY_SEPARATOR;
 use Illuminate\Contracts\Foundation\Application;
 use function in_array;
 use Orchestra\Testbench\Concerns\CreatesApplication;
+use ReflectionClass;
 
 /**
  * @internal
@@ -34,12 +36,12 @@ final class ApplicationResolver
     {
         $app = (new self)->createApplication();
 
-        $composerFile = getcwd().DIRECTORY_SEPARATOR.'composer.json';
+        $vendorDir = self::getVendorDir() ?? getcwd().DIRECTORY_SEPARATOR.'vendor';
+        $composerConfigPath = dirname($vendorDir).DIRECTORY_SEPARATOR.'composer.json';
 
-        if (file_exists($composerFile)) {
-            self::$composer = json_decode((string) file_get_contents($composerFile), true);
+        if (file_exists($composerConfigPath)) {
+            self::$composer = json_decode((string) file_get_contents($composerConfigPath), true);
             $namespace = (string) key(self::$composer['autoload']['psr-4']);
-            $vendorDir = self::$composer['config']['vendor-dir'] ?? dirname($composerFile).DIRECTORY_SEPARATOR.'vendor';
             $serviceProviders = array_values(array_filter(self::getProjectClasses($namespace, $vendorDir), static function ($class) use (
                 $namespace
             ) {
@@ -53,6 +55,22 @@ final class ApplicationResolver
         }
 
         return $app;
+    }
+
+    protected static function getVendorDir(): ?string
+    {
+        $reflector = new ReflectionClass(ClassLoader::class);
+        $classLoaderPath = $reflector->getFileName();
+        if ($classLoaderPath === false) {
+            return null;
+        }
+
+        $vendorDir = dirname($classLoaderPath, 2);
+        if (! is_dir($vendorDir)) {
+            return null;
+        }
+
+        return $vendorDir;
     }
 
     /**
