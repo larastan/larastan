@@ -9,11 +9,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Improvements
 * feat: add Rule checking for useless 'with()' and 'value()' function calls by @PrinsFrank in https://github.com/nunomaduro/larastan/pull/1226
 * feat: Add rule for missing 'provides' method in Deferrable ServiceProviders
+* feat: Support for `__()` helper and simplified existing `trans()` helper by @niekbr in [#1296](https://github.com/nunomaduro/larastan/pull/1296).
 
 ### Fixed
 * fix: Resolve correct model factory instance when application namespace is empty
 * fix: Remove stubs for `having()` and `orHaving()` QueryBuilder methods by @Maxoulak in [#1258](https://github.com/nunomaduro/larastan/pull/1258)
-* added: Support for `__()` helper and simplified existing `trans()` helper by @niekbr in [#1296](https://github.com/nunomaduro/larastan/pull/1296).
+* fix: fix return types for App::environment() [#1303](https://github.com/nunomaduro/larastan/pull/1303)
 
 ## [2.1.8] - 2022-06-04
 
