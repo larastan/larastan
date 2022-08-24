@@ -30,3 +30,17 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
     */
     public function random($number = null) {}
 }
+
+/**
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @implements \Illuminate\Support\Enumerable<TKey, TValue>
+ */
+class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
+{
+    /**
+     * @use \Illuminate\Support\Traits\EnumeratesValues<TKey, TValue>
+     */
+    use EnumeratesValues;
+}
