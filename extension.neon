@@ -377,7 +377,7 @@ services:
         tags:
             - phpstan.phpDoc.typeNodeResolverExtension
     -
-        class: NunoMaduro\Larastan\Types\AppEnvironmentReturnTypeExtension
+        class: NunoMaduro\Larastan\ReturnTypes\AppEnvironmentReturnTypeExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 

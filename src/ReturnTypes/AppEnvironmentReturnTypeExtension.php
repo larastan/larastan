@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Types;
+namespace NunoMaduro\Larastan\ReturnTypes;
 
 use Illuminate\Foundation\Application;
 use PhpParser\Node\Expr\MethodCall;
@@ -34,6 +34,6 @@ class AppEnvironmentReturnTypeExtension implements DynamicMethodReturnTypeExtens
             return new StringType();
         }
 
-        return  new BooleanType();
+        return new BooleanType();
     }
 }
