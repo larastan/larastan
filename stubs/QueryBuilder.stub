@@ -555,7 +555,7 @@ class Builder
      *
      * @param  string  $column
      * @param  string  $operator
-     * @param  \DateTimeInterface|string|null  $value
+     * @param  \DateTimeInterface|string|int|null  $value
      * @param  string  $boolean
      * @return $this
      */
@@ -567,7 +567,7 @@ class Builder
      *
      * @param  string  $column
      * @param  string  $operator
-     * @param  \DateTimeInterface|string|null  $value
+     * @param  \DateTimeInterface|string|int|null  $value
      * @return $this
      */
     public function orWhereDay($column, $operator, $value = null)
@@ -578,7 +578,7 @@ class Builder
      *
      * @param  string  $column
      * @param  string  $operator
-     * @param  \DateTimeInterface|string|null  $value
+     * @param  \DateTimeInterface|string|int|null  $value
      * @param  string  $boolean
      * @return $this
      */
@@ -590,7 +590,7 @@ class Builder
      *
      * @param  string  $column
      * @param  string  $operator
-     * @param  \DateTimeInterface|string|null  $value
+     * @param  \DateTimeInterface|string|int|null  $value
      * @return $this
      */
     public function orWhereMonth($column, $operator, $value = null)
