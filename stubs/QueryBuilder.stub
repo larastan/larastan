@@ -37,18 +37,6 @@ class Builder
     {}
 
     /**
-     * Makes "from" fetch from a subquery.
-     *
-     * @param  \Closure|\Illuminate\Database\Query\Builder|string  $query
-     * @param  string  $as
-     * @return $this
-     *
-     * @throws \InvalidArgumentException
-     */
-    public function fromSub($query, $as)
-    {}
-
-    /**
      * Add a raw from clause to the query.
      *
      * @param  string  $expression
