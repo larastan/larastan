@@ -1,6 +1,7 @@
 parameters:
     universalObjectCratesClasses:
         - Illuminate\Http\Request
+        - Illuminate\Support\Optional
     earlyTerminatingFunctionCalls:
         - abort
         - dd
