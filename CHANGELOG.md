@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * fix: Resolve correct model factory instance when application namespace is empty
 * fix: Remove stubs for `having()` and `orHaving()` QueryBuilder methods by @Maxoulak in [#1258](https://github.com/nunomaduro/larastan/pull/1258)
 * fix: fix return types for App::environment() [#1303](https://github.com/nunomaduro/larastan/pull/1303)
+* fix: Remove all unnecessary method stubs for the Query Builder by @lupinitylabs in [#1343](https://github.com/nunomaduro/larastan/pull/1343)
 
 ## [2.1.8] - 2022-06-04
 
