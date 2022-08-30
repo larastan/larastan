@@ -442,7 +442,6 @@ services:
         class: NunoMaduro\Larastan\LarastanStubFilesExtension
         tags: [phpstan.stubFilesExtension]
 rules:
-    - NunoMaduro\Larastan\Rules\DeferrableServiceProviderMissingProvidesRule
     - NunoMaduro\Larastan\Rules\RelationExistenceRule
     - NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule
     - NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessValueFunctionCallsRule
