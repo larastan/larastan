@@ -6,16 +6,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
-### Improvements
-* feat: add Rule checking for useless 'with()' and 'value()' function calls by @PrinsFrank in https://github.com/nunomaduro/larastan/pull/1226
-* feat: Add rule for missing 'provides' method in Deferrable ServiceProviders
-* feat: Support for `__()` helper and simplified existing `trans()` helper by @niekbr in [#1296](https://github.com/nunomaduro/larastan/pull/1296).
+## [2.2.0] - 2022-08-31
+
+### Added
+* Install fileinfo PHP extension by @szepeviktor in https://github.com/nunomaduro/larastan/pull/1318
+* Configure Composer properly in CI by @szepeviktor in https://github.com/nunomaduro/larastan/pull/1329
+* feat: rules for unnecessary uses of with() and values() functions by @PrinsFrank in https://github.com/nunomaduro/larastan/pull/1226
+* feat: add rule for missing 'provides' method in Deferrable ServiceProviders by @PrinsFrank in https://github.com/nunomaduro/larastan/pull/1262
+* feat: conditional return type for Collection::random method by @canvural in https://github.com/nunomaduro/larastan/pull/1338
+* Remove all unnecessary method stubs for the Query Builder by @lupinitylabs in https://github.com/nunomaduro/larastan/pull/1343
+* feat: add ViewWithMethodsClassReflectionExtension by @canvural in https://github.com/nunomaduro/larastan/pull/1348
 
 ### Fixed
-* fix: Resolve correct model factory instance when application namespace is empty
-* fix: Remove stubs for `having()` and `orHaving()` QueryBuilder methods by @Maxoulak in [#1258](https://github.com/nunomaduro/larastan/pull/1258)
-* fix: fix return types for App::environment() [#1303](https://github.com/nunomaduro/larastan/pull/1303)
-* fix: Remove all unnecessary method stubs for the Query Builder by @lupinitylabs in [#1343](https://github.com/nunomaduro/larastan/pull/1343)
+* fix: use Composer autoloader to determine vendor-dir by @szepeviktor in https://github.com/nunomaduro/larastan/pull/1319
+* fix: return correct types from model factories by @canvural in https://github.com/nunomaduro/larastan/pull/1339
+* fix: better return types for `App::environment` by @crissi in https://github.com/nunomaduro/larastan/pull/1303
+* fix: remove `fromSub` from stubs by @crissi in https://github.com/nunomaduro/larastan/pull/1340
+
 
 ## [2.1.8] - 2022-06-04
 
@@ -825,7 +832,8 @@ Upgrade guide: [UPGRADE.md](https://github.com/nunomaduro/larastan/blob/master/U
 ### Added
 - Adds first alpha version
 
-[Unreleased]: https://github.com/nunomaduro/larastan/compare/v2.1.8...HEAD
+[Unreleased]: https://github.com/nunomaduro/larastan/compare/v2.2.0...HEAD
+[2.2.0]: https://github.com/nunomaduro/larastan/compare/v2.1.12...v2.2.0
 [2.1.8]: https://github.com/nunomaduro/larastan/compare/v2.1.7...v2.1.8
 [2.1.7]: https://github.com/nunomaduro/larastan/compare/v2.1.6...v2.1.7
 [2.1.6]: https://github.com/nunomaduro/larastan/compare/v2.1.5...v2.1.6
