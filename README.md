@@ -52,18 +52,18 @@ includes:
 parameters:
 
     paths:
-        - app
+        - app/
 
-    # The level 9 is the highest level
+    # Level 9 is the highest level
     level: 5
 
-    ignoreErrors:
-        - '#PHPDoc tag @var#'
-
-    excludePaths:
-        - ./*/*/FileToBeExcluded.php
-
-    checkMissingIterableValueType: false
+#    ignoreErrors:
+#        - '#PHPDoc tag @var#'
+#
+#    excludePaths:
+#        - ./*/*/FileToBeExcluded.php
+#
+#    checkMissingIterableValueType: false
 ```
 
 For all available options, please take a look at the PHPStan documentation: **https://phpstan.org/config-reference**
