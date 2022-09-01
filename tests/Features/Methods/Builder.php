@@ -198,10 +198,10 @@ class Builder
     public function testJoinSubAllowsEloquentBuilder(): void
     {
         User::query()->joinSub(
-            User::query()->whereIn('id', [1, 2, 3]),
+            Post::query()->whereIn('id', [1, 2, 3]),
             'users',
             'users.id',
-            'users.id'
+            'posts.id'
         );
     }
 
