@@ -17,17 +17,10 @@ sed -i -e 's|^\(\s*\)// \(protected \$namespace =\).*$|\1\2 null;|' app/Provider
 cat >phpstan.neon <<"EOF"
 includes:
     - ./vendor/nunomaduro/larastan/extension.neon
-
 parameters:
-    # The level 9 is the highest level
     level: 5
-
-    checkMissingIterableValueType: false
-
     paths:
         - app/
-    #excludePaths:
-    #    - ./*/*/FileToBeExcluded.php
 EOF
 
 echo "Test Laravel"
