@@ -245,4 +245,9 @@ class ModelPropertyExtension
     {
         return $this->user->favorites;
     }
+
+    public function testInboundCast(): void
+    {
+        $this->user->secret = 'secret';
+    }
 }

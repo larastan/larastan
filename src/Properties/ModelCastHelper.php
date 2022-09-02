@@ -134,9 +134,9 @@ class ModelCastHelper
     {
         $dateClass = class_exists(\Illuminate\Support\Facades\Date::class)
             ? \Illuminate\Support\Facades\Date::now()::class
-            : '\Illuminate\Support\Carbon';
+            : \Illuminate\Support\Carbon::class;
 
-        if ($dateClass === '\Illuminate\Support\Carbon') {
+        if ($dateClass === \Illuminate\Support\Carbon::class) {
             return TypeCombinator::union(new ObjectType($dateClass), new ObjectType(\Carbon\Carbon::class));
         }
 
