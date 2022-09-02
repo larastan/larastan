@@ -1,13 +1,20 @@
 name: "Integration tests"
 
 on:
-  workflow_run:
-    workflows: ["tests"]
-    types: [completed]
+  push:
+    paths-ignore:
+      - "**.md"
+      - 'docs/**'
+    # Prevent duplicating jobs on PR-s from local branches
+    branches:
+      - "master"
+  pull_request:
+    paths-ignore:
+      - "**.md"
+      - 'docs/**'
 
 jobs:
   integration-tests:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: "Integration Tests"
 
     runs-on: "ubuntu-latest"
