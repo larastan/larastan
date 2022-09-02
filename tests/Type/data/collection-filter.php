@@ -9,7 +9,7 @@ use Illuminate\Support\Collection;
 use function PHPStan\Testing\assertType;
 
 /** @var User $user */
-assertType('Illuminate\Support\Collection<int, non-empty-string>', collect(['foo', null, '', 'bar', null])->filter());
+assertType('Illuminate\Support\Collection<int, non-falsy-string>', collect(['foo', null, '', 'bar', null])->filter());
 
 /** @param Collection<int, mixed> $foo */
 function foo(Collection $foo): void
