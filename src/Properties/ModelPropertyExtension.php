@@ -27,16 +27,16 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
     private array $tables = [];
 
     public function __construct(
-        private TypeStringResolver      $stringResolver,
-        private MigrationHelper         $migrationHelper,
+        private TypeStringResolver $stringResolver,
+        private MigrationHelper $migrationHelper,
         private SquashedMigrationHelper $squashedMigrationHelper,
-        private ModelCastHelper         $modelCastHelper,
+        private ModelCastHelper $modelCastHelper,
     ) {
     }
 
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
     {
-        if (!$classReflection->isSubclassOf(Model::class)) {
+        if (! $classReflection->isSubclassOf(Model::class)) {
             return false;
         }
 
@@ -52,7 +52,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             return false;
         }
 
-        if (!$this->migrationsLoaded()) {
+        if (! $this->migrationsLoaded()) {
             $this->loadMigrations();
         }
 
@@ -69,7 +69,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
         $tableName = $modelInstance->getTable();
 
-        if (!array_key_exists($tableName, $this->tables)) {
+        if (! array_key_exists($tableName, $this->tables)) {
             return false;
         }
 
@@ -95,7 +95,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
             $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
 
-            if (!(new ObjectType(Attribute::class))->isSuperTypeOf($returnType)->yes()) {
+            if (! (new ObjectType(Attribute::class))->isSuperTypeOf($returnType)->yes()) {
                 return false;
             }
 
@@ -107,7 +107,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
     private function migrationsLoaded(): bool
     {
-        return !empty($this->tables);
+        return ! empty($this->tables);
     }
 
     private function loadMigrations(): void
@@ -121,9 +121,8 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
     public function getProperty(
         ClassReflection $classReflection,
-        string          $propertyName
-    ): PropertyReflection
-    {
+        string $propertyName
+    ): PropertyReflection {
         try {
             /** @var Model $modelInstance */
             $modelInstance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
@@ -135,7 +134,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
         if (
             $propertyName === $modelInstance->getKeyName()
-            && (!array_key_exists($tableName, $this->tables) || !array_key_exists($propertyName, $this->tables[$tableName]->columns))
+            && (! array_key_exists($tableName, $this->tables) || ! array_key_exists($propertyName, $this->tables[$tableName]->columns))
         ) {
             return new ModelProperty(
                 declaringClass: $classReflection,
