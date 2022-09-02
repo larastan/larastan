@@ -11,3 +11,6 @@ assertType('int', $user->stringButInt);
 assertType('string', $user->email);
 assertType('array', $user->allowed_ips);
 assertType('string', $user->floatButRoundedDecimalString);
+
+// CastsAttributes
+assertType('App\DTO\Favorites', $user->favorites);
