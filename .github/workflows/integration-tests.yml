@@ -1,0 +1,55 @@
+name: "Integration tests"
+
+on:
+  workflow_run:
+    workflows: ["tests"]
+    types: [completed]
+
+jobs:
+  integration-tests:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    name: "Integration Tests"
+
+    runs-on: "ubuntu-latest"
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+#          - php-version: 8.1
+#            script: |
+#              git clone https://github.com/monicahq/monica.git ../e2e/integration/repo
+#              cd ../e2e/integration/repo
+#              git checkout aca98708fecc5ff90feb1edc91d01a7b4fb12c56
+#              composer install --ignore-platform-reqs --no-scripts --no-interaction
+#              composer config repositories.0 '{ "type": "path", "url": "../../../larastan"}'
+#              composer config minimum-stability dev
+#              composer require --dev "nunomaduro/larastan:*" --ignore-platform-reqs
+#              ./vendor/bin/phpstan
+          - php-version: 8.1
+            script: |
+              git clone https://github.com/koel/koel.git ../e2e/integration/repo
+              cd ../e2e/integration/repo
+              git checkout a7d4522a36840c672f04b051bf28d852407da728
+              composer install --ignore-platform-reqs --no-scripts --no-interaction
+              composer config repositories.0 '{ "type": "path", "url": "../../../larastan"}'
+              composer config minimum-stability dev
+              composer require --dev "nunomaduro/larastan:*" --ignore-platform-reqs -W
+              ./vendor/bin/phpstan
+
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v3
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          coverage: "none"
+          php-version: "${{ matrix.php-version }}"
+
+      - name: "Install dependencies"
+        run: "composer update --no-interaction --no-progress"
+
+      - name: "Tests"
+        run: "${{ matrix.script }}"
