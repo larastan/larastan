@@ -2,10 +2,16 @@ name: "tests"
 
 on:
   push:
+    paths-ignore:
+      - "**.md"
+      - 'docs/**'
     # Prevent duplicating jobs on PR-s from local branches
     branches:
       - "master"
-  pull_request: null
+  pull_request:
+    paths-ignore:
+      - "**.md"
+      - 'docs/**'
   schedule:
     - cron: "0 0 * * *"
 
