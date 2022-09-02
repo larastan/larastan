@@ -1,0 +1,29 @@
+<?php
+
+namespace Illuminate\Notifications\Messages;
+
+class MailMessage
+{
+    /**
+     * The Markdown template to render (if applicable).
+     *
+     * @var view-string
+     */
+    public $markdown = 'notifications::email';
+    
+    /**
+     * @param view-string $view
+     * @param  array<string, mixed>  $data
+     * @return $this
+     */
+    public function markdown($view, array $data = [])
+    {}
+
+    /**
+     * @param  view-string  $view
+     * @param  array<string, mixed>  $data
+     * @return $this
+     */
+    public function view($view, array $data = [])
+    {}
+}

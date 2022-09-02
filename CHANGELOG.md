@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+* Add MailMessage stub to work well with Mailable
+
 ## [2.2.0] - 2022-08-31
 
 ### Added
