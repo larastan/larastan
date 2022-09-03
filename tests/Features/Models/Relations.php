@@ -242,7 +242,7 @@ class Relations
     {
         return User::with([
             'group' => [
-                'accounts'
+                'accounts',
             ],
         ]);
     }
