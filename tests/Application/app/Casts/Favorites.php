@@ -10,11 +10,11 @@ class Favorites implements CastsAttributes
     /**
      * Cast the given value.
      *
-     * @return \App\DTO\Favorites
+     * @return \App\ValueObjects\Favorites
      */
     public function get($model, $key, $value, $attributes)
     {
-        return new \App\DTO\Favorites();
+        return new \App\ValueObjects\Favorites();
     }
 
     /**
@@ -24,7 +24,7 @@ class Favorites implements CastsAttributes
      */
     public function set($model, $key, $value, $attributes)
     {
-        if (! $value instanceof \App\DTO\Favorites) {
+        if (! $value instanceof \App\ValueObjects\Favorites) {
             throw new InvalidArgumentException('The given value is not a Favorites instance.');
         }
 

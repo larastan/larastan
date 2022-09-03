@@ -6,7 +6,7 @@ namespace Tests\Features\Properties;
 
 use App\Account;
 use App\Address;
-use App\DTO\Favorites;
+use App\ValueObjects\Favorites;
 use App\Group;
 use App\GuardedModel;
 use App\Role;
