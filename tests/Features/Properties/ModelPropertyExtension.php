@@ -6,13 +6,13 @@ namespace Tests\Features\Properties;
 
 use App\Account;
 use App\Address;
-use App\ValueObjects\Favorites;
 use App\Group;
 use App\GuardedModel;
 use App\Role;
 use App\Team;
 use App\Thread;
 use App\User;
+use App\ValueObjects\Favorites;
 use ArrayObject;
 use Carbon\Carbon as BaseCarbon;
 use Illuminate\Support\Carbon;
