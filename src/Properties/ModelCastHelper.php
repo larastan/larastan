@@ -41,7 +41,7 @@ class ModelCastHelper
             'object' => new ObjectType('stdClass'),
             'array', 'json' => new ArrayType(new MixedType(), new MixedType()),
             'collection' => new ObjectType('Illuminate\Support\Collection'),
-            'date', 'datetime' => new ObjectType('Carbon\Carbon'),
+            'date', 'datetime' => $this->getDateType(),
             'immutable_date', 'immutable_datetime' => new ObjectType('Carbon\CarbonImmutable'),
             'timestamp' => new IntegerType(),
             default => null,
