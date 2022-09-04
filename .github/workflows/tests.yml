@@ -56,6 +56,9 @@ jobs:
         if: "matrix.dependencies == 'highest'"
         run: "composer update --with='illuminate/contracts:${{ matrix.laravel }}' --no-interaction --no-progress"
 
+      - name: "Check PSR-4 mapping"
+        run: "composer dump-autoload --optimize --strict-psr"
+
       - name: "Execute static analysis"
         run: "composer run-script test:types"
 
