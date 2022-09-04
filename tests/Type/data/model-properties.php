@@ -13,4 +13,4 @@ assertType('array', $user->allowed_ips);
 assertType('string', $user->floatButRoundedDecimalString);
 
 // CastsAttributes
-assertType('App\DTO\Favorites', $user->favorites);
+assertType('App\ValueObjects\Favorites', $user->favorites);
