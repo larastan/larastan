@@ -27,6 +27,7 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from $this->gatherAssertTypes(__DIR__.'/data/bug-1346.php');
         yield from $this->gatherAssertTypes(__DIR__.'/data/request-header.php');
         yield from $this->gatherAssertTypes(__DIR__.'/data/optional-helper.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/abstract-manager.php');
     }
 
     /**
