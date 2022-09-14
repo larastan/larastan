@@ -16,4 +16,4 @@ assertType('array<App\User>', User::simplePaginate()->items());
 assertType('Illuminate\Pagination\CursorPaginator<App\User>', User::cursorPaginate());
 assertType('array<App\User>', User::cursorPaginate()->items());
 
-assertType('ArrayIterator<mixed, App\User>', User::query()->paginate()->getIterator());
+assertType('ArrayIterator<(int|string), App\User>', User::query()->paginate()->getIterator());

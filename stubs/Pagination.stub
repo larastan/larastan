@@ -28,8 +28,8 @@ abstract class AbstractPaginator implements \Illuminate\Contracts\Support\Htmlab
 /**
  * @template TValue
  *
- * @implements \ArrayAccess<mixed, TValue>
- * @implements \IteratorAggregate<mixed, TValue>
+ * @implements \ArrayAccess<array-key, TValue>
+ * @implements \IteratorAggregate<array-key, TValue>
  * @implements \Illuminate\Contracts\Support\Arrayable<array-key, TValue>
  *
  * @extends AbstractPaginator<TValue>
@@ -40,8 +40,8 @@ class Paginator extends AbstractPaginator implements \Illuminate\Contracts\Suppo
 /**
  * @template TValue
  *
- * @implements \ArrayAccess<mixed, TValue>
- * @implements \IteratorAggregate<mixed, TValue>
+ * @implements \ArrayAccess<array-key, TValue>
+ * @implements \IteratorAggregate<array-key, TValue>
  * @implements \Illuminate\Contracts\Support\Arrayable<array-key, TValue>
  *
  * @extends AbstractPaginator<TValue>
@@ -75,8 +75,8 @@ abstract class AbstractCursorPaginator implements \Illuminate\Contracts\Support\
 /**
  * @template TValue
  *
- * @implements \ArrayAccess<mixed, TValue>
- * @implements \IteratorAggregate<mixed, TValue>
+ * @implements \ArrayAccess<array-key, TValue>
+ * @implements \IteratorAggregate<array-key, TValue>
  * @implements \Illuminate\Contracts\Support\Arrayable<array-key, TValue>
  *
  * @extends AbstractCursorPaginator<TValue>
