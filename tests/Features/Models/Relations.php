@@ -9,7 +9,6 @@ use App\Group;
 use App\Post;
 use App\Role;
 use App\User;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -19,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Pagination\LengthAwarePaginator;
 use function PHPStan\Testing\assertType;
 
 class Relations
@@ -86,6 +86,9 @@ class Relations
         return $user->accounts()->decrement('id', 5);
     }
 
+    /**
+     * @return LengthAwarePaginator<Account>
+     */
     public function testPaginate(User $user): LengthAwarePaginator
     {
         return $user->accounts()->paginate(5);

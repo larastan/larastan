@@ -3,37 +3,91 @@
 namespace Illuminate\Pagination;
 
 /**
- * @mixin \Illuminate\Support\Collection
+ * @template TValue
+ *
+ * @mixin \Illuminate\Support\Collection<mixed, TValue>
  */
 abstract class AbstractPaginator implements \Illuminate\Contracts\Support\Htmlable
-{}
+{
+    /**
+     * @return array<TValue>
+     */
+    public function items(): array;
+
+    /**
+     * @return \Illuminate\Support\Collection<array-key, TValue>
+     */
+    public function getCollection(): \Illuminate\Support\Collection;
+
+    /**
+     * @return \ArrayIterator<array-key, TValue>
+     */
+    public function getIterator(): \Traversable;
+}
 
 /**
- * @implements \ArrayAccess<mixed, mixed>
- * @implements \IteratorAggregate<mixed, mixed>
- * @implements \Illuminate\Contracts\Support\Arrayable<array-key, mixed>
+ * @template TValue
+ *
+ * @implements \ArrayAccess<mixed, TValue>
+ * @implements \IteratorAggregate<mixed, TValue>
+ * @implements \Illuminate\Contracts\Support\Arrayable<array-key, TValue>
+ *
+ * @extends AbstractPaginator<TValue>
  */
 class Paginator extends AbstractPaginator implements \Illuminate\Contracts\Support\Arrayable, \ArrayAccess, \Countable, \IteratorAggregate, \Illuminate\Contracts\Support\Jsonable, \JsonSerializable, \Illuminate\Contracts\Pagination\Paginator
 {}
 
 /**
- * @implements \ArrayAccess<mixed, mixed>
- * @implements \IteratorAggregate<mixed, mixed>
- * @implements \Illuminate\Contracts\Support\Arrayable<array-key, mixed>
+ * @template TValue
+ *
+ * @implements \ArrayAccess<mixed, TValue>
+ * @implements \IteratorAggregate<mixed, TValue>
+ * @implements \Illuminate\Contracts\Support\Arrayable<array-key, TValue>
+ *
+ * @extends AbstractPaginator<TValue>
  */
 class LengthAwarePaginator extends AbstractPaginator implements \Illuminate\Contracts\Support\Arrayable, \ArrayAccess, \Countable, \IteratorAggregate, \Illuminate\Contracts\Support\Jsonable, \JsonSerializable, \Illuminate\Contracts\Pagination\LengthAwarePaginator
 {}
 
 /**
- * @implements \ArrayAccess<mixed, mixed>
- * @implements \IteratorAggregate<mixed, mixed>
- * @implements \Illuminate\Contracts\Support\Arrayable<array-key, mixed>
+ * @template TValue
+ *
+ * @mixin \Illuminate\Support\Collection<mixed, TValue>
  */
-class CursorPaginator extends AbstractPaginator implements \Illuminate\Contracts\Support\Arrayable, \ArrayAccess, \Countable, \IteratorAggregate, \Illuminate\Contracts\Support\Jsonable, \JsonSerializable, \Illuminate\Contracts\Pagination\CursorPaginator
+abstract class AbstractCursorPaginator implements \Illuminate\Contracts\Support\Htmlable
+{
+    /**
+     * @return array<TValue>
+     */
+    public function items(): array;
+
+    /**
+     * @return \Illuminate\Support\Collection<array-key, TValue>
+     */
+    public function getCollection(): \Illuminate\Support\Collection;
+
+    /**
+     * @return \ArrayIterator<array-key, TValue>
+     */
+    public function getIterator(): \Traversable;
+}
+
+/**
+ * @template TValue
+ *
+ * @implements \ArrayAccess<mixed, TValue>
+ * @implements \IteratorAggregate<mixed, TValue>
+ * @implements \Illuminate\Contracts\Support\Arrayable<array-key, TValue>
+ *
+ * @extends AbstractCursorPaginator<TValue>
+ */
+class CursorPaginator extends AbstractCursorPaginator implements \Illuminate\Contracts\Support\Arrayable, \ArrayAccess, \Countable, \IteratorAggregate, \Illuminate\Contracts\Support\Jsonable, \JsonSerializable, \Illuminate\Contracts\Pagination\CursorPaginator
 {}
 
 /**
- * @implements \Illuminate\Contracts\Support\Arrayable<array-key, mixed>
+ * @template TValue
+ *
+ * @implements \Illuminate\Contracts\Support\Arrayable<array-key, TValue>
  */
 class Cursor implements \Illuminate\Contracts\Support\Arrayable
 {}

@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Features\Methods;
 
+use App\Account;
 use App\Post;
 use App\PostBuilder;
 use App\User;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use function PHPStan\Testing\assertType;
 
@@ -344,5 +346,21 @@ class Builder
     public function testQueryBuilderOnEloquentBuilderWithBaseModel(EloquentBuilder $query): void
     {
         assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query->select());
+    }
+
+    /**
+     * @phpstan-return LengthAwarePaginator<User>
+     */
+    public function testPaginate()
+    {
+        return User::query()->paginate();
+    }
+
+    /**
+     * @phpstan-return array<User>
+     */
+    public function testPaginateItems()
+    {
+        return User::query()->paginate()->items();
     }
 }
