@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Features\Methods;
 
-use App\Account;
 use App\Post;
 use App\PostBuilder;
 use App\User;
