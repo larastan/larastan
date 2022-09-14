@@ -463,7 +463,7 @@ class Builder
      * @param  int|null  $perPage
      * @param  array<array-key, mixed>  $columns
      * @param  string  $cursorName
-     * @param  \Illuminate\Pagination\Cursor<TModelClass>|string|null  $cursor
+     * @param  \Illuminate\Pagination\Cursor|string|null  $cursor
      * @return \Illuminate\Pagination\CursorPaginator<TModelClass>
      */
      public function cursorPaginate($perPage = null, $columns = ['*'], $cursorName = 'cursor', $cursor = null);

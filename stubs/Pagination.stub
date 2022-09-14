@@ -85,9 +85,7 @@ class CursorPaginator extends AbstractCursorPaginator implements \Illuminate\Con
 {}
 
 /**
- * @template TValue
- *
- * @implements \Illuminate\Contracts\Support\Arrayable<array-key, TValue>
+ * @implements \Illuminate\Contracts\Support\Arrayable<array-key, mixed>
  */
 class Cursor implements \Illuminate\Contracts\Support\Arrayable
 {}
