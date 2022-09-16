@@ -17,3 +17,9 @@ assertType('Illuminate\Pagination\CursorPaginator<App\User>', User::cursorPagina
 assertType('array<App\User>', User::cursorPaginate()->items());
 
 assertType('ArrayIterator<(int|string), App\User>', User::query()->paginate()->getIterator());
+
+// HasMany
+assertType('Illuminate\Pagination\LengthAwarePaginator<App\Account>', (new User())->accounts()->paginate());
+
+// BelongsToMany
+assertType('Illuminate\Pagination\LengthAwarePaginator<App\Post>', (new User())->posts()->paginate());

@@ -31,6 +31,7 @@ abstract class AbstractPaginator implements \Illuminate\Contracts\Support\Htmlab
  * @implements \ArrayAccess<array-key, TValue>
  * @implements \IteratorAggregate<array-key, TValue>
  * @implements \Illuminate\Contracts\Support\Arrayable<array-key, TValue>
+ * @implements \Illuminate\Contracts\Pagination\Paginator<TValue>
  *
  * @extends AbstractPaginator<TValue>
  */
@@ -43,6 +44,7 @@ class Paginator extends AbstractPaginator implements \Illuminate\Contracts\Suppo
  * @implements \ArrayAccess<array-key, TValue>
  * @implements \IteratorAggregate<array-key, TValue>
  * @implements \Illuminate\Contracts\Support\Arrayable<array-key, TValue>
+ * @implements \Illuminate\Contracts\Pagination\LengthAwarePaginator<TValue>
  *
  * @extends AbstractPaginator<TValue>
  */
@@ -78,6 +80,7 @@ abstract class AbstractCursorPaginator implements \Illuminate\Contracts\Support\
  * @implements \ArrayAccess<array-key, TValue>
  * @implements \IteratorAggregate<array-key, TValue>
  * @implements \Illuminate\Contracts\Support\Arrayable<array-key, TValue>
+ * @implements \Illuminate\Contracts\Pagination\CursorPaginator<TValue>
  *
  * @extends AbstractCursorPaginator<TValue>
  */
