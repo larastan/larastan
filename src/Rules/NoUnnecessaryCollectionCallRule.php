@@ -156,12 +156,12 @@ class NoUnnecessaryCollectionCallRule implements Rule
         /** @var \PhpParser\Node\Identifier $name */
         $name = $node->name;
 
-        if (! $this->isCalledOnCollection($node->var, $scope)) {
+        $previousCall = $node->var;
+
+        if (! $this->isCalledOnCollection($previousCall, $scope)) {
             // Method was not called on a collection, so no errors.
             return [];
         }
-
-        $previousCall = $node->var;
 
         if (! $this->callIsQuery($previousCall, $scope)) {
             // Previous call wasn't on a Builder, so no errors.
@@ -280,6 +280,10 @@ class NoUnnecessaryCollectionCallRule implements Rule
      */
     protected function callIsQuery(Node\Expr $call, Scope $scope): bool
     {
+        if ($call instanceof Node\Expr\PropertyFetch) {
+            return $this->isCalledOnCollection($call, $scope);
+        }
+
         if ($call instanceof MethodCall) {
             $calledOn = $scope->getType($call->var);
 
