@@ -5,6 +5,8 @@ namespace Illuminate\Database\Eloquent;
 /**
  * @template TModelClass of Model
  * @property-read static $orWhere
+ *
+ * @mixin \Illuminate\Database\Query\Builder
  */
 class Builder
 {
