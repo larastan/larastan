@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- fix: add @mixin Query\Builder to EloquentBuilder.stub by @davidjr82 in https://github.com/nunomaduro/larastan/pull/1379
+
 ## [2.2.0] - 2022-08-31
 
 ### Added
