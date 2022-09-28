@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+### Added
+* feat: Add a rule disallowing the usage of global helper functions that depend on a booted application by @PrinsFrank in https://github.com/nunomaduro/larastan/pull/1378
+
 ## [2.2.0] - 2022-08-31
 
 ### Added

@@ -19,6 +19,7 @@ parameters:
     databaseMigrationsPath: []
     checkModelProperties: false
     checkPhpDocMissingReturn: false
+    checkDecoupledCode: false
 
 parametersSchema:
     checkOctaneCompatibility: bool()
@@ -29,6 +30,7 @@ parametersSchema:
     databaseMigrationsPath: listOf(string())
     squashedMigrationsPath: listOf(string())
     checkModelProperties: bool()
+    checkDecoupledCode: bool()
 
 conditionalTags:
     NunoMaduro\Larastan\Rules\NoModelMakeRule:
@@ -41,6 +43,8 @@ conditionalTags:
         phpstan.rules.rule: %checkModelProperties%
     NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertyStaticCallRule:
         phpstan.rules.rule: %checkModelProperties%
+    NunoMaduro\Larastan\Rules\DecoupledCode\NoHelperDependingOnBootedApplicationUsageRule:
+        phpstan.rules.rule: %checkDecoupledCode%
 
 services:
     -
@@ -375,6 +379,9 @@ services:
 
     -
         class: NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertyStaticCallRule
+
+    -
+        class: NunoMaduro\Larastan\Rules\DecoupledCode\NoHelperDependingOnBootedApplicationUsageRule
 
     -
         class: NunoMaduro\Larastan\Types\GenericEloquentBuilderTypeNodeResolverExtension
