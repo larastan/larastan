@@ -23,6 +23,7 @@ class FeaturesTest extends BaseTestCase
         File::copyDirectory(__DIR__.'/Application/database/schema', $this->getBasePath().'/database/schema');
         File::copyDirectory(__DIR__.'/Application/config', $this->getBasePath().'/config');
         File::copyDirectory(__DIR__.'/Application/resources', $this->getBasePath().'/resources');
+        File::copyDirectory(__DIR__.'/Application/lang', $this->getBasePath().'/lang');
 
         $this->configPath = __DIR__.'/phpstan-tests.neon';
     }

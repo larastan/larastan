@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 
 - feat: freed `joinSub` to allow models to join other models by @harmenjanssen in https://github.com/nunomaduro/larastan/pull/1352
+- feat: Added `trans-string` type which checks if a `string` is a valid translation key by @mad-briller https://github.com/nunomaduro/larastan/pull/1383
 
 ## [2.2.0] - 2022-08-31
 

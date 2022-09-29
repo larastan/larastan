@@ -2,4 +2,25 @@
 
 namespace Illuminate\Contracts\Translation;
 
-interface Translator {}
+interface Translator {
+    /**
+     * Get the translation for a given key.
+     *
+     * @param  trans-string  $key
+     * @param  array<string, scalar>  $replace
+     * @param  string|null  $locale
+     * @return mixed
+     */
+    public function get($key, array $replace = [], $locale = null);
+
+    /**
+     * Get a translation according to an integer value.
+     *
+     * @param  trans-string  $key
+     * @param  \Countable|int|array<array-key, mixed>  $number
+     * @param  array<string, scalar>  $replace
+     * @param  string|null  $locale
+     * @return string
+     */
+    public function choice($key, $number, array $replace = [], $locale = null);
+}

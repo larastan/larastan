@@ -33,7 +33,7 @@ class ValidatorExtension
         ]);
 
         $validationAttributeNames = [
-            'message' => trans('g.label.message'),
+            'message' => trans('trans.language-key'),
         ];
 
         $validator->setAttributeNames($validationAttributeNames);

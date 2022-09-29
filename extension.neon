@@ -359,6 +359,11 @@ services:
             - phpstan.phpDoc.typeNodeResolverExtension
 
     -
+        class: NunoMaduro\Larastan\Types\TransStringTypeNodeResolverExtension
+        tags:
+            - phpstan.phpDoc.typeNodeResolverExtension
+
+    -
         class: NunoMaduro\Larastan\Rules\OctaneCompatibilityRule
 
     -

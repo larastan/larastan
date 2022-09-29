@@ -22,13 +22,13 @@ public function renderView(string $view): View
     return view($view);
 }
 ```
-Now, whenever you call `renderView`, Larastan will try to check whether 
+Now, whenever you call `renderView`, Larastan will try to check whether
 the given string is a valid blade view.
 
 
 If the string is not an existing blade view, the following error will be displayed by Larastan.
 ```
-Parameter #1 $view of method TestClass::renderView() expects view-string, string given.  
+Parameter #1 $view of method TestClass::renderView() expects view-string, string given.
 ```
 
 ## model-property
@@ -38,3 +38,25 @@ All of the Laravel core methods have this type thanks to the stubs. So whenever 
 
 The actual check is done by the `ModelPropertyRule`. You can read the details [here](rules.md#ModelPropertyRule).
 
+
+## trans-string
+
+`trans-string` is a subset of the `string` type. Any `string` that passes the `trans()->has($string)` test
+is also a valid `trans-string`.
+
+**Example:**
+
+```php
+/**
+ * @phpstan-param trans-string $key
+ * @param string $key
+ * @return mixed
+ */
+public function getTrans(string $key): mixed
+{
+    return trans($key);
+}
+```
+
+Now, whenever `getTrans` is called, Larastan will check whether
+the given string is a defined [translation](https://laravel.com/docs/master/localization#defining-translation-strings) key.
