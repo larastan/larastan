@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Methods\BuilderHelper;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
@@ -49,7 +50,13 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
     public function isStaticMethodSupported(MethodReflection $methodReflection): bool
     {
         $name = $methodReflection->getName();
+
         if ($name === '__construct') {
+            return false;
+        }
+
+        // Another extension handles this case
+        if (Str::startsWith($name, 'find')) {
             return false;
         }
 
@@ -81,7 +88,7 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
 
         $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
 
-        if ((count(array_intersect([EloquentBuilder::class, QueryBuilder::class], $returnType->getReferencedClasses())) > 0)
+        if ((count(array_intersect([EloquentBuilder::class], $returnType->getReferencedClasses())) > 0)
             && $methodCall->class instanceof \PhpParser\Node\Name
         ) {
             $returnType = new GenericObjectType(
