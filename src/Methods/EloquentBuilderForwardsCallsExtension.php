@@ -87,10 +87,6 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
 
         if ($modelType instanceof TemplateObjectType) {
             $modelType = $modelType->getBound();
-
-            if ($modelType->equals(new ObjectType(Model::class))) {
-                return null;
-            }
         }
 
         if ($modelType instanceof TypeWithClassName) {
