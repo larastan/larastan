@@ -50,7 +50,7 @@ class ModelPropertyStaticCallRule implements Rule
      * @param  Scope  $scope
      * @return string[]
      *
-     * @throws \PHPStan\ShouldNotHappenException|\PHPStan\Reflection\MissingMethodFromReflectionException
+     * @throws \PHPStan\ShouldNotHappenException
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -82,10 +82,6 @@ class ModelPropertyStaticCallRule implements Rule
                 }
 
                 $currentClassReflection = $scope->getClassReflection();
-
-                if ($currentClassReflection === null) {
-                    return [];
-                }
 
                 $parentClass = $currentClassReflection->getParentClass();
 
@@ -132,10 +128,6 @@ class ModelPropertyStaticCallRule implements Rule
             $modelReflection = $this->reflectionProvider->getClass($modelClassName);
         }
 
-        if ($modelReflection === null) {
-            return [];
-        }
-
         if (! $modelReflection->isSubclassOf(Model::class)) {
             return [];
         }
@@ -145,10 +137,6 @@ class ModelPropertyStaticCallRule implements Rule
         }
 
         $methodReflection = $modelReflection->getMethod($methodName, $scope);
-
-        if ($methodReflection instanceof EloquentBuilderMethodReflection) {
-            $methodReflection = $methodReflection->getOriginalMethodReflection();
-        }
 
         $className = $methodReflection->getDeclaringClass()->getName();
 

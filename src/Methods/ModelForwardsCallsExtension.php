@@ -202,7 +202,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
             });
 
             return new EloquentBuilderMethodReflection(
-                $methodName, $classReflection,
+                $methodName, $builderReflection,
                 $reflection,
                 $parametersAcceptor->getParameters(),
                 $returnType,
