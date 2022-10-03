@@ -335,4 +335,14 @@ class Builder
             assertType('App\PostBuilder<App\Post>', $query);
         });
     }
+
+    /**
+     * @template TModelClass of \Illuminate\Database\Eloquent\Model
+     *
+     * @param  EloquentBuilder<TModelClass>  $query
+     */
+    public function testQueryBuilderOnEloquentBuilderWithBaseModel(EloquentBuilder $query): void
+    {
+        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query->select());
+    }
 }
