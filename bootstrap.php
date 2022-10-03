@@ -15,7 +15,7 @@ if (file_exists($applicationPath = getcwd().'/bootstrap/app.php')) { // Applicat
 } elseif (file_exists($applicationPath = dirname(__DIR__, 3).'/bootstrap/app.php')) { // Relative path from default vendor dir
     $app = require $applicationPath;
 } elseif (trait_exists(CreatesApplication::class)) { // Packages
-    $app = ApplicationResolver::resolve();
+    $app = ApplicationResolver::resolve(dirname(__DIR__, 2));
 } else {
     throw new Exception('Could not find Laravel bootstrap file nor Testbench is installed. Install orchestra/testbench if analyzing a package.');
 }

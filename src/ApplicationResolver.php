@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan;
 
-use Composer\Autoload\ClassLoader;
 use Composer\ClassMapGenerator\ClassMapGenerator;
 use const DIRECTORY_SEPARATOR;
 use Illuminate\Contracts\Foundation\Application;
 use function in_array;
 use Orchestra\Testbench\Concerns\CreatesApplication;
-use ReflectionClass;
 
 /**
  * @internal
@@ -32,11 +30,11 @@ final class ApplicationResolver
      *
      * @throws \ReflectionException
      */
-    public static function resolve(): Application
+    public static function resolve(?string $vendorDir = null): Application
     {
         $app = (new self)->createApplication();
 
-        $vendorDir = self::getVendorDir() ?? getcwd().DIRECTORY_SEPARATOR.'vendor';
+        $vendorDir ??= getcwd().DIRECTORY_SEPARATOR.'vendor';
         $composerConfigPath = dirname($vendorDir).DIRECTORY_SEPARATOR.'composer.json';
 
         if (file_exists($composerConfigPath)) {
@@ -55,22 +53,6 @@ final class ApplicationResolver
         }
 
         return $app;
-    }
-
-    protected static function getVendorDir(): ?string
-    {
-        $reflector = new ReflectionClass(ClassLoader::class);
-        $classLoaderPath = $reflector->getFileName();
-        if ($classLoaderPath === false) {
-            return null;
-        }
-
-        $vendorDir = dirname($classLoaderPath, 2);
-        if (! is_dir($vendorDir)) {
-            return null;
-        }
-
-        return $vendorDir;
     }
 
     /**
