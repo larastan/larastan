@@ -36,41 +36,36 @@ final class ApplicationResolver
     {
         $app = (new self)->createApplication();
 
-        $vendorDir = self::getVendorDir() ?? getcwd().DIRECTORY_SEPARATOR.'vendor';
-        $composerConfigPath = dirname($vendorDir).DIRECTORY_SEPARATOR.'composer.json';
+        $classLoaders = array_map('get_class', ClassLoader::getRegisteredLoaders());
+        $currentVendorDir = getcwd().DIRECTORY_SEPARATOR.'vendor';
+        if (is_dir($currentVendorDir) && !array_key_exists($currentVendorDir, $classLoaders)) {
+            $classLoaders[$currentVendorDir] = ClassLoader::class;
+        }
 
-        if (file_exists($composerConfigPath)) {
-            self::$composer = json_decode((string) file_get_contents($composerConfigPath), true);
-            $namespace = (string) key(self::$composer['autoload']['psr-4']);
-            $serviceProviders = array_values(array_filter(self::getProjectClasses($namespace, $vendorDir), static function ($class) use (
-                $namespace
-            ) {
-                /** @var class-string $class */
-                return strpos($class, $namespace) === 0 && self::isServiceProvider($class);
-            }));
+        foreach (array_keys($classLoaders) as $vendorDir) {
+            if (substr($vendorDir, 0, 5) === 'phar:') {
+                continue;
+            }
 
-            foreach ($serviceProviders as $serviceProvider) {
-                $app->register($serviceProvider);
+            $composerConfigPath = dirname($vendorDir).DIRECTORY_SEPARATOR.'composer.json';
+
+            if (file_exists($composerConfigPath)) {
+                self::$composer = json_decode((string) file_get_contents($composerConfigPath), true);
+                $namespace = (string) key(self::$composer['autoload']['psr-4']);
+                $serviceProviders = array_values(array_filter(self::getProjectClasses($namespace, $vendorDir), static function ($class) use (
+                    $namespace
+                ) {
+                    /** @var class-string $class */
+                    return strpos($class, $namespace) === 0 && self::isServiceProvider($class);
+                }));
+
+                foreach ($serviceProviders as $serviceProvider) {
+                    $app->register($serviceProvider);
+                }
             }
         }
 
         return $app;
-    }
-
-    protected static function getVendorDir(): ?string
-    {
-        $reflector = new ReflectionClass(ClassLoader::class);
-        $classLoaderPath = $reflector->getFileName();
-        if ($classLoaderPath === false) {
-            return null;
-        }
-
-        $vendorDir = dirname($classLoaderPath, 2);
-        if (! is_dir($vendorDir)) {
-            return null;
-        }
-
-        return $vendorDir;
     }
 
     /**
