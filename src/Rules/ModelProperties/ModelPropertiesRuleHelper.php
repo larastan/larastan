@@ -13,6 +13,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantStringType;
@@ -34,7 +35,7 @@ class ModelPropertiesRuleHelper
      * @param  ClassReflection|null  $modelReflection
      * @return string[]
      *
-     * @throws \PHPStan\ShouldNotHappenException
+     * @throws ShouldNotHappenException
      */
     public function check(MethodReflection $methodReflection, Scope $scope, array $args, ?ClassReflection $modelReflection = null): array
     {

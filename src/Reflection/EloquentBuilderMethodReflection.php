@@ -7,7 +7,6 @@ namespace NunoMaduro\Larastan\Reflection;
 use Illuminate\Database\Eloquent\Builder;
 use PHPStan\Reflection\ClassMemberReflection;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\ExtendedMethodReflection;
 use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParameterReflection;
@@ -16,8 +15,7 @@ use PHPStan\Type\Generic\TemplateTypeMap;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
-/** @phpstan-ignore-next-line */
-final class EloquentBuilderMethodReflection implements ExtendedMethodReflection
+final class EloquentBuilderMethodReflection implements MethodReflection
 {
     /**
      * @var string

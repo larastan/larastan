@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder;
-use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
@@ -50,7 +49,7 @@ class ModelPropertyStaticCallRule implements Rule
      * @param  Scope  $scope
      * @return string[]
      *
-     * @throws \PHPStan\ShouldNotHappenException|\PHPStan\Reflection\MissingMethodFromReflectionException
+     * @throws \PHPStan\ShouldNotHappenException
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -145,10 +144,6 @@ class ModelPropertyStaticCallRule implements Rule
         }
 
         $methodReflection = $modelReflection->getMethod($methodName, $scope);
-
-        if ($methodReflection instanceof EloquentBuilderMethodReflection) {
-            $methodReflection = $methodReflection->getOriginalMethodReflection();
-        }
 
         $className = $methodReflection->getDeclaringClass()->getName();
 
