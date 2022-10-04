@@ -338,7 +338,8 @@ class Builder
 
     /**
      * @template TModelClass of \Illuminate\Database\Eloquent\Model
-     * @param EloquentBuilder<TModelClass> $query
+     *
+     * @param  EloquentBuilder<TModelClass>  $query
      */
     public function testQueryBuilderOnEloquentBuilderWithBaseModel(EloquentBuilder $query): void
     {
