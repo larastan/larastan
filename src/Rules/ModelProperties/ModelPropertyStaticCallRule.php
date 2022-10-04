@@ -82,6 +82,10 @@ class ModelPropertyStaticCallRule implements Rule
 
                 $currentClassReflection = $scope->getClassReflection();
 
+                if ($currentClassReflection === null) {
+                    return [];
+                }
+
                 $parentClass = $currentClassReflection->getParentClass();
 
                 if ($parentClass === null) {
@@ -125,6 +129,10 @@ class ModelPropertyStaticCallRule implements Rule
             }
 
             $modelReflection = $this->reflectionProvider->getClass($modelClassName);
+        }
+
+        if ($modelReflection === null) {
+            return [];
         }
 
         if (! $modelReflection->isSubclassOf(Model::class)) {
