@@ -31,8 +31,10 @@ final class ApplicationResolver
     public static function resolve(): Application
     {
         if (file_exists(getcwd().'/testbench.yaml')) {
-            $appBasePath = transform(Yaml::parseFile(getcwd().'/testbench.yaml'), function ($config) {
-                return $config['laravel'];
+            $config = Yaml::parseFile(getcwd().'/testbench.yaml');
+
+            $appBasePath = transform($config['laravel'], function ($basePath) {
+                return str_replace('./', getcwd().'/', $basePath);
             });
         }
 
