@@ -9,21 +9,17 @@ use Composer\ClassMapGenerator\ClassMapGenerator;
 use const DIRECTORY_SEPARATOR;
 use Illuminate\Contracts\Foundation\Application;
 use function in_array;
-use Orchestra\Testbench\Concerns\CreatesApplication;
+use Orchestra\Testbench\Foundation\Application as Testbench;
 use ReflectionClass;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * @internal
  */
 final class ApplicationResolver
 {
-    use CreatesApplication;
-
     /** @var mixed */
     public static $composer;
-
-    /** @var bool */
-    protected $enablesPackageDiscoveries = true;
 
     /**
      * Creates an application and registers service providers found.
@@ -34,7 +30,15 @@ final class ApplicationResolver
      */
     public static function resolve(): Application
     {
-        $app = (new self)->createApplication();
+        if (file_exists(getcwd().'/testbench.yaml')) {
+            $appBasePath = transform(Yaml::parseFile(getcwd().'/testbench.yaml'), function ($config) {
+                return $config['laravel'];
+            });
+        }
+
+        $appBasePath ??= Testbench::applicationBasePath();
+
+        $app = Testbench::create($appBasePath, null, ['enables_package_discoveries' => true]);
 
         $vendorDir = self::getVendorDir() ?? getcwd().DIRECTORY_SEPARATOR.'vendor';
         $composerConfigPath = dirname($vendorDir).DIRECTORY_SEPARATOR.'composer.json';
