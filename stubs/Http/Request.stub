@@ -2,4 +2,18 @@
 
 namespace Illuminate\Http;
 
-class Request {}
+class Request {
+
+    /**
+     * Retrieve a header from the request.
+     *
+     * @template TDefault of string|array<string, string>|null
+     *
+     * @param  string|null  $key
+     * @param  TDefault $default
+     *
+     * @return ($key is null ? array<string, string> : string|TDefault)
+     */
+    public function header($key = null, $default = null)
+    {}
+}
