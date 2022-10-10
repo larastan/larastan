@@ -155,3 +155,17 @@ function trans($key = null, $replace = [], $locale = null)
 function __($key = null, $replace = [], $locale = null)
 {
 }
+
+/**
+ * Provide access to optional objects.
+ *
+ * @template TValue of mixed
+ * @template TReturn of mixed
+ *
+ * @param  TValue  $value
+ * @param  ?callable(TValue): TReturn  $callback
+ * @return ($callback is null ? \Illuminate\Support\Optional : ($value is null ? null : TReturn))
+ */
+function optional($value = null, callable $callback = null)
+{
+}
