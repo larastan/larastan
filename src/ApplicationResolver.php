@@ -35,7 +35,7 @@ final class ApplicationResolver
 
         $tempApp = (new self)->createApplication();
         try {
-            exec($tempApp->get(PackageManifest::class)->vendorPath . '/bin/testbench package:discover');
+            exec($tempApp->get(PackageManifest::class)->vendorPath.'/bin/testbench package:discover');
         } catch (NotFoundExceptionInterface|ContainerExceptionInterface $e) {
             // do nothing
         }
