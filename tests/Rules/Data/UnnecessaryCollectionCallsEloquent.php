@@ -102,4 +102,9 @@ class UnnecessaryCollectionCallsEloquent
     {
         return User::pluck('id')->sum();
     }
+
+    public function relationWithRiskyMethod(): int
+    {
+        return User::firstOrFail()->accounts->count();
+    }
 }
