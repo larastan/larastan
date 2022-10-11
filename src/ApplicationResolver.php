@@ -31,6 +31,10 @@ final class ApplicationResolver
         if (
             "$laravelVendorPath/autoload.php" !== "$vendorDir/autoload.php"
         ) {
+            if ($filesystem->exists($app->basePath('bootstrap/cache/packages.php'))) {
+                $filesystem->delete($app->basePath('bootstrap/cache/packages.php'));
+            }
+
             $filesystem->delete($laravelVendorPath);
             $filesystem->link($vendorDir, $laravelVendorPath);
         }
@@ -62,7 +66,9 @@ final class ApplicationResolver
         $resolvingCallback = function ($app) {
             $packageManifest = $app->make(PackageManifest::class);
 
-            $packageManifest->build();
+            if (! file_exists($packageManifest->manifestPath)) {
+                $packageManifest->build();
+            }
         };
 
         if (class_exists(Config::class)) {
