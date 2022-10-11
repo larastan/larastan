@@ -34,18 +34,16 @@ final class ApplicationResolver
         if (class_exists(Config::class)) {
             $config = Config::loadFromYaml(getcwd());
 
-            $app = Testbench::create(
+            return Testbench::create(
                 basePath: $config['laravel'],
                 resolvingCallback: $resolvingCallback,
                 options: ['enables_package_discoveries' => true, 'extra' => $config->getExtraAttributes()]
             );
-        } else {
-            $app = Testbench::create(
-                resolvingCallback: $resolvingCallback,
-                options: ['enables_package_discoveries' => true]
-            );
         }
-
-        return $app;
+            
+        return Testbench::create(
+            resolvingCallback: $resolvingCallback,
+            options: ['enables_package_discoveries' => true]
+        );
     }
 }
