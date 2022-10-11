@@ -40,7 +40,7 @@ final class ApplicationResolver
                 options: ['enables_package_discoveries' => true, 'extra' => $config->getExtraAttributes()]
             );
         }
-            
+
         return Testbench::create(
             resolvingCallback: $resolvingCallback,
             options: ['enables_package_discoveries' => true]
