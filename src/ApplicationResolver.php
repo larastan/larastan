@@ -56,7 +56,7 @@ final class ApplicationResolver
         if ($composerConfig = ComposerHelper::getComposerConfig($workingPath)) {
             $vendorDir = ComposerHelper::getVendorDirFromComposerConfig($workingPath, $composerConfig);
         } else {
-            $vendorDir = $workingPath . '/vendor';
+            $vendorDir = $workingPath.'/vendor';
         }
 
         $resolvingCallback = function ($app) {
