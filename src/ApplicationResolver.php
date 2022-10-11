@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan;
 
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Foundation\PackageManifest;
 use Orchestra\Testbench\Foundation\Application as Testbench;
 use Orchestra\Testbench\Foundation\Config;
+use Illuminate\Foundation\PackageManifest as IlluminatePackageManifest;
 
 /**
  * @internal
@@ -23,8 +23,12 @@ final class ApplicationResolver
      */
     public static function resolve(): Application
     {
+        if (! defined('TESTBENCH_WORKING_PATH')) {
+            define('TESTBENCH_WORKING_PATH', $workingPath = getcwd());
+        }
+
         $resolvingCallback = function ($app) {
-            $packageManifest = $app->make(PackageManifest::class);
+            $packageManifest = $app->make(IlluminatePackageManifest::class);
 
             if (! file_exists($packageManifest->manifestPath)) {
                 $packageManifest->build();
@@ -32,7 +36,7 @@ final class ApplicationResolver
         };
 
         if (class_exists(Config::class)) {
-            $config = Config::loadFromYaml(getcwd());
+            $config = Config::loadFromYaml($workingPath);
 
             return Testbench::create(
                 basePath: $config['laravel'],
