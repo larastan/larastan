@@ -33,12 +33,11 @@ final class ApplicationResolver
         if (class_exists(Config::class)) {
             $config = Config::loadFromYaml(getcwd());
 
-            $appBasePath = $config['laravel'];
+            $app = Testbench::create(basePath: $config['laravel'], options: ['enables_package_discoveries' => true, 'extra' => $config->getExtraAttributes()]);
+        } else {
+            $app = Testbench::create(options: ['enables_package_discoveries' => true]);
         }
 
-        $appBasePath ??= Testbench::applicationBasePath();
-
-        $app = Testbench::create(basePath: $appBasePath, options: ['enables_package_discoveries' => true]);
 
         $vendorDir = self::getVendorDir() ?? getcwd().DIRECTORY_SEPARATOR.'vendor';
         $composerConfigPath = dirname($vendorDir).DIRECTORY_SEPARATOR.'composer.json';
