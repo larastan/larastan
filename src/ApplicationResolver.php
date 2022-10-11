@@ -10,8 +10,8 @@ use const DIRECTORY_SEPARATOR;
 use Illuminate\Contracts\Foundation\Application;
 use function in_array;
 use Orchestra\Testbench\Foundation\Application as Testbench;
+use Orchestra\Testbench\Foundation\Config;
 use ReflectionClass;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * @internal
@@ -30,12 +30,10 @@ final class ApplicationResolver
      */
     public static function resolve(): Application
     {
-        if (file_exists(getcwd().'/testbench.yaml')) {
-            $config = Yaml::parseFile(getcwd().'/testbench.yaml');
+        if (class_exists(Config::class)) {
+            $config = Config::loadFromYaml(getcwd());
 
-            $appBasePath = transform($config['laravel'], function ($basePath) {
-                return str_replace('./', getcwd().'/', $basePath);
-            });
+            $appBasePath = $config['laravel'];
         }
 
         $appBasePath ??= Testbench::applicationBasePath();
@@ -77,17 +75,6 @@ final class ApplicationResolver
         }
 
         return $vendorDir;
-    }
-
-    /**
-     * Define environment setup.
-     *
-     * @param  \Illuminate\Foundation\Application  $app
-     * @return void
-     */
-    protected function getEnvironmentSetUp($app)
-    {
-        // ..
     }
 
     /**
