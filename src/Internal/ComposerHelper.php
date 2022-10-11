@@ -12,7 +12,7 @@ final class ComposerHelper
     {
         $composerJsonPath = self::getComposerJsonPath($root);
 
-        if (!is_file($composerJsonPath)) {
+        if (! is_file($composerJsonPath)) {
             return null;
         }
 
@@ -35,16 +35,16 @@ final class ComposerHelper
         $fileName = is_string($envComposer) ? $envComposer : 'composer.json';
         $fileName = basename(trim($fileName));
 
-        return $root . '/' . $fileName;
+        return $root.'/'.$fileName;
     }
 
     /**
-     * @param array<string, mixed> $composerConfig
+     * @param  array<string, mixed>  $composerConfig
      */
     public static function getVendorDirFromComposerConfig(string $root, array $composerConfig): string
     {
         $vendorDirectory = $composerConfig['config']['vendor-dir'] ?? 'vendor';
 
-        return $root . '/' . trim($vendorDirectory, '/');
+        return $root.'/'.trim($vendorDirectory, '/');
     }
 }
