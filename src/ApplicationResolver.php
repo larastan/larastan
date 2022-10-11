@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan;
 
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Foundation\PackageManifest;
 use Orchestra\Testbench\Foundation\Application as Testbench;
 use Orchestra\Testbench\Foundation\Config;
-use Illuminate\Foundation\PackageManifest as IlluminatePackageManifest;
 
 /**
  * @internal
@@ -28,7 +28,7 @@ final class ApplicationResolver
         }
 
         $resolvingCallback = function ($app) {
-            $packageManifest = $app->make(IlluminatePackageManifest::class);
+            $packageManifest = $app->make(PackageManifest::class);
 
             if (! file_exists($packageManifest->manifestPath)) {
                 $packageManifest->build();
