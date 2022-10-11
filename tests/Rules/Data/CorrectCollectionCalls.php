@@ -103,18 +103,6 @@ class CorrectCollectionCalls
             ->pluck('id')
             ->avg();
     }
-
-    /** @phpstan-return mixed */
-    public function testRelationPropertyRiskyMethod()
-    {
-        return User::firstOrFail()->accounts->pluck('not_a_db_column');
-    }
-
-    /** @phpstan-return mixed */
-    public function testRelationPropertyNonRiskyMethod()
-    {
-        return User::firstOrFail()->accounts->shift();
-    }
 }
 
 class Foo extends Model

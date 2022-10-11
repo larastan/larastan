@@ -35,7 +35,6 @@ class NoUnnecessaryCollectionCallRuleTest extends RulesTest
             92 => 'Called \'modelKeys\' on Laravel collection, but could have been retrieved as a query.',
             97 => 'Called \'containsStrict\' on Laravel collection, but could have been retrieved as a query.',
             103 => 'Called \'sum\' on Laravel collection, but could have been retrieved as a query.',
-            108 => 'Called \'count\' on Laravel collection, but could have been retrieved as a query.',
         ], $errors);
     }
 
