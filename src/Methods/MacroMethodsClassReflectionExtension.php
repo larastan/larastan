@@ -4,6 +4,7 @@ namespace NunoMaduro\Larastan\Methods;
 
 use Carbon\Traits\Macro as CarbonMacro;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
 use NunoMaduro\Larastan\Concerns\HasContainer;
@@ -47,6 +48,18 @@ class MacroMethodsClassReflectionExtension implements \PHPStan\Reflection\Method
         } elseif ($this->hasIndirectTraitUse($classReflection, CarbonMacro::class)) {
             $className = $classReflection->getName();
             $macroTraitProperty = 'globalMacros';
+        } elseif ($classReflection->isSubclassOf(Facade::class)) {
+            $facadeClass = $classReflection->getName();
+            $concrete = $facadeClass::getFacadeRoot();
+
+            if ($concrete) {
+                $facadeClassName = get_class($concrete);
+
+                if ($facadeClassName) {
+                    $className = $facadeClassName;
+                    $macroTraitProperty = 'macros';
+                }
+            }
         }
 
         if ($className !== null && $macroTraitProperty) {

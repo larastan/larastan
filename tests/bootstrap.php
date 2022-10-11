@@ -11,3 +11,7 @@ Carbon::macro('foo', static function (): string {
 \Illuminate\Database\Eloquent\Builder::macro('globalCustomMacro', function (string $arg = 'foobar', int $b = 5): string {
     return $arg;
 });
+
+\Illuminate\Support\Facades\Route::macro('facadeMacro', function (): int {
+    return 5;
+});
