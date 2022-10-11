@@ -38,7 +38,6 @@ final class ApplicationResolver
             $app = Testbench::create(options: ['enables_package_discoveries' => true]);
         }
 
-
         $vendorDir = self::getVendorDir() ?? getcwd().DIRECTORY_SEPARATOR.'vendor';
         $composerConfigPath = dirname($vendorDir).DIRECTORY_SEPARATOR.'composer.json';
 
