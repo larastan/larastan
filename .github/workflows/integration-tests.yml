@@ -48,7 +48,7 @@ jobs:
             script: |
               git clone https://github.com/canvural/larastan-test.git ../e2e/integration/repo
               cd ../e2e/integration/repo
-              git checkout 9247d7484e1d3377c27e8520bf41dc0d227d2bae
+              git checkout 8e4bd795a07a355eef45edeb0d1945a39b8394ab
               composer install --ignore-platform-reqs --no-scripts --no-interaction
               composer config repositories.0 '{ "type": "path", "url": "../../../larastan"}'
               composer config minimum-stability dev
