@@ -48,12 +48,12 @@ jobs:
             script: |
               git clone https://github.com/canvural/larastan-test.git ../e2e/integration/repo
               cd ../e2e/integration/repo
-              git checkout 8e4bd795a07a355eef45edeb0d1945a39b8394ab
+              git checkout 686828b76a2e300b1a3cc99fdd8be9af3a3e7e60
               composer install --ignore-platform-reqs --no-scripts --no-interaction
               composer config repositories.0 '{ "type": "path", "url": "../../../larastan"}'
               composer config minimum-stability dev
               composer require --dev "nunomaduro/larastan:*" --ignore-platform-reqs -W
-              ./vendor/bin/phpstan
+              ./my-custom-vendor-dir/bin/phpstan
 
     steps:
       - name: "Checkout"
