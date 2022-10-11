@@ -47,4 +47,10 @@ class NoUnnecessaryCollectionCallRuleTest extends RulesTest
             'Called \'pluck\' on Laravel collection, but could have been retrieved as a query.',
         ]);
     }
+
+    public function testFalsePositives(): void
+    {
+        $this->assertSeeErrorsInOrder(__DIR__.'/Data/collection-false-positive.php', [
+        ]);
+    }
 }
