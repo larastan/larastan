@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan;
 
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\PackageManifest;
 use Orchestra\Testbench\Foundation\Application as Testbench;
 use Orchestra\Testbench\Foundation\Config;
@@ -14,6 +15,30 @@ use Orchestra\Testbench\Foundation\Config;
  */
 final class ApplicationResolver
 {
+    /**
+     * Create symlink on vendor path.
+     *
+     * @param  \Illuminate\Contracts\Foundation\Application  $app
+     * @return void
+     */
+    public static function createSymlinkToVendorPath($app): void
+    {
+        $workingVendorPath = TESTBENCH_WORKING_PATH.'/vendor';
+
+        $filesystem = new Filesystem();
+
+        $laravelVendorPath = $app->basePath('vendor');
+
+        if (
+            "{$laravelVendorPath}/autoload.php" !== "{$workingVendorPath}/autoload.php"
+        ) {
+            $filesystem->delete($laravelVendorPath);
+            $filesystem->link($workingVendorPath, $laravelVendorPath);
+        }
+
+        $app->flush();
+    }
+
     /**
      * Creates an application and registers service providers found.
      *
@@ -30,13 +55,13 @@ final class ApplicationResolver
         $resolvingCallback = function ($app) {
             $packageManifest = $app->make(PackageManifest::class);
 
-            if (! file_exists($packageManifest->manifestPath)) {
-                $packageManifest->build();
-            }
+            $packageManifest->build();
         };
 
         if (class_exists(Config::class)) {
             $config = Config::loadFromYaml($workingPath);
+
+            static::createSymlinkToVendorPath(Testbench::create(basePath: $config['laravel']));
 
             return Testbench::create(
                 basePath: $config['laravel'],
@@ -44,6 +69,8 @@ final class ApplicationResolver
                 options: ['enables_package_discoveries' => true, 'extra' => $config->getExtraAttributes()]
             );
         }
+
+        static::createSymlinkToVendorPath(Testbench::create(basePath: Testbench::applicationBasePath()));
 
         return Testbench::create(
             resolvingCallback: $resolvingCallback,
