@@ -18,18 +18,3 @@ parameters:
             message: "#Called 'Model::make\\(\\)' which performs unnecessary work, use 'new Model\\(\\)'\\.#"
             count: 1
             path: Features/Methods/ModelExtension.php
-
-        # Even though $model->relation->first() is not performant, these tests need to
-        # access model relations via property and call methods on the resulting collection.
-        -
-            message: "#Called 'where' on Laravel collection, but could have been retrieved as a query\\.#"
-            count: 1
-            path: Features/ReturnTypes/CustomEloquentCollectionTest.php
-        -
-            message: "#Called 'first' on Laravel collection, but could have been retrieved as a query\\.#"
-            count: 1
-            path: Features/Models/Relations.php
-        -
-            message: "#Called 'first' on Laravel collection, but could have been retrieved as a query\\.#"
-            count: 1
-            path: Features/Properties/ModelPropertyExtension.php
