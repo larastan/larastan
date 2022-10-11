@@ -31,8 +31,8 @@ final class ApplicationResolver
         if (
             "$laravelVendorPath/autoload.php" !== "$vendorDir/autoload.php"
         ) {
-            if ($filesystem->exists($laravel->basePath('bootstrap/cache/packages.php'))) {
-                $filesystem->delete($laravel->basePath('bootstrap/cache/packages.php'));
+            if ($filesystem->exists($app->basePath('bootstrap/cache/packages.php'))) {
+                $filesystem->delete($app->basePath('bootstrap/cache/packages.php'));
             }
 
             $filesystem->delete($laravelVendorPath);
