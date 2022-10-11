@@ -7,6 +7,7 @@ namespace NunoMaduro\Larastan;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\PackageManifest;
+use NunoMaduro\Larastan\Internal\ComposerHelper;
 use Orchestra\Testbench\Foundation\Application as Testbench;
 use Orchestra\Testbench\Foundation\Config;
 
@@ -21,19 +22,17 @@ final class ApplicationResolver
      * @param  \Illuminate\Contracts\Foundation\Application  $app
      * @return void
      */
-    public static function createSymlinkToVendorPath($app): void
+    public static function createSymlinkToVendorPath($app, string $vendorDir): void
     {
-        $workingVendorPath = TESTBENCH_WORKING_PATH.'/vendor';
-
         $filesystem = new Filesystem();
 
         $laravelVendorPath = $app->basePath('vendor');
 
         if (
-            "{$laravelVendorPath}/autoload.php" !== "{$workingVendorPath}/autoload.php"
+            "$laravelVendorPath/autoload.php" !== "$vendorDir/autoload.php"
         ) {
             $filesystem->delete($laravelVendorPath);
-            $filesystem->link($workingVendorPath, $laravelVendorPath);
+            $filesystem->link($vendorDir, $laravelVendorPath);
         }
 
         $app->flush();
@@ -48,8 +47,16 @@ final class ApplicationResolver
      */
     public static function resolve(): Application
     {
+        /** @var string $workingPath */
+        $workingPath = getcwd();
         if (! defined('TESTBENCH_WORKING_PATH')) {
-            define('TESTBENCH_WORKING_PATH', $workingPath = getcwd());
+            define('TESTBENCH_WORKING_PATH', $workingPath);
+        }
+
+        if ($composerConfig = ComposerHelper::getComposerConfig($workingPath)) {
+            $vendorDir = ComposerHelper::getVendorDirFromComposerConfig($workingPath, $composerConfig);
+        } else {
+            $vendorDir = $workingPath . '/vendor';
         }
 
         $resolvingCallback = function ($app) {
@@ -61,20 +68,21 @@ final class ApplicationResolver
         if (class_exists(Config::class)) {
             $config = Config::loadFromYaml($workingPath);
 
-            static::createSymlinkToVendorPath(Testbench::create(basePath: $config['laravel']));
+            static::createSymlinkToVendorPath(Testbench::create($config['laravel']), $vendorDir);
 
             return Testbench::create(
-                basePath: $config['laravel'],
-                resolvingCallback: $resolvingCallback,
-                options: ['enables_package_discoveries' => true, 'extra' => $config->getExtraAttributes()]
+                $config['laravel'],
+                $resolvingCallback,
+                ['enables_package_discoveries' => true, 'extra' => $config->getExtraAttributes()]
             );
         }
 
-        static::createSymlinkToVendorPath(Testbench::create(basePath: Testbench::applicationBasePath()));
+        static::createSymlinkToVendorPath(Testbench::create(Testbench::applicationBasePath()), $vendorDir);
 
         return Testbench::create(
-            resolvingCallback: $resolvingCallback,
-            options: ['enables_package_discoveries' => true]
+            null,
+            $resolvingCallback,
+            ['enables_package_discoveries' => true]
         );
     }
 }
