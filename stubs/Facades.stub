@@ -28,3 +28,8 @@ class Queue extends Facade {}
  * @mixin \Illuminate\Log\Logger
  */
 class Log extends Facade {}
+
+/**
+ * @mixin \Illuminate\Http\Request
+ */
+class Request extends Facade {}
