@@ -3,7 +3,10 @@
 namespace NunoMaduro\Larastan\Methods;
 
 use Carbon\Traits\Macro as CarbonMacro;
+use Illuminate\Auth\RequestGuard;
+use Illuminate\Auth\SessionGuard;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
@@ -26,8 +29,8 @@ class MacroMethodsClassReflectionExtension implements \PHPStan\Reflection\Method
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        /** @var class-string $className */
-        $className = null;
+        /** @var class-string[] $classNames */
+        $classNames = [];
         $found = false;
         $macroTraitProperty = null;
 
@@ -39,46 +42,57 @@ class MacroMethodsClassReflectionExtension implements \PHPStan\Reflection\Method
                 $className = get_class($concrete);
 
                 if ($className && $this->reflectionProvider->getClass($className)->hasTraitUse(Macroable::class)) {
+                    $classNames = [$className];
                     $macroTraitProperty = 'macros';
                 }
             }
         } elseif ($classReflection->hasTraitUse(Macroable::class) || $classReflection->getName() === Builder::class) {
-            $className = $classReflection->getName();
+            $classNames = [$classReflection->getName()];
             $macroTraitProperty = 'macros';
         } elseif ($this->hasIndirectTraitUse($classReflection, CarbonMacro::class)) {
-            $className = $classReflection->getName();
+            $classNames = [$classReflection->getName()];
             $macroTraitProperty = 'globalMacros';
         } elseif ($classReflection->isSubclassOf(Facade::class)) {
             $facadeClass = $classReflection->getName();
-            $concrete = $facadeClass::getFacadeRoot();
 
-            if ($concrete) {
-                $facadeClassName = get_class($concrete);
+            if ($facadeClass === Auth::class) {
+                $classNames = [SessionGuard::class, RequestGuard::class];
+                $macroTraitProperty = 'macros';
+            } else {
+                $concrete = $facadeClass::getFacadeRoot();
 
-                if ($facadeClassName) {
-                    $className = $facadeClassName;
-                    $macroTraitProperty = 'macros';
+                if ($concrete) {
+                    $facadeClassName = get_class($concrete);
+
+                    if ($facadeClassName) {
+                        $classNames = [$facadeClassName];
+                        $macroTraitProperty = 'macros';
+                    }
                 }
             }
         }
 
-        if ($className !== null && $macroTraitProperty) {
-            $macroClassReflection = $this->reflectionProvider->getClass($className);
+        if ($classNames !== [] && $macroTraitProperty) {
+            foreach ($classNames as $className) {
+                $macroClassReflection = $this->reflectionProvider->getClass($className);
 
-            if ($macroClassReflection->getNativeReflection()->hasProperty($macroTraitProperty)) {
-                $refProperty = $macroClassReflection->getNativeReflection()->getProperty($macroTraitProperty);
-                $refProperty->setAccessible(true);
+                if ($macroClassReflection->getNativeReflection()->hasProperty($macroTraitProperty)) {
+                    $refProperty = $macroClassReflection->getNativeReflection()->getProperty($macroTraitProperty);
+                    $refProperty->setAccessible(true);
 
-                $found = array_key_exists($methodName, $refProperty->getValue());
+                    $found = array_key_exists($methodName, $refProperty->getValue());
 
-                if ($found) {
-                    $methodReflection = new Macro(
-                        $macroClassReflection, $methodName, $this->closureTypeFactory->fromClosureObject($refProperty->getValue()[$methodName])
-                    );
+                    if ($found) {
+                        $methodReflection = new Macro(
+                            $macroClassReflection, $methodName, $this->closureTypeFactory->fromClosureObject($refProperty->getValue()[$methodName])
+                        );
 
-                    $methodReflection->setIsStatic(true);
+                        $methodReflection->setIsStatic(true);
 
-                    $this->methods[$classReflection->getName().'-'.$methodName] = $methodReflection;
+                        $this->methods[$classReflection->getName().'-'.$methodName] = $methodReflection;
+
+                        break;
+                    }
                 }
             }
         }

@@ -15,3 +15,11 @@ Carbon::macro('foo', static function (): string {
 \Illuminate\Support\Facades\Route::macro('facadeMacro', function (): int {
     return 5;
 });
+
+\Illuminate\Auth\SessionGuard::macro('sessionGuardMacro', function (): int {
+    return 5;
+});
+
+\Illuminate\Auth\RequestGuard::macro('requestGuardMacro', function (): int {
+    return 5;
+});
