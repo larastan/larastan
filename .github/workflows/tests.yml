@@ -48,6 +48,15 @@ jobs:
       - name: "Check file permissions"
         run: "test \"$(find . -type f -not -path './.git/*' -executable)\" == ./tests/laravel-test.sh"
 
+      - name: "Change Composer config minimum-stability"
+        run: "composer config minimum-stability stable"
+
+      - name: "Change Composer config prefer-stable"
+        run: "composer config prefer-stable false"
+
+      - name: "Require PHPStan dev version"
+        run: "composer require phpstan/phpstan:@dev --no-update --no-interaction --no-progress"
+
       - name: "Install lowest dependencies from composer.json"
         if: "matrix.dependencies == 'lowest'"
         run: "composer update --with='illuminate/contracts:${{ matrix.laravel }}' --no-interaction --no-progress --prefer-lowest"
