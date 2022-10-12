@@ -58,6 +58,10 @@ class CollectionGenericStaticMethodDynamicStaticMethodReturnTypeExtension implem
             return new ErrorType();
         }
 
+        if (! $this->reflectionProvider->hasClass((string) $class)) {
+            return $returnType;
+        }
+
         $classReflection = $this->reflectionProvider->getClass((string) $class);
 
         // If it's called on Support collection, just return.
