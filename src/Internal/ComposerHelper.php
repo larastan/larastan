@@ -33,9 +33,8 @@ final class ComposerHelper
     {
         $envComposer = getenv('COMPOSER');
         $fileName = is_string($envComposer) ? $envComposer : 'composer.json';
-        $fileName = basename(trim($fileName));
 
-        return $root.'/'.$fileName;
+        return $root.'/'.basename(trim($fileName));
     }
 
     /**
