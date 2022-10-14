@@ -7,27 +7,25 @@ use function optional;
 use function PHPStan\Testing\assertType;
 use StdClass;
 
-$arrayOptional = optional(['foo' => 'bar']);
+assertType('mixed', optional(['foo' => 'bar']));
 
-assertType(Optional::class, $arrayOptional);
-
-$callbackOptional = optional('1', function (string $value): int {
+assertType('int', optional('1', function (string $value): int {
     return 1;
-});
+}));
 
-assertType('int', $callbackOptional);
-
-$nullCallbackOptional = optional(null, function (string $value): int {
+assertType('null', optional(null, function (string $value): int {
     return 1;
-});
+}));
 
-assertType('null', $nullCallbackOptional);
+assertType('mixed', optional(new StdClass()));
+assertType('mixed', optional(new StdClass())->foo);
 
-$objectOptional = optional(new StdClass());
+class Foo
+{
+    public function doFoo(): void
+    {
 
-assertType(Optional::class, $objectOptional);
-assertType('mixed', $objectOptional->foo);
+    }
+}
 
-$nullOptional = optional();
-
-assertType(Optional::class, $nullOptional);
+assertType('mixed', optional(new Foo)->doFoo());
