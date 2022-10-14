@@ -74,7 +74,7 @@ final class ApplicationResolver
         if (class_exists(Config::class)) {
             $config = Config::loadFromYaml($workingPath);
 
-            static::createSymlinkToVendorPath(Testbench::create($config['laravel'], null,  ['extra' => ['dont-discover' => ['*']]]), $vendorDir);
+            static::createSymlinkToVendorPath(Testbench::create($config['laravel'], null, ['extra' => ['dont-discover' => ['*']]]), $vendorDir);
 
             return Testbench::create(
                 $config['laravel'],
@@ -83,7 +83,7 @@ final class ApplicationResolver
             );
         }
 
-        static::createSymlinkToVendorPath(Testbench::create(Testbench::applicationBasePath(), null,  ['extra' => ['dont-discover' => ['*']]]), $vendorDir);
+        static::createSymlinkToVendorPath(Testbench::create(Testbench::applicationBasePath(), null, ['extra' => ['dont-discover' => ['*']]]), $vendorDir);
 
         return Testbench::create(
             null,
