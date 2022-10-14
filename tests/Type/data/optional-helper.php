@@ -2,7 +2,6 @@
 
 namespace OptionalType;
 
-use Illuminate\Support\Optional;
 use function optional;
 use function PHPStan\Testing\assertType;
 use StdClass;
@@ -24,7 +23,6 @@ class Foo
 {
     public function doFoo(): void
     {
-
     }
 }
 
