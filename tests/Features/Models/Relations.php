@@ -237,6 +237,16 @@ class Relations
         ]);
     }
 
+    /** @phpstan-return Builder<User> */
+    public function testRelationWithArrayWithOnModel(): Builder
+    {
+        return User::with([
+            'group' => [
+                'accounts',
+            ],
+        ]);
+    }
+
     public function testBelongsToManyCreateReturnsCorrectModel(User $user): Post
     {
         assertType(Post::class, $user->posts()->create());
