@@ -24,16 +24,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
-#          - php-version: 8.1
-#            script: |
-#              git clone https://github.com/monicahq/monica.git ../e2e/integration/repo
-#              cd ../e2e/integration/repo
-#              git checkout aca98708fecc5ff90feb1edc91d01a7b4fb12c56
-#              composer install --ignore-platform-reqs --no-scripts --no-interaction
-#              composer config repositories.0 '{ "type": "path", "url": "../../../larastan"}'
-#              composer config minimum-stability dev
-#              composer require --dev "nunomaduro/larastan:*" --ignore-platform-reqs
-#              ./vendor/bin/phpstan
+          - php-version: 8.1
+            script: |
+              git clone https://github.com/monicahq/chandler.git ../e2e/integration/repo
+              cd ../e2e/integration/repo
+              git checkout 6df6cd62c35232e444e6bc7ce660495c655650fc
+              composer install --ignore-platform-reqs --no-scripts --no-interaction
+              composer config repositories.0 '{ "type": "path", "url": "../../../larastan"}'
+              composer config minimum-stability dev
+              composer require --dev "nunomaduro/larastan:*" --ignore-platform-reqs
+              ./vendor/bin/phpstan
           - php-version: 8.1
             script: |
               git clone https://github.com/koel/koel.git ../e2e/integration/repo
