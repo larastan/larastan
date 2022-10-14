@@ -164,7 +164,7 @@ function __($key = null, $replace = [], $locale = null)
  *
  * @param  TValue  $value
  * @param  ?callable(TValue): TReturn  $callback
- * @return ($callback is null ? \Illuminate\Support\Optional : ($value is null ? null : TReturn))
+ * @return ($callback is null ? mixed : ($value is null ? null : TReturn))
  */
 function optional($value = null, callable $callback = null)
 {
