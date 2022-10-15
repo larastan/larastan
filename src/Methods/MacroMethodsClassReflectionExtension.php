@@ -95,8 +95,8 @@ class MacroMethodsClassReflectionExtension implements \PHPStan\Reflection\Method
 
                         if (is_array($macroDefinition)) {
                             $macroClassName = get_class($macroDefinition[0]);
-                            if($macroClassName === false || ! $this->reflectionProvider->hasClass($macroClassName) || ! $this->reflectionProvider->getClass($macroClassName)->hasNativeMethod($macroDefinition[1])) {
-                                throw new ShouldNotHappenException('Class ' . $macroClassName . ' does not exist');
+                            if ($macroClassName === false || ! $this->reflectionProvider->hasClass($macroClassName) || ! $this->reflectionProvider->getClass($macroClassName)->hasNativeMethod($macroDefinition[1])) {
+                                throw new ShouldNotHappenException('Class '.$macroClassName.' does not exist');
                             }
 
                             $methodReflection = $this->reflectionProvider->getClass($macroClassName)->getNativeMethod($macroDefinition[1]);
