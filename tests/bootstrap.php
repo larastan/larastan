@@ -23,3 +23,18 @@ Carbon::macro('foo', static function (): string {
 \Illuminate\Auth\RequestGuard::macro('requestGuardMacro', function (): int {
     return 5;
 });
+
+class CustomCollectionMacro
+{
+    public function registerMacro()
+    {
+        \Illuminate\Support\Collection::macro('customCollectionMacro', [$this, 'customMacro']);
+    }
+
+    public function customMacro(): string
+    {
+        return 'customMacro';
+    }
+}
+
+(new CustomCollectionMacro)->registerMacro();
