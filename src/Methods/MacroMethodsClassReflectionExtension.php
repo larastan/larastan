@@ -13,8 +13,11 @@ use Illuminate\Support\Traits\Macroable;
 use NunoMaduro\Larastan\Concerns\HasContainer;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ReflectionProvider;
+use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\ClosureTypeFactory;
+use ReflectionException;
 
 class MacroMethodsClassReflectionExtension implements \PHPStan\Reflection\MethodsClassReflectionExtension
 {
@@ -27,6 +30,11 @@ class MacroMethodsClassReflectionExtension implements \PHPStan\Reflection\Method
     {
     }
 
+    /**
+     * @throws ReflectionException
+     * @throws ShouldNotHappenException
+     * @throws MissingMethodFromReflectionException
+     */
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
         /** @var class-string[] $classNames */
@@ -83,11 +91,22 @@ class MacroMethodsClassReflectionExtension implements \PHPStan\Reflection\Method
                     $found = array_key_exists($methodName, $refProperty->getValue());
 
                     if ($found) {
-                        $methodReflection = new Macro(
-                            $macroClassReflection, $methodName, $this->closureTypeFactory->fromClosureObject($refProperty->getValue()[$methodName])
-                        );
+                        $macroDefinition = $refProperty->getValue()[$methodName];
 
-                        $methodReflection->setIsStatic(true);
+                        if (is_array($macroDefinition)) {
+                            $macroClassName = get_class($macroDefinition[0]);
+                            if ($macroClassName === false || ! $this->reflectionProvider->hasClass($macroClassName) || ! $this->reflectionProvider->getClass($macroClassName)->hasNativeMethod($macroDefinition[1])) {
+                                throw new ShouldNotHappenException('Class '.$macroClassName.' does not exist');
+                            }
+
+                            $methodReflection = $this->reflectionProvider->getClass($macroClassName)->getNativeMethod($macroDefinition[1]);
+                        } else {
+                            $methodReflection = new Macro(
+                                $macroClassReflection, $methodName, $this->closureTypeFactory->fromClosureObject($refProperty->getValue()[$methodName])
+                            );
+
+                            $methodReflection->setIsStatic(true);
+                        }
 
                         $this->methods[$classReflection->getName().'-'.$methodName] = $methodReflection;
 
