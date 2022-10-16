@@ -54,9 +54,13 @@ class MacroMethodsClassReflectionExtension implements \PHPStan\Reflection\Method
                     $macroTraitProperty = 'macros';
                 }
             }
-        } elseif ($classReflection->hasTraitUse(Macroable::class) || $classReflection->getName() === Builder::class) {
+        } elseif ($this->hasIndirectTraitUse($classReflection, Macroable::class) || $classReflection->getName() === Builder::class || $classReflection->isSubclassOf(Builder::class)) {
             $classNames = [$classReflection->getName()];
             $macroTraitProperty = 'macros';
+
+            if ($classReflection->isSubclassOf(Builder::class)) {
+                $classNames[] = Builder::class;
+            }
         } elseif ($this->hasIndirectTraitUse($classReflection, CarbonMacro::class)) {
             $classNames = [$classReflection->getName()];
             $macroTraitProperty = 'globalMacros';
