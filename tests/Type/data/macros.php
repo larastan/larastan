@@ -2,6 +2,8 @@
 
 namespace Macros;
 
+use App\Post;
+use App\PostBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -19,6 +21,8 @@ try {
 }
 
 assertType('string', Builder::globalCustomMacro(b: 99));
+assertType('string', Post::globalCustomMacro(b: 99));
+assertType('string', PostBuilder::globalCustomMacro(b: 99));
 
 assertType('int', Route::facadeMacro());
 assertType('int', Auth::sessionGuardMacro());

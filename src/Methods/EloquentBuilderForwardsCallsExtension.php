@@ -146,6 +146,11 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             );
         }
 
+        // Macros have their own reflection. And return type, parameters, etc. are already set with the closure.
+        if ($ref instanceof Macro) {
+            return $ref;
+        }
+
         // Returning custom reflection
         // to ensure return type is always `EloquentBuilder<Model>`
         return new EloquentBuilderMethodReflection(

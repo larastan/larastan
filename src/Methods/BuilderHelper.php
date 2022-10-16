@@ -56,7 +56,7 @@ class BuilderHelper
     /** @var bool */
     private $checkProperties;
 
-    public function __construct(ReflectionProvider $reflectionProvider, bool $checkProperties)
+    public function __construct(ReflectionProvider $reflectionProvider, bool $checkProperties, private MacroMethodsClassReflectionExtension $macroMethodsClassReflectionExtension)
     {
         $this->reflectionProvider = $reflectionProvider;
         $this->checkProperties = $checkProperties;
@@ -133,6 +133,11 @@ class BuilderHelper
      */
     public function searchOnEloquentBuilder(ClassReflection $eloquentBuilder, string $methodName, ClassReflection $model): ?MethodReflection
     {
+        // Check for macros first
+        if ($this->macroMethodsClassReflectionExtension->hasMethod($eloquentBuilder, $methodName)) {
+            return $this->macroMethodsClassReflectionExtension->getMethod($eloquentBuilder, $methodName);
+        }
+
         // Check for local query scopes
         if (array_key_exists('scope'.ucfirst($methodName), $model->getMethodTags())) {
             $methodTag = $model->getMethodTags()['scope'.ucfirst($methodName)];
