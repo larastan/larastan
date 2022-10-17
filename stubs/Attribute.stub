@@ -48,8 +48,8 @@ class Attribute
      * Create a new attribute mutator.
      *
      * @template T
-      * @param  callable(T, mixed=): mixed $set
-      * @return Attribute<never, T>
+     * @param  callable(T, mixed=): mixed $set
+     * @return Attribute<never, T>
      */
     public static function set(callable $set)
     {}
