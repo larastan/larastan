@@ -24,7 +24,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - php-version: 8.1
+          - name: "Integration Tests with monicahq/chandler"
+            php-version: 8.1
             script: |
               git clone https://github.com/monicahq/chandler.git ../e2e/integration/repo
               cd ../e2e/integration/repo
@@ -34,7 +35,8 @@ jobs:
               composer config minimum-stability dev
               composer require --dev "nunomaduro/larastan:*" --ignore-platform-reqs
               ./vendor/bin/phpstan
-          - php-version: 8.1
+          - name: "Integration Tests with koel/koel"
+            php-version: 8.1
             script: |
               git clone https://github.com/koel/koel.git ../e2e/integration/repo
               cd ../e2e/integration/repo
@@ -44,7 +46,8 @@ jobs:
               composer config minimum-stability dev
               composer require --dev "nunomaduro/larastan:*" --ignore-platform-reqs -W
               ./vendor/bin/phpstan
-          - php-version: 8.1
+          - name: "Integration Tests with larastan-test"
+            php-version: 8.1
             script: |
               git clone https://github.com/canvural/larastan-test.git ../e2e/integration/repo
               cd ../e2e/integration/repo
@@ -54,7 +57,8 @@ jobs:
               composer config minimum-stability dev
               composer require --dev "nunomaduro/larastan:*" --ignore-platform-reqs -W
               ./my-custom-vendor-dir/bin/phpstan
-          - php-version: 8.1
+          - name: "Integration Tests with canvural/larastan"
+            php-version: 8.1
             script: |
               git clone https://github.com/canvural/larastan-strict-rules.git ../e2e/integration/repo
               cd ../e2e/integration/repo
