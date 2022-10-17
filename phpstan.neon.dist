@@ -6,8 +6,6 @@ parameters:
     phpVersion: 80000
     paths:
         - src
-    excludePaths:
-        - src/Support/ClassMapGenerator.php
     ignoreErrors:
         - '#Call to an undefined method Mockery\\ExpectationInterface#'
         - '#Mockery\\(?:Legacy)?MockInterface#'
