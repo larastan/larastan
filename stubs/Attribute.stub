@@ -27,7 +27,7 @@ class Attribute
      *
      * @template TMakeGet
      * @template TMakeSet
-     * @param  (callable(mixed, mixed=): TMakeGet)|null  $get
+     * @param  (callable(mixed, mixed): TMakeGet)|null  $get
      * @param  (callable(TMakeSet, mixed=): mixed)|null  $set
      * @return Attribute<TMakeGet, TMakeSet>
      */
