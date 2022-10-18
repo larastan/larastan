@@ -501,6 +501,17 @@ class Builder
       * @throws \InvalidArgumentException
       */
      public function lazyByIdDesc($chunkSize = 1000, $column = null, $alias = null);
+
+    /**
+     * Add a basic where clause to a relationship query.
+     *
+     * @param  string  $relation
+     * @param  \Closure|string|array<mixed>|\Illuminate\Database\Query\Expression  $column
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return static
+     */
+    public function whereRelation($relation, $column, $operator = null, $value = null);
 }
 
 class Scope {}
