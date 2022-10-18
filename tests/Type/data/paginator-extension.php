@@ -8,12 +8,15 @@ use App\User;
 use function PHPStan\Testing\assertType;
 
 assertType('Illuminate\Pagination\LengthAwarePaginator<App\User>', User::paginate());
+assertType('array<App\User>', User::paginate()->all());
 assertType('array<App\User>', User::paginate()->items());
 
 assertType('Illuminate\Pagination\Paginator<App\User>', User::simplePaginate());
+assertType('array<App\User>', User::simplePaginate()->all());
 assertType('array<App\User>', User::simplePaginate()->items());
 
 assertType('Illuminate\Pagination\CursorPaginator<App\User>', User::cursorPaginate());
+assertType('array<App\User>', User::cursorPaginate()->all());
 assertType('array<App\User>', User::cursorPaginate()->items());
 
 assertType('ArrayIterator<(int|string), App\User>', User::query()->paginate()->getIterator());
