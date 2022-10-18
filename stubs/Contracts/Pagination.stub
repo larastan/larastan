@@ -4,9 +4,6 @@ namespace Illuminate\Contracts\Pagination;
 
 /**
  * @template TItem
- *
- * @mixin \Illuminate\Support\Collection<array-key, TItem>
- * @mixin \Illuminate\Pagination\Paginator<TItem>
  */
 interface Paginator
 {
@@ -19,8 +16,6 @@ interface Paginator
 /**
  * @template TItem
  *
- * @mixin \Illuminate\Support\Collection<array-key, TItem>
- * @mixin \Illuminate\Pagination\LengthAwarePaginator<TItem>
  * @extends Paginator<TItem>
  */
 interface LengthAwarePaginator extends Paginator
@@ -28,9 +23,6 @@ interface LengthAwarePaginator extends Paginator
 
 /**
  * @template TItem
- *
- * @mixin \Illuminate\Support\Collection<array-key, TItem>
- * @mixin \Illuminate\Pagination\CursorPaginator<TItem>
  */
 interface CursorPaginator
 {
