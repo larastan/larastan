@@ -62,7 +62,7 @@ jobs:
             script: |
               git clone https://github.com/canvural/larastan-strict-rules.git ../e2e/integration/repo
               cd ../e2e/integration/repo
-              git checkout e0d27576d74da996ca4905a04c4ffba754afe63f
+              git checkout 91b3e8dda2264d15d688e6bbbed23c83bc65a648
               composer install --ignore-platform-reqs --no-scripts --no-interaction
               composer config repositories.0 '{ "type": "path", "url": "../../../larastan"}'
               composer config minimum-stability dev
