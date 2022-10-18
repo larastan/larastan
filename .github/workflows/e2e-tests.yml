@@ -57,7 +57,7 @@ jobs:
               composer config minimum-stability dev
               composer require --dev "nunomaduro/larastan:*" --ignore-platform-reqs -W
               ./my-custom-vendor-dir/bin/phpstan
-          - repo: "canvural/larastan"
+          - repo: "canvural/larastan-strict-rules"
             php-version: 8.1
             script: |
               git clone https://github.com/canvural/larastan-strict-rules.git ../e2e/integration/repo
