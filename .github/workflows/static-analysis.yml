@@ -1,0 +1,49 @@
+name: "Static Analysis"
+
+on:
+  push:
+    paths-ignore:
+      - "**.md"
+      - 'docs/**'
+    # Prevent duplicating jobs on PR-s from local branches
+    branches:
+      - "master"
+  pull_request:
+    paths-ignore:
+      - "**.md"
+      - 'docs/**'
+  schedule:
+    - cron: "0 0 * * *"
+
+concurrency:
+  group: sa-${{ github.head_ref || github.run_id }} # will be canceled on subsequent pushes in pull requests but not branches
+  cancel-in-progress: true
+
+jobs:
+  static-analysis:
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["8.0", "8.1", "8.2"]
+
+    name: "PHP ${{ matrix.php }}"
+
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout code"
+        uses: "actions/checkout@v3"
+
+      - name: "Setup PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php }}"
+          extensions: "dom, curl, libxml, mbstring, zip, fileinfo"
+          tools: "composer:v2"
+          coverage: "none"
+
+      - name: "Install dependencies from composer.json"
+        run: "composer update --with='illuminate/contracts:^9.0' --no-interaction --no-progress"
+
+      - name: "Execute static analysis"
+        run: "composer run-script test:types"
