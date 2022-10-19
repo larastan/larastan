@@ -9,6 +9,7 @@ use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\PackageManifest;
 use NunoMaduro\Larastan\Internal\ComposerHelper;
 use Orchestra\Testbench\Foundation\Application as Testbench;
+use Orchestra\Testbench\Foundation\Bootstrap\CreateVendorSymlink;
 use Orchestra\Testbench\Foundation\Config;
 
 /**
@@ -24,6 +25,12 @@ final class ApplicationResolver
      */
     public static function createSymlinkToVendorPath($app, string $vendorDir): void
     {
+        if (class_exists(CreateVendorSymlink::class)) {
+            (new CreateVendorSymlink($vendorDir))->bootstrap($app);
+
+            return;
+        }
+
         $filesystem = new Filesystem();
 
         $laravelVendorPath = $app->basePath('vendor');
