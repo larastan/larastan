@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - feat: Added stub for `optional()` helper and class by @mad-briller in https://github.com/nunomaduro/larastan/pull/1344
 - fix: abstract Manager class causing Larastan to crash by @mad-briller
 - fix: Eloquent builder `whereRelation()` losing the TModelClass generic type by @mad-briller.
+- feat: updated return type of the Validator::safe and FormRequest::safe method by @jdjfisher
 
 ## [2.2.0] - 2022-08-31
 
