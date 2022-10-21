@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - fix: abstract Manager class causing Larastan to crash by @mad-briller
 - fix: Eloquent builder `whereRelation()` losing the TModelClass generic type by @mad-briller.
 - feat: updated return type of the Validator::safe and FormRequest::safe method by @jdjfisher
+- feat: Added stub for the DB::transaction method by @jdjfisher
 
 ## [2.2.0] - 2022-08-31
 
