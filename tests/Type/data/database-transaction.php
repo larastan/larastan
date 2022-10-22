@@ -25,4 +25,3 @@ assertType('float|null', DB::transaction(function () {
 
     return sqrt($number);
 }));
-

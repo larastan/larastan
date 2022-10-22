@@ -10,7 +10,7 @@ trait ManagesTransactions
      * @template TCallbackReturnType
      *
      * @param  \Closure($this): TCallbackReturnType  $callback
-     * @param  int  $attempts
+     * @param  positive-int  $attempts
      * @return TCallbackReturnType
      *
      * @throws \Throwable
