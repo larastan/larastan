@@ -1,0 +1,9 @@
+<?php
+
+namespace Illuminate\Contracts\View;
+
+interface Factory
+{}
+
+interface View
+{}
