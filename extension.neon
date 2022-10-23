@@ -263,11 +263,6 @@ services:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\Helpers\ViewExtension
-        tags:
-            - phpstan.broker.dynamicFunctionReturnTypeExtension
-
-    -
         class: NunoMaduro\Larastan\ReturnTypes\Helpers\ValidatorExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
@@ -442,6 +437,21 @@ services:
     -
         class: NunoMaduro\Larastan\LarastanStubFilesExtension
         tags: [phpstan.stubFilesExtension]
+
+    -
+        class: NunoMaduro\Larastan\Rules\UnusedViewsRule
+        tags:
+            - phpstan.rules.rule
+
+    -
+        class: NunoMaduro\Larastan\Collectors\UsedViewFunctionCollector
+        tags:
+            - phpstan.collector
+
+    -
+        class: NunoMaduro\Larastan\Collectors\UsedEmailViewCollector
+        tags:
+            - phpstan.collector
 rules:
     - NunoMaduro\Larastan\Rules\RelationExistenceRule
     - NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule
