@@ -11,10 +11,12 @@ class FooController
     {
         return view('users.index');
     }
+
     public function existingNested(): View
     {
         return view('emails.orders.shipped');
     }
+
     public function notExisting(): View
     {
         return view('foo');
