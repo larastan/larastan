@@ -32,6 +32,7 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from $this->gatherAssertTypes(__DIR__.'/data/where-relation.php');
         yield from $this->gatherAssertTypes(__DIR__.'/data/validator.php');
         yield from $this->gatherAssertTypes(__DIR__.'/data/form-request.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/database-transaction.php');
     }
 
     /**
