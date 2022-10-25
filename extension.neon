@@ -19,6 +19,7 @@ parameters:
     squashedMigrationsPath: []
     databaseMigrationsPath: []
     viewDirectories: []
+    translationDirectories: []
     checkModelProperties: false
     checkPhpDocMissingReturn: false
     checkUnusedViews: false
@@ -31,6 +32,7 @@ parametersSchema:
     noUnnecessaryCollectionCallExcept: listOf(string())
     databaseMigrationsPath: listOf(string())
     viewDirectories: listOf(string())
+    translationDirectories: listOf(string())
     squashedMigrationsPath: listOf(string())
     checkModelProperties: bool()
     checkUnusedViews: bool()
@@ -427,6 +429,13 @@ services:
             - phpstan.rule
 
     -
+        class: NunoMaduro\Larastan\Rules\UnusedTranslationsRule
+        arguments:
+            translationDirectories: %translationDirectories%
+        tags:
+            - phpstan.rules.rule
+
+    -
         class: NunoMaduro\Larastan\Rules\CheckDispatchArgumentTypesCompatibleWithClassConstructorRule
         arguments:
             dispatchableClass: Illuminate\Foundation\Bus\Dispatchable
@@ -471,14 +480,36 @@ services:
         class: NunoMaduro\Larastan\Collectors\UsedRouteFacadeViewCollector
         tags:
             - phpstan.collector
+
+    -
+        class: NunoMaduro\Larastan\Collectors\UsedTranslationFunctionsCollector
+        tags:
+            - phpstan.collector
+
+    -
+        class: NunoMaduro\Larastan\Collectors\UsedTranslationsLangFacadeCollector
+        tags:
+            - phpstan.collector
+
+    -
+        class: NunoMaduro\Larastan\Collectors\UsedTranslationsInTranslatorCollector
+        tags:
+            - phpstan.collector
     -
         class: NunoMaduro\Larastan\Collectors\UsedViewInAnotherViewCollector
+        arguments:
+            parser: @currentPhpVersionSimpleDirectParser
+    -
+        class: NunoMaduro\Larastan\Collectors\UsedTranslationsInViewsCollector
         arguments:
             parser: @currentPhpVersionSimpleDirectParser
     -
         class: NunoMaduro\Larastan\Support\ViewFileHelper
         arguments:
             viewDirectories: %viewDirectories%
+
+    -
+        class: Illuminate\Filesystem\Filesystem
 rules:
     - NunoMaduro\Larastan\Rules\RelationExistenceRule
     - NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule
