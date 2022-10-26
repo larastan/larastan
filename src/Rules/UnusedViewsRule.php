@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Rules;
 
+use function collect;
 use Illuminate\Support\Facades\File;
 use Illuminate\View\Factory;
 use NunoMaduro\Larastan\Collectors\UsedEmailViewCollector;
@@ -15,8 +16,6 @@ use PHPStan\Node\CollectedDataNode;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 use Symfony\Component\Finder\SplFileInfo;
-
-use function collect;
 
 /** @implements Rule<CollectedDataNode> */
 final class UnusedViewsRule implements Rule
@@ -31,7 +30,7 @@ final class UnusedViewsRule implements Rule
         $usedViews = collect([
             $node->get(UsedViewFunctionCollector::class),
             $node->get(UsedEmailViewCollector::class),
-            $node->get(UsedViewInAnotherViewCollector::class)
+            $node->get(UsedViewInAnotherViewCollector::class),
         ])->flatten()->unique()->toArray();
         $allViews = array_map(function (SplFileInfo $file) {
             return $file->getPathname();
