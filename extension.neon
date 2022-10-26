@@ -5,8 +5,6 @@ parameters:
     earlyTerminatingFunctionCalls:
         - abort
         - dd
-    excludePaths:
-        - *.blade.php
     mixinExcludeClasses:
         - Eloquent
     bootstrapFiles:
@@ -450,6 +448,10 @@ services:
 
     -
         class: NunoMaduro\Larastan\Collectors\UsedEmailViewCollector
+        tags:
+            - phpstan.collector
+    -
+        class: NunoMaduro\Larastan\Collectors\UsedViewInAnotherViewCollector
         tags:
             - phpstan.collector
 rules:

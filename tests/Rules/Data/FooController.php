@@ -7,6 +7,11 @@ use Illuminate\Mail\Mailable;
 
 class FooController
 {
+    public function index()
+    {
+        return view('index');
+    }
+
     public function existing(): View
     {
         return view('users.index');
