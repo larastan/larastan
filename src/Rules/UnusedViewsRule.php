@@ -8,12 +8,15 @@ use Illuminate\Support\Facades\File;
 use Illuminate\View\Factory;
 use NunoMaduro\Larastan\Collectors\UsedEmailViewCollector;
 use NunoMaduro\Larastan\Collectors\UsedViewFunctionCollector;
+use NunoMaduro\Larastan\Collectors\UsedViewInAnotherViewCollector;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\CollectedDataNode;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 use Symfony\Component\Finder\SplFileInfo;
+
+use function collect;
 
 /** @implements Rule<CollectedDataNode> */
 final class UnusedViewsRule implements Rule
@@ -25,12 +28,15 @@ final class UnusedViewsRule implements Rule
 
     public function processNode(Node $node, Scope $scope): array
     {
-        $usedViews = array_unique(array_merge(...array_values($node->get(UsedViewFunctionCollector::class)), ...array_values($node->get(UsedEmailViewCollector::class))));
-
+        $usedViews = collect([
+            $node->get(UsedViewFunctionCollector::class),
+            $node->get(UsedEmailViewCollector::class),
+            $node->get(UsedViewInAnotherViewCollector::class)
+        ])->flatten()->unique()->toArray();
         $allViews = array_map(function (SplFileInfo $file) {
             return $file->getPathname();
         }, array_filter(File::allFiles(resource_path('views')), function (SplFileInfo $file) {
-            return ! str_contains($file->getPathname(), 'views/vendor') && $file->getExtension() === 'php' && str_ends_with($file->getFilename(), '.blade.php');
+            return ! str_contains($file->getPathname(), 'views/vendor') && str_ends_with($file->getFilename(), '.blade.php');
         }));
 
         $existingViews = [];
