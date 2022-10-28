@@ -23,6 +23,20 @@ abstract class AbstractPaginator implements \Illuminate\Contracts\Support\Htmlab
      * @return \ArrayIterator<array-key, TValue>
      */
     public function getIterator(): \Traversable;
+
+    public function offsetExists(mixed $offset): bool;
+
+    /**
+     * @return TValue|null
+     */
+    public function offsetGet(mixed $offset): mixed;
+
+    /**
+     * @param TValue $value
+     */
+    public function offsetSet(mixed $offset, $value): void;
+
+    public function offsetUnset(mixed $offset): void;
 }
 
 /**
@@ -72,6 +86,20 @@ abstract class AbstractCursorPaginator implements \Illuminate\Contracts\Support\
      * @return \ArrayIterator<array-key, TValue>
      */
     public function getIterator(): \Traversable;
+
+    public function offsetExists(mixed $offset): bool;
+
+    /**
+     * @return TValue|null
+     */
+    public function offsetGet(mixed $offset): mixed;
+
+    /**
+     * @param TValue $value
+     */
+    public function offsetSet(mixed $offset, $value): void;
+
+    public function offsetUnset(mixed $offset): void;
 }
 
 /**
