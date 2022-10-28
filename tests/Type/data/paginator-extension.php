@@ -10,14 +10,17 @@ use function PHPStan\Testing\assertType;
 assertType('Illuminate\Pagination\LengthAwarePaginator<App\User>', User::paginate());
 assertType('array<App\User>', User::paginate()->all());
 assertType('array<App\User>', User::paginate()->items());
+assertType('App\User', User::paginate()[0]);
 
 assertType('Illuminate\Pagination\Paginator<App\User>', User::simplePaginate());
 assertType('array<App\User>', User::simplePaginate()->all());
 assertType('array<App\User>', User::simplePaginate()->items());
+assertType('App\User', User::simplePaginate()[0]);
 
 assertType('Illuminate\Pagination\CursorPaginator<App\User>', User::cursorPaginate());
 assertType('array<App\User>', User::cursorPaginate()->all());
 assertType('array<App\User>', User::cursorPaginate()->items());
+assertType('App\User', User::cursorPaginate()[0]);
 
 assertType('ArrayIterator<(int|string), App\User>', User::query()->paginate()->getIterator());
 
