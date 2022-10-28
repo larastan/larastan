@@ -28,7 +28,7 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
         if ($methodReflection->getDeclaringClass()->getName() === EloquentCollection::class) {
-            return false;
+            return in_array($methodReflection->getName(), ['find']);
         }
 
         return in_array($methodReflection->getName(), [

@@ -11,12 +11,31 @@ use function PHPStan\Testing\assertType;
 /** @var SupportCollection<string, int> $items */
 /** @var App\TransactionCollection<int, Transaction> $customEloquentCollection */
 /** @var App\UserCollection $secondCustomEloquentCollection */
+/** @var User $user */
 assertType('Illuminate\Database\Eloquent\Collection<int, int>', EloquentCollection::range(1, 10));
 
 assertType('Illuminate\Support\Collection<int, mixed>', $collection->collapse());
 assertType('Illuminate\Support\Collection<int, mixed>', $items->collapse());
 
 assertType('Illuminate\Database\Eloquent\Collection<int, array<int, App\User|int>>', $collection->crossJoin([1]));
+
+assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->find($items));
+assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->find([1]));
+assertType('App\User|null', $collection->find($user));
+assertType('App\User|null', $collection->find(1));
+assertType('App\User|bool', $collection->find(1, false));
+
+assertType('App\TransactionCollection<int, App\Transaction>', $customEloquentCollection->find($items));
+assertType('App\TransactionCollection<int, App\Transaction>', $customEloquentCollection->find([1]));
+assertType('App\Transaction|null', $customEloquentCollection->find($user));
+assertType('App\Transaction|null', $customEloquentCollection->find(1));
+assertType('App\Transaction|bool', $customEloquentCollection->find(1, false));
+
+assertType('App\UserCollection', $secondCustomEloquentCollection->find($items));
+assertType('App\UserCollection', $secondCustomEloquentCollection->find([1]));
+assertType('App\User|null', $secondCustomEloquentCollection->find($user));
+assertType('App\User|null', $secondCustomEloquentCollection->find(1));
+assertType('App\User|bool', $secondCustomEloquentCollection->find(1, false));
 
 assertType('Illuminate\Support\Collection<int, mixed>', $collection->flatten());
 assertType('Illuminate\Support\Collection<int, mixed>', $items->flatten());
