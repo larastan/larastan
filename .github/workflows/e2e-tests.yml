@@ -29,7 +29,7 @@ jobs:
             script: |
               git clone https://github.com/monicahq/chandler.git ../e2e/integration/repo
               cd ../e2e/integration/repo
-              git checkout 6df6cd62c35232e444e6bc7ce660495c655650fc
+              git checkout 1c4eca3891415e14a195b258a3b69583be4a189b
               composer install --ignore-platform-reqs --no-scripts --no-interaction
               composer config repositories.0 '{ "type": "path", "url": "../../../larastan"}'
               composer config minimum-stability dev
