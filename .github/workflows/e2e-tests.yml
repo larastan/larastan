@@ -33,7 +33,7 @@ jobs:
               composer install --ignore-platform-reqs --no-scripts --no-interaction
               composer config repositories.0 '{ "type": "path", "url": "../../../larastan"}'
               composer config minimum-stability dev
-              composer require --dev "nunomaduro/larastan:*" --ignore-platform-reqs
+              composer require --dev "nunomaduro/larastan:*" -W
               ./vendor/bin/phpstan
           - repo: "koel/koel"
             php-version: 8.1
@@ -44,7 +44,7 @@ jobs:
               composer install --ignore-platform-reqs --no-scripts --no-interaction
               composer config repositories.0 '{ "type": "path", "url": "../../../larastan"}'
               composer config minimum-stability dev
-              composer require --dev "nunomaduro/larastan:*" --ignore-platform-reqs -W
+              composer require --dev "nunomaduro/larastan:*" -W
               ./vendor/bin/phpstan
           - repo: "canvural/larastan-test"
             php-version: 8.1
@@ -55,7 +55,7 @@ jobs:
               composer install --ignore-platform-reqs --no-scripts --no-interaction
               composer config repositories.0 '{ "type": "path", "url": "../../../larastan"}'
               composer config minimum-stability dev
-              composer require --dev "nunomaduro/larastan:*" --ignore-platform-reqs -W
+              composer require --dev "nunomaduro/larastan:*" -W
               ./my-custom-vendor-dir/bin/phpstan
           - repo: "canvural/larastan-strict-rules"
             php-version: 8.1
@@ -66,7 +66,7 @@ jobs:
               composer install --ignore-platform-reqs --no-scripts --no-interaction
               composer config repositories.0 '{ "type": "path", "url": "../../../larastan"}'
               composer config minimum-stability dev
-              composer require --dev "nunomaduro/larastan:*" --ignore-platform-reqs -W
+              composer require --dev "nunomaduro/larastan:*" -W
               ./vendor/bin/phpstan
 
     steps:
