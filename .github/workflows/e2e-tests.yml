@@ -76,7 +76,7 @@ jobs:
 
       - name: "Install dependencies"
         run: |
-          cd ../e2e/integration/repo/
+          cd vendor/nunomaduro/larastan/e2e/
           composer install --no-scripts --no-interaction
           composer config repositories.0 '{ "type": "path", "url": "../../../.." }'
           composer config minimum-stability dev
