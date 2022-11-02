@@ -28,7 +28,7 @@ jobs:
             php-version: "8.1"
             checkout-with: |
               {
-                "repository": "https://github.com/monicahq/chandler.git",
+                "repository": "monicahq/chandler",
                 "ref": "1c4eca3891415e14a195b258a3b69583be4a189b",
                 "path": "../e2e/integration/repo"
               }
@@ -36,7 +36,7 @@ jobs:
             php-version: "8.1"
             checkout-with: |
               {
-                "repository": "https://github.com/koel/koel.git",
+                "repository": "koel/koel",
                 "ref": "0b85ff18b949714ef46b4d2bc73c6c1f6587a1ad",
                 "path": "../e2e/integration/repo"
               }
@@ -44,7 +44,7 @@ jobs:
             php-version: "8.1"
             checkout-with: |
               {
-                "repository": "https://github.com/canvural/larastan-test.git",
+                "repository": "canvural/larastan-test",
                 "ref": "686828b76a2e300b1a3cc99fdd8be9af3a3e7e60",
                 "path": "../e2e/integration/repo"
               }
@@ -52,7 +52,7 @@ jobs:
             php-version: "8.1"
             checkout-with: |
               {
-                "repository": "https://github.com/canvural/larastan-strict-rules.git",
+                "repository": "canvural/larastan-strict-rules",
                 "ref": "91b3e8dda2264d15d688e6bbbed23c83bc65a648",
                 "path": "../e2e/integration/repo"
               }
