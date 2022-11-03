@@ -53,7 +53,7 @@ jobs:
             checkout-with: |
               {
                 "repository": "canvural/larastan-strict-rules",
-                "ref": "91b3e8dda2264d15d688e6bbbed23c83bc65a648",
+                "ref": "872048172bb2b3501f92438e0462aa7f80111f44",
                 "path": "e2e"
               }
 
