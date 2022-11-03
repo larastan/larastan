@@ -86,8 +86,9 @@ class CollectionFilterDynamicReturnTypeExtension implements DynamicMethodReturnT
 
             $itemVariableName = $var->name;
 
+            $node = new Variable($itemVariableName);
             // @phpstan-ignore-next-line
-            $scope = $scope->assignVariable($itemVariableName, $valueType);
+            $scope = $scope->assignExpression($node, $valueType);
             $scope = $scope->filterByTruthyValue($expr);
             $valueType = $scope->getVariableType($itemVariableName);
         }
