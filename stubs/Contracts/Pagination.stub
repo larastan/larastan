@@ -3,22 +3,31 @@
 namespace Illuminate\Contracts\Pagination;
 
 /**
- * @mixin \Illuminate\Support\Collection
- * @mixin \Illuminate\Pagination\Paginator
+ * @template TItem
  */
 interface Paginator
-{}
+{
+    /**
+     * @return array<TItem>
+     */
+    public function items(): array;
+}
 
 /**
- * @mixin \Illuminate\Support\Collection
- * @mixin \Illuminate\Pagination\LengthAwarePaginator
+ * @template TItem
+ *
+ * @extends Paginator<TItem>
  */
 interface LengthAwarePaginator extends Paginator
 {}
 
 /**
- * @mixin \Illuminate\Support\Collection
- * @mixin \Illuminate\Pagination\CursorPaginator
+ * @template TItem
  */
-interface CursorPaginator extends Paginator
-{}
+interface CursorPaginator
+{
+    /**
+     * @return array<TItem>
+     */
+    public function items(): array;
+}
