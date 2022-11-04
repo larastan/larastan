@@ -25,53 +25,43 @@ jobs:
       matrix:
         include:
           - repo: "monicahq/chandler"
-            php-version: 8.1
-            script: |
-              git clone https://github.com/monicahq/chandler.git ../e2e/integration/repo
-              cd ../e2e/integration/repo
-              git checkout 1c4eca3891415e14a195b258a3b69583be4a189b
-              composer install --ignore-platform-reqs --no-scripts --no-interaction
-              composer config repositories.0 '{ "type": "path", "url": "../../../larastan"}'
-              composer config minimum-stability dev
-              composer require --dev "nunomaduro/larastan:*" --ignore-platform-reqs
-              ./vendor/bin/phpstan
+            php-version: "8.1"
+            checkout-with: |
+              {
+                "repository": "monicahq/chandler",
+                "ref": "1c4eca3891415e14a195b258a3b69583be4a189b",
+                "path": "e2e"
+              }
           - repo: "koel/koel"
-            php-version: 8.1
-            script: |
-              git clone https://github.com/koel/koel.git ../e2e/integration/repo
-              cd ../e2e/integration/repo
-              git checkout 0b85ff18b949714ef46b4d2bc73c6c1f6587a1ad
-              composer install --ignore-platform-reqs --no-scripts --no-interaction
-              composer config repositories.0 '{ "type": "path", "url": "../../../larastan"}'
-              composer config minimum-stability dev
-              composer require --dev "nunomaduro/larastan:*" --ignore-platform-reqs -W
-              ./vendor/bin/phpstan
+            php-version: "8.1"
+            checkout-with: |
+              {
+                "repository": "koel/koel",
+                "ref": "0b85ff18b949714ef46b4d2bc73c6c1f6587a1ad",
+                "path": "e2e"
+              }
           - repo: "canvural/larastan-test"
-            php-version: 8.1
-            script: |
-              git clone https://github.com/canvural/larastan-test.git ../e2e/integration/repo
-              cd ../e2e/integration/repo
-              git checkout 686828b76a2e300b1a3cc99fdd8be9af3a3e7e60
-              composer install --ignore-platform-reqs --no-scripts --no-interaction
-              composer config repositories.0 '{ "type": "path", "url": "../../../larastan"}'
-              composer config minimum-stability dev
-              composer require --dev "nunomaduro/larastan:*" --ignore-platform-reqs -W
-              ./my-custom-vendor-dir/bin/phpstan
+            php-version: "8.1"
+            checkout-with: |
+              {
+                "repository": "canvural/larastan-test",
+                "ref": "686828b76a2e300b1a3cc99fdd8be9af3a3e7e60",
+                "path": "e2e"
+              }
           - repo: "canvural/larastan-strict-rules"
-            php-version: 8.1
-            script: |
-              git clone https://github.com/canvural/larastan-strict-rules.git ../e2e/integration/repo
-              cd ../e2e/integration/repo
-              git checkout 91b3e8dda2264d15d688e6bbbed23c83bc65a648
-              composer install --ignore-platform-reqs --no-scripts --no-interaction
-              composer config repositories.0 '{ "type": "path", "url": "../../../larastan"}'
-              composer config minimum-stability dev
-              composer require --dev "nunomaduro/larastan:*" --ignore-platform-reqs -W
-              ./vendor/bin/phpstan
+            php-version: "8.1"
+            checkout-with: |
+              {
+                "repository": "canvural/larastan-strict-rules",
+                "ref": "872048172bb2b3501f92438e0462aa7f80111f44",
+                "path": "e2e"
+              }
 
     steps:
       - name: "Checkout"
-        uses: actions/checkout@v3
+        uses: "actions/checkout@v3"
+        with:
+          path: "larastan"
 
       - name: "Install PHP"
         uses: "shivammathur/setup-php@v2"
@@ -79,8 +69,19 @@ jobs:
           coverage: "none"
           php-version: "${{ matrix.php-version }}"
 
-      - name: "Install dependencies"
-        run: "composer update --no-interaction --no-progress"
+      - name: "Checkout dependent repo"
+        uses: "actions/checkout@v3"
+        with: "${{ fromJSON(matrix.checkout-with) }}"
 
-      - name: "Tests"
-        run: "${{ matrix.script }}"
+      - name: "Install dependencies"
+        run: |
+          cd e2e/
+          composer install --no-scripts --no-interaction
+          composer config repositories.0 '{ "type": "path", "url": "../larastan" }'
+          composer config minimum-stability dev
+          composer require --dev --update-with-all-dependencies "nunomaduro/larastan:*"
+
+      - name: "Perform static analysis"
+        run: |
+          cd e2e/
+          composer exec phpstan

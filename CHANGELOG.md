@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - feat: updated return type of the Validator::safe and FormRequest::safe method by @jdjfisher
 - feat: Added stub for the DB::transaction method by @jdjfisher
 - feat: conditional return types for `Eloquent\Collection::find()` by @sebdesign
+- feat: add support for generic paginators by @erikgaal
 
 ## [2.2.0] - 2022-08-31
 
