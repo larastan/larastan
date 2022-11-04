@@ -9,6 +9,7 @@ use function PHPStan\Testing\assertType;
 
 /** @var EloquentCollection<int, User> $collection */
 /** @var SupportCollection<string, int> $items */
+/** @var User $user */
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::all()->each(function (User $user, int $key): void {
 }));
 
@@ -19,6 +20,12 @@ assertType('Illuminate\Support\Collection<string, int>', $items->each(function (
 assertType('Illuminate\Support\Collection<string, string>', $items->map(function (int $item): string {
     return (string) $item;
 }));
+
+assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->find($items));
+assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->find([1]));
+assertType('App\User|null', $collection->find($user));
+assertType('App\User|null', $collection->find(1));
+assertType('App\User|bool', $collection->find(1, false));
 
 assertType('Illuminate\Support\Collection<int, mixed>', $collection->pluck('id'));
 
