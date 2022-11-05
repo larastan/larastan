@@ -16,6 +16,7 @@ parameters:
     noUnnecessaryCollectionCallExcept: []
     squashedMigrationsPath: []
     databaseMigrationsPath: []
+    viewDirectories: []
     checkModelProperties: false
     checkPhpDocMissingReturn: false
 
@@ -26,6 +27,7 @@ parametersSchema:
     noUnnecessaryCollectionCallOnly: listOf(string())
     noUnnecessaryCollectionCallExcept: listOf(string())
     databaseMigrationsPath: listOf(string())
+    viewDirectories: listOf(string())
     squashedMigrationsPath: listOf(string())
     checkModelProperties: bool()
 
@@ -452,8 +454,12 @@ services:
             - phpstan.collector
     -
         class: NunoMaduro\Larastan\Collectors\UsedViewInAnotherViewCollector
-        tags:
-            - phpstan.collector
+        arguments:
+            parser: @currentPhpVersionSimpleDirectParser
+    -
+        class: NunoMaduro\Larastan\Support\ViewFileHelper
+        arguments:
+            viewDirectories: %viewDirectories%
 rules:
     - NunoMaduro\Larastan\Rules\RelationExistenceRule
     - NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule

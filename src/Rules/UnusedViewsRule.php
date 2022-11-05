@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Rules;
 
+use CallbackFilterIterator;
+use InvalidArgumentException;
+use NunoMaduro\Larastan\Support\ViewFileHelper;
 use function collect;
 use Illuminate\Support\Facades\File;
 use Illuminate\View\Factory;
@@ -20,6 +23,13 @@ use Symfony\Component\Finder\SplFileInfo;
 /** @implements Rule<CollectedDataNode> */
 final class UnusedViewsRule implements Rule
 {
+    /** @var list<string>|null  */
+    private ?array $viewsUsedInOtherViews = null;
+
+    public function __construct(private UsedViewInAnotherViewCollector $usedViewInAnotherViewCollector, private ViewFileHelper $viewFileHelper)
+    {
+    }
+
     public function getNodeType(): string
     {
         return CollectedDataNode::class;
@@ -27,17 +37,17 @@ final class UnusedViewsRule implements Rule
 
     public function processNode(Node $node, Scope $scope): array
     {
+        if ($this->viewsUsedInOtherViews === null) {
+            $this->viewsUsedInOtherViews = $this->usedViewInAnotherViewCollector->getUsedViews();
+        }
+
         $usedViews = collect([
             $node->get(UsedViewFunctionCollector::class),
             $node->get(UsedEmailViewCollector::class),
-            $node->get(UsedViewInAnotherViewCollector::class),
+            $this->viewsUsedInOtherViews,
         ])->flatten()->unique()->toArray();
 
-        $allViews = array_map(function (SplFileInfo $file) {
-            return $file->getPathname();
-        }, array_filter(File::allFiles(resource_path('views')), function (SplFileInfo $file) {
-            return ! str_contains($file->getPathname(), 'views/vendor') && str_ends_with($file->getFilename(), '.blade.php');
-        }));
+        $allViews = iterator_to_array($this->viewFileHelper->getAllViewNames());
 
         $existingViews = [];
 
@@ -45,13 +55,12 @@ final class UnusedViewsRule implements Rule
         $view = view();
 
         foreach ($usedViews as $viewName) {
-            // Not existing views are reported with `view-string` type
             if ($view->exists($viewName)) {
-                $existingViews[] = $view->getFinder()->find($viewName);
+                $existingViews[] = $viewName;
             }
         }
 
-        $unusedViews = array_diff($allViews, $existingViews);
+        $unusedViews = array_diff($allViews, array_filter($existingViews));
 
         $errors = [];
         foreach ($unusedViews as $file) {
