@@ -4,26 +4,22 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Rules;
 
-use CallbackFilterIterator;
-use InvalidArgumentException;
-use NunoMaduro\Larastan\Support\ViewFileHelper;
 use function collect;
-use Illuminate\Support\Facades\File;
 use Illuminate\View\Factory;
 use NunoMaduro\Larastan\Collectors\UsedEmailViewCollector;
 use NunoMaduro\Larastan\Collectors\UsedViewFunctionCollector;
 use NunoMaduro\Larastan\Collectors\UsedViewInAnotherViewCollector;
+use NunoMaduro\Larastan\Support\ViewFileHelper;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\CollectedDataNode;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
-use Symfony\Component\Finder\SplFileInfo;
 
 /** @implements Rule<CollectedDataNode> */
 final class UnusedViewsRule implements Rule
 {
-    /** @var list<string>|null  */
+    /** @var list<string>|null */
     private ?array $viewsUsedInOtherViews = null;
 
     public function __construct(private UsedViewInAnotherViewCollector $usedViewInAnotherViewCollector, private ViewFileHelper $viewFileHelper)

@@ -13,7 +13,7 @@ use RegexIterator;
 final class ViewFileHelper
 {
     /**
-     * @param list<non-empty-string> $viewDirectories
+     * @param  list<non-empty-string>  $viewDirectories
      */
     public function __construct(private array $viewDirectories, private FileHelper $fileHelper)
     {
@@ -62,9 +62,9 @@ final class ViewFileHelper
                     continue;
                 }
 
-                 $viewName = explode($viewDirectory.'/', $view->getPathname());
+                $viewName = explode($viewDirectory.'/', $view->getPathname());
 
-                 yield str_replace(['/', '.blade.php'], ['.', ''], $viewName[1]);
+                yield str_replace(['/', '.blade.php'], ['.', ''], $viewName[1]);
             }
         }
     }

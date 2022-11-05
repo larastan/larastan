@@ -2,15 +2,10 @@
 
 namespace NunoMaduro\Larastan\Collectors;
 
-use Generator;
 use NunoMaduro\Larastan\Support\ViewFileHelper;
 use PhpParser\Node;
-use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
 use PHPStan\Parser\ParserErrorsException;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use RegexIterator;
 
 final class UsedViewInAnotherViewCollector
 {
@@ -39,7 +34,7 @@ final class UsedViewInAnotherViewCollector
     }
 
     /**
-     * @param Node\Stmt[] $nodes
+     * @param  Node\Stmt[]  $nodes
      * @return list<string>
      */
     private function processNodes(array $nodes): array
