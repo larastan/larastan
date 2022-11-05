@@ -4,22 +4,30 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Rules;
 
+use NunoMaduro\Larastan\Collectors\UsedViewFacadeMakeCollector;
+use NunoMaduro\Larastan\Collectors\UsedViewMakeCollector;
 use function collect;
-use Illuminate\Support\Facades\File;
 use Illuminate\View\Factory;
 use NunoMaduro\Larastan\Collectors\UsedEmailViewCollector;
 use NunoMaduro\Larastan\Collectors\UsedViewFunctionCollector;
 use NunoMaduro\Larastan\Collectors\UsedViewInAnotherViewCollector;
+use NunoMaduro\Larastan\Support\ViewFileHelper;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\CollectedDataNode;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
-use Symfony\Component\Finder\SplFileInfo;
 
 /** @implements Rule<CollectedDataNode> */
 final class UnusedViewsRule implements Rule
 {
+    /** @var list<string>|null */
+    private ?array $viewsUsedInOtherViews = null;
+
+    public function __construct(private UsedViewInAnotherViewCollector $usedViewInAnotherViewCollector, private ViewFileHelper $viewFileHelper)
+    {
+    }
+
     public function getNodeType(): string
     {
         return CollectedDataNode::class;
@@ -27,17 +35,19 @@ final class UnusedViewsRule implements Rule
 
     public function processNode(Node $node, Scope $scope): array
     {
+        if ($this->viewsUsedInOtherViews === null) {
+            $this->viewsUsedInOtherViews = $this->usedViewInAnotherViewCollector->getUsedViews();
+        }
+
         $usedViews = collect([
             $node->get(UsedViewFunctionCollector::class),
             $node->get(UsedEmailViewCollector::class),
-            $node->get(UsedViewInAnotherViewCollector::class),
+            $node->get(UsedViewMakeCollector::class),
+            $node->get(UsedViewFacadeMakeCollector::class),
+            $this->viewsUsedInOtherViews,
         ])->flatten()->unique()->toArray();
 
-        $allViews = array_map(function (SplFileInfo $file) {
-            return $file->getPathname();
-        }, array_filter(File::allFiles(resource_path('views')), function (SplFileInfo $file) {
-            return ! str_contains($file->getPathname(), 'views/vendor') && str_ends_with($file->getFilename(), '.blade.php');
-        }));
+        $allViews = iterator_to_array($this->viewFileHelper->getAllViewNames());
 
         $existingViews = [];
 
@@ -45,18 +55,17 @@ final class UnusedViewsRule implements Rule
         $view = view();
 
         foreach ($usedViews as $viewName) {
-            // Not existing views are reported with `view-string` type
             if ($view->exists($viewName)) {
-                $existingViews[] = $view->getFinder()->find($viewName);
+                $existingViews[] = $viewName;
             }
         }
 
-        $unusedViews = array_diff($allViews, $existingViews);
+        $unusedViews = array_diff($allViews, array_filter($existingViews));
 
         $errors = [];
         foreach ($unusedViews as $file) {
             $errors[] = RuleErrorBuilder::message('This view is not used in the project.')
-                ->file($file)
+                ->file($file.'.blade.php')
                 ->line(0)
                 ->build();
         }

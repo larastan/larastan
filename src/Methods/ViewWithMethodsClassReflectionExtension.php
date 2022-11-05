@@ -11,7 +11,7 @@ class ViewWithMethodsClassReflectionExtension implements MethodsClassReflectionE
 {
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        if ($classReflection->getName() !== 'Illuminate\View\View') {
+        if (! in_array($classReflection->getName(), ['Illuminate\View\View', 'Illuminate\Contracts\View\View'], true)) {
             return false;
         }
 

@@ -5,6 +5,8 @@ parameters:
     earlyTerminatingFunctionCalls:
         - abort
         - dd
+    excludePaths:
+        - *.blade.php
     mixinExcludeClasses:
         - Eloquent
     bootstrapFiles:
@@ -16,6 +18,7 @@ parameters:
     noUnnecessaryCollectionCallExcept: []
     squashedMigrationsPath: []
     databaseMigrationsPath: []
+    viewDirectories: []
     checkModelProperties: false
     checkPhpDocMissingReturn: false
 
@@ -26,6 +29,7 @@ parametersSchema:
     noUnnecessaryCollectionCallOnly: listOf(string())
     noUnnecessaryCollectionCallExcept: listOf(string())
     databaseMigrationsPath: listOf(string())
+    viewDirectories: listOf(string())
     squashedMigrationsPath: listOf(string())
     checkModelProperties: bool()
 
@@ -450,10 +454,24 @@ services:
         class: NunoMaduro\Larastan\Collectors\UsedEmailViewCollector
         tags:
             - phpstan.collector
+
     -
-        class: NunoMaduro\Larastan\Collectors\UsedViewInAnotherViewCollector
+        class: NunoMaduro\Larastan\Collectors\UsedViewMakeCollector
         tags:
             - phpstan.collector
+
+    -
+        class: NunoMaduro\Larastan\Collectors\UsedViewFacadeMakeCollector
+        tags:
+            - phpstan.collector
+    -
+        class: NunoMaduro\Larastan\Collectors\UsedViewInAnotherViewCollector
+        arguments:
+            parser: @currentPhpVersionSimpleDirectParser
+    -
+        class: NunoMaduro\Larastan\Support\ViewFileHelper
+        arguments:
+            viewDirectories: %viewDirectories%
 rules:
     - NunoMaduro\Larastan\Rules\RelationExistenceRule
     - NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule

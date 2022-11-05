@@ -4,42 +4,48 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Collectors;
 
-use Illuminate\Mail\Mailable;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Support\Facades\View;
 use Illuminate\View\ViewName;
 use PhpParser\Node;
-use PhpParser\Node\Identifier;
 use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
 use PHPStan\Type\ObjectType;
 
-/** @implements Collector<Node\Expr\MethodCall, string> */
-final class UsedEmailViewCollector implements Collector
+/** @implements Collector<Node\Expr\StaticCall, string> */
+final class UsedViewFacadeMakeCollector implements Collector
 {
     public function getNodeType(): string
     {
-        return Node\Expr\MethodCall::class;
+        return Node\Expr\StaticCall::class;
     }
 
-    /** @param Node\Expr\MethodCall $node */
+    /** @param Node\Expr\StaticCall $node */
     public function processNode(Node $node, Scope $scope): ?string
     {
         $name = $node->name;
 
-        if (! $name instanceof Identifier) {
+        if (! $name instanceof Node\Identifier) {
             return null;
         }
 
-        if (! in_array($name->name, ['markdown', 'view'], true)) {
+        if ($name->name !== 'make') {
             return null;
         }
 
-        if (count($node->getArgs()) === 0) {
+        if (count($node->getArgs()) < 1) {
             return null;
         }
 
-        $class = $node->var;
+        $class = $node->class;
 
-        if (! (new ObjectType(Mailable::class))->isSuperTypeOf($scope->getType($class))->yes()) {
+        if (! $class instanceof Node\Name) {
+            return null;
+        }
+
+        $class = $scope->resolveName($class);
+
+        if (! (new ObjectType(View::class))->isSuperTypeOf(new ObjectType($class))->yes()) {
             return null;
         }
 
