@@ -158,6 +158,12 @@ class ModelPropertyExtension
         $user->email_verified_at = null;
     }
 
+    /** @return array<string> */
+    public function testEncryptedArrayCast(User $user): array
+    {
+        return $user->allowed_ips;
+    }
+
     /** @return ArrayObject<array-key, mixed> */
     public function testAsArrayObjectCast(User $user): ArrayObject
     {

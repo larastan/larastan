@@ -232,6 +232,11 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
                 continue;
             }
 
+            // Reduce encrypted castable types
+            if (in_array($type, ['encrypted', 'encrypted:array', 'encrypted:collection', 'encrypted:json', 'encrypted:object'], true)) {
+                $type = Str::after($type, 'encrypted:');
+            }
+
             switch ($type) {
                 case 'boolean':
                 case 'bool':
