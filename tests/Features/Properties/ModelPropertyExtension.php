@@ -164,6 +164,11 @@ class ModelPropertyExtension
         return $user->allowed_ips;
     }
 
+    public function testPrecisionDecimalCast(User $user): string
+    {
+        return $user->floatButRoundedDecimalString;
+    }
+
     /** @return ArrayObject<array-key, mixed> */
     public function testAsArrayObjectCast(User $user): ArrayObject
     {

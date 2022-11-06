@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - feat: Added stub for the DB::transaction method by @jdjfisher
 - feat: conditional return types for `Eloquent\Collection::find()` by @sebdesign
 - feat: add support for generic paginators by @erikgaal
+- feat: add support for encrypted and parameterized eloquent casts by @jdjfisher
 
 ## [2.2.0] - 2022-08-31
 

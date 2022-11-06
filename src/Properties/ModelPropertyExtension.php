@@ -237,12 +237,16 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
                 $type = Str::after($type, 'encrypted:');
             }
 
+            // Truncate cast parameters
+            $type = Str::before($type, ':');
+
             switch ($type) {
                 case 'boolean':
                 case 'bool':
                     $realType = 'boolean';
                     break;
                 case 'string':
+                case 'decimal':
                     $realType = 'string';
                     break;
                 case 'array':
