@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Rules;
 
-use NunoMaduro\Larastan\Collectors\UsedViewFacadeMakeCollector;
-use NunoMaduro\Larastan\Collectors\UsedViewMakeCollector;
 use function collect;
 use Illuminate\View\Factory;
 use NunoMaduro\Larastan\Collectors\UsedEmailViewCollector;
+use NunoMaduro\Larastan\Collectors\UsedViewFacadeMakeCollector;
 use NunoMaduro\Larastan\Collectors\UsedViewFunctionCollector;
 use NunoMaduro\Larastan\Collectors\UsedViewInAnotherViewCollector;
+use NunoMaduro\Larastan\Collectors\UsedViewMakeCollector;
 use NunoMaduro\Larastan\Support\ViewFileHelper;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;

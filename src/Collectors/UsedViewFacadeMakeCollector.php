@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Collectors;
 
-use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Facades\View;
 use Illuminate\View\ViewName;
 use PhpParser\Node;

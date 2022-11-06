@@ -61,5 +61,3 @@ function viewStaticMake(): View
 {
     return \Illuminate\Support\Facades\View::make('view-static-make');
 }
-
-
