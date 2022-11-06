@@ -9,3 +9,5 @@ use function PHPStan\Testing\assertType;
 assertType('int', $user->newStyleAttribute);
 assertType('int', $user->stringButInt);
 assertType('string', $user->email);
+assertType('array', $user->allowed_ips);
+assertType('string', $user->floatButRoundedDecimalString);

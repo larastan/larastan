@@ -46,6 +46,8 @@ class User extends Authenticatable
         'meta' => 'array',
         'blocked' => 'boolean',
         'email_verified_at' => 'date',
+        'allowed_ips' => 'encrypted:array',
+        'floatButRoundedDecimalString' => 'decimal:1',
         'options' => AsArrayObject::class,
         'properties' => AsCollection::class,
     ];

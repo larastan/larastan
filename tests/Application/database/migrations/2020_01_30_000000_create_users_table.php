@@ -22,6 +22,8 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->string('stringButInt');
+            $table->float('floatButRoundedDecimalString');
+            $table->json('allowed_ips');
             $table->json('meta');
             $table->json('options');
             $table->json('properties');
