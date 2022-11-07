@@ -100,7 +100,7 @@ function rescue(callable $callback, $rescue = null, $report = true)
 
 /**
  * @template TValue
- * @param int $times
+ * @param int|array<int, int> $times
  * @param callable(int): TValue $callback
  * @param int $sleep
  * @param null|callable(\Exception): bool $when
