@@ -18,7 +18,7 @@ class UnusedViewsRuleTest extends RuleTestCase
 {
     protected function getRule(): Rule
     {
-        $viewFileHelper = new ViewFileHelper([__DIR__ . '/../Application/resources/views'], $this->getContainer()->getByType(FileHelper::class));
+        $viewFileHelper = new ViewFileHelper([__DIR__.'/../Application/resources/views'], $this->getContainer()->getByType(FileHelper::class));
 
         return new UnusedViewsRule(new UsedViewInAnotherViewCollector(
             $this->getContainer()->getService('currentPhpVersionSimpleDirectParser'),
