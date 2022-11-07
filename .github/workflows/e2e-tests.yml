@@ -29,7 +29,7 @@ jobs:
             checkout-with: |
               {
                 "repository": "monicahq/chandler",
-                "ref": "1c4eca3891415e14a195b258a3b69583be4a189b",
+                "ref": "a71b14ce977754d6df80d46a98ea5b36b6d46d1d",
                 "path": "e2e"
               }
           - repo: "koel/koel"
