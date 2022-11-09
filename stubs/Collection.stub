@@ -29,6 +29,16 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
     * @throws \InvalidArgumentException
     */
     public function random($number = null) {}
+
+    /**
+     * Create a collection by using this collection for keys and another for its values.
+     *
+     * @template TCombineValue
+     *
+     * @param  \Illuminate\Contracts\Support\Arrayable<array-key, TCombineValue>|iterable<array-key, TCombineValue>  $values
+     * @return static<array-key, TCombineValue>
+     */
+    public function combine($values) {}
 }
 
 /**
@@ -43,4 +53,14 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * @use \Illuminate\Support\Traits\EnumeratesValues<TKey, TValue>
      */
     use EnumeratesValues;
+
+    /**
+     * Create a collection by using this collection for keys and another for its values.
+     *
+     * @template TCombineValue
+     *
+     * @param  \Illuminate\Contracts\Support\Arrayable<array-key, TCombineValue>|iterable<array-key, TCombineValue>  $values
+     * @return static<array-key, TCombineValue>
+     */
+    public function combine($values) {}
 }

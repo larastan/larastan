@@ -19,4 +19,14 @@ interface Enumerable extends \Countable, \IteratorAggregate, \JsonSerializable
     * @throws \InvalidArgumentException
     */
    public function random($number = null) {}
+
+   /**
+    * Create a collection by using this collection for keys and another for its values.
+    *
+    * @template TCombineValue
+    *
+    * @param  \Illuminate\Contracts\Support\Arrayable<array-key, TCombineValue>|iterable<array-key, TCombineValue>  $values
+    * @return static<array-key, TCombineValue>
+    */
+   public function combine($values);
 }
