@@ -74,10 +74,10 @@ assertType('App\TransactionCollection<int, App\Transaction>', $customEloquentCol
 assertType('App\UserCollection', $secondCustomEloquentCollection->mergeRecursive([1 => new User()]));
 assertType('Illuminate\Support\Collection<string, int>', $items->mergeRecursive(['foo' => 2]));
 
-assertType('Illuminate\Database\Eloquent\Collection<int, int>', $collection->combine([1]));
-assertType('App\TransactionCollection<int, int>', $customEloquentCollection->combine([1]));
+assertType('Illuminate\Database\Eloquent\Collection<string, int>', $collection->combine([1]));
+assertType('App\TransactionCollection<string, int>', $customEloquentCollection->combine([1]));
 assertType('App\UserCollection', $secondCustomEloquentCollection->combine([1]));
-assertType('Illuminate\Support\Collection<string, string>', $items->combine(['foo']));
+assertType('Illuminate\Support\Collection<int, string>', $items->combine(['foo']));
 
 assertType('App\User|Illuminate\Database\Eloquent\Collection<int, App\User>|null', $collection->pop(1));
 assertType('App\Transaction|App\TransactionCollection<int, App\Transaction>|null', $customEloquentCollection->pop(2));

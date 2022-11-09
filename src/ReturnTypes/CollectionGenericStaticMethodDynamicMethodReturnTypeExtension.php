@@ -14,6 +14,7 @@ use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntersectionType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeTraverser;
 use PHPStan\Type\UnionType;
@@ -109,6 +110,11 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
 
         $genericTypes = $returnTypeClassReflection->typeMapToList($returnTypeClassReflection->getActiveTemplateTypeMap());
 
+        // If the key type is gonna be a model, we change it to string
+        if ((new ObjectType(Model::class))->isSuperTypeOf($genericTypes[0])->yes()) {
+            $genericTypes[0] = new StringType();
+        }
+
         $genericTypes = array_map(static function (Type $type) use ($classReflection) {
             return TypeTraverser::map($type, static function (Type $type, callable $traverse) use ($classReflection): Type {
                 if ($type instanceof UnionType || $type instanceof IntersectionType) {
@@ -116,7 +122,9 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
                 }
 
                 if ($type instanceof GenericObjectType && (($innerTypeReflection = $type->getClassReflection()) !== null)) {
-                    return new GenericObjectType($classReflection->getName(), $innerTypeReflection->typeMapToList($innerTypeReflection->getActiveTemplateTypeMap()));
+                    $genericTypes = $innerTypeReflection->typeMapToList($innerTypeReflection->getActiveTemplateTypeMap());
+
+                    return new GenericObjectType($classReflection->getName(), $genericTypes);
                 }
 
                 return $traverse($type);
