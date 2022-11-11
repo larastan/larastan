@@ -189,3 +189,27 @@ function transformHelper()
     assertType('null', transform('', fn () => 1));
     assertType('null', transform([], fn () => 1));
 }
+
+function filledHelperNullInference()
+{
+    /** @var ?int $value */
+    $value = 0;
+
+    if (filled($value)) {
+        assertType('int', $value);
+    } else {
+        assertType('int|null', $value);
+    }
+}
+
+function blankHelperNullInference()
+{
+    /** @var ?int $value */
+    $value = 0;
+
+    if (blank($value)) {
+        assertType('int|null', $value);
+    } else {
+        assertType('int', $value);
+    }
+}
