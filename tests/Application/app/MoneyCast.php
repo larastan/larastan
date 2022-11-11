@@ -4,7 +4,6 @@ namespace App;
 
 class MoneyCast implements \Illuminate\Contracts\Database\Eloquent\CastsAttributes
 {
-
     /**
      * @inheritDoc
      */
