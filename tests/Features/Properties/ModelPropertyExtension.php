@@ -8,6 +8,7 @@ use App\Account;
 use App\Address;
 use App\Group;
 use App\GuardedModel;
+use App\Money;
 use App\Role;
 use App\Team;
 use App\Thread;
@@ -200,6 +201,14 @@ class ModelPropertyExtension
     public function testSoftDeletesCastDateTimeAndNullable(User $user): ?string
     {
         return $user->deleted_at?->format('d/m/Y');
+    }
+
+    /** @return Money|null */
+    public function testCastClassReturnsDifferentClassInstanceOrNull(User $user)
+    {
+        assertType('App\\Money|null', $user->balance);
+
+        return $user->balance;
     }
 
     public function testWriteToSoftDeletesColumn(): void

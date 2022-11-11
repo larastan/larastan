@@ -50,6 +50,7 @@ class User extends Authenticatable
         'floatButRoundedDecimalString' => 'decimal:1',
         'options' => AsArrayObject::class,
         'properties' => AsCollection::class,
+        'balance' => MoneyCast::class,
     ];
 
     /**

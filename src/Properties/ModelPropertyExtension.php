@@ -18,6 +18,7 @@ use PHPStan\Reflection\PropertyReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\ObjectType;
+use ReflectionNamedType;
 
 /**
  * @internal
@@ -280,7 +281,24 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
                     $realType = '\Illuminate\Support\Collection<array-key, mixed>';
                     break;
                 default:
-                    $realType = class_exists($type) ? ('\\'.$type) : 'mixed';
+                    if (class_exists($type)) {
+                        $realType = ('\\'.$type);
+                        $reflection = $this->reflectionProvider
+                            ->getClass($realType)
+                            ->getNativeReflection();
+                        if ($reflection->hasMethod('get')) {
+                            if ($returnType = $reflection->getMethod('get')->getReturnType()) {
+                                if ($returnType instanceof ReflectionNamedType) {
+                                    $realType = $returnType->getName();
+                                    if ($returnType->allowsNull()) {
+                                        $realType .= '|null';
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        $realType = 'mixed';
+                    }
                     break;
             }
 

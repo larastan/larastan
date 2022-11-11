@@ -29,6 +29,7 @@ class CreateUsersTable extends Migration
             $table->json('properties');
             $table->boolean('blocked');
             $table->unknownColumnType('unknown_column');
+            $table->integer('balance');
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
