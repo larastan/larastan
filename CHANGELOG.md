@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - feat: conditional return types for `Eloquent\Collection::find()` by @sebdesign
 - feat: add support for generic paginators by @erikgaal
 - feat: add support for encrypted and parameterized eloquent casts by @jdjfisher
+- fix: improve handling of read types on custom model casts by @Aberdeener
 
 ## [2.2.0] - 2022-08-31
 
