@@ -169,3 +169,23 @@ function optional($value = null, callable $callback = null) {}
  * @return ($value is empty ? TDefault : TReturn)
  */
 function transform($value, callable $callback, $default = null): mixed {}
+
+/**
+ * Determine if a value is "filled".
+ *
+ * @phpstan-assert-if-true !=null $value
+ *
+ * @param  mixed  $value
+ * @return bool
+ */
+function filled($value) {}
+
+/**
+ * Determine if the given value is "blank".
+ *
+ * @phpstan-assert-if-false !=null $value
+ *
+ * @param  mixed  $value
+ * @return bool
+ */
+function blank($value) {}
