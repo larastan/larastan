@@ -137,6 +137,31 @@ And if you call the function above with a property that does not exist in User m
 takesOnlyUserModelProperties('emaiil');
 ```
 
+## ContainerBindingImplementsAbstractRule
+
+Checks for improper container bindings where the resolved type does not implement the provided abstract class.
+
+Supported container methods are:
+- `bind`
+- `bindIf`
+- `singleton`
+- `singletonIf`
+
+### Examples
+
+Following code
+```php
+public function register()
+{
+    $this->app->bind(CarContract::class, Dog::class);
+}
+```
+Will result in the following error:
+
+```
+Container binding of type App\Dog does not implement App\Contracts\CarContract.
+```
+
 ## OctaneCompatibilityRule
 
 This is an optional rule that can check your application for Laravel Octane compatibility.

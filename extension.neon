@@ -13,6 +13,7 @@ parameters:
         - bootstrap.php
     checkOctaneCompatibility: false
     noModelMake: true
+    containerBindingImplementsAbstract: true
     noUnnecessaryCollectionCall: true
     noUnnecessaryCollectionCallOnly: []
     noUnnecessaryCollectionCallExcept: []
@@ -26,6 +27,7 @@ parameters:
 parametersSchema:
     checkOctaneCompatibility: bool()
     noModelMake: bool()
+    containerBindingImplementsAbstract: bool()
     noUnnecessaryCollectionCall: bool()
     noUnnecessaryCollectionCallOnly: listOf(string())
     noUnnecessaryCollectionCallExcept: listOf(string())
@@ -38,6 +40,8 @@ parametersSchema:
 conditionalTags:
     NunoMaduro\Larastan\Rules\NoModelMakeRule:
         phpstan.rules.rule: %noModelMake%
+    NunoMaduro\Larastan\Rules\ContainerBindingImplementsAbstractRule:
+        phpstan.rules.rule: %containerBindingImplementsAbstract%
     NunoMaduro\Larastan\Rules\NoUnnecessaryCollectionCallRule:
         phpstan.rules.rule: %noUnnecessaryCollectionCall%
     NunoMaduro\Larastan\Rules\OctaneCompatibilityRule:
@@ -367,6 +371,9 @@ services:
         class: NunoMaduro\Larastan\Rules\NoModelMakeRule
 
     -
+        class: NunoMaduro\Larastan\Rules\ContainerBindingImplementsAbstractRule
+
+    -
         class: NunoMaduro\Larastan\Rules\NoUnnecessaryCollectionCallRule
         arguments:
             onlyMethods: %noUnnecessaryCollectionCallOnly%
@@ -474,10 +481,17 @@ services:
         class: NunoMaduro\Larastan\Collectors\UsedRouteFacadeViewCollector
         tags:
             - phpstan.collector
+
+    -
+        class: NunoMaduro\Larastan\Collectors\ContainerBindingsCollector
+        tags:
+            - phpstan.collector
+
     -
         class: NunoMaduro\Larastan\Collectors\UsedViewInAnotherViewCollector
         arguments:
             parser: @currentPhpVersionSimpleDirectParser
+
     -
         class: NunoMaduro\Larastan\Support\ViewFileHelper
         arguments:
