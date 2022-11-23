@@ -3,13 +3,13 @@
 namespace Rules;
 
 use NunoMaduro\Larastan\Collectors\UsedEmailViewCollector;
+use NunoMaduro\Larastan\Collectors\UsedRouteFacadeViewCollector;
 use NunoMaduro\Larastan\Collectors\UsedViewFacadeMakeCollector;
 use NunoMaduro\Larastan\Collectors\UsedViewFunctionCollector;
 use NunoMaduro\Larastan\Collectors\UsedViewInAnotherViewCollector;
 use NunoMaduro\Larastan\Collectors\UsedViewMakeCollector;
 use NunoMaduro\Larastan\Rules\UnusedViewsRule;
 use NunoMaduro\Larastan\Support\ViewFileHelper;
-use PHPStan\File\FileHelper;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
@@ -18,7 +18,7 @@ class UnusedViewsRuleTest extends RuleTestCase
 {
     protected function getRule(): Rule
     {
-        $viewFileHelper = new ViewFileHelper([__DIR__.'/../Application/resources/views'], $this->getContainer()->getByType(FileHelper::class));
+        $viewFileHelper = new ViewFileHelper([__DIR__.'/../Application/resources/views'], $this->getFileHelper());
 
         return new UnusedViewsRule(new UsedViewInAnotherViewCollector(
             $this->getContainer()->getService('currentPhpVersionSimpleDirectParser'),
@@ -33,7 +33,16 @@ class UnusedViewsRuleTest extends RuleTestCase
             new UsedEmailViewCollector,
             new UsedViewMakeCollector,
             new UsedViewFacadeMakeCollector,
+            new UsedRouteFacadeViewCollector,
         ];
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // This is a workaround for a weird PHPStan container cache issue.
+        require __DIR__.'/../../bootstrap.php';
     }
 
     public function testRule(): void

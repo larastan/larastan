@@ -6,4 +6,4 @@
 
 Lorem ipsum
 
-@include('home')
+@include("home")

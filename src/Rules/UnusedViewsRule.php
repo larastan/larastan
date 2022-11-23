@@ -8,6 +8,7 @@ use function collect;
 use Illuminate\View\Factory;
 use NunoMaduro\Larastan\Collectors\UsedEmailViewCollector;
 use NunoMaduro\Larastan\Collectors\UsedViewFacadeMakeCollector;
+use NunoMaduro\Larastan\Collectors\UsedRouteFacadeViewCollector;
 use NunoMaduro\Larastan\Collectors\UsedViewFunctionCollector;
 use NunoMaduro\Larastan\Collectors\UsedViewInAnotherViewCollector;
 use NunoMaduro\Larastan\Collectors\UsedViewMakeCollector;
@@ -44,6 +45,7 @@ final class UnusedViewsRule implements Rule
             $node->get(UsedEmailViewCollector::class),
             $node->get(UsedViewMakeCollector::class),
             $node->get(UsedViewFacadeMakeCollector::class),
+            $node->get(UsedRouteFacadeViewCollector::class),
             $this->viewsUsedInOtherViews,
         ])->flatten()->unique()->toArray();
 

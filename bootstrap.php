@@ -8,7 +8,9 @@ use Laravel\Lumen\Application as LumenApplication;
 use NunoMaduro\Larastan\ApplicationResolver;
 use Orchestra\Testbench\Concerns\CreatesApplication;
 
-define('LARAVEL_START', microtime(true));
+if (! defined('LARAVEL_START')) {
+    define('LARAVEL_START', microtime(true));
+}
 
 if (file_exists($applicationPath = getcwd().'/bootstrap/app.php')) { // Applications and Local Dev
     $app = require $applicationPath;
@@ -26,4 +28,6 @@ if ($app instanceof Application) {
     $app->boot();
 }
 
-define('LARAVEL_VERSION', $app->version());
+if (! defined('LARAVEL_VERSION')) {
+    define('LARAVEL_VERSION', $app->version());
+}
