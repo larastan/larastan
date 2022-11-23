@@ -4,6 +4,7 @@ namespace Tests\Rules\Data;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Mail\Mailable;
+use Illuminate\Support\Facades\Route;
 use Illuminate\View\Factory;
 
 class FooController
@@ -36,11 +37,6 @@ class FooEmail extends Mailable
         return $this->markdown('emails.markdown');
     }
 
-    public function foo(): self
-    {
-        return $this->markdown('home');
-    }
-
     public function bar(): self
     {
         return $this->view('emails.view');
@@ -60,4 +56,9 @@ function viewFactory(Factory $factory): View
 function viewStaticMake(): View
 {
     return \Illuminate\Support\Facades\View::make('view-static-make');
+}
+
+function routeView(): void
+{
+    Route::view('/welcome', 'route-view');
 }

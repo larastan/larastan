@@ -89,11 +89,4 @@ class CheckDispatchArgumentTypesCompatibleWithClassConstructorRuleTest extends R
             ['Event class Tests\Rules\Data\LaravelEventWithoutConstructor does not have a constructor and must be dispatched without any parameters.', 18],
         ]);
     }
-
-    public static function getAdditionalConfigFiles(): array
-    {
-        return [
-            __DIR__.'/phpstan-rules.neon',
-        ];
-    }
 }

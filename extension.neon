@@ -21,6 +21,7 @@ parameters:
     viewDirectories: []
     checkModelProperties: false
     checkPhpDocMissingReturn: false
+    checkUnusedViews: false
 
 parametersSchema:
     checkOctaneCompatibility: bool()
@@ -32,6 +33,7 @@ parametersSchema:
     viewDirectories: listOf(string())
     squashedMigrationsPath: listOf(string())
     checkModelProperties: bool()
+    checkUnusedViews: bool()
 
 conditionalTags:
     NunoMaduro\Larastan\Rules\NoModelMakeRule:
@@ -44,6 +46,8 @@ conditionalTags:
         phpstan.rules.rule: %checkModelProperties%
     NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertyStaticCallRule:
         phpstan.rules.rule: %checkModelProperties%
+    NunoMaduro\Larastan\Rules\UnusedViewsRule:
+        phpstan.rules.rule: %checkUnusedViews%
 
 services:
     -
@@ -442,8 +446,6 @@ services:
 
     -
         class: NunoMaduro\Larastan\Rules\UnusedViewsRule
-        tags:
-            - phpstan.rules.rule
 
     -
         class: NunoMaduro\Larastan\Collectors\UsedViewFunctionCollector
@@ -462,6 +464,11 @@ services:
 
     -
         class: NunoMaduro\Larastan\Collectors\UsedViewFacadeMakeCollector
+        tags:
+            - phpstan.collector
+
+    -
+        class: NunoMaduro\Larastan\Collectors\UsedRouteFacadeViewCollector
         tags:
             - phpstan.collector
     -

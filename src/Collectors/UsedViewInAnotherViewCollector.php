@@ -9,8 +9,8 @@ use PHPStan\Parser\ParserErrorsException;
 
 final class UsedViewInAnotherViewCollector
 {
-    /** @see https://regex101.com/r/8gosof/1 */
-    private const VIEW_NAME_REGEX = '/@(extends|include(If|Unless|When|First)?)(\(.*?\'(.*?)\'(\)|,))/m';
+    /** @see https://regex101.com/r/OyHHCY/1 */
+    private const VIEW_NAME_REGEX = '/@(extends|include(If|Unless|When|First)?)(\(.*?([\'"])(.*?)([\'"])([),]))/m';
 
     public function __construct(private Parser $parser, private ViewFileHelper $viewFileHelper)
     {
@@ -53,7 +53,7 @@ final class UsedViewInAnotherViewCollector
             preg_match_all(self::VIEW_NAME_REGEX, $node->value, $matches, PREG_SET_ORDER, 0);
 
             $usedViews = array_merge($usedViews, array_map(function ($match) {
-                return $match[4];
+                return $match[5];
             }, $matches));
         }
 
