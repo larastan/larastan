@@ -18,8 +18,10 @@ parameters:
     noUnnecessaryCollectionCallExcept: []
     squashedMigrationsPath: []
     databaseMigrationsPath: []
+    viewDirectories: []
     checkModelProperties: false
     checkPhpDocMissingReturn: false
+    checkUnusedViews: false
 
 parametersSchema:
     checkOctaneCompatibility: bool()
@@ -28,8 +30,10 @@ parametersSchema:
     noUnnecessaryCollectionCallOnly: listOf(string())
     noUnnecessaryCollectionCallExcept: listOf(string())
     databaseMigrationsPath: listOf(string())
+    viewDirectories: listOf(string())
     squashedMigrationsPath: listOf(string())
     checkModelProperties: bool()
+    checkUnusedViews: bool()
 
 conditionalTags:
     NunoMaduro\Larastan\Rules\NoModelMakeRule:
@@ -42,6 +46,8 @@ conditionalTags:
         phpstan.rules.rule: %checkModelProperties%
     NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertyStaticCallRule:
         phpstan.rules.rule: %checkModelProperties%
+    NunoMaduro\Larastan\Rules\UnusedViewsRule:
+        phpstan.rules.rule: %checkUnusedViews%
 
 services:
     -
@@ -263,11 +269,6 @@ services:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\Helpers\ViewExtension
-        tags:
-            - phpstan.broker.dynamicFunctionReturnTypeExtension
-
-    -
         class: NunoMaduro\Larastan\ReturnTypes\Helpers\ValidatorExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
@@ -442,6 +443,42 @@ services:
     -
         class: NunoMaduro\Larastan\LarastanStubFilesExtension
         tags: [phpstan.stubFilesExtension]
+
+    -
+        class: NunoMaduro\Larastan\Rules\UnusedViewsRule
+
+    -
+        class: NunoMaduro\Larastan\Collectors\UsedViewFunctionCollector
+        tags:
+            - phpstan.collector
+
+    -
+        class: NunoMaduro\Larastan\Collectors\UsedEmailViewCollector
+        tags:
+            - phpstan.collector
+
+    -
+        class: NunoMaduro\Larastan\Collectors\UsedViewMakeCollector
+        tags:
+            - phpstan.collector
+
+    -
+        class: NunoMaduro\Larastan\Collectors\UsedViewFacadeMakeCollector
+        tags:
+            - phpstan.collector
+
+    -
+        class: NunoMaduro\Larastan\Collectors\UsedRouteFacadeViewCollector
+        tags:
+            - phpstan.collector
+    -
+        class: NunoMaduro\Larastan\Collectors\UsedViewInAnotherViewCollector
+        arguments:
+            parser: @currentPhpVersionSimpleDirectParser
+    -
+        class: NunoMaduro\Larastan\Support\ViewFileHelper
+        arguments:
+            viewDirectories: %viewDirectories%
 rules:
     - NunoMaduro\Larastan\Rules\RelationExistenceRule
     - NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule

@@ -47,11 +47,4 @@ class DeferrableServiceProviderMissingProvidesRuleTest extends RuleTestCase
     {
         return new DeferrableServiceProviderMissingProvidesRule();
     }
-
-    public static function getAdditionalConfigFiles(): array
-    {
-        return [
-            __DIR__.'/phpstan-rules.neon',
-        ];
-    }
 }
