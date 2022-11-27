@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Rules;
 
+use function collect;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use Illuminate\View\Factory;
 use NunoMaduro\Larastan\Collectors\UsedTranslationFunctionsCollector;
 use NunoMaduro\Larastan\Collectors\UsedTranslationsInViewsCollector;
 use PhpParser\Node;
@@ -15,8 +15,6 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Node\CollectedDataNode;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
-use function collect;
-use function PHPStan\dumpType;
 
 /** @implements Rule<CollectedDataNode> */
 final class UnusedTranslationsRule implements Rule
@@ -68,13 +66,12 @@ final class UnusedTranslationsRule implements Rule
             $this->usedTranslationsInViews,
         ])->flatten()->unique()->toArray();
 
-
         $unusedTranslations = array_diff($this->allTranslations, array_filter($usedTranslations));
 
         $errors = [];
         foreach ($unusedTranslations as $translation) {
             $errors[] = RuleErrorBuilder::message(sprintf('"%s" translation is not used in the project.', $translation))
-                ->file(Str::before($translation, '.') . '.php')
+                ->file(Str::before($translation, '.').'.php')
                 ->line(0)
                 ->build();
         }

@@ -8,7 +8,7 @@ class TranslationsController
     {
         return [
             __('system.foo'),
-            trans('system.bar')
+            trans('system.bar'),
         ];
     }
 }
