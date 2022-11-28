@@ -20,7 +20,7 @@ class ModelPropertyOnModel extends \Illuminate\Database\Eloquent\Model
 
     public function unionMethodWithPropertyOnlyInOne(\App\User|\App\Account $model): void
     {
-        $model->update(['name' => 'bar']);
+        $model->update(['email_verified_at' => 'bar']);
     }
 
     public function unionMethodGreen(\App\User|\App\Account $model): void

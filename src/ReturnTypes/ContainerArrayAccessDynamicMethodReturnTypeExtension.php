@@ -8,12 +8,12 @@ use NunoMaduro\Larastan\Concerns\HasContainer;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\ParametersAcceptorSelector;
-use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\TypeUtils;
 
 class ContainerArrayAccessDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
@@ -43,31 +43,41 @@ class ContainerArrayAccessDynamicMethodReturnTypeExtension implements DynamicMet
         MethodReflection $methodReflection,
         MethodCall $methodCall,
         Scope $scope
-    ): Type {
+    ): ?Type {
         $args = $methodCall->getArgs();
 
         if (count($args) === 0) {
-            return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+            return null;
         }
 
         $argType = $scope->getType($args[0]->value);
 
-        if (! $argType instanceof ConstantStringType) {
-            return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+        $argStrings = TypeUtils::getConstantStrings($argType);
+
+        if ($argStrings === []) {
+            return null;
         }
 
-        $resolvedValue = $this->resolve($argType->getValue());
+        $argTypes = [];
 
-        if ($resolvedValue === null) {
-            return new ErrorType();
+        foreach ($argStrings as $argString) {
+            $resolvedValue = $this->resolve($argString->getValue());
+
+            if ($resolvedValue === null) {
+                $argTypes[] = new ErrorType();
+                continue;
+            }
+
+            if (is_object($resolvedValue)) {
+                $class = get_class($resolvedValue);
+
+                $argTypes[] = new ObjectType($class);
+                continue;
+            }
+
+            $argTypes[] = $scope->getTypeFromValue($resolvedValue);
         }
 
-        if (is_object($resolvedValue)) {
-            $class = get_class($resolvedValue);
-
-            return new ObjectType($class);
-        }
-
-        return $scope->getTypeFromValue($resolvedValue);
+        return count($argTypes) > 1 ? TypeCombinator::union(...$argTypes) : $argTypes[0];
     }
 }

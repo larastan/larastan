@@ -8,11 +8,12 @@ use Illuminate\Foundation\Testing\TestCase;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
+use PHPStan\Type\ErrorType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\TypeUtils;
 
 /**
  * @internal
@@ -40,14 +41,27 @@ final class TestCaseExtension implements DynamicMethodReturnTypeExtension
     ): Type {
         $defaultReturnType = new ObjectType('Mockery\\MockInterface');
 
-        $classType = $scope->getType($methodCall->getArgs()[0]->value);
+        if (count($methodCall->args) === 0) {
+            return new ErrorType();
+        }
 
-        if (! $classType instanceof ConstantStringType) {
+        $classType = $scope->getType($methodCall->getArgs()[0]->value);
+        $constantStrings = TypeUtils::getConstantStrings($classType);
+
+        if ($constantStrings === []) {
             return $defaultReturnType;
         }
 
-        $objectType = new ObjectType($classType->getValue());
+        $returnTypes = [];
 
-        return TypeCombinator::intersect($defaultReturnType, $objectType);
+        foreach ($constantStrings as $constantString) {
+            $objectType = new ObjectType($constantString->getValue());
+
+            $returnTypes[] = TypeCombinator::intersect($defaultReturnType, $objectType);
+        }
+
+        return count($returnTypes) === 1
+            ? $returnTypes[0]
+            : TypeCombinator::union(...$returnTypes);
     }
 }

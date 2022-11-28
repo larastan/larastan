@@ -14,12 +14,12 @@ use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
-use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StaticType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeUtils;
 
 class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
@@ -77,12 +77,13 @@ class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTyp
         }
 
         $argType = $scope->getType($methodCall->getArgs()[0]->value);
+        $argStrings = TypeUtils::getConstantStrings($argType);
 
-        if (! $argType instanceof ConstantStringType) {
+        if (count($argStrings) !== 1) {
             return $returnType;
         }
 
-        $argClassName = $argType->getValue();
+        $argClassName = $argStrings[0]->getValue();
 
         if (! $this->provider->hasClass($argClassName)) {
             $argClassName = Model::class;
