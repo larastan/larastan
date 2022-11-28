@@ -14,7 +14,6 @@ use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
-use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;

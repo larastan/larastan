@@ -11,7 +11,6 @@ use NunoMaduro\Larastan\Concerns\HasContainer;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;

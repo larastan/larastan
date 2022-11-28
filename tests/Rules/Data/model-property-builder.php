@@ -1,7 +1,6 @@
 <?php
 
 /** @var 'unionNotExisting'|'id' $union */
-
 \App\User::query()->firstWhere('foo', 'bar');
 \App\User::query()->firstWhere($union, 'bar');
 \App\User::query()->where('foo', 'bar')->get();

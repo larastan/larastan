@@ -11,15 +11,10 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
-use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantStringType;
-use PHPStan\Type\GeneralizePrecision;
-use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
-use PHPStan\Type\TypeTraverser;
 use PHPStan\Type\TypeUtils;
-use PHPStan\Type\UnionType;
 
 /** @implements Rule<Node\Expr\CallLike> */
 class RelationExistenceRule implements Rule
