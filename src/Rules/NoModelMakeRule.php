@@ -16,8 +16,8 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
-use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\TypeUtils;
 
 /**
  * Catches inefficient instantiation of models using Model::make().
@@ -96,17 +96,11 @@ class NoModelMakeRule implements Rule
         if ($class instanceof FullyQualified) {
             $type = new ObjectType($class->toString());
         } elseif ($class instanceof Expr) {
-            $exprType = $scope->getType($class);
+            $type = $scope->getType($class);
 
-            if (! $exprType instanceof ConstantStringType) {
-                return false;
+            if ($type->isClassStringType()->yes() && TypeUtils::getConstantStrings($type) !== []) {
+                $type = new ObjectType($type->getValue()); // @phpstan-ignore-line
             }
-
-            if (! $exprType->isClassString()) {
-                return false;
-            }
-
-            $type = new ObjectType($exprType->getValue());
         } else {
             // TODO can we handle relative names, do they even occur here?
             return false;

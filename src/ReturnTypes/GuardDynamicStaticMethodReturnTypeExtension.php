@@ -11,11 +11,11 @@ use NunoMaduro\Larastan\Concerns\HasContainer;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\TypeUtils;
 
 class GuardDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
 {
@@ -58,25 +58,22 @@ class GuardDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethod
         }
 
         $argType = $scope->getType($methodCall->getArgs()[0]->value);
+        $argStrings = TypeUtils::getConstantStrings($argType);
 
-        if (! $argType instanceof ConstantStringType) {
+        if (count($argStrings) !== 1) {
             return $defaultReturnType;
         }
 
-        return $this->findTypeFromGuardDriver($argType->getValue()) ?? $defaultReturnType;
+        return $this->findTypeFromGuardDriver($argStrings[0]->getValue()) ?? $defaultReturnType;
     }
 
     private function findTypeFromGuardDriver(string $driver): ?Type
     {
-        switch ($driver) {
-            case 'session':
-                return new ObjectType(\Illuminate\Auth\SessionGuard::class);
-            case 'token':
-                return new ObjectType(\Illuminate\Auth\TokenGuard::class);
-            case 'passport':
-                return new ObjectType(\Illuminate\Auth\RequestGuard::class);
-            default:
-                return null;
-        }
+        return match ($driver) {
+            'session' => new ObjectType(\Illuminate\Auth\SessionGuard::class),
+            'token' => new ObjectType(\Illuminate\Auth\TokenGuard::class),
+            'passport' => new ObjectType(\Illuminate\Auth\RequestGuard::class),
+            default => null,
+        };
     }
 }

@@ -22,7 +22,7 @@
         "illuminate/support": "^9",
         "mockery/mockery": "^1.4.4",
         "phpmyadmin/sql-parser": "^5.5",
-        "phpstan/phpstan": "^1.9.0"
+        "phpstan/phpstan": "^1.9.2"
     },
     "require-dev": {
         "nikic/php-parser": "^4.13.2",

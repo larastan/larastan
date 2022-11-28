@@ -17,7 +17,6 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\TypeUtils;
 use PHPStan\Type\TypeWithClassName;
 use Traversable;
 
@@ -50,8 +49,8 @@ final class CollectionHelper
         }
 
         return new GenericObjectType(Collection::class, [
-            TypeUtils::generalizeType($type->getIterableKeyType(), GeneralizePrecision::lessSpecific()),
-            TypeUtils::generalizeType($type->getIterableValueType(), GeneralizePrecision::lessSpecific()),
+            $type->getIterableKeyType()->generalize(GeneralizePrecision::lessSpecific()),
+            $type->getIterableValueType()->generalize(GeneralizePrecision::lessSpecific()),
         ]);
     }
 
