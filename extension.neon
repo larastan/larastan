@@ -424,7 +424,7 @@ services:
     -
         class: NunoMaduro\Larastan\Rules\RelationExistenceRule
         tags:
-            - phpstan.rule
+            - phpstan.rules.rule
 
     -
         class: NunoMaduro\Larastan\Rules\CheckDispatchArgumentTypesCompatibleWithClassConstructorRule
