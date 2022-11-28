@@ -18,6 +18,7 @@ use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeTraverser;
+use PHPStan\Type\TypeUtils;
 use PHPStan\Type\UnionType;
 
 /** @implements Rule<Node\Expr\CallLike> */
@@ -72,39 +73,32 @@ class RelationExistenceRule implements Rule
 
         $valueType = $scope->getType($args[0]->value);
 
-        if (! $valueType instanceof ConstantStringType && ! $valueType instanceof ConstantArrayType) {
-            return [];
-        }
+        /** @var ConstantStringType[] $relations */
+        $relations = [];
 
-        if ($valueType instanceof ConstantStringType) {
-            $relations = [$valueType];
+        if ($valueType->isConstantArray()->yes()) {
+            $relations = array_merge(
+                $relations,
+                ...array_map(function (Type $type) {
+                    return TypeUtils::getConstantStrings($type);
+                }, $valueType->getKeyTypes()), // @phpstan-ignore-line
+                ...array_map(function (Type $type) {
+                    return TypeUtils::getConstantStrings($type);
+                }, $valueType->getValueTypes()), // @phpstan-ignore-line
+            );
         } else {
-            if ($valueType->getKeyType()->generalize(GeneralizePrecision::lessSpecific()) instanceof IntegerType) {
-                $relations = $valueType->getValueTypes();
-            } else {
-                $relations = $valueType->getKeyTypes();
+            $constants = TypeUtils::getConstantStrings($valueType);
+
+            if ($constants === []) {
+                return [];
             }
+
+            $relations = $constants;
         }
 
         $errors = [];
 
         foreach ($relations as $relationType) {
-            $relationType = TypeTraverser::map($relationType, static function (Type $type, callable $traverse) {
-                if ($type instanceof UnionType) {
-                    return $traverse($type);
-                }
-
-                if ($type instanceof ConstantStringType) {
-                    return $type;
-                }
-
-                return $traverse($type);
-            });
-
-            if (! $relationType instanceof ConstantStringType) {
-                continue;
-            }
-
             $relationName = explode(':', $relationType->getValue())[0];
 
             $calledOnNode = $node instanceof MethodCall ? $node->var : $node->class;

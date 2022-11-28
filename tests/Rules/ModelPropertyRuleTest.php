@@ -13,15 +13,16 @@ class ModelPropertyRuleTest extends RulesTest
         $errors = $this->setConfigPath(__DIR__.DIRECTORY_SEPARATOR.'Data/modelPropertyConfig.neon')->findErrorsByLine(__DIR__.'/Data/model-property-builder.php');
 
         self::assertEquals([
-            3 => 'Property \'foo\' does not exist in App\\User model.',
-            4 => 'Property \'foo\' does not exist in App\\User model.',
-            9 => 'Property \'foo\' does not exist in App\\User model.',
-            18 => 'Property \'foo\' does not exist in App\\User model.',
-            23 => 'Property \'foo\' does not exist in App\\User model.',
-            25 => 'Property \'foo\' does not exist in App\\User model.',
+            5 => 'Property \'foo\' does not exist in App\\User model.',
+            6 => 'Property \'unionNotExisting\' does not exist in App\\User model.',
+            7 => 'Property \'foo\' does not exist in App\\User model.',
+            12 => 'Property \'foo\' does not exist in App\\User model.',
+            21 => 'Property \'foo\' does not exist in App\\User model.',
             26 => 'Property \'foo\' does not exist in App\\User model.',
-            27 => 'Property \'foo\' does not exist in App\\User model.',
+            28 => 'Property \'foo\' does not exist in App\\User model.',
+            29 => 'Property \'foo\' does not exist in App\\User model.',
             30 => 'Property \'foo\' does not exist in App\\User model.',
+            33 => 'Property \'foo\' does not exist in App\\User model.',
         ], $errors);
     }
 
@@ -46,7 +47,7 @@ class ModelPropertyRuleTest extends RulesTest
         self::assertEquals([
             9 => 'Property \'foo\' does not exist in ModelPropertyModel\ModelPropertyOnModel model.',
             16 => 'Property \'foo\' does not exist in App\Account|App\User model.',
-            23 => 'Property \'name\' does not exist in App\Account|App\User model.',
+            23 => 'Property \'email_verified_at\' does not exist in App\Account|App\User model.',
         ], $errors);
     }
 
