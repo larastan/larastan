@@ -23,21 +23,26 @@ assertType('App\User', User::factory()->configure()->make());
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory(2)->create());
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory(2)->createQuietly());
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory(2)->make());
+assertType('App\User', User::factory(2)->createOneQuietly());
 
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory()->count(1)->create());
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory()->count(1)->createQuietly());
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory()->count(1)->make());
+assertType('App\User', User::factory()->count(2)->createOneQuietly());
 
 assertType('App\User', User::factory(2)->count(null)->create());
 assertType('App\User', User::factory(2)->count(null)->createQuietly());
+assertType('App\User', User::factory(2)->count(null)->createOneQuietly());
 assertType('App\User', User::factory(2)->count(null)->make());
 
 assertType('App\User', User::factory(2)->count(null)->create());
 assertType('App\User', User::factory(2)->count(null)->createQuietly());
+assertType('App\User', User::factory(2)->count(null)->createOneQuietly());
 assertType('App\User', User::factory(2)->count(null)->make());
 
 assertType('App\User', User::factory(2)->state(['foo'])->count(null)->create());
 assertType('App\User', User::factory(2)->state(['foo'])->count(null)->createQuietly());
+assertType('App\User', User::factory(2)->state(['foo'])->count(null)->createOneQuietly());
 assertType('App\User', User::factory(2)->state(['foo'])->count(null)->make());
 
 function foo(?int $foo): void
