@@ -8,6 +8,7 @@ use function PHPStan\Testing\assertType;
 assertType('Database\Factories\UserFactory', User::factory());
 assertType('Database\Factories\UserFactory', User::factory()->new());
 assertType('App\User', User::factory()->createOne());
+assertType('App\User', User::factory()->createOneQuietly());
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory()->createMany([]));
 assertType('App\User', User::factory()->makeOne());
 
