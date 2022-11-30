@@ -35,11 +35,6 @@ assertType('App\User', User::factory(2)->count(null)->createQuietly());
 assertType('App\User', User::factory(2)->count(null)->createOneQuietly());
 assertType('App\User', User::factory(2)->count(null)->make());
 
-assertType('App\User', User::factory(2)->count(null)->create());
-assertType('App\User', User::factory(2)->count(null)->createQuietly());
-assertType('App\User', User::factory(2)->count(null)->createOneQuietly());
-assertType('App\User', User::factory(2)->count(null)->make());
-
 assertType('App\User', User::factory(2)->state(['foo'])->count(null)->create());
 assertType('App\User', User::factory(2)->state(['foo'])->count(null)->createQuietly());
 assertType('App\User', User::factory(2)->state(['foo'])->count(null)->createOneQuietly());
