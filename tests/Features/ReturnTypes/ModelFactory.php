@@ -85,6 +85,11 @@ class ModelFactory
         return Post::factory()->createOne();
     }
 
+    public function testCreateOneQuietly(): Post
+    {
+        return Post::factory()->createOneQuietly();
+    }
+
     /** @phpstan-return Collection<int, Post> */
     public function testCreateMany(): Collection
     {
