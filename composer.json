@@ -1,5 +1,5 @@
 {
-    "name": "nunomaduro/larastan",
+    "name": "commentsold/larastan",
     "type": "phpstan-extension",
     "description": "Larastan - Discover bugs in your code without running it. A phpstan/phpstan wrapper for Laravel",
     "keywords": ["laravel", "larastan", "phpstan", "php", "package", "static analysis", "code analysis", "code analyse"],
