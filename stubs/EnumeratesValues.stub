@@ -35,4 +35,17 @@ use Illuminate\Support\HigherOrderCollectionProxy;
  * @property-read HigherOrderCollectionProxy<'until', TValue> $until
  */
 trait EnumeratesValues
-{}
+{
+    /**
+     * NOTE: This stub is needed to support older Laravel versions.
+     *
+     * Map a collection and flatten the result by a single level.
+     *
+     * @template TFlatMapKey of array-key
+     * @template TFlatMapValue
+     *
+     * @param  callable(TValue, TKey): (\Illuminate\Support\Collection<TFlatMapKey, TFlatMapValue>|array<TFlatMapKey, TFlatMapValue>)  $callback
+     * @return static<TFlatMapKey, TFlatMapValue>
+     */
+    public function flatMap(callable $callback);
+}
