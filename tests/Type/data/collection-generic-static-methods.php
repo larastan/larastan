@@ -168,7 +168,7 @@ assertType(
 );
 
 assertType(
-    'Illuminate\Database\Eloquent\Collection<int, mixed>',
+    'Illuminate\Database\Eloquent\Collection<(int|string), mixed>',
     $collection->flatMap(function (User $user, int $id) {
         return $user->email;
     })
