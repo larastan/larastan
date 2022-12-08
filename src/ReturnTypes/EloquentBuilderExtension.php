@@ -19,6 +19,7 @@ use PHPStan\Type\Generic\TemplateMixedType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeWithClassName;
 
 final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
 {
@@ -58,7 +59,7 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
 
         $templateTypeMap = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap();
 
-        if (! $templateTypeMap->getType('TModelClass') instanceof ObjectType) {
+        if (! $templateTypeMap->getType('TModelClass') instanceof TypeWithClassName) {
             return false;
         }
 

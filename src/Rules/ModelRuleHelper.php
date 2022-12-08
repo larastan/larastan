@@ -13,6 +13,7 @@ use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\TypeWithClassName;
 
 final class ModelRuleHelper
 {
@@ -39,7 +40,7 @@ final class ModelRuleHelper
 
         $modelType = TypeCombinator::removeNull($modelType);
 
-        if (! $modelType instanceof ObjectType) {
+        if (! $modelType instanceof TypeWithClassName) {
             return null;
         }
 

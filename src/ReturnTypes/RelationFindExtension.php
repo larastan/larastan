@@ -22,6 +22,7 @@ use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\TypeWithClassName;
 
 /**
  * @internal
@@ -59,7 +60,7 @@ final class RelationFindExtension implements DynamicMethodReturnTypeExtension
 
         $modelType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TRelatedModel');
 
-        if (! $modelType instanceof ObjectType) {
+        if (! $modelType instanceof TypeWithClassName) {
             return false;
         }
 

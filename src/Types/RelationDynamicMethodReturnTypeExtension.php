@@ -6,7 +6,6 @@ namespace NunoMaduro\Larastan\Types;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\FunctionVariant;
@@ -20,6 +19,7 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\StaticType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeUtils;
+use PHPStan\Type\TypeWithClassName;
 
 class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
@@ -57,7 +57,7 @@ class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTyp
         $functionVariant = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
         $returnType = $functionVariant->getReturnType();
 
-        if (! $returnType instanceof ObjectType) {
+        if (! $returnType instanceof TypeWithClassName) {
             return $returnType;
         }
 

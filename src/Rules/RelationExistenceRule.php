@@ -72,15 +72,19 @@ class RelationExistenceRule implements Rule
         $relations = [];
 
         if ($valueType->isConstantArray()->yes()) {
-            $relations = array_merge(
-                $relations,
-                ...array_map(function (Type $type) {
-                    return TypeUtils::getConstantStrings($type);
-                }, $valueType->getKeyTypes()), // @phpstan-ignore-line
-                ...array_map(function (Type $type) {
-                    return TypeUtils::getConstantStrings($type);
-                }, $valueType->getValueTypes()), // @phpstan-ignore-line
-            );
+            $arrays = $valueType->getConstantArrays();
+
+            foreach ($arrays as $array) {
+                $relations = array_merge(
+                    $relations,
+                    ...array_map(function (Type $type) {
+                        return TypeUtils::getConstantStrings($type);
+                    }, $array->getKeyTypes()),
+                    ...array_map(function (Type $type) {
+                        return TypeUtils::getConstantStrings($type);
+                    }, $array->getValueTypes()),
+                );
+            }
         } else {
             $constants = TypeUtils::getConstantStrings($valueType);
 
@@ -153,7 +157,7 @@ class RelationExistenceRule implements Rule
                 return [];
             }
 
-            $errors += $closure($calledOnType, $relationName, $node);
+            $errors = array_merge($errors, $closure($calledOnType, $relationName, $node));
         }
 
         return $errors;

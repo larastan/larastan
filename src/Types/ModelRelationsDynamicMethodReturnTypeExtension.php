@@ -17,6 +17,7 @@ use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeWithClassName;
 
 class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
@@ -41,7 +42,7 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
 
         $returnType = $variants->getReturnType();
 
-        if (! $returnType instanceof ObjectType) {
+        if (! $returnType instanceof TypeWithClassName) {
             return false;
         }
 
