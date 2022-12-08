@@ -22,6 +22,7 @@ use PHPStan\TrinaryLogic;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeWithClassName;
 use PHPStan\Type\VerbosityLevel;
 
 class BuilderHelper
@@ -211,7 +212,7 @@ class BuilderHelper
             return EloquentBuilder::class;
         }
 
-        if ($returnType instanceof ObjectType) {
+        if ($returnType instanceof TypeWithClassName) {
             return $returnType->getClassName();
         }
 
@@ -223,7 +224,7 @@ class BuilderHelper
         try {
             $newCollectionMethod = $this->reflectionProvider->getClass($modelClassName)->getNativeMethod('newCollection');
             $returnType = ParametersAcceptorSelector::selectSingle($newCollectionMethod->getVariants())->getReturnType();
-            if ($returnType instanceof ObjectType) {
+            if ($returnType instanceof TypeWithClassName) {
                 return $returnType->getClassName();
             }
 

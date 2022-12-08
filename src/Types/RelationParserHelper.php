@@ -15,7 +15,8 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\GenericClassStringType;
 use PHPStan\Type\Generic\TemplateTypeMap;
-use PHPStan\Type\ObjectType;
+use PHPStan\Type\TypeUtils;
+use PHPStan\Type\TypeWithClassName;
 
 class RelationParserHelper
 {
@@ -87,14 +88,16 @@ class RelationParserHelper
         $argType = $methodScope->getType($methodCall->getArgs()[0]->value);
         $returnClass = null;
 
-        if ($argType instanceof ConstantStringType) {
-            $returnClass = $argType->getValue();
+        $constantStrings = TypeUtils::getConstantStrings($argType);
+
+        if (count($constantStrings) === 1) {
+            $returnClass = $constantStrings[0]->getValue();
         }
 
         if ($argType instanceof GenericClassStringType) {
             $modelType = $argType->getGenericType();
 
-            if (! $modelType instanceof ObjectType) {
+            if (!$modelType instanceof TypeWithClassName) {
                 return null;
             }
 

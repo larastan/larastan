@@ -82,7 +82,7 @@ class GenericModelPropertyType extends ModelPropertyType
             $typeToInfer = new ObjectType($receivedType->getValue());
         } elseif ($receivedType instanceof self) {
             $typeToInfer = $receivedType->type;
-        } elseif ($receivedType instanceof ClassStringType) {
+        } elseif ($receivedType->isClassStringType()->yes()) {
             $typeToInfer = $this->getGenericType();
 
             if ($typeToInfer instanceof TemplateType) {

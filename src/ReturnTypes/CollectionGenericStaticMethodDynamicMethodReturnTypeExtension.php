@@ -17,6 +17,7 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeTraverser;
+use PHPStan\Type\TypeWithClassName;
 use PHPStan\Type\UnionType;
 
 class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
@@ -62,7 +63,7 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
 
         $calledOnType = $scope->getType($methodCall->var);
 
-        if (! $calledOnType instanceof ObjectType) {
+        if (!$calledOnType instanceof TypeWithClassName) {
             return $returnType;
         }
 

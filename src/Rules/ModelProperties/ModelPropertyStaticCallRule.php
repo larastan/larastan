@@ -15,8 +15,9 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleLevelHelper;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\ErrorType;
-use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeUtils;
+use PHPStan\Type\TypeWithClassName;
 
 /**
  * @implements \PHPStan\Rules\Rule<\PhpParser\Node\Expr\StaticCall>
@@ -116,9 +117,11 @@ class ModelPropertyStaticCallRule implements Rule
                 return [];
             }
 
-            if ($classType instanceof ConstantStringType) {
-                $modelClassName = $classType->getValue();
-            } elseif ($classType instanceof ObjectType) {
+            $strings = TypeUtils::getConstantStrings($classType);
+
+            if (count($strings) === 1) {
+                $modelClassName = $strings[0]->getValue();
+            } elseif ($classType instanceof TypeWithClassName) {
                 $modelClassName = $classType->getClassName();
             } else {
                 return [];
