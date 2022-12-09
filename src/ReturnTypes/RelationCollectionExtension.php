@@ -51,7 +51,7 @@ final class RelationCollectionExtension implements DynamicMethodReturnTypeExtens
 
         $modelType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TRelatedModel');
 
-        if (!$modelType instanceof TypeWithClassName) {
+        if (! $modelType instanceof TypeWithClassName) {
             return false;
         }
 

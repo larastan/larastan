@@ -63,7 +63,7 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
 
         $calledOnType = $scope->getType($methodCall->var);
 
-        if (!$calledOnType instanceof TypeWithClassName) {
+        if (! $calledOnType instanceof TypeWithClassName) {
             return $returnType;
         }
 

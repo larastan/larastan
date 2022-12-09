@@ -44,7 +44,7 @@ class OctaneCompatibilityRule implements Rule
 
         $calledOnType = $scope->getType($node->var);
 
-        if (!$calledOnType instanceof TypeWithClassName) {
+        if (! $calledOnType instanceof TypeWithClassName) {
             return [];
         }
 

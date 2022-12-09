@@ -62,7 +62,7 @@ final class BuilderModelFindExtension implements DynamicMethodReturnTypeExtensio
 
         $model = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TModelClass');
 
-        if (!$model instanceof TypeWithClassName) {
+        if (! $model instanceof TypeWithClassName) {
             return false;
         }
 

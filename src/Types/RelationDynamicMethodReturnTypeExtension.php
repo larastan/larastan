@@ -57,7 +57,7 @@ class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTyp
         $functionVariant = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
         $returnType = $functionVariant->getReturnType();
 
-        if (!$returnType instanceof TypeWithClassName) {
+        if (! $returnType instanceof TypeWithClassName) {
             return $returnType;
         }
 

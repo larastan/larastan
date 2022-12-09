@@ -40,7 +40,7 @@ final class ModelRuleHelper
 
         $modelType = TypeCombinator::removeNull($modelType);
 
-        if (!$modelType instanceof TypeWithClassName) {
+        if (! $modelType instanceof TypeWithClassName) {
             return null;
         }
 

@@ -12,7 +12,6 @@ use PHPStan\Analyser\ScopeFactory;
 use PHPStan\Parser\Parser;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ReflectionProvider;
-use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\GenericClassStringType;
 use PHPStan\Type\Generic\TemplateTypeMap;
 use PHPStan\Type\TypeUtils;
@@ -97,7 +96,7 @@ class RelationParserHelper
         if ($argType instanceof GenericClassStringType) {
             $modelType = $argType->getGenericType();
 
-            if (!$modelType instanceof TypeWithClassName) {
+            if (! $modelType instanceof TypeWithClassName) {
                 return null;
             }
 

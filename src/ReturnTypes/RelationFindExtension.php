@@ -60,7 +60,7 @@ final class RelationFindExtension implements DynamicMethodReturnTypeExtension
 
         $modelType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TRelatedModel');
 
-        if (!$modelType instanceof TypeWithClassName) {
+        if (! $modelType instanceof TypeWithClassName) {
             return false;
         }
 
