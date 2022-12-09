@@ -11,8 +11,8 @@ use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\MixedType;
-use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeWithClassName;
 
 /**
  * @internal
@@ -46,7 +46,7 @@ final class HigherOrderTapProxyExtension implements DynamicMethodReturnTypeExten
         $type = $scope->getType($methodCall->var);
         if ($type instanceof GenericObjectType) {
             $types = $type->getTypes();
-            if (count($types) === 1 && $types[0] instanceof ObjectType) {
+            if (count($types) === 1 && $types[0] instanceof TypeWithClassName) {
                 return $types[0];
             }
         }

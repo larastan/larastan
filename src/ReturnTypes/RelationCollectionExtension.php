@@ -17,6 +17,7 @@ use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeWithClassName;
 
 /**
  * @internal
@@ -50,7 +51,7 @@ final class RelationCollectionExtension implements DynamicMethodReturnTypeExtens
 
         $modelType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TRelatedModel');
 
-        if (! $modelType instanceof ObjectType) {
+        if (! $modelType instanceof TypeWithClassName) {
             return false;
         }
 

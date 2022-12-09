@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Types\ModelProperty;
 
 use PHPStan\TrinaryLogic;
-use PHPStan\Type\ClassStringType;
 use PHPStan\Type\CompoundType;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\TemplateType;
@@ -82,7 +81,7 @@ class GenericModelPropertyType extends ModelPropertyType
             $typeToInfer = new ObjectType($receivedType->getValue());
         } elseif ($receivedType instanceof self) {
             $typeToInfer = $receivedType->type;
-        } elseif ($receivedType instanceof ClassStringType) {
+        } elseif ($receivedType->isClassStringType()->yes()) {
             $typeToInfer = $this->getGenericType();
 
             if ($typeToInfer instanceof TemplateType) {

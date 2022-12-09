@@ -14,8 +14,6 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\ShouldNotHappenException;
-use PHPStan\Type\ArrayType;
-use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\GeneralizePrecision;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
@@ -62,17 +60,21 @@ class ModelPropertiesRuleHelper
 
         $argType = $scope->getType($argValue);
 
-        if ($argType instanceof ConstantArrayType) {
+        if ($argType->isConstantArray()->yes()) {
             $errors = [];
 
-            $keyType = $argType->getKeyType()->generalize(GeneralizePrecision::lessSpecific());
+            $constantArrays = $argType->getConstantArrays();
 
-            if ($keyType->isInteger()->yes()) {
-                $valueTypes = $argType->getValuesArray()->getValueTypes();
-            } elseif ($keyType->isString()->yes()) {
-                $valueTypes = $argType->getKeysArray()->getValueTypes();
-            } else {
-                $valueTypes = [];
+            $valueTypes = [];
+
+            foreach ($constantArrays as $constantArray) {
+                $keyType = $constantArray->getKeyType()->generalize(GeneralizePrecision::lessSpecific());
+
+                if ($keyType->isInteger()->yes()) {
+                    $valueTypes = array_merge($valueTypes, $constantArray->getValuesArray()->getValueTypes());
+                } elseif ($keyType->isString()->yes()) {
+                    $valueTypes = array_merge($valueTypes, $constantArray->getKeysArray()->getValueTypes());
+                }
             }
 
             foreach ($valueTypes as $valueType) {
@@ -159,9 +161,9 @@ class ModelPropertiesRuleHelper
                         return [$index, new ObjectType($modelReflection->getName())];
                     }
                 }
-            } elseif ($type instanceof ArrayType) {
-                $keyType = $type->getKeyType();
-                $itemType = $type->getItemType();
+            } elseif ($type->isArray()->yes()) {
+                $keyType = $type->getIterableKeyType();
+                $itemType = $type->getIterableValueType();
 
                 if ($keyType instanceof GenericModelPropertyType) {
                     return [$index, $keyType->getGenericType()];

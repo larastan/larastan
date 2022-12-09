@@ -50,3 +50,6 @@ declare(strict_types=1);
 \App\User::query()->with('foo:id,name');
 \App\User::with(['foo:id', 'accounts']);
 \App\User::query()->with(['foo:id', 'accounts']);
+
+/** @var array{foo:string}|array{0: 'bar'} $a */
+\App\User::with($a);

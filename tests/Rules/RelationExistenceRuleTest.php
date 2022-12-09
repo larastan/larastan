@@ -184,10 +184,17 @@ class RelationExistenceRuleTest extends RuleTestCase
                 'Relation \'foo\' is not found in App\User model.',
                 51,
             ],
-
             [
                 'Relation \'foo\' is not found in App\User model.',
                 52,
+            ],
+            [
+                'Relation \'foo\' is not found in App\User model.',
+                55,
+            ],
+            [
+                'Relation \'bar\' is not found in App\User model.',
+                55,
             ],
         ]);
     }
