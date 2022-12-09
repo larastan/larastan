@@ -11,6 +11,5 @@ class FormRequest
      *
      * @return ($keys is null ? \Illuminate\Support\ValidatedInput : array<string, mixed>)
      */
-    public function safe(array $keys = null)
-    {}
+    public function safe(array $keys = null);
 }

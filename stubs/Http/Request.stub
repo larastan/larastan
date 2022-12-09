@@ -14,6 +14,5 @@ class Request {
      *
      * @return ($key is null ? array<string, string> : string|TDefault)
      */
-    public function header($key = null, $default = null)
-    {}
+    public function header($key = null, $default = null);
 }

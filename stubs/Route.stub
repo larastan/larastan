@@ -10,5 +10,5 @@ class Route
      * @param  string[]|string|null  $middleware
      * @return ($middleware is null ? string[] : $this)
      */
-    public function middleware($middleware = null) {}
+    public function middleware($middleware = null);
 }

@@ -9,14 +9,12 @@ class Mailable
      * @param  array<string, mixed>  $data
      * @return $this
      */
-    public function markdown($view, array $data = [])
-    {}
+    public function markdown($view, array $data = []);
 
     /**
      * @param  view-string  $view
      * @param  array<string, mixed>  $data
      * @return $this
      */
-    public function view($view, array $data = [])
-    {}
+    public function view($view, array $data = []);
 }

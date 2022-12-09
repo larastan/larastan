@@ -11,9 +11,7 @@ class HigherOrderTapProxy
     /**
      * @param TClass $target
      */
-    public function __construct($target)
-    {
-    }
+    public function __construct($target);
 }
 
 /**
