@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+- feat: assert `view-string` when using `view()->exists()` by @mad-briller
 - feat: freed `joinSub` to allow models to join other models by @harmenjanssen in https://github.com/nunomaduro/larastan/pull/1352
 - feat: updated return type of the Request::header method by @mad-briller
 - feat: Added stub for `optional()` helper and class by @mad-briller in https://github.com/nunomaduro/larastan/pull/1344
