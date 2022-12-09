@@ -18,7 +18,7 @@ interface Enumerable extends \Countable, \IteratorAggregate, \JsonSerializable
     *
     * @throws \InvalidArgumentException
     */
-   public function random($number = null) {}
+   public function random($number = null);
 
    /**
     * Create a collection by using this collection for keys and another for its values.

@@ -31,8 +31,7 @@ class Attribute
      * @param  (callable(TMakeSet, mixed=): mixed)|null  $set
      * @return Attribute<TMakeGet, TMakeSet>
      */
-    public static function make(callable $get = null, callable $set = null)
-    {}
+    public static function make(callable $get = null, callable $set = null);
 
     /**
      * Create a new attribute accessor.
@@ -41,8 +40,7 @@ class Attribute
      * @param  callable(mixed, mixed=): T  $get
      * @return Attribute<T, never>
      */
-    public static function get(callable $get)
-    {}
+    public static function get(callable $get);
 
     /**
      * Create a new attribute mutator.
@@ -51,6 +49,5 @@ class Attribute
      * @param  callable(T, mixed=): mixed $set
      * @return Attribute<never, T>
      */
-    public static function set(callable $set)
-    {}
+    public static function set(callable $set);
 }

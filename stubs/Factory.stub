@@ -20,7 +20,7 @@ class Factory
      * @param  callable|array<model-property<TModel>, mixed>  $attributes
      * @return static
      */
-    public static function new($attributes = []) {}
+    public static function new($attributes = []);
 
     /**
      * Create a single model and persist it to the database.
@@ -28,7 +28,7 @@ class Factory
      * @param  array<model-property<TModel>, mixed> $attributes
      * @return TModel
      */
-    public function createOne($attributes = []) {}
+    public function createOne($attributes = []);
 
     /**
      * Create a single model and persist it to the database.
@@ -44,7 +44,7 @@ class Factory
      * @param  iterable<callable|array<model-property<TModel>, mixed>>  $records
      * @return \Illuminate\Database\Eloquent\Collection<int, TModel>
      */
-    public function createMany(iterable $records) {}
+    public function createMany(iterable $records);
 
     /**
      * Create a collection of models and persist them to the database.
@@ -53,7 +53,7 @@ class Factory
      * @param  \Illuminate\Database\Eloquent\Model|null  $parent
      * @return \Illuminate\Database\Eloquent\Collection<int, TModel>|TModel
      */
-    public function create($attributes = [], ?\Illuminate\Database\Eloquent\Model $parent = null) {}
+    public function create($attributes = [], ?\Illuminate\Database\Eloquent\Model $parent = null);
 
     /**
      * Create a collection of models and persist them to the database without dispatching any model events.
@@ -62,7 +62,7 @@ class Factory
      * @param  \Illuminate\Database\Eloquent\Model|null  $parent
      * @return \Illuminate\Database\Eloquent\Collection<int, TModel>|TModel
      */
-    public function createQuietly($attributes = [], ?\Illuminate\Database\Eloquent\Model $parent = null) {}
+    public function createQuietly($attributes = [], ?\Illuminate\Database\Eloquent\Model $parent = null);
 
     /**
      * Make a single instance of the model.
@@ -70,7 +70,7 @@ class Factory
      * @param  callable|array<model-property<TModel>, mixed>  $attributes
      * @return TModel
      */
-    public function makeOne($attributes = []) {}
+    public function makeOne($attributes = []);
 
     /**
      * Create a collection of models.
@@ -79,7 +79,7 @@ class Factory
      * @param  \Illuminate\Database\Eloquent\Model|null  $parent
      * @return \Illuminate\Database\Eloquent\Collection<int, TModel>|TModel
      */
-    public function make($attributes = [], ?\Illuminate\Database\Eloquent\Model $parent = null) {}
+    public function make($attributes = [], ?\Illuminate\Database\Eloquent\Model $parent = null);
 
     /**
      * Make an instance of the model with the given attributes.
@@ -87,7 +87,7 @@ class Factory
      * @param  \Illuminate\Database\Eloquent\Model|null  $parent
      * @return TModel
      */
-    protected function makeInstance(?\Illuminate\Database\Eloquent\Model $parent) {}
+    protected function makeInstance(?\Illuminate\Database\Eloquent\Model $parent);
 
     /**
      * Define the model's default state.
@@ -102,7 +102,7 @@ class Factory
      * @param  \Closure(TModel): mixed  $callback
      * @return static
      */
-    public function afterMaking(\Closure $callback) {}
+    public function afterMaking(\Closure $callback);
 
     /**
      * Add a new "after creating" callback to the model definition.
@@ -110,5 +110,5 @@ class Factory
      * @param  \Closure(TModel): mixed  $callback
      * @return static
      */
-    public function afterCreating(\Closure $callback) {}
+    public function afterCreating(\Closure $callback);
 }

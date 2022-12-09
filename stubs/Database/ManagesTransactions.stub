@@ -15,6 +15,5 @@ trait ManagesTransactions
      *
      * @throws \Throwable
      */
-    public function transaction(\Closure $callback, $attempts = 1)
-    {}
+    public function transaction(\Closure $callback, $attempts = 1);
 }

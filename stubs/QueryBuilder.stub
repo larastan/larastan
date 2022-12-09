@@ -20,8 +20,7 @@ class Builder
      *
      * @throws \InvalidArgumentException
      */
-    public function joinSub($query, $as, $first, $operator = null, $second = null, $type = 'inner', $where = false)
-    {}
+    public function joinSub($query, $as, $first, $operator = null, $second = null, $type = 'inner', $where = false);
 
     /**
      * Add a basic where clause to the query.
@@ -32,8 +31,7 @@ class Builder
      * @param  string  $boolean
      * @return $this
      */
-    public function where($column, $operator = null, $value = null, $boolean = 'and')
-    {}
+    public function where($column, $operator = null, $value = null, $boolean = 'and');
 
     /**
      * Add an array of where clauses to the query.
@@ -43,8 +41,7 @@ class Builder
      * @param  string  $method
      * @return $this
      */
-    protected function addArrayOfWheres($column, $boolean, $method = 'where')
-    {}
+    protected function addArrayOfWheres($column, $boolean, $method = 'where');
 
     /**
      * Add an "or where" clause to the query.
@@ -54,8 +51,7 @@ class Builder
      * @param  mixed  $value
      * @return $this
      */
-    public function orWhere($column, $operator = null, $value = null)
-    {}
+    public function orWhere($column, $operator = null, $value = null);
 
     /**
      * Add a "where" clause comparing two columns to the query.
@@ -66,8 +62,7 @@ class Builder
      * @param  string|null  $boolean
      * @return $this
      */
-    public function whereColumn($first, $operator = null, $second = null, $boolean = 'and')
-    {}
+    public function whereColumn($first, $operator = null, $second = null, $boolean = 'and');
 
     /**
      * Add a "where in raw" clause for integer values to the query.
@@ -78,8 +73,7 @@ class Builder
      * @param  bool  $not
      * @return $this
      */
-    public function whereIntegerInRaw($column, $values, $boolean = 'and', $not = false)
-    {}
+    public function whereIntegerInRaw($column, $values, $boolean = 'and', $not = false);
 
     /**
      * Add an "or where in raw" clause for integer values to the query.
@@ -88,8 +82,7 @@ class Builder
      * @param  \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<int|string, mixed>  $values
      * @return $this
      */
-    public function orWhereIntegerInRaw($column, $values)
-    {}
+    public function orWhereIntegerInRaw($column, $values);
 
     /**
      * Add a "where not in raw" clause for integer values to the query.
@@ -99,8 +92,7 @@ class Builder
      * @param  string  $boolean
      * @return $this
      */
-    public function whereIntegerNotInRaw($column, $values, $boolean = 'and')
-    {}
+    public function whereIntegerNotInRaw($column, $values, $boolean = 'and');
 
     /**
      * Add an "or where not in raw" clause for integer values to the query.
@@ -109,8 +101,7 @@ class Builder
      * @param  \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<string, mixed>  $values
      * @return $this
      */
-    public function orWhereIntegerNotInRaw($column, $values)
-    {}
+    public function orWhereIntegerNotInRaw($column, $values);
 
     /**
      * Add a "where null" clause to the query.
@@ -120,8 +111,7 @@ class Builder
      * @param  bool  $not
      * @return $this
      */
-    public function whereNull($columns, $boolean = 'and', $not = false)
-    {}
+    public function whereNull($columns, $boolean = 'and', $not = false);
 
     /**
      * Add a "where not null" clause to the query.
@@ -130,8 +120,7 @@ class Builder
      * @param  string  $boolean
      * @return $this
      */
-    public function whereNotNull($columns, $boolean = 'and')
-    {}
+    public function whereNotNull($columns, $boolean = 'and');
 
     /**
      * Adds a where condition using row values.
@@ -144,8 +133,7 @@ class Builder
      *
      * @throws \InvalidArgumentException
      */
-    public function whereRowValues($columns, $operator, $values, $boolean = 'and')
-    {}
+    public function whereRowValues($columns, $operator, $values, $boolean = 'and');
 
     /**
      * Adds a or where condition using row values.
@@ -155,8 +143,7 @@ class Builder
      * @param  array<string|int, mixed>  $values
      * @return $this
      */
-    public function orWhereRowValues($columns, $operator, $values)
-    {}
+    public function orWhereRowValues($columns, $operator, $values);
 
     /**
      * Add a "having between " clause to the query.
@@ -167,8 +154,7 @@ class Builder
      * @param  bool  $not
      * @return $this
      */
-    public function havingBetween($column, array $values, $boolean = 'and', $not = false)
-    {}
+    public function havingBetween($column, array $values, $boolean = 'and', $not = false);
 
     /**
      * Add an "order by" clause to the query.
@@ -180,8 +166,7 @@ class Builder
      *
      * @throws \InvalidArgumentException
      */
-    public function orderBy($column, $direction = 'asc')
-    {}
+    public function orderBy($column, $direction = 'asc');
 
     /**
      * Add a descending "order by" clause to the query.
@@ -190,8 +175,7 @@ class Builder
      * @param  \Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<TModelClass>|\Illuminate\Database\Query\Expression|string  $column
      * @return $this
      */
-    public function orderByDesc($column)
-    {}
+    public function orderByDesc($column);
 
     /**
      * Add a union statement to the query.
@@ -201,8 +185,7 @@ class Builder
      * @param  bool  $all
      * @return $this
      */
-    public function union($query, $all = false)
-    {}
+    public function union($query, $all = false);
 
     /**
      * Add a union all statement to the query.
@@ -211,8 +194,7 @@ class Builder
      * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<TModelClass>|\Closure  $query
      * @return $this
      */
-    public function unionAll($query)
-    {}
+    public function unionAll($query);
 
     /**
      * Execute a query for a single record by ID.
@@ -221,8 +203,7 @@ class Builder
      * @param  array<string>  $columns
      * @return mixed|static
      */
-    public function find($id, $columns = ['*'])
-    {}
+    public function find($id, $columns = ['*']);
 
     /**
      * Get an array with the values of a given column.
@@ -231,8 +212,7 @@ class Builder
      * @param  string|null  $key
      * @return \Illuminate\Support\Collection<string, mixed>
      */
-    public function pluck($column, $key = null)
-    {}
+    public function pluck($column, $key = null);
 
     /**
      * Execute an aggregate function on the database.
@@ -241,8 +221,7 @@ class Builder
      * @param  array<string>  $columns
      * @return mixed
      */
-    public function aggregate($function, $columns = ['*'])
-    {}
+    public function aggregate($function, $columns = ['*']);
 
     /**
      * Execute a numeric aggregate function on the database.
@@ -251,8 +230,7 @@ class Builder
      * @param  array<string>  $columns
      * @return float|int
      */
-    public function numericAggregate($function, $columns = ['*'])
-    {}
+    public function numericAggregate($function, $columns = ['*']);
 
     /**
      * Set the aggregate property without running the query.
@@ -261,8 +239,7 @@ class Builder
      * @param  array<string>  $columns
      * @return $this
      */
-    protected function setAggregate($function, $columns)
-    {}
+    protected function setAggregate($function, $columns);
 
     /**
      * Execute the given callback while selecting the given columns.
@@ -273,8 +250,7 @@ class Builder
      * @param  callable  $callback
      * @return mixed
      */
-    protected function onceWithColumns($columns, $callback)
-    {}
+    protected function onceWithColumns($columns, $callback);
 
     /**
      * Insert a new record and get the value of the primary key.
@@ -283,8 +259,7 @@ class Builder
      * @param  string|null  $sequence
      * @return int
      */
-    public function insertGetId(array $values, $sequence = null)
-    {}
+    public function insertGetId(array $values, $sequence = null);
 
     /**
      * Insert new records into the table using a subquery.
@@ -294,8 +269,7 @@ class Builder
      * @param  \Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<TModelClass>|string  $query
      * @return int
      */
-    public function insertUsing(array $columns, $query)
-    {}
+    public function insertUsing(array $columns, $query);
 
     /**
      * Update a record in the database.
@@ -303,8 +277,7 @@ class Builder
      * @param  array<string, mixed>  $values
      * @return int
      */
-    public function update(array $values)
-    {}
+    public function update(array $values);
 
     /**
      * Insert or update a record matching the attributes, and fill it with values.
@@ -313,8 +286,7 @@ class Builder
      * @param  array<string, mixed>  $values
      * @return bool
      */
-    public function updateOrInsert(array $attributes, array $values = [])
-    {}
+    public function updateOrInsert(array $attributes, array $values = []);
 
     /**
      * Increment a column's value by a given amount.
@@ -326,8 +298,7 @@ class Builder
      *
      * @throws \InvalidArgumentException
      */
-    public function increment($column, $amount = 1, array $extra = [])
-    {}
+    public function increment($column, $amount = 1, array $extra = []);
 
     /**
      * Decrement a column's value by a given amount.
@@ -339,6 +310,5 @@ class Builder
      *
      * @throws \InvalidArgumentException
      */
-    public function decrement($column, $amount = 1, array $extra = [])
-    {}
+    public function decrement($column, $amount = 1, array $extra = []);
 }

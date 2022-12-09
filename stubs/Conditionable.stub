@@ -17,7 +17,7 @@ trait Conditionable
      * @param  (callable($this, TWhenParameter): TWhenReturnType)|null  $default
      * @return (TWhenReturnType is void|null ? $this : TWhenReturnType)
      */
-    public function when($value, callable $callback = null, callable $default = null) {}
+    public function when($value, callable $callback = null, callable $default = null);
 
     /**
      * Apply the callback if the given "value" is (or resolves to) falsy.
@@ -30,5 +30,5 @@ trait Conditionable
      * @param  (callable($this, TUnlessParameter): TUnlessReturnType)|null  $default
      * @return (TUnlessReturnType is void|null ? $this : TUnlessReturnType)
      */
-    public function unless($value, callable $callback = null, callable $default = null) {}
+    public function unless($value, callable $callback = null, callable $default = null);
 }
