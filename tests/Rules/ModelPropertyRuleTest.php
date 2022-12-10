@@ -28,43 +28,43 @@ class ModelPropertyRuleTest extends RuleTestCase
         $this->analyse([__DIR__.'/Data/model-property-builder.php'], [
             [
                 'Property \'foo\' does not exist in App\\User model.',
-                4
+                4,
             ],
             [
                 'Property \'unionNotExisting\' does not exist in App\\User model.',
-                5
+                5,
             ],
             [
                 'Property \'foo\' does not exist in App\\User model.',
-                6
+                6,
             ],
             [
                 'Property \'foo\' does not exist in App\\User model.',
-                11
+                11,
             ],
             [
                 'Property \'foo\' does not exist in App\\User model.',
-                20
+                20,
             ],
             [
                 'Property \'foo\' does not exist in App\\User model.',
-                25
+                25,
             ],
             [
                 'Property \'foo\' does not exist in App\\User model.',
-                27
+                27,
             ],
             [
                 'Property \'foo\' does not exist in App\\User model.',
-                28
+                28,
             ],
             [
                 'Property \'foo\' does not exist in App\\User model.',
-                29
+                29,
             ],
             [
                 'Property \'foo\' does not exist in App\\User model.',
-                32
+                32,
             ],
         ]);
     }
@@ -74,27 +74,27 @@ class ModelPropertyRuleTest extends RuleTestCase
         $this->analyse([__DIR__.'/Data/model-property-relation.php'], [
             [
                 'Property \'foo\' does not exist in App\\Account model.',
-                4
+                4,
             ],
             [
                 'Property \'foo\' does not exist in App\\Account model.',
-                5
+                5,
             ],
             [
                 'Property \'foo\' does not exist in App\\Account model.',
-                6
+                6,
             ],
             [
                 'Property \'foo\' does not exist in App\\Account model.',
-                7
+                7,
             ],
             [
                 'Property \'foo\' does not exist in App\\Account model.',
-                8
+                8,
             ],
             [
                 'Property \'foo\' does not exist in App\\Post model. If \'foo\' exists as a column on the pivot table, consider using \'wherePivot\' or prefix the column with table name instead.',
-                10
+                10,
             ],
         ]);
     }
@@ -104,15 +104,15 @@ class ModelPropertyRuleTest extends RuleTestCase
         $this->analyse([__DIR__.'/Data/model-property-model.php'], [
             [
                 'Property \'foo\' does not exist in ModelPropertyModel\ModelPropertyOnModel model.',
-                9
+                9,
             ],
             [
                 'Property \'foo\' does not exist in App\Account|App\User model.',
-                16
+                16,
             ],
             [
                 'Property \'email_verified_at\' does not exist in App\Account|App\User model.',
-                23
+                23,
             ],
         ]);
     }
@@ -122,7 +122,7 @@ class ModelPropertyRuleTest extends RuleTestCase
         $this->analyse([__DIR__.'/Data/model-property-model-factory.php'], [
             [
                 'Property \'foo\' does not exist in App\\User model.',
-                5
+                5,
             ],
         ]);
     }
@@ -130,7 +130,7 @@ class ModelPropertyRuleTest extends RuleTestCase
     public static function getAdditionalConfigFiles(): array
     {
         return [
-            __DIR__.'/Data/modelPropertyConfig.neon'
+            __DIR__.'/Data/modelPropertyConfig.neon',
         ];
     }
 }
