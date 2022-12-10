@@ -20,7 +20,7 @@ use PHPStan\Type\Type;
 /**
  * Ensures a 'model-property' type in PHPDoc is recognised to be of type ModelPropertyType.
  */
-class ModelPropertyTypeNodeResolverExtension implements TypeNodeResolverExtension
+final class ModelPropertyTypeNodeResolverExtension implements TypeNodeResolverExtension
 {
     /** @var bool */
     protected $active;
