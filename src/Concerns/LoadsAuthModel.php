@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Concerns;
 
-use Illuminate\Config\Repository as ConfigRepository;
+use Illuminate\Contracts\Config\Repository as ConfigRepository;
 
 trait LoadsAuthModel
 {
