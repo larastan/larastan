@@ -18,7 +18,7 @@ use PHPStan\Type\TypeUtils;
 /**
  * @internal
  */
-final class TestCaseExtension implements DynamicMethodReturnTypeExtension
+final class TestCaseMockeryExtension implements DynamicMethodReturnTypeExtension
 {
     public function getClass(): string
     {

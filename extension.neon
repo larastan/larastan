@@ -241,7 +241,12 @@ services:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
-        class: NunoMaduro\Larastan\ReturnTypes\TestCaseExtension
+        class: NunoMaduro\Larastan\ReturnTypes\TestCaseMakesHttpRequestsExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\TestCaseMockeryExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 

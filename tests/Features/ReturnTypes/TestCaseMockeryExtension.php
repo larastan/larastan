@@ -7,25 +7,25 @@ namespace Tests\Features\ReturnTypes;
 use App\User;
 use Illuminate\Foundation\Application;
 
-class TestCaseExtension
+class TestCaseMockeryExtension
 {
     public function testMockMethod(): void
     {
-        (new TestTestCase())->testMockMethod();
+        (new TestMockeryTestCase())->testMockMethod();
     }
 
     public function testPartialMockMethod(): void
     {
-        (new TestTestCase())->testPartialMockMethod();
+        (new TestMockeryTestCase())->testPartialMockMethod();
     }
 
     public function testSpyMethod(): void
     {
-        (new TestTestCase())->testSpyMethod();
+        (new TestMockeryTestCase())->testSpyMethod();
     }
 }
 
-class TestTestCase extends \Illuminate\Foundation\Testing\TestCase
+class TestMockeryTestCase extends \Illuminate\Foundation\Testing\TestCase
 {
     public function testMockMethod(): void
     {
