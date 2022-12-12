@@ -4,28 +4,45 @@ declare(strict_types=1);
 
 namespace Tests\Rules;
 
-use Tests\RulesTest;
+use NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertiesRuleHelper;
+use NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertyStaticCallRule;
+use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleLevelHelper;
+use PHPStan\Testing\RuleTestCase;
 
-class ModelPropertyStaticCallRuleTest extends RulesTest
+/** @extends RuleTestCase<ModelPropertyStaticCallRule> */
+class ModelPropertyStaticCallRuleTest extends RuleTestCase
 {
+    protected function getRule(): Rule
+    {
+        return new ModelPropertyStaticCallRule(
+            $this->createReflectionProvider(),
+            new ModelPropertiesRuleHelper,
+            $this->getContainer()->getByType(RuleLevelHelper::class),
+        );
+    }
+
     public function testModelPropertyRuleOnStaticCallsToModel(): void
     {
-        $errors = $this->setConfigPath(__DIR__.DIRECTORY_SEPARATOR.'Data/modelPropertyConfig.neon')->findErrorsByLine(__DIR__.'/Data/model-property-static-call.php');
-
-        self::assertEquals([
-            7 => 'Property \'foo\' does not exist in App\\User model.',
-            13 => 'Property \'foo\' does not exist in App\\User model.',
-            18 => 'Property \'foo\' does not exist in App\\User model.',
-        ], $errors);
+        $this->analyse([__DIR__.'/Data/model-property-static-call.php'], [
+            ['Property \'foo\' does not exist in App\\User model.', 7],
+            ['Property \'foo\' does not exist in App\\User model.', 13],
+            ['Property \'foo\' does not exist in App\\User model.', 18],
+        ]);
     }
 
     public function testModelPropertyRuleOnStaticCallsInClass(): void
     {
-        $errors = $this->setConfigPath(__DIR__.DIRECTORY_SEPARATOR.'Data/modelPropertyConfig.neon')->findErrorsByLine(__DIR__.'/Data/ModelPropertyStaticCallsInClass.php');
+        $this->analyse([__DIR__.'/Data/ModelPropertyStaticCallsInClass.php'], [
+            ['Property \'foo\' does not exist in Tests\\Rules\\Data\\ModelPropertyStaticCallsInClass model.', 16],
+            ['Property \'foo\' does not exist in Tests\\Rules\\Data\\ModelPropertyStaticCallsInClass model.', 24],
+        ]);
+    }
 
-        self::assertEquals([
-            16 => 'Property \'foo\' does not exist in Tests\\Rules\\Data\\ModelPropertyStaticCallsInClass model.',
-            24 => 'Property \'foo\' does not exist in Tests\\Rules\\Data\\ModelPropertyStaticCallsInClass model.',
-        ], $errors);
+    public static function getAdditionalConfigFiles(): array
+    {
+        return [
+            __DIR__.'/Data/modelPropertyConfig.neon',
+        ];
     }
 }
