@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+- fix: changed dependency from `Illuminate\Config\Repository` to Config interface by @nai4rus
+
 ## [1.0.2] - 2021-11-23
 
 ### Added
