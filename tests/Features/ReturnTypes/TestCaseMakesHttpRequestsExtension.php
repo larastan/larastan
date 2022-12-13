@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Features\ReturnTypes;
 
-use App\User;
 use Illuminate\Foundation\Application;
 
 class TestCaseMockeryExtension
