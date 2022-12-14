@@ -19,7 +19,7 @@
 
 ## ⚗️ About Larastan
 
-> If you are using a Laravel version older than 9.x, please refer to [Larastan v1.x](https://github.com/nunomaduro/larastan/tree/1.x).
+> If you are using a Laravel version older than 9.x, please refer to [Larastan v1.x](https://github.com/nunomaduro/larastan/tree/1.x) with [PHPStan 1.8.x](https://github.com/nunomaduro/larastan/pull/1431#issuecomment-1303332293).
 
 Larastan was created by [Can Vural](https://github.com/canvural) and [Nuno Maduro](https://github.com/nunomaduro), got artwork designed by [@Caneco](http://github.com/caneco), is maintained by [Can Vural](https://github.com/canvural), [Nuno Maduro](https://github.com/nunomaduro), and [Viktor Szépe](https://github.com/szepeviktor), and is a [PHPStan](https://phpstan.org/) wrapper for Laravel. Larastan focuses on **finding errors in your code**. It catches whole classes of bugs even **before you write tests** for the code.
 
