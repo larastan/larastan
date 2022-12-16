@@ -67,14 +67,14 @@ final class SchemaAggregator
                 && $stmt->expr->var->class instanceof PhpParser\Node\Name
                 && $stmt->expr->var->name instanceof PhpParser\Node\Identifier
                 && ($stmt->expr->var->name->toString() === 'connection' || $stmt->expr->var->name->toString() === 'setConnection')
-                && ($stmt->expr->var->class->toCodeString() === '\Illuminate\Support\Facades\Schema' || $stmt->expr->var->class->toCodeString() === '\Schema')
+                && $this->isClass($stmt->expr->var->class->toCodeString(), ['\Illuminate\Support\Facades\Schema', '\Schema'])
             ) {
                 $statement = $stmt->expr;
             } elseif ($stmt instanceof PhpParser\Node\Stmt\Expression
                 && $stmt->expr instanceof PhpParser\Node\Expr\StaticCall
                 && $stmt->expr->class instanceof PhpParser\Node\Name
                 && $stmt->expr->name instanceof PhpParser\Node\Identifier
-                && ($stmt->expr->class->toCodeString() === '\Illuminate\Support\Facades\Schema' || $stmt->expr->class->toCodeString() === '\Schema')
+                && $this->isClass($stmt->expr->class->toCodeString(), ['\Illuminate\Support\Facades\Schema', '\Schema'])
             ) {
                 $statement = $stmt->expr;
             } else {
@@ -123,8 +123,9 @@ final class SchemaAggregator
             || ! $call->getArgs()[1]->value instanceof PhpParser\Node\Expr\Closure
             || count($call->getArgs()[1]->value->params) < 1
             || ($call->getArgs()[1]->value->params[0]->type instanceof PhpParser\Node\Name
-                && $call->getArgs()[1]->value->params[0]->type->toCodeString()
-                !== '\\Illuminate\Database\Schema\Blueprint')
+                && !$this->isClass($call->getArgs()[1]->value->params[0]->type->toString(), [
+                    '\\Illuminate\Database\Schema\Blueprint',
+                ]))
         ) {
             return;
         }
@@ -477,5 +478,19 @@ final class SchemaAggregator
         $table->name = $newTableName;
 
         $this->tables[$newTableName] = $table;
+    }
+
+    /**
+     * @param string[]  $allowedClasses
+     */
+    private function isClass(string $class, array $allowedClasses): bool
+    {
+        foreach ($allowedClasses as $allowedClass) {
+            if (is_a($class, $allowedClass, true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
