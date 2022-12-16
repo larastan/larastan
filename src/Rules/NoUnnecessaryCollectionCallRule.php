@@ -204,7 +204,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
             // 'contains' can also be called with Model instances or keys as its first argument
             /** @var \PhpParser\Node\Arg[] $args */
             $args = $node->args;
-            if (count($args) === 1 && ! ($args[0]->value instanceof Node\Expr\Closure)) {
+            if (count($args) === 1 && ! ($args[0]->value instanceof Node\FunctionLike)) {
                 return [$this->formatError($name->toString())];
             }
 
