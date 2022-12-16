@@ -4,7 +4,6 @@ namespace CustomEloquentBuilder;
 
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use function PHPStan\Testing\assertType;
@@ -63,7 +62,7 @@ class CustomEloquentBuilderTest
 
     public function testCustomBuilderExistsMethodThroughRelation(FooModel $foo)
     {
-        assertType('bool',  $foo->customModels()->exists());
+        assertType('bool', $foo->customModels()->exists());
     }
 
     public function testWeirdErrorMessage()
@@ -227,6 +226,7 @@ class CustomEloquentBuilder extends Builder
     public function category(string $category): CustomEloquentBuilder
     {
         assertType('static(CustomEloquentBuilder\CustomEloquentBuilder<TModelClass of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->where('category', $category));
+
         return $this->where('category', $category);
     }
 
@@ -234,6 +234,7 @@ class CustomEloquentBuilder extends Builder
     public function type(string $type): CustomEloquentBuilder
     {
         assertType('static(CustomEloquentBuilder\CustomEloquentBuilder<TModelClass of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->where(['type' => $type]));
+
         return $this->where(['type' => $type]);
     }
 
@@ -300,4 +301,3 @@ class ModelWithCustomBuilderAndDocBlocks extends Model
 class CustomBuilder2 extends Builder
 {
 }
-

@@ -2,7 +2,6 @@
 
 namespace AbortTests;
 
-use Illuminate\Foundation\Testing\TestCase;
 use function PHPStan\Testing\assertType;
 use function PHPStan\Testing\assertVariableCertainty;
 

@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
 use function PHPStan\Testing\assertType;
 
-function foo() {
+function foo()
+{
     assertType('Illuminate\Http\Request', Request::instance());
 
     assertType('void', Event::assertDispatched('FooEvent'));
@@ -37,4 +38,4 @@ function foo() {
     assertType('bool', Storage::disk()->deleteDirectory('foo'));
     assertType('bool', Storage::drive()->deleteDirectory('foo'));
     assertType('string|false', Storage::putFile('foo', 'foo/bar'));
-};
+}

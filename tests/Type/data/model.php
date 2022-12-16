@@ -7,9 +7,7 @@ use App\PostBuilder;
 use App\Thread;
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Foundation\Http\FormRequest;
 use function PHPStan\Testing\assertType;
 
@@ -24,11 +22,11 @@ function testFindOnGenericModel(Model $model)
 }
 
 /**
- * @param class-string<Model> $modelClass
+ * @param  class-string<Model>  $modelClass
  */
 function testFindOnModelClassString(string $modelClass)
 {
-    assertType('Illuminate\Database\Eloquent\Model|null',  $modelClass::find(1));
+    assertType('Illuminate\Database\Eloquent\Model|null', $modelClass::find(1));
 }
 
 function testFindCanReturnCollection()
@@ -193,13 +191,13 @@ function testWithAcceptsArrayOfClosures()
 
 function testWithGlobalScope()
 {
-    assertType('Illuminate\Database\Eloquent\Builder<App\User>',  (new User)->withGlobalScope('test', function () {
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', (new User)->withGlobalScope('test', function () {
     }));
 }
 
 function testWithoutGlobalScope()
 {
-    assertType('Illuminate\Database\Eloquent\Builder<App\User>',  (new User)->withoutGlobalScope('test'));
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', (new User)->withoutGlobalScope('test'));
 }
 
 function testSoftDeletesOnlyTrashed()

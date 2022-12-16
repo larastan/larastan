@@ -8,7 +8,6 @@ use NunoMaduro\Larastan\Properties\ModelPropertyExtension;
 use NunoMaduro\Larastan\Rules\NoUnnecessaryCollectionCallRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
-use Tests\RulesTest;
 
 /** @extends RuleTestCase<NoUnnecessaryCollectionCallRule> */
 class NoUnnecessaryCollectionCallRuleTest extends RuleTestCase

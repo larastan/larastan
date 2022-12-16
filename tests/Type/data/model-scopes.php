@@ -5,8 +5,6 @@ namespace ModelScope;
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use function PHPStan\Testing\assertType;
 
 class Scopes extends Model

@@ -10,9 +10,6 @@ use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Collection;
 use function PHPStan\Testing\assertType;
 
 function foo(): void
@@ -191,7 +188,7 @@ function foo(): void
 }
 
 /**
- * @param Builder<User> $builder
+ * @param  Builder<User>  $builder
  */
 function testCallingQueryBuilderMethodOnEloquentBuilderReturnsEloquentBuilder(Builder $builder): void
 {

@@ -2,11 +2,9 @@
 
 namespace HigherOrderCollectionProxyMethods;
 
-use App\Account;
 use App\Importer;
 use App\User;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection as SupportCollection;
 use function PHPStan\Testing\assertType;
 
@@ -112,7 +110,7 @@ class HigherOrderCollectionProxyMethods
 
     public function testSum()
     {
-        assertType('int',$this->users->sum->id());
+        assertType('int', $this->users->sum->id());
     }
 
     public function testTakeUntil()
