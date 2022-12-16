@@ -73,6 +73,16 @@ class CorrectCollectionCalls
     }
 
     /**
+     * Can't analyze the arrow function as a parameter to contains, so should not throw any error.
+     *
+     * @return bool
+     */
+    public function testContainsArrowFunction(): bool
+    {
+        return User::where('id', '>', 1)->get()->contains(fn (User $user): bool => $user->id === 2);
+    }
+
+    /**
      * Can't analyze the closure as a parameter to first, so should not throw any error.
      *
      * @return User|null
@@ -82,6 +92,16 @@ class CorrectCollectionCalls
         return User::where('id', '>', 1)->get()->first(function (User $user): bool {
             return $user->id === 2;
         });
+    }
+
+    /**
+     * Can't analyze the arrow function as a parameter to first, so should not throw any error.
+     *
+     * @return User|null
+     */
+    public function testFirstArrowFunction(): ?User
+    {
+        return User::where('id', '>', 1)->get()->first(fn (User $user): bool => $user->id === 2);
     }
 
     /** @phpstan-return mixed */
