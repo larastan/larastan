@@ -8,24 +8,34 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Storage;
 use function PHPStan\Testing\assertType;
 
-assertType('Illuminate\Http\Request', Request::instance());
+function foo()
+{
+    assertType('Illuminate\Http\Request', Request::instance());
 
-assertType('void', Event::assertDispatched('FooEvent'));
-assertType('void', Event::assertDispatchedTimes('FooEvent', 5));
-assertType('void', Event::assertNotDispatched('FooEvent'));
+    assertType('void', Event::assertDispatched('FooEvent'));
+    assertType('void', Event::assertDispatchedTimes('FooEvent', 5));
+    assertType('void', Event::assertNotDispatched('FooEvent'));
 
-$redis = Redis::connection();
-assertType('array', Redis::lrange('some-key', 0, -1));
-assertType('array', $redis->lrange('some-key', 0, -1));
-assertType('bool', Redis::expire('foo', 3));
-assertType('array', Redis::hmget('h', ['field1', 'field2']));
+    $redis = Redis::connection();
+    assertType('array', $redis->lrange('some-key', 0, -1));
+    assertType('array', Redis::lrange('some-key', 0, -1));
+    assertType('bool', Redis::expire('foo', 3));
+    assertType('array', Redis::hmget('h', ['field1', 'field2']));
 
-assertType('Illuminate\Database\Query\Builder', DB::query());
-assertType('int', DB::transactionLevel());
+    assertType('Illuminate\Database\Query\Builder', DB::query());
+    assertType('int', DB::transactionLevel());
 
-assertType('void', Queue::createPayloadUsing(function () {
-}));
+    assertType('void', Queue::createPayloadUsing(function () {
+    }));
 
-assertType('Psr\Log\LoggerInterface', Log::getLogger());
+    assertType('Psr\Log\LoggerInterface', Log::getLogger());
+
+    assertType('Illuminate\Filesystem\FilesystemAdapter', Storage::disk());
+    assertType('Illuminate\Filesystem\FilesystemAdapter', Storage::drive());
+    assertType('bool', Storage::disk()->deleteDirectory('foo'));
+    assertType('bool', Storage::drive()->deleteDirectory('foo'));
+    assertType('string|false', Storage::putFile('foo', 'foo/bar'));
+}

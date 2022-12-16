@@ -40,6 +40,13 @@ assertType('App\User', User::factory(2)->state(['foo'])->count(null)->createQuie
 assertType('App\User', User::factory(2)->state(['foo'])->count(null)->createOneQuietly());
 assertType('App\User', User::factory(2)->state(['foo'])->count(null)->make());
 
+assertType('Database\Factories\UserFactory', User::factory()->hasPosts());
+assertType('Database\Factories\UserFactory', User::factory()->hasPosts(3));
+assertType('Database\Factories\UserFactory', User::factory()->hasPosts(['active' => 0]));
+assertType('App\User', User::factory()->hasPosts(3, ['active' => 0])->createOne());
+assertType('Database\Factories\UserFactory', User::factory()->forParent());
+assertType('Database\Factories\UserFactory', User::factory()->forParent(['meta' => ['foo']]));
+
 function foo(?int $foo): void
 {
     assertType('App\User|Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory()->count($foo)->create());
