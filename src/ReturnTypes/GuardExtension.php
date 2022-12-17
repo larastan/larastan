@@ -15,7 +15,6 @@ use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\TypeUtils;
 
 final class GuardExtension implements DynamicMethodReturnTypeExtension
 {
@@ -70,7 +69,7 @@ final class GuardExtension implements DynamicMethodReturnTypeExtension
         }
 
         $guardType = $scope->getType($methodCall->var->getArgs()[0]->value);
-        $constantStrings = TypeUtils::getConstantStrings($guardType);
+        $constantStrings = $guardType->getConstantStrings();
 
         if (count($constantStrings) !== 1) {
             return null;

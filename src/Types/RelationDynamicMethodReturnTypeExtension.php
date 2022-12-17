@@ -18,7 +18,6 @@ use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StaticType;
 use PHPStan\Type\Type;
-use PHPStan\Type\TypeUtils;
 use PHPStan\Type\TypeWithClassName;
 
 class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
@@ -77,7 +76,7 @@ class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTyp
         }
 
         $argType = $scope->getType($methodCall->getArgs()[0]->value);
-        $argStrings = TypeUtils::getConstantStrings($argType);
+        $argStrings = $argType->getConstantStrings();
 
         if (count($argStrings) !== 1) {
             return $returnType;

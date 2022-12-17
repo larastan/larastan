@@ -15,7 +15,6 @@ use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\TypeUtils;
 
 class GuardDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
 {
@@ -58,7 +57,7 @@ class GuardDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethod
         }
 
         $argType = $scope->getType($methodCall->getArgs()[0]->value);
-        $argStrings = TypeUtils::getConstantStrings($argType);
+        $argStrings = $argType->getConstantStrings();
 
         if (count($argStrings) !== 1) {
             return $defaultReturnType;

@@ -15,7 +15,6 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleLevelHelper;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\Type;
-use PHPStan\Type\TypeUtils;
 use PHPStan\Type\TypeWithClassName;
 
 /**
@@ -116,7 +115,7 @@ class ModelPropertyStaticCallRule implements Rule
                 return [];
             }
 
-            $strings = TypeUtils::getConstantStrings($classType);
+            $strings = $classType->getConstantStrings();
 
             if (count($strings) === 1) {
                 $modelClassName = $strings[0]->getValue();

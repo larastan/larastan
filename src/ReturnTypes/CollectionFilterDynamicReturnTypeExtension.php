@@ -13,17 +13,10 @@ use PhpParser\Node\Stmt\Return_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
-use PHPStan\Type\Constant\ConstantArrayType;
-use PHPStan\Type\Constant\ConstantBooleanType;
-use PHPStan\Type\Constant\ConstantFloatType;
-use PHPStan\Type\Constant\ConstantIntegerType;
-use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\NullType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\UnionType;
 
 class CollectionFilterDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
@@ -56,9 +49,7 @@ class CollectionFilterDynamicReturnTypeExtension implements DynamicMethodReturnT
         }
 
         if (count($methodCall->getArgs()) < 1) {
-            $falseyTypes = $this->getFalseyTypes();
-
-            $nonFalseyTypes = TypeCombinator::remove($valueType, $falseyTypes);
+            $nonFalseyTypes = TypeCombinator::removeFalsey($valueType);
 
             return new GenericObjectType($calledOnType->getClassName(), [$keyType, $nonFalseyTypes]);
         }
@@ -94,10 +85,5 @@ class CollectionFilterDynamicReturnTypeExtension implements DynamicMethodReturnT
         }
 
         return new GenericObjectType($calledOnType->getClassName(), [$keyType, $valueType]);
-    }
-
-    private function getFalseyTypes(): UnionType
-    {
-        return new UnionType([new NullType(), new ConstantBooleanType(false), new ConstantIntegerType(0), new ConstantFloatType(0.0), new ConstantStringType(''), new ConstantStringType('0'), new ConstantArrayType([], [])]);
     }
 }
