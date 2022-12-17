@@ -124,8 +124,8 @@ final class SchemaAggregator
             || ! $call->getArgs()[1]->value instanceof PhpParser\Node\Expr\Closure
             || count($call->getArgs()[1]->value->params) < 1
             || ($call->getArgs()[1]->value->params[0]->type instanceof PhpParser\Node\Name
-                && $call->getArgs()[1]->value->params[0]->type->toCodeString()
-                !== '\\Illuminate\Database\Schema\Blueprint')
+                && ! (new ObjectType('Illuminate\Database\Schema\Blueprint'))->isSuperTypeOf(new ObjectType($call->getArgs()[1]->value->params[0]->type->toCodeString()))->yes()
+            )
         ) {
             return;
         }
