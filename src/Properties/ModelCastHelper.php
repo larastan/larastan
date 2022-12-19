@@ -6,7 +6,6 @@ use Illuminate\Contracts\Database\Eloquent\Castable;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Contracts\Database\Eloquent\CastsInboundAttributes;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use PHPStan\Reflection\ParameterReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
@@ -31,9 +30,9 @@ class ModelCastHelper
 
     public function getReadableType(string $cast, Type $originalType): Type
     {
-        $cast = Str::before($cast, ':');
+        $castType = $this->parseCast($cast);
 
-        $attributeType = match ($cast) {
+        $attributeType = match ($castType) {
             'int', 'integer' => new IntegerType(),
             'real', 'float', 'double' => new FloatType(),
             'decimal' => TypeCombinator::intersect(new StringType(), new AccessoryNumericStringType()),
@@ -53,7 +52,7 @@ class ModelCastHelper
         }
 
         if (! $this->reflectionProvider->hasClass($cast)) {
-            return new MixedType();
+            return $originalType;
         }
 
         $classReflection = $this->reflectionProvider->getClass($cast);
@@ -82,7 +81,9 @@ class ModelCastHelper
 
     public function getWriteableType(string $cast, Type $originalType): Type
     {
-        $attributeType = match ($cast) {
+        $castType = $this->parseCast($cast);
+
+        $attributeType = match ($castType) {
             'int', 'integer' => new IntegerType(),
             'real', 'float', 'double' => new FloatType(),
             'decimal' => TypeCombinator::intersect(new StringType(), new AccessoryNumericStringType()),
@@ -102,7 +103,7 @@ class ModelCastHelper
         }
 
         if (! $this->reflectionProvider->hasClass($cast)) {
-            return new MixedType();
+            return $originalType;
         }
 
         $classReflection = $this->reflectionProvider->getClass($cast);
@@ -142,5 +143,21 @@ class ModelCastHelper
         }
 
         return new ObjectType($dateClass);
+    }
+
+    /**
+     * @param string $cast
+     * @return string|null
+     */
+    private function parseCast(string $cast): ?string
+    {
+        foreach (explode(':', $cast) as $part) {
+            // If the cast is prefixed with `encrypted:` we need to skip to the next
+            if ($part === 'encrypted') continue;
+
+            return $part;
+        }
+
+        return null;
     }
 }
