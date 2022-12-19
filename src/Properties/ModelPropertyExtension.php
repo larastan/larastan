@@ -80,7 +80,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
     {
         $propertyNameStudlyCase = Str::studly($propertyName);
 
-        if ($classReflection->hasNativeMethod(sprintf("get%sAttribute", $propertyNameStudlyCase))) {
+        if ($classReflection->hasNativeMethod(sprintf('get%sAttribute', $propertyNameStudlyCase))) {
             return true;
         }
 

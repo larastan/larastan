@@ -146,14 +146,16 @@ class ModelCastHelper
     }
 
     /**
-     * @param string $cast
+     * @param  string  $cast
      * @return string|null
      */
     private function parseCast(string $cast): ?string
     {
         foreach (explode(':', $cast) as $part) {
             // If the cast is prefixed with `encrypted:` we need to skip to the next
-            if ($part === 'encrypted') continue;
+            if ($part === 'encrypted') {
+                continue;
+            }
 
             return $part;
         }
