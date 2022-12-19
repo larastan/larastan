@@ -80,7 +80,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
     {
         $propertyNameStudlyCase = Str::studly($propertyName);
 
-        if ($classReflection->hasNativeMethod("get{$propertyNameStudlyCase}Attribute")) {
+        if ($classReflection->hasNativeMethod(sprintf("get%sAttribute", $propertyNameStudlyCase))) {
             return true;
         }
 
@@ -95,11 +95,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
             $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
 
-            if (! (new ObjectType(Attribute::class))->isSuperTypeOf($returnType)->yes()) {
-                return false;
-            }
-
-            return true;
+            return (new ObjectType(Attribute::class))->isSuperTypeOf($returnType)->yes();
         }
 
         return false;
@@ -107,7 +103,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
     private function migrationsLoaded(): bool
     {
-        return ! empty($this->tables);
+        return count($this->tables) > 0;
     }
 
     private function loadMigrations(): void
@@ -137,9 +133,9 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             && (! array_key_exists($tableName, $this->tables) || ! array_key_exists($propertyName, $this->tables[$tableName]->columns))
         ) {
             return new ModelProperty(
-                declaringClass: $classReflection,
-                readableType: $this->stringResolver->resolve($modelInstance->getKeyType()),
-                writableType: $this->stringResolver->resolve($modelInstance->getKeyType()),
+                $classReflection,
+                $this->stringResolver->resolve($modelInstance->getKeyType()),
+                $this->stringResolver->resolve($modelInstance->getKeyType()),
             );
         }
 
@@ -152,12 +148,12 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             $cast = $modelInstance->getCasts()[$propertyName];
 
             $readableType = $this->modelCastHelper->getReadableType(
-                cast: $cast,
-                originalType: $this->stringResolver->resolve($column->readableType),
+                $cast,
+                $this->stringResolver->resolve($column->readableType),
             );
             $writeableType = $this->modelCastHelper->getWriteableType(
-                cast: $cast,
-                originalType: $this->stringResolver->resolve($column->writeableType),
+                $cast,
+                $this->stringResolver->resolve($column->writeableType),
             );
         } else {
             $readableType = $this->stringResolver->resolve($column->readableType);
@@ -170,9 +166,9 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
         }
 
         return new ModelProperty(
-            declaringClass: $classReflection,
-            readableType: $readableType,
-            writableType: $writeableType,
+            $classReflection,
+            $readableType,
+            $writeableType,
         );
     }
 

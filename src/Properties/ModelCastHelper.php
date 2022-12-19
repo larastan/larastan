@@ -12,6 +12,7 @@ use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\Accessory\AccessoryNumericStringType;
 use PHPStan\Type\ArrayType;
+use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\BooleanType;
 use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\FloatType;
@@ -35,11 +36,11 @@ class ModelCastHelper
         $attributeType = match ($cast) {
             'int', 'integer' => new IntegerType(),
             'real', 'float', 'double' => new FloatType(),
-            'decimal' => new AccessoryNumericStringType(),
+            'decimal' => TypeCombinator::intersect(new StringType(), new AccessoryNumericStringType()),
             'string' => new StringType(),
             'bool', 'boolean' => new BooleanType(),
             'object' => new ObjectType('stdClass'),
-            'array', 'json' => new ArrayType(new MixedType(), new MixedType()),
+            'array', 'json' => new ArrayType(new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()),
             'collection' => new ObjectType('Illuminate\Support\Collection'),
             'date', 'datetime' => $this->getDateType(),
             'immutable_date', 'immutable_datetime' => new ObjectType('Carbon\CarbonImmutable'),
@@ -84,11 +85,11 @@ class ModelCastHelper
         $attributeType = match ($cast) {
             'int', 'integer' => new IntegerType(),
             'real', 'float', 'double' => new FloatType(),
-            'decimal' => new AccessoryNumericStringType(),
+            'decimal' => TypeCombinator::intersect(new StringType(), new AccessoryNumericStringType()),
             'string' => new StringType(),
             'bool', 'boolean' => TypeCombinator::union(new BooleanType(), new ConstantIntegerType(0), new ConstantIntegerType(1)),
             'object' => new ObjectType('stdClass'),
-            'array', 'json' => new ArrayType(new MixedType(), new MixedType()),
+            'array', 'json' => new ArrayType(new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()),
             'collection' => new ObjectType('Illuminate\Support\Collection'),
             'date', 'datetime' => $this->getDateType(),
             'immutable_date', 'immutable_datetime' => new ObjectType('Carbon\CarbonImmutable'),
