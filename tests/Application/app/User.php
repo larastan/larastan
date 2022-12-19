@@ -54,6 +54,25 @@ class User extends Authenticatable
         'properties' => AsCollection::class,
         'favorites' => Favorites::class,
         'secret' => Hash::class.':sha256',
+
+        'int' => 'int',
+        'integer' => 'integer',
+        'real' => 'real',
+        'float' => 'float',
+        'double' => 'double',
+        'decimal' => 'decimal',
+        'string' => 'string',
+        'bool' => 'bool',
+        'boolean' => 'boolean',
+        'object' => 'object',
+        'array' => 'array',
+        'json' => 'json',
+        'collection' => 'collection',
+        'date' => 'date',
+        'datetime' => 'datetime',
+        'immutable_date' => 'immutable_date',
+        'immutable_datetime' => 'immutable_datetime',
+        'timestamp' => 'timestamp',
     ];
 
     /**
