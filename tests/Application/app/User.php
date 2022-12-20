@@ -2,6 +2,8 @@
 
 namespace App;
 
+use App\Casts\Favorites;
+use App\Casts\Hash;
 use function get_class;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
@@ -50,6 +52,27 @@ class User extends Authenticatable
         'floatButRoundedDecimalString' => 'decimal:1',
         'options' => AsArrayObject::class,
         'properties' => AsCollection::class,
+        'favorites' => Favorites::class,
+        'secret' => Hash::class.':sha256',
+
+        'int' => 'int',
+        'integer' => 'integer',
+        'real' => 'real',
+        'float' => 'float',
+        'double' => 'double',
+        'decimal' => 'decimal',
+        'string' => 'string',
+        'bool' => 'bool',
+        'boolean' => 'boolean',
+        'object' => 'object',
+        'array' => 'array',
+        'json' => 'json',
+        'collection' => 'collection',
+        'date' => 'date',
+        'datetime' => 'datetime',
+        'immutable_date' => 'immutable_date',
+        'immutable_datetime' => 'immutable_datetime',
+        'timestamp' => 'timestamp',
     ];
 
     /**

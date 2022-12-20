@@ -411,6 +411,9 @@ services:
             schemaPaths: %squashedMigrationsPath%
 
     -
+        class: NunoMaduro\Larastan\Properties\ModelCastHelper
+
+    -
         class: NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertiesRuleHelper
 
     -
