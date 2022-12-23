@@ -65,9 +65,9 @@ final class ViewFileHelper
                     continue;
                 }
 
-                $viewName = explode($viewDirectory.'/', $view->getPathname());
+                $viewName = explode($viewDirectory.DIRECTORY_SEPARATOR, $view->getPathname());
 
-                yield str_replace(['/', '.blade.php'], ['.', ''], $viewName[1]);
+                yield str_replace([DIRECTORY_SEPARATOR, '.blade.php'], ['.', ''], $viewName[1]);
             }
         }
     }
