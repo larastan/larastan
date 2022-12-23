@@ -31,6 +31,7 @@ class CreateUsersTable extends Migration
             $table->boolean('blocked');
             $table->unknownColumnType('unknown_column');
             $table->rememberToken();
+            $table->enum('enum_status', ['active', 'inactive']);
 
             // Testing property casts
             $table->integer('int');

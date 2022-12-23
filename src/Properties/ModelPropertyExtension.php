@@ -143,7 +143,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
         if ($this->hasDate($modelInstance, $propertyName)) {
             $readableType = $this->modelCastHelper->getDateType();
-            $writeableType = TypeCombinator::union($this->modelCastHelper->getDateType(), new StringType());
+            $writableType = TypeCombinator::union($this->modelCastHelper->getDateType(), new StringType());
         } elseif ($modelInstance->hasCast($propertyName)) {
             $cast = $modelInstance->getCasts()[$propertyName];
 
@@ -151,24 +151,32 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
                 $cast,
                 $this->stringResolver->resolve($column->readableType),
             );
-            $writeableType = $this->modelCastHelper->getWriteableType(
+            $writableType = $this->modelCastHelper->getWriteableType(
                 $cast,
                 $this->stringResolver->resolve($column->writeableType),
             );
         } else {
-            $readableType = $this->stringResolver->resolve($column->readableType);
-            $writeableType = $this->stringResolver->resolve($column->writeableType);
+            if (in_array($column->readableType, ['enum', 'set'], true)) {
+                if ($column->options === null || count($column->options) < 1) {
+                    $readableType = $writableType = new StringType();
+                } else {
+                    $readableType = $writableType = $this->stringResolver->resolve('\''.implode('\'|\'', $column->options).'\'');
+                }
+            } else {
+                $readableType = $this->stringResolver->resolve($column->readableType);
+                $writableType = $this->stringResolver->resolve($column->writeableType);
+            }
         }
 
         if ($column->nullable) {
             $readableType = TypeCombinator::addNull($readableType);
-            $writeableType = TypeCombinator::addNull($writeableType);
+            $writableType = TypeCombinator::addNull($writableType);
         }
 
         return new ModelProperty(
             $classReflection,
             $readableType,
-            $writeableType,
+            $writableType,
         );
     }
 

@@ -34,6 +34,7 @@ assertType(Carbon::class, $user->datetime);
 assertType(CarbonImmutable::class, $user->immutable_date);
 assertType(CarbonImmutable::class, $user->immutable_datetime);
 assertType('int', $user->timestamp);
+assertType('\'active\'|\'inactive\'', $user->enum_status);
 
 // CastsAttributes
 assertType('App\ValueObjects\Favorites', $user->favorites);
