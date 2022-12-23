@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+- fix: changed return type of `Illuminate\Database\Eloquent\Builder::where()` from `static` to `$this` to match original by @taka-oyama
 - fix: changed dependency from `Illuminate\Config\Repository` to Config interface by @nai4rus
 - feat: assert `view-string` when using `view()->exists()` by @mad-briller
 - feat: freed `joinSub` to allow models to join other models by @harmenjanssen in https://github.com/nunomaduro/larastan/pull/1352

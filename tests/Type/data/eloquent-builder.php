@@ -175,6 +175,16 @@ class Foo extends Model
     use FooTrait;
 }
 
+/** @extends Builder<Foo> */
+class FooBuilder extends Builder
+{
+    /** @return $this */
+    public function whereFoo()
+    {
+        return $this->where('foo', 'foo');
+    }
+}
+
 /** @template TModelClass of Model */
 trait FooTrait
 {

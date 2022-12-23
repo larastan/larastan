@@ -221,7 +221,7 @@ class Builder
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
-     * @return static
+     * @return $this
      */
     public function where($column, $operator = null, $value = null, $boolean = 'and');
 
