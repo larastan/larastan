@@ -120,7 +120,7 @@ function tap($value, $callback = null) {}
  * @param  view-string|null  $view
  * @param  \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<string, mixed>  $data
  * @param  array<string, mixed>  $mergeData
- * @return ($view is null ? \Illuminate\Contracts\View\Factory : \Illuminate\Contracts\View\View)
+ * @return ($view is null ? \Illuminate\Contracts\View\Factory : \Illuminate\View\View)
  */
 function view($view = null, $data = [], $mergeData = []) {}
 
