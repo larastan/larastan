@@ -4,6 +4,8 @@ namespace ModelProperties;
 
 use App\Account;
 use App\Address;
+use App\Casts\BackedEnumeration;
+use App\Casts\BasicEnumeration;
 use App\Group;
 use App\GuardedModel;
 use App\Role;
@@ -43,6 +45,8 @@ function foo(User $user, Account $account, Role $role, Group $group, Team $team,
     assertType(CarbonImmutable::class, $user->immutable_datetime);
     assertType('int', $user->timestamp);
     assertType('\'active\'|\'inactive\'', $user->enum_status);
+    assertType(BasicEnumeration::class, $user->basic_enum);
+    assertType(BackedEnumeration::class, $user->backed_enum);
 
     // CastsAttributes
     assertType('App\ValueObjects\Favorites', $user->favorites);

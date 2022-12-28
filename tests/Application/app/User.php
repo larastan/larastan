@@ -4,6 +4,8 @@ namespace App;
 
 use App\Casts\Favorites;
 use App\Casts\Hash;
+use App\Casts\BackedEnumeration;
+use App\Casts\BasicEnumeration;
 use function get_class;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
@@ -54,6 +56,8 @@ class User extends Authenticatable
         'properties' => AsCollection::class,
         'favorites' => Favorites::class,
         'secret' => Hash::class.':sha256',
+        'basic_enum' => BasicEnumeration::class,
+        'backed_enum' => BackedEnumeration::class,
 
         'int' => 'int',
         'integer' => 'integer',
