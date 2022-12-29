@@ -168,11 +168,19 @@ assertType(
 );
 
 assertType(
-    'Illuminate\Database\Eloquent\Collection<(int|string), mixed>',
+    'Illuminate\Database\Eloquent\Collection<int, int>',
     $collection->flatMap(function (User $user, int $id) {
-        return $user->email;
+        return [$user->id];
     })
 );
+
+assertType(
+    'Illuminate\Support\Collection<int, int>',
+    $items->flatMap(function (int $int) {
+        return [$int * 2];
+    })
+);
+
 
 assertType('Illuminate\Support\Collection<(int|string), Illuminate\Support\Collection<(int|string), array{id: int, type: string}>>', collect([
     [
