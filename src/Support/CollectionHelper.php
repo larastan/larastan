@@ -9,23 +9,20 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Enumerable;
 use Iterator;
 use IteratorAggregate;
-use PHPStan\Type\GeneralizePrecision;
+use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
-use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\TypeWithClassName;
 use Traversable;
 
 final class CollectionHelper
 {
-    public function determineGenericCollectionTypeFromType(Type $type): GenericObjectType
+    public function determineGenericCollectionTypeFromType(Type $type): ?GenericObjectType
     {
-        $keyType = TypeCombinator::union(new IntegerType(), new StringType());
-
         if ($type instanceof TypeWithClassName) {
             if ((new ObjectType(Enumerable::class))->isSuperTypeOf($type)->yes()) {
                 return $this->getTypeFromEloquentCollection($type);
@@ -45,23 +42,20 @@ final class CollectionHelper
         }
 
         if ($type->isIterableAtLeastOnce()->no()) {
-            return new GenericObjectType(Collection::class, [$keyType, new MixedType()]);
+            return new GenericObjectType(Collection::class, [new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()]);
         }
 
-        return new GenericObjectType(Collection::class, [
-            $type->getIterableKeyType()->generalize(GeneralizePrecision::lessSpecific()),
-            $type->getIterableValueType()->generalize(GeneralizePrecision::lessSpecific()),
-        ]);
+        return null;
     }
 
-    private function getTypeFromEloquentCollection(TypeWithClassName $valueType): GenericObjectType
+    private function getTypeFromEloquentCollection(TypeWithClassName $valueType): ?GenericObjectType
     {
-        $keyType = TypeCombinator::union(new IntegerType(), new StringType());
+        $keyType = new BenevolentUnionType([new IntegerType(), new StringType()]);
 
         $classReflection = $valueType->getClassReflection();
 
         if ($classReflection === null) {
-            return new GenericObjectType(Collection::class, [$keyType, new MixedType()]);
+            return null;
         }
 
         $innerValueType = $classReflection->getActiveTemplateTypeMap()->getType('TModel');
@@ -74,17 +68,17 @@ final class CollectionHelper
             return new GenericObjectType(Collection::class, [$keyType, $innerValueType]);
         }
 
-        return new GenericObjectType(Collection::class, [$keyType, new MixedType()]);
+        return null;
     }
 
-    private function getTypeFromIterator(TypeWithClassName $valueType): GenericObjectType
+    private function getTypeFromIterator(TypeWithClassName $valueType): ?GenericObjectType
     {
-        $keyType = TypeCombinator::union(new IntegerType(), new StringType());
+        $keyType = new BenevolentUnionType([new IntegerType(), new StringType()]);
 
         $classReflection = $valueType->getClassReflection();
 
         if ($classReflection === null) {
-            return new GenericObjectType(Collection::class, [$keyType, new MixedType()]);
+            return null;
         }
 
         $templateTypes = array_values($classReflection->getActiveTemplateTypeMap()->getTypes());

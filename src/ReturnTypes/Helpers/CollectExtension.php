@@ -38,7 +38,7 @@ final class CollectExtension implements DynamicFunctionReturnTypeExtension
         FunctionReflection $functionReflection,
         FuncCall $functionCall,
         Scope $scope
-    ): Type {
+    ): ?Type {
         if (count($functionCall->getArgs()) < 1) {
             return new GenericObjectType(Collection::class, [new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()]);
         }
