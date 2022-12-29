@@ -7,6 +7,7 @@ namespace NunoMaduro\Larastan\Properties;
 use Illuminate\Support\Str;
 use PhpParser;
 use PhpParser\NodeFinder;
+use PHPStan\Type\ObjectType;
 
 /**
  * @see https://github.com/psalm/laravel-psalm-plugin/blob/master/src/SchemaAggregator.php
@@ -67,14 +68,14 @@ final class SchemaAggregator
                 && $stmt->expr->var->class instanceof PhpParser\Node\Name
                 && $stmt->expr->var->name instanceof PhpParser\Node\Identifier
                 && ($stmt->expr->var->name->toString() === 'connection' || $stmt->expr->var->name->toString() === 'setConnection')
-                && ($stmt->expr->var->class->toCodeString() === '\Illuminate\Support\Facades\Schema' || $stmt->expr->var->class->toCodeString() === '\Schema')
+                && ($stmt->expr->var->class->toCodeString() === '\Schema' || (new ObjectType('Illuminate\Support\Facades\Schema'))->isSuperTypeOf(new ObjectType($stmt->expr->var->class->toCodeString()))->yes())
             ) {
                 $statement = $stmt->expr;
             } elseif ($stmt instanceof PhpParser\Node\Stmt\Expression
                 && $stmt->expr instanceof PhpParser\Node\Expr\StaticCall
                 && $stmt->expr->class instanceof PhpParser\Node\Name
                 && $stmt->expr->name instanceof PhpParser\Node\Identifier
-                && ($stmt->expr->class->toCodeString() === '\Illuminate\Support\Facades\Schema' || $stmt->expr->class->toCodeString() === '\Schema')
+                && ($stmt->expr->class->toCodeString() === '\Schema' || (new ObjectType('Illuminate\Support\Facades\Schema'))->isSuperTypeOf(new ObjectType($stmt->expr->class->toCodeString()))->yes())
             ) {
                 $statement = $stmt->expr;
             } else {
@@ -123,8 +124,8 @@ final class SchemaAggregator
             || ! $call->getArgs()[1]->value instanceof PhpParser\Node\Expr\Closure
             || count($call->getArgs()[1]->value->params) < 1
             || ($call->getArgs()[1]->value->params[0]->type instanceof PhpParser\Node\Name
-                && $call->getArgs()[1]->value->params[0]->type->toCodeString()
-                !== '\\Illuminate\Database\Schema\Blueprint')
+                && ! (new ObjectType('Illuminate\Database\Schema\Blueprint'))->isSuperTypeOf(new ObjectType($call->getArgs()[1]->value->params[0]->type->toCodeString()))->yes()
+            )
         ) {
             return;
         }

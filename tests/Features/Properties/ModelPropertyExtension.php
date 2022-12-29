@@ -12,6 +12,7 @@ use App\Role;
 use App\Team;
 use App\Thread;
 use App\User;
+use App\ValueObjects\Favorites;
 use ArrayObject;
 use Carbon\Carbon as BaseCarbon;
 use Illuminate\Support\Carbon;
@@ -238,5 +239,15 @@ class ModelPropertyExtension
     public function testForeignIdConstrainedNullable(Address $address): ?int
     {
         return $address->nullable_foreign_id_constrained;
+    }
+
+    public function testCustomCast(): Favorites
+    {
+        return $this->user->favorites;
+    }
+
+    public function testInboundCast(): void
+    {
+        $this->user->secret = 'secret';
     }
 }

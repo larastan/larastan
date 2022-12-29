@@ -13,7 +13,6 @@ use PHPStan\Type\ErrorType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\TypeUtils;
 
 /**
  * @internal
@@ -46,7 +45,7 @@ final class TestCaseExtension implements DynamicMethodReturnTypeExtension
         }
 
         $classType = $scope->getType($methodCall->getArgs()[0]->value);
-        $constantStrings = TypeUtils::getConstantStrings($classType);
+        $constantStrings = $classType->getConstantStrings();
 
         if ($constantStrings === []) {
             return $defaultReturnType;

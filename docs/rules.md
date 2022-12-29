@@ -317,3 +317,42 @@ This will result in the following error:
 ```
 ServiceProviders that implement the "DeferrableProvider" interface should implement the "provides" method that returns an array of strings or class-strings
 ```
+
+## UnusedViewsRule
+
+This rule will find any unused views in your application.
+
+> **NOTE**: Due to the nature of static analysis, this rule can produce false positives. It cannot find every usage of a view, so it is possible that a view is reported as unused when it is actually used. This is why it's an optional rule.
+
+### Configuration
+
+This rule is disabled by default. You can enable it by adding
+```neon
+parameters:
+    checkUnusedViews: true
+```
+to your `phpstan.neon` file.
+
+This rule analyzes your view files to find used views. By default, it checks the `resources/views` directory for Blade files. But if you have views in other directories you can use `viewDirectories` config option to specify them. For example:
+
+```neon
+parameters:
+    checkUnusedViews: true
+    viewDirectories:
+        - domainA/resources/views
+        - a/path/to/views
+```
+
+### Supported View Usages
+
+- `view` helper function.
+- `$this->markdown` and `$this->view` methods in Mailables.
+- `Illuminate\View\Factory::make` method.
+- `Illuminate\Support\Facades\View::make` method.
+- `Illuminate\Support\Facades\Route::view` method.
+- `@extends` Blade directive.
+- `@include` Blade directive.
+- `@includeIf` Blade directive.
+- `@includeUnless` Blade directive.
+- `@includeWhen` Blade directive.
+- `@includeFirst` Blade directive.

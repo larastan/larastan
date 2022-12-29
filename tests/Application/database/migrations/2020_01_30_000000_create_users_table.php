@@ -6,7 +6,6 @@ namespace Database\Migrations;
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
 class CreateUsersTable extends Migration
 {
@@ -27,9 +26,33 @@ class CreateUsersTable extends Migration
             $table->json('meta');
             $table->json('options');
             $table->json('properties');
+            $table->json('favorites');
+            $table->string('secret');
             $table->boolean('blocked');
             $table->unknownColumnType('unknown_column');
             $table->rememberToken();
+            $table->enum('enum_status', ['active', 'inactive']);
+
+            // Testing property casts
+            $table->integer('int');
+            $table->integer('integer');
+            $table->float('real');
+            $table->float('float');
+            $table->double('double');
+            $table->decimal('decimal');
+            $table->string('string');
+            $table->boolean('bool');
+            $table->boolean('boolean');
+            $table->json('object');
+            $table->json('array');
+            $table->json('json');
+            $table->json('collection');
+            $table->date('date');
+            $table->dateTime('datetime');
+            $table->date('immutable_date');
+            $table->dateTime('immutable_datetime');
+            $table->timestamp('timestamp');
+
             $table->timestamps();
             $table->softDeletes();
         });

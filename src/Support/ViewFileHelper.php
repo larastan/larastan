@@ -61,13 +61,13 @@ final class ViewFileHelper
             );
 
             foreach ($views as $view) {
-                if (str_contains($view->getPathname(), 'views/vendor')) {
+                if (str_contains($view->getPathname(), 'views'.DIRECTORY_SEPARATOR.'vendor')) {
                     continue;
                 }
 
-                $viewName = explode($viewDirectory.'/', $view->getPathname());
+                $viewName = explode($viewDirectory.DIRECTORY_SEPARATOR, $view->getPathname());
 
-                yield str_replace(['/', '.blade.php'], ['.', ''], $viewName[1]);
+                yield str_replace([DIRECTORY_SEPARATOR, '.blade.php'], ['.', ''], $viewName[1]);
             }
         }
     }

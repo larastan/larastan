@@ -17,7 +17,6 @@ use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\GeneralizePrecision;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
-use PHPStan\Type\TypeUtils;
 use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
 
@@ -78,7 +77,7 @@ class ModelPropertiesRuleHelper
             }
 
             foreach ($valueTypes as $valueType) {
-                $strings = TypeUtils::getConstantStrings($valueType);
+                $strings = $valueType->getConstantStrings();
 
                 // It could be something like `DB::raw`
                 // We only want to analyze strings
@@ -107,7 +106,7 @@ class ModelPropertiesRuleHelper
             return $errors;
         }
 
-        $argStrings = TypeUtils::getConstantStrings($argType);
+        $argStrings = $argType->getConstantStrings();
 
         if ($argStrings === []) {
             return [];

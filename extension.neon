@@ -411,6 +411,9 @@ services:
             schemaPaths: %squashedMigrationsPath%
 
     -
+        class: NunoMaduro\Larastan\Properties\ModelCastHelper
+
+    -
         class: NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertiesRuleHelper
 
     -
@@ -493,7 +496,6 @@ services:
     - NunoMaduro\Larastan\ReturnTypes\AppMakeHelper
 
 rules:
-    - NunoMaduro\Larastan\Rules\RelationExistenceRule
     - NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule
     - NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessValueFunctionCallsRule
     - NunoMaduro\Larastan\Rules\DeferrableServiceProviderMissingProvidesRule

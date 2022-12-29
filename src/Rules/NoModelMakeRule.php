@@ -17,7 +17,6 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\ObjectType;
-use PHPStan\Type\TypeUtils;
 
 /**
  * Catches inefficient instantiation of models using Model::make().
@@ -98,8 +97,8 @@ class NoModelMakeRule implements Rule
         } elseif ($class instanceof Expr) {
             $type = $scope->getType($class);
 
-            if ($type->isClassStringType()->yes() && TypeUtils::getConstantStrings($type) !== []) {
-                $type = new ObjectType($type->getValue()); // @phpstan-ignore-line
+            if ($type->isClassStringType()->yes() && $type->getConstantStrings() !== []) {
+                $type = new ObjectType($type->getConstantStrings()[0]->getValue());
             }
         } else {
             // TODO can we handle relative names, do they even occur here?

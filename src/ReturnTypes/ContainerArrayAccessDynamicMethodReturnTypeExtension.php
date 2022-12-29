@@ -13,7 +13,6 @@ use PHPStan\Type\ErrorType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\TypeUtils;
 
 class ContainerArrayAccessDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
@@ -52,7 +51,7 @@ class ContainerArrayAccessDynamicMethodReturnTypeExtension implements DynamicMet
 
         $argType = $scope->getType($args[0]->value);
 
-        $argStrings = TypeUtils::getConstantStrings($argType);
+        $argStrings = $argType->getConstantStrings();
 
         if ($argStrings === []) {
             return null;

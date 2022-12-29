@@ -14,7 +14,6 @@ use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
-use PHPStan\Type\TypeUtils;
 
 /** @implements Rule<Node\Expr\CallLike> */
 class RelationExistenceRule implements Rule
@@ -78,15 +77,15 @@ class RelationExistenceRule implements Rule
                 $relations = array_merge(
                     $relations,
                     ...array_map(function (Type $type) {
-                        return TypeUtils::getConstantStrings($type);
+                        return $type->getConstantStrings();
                     }, $array->getKeyTypes()),
                     ...array_map(function (Type $type) {
-                        return TypeUtils::getConstantStrings($type);
+                        return $type->getConstantStrings();
                     }, $array->getValueTypes()),
                 );
             }
         } else {
-            $constants = TypeUtils::getConstantStrings($valueType);
+            $constants = $valueType->getConstantStrings();
 
             if ($constants === []) {
                 return [];

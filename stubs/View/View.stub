@@ -1,0 +1,8 @@
+<?php
+
+namespace Illuminate\View;
+
+/** @implements \ArrayAccess<array-key, mixed> */
+class View implements \ArrayAccess, \Illuminate\Contracts\Support\Htmlable, \Illuminate\Contracts\View\View
+{
+}

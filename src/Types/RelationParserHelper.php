@@ -14,7 +14,6 @@ use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\Generic\GenericClassStringType;
 use PHPStan\Type\Generic\TemplateTypeMap;
-use PHPStan\Type\TypeUtils;
 use PHPStan\Type\TypeWithClassName;
 
 class RelationParserHelper
@@ -87,7 +86,7 @@ class RelationParserHelper
         $argType = $methodScope->getType($methodCall->getArgs()[0]->value);
         $returnClass = null;
 
-        $constantStrings = TypeUtils::getConstantStrings($argType);
+        $constantStrings = $argType->getConstantStrings();
 
         if (count($constantStrings) === 1) {
             $returnClass = $constantStrings[0]->getValue();
