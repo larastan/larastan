@@ -174,7 +174,7 @@ assertType(
     })
 );
 
-assertType('Illuminate\Support\Collection<(int|string), Illuminate\Support\Collection<(int|string), non-empty-array<string, int|string>>>', collect([
+assertType('Illuminate\Support\Collection<(int|string), Illuminate\Support\Collection<(int|string), array{id: int, type: string}>>', collect([
     [
         'id'   => 1,
         'type' => 'A',
