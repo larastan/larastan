@@ -61,7 +61,7 @@ final class ViewFileHelper
             );
 
             foreach ($views as $view) {
-                if (str_contains($view->getPathname(), 'views'.DIRECTORY_SEPARATOR.'vendor')) {
+                if (str_contains($view->getPathname(), 'views'.DIRECTORY_SEPARATOR.'vendor') || str_contains($view->getPathname(), 'views'.DIRECTORY_SEPARATOR.'errors')) {
                     continue;
                 }
 
