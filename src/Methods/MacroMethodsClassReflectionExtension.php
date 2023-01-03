@@ -68,7 +68,7 @@ class MacroMethodsClassReflectionExtension implements \PHPStan\Reflection\Method
             $facadeClass = $classReflection->getName();
 
             if ($facadeClass === Auth::class) {
-                $classNames = [SessionGuard::class, RequestGuard::class];
+                $classNames = ['Illuminate\Auth\SessionGuard', RequestGuard::class];
                 $macroTraitProperty = 'macros';
             } else {
                 $concrete = $facadeClass::getFacadeRoot();
