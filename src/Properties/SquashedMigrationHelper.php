@@ -60,10 +60,10 @@ final class SquashedMigrationHelper
             }
 
             /** @var CreateStatement[] $createStatements */
-            $createStatements = array_filter($parser->statements, static fn (Statement $statement) => $statement instanceof CreateStatement);
+            $createStatements = array_filter($parser->statements, static fn (Statement $statement) => $statement instanceof CreateStatement && $statement->name !== null);
 
             foreach ($createStatements as $createStatement) {
-                if (array_key_exists($createStatement->name->table, $tables)) {
+                if ($createStatement->name?->table === null || array_key_exists($createStatement->name->table, $tables)) {
                     continue;
                 }
 
@@ -118,7 +118,7 @@ final class SquashedMigrationHelper
 
     private function isNullable(CreateDefinition $definition): bool
     {
-        if ($definition->options->has('NOT NULL')) {
+        if ($definition->options?->has('NOT NULL')) {
             return false;
         }
 
