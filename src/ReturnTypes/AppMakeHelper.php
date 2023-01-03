@@ -3,48 +3,52 @@
 namespace NunoMaduro\Larastan\ReturnTypes;
 
 use NunoMaduro\Larastan\Concerns\HasContainer;
-use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
-use PhpParser\Node\Name\FullyQualified;
-use PhpParser\Node\Scalar\String_;
+use PHPStan\Analyser\Scope;
 use PHPStan\Type\ErrorType;
-use PHPStan\Type\NeverType;
+use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
 use Throwable;
 
 final class AppMakeHelper
 {
     use HasContainer;
 
-    public function resolveTypeFromCall(FuncCall|MethodCall|StaticCall $call): Type
+    public function resolveTypeFromCall(FuncCall|MethodCall|StaticCall $call, Scope $scope): Type
     {
-        if (count($call->getArgs()) === 0) {
+        $args = $call->getArgs();
+        if (count($args) === 0) {
             return new ErrorType();
         }
 
-        $expr = $call->getArgs()[0]->value;
-        if ($expr instanceof String_) {
-            try {
-                /** @var object|null $resolved */
-                $resolved = $this->resolve($expr->value);
+        $argType = $scope->getType($args[0]->value);
 
-                if ($resolved === null) {
+        $constantStrings = $argType->getConstantStrings();
+
+        if (count($constantStrings) > 0) {
+            $types = [];
+            foreach ($constantStrings as $constantString) {
+                try {
+                    /** @var object|null $resolved */
+                    $resolved = $this->resolve($constantString->getValue());
+
+                    if ($resolved === null) {
+                        return new ErrorType();
+                    }
+
+                    $types[] = new ObjectType(get_class($resolved));
+                } catch (Throwable $exception) {
                     return new ErrorType();
                 }
-
-                return new ObjectType(get_class($resolved));
-            } catch (Throwable $exception) {
-                return new ErrorType();
             }
+
+            return count($types) === 1 ? $types[0] : TypeCombinator::union(...$types);
         }
 
-        if ($expr instanceof ClassConstFetch && $expr->class instanceof FullyQualified) {
-            return new ObjectType($expr->class->toString());
-        }
-
-        return new NeverType();
+        return new MixedType();
     }
 }

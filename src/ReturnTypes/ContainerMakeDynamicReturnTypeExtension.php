@@ -30,6 +30,6 @@ final class ContainerMakeDynamicReturnTypeExtension implements DynamicMethodRetu
 
     public function getTypeFromMethodCall(MethodReflection $methodReflection, MethodCall $methodCall, Scope $scope): ?Type
     {
-        return $this->appMakeHelper->resolveTypeFromCall($methodCall);
+        return $this->appMakeHelper->resolveTypeFromCall($methodCall, $scope);
     }
 }
