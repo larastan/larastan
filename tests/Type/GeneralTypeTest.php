@@ -48,6 +48,10 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from $this->gatherAssertTypes(__DIR__.'/data/higher-order-collection-proxy-methods.php');
         yield from $this->gatherAssertTypes(__DIR__.'/data/model-relations.php');
         yield from $this->gatherAssertTypes(__DIR__.'/data/model-scopes.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/date-extension.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/gate-facade.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/helpers.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/custom-eloquent-collection.php');
     }
 
     /**
