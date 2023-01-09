@@ -6,12 +6,11 @@ namespace NunoMaduro\Larastan\Methods;
 
 use Illuminate\Contracts\Pipeline\Pipeline;
 use LogicException;
-use Mockery;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
+use NunoMaduro\Larastan\Reflection\StaticMethodReflection;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\Php\PhpMethodReflection;
 use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
 use PHPStan\Reflection\ReflectionProvider;
 
@@ -189,14 +188,7 @@ final class Passable implements PassableContract
             );
 
         if ($result = $this->hasFound()) {
-            $methodReflection = $this->getMethodReflection();
-            if (get_class($methodReflection) === PhpMethodReflection::class) {
-                $methodReflection = Mockery::mock($methodReflection);
-                $methodReflection->shouldReceive('isStatic')
-                    ->andReturn($this->isStaticAllowed());
-            }
-
-            $this->setMethodReflection($methodReflection);
+            $this->setMethodReflection(new StaticMethodReflection($this->getMethodReflection()));
         }
 
         return $result;
