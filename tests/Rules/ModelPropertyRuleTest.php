@@ -122,7 +122,7 @@ class ModelPropertyRuleTest extends RuleTestCase
         $this->analyse([__DIR__.'/Data/model-property-model-factory.php'], [
             [
                 'Property \'foo\' does not exist in App\\User model.',
-                5,
+                7,
             ],
         ]);
     }

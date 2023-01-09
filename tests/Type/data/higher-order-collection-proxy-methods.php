@@ -8,155 +8,61 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
 use function PHPStan\Testing\assertType;
 
-class HigherOrderCollectionProxyMethods
+/**
+ * @param  Collection<int, User>  $users
+ * @param  SupportCollection<int, Importer>  $collection
+ */
+function doFoo(Collection $users, User $user, SupportCollection $collection)
 {
-    /** @var Collection<int, User> */
-    public $users;
+    assertType('float', $users->avg->id() + $users->average->id());
+    assertType('bool', $users->contains->isActive());
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->each->delete());
+    assertType('bool', $users->every->isActive());
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->filter->isActive());
+    assertType('App\User|null', $users->first->isActive());
+    assertType('Illuminate\Support\Collection<int, mixed>', $users->flatMap->isActive());
+    assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $users->groupBy->isActive());
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', $users->keyBy->isActive());
+    assertType('Illuminate\Support\Collection<int, bool>', $users->map->isActive());
+    assertType('Illuminate\Support\Collection<int, Illuminate\Database\Eloquent\Relations\HasMany<App\Account>>', $users->map->accounts());
+    assertType('Illuminate\Support\Collection<int, int>', $users->map->id());
+    assertType('array<int, array>', $user->accounts->map->getAttributes()->all());
+    assertType('int', $users->max->id());
+    assertType('int', $users->min->id());
+    assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $users->partition->isActive());
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->reject->isActive());
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->skipUntil->isActive());
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->skipWhile->isActive());
+    assertType('int', $users->sum->id());
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->takeUntil->isActive());
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->takeWhile->isActive());
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->unique->isActive());
+    assertType('Illuminate\Support\Collection<int, bool>', $collection->map->import());
+    assertType('Illuminate\Support\Collection<int, App\Importer>', $collection->each->import());
+    assertType('Illuminate\Support\Collection<int, App\Importer>', $collection->filter->isImported());
 
-    public function testAverage()
-    {
-        assertType('float', $this->users->avg->id() + $this->users->average->id());
-    }
-
-    public function testContains()
-    {
-        assertType('bool', $this->users->contains->isActive());
-    }
-
-    public function testEach()
-    {
-        assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $this->users->each->delete());
-    }
-
-    public function testEvery()
-    {
-        assertType('bool', $this->users->every->isActive());
-    }
-
-    public function testFilter()
-    {
-        assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $this->users->filter->isActive());
-    }
-
-    public function testFirst()
-    {
-        assertType('App\User|null', $this->users->first->isActive());
-    }
-
-    public function testFlatMap()
-    {
-        assertType('Illuminate\Support\Collection<int, mixed>', $this->users->flatMap->isActive());
-    }
-
-    public function testGroupBy()
-    {
-        assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $this->users->groupBy->isActive());
-    }
-
-    public function testKeyBy()
-    {
-        assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', $this->users->keyBy->isActive());
-    }
-
-    public function testMapWithBoolMethod()
-    {
-        assertType('Illuminate\Support\Collection<int, bool>', $this->users->map->isActive());
-    }
-
-    public function testMapWithRelationMethod()
-    {
-        assertType('Illuminate\Support\Collection<int, Illuminate\Database\Eloquent\Relations\HasMany<App\Account>>', $this->users->map->accounts());
-    }
-
-    public function testMapWithIntegerMethod()
-    {
-        assertType('Illuminate\Support\Collection<int, int>', $this->users->map->id());
-    }
-
-    public function testMapOnRelation(User $user)
-    {
-        assertType('array<int, array>', $user->accounts->map->getAttributes()->all());
-    }
-
-    public function testMax()
-    {
-        assertType('int', $this->users->max->id());
-    }
-
-    public function testMin()
-    {
-        assertType('int', $this->users->min->id());
-    }
-
-    public function testPartition()
-    {
-        assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $this->users->partition->isActive());
-    }
-
-    public function testReject()
-    {
-        assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $this->users->reject->isActive());
-    }
-
-    public function testSkipUntil()
-    {
-        assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $this->users->skipUntil->isActive());
-    }
-
-    public function testSkipWhile()
-    {
-        assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $this->users->skipWhile->isActive());
-    }
-
-    public function testSum()
-    {
-        assertType('int', $this->users->sum->id());
-    }
-
-    public function testTakeUntil()
-    {
-        assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $this->users->takeUntil->isActive());
-    }
-
-    public function testTakeWhile()
-    {
-        assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $this->users->takeWhile->isActive());
-    }
-
-    public function testUnique()
-    {
-        assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $this->users->unique->isActive());
-    }
-
-    /**
-     * @param  SupportCollection<int, Importer>  $collection
-     */
-    public function testMapWithSupportCollection(SupportCollection $collection)
-    {
-        assertType('Illuminate\Support\Collection<int, bool>', $collection->map->import());
-    }
-
-    /**
-     * @param  SupportCollection<int, Importer>  $collection
-     */
-    public function testEachWithSupportCollection(SupportCollection $collection)
-    {
-        assertType('Illuminate\Support\Collection<int, App\Importer>', $collection->each->import());
-    }
-
-    /**
-     * @param  SupportCollection<int, User>  $collection
-     */
-    public function testKeyByWithSupportCollection(SupportCollection $collection)
-    {
-        assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', $collection->keyBy->getKey());
-    }
-
-    /**
-     * @param  SupportCollection<int, Importer>  $collection
-     */
-    public function testFilterWithSupportCollection(SupportCollection $collection)
-    {
-        assertType('Illuminate\Support\Collection<int, App\Importer>', $collection->filter->isImported());
-    }
+    assertType('float', $users->avg->id + $users->average->id);
+    assertType('bool', $users->contains->email);
+    assertType('bool', $users->every->email);
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->each->email);
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->filter->email);
+    assertType('Illuminate\Support\Collection<int, mixed>', $users->flatMap->email);
+    assertType('App\User|null', $users->first->email);
+    assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $users->groupBy->email);
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', $users->keyBy->email);
+    assertType('Illuminate\Support\Collection<int, string>', $users->map->email);
+    assertType('Illuminate\Support\Collection<int, int>', $users->map->id);
+    assertType('Illuminate\Support\Collection<int, Carbon\Carbon|null>', $users->map->created_at);
+    assertType('string', $users->max->email);
+    assertType('int', $users->max->id);
+    assertType('string', $users->min->email);
+    assertType('int', $users->min->id);
+    assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $users->partition->email);
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->reject->email);
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->skipUntil->email);
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->skipWhile->email);
+    assertType('int', $users->sum->id);
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->takeUntil->email);
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->takeWhile->email);
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->unique->email);
 }
