@@ -37,6 +37,21 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from $this->gatherAssertTypes(__DIR__.'/data/view-exists.php');
         yield from $this->gatherAssertTypes(__DIR__.'/data/application-make.php');
         yield from $this->gatherAssertTypes(__DIR__.'/data/container-make.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/abort.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/throw.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/app-make.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/auth.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/custom-eloquent-builder.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/model.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/carbon.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/contracts.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/higher-order-collection-proxy-methods.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/model-relations.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/model-scopes.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/date-extension.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/gate-facade.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/helpers.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/custom-eloquent-collection.php');
     }
 
     /**

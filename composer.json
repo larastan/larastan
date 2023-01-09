@@ -22,7 +22,7 @@
         "illuminate/support": "^9",
         "mockery/mockery": "^1.4.4",
         "phpmyadmin/sql-parser": "^5.6",
-        "phpstan/phpstan": "^1.9.4"
+        "phpstan/phpstan": "^1.9.8"
     },
     "require-dev": {
         "nikic/php-parser": "^4.13.2",
@@ -65,7 +65,7 @@
     },
     "scripts": {
         "test:types": "phpstan analyse --ansi --memory-limit 256M",
-        "test:unit": "phpunit --colors=always -d memory_limit=1G",
+        "test:unit": "phpunit --colors=always -d memory_limit=2G",
         "test": [
             "@test:types",
             "@test:unit"

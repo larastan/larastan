@@ -91,9 +91,10 @@ class Builder
     /**
      * Find a model by its primary key or return fresh model instance.
      *
-     * @param  mixed  $id
+     * @template T
+     * @param  T  $id
      * @param  array<int, (model-property<TModelClass>|'*')>|model-property<TModelClass>|'*'  $columns
-     * @phpstan-return TModelClass
+     * @phpstan-return ($id is array ? \Illuminate\Database\Eloquent\Collection<int, TModelClass> : TModelClass)
      */
     public function findOrNew($id, $columns = ['*']);
 

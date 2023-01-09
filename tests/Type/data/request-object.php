@@ -15,4 +15,4 @@ assertType('Illuminate\Routing\Route|null', $request->route());
 assertType('object|string|null', $request->route('foo'));
 assertType('object|string|null', $request->route('foo', 'bar'));
 
-assertType('Illuminate\Foundation\Auth\User|null', $request->user());
+assertType('App\User|null', $request->user());
