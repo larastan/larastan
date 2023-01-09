@@ -13,6 +13,8 @@ class IntegrationTest extends PHPStanTestCase
     public function dataIntegrationTests(): iterable
     {
         yield [__DIR__.'/integration/data/test-case-extension.php'];
+        yield [__DIR__.'/integration/data/model-properties.php'];
+        yield [__DIR__.'/integration/data/blade-view.php'];
     }
 
     /**

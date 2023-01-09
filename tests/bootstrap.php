@@ -3,6 +3,14 @@
 declare(strict_types=1);
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\File;
+
+@File::makeDirectory(dirname(__DIR__).'/vendor/nunomaduro/larastan', 0755, true);
+@File::copy(dirname(__DIR__).'/bootstrap.php', dirname(__DIR__).'/vendor/nunomaduro/larastan/bootstrap.php');
+File::copyDirectory(__DIR__.'/Application/database/migrations', __DIR__.'/../vendor/orchestra/testbench-core/laravel/database/migrations');
+File::copyDirectory(__DIR__.'/Application/database/schema', __DIR__.'/../vendor/orchestra/testbench-core/laravel/database/schema');
+File::copyDirectory(__DIR__.'/Application/config', __DIR__.'/../vendor/orchestra/testbench-core/laravel/config');
+File::copyDirectory(__DIR__.'/Application/resources', __DIR__.'/../vendor/orchestra/testbench-core/laravel/resources');
 
 Carbon::macro('foo', static function (): string {
     return 'foo';

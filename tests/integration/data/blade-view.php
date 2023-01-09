@@ -1,8 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Tests\Features\Types;
+namespace BladeViewString;
 
 class BladeViewType
 {

@@ -15,6 +15,7 @@ use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\BooleanType;
 use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\FloatType;
+use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
@@ -34,7 +35,7 @@ class ModelCastHelper
         $castType = $this->parseCast($cast);
 
         $attributeType = match ($castType) {
-            'int', 'integer' => new IntegerType(),
+            'int', 'integer', 'timestamp' => new IntegerType(),
             'real', 'float', 'double' => new FloatType(),
             'decimal' => TypeCombinator::intersect(new StringType(), new AccessoryNumericStringType()),
             'string' => new StringType(),
@@ -44,7 +45,8 @@ class ModelCastHelper
             'collection' => new ObjectType('Illuminate\Support\Collection'),
             'date', 'datetime' => $this->getDateType(),
             'immutable_date', 'immutable_datetime' => new ObjectType('Carbon\CarbonImmutable'),
-            'timestamp' => new IntegerType(),
+            'Illuminate\Database\Eloquent\Casts\AsArrayObject' => new ObjectType('Illuminate\Database\Eloquent\Casts\ArrayObject'),
+            'Illuminate\Database\Eloquent\Casts\AsCollection' => new GenericObjectType('Illuminate\Support\Collection', [new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()]),
             default => null,
         };
 
@@ -85,7 +87,7 @@ class ModelCastHelper
         $castType = $this->parseCast($cast);
 
         $attributeType = match ($castType) {
-            'int', 'integer' => new IntegerType(),
+            'int', 'integer', 'timestamp' => new IntegerType(),
             'real', 'float', 'double' => new FloatType(),
             'decimal' => TypeCombinator::intersect(new StringType(), new AccessoryNumericStringType()),
             'string' => new StringType(),
@@ -95,7 +97,7 @@ class ModelCastHelper
             'collection' => new ObjectType('Illuminate\Support\Collection'),
             'date', 'datetime' => $this->getDateType(),
             'immutable_date', 'immutable_datetime' => new ObjectType('Carbon\CarbonImmutable'),
-            'timestamp' => new IntegerType(),
+            'Illuminate\Database\Eloquent\Casts\AsArrayObject', 'Illuminate\Database\Eloquent\Casts\AsCollection' => new MixedType(),
             default => null,
         };
 
