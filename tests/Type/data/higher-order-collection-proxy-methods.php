@@ -9,8 +9,8 @@ use Illuminate\Support\Collection as SupportCollection;
 use function PHPStan\Testing\assertType;
 
 /**
- * @param Collection<int, User>            $users
- * @param SupportCollection<int, Importer> $collection
+ * @param  Collection<int, User>  $users
+ * @param  SupportCollection<int, Importer>  $collection
  */
 function doFoo(Collection $users, User $user, SupportCollection $collection)
 {
@@ -65,5 +65,4 @@ function doFoo(Collection $users, User $user, SupportCollection $collection)
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->takeUntil->email);
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->takeWhile->email);
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->unique->email);
-
 }

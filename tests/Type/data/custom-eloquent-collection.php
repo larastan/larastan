@@ -3,15 +3,9 @@
 namespace CustomEloquentCollection;
 
 use App\Account;
-use App\AccountCollection;
 use App\Group;
 use App\Role;
-use App\RoleCollection;
-use App\Transaction;
-use App\TransactionCollection;
 use App\User;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use function PHPStan\Testing\assertType;
 
 function foo()
@@ -20,10 +14,10 @@ function foo()
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::query()->fromQuery('select * from accounts'));
     assertType('App\AccountCollection<int, App\Account>', Account::fromQuery('select * from accounts'));
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::fromQuery('select * from accounts'));
-    assertType('App\AccountCollection<int, App\Account>', Account::query()->hydrate([['active' => 1], ['active' => 0],]));
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::query()->hydrate([['active' => 1], ['active' => 0],]));
-    assertType('App\AccountCollection<int, App\Account>', Account::hydrate([['active' => 1], ['active' => 0],]));
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::hydrate([['active' => 1], ['active' => 0],]));
+    assertType('App\AccountCollection<int, App\Account>', Account::query()->hydrate([['active' => 1], ['active' => 0]]));
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::query()->hydrate([['active' => 1], ['active' => 0]]));
+    assertType('App\AccountCollection<int, App\Account>', Account::hydrate([['active' => 1], ['active' => 0]]));
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::hydrate([['active' => 1], ['active' => 0]]));
     assertType('App\AccountCollection<int, App\Account>', Account::query()->find([1, 2]));
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::query()->find([1, 2]));
     assertType('App\AccountCollection<int, App\Account>', Account::find([1, 2]));

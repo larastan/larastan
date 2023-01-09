@@ -12,7 +12,7 @@ class IntegrationTest extends PHPStanTestCase
      */
     public function dataIntegrationTests(): iterable
     {
-        yield [__DIR__ . '/integration/data/test-case-extension.php'];
+        yield [__DIR__.'/integration/data/test-case-extension.php'];
     }
 
     /**
@@ -26,7 +26,6 @@ class IntegrationTest extends PHPStanTestCase
             $this->assertNoErrors($errors);
         } else {
             // TODO: compare errors
-
         }
     }
 
@@ -34,8 +33,7 @@ class IntegrationTest extends PHPStanTestCase
      * @see https://github.com/phpstan/phpstan-src/blob/c9772621c0bd6eab7e02fdaa03714bea239b372d/tests/PHPStan/Analyser/AnalyserIntegrationTest.php#L604-L622
      * @see https://github.com/phpstan/phpstan/discussions/6888#discussioncomment-2423613
      *
-     * @param string[]|null $allAnalysedFiles
-     *
+     * @param  string[]|null  $allAnalysedFiles
      * @return Error[]
      */
     private function runAnalyse(string $file, ?array $allAnalysedFiles = null): array

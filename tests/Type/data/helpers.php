@@ -5,8 +5,8 @@ namespace Helpers;
 use App\User;
 use Exception;
 use NunoMaduro\Larastan\ApplicationResolver;
-use Throwable;
 use function PHPStan\Testing\assertType;
+use Throwable;
 
 function appHelper()
 {

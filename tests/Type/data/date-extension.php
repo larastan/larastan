@@ -1,7 +1,7 @@
 <?php
+
 namespace DateExtension;
 
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 use function PHPStan\Testing\assertType;
 
