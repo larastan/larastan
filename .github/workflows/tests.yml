@@ -29,6 +29,13 @@ jobs:
         dependencies:
             - "lowest"
             - "highest"
+        exclude:
+          - php: "8.0"
+            laravel: "^10.0"
+            dependencies: "lowest"
+          - php: "8.0"
+            laravel: "^10.0"
+            dependencies: "highest"
 
     name: "PHP${{ matrix.php }} - Laravel${{ matrix.laravel }} ${{ matrix.dependencies == 'highest' && '↑' || '↓' }}"
 
