@@ -38,4 +38,5 @@ function foo()
     assertType('bool', Storage::disk()->deleteDirectory('foo'));
     assertType('bool', Storage::drive()->deleteDirectory('foo'));
     assertType('string|false', Storage::putFile('foo', 'foo/bar'));
+    assertType('string|false', Redis::get('foo'));
 }
