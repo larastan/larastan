@@ -26,9 +26,7 @@ jobs:
       matrix:
         php: ["8.0", "8.1", "8.2"]
         laravel: ["^9.0", "^10.0"]
-        exclude:
-            - php: "8.0"
-              laravel: "^10.0"
+
     name: "PHP ${{ matrix.php }} - L${{ matrix.laravel }}"
 
     runs-on: "ubuntu-latest"
