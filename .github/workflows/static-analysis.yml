@@ -44,7 +44,7 @@ jobs:
           coverage: "none"
 
       - name: "Install dependencies from composer.json"
-        run: "composer update --with='illuminate/contracts:${{ matrix.laravel }}' --no-interaction --no-progress"
+        run: "composer update --with='laravel/framework:${{ matrix.laravel }}' --no-interaction --no-progress"
 
       - name: "Execute static analysis"
         run: "composer run-script test:types"
