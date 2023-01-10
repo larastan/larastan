@@ -27,7 +27,7 @@ assertType('App\User|null', $collection->find($user));
 assertType('App\User|null', $collection->find(1));
 assertType('App\User|bool', $collection->find(1, false));
 
-assertType('Illuminate\Support\Collection<int, mixed>', $collection->pluck('id'));
+assertType('Illuminate\Support\Collection<(int|string), mixed>', $collection->pluck('id'));
 
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::all()->mapInto(User::class));
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->flatMap(function (User $user, int $id): array {

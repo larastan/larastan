@@ -51,8 +51,8 @@ assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', $c
 assertType('Illuminate\Support\Collection<int, int>', $collection->keys());
 assertType('Illuminate\Support\Collection<int, string>', $items->keys());
 
-assertType('Illuminate\Support\Collection<int, mixed>', $collection->pluck(['email']));
-assertType('Illuminate\Support\Collection<int, mixed>', $items->pluck('1'));
+assertType('Illuminate\Support\Collection<(int|string), mixed>', $collection->pluck(['email']));
+assertType('Illuminate\Support\Collection<(int|string), mixed>', $items->pluck('1'));
 
 assertType('Illuminate\Support\Collection<int, int>', $customEloquentCollection->map(fn (Transaction $transaction): int => $transaction->id));
 assertType('Illuminate\Support\Collection<int, int>', $secondCustomEloquentCollection->map(fn (User $user): int => $user->id));
