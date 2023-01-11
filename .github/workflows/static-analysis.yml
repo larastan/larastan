@@ -25,8 +25,12 @@ jobs:
       fail-fast: false
       matrix:
         php: ["8.0", "8.1", "8.2"]
+        laravel: ["^9.0", "^10.0"]
+        exclude:
+          - php: "8.0"
+            laravel: "^10.0"
 
-    name: "PHP ${{ matrix.php }}"
+    name: "PHP ${{ matrix.php }} - L${{ matrix.laravel }}"
 
     runs-on: "ubuntu-latest"
 
@@ -43,7 +47,7 @@ jobs:
           coverage: "none"
 
       - name: "Install dependencies from composer.json"
-        run: "composer update --with='illuminate/contracts:^9.0' --no-interaction --no-progress"
+        run: "composer update --with='laravel/framework:${{ matrix.laravel }}' --no-interaction --no-progress"
 
       - name: "Execute static analysis"
         run: "composer run-script test:types"

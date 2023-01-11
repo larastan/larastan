@@ -7,16 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 
+- feat: laravel 10 support by @nunomaduro in https://github.com/nunomaduro/larastan/pull/1514
 - fix: changed dependency from `Illuminate\Config\Repository` to Config interface by @nai4rus
 - feat: assert `view-string` when using `view()->exists()` by @mad-briller
-- feat: Add return-type extension for Application / Container `make` `makeWith` and `resolve` methods by @mad-briller.
+- feat: add return-type extension for Application / Container `make` `makeWith` and `resolve` methods by @mad-briller.
 - feat: freed `joinSub` to allow models to join other models by @harmenjanssen in https://github.com/nunomaduro/larastan/pull/1352
 - feat: updated return type of the Request::header method by @mad-briller
-- feat: Added stub for `optional()` helper and class by @mad-briller in https://github.com/nunomaduro/larastan/pull/1344
+- feat: added stub for `optional()` helper and class by @mad-briller in https://github.com/nunomaduro/larastan/pull/1344
 - fix: abstract Manager class causing Larastan to crash by @mad-briller
-- fix: Eloquent builder `whereRelation()` losing the TModelClass generic type by @mad-briller.
+- fix: eloquent builder `whereRelation()` losing the TModelClass generic type by @mad-briller.
 - feat: updated return type of the Validator::safe and FormRequest::safe method by @jdjfisher
-- feat: Added stub for the DB::transaction method by @jdjfisher
+- feat: added stub for the DB::transaction method by @jdjfisher
 - feat: conditional return types for `Eloquent\Collection::find()` by @sebdesign
 - feat: add support for generic paginators by @erikgaal
 - feat: add support for encrypted and parameterized eloquent casts by @jdjfisher

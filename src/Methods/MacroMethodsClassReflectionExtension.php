@@ -4,7 +4,6 @@ namespace NunoMaduro\Larastan\Methods;
 
 use Carbon\Traits\Macro as CarbonMacro;
 use Illuminate\Auth\RequestGuard;
-use Illuminate\Auth\SessionGuard;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Facade;
@@ -68,7 +67,7 @@ class MacroMethodsClassReflectionExtension implements \PHPStan\Reflection\Method
             $facadeClass = $classReflection->getName();
 
             if ($facadeClass === Auth::class) {
-                $classNames = [SessionGuard::class, RequestGuard::class];
+                $classNames = ['Illuminate\Auth\SessionGuard', RequestGuard::class];
                 $macroTraitProperty = 'macros';
             } else {
                 $concrete = $facadeClass::getFacadeRoot();
