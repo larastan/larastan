@@ -69,7 +69,7 @@ class GuardDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethod
     private function findTypeFromGuardDriver(string $driver): ?Type
     {
         return match ($driver) {
-            'session' => new ObjectType(\Illuminate\Auth\SessionGuard::class),
+            'session' => new ObjectType('Illuminate\Auth\SessionGuard'),
             'token' => new ObjectType(\Illuminate\Auth\TokenGuard::class),
             'passport' => new ObjectType(\Illuminate\Auth\RequestGuard::class),
             default => null,
