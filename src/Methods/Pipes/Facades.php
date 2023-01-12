@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods\Pipes;
 
 use Closure;
+use Exception;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
+use NunoMaduro\Larastan\Reflection\ReflectionHelper;
 
 /**
  * @internal
@@ -27,7 +29,21 @@ final class Facades implements PipeContract
         if ($classReflection->isSubclassOf(Facade::class)) {
             $facadeClass = $classReflection->getName();
 
-            if ($concrete = $facadeClass::getFacadeRoot()) {
+            if (ReflectionHelper::hasMethodTag($classReflection, $passable->getMethodName())) {
+                $next($passable);
+
+                return;
+            }
+
+            $concrete = null;
+
+            try {
+                $concrete = $facadeClass::getFacadeRoot();
+            } catch (Exception) {
+                //
+            }
+
+            if ($concrete) {
                 $class = get_class($concrete);
 
                 if ($class) {

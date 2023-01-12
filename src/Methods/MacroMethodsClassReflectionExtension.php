@@ -3,6 +3,7 @@
 namespace NunoMaduro\Larastan\Methods;
 
 use Carbon\Traits\Macro as CarbonMacro;
+use Exception;
 use Illuminate\Auth\RequestGuard;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
@@ -12,13 +13,14 @@ use Illuminate\Support\Traits\Macroable;
 use NunoMaduro\Larastan\Concerns\HasContainer;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\ClosureTypeFactory;
 use ReflectionException;
 
-class MacroMethodsClassReflectionExtension implements \PHPStan\Reflection\MethodsClassReflectionExtension
+class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExtension
 {
     use HasContainer;
 
@@ -70,7 +72,13 @@ class MacroMethodsClassReflectionExtension implements \PHPStan\Reflection\Method
                 $classNames = ['Illuminate\Auth\SessionGuard', RequestGuard::class];
                 $macroTraitProperty = 'macros';
             } else {
-                $concrete = $facadeClass::getFacadeRoot();
+                $concrete = null;
+
+                try {
+                    $concrete = $facadeClass::getFacadeRoot();
+                } catch (Exception) {
+                    //
+                }
 
                 if ($concrete) {
                     $facadeClassName = get_class($concrete);

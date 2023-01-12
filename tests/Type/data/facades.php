@@ -2,6 +2,7 @@
 
 namespace Facades;
 
+use App\DummyFacade;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
@@ -39,4 +40,7 @@ function foo()
     assertType('bool', Storage::drive()->deleteDirectory('foo'));
     assertType('string|false', Storage::putFile('foo', 'foo/bar'));
     assertType('string|false', Redis::get('foo'));
+
+    assertType('string', DummyFacade::foo());
+    assertType('int', DummyFacade::bar());
 }
