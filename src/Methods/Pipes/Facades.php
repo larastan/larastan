@@ -31,6 +31,7 @@ final class Facades implements PipeContract
 
             if (ReflectionHelper::hasMethodTag($classReflection, $passable->getMethodName())) {
                 $next($passable);
+
                 return;
             }
 
