@@ -2,10 +2,10 @@
 
 namespace App;
 
-use App\Casts\Favorites;
-use App\Casts\Hash;
 use App\Casts\BackedEnumeration;
 use App\Casts\BasicEnumeration;
+use App\Casts\Favorites;
+use App\Casts\Hash;
 use function get_class;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
