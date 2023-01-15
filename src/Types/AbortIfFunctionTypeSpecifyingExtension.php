@@ -44,7 +44,7 @@ final class AbortIfFunctionTypeSpecifyingExtension implements FunctionTypeSpecif
         Scope $scope,
         TypeSpecifierContext $context
     ): SpecifiedTypes {
-        if (count($node->args) < 2) {
+        if (! str_starts_with($this->methodName, 'throw') && count($node->args) < 2) {
             return new SpecifiedTypes();
         }
 

@@ -39,4 +39,32 @@ class ThrowTest
 
         assertType('int', $foo);
     }
+
+    public function testThrowIfWithoutSecondArgument(int|string $foo = 5): void
+    {
+        throw_if(is_string($foo));
+
+        assertType('int', $foo);
+    }
+
+    public function testThrowIfWithStringArgument(int|string $foo = 5): void
+    {
+        throw_if(is_string($foo), 'Exception message');
+
+        assertType('int', $foo);
+    }
+
+    public function testThrowUnlessWithoutSecondArgument(int|string $foo = 5): void
+    {
+        throw_unless(! is_string($foo));
+
+        assertType('int', $foo);
+    }
+
+    public function testThrowUnlessWithStringArgument(int|string $foo = 5): void
+    {
+        throw_unless(! is_string($foo), 'Exception message');
+
+        assertType('int', $foo);
+    }
 }
