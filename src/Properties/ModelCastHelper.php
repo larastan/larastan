@@ -60,6 +60,10 @@ class ModelCastHelper
 
         $classReflection = $this->reflectionProvider->getClass($cast);
 
+        if ($classReflection->isEnum()) {
+            return new ObjectType($cast);
+        }
+
         if ($classReflection->isSubclassOf(Castable::class)) {
             $methodReflection = $classReflection->getNativeMethod('castUsing');
             $castUsingReturn = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
@@ -110,6 +114,10 @@ class ModelCastHelper
         }
 
         $classReflection = $this->reflectionProvider->getClass($cast);
+
+        if ($classReflection->isEnum()) {
+            return new ObjectType($cast);
+        }
 
         if ($classReflection->isSubclassOf(Castable::class)) {
             $methodReflection = $classReflection->getNativeMethod('castUsing');
