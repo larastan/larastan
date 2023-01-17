@@ -35,7 +35,7 @@ jobs:
           coverage: "none"
 
       - name: "Change Composer config minimum-stability"
-        run: "composer config minimum-stability stable"
+        run: "composer config minimum-stability dev"
 
       - name: "Change Composer config prefer-stable"
         run: "composer config prefer-stable false"
