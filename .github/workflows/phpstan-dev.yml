@@ -13,10 +13,10 @@ jobs:
         include:
           - php: "8.1"
             laravel: "^9.0"
-            testbench: "^7.19.0"
+            testbench: "^7.19"
           - php: "8.1"
             laravel: "^10.0"
-            testbench: "^8.0.0"
+            testbench: "8.0-dev"
 
     name: "P${{ matrix.php }} - L${{ matrix.laravel }}"
 
