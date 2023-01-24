@@ -5,3 +5,8 @@ parameters:
 			count: 1
 			path: src/Methods/ModelForwardsCallsExtension.php
 
+		-
+			message: "#^Constant LARAVEL_VERSION not found\\.$#"
+			count: 1
+			path: src/ReturnTypes/CollectionGenericStaticMethodDynamicMethodReturnTypeExtension.php
+
