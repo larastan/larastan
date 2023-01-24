@@ -6,6 +6,7 @@ use App\Casts\BackedEnumeration;
 use App\Casts\BasicEnumeration;
 use App\Casts\Favorites;
 use App\Casts\Hash;
+use Illuminate\Database\Eloquent\Casts\AsStringable;
 use function get_class;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
@@ -54,6 +55,7 @@ class User extends Authenticatable
         'floatButRoundedDecimalString' => 'decimal:1',
         'options' => AsArrayObject::class,
         'properties' => AsCollection::class,
+        'castable_with_argument' => AsStringable::class.':argument',
         'favorites' => Favorites::class,
         'secret' => Hash::class.':sha256',
         'basic_enum' => BasicEnumeration::class,
