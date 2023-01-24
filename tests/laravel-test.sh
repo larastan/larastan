@@ -2,7 +2,7 @@
 
 set -e
 
-echo "Install Laravel"
+echo "Install Laravel v9"
 composer create-project --quiet --prefer-dist "laravel/laravel:^9" ../laravel
 cd ../laravel/
 
