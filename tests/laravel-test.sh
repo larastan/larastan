@@ -2,8 +2,8 @@
 
 set -e
 
-# TODO Replace dev-master with 10
-for LARAVEL_VERSION_CONSTRAINT in "^9" "^dev-master"; do
+# TODO Replace dev-master with ^10
+for LARAVEL_VERSION_CONSTRAINT in "^9" "dev-master"; do
 
 echo "Install Laravel ${LARAVEL_VERSION_CONSTRAINT}"
 composer create-project --quiet --prefer-dist "laravel/laravel:${LARAVEL_VERSION_CONSTRAINT}" ../laravel
