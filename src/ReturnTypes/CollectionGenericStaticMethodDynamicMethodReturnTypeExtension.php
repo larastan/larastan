@@ -33,9 +33,9 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
             return in_array($methodReflection->getName(), ['find']);
         }
 
-        return in_array($methodReflection->getName(), [
+        $methods = [
             'chunk', 'chunkWhile', 'collapse', 'combine',
-            'countBy', 'crossJoin', 'flatMap', 'flip',
+            'crossJoin', 'flatMap', 'flip',
             'groupBy', 'keyBy', 'keys',
             'make', 'map', 'mapInto',
             'mapToDictionary', 'mapToGroups',
@@ -43,7 +43,13 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
             'pad', 'partition', 'pluck',
             'pop', 'random', 'shift', 'sliding', 'split',
             'splitIn', 'values', 'wrap', 'zip',
-        ], true);
+        ];
+
+        if (version_compare(LARAVEL_VERSION, '9.48.0', '<')) {
+            $methods[] = 'countBy';
+        }
+
+        return in_array($methodReflection->getName(), $methods, true);
     }
 
     public function getTypeFromMethodCall(

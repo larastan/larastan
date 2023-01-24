@@ -14,7 +14,12 @@ class CollectionDynamicReturnTypeExtensionsTest extends \PHPStan\Testing\TypeInf
         yield from $this->gatherAssertTypes(__DIR__.'/data/collection-helper.php');
         yield from $this->gatherAssertTypes(__DIR__.'/data/collection-make-static.php');
         yield from $this->gatherAssertTypes(__DIR__.'/data/collection-stubs.php');
-        yield from $this->gatherAssertTypes(__DIR__.'/data/collection-generic-static-methods.php');
+
+        if (version_compare(LARAVEL_VERSION, '9.48.0', '<')) {
+            yield from $this->gatherAssertTypes(__DIR__.'/data/collection-generic-static-methods.php');
+        } else {
+            yield from $this->gatherAssertTypes(__DIR__.'/data/collection-generic-static-methods-l948.php');
+        }
     }
 
     /**
