@@ -20,7 +20,6 @@ class CollectionDynamicReturnTypeExtensionsTest extends \PHPStan\Testing\TypeInf
         } else {
             yield from $this->gatherAssertTypes(__DIR__.'/data/collection-generic-static-methods-l948.php');
         }
-
     }
 
     /**
