@@ -2,8 +2,10 @@
 
 set -e
 
-echo "Install Laravel v9"
-composer create-project --quiet --prefer-dist "laravel/laravel:^9" ../laravel
+for LARAVEL_VERSION_CONSTRAINT in "^9" "^10"; do
+
+echo "Install Laravel ${LARAVEL_VERSION_CONSTRAINT}"
+composer create-project --quiet --prefer-dist "laravel/laravel:${LARAVEL_VERSION_CONSTRAINT}" ../laravel
 cd ../laravel/
 
 echo "Add Larastan from source"
@@ -30,3 +32,7 @@ cd -
 
 echo "Test Laravel from other working directories"
 ../laravel/vendor/bin/phpstan analyse --configuration=../laravel/phpstan.neon ../laravel/app
+
+rm -r -f ../laravel/
+
+done
