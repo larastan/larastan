@@ -13,7 +13,7 @@ use function PHPStan\Testing\assertType;
 /** @var App\UserCollection $secondCustomEloquentCollection */
 /** @var User $user */
 assertType('Illuminate\Database\Eloquent\Collection<int, int>', EloquentCollection::range(1, 10));
-
+// Fake PR
 assertType('Illuminate\Support\Collection<int, mixed>', $collection->collapse());
 assertType('Illuminate\Support\Collection<int, mixed>', $items->collapse());
 
