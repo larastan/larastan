@@ -2,8 +2,10 @@
 
 set -e
 
-# TODO Replace dev-master with ^10
-for LARAVEL_VERSION_CONSTRAINT in "^9" "dev-master"; do
+LARAVEL_VERSION_CONSTRAINT="${1:-^9.0}"
+if [ "${LARAVEL_VERSION_CONSTRAINT}" == "^10.0" ]; then
+    LARAVEL_VERSION_CONSTRAINT="dev-master"
+fi
 
 echo "Install Laravel ${LARAVEL_VERSION_CONSTRAINT}"
 composer create-project --quiet --prefer-dist "laravel/laravel:${LARAVEL_VERSION_CONSTRAINT}" ../laravel
@@ -33,7 +35,3 @@ cd -
 
 echo "Test Laravel from other working directories"
 ../laravel/vendor/bin/phpstan analyse --configuration=../laravel/phpstan.neon ../laravel/app
-
-rm -r -f ../laravel/
-
-done
