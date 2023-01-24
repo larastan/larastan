@@ -45,8 +45,9 @@ class ModelCastHelper
             'collection' => new ObjectType('Illuminate\Support\Collection'),
             'date', 'datetime' => $this->getDateType(),
             'immutable_date', 'immutable_datetime' => new ObjectType('Carbon\CarbonImmutable'),
-            'Illuminate\Database\Eloquent\Casts\AsArrayObject' => new ObjectType('Illuminate\Database\Eloquent\Casts\ArrayObject'),
-            'Illuminate\Database\Eloquent\Casts\AsCollection' => new GenericObjectType('Illuminate\Support\Collection', [new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()]),
+            'Illuminate\Database\Eloquent\Casts\AsArrayObject', 'Illuminate\Database\Eloquent\Casts\AsEncryptedArrayObject' => new ObjectType('Illuminate\Database\Eloquent\Casts\ArrayObject'),
+            'Illuminate\Database\Eloquent\Casts\AsCollection', 'Illuminate\Database\Eloquent\Casts\AsEncryptedCollection' => new GenericObjectType('Illuminate\Support\Collection', [new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()]),
+            'Illuminate\Database\Eloquent\Casts\AsStringable' => new ObjectType('Illuminate\Support\Stringable'),
             default => null,
         };
 
@@ -101,7 +102,9 @@ class ModelCastHelper
             'collection' => new ObjectType('Illuminate\Support\Collection'),
             'date', 'datetime' => $this->getDateType(),
             'immutable_date', 'immutable_datetime' => new ObjectType('Carbon\CarbonImmutable'),
-            'Illuminate\Database\Eloquent\Casts\AsArrayObject', 'Illuminate\Database\Eloquent\Casts\AsCollection' => new MixedType(),
+            'Illuminate\Database\Eloquent\Casts\AsArrayObject', 'Illuminate\Database\Eloquent\Casts\AsCollection',
+            'Illuminate\Database\Eloquent\Casts\AsEncryptedArrayObject', 'Illuminate\Database\Eloquent\Casts\AsEncryptedCollection' => new MixedType(),
+            'Illuminate\Database\Eloquent\Casts\AsStringable' => TypeCombinator::union(new StringType(), new ObjectType('Stringable')),
             default => null,
         };
 
