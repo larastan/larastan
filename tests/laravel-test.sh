@@ -2,11 +2,17 @@
 
 set -e
 
-echo "Install Laravel"
-composer create-project --quiet --prefer-dist "laravel/laravel:^9" ../laravel
+LARAVEL_VERSION_CONSTRAINT="${1:-^9.0}"
+if [ "${LARAVEL_VERSION_CONSTRAINT}" == "^10.0" ]; then
+    LARAVEL_VERSION_CONSTRAINT="dev-master"
+fi
+
+echo "Install Laravel ${LARAVEL_VERSION_CONSTRAINT}"
+composer create-project --quiet --prefer-dist "laravel/laravel:${LARAVEL_VERSION_CONSTRAINT}" ../laravel
 cd ../laravel/
 
 echo "Add Larastan from source"
+composer config minimum-stability dev
 composer config repositories.0 '{ "type": "path", "url": "../larastan", "options": { "symlink": false } }'
 # No version information with "type":"path"
 composer require --dev "nunomaduro/larastan:*"
