@@ -513,6 +513,15 @@ class Builder
      * @return static
      */
     public function whereRelation($relation, $column, $operator = null, $value = null);
+
+    /**
+     * Gets the result of a query in chunks.
+     *
+     * @param  int  $count
+     * @param  callable(\Illuminate\Database\Eloquent\Collection<int, TModelClass>, int): mixed $callback
+     * @return bool
+     */
+    public function chunk($count, $callback);
 }
 
 class Scope {}
