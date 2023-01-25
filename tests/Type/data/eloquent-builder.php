@@ -432,6 +432,11 @@ function testPaginateItems()
     assertType('array<App\User>', User::query()->paginate()->items());
 }
 
+function testChunkOnEloquentBuilder()
+{
+    User::chunk(1000, fn ($collection) => assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection));
+}
+
 class Foo extends Model
 {
     /** @phpstan-use FooTrait<Foo> */
