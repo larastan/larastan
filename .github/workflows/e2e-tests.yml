@@ -79,7 +79,7 @@ jobs:
           composer install --no-scripts --no-interaction
           composer config repositories.0 '{ "type": "path", "url": "../larastan" }'
           composer config minimum-stability dev
-          composer require --dev --update-with-dependencies "nunomaduro/larastan:*"
+          composer require --dev --update-with-dependencies "nunomaduro/larastan:*" "laravel/framework:^9.47.0"
 
       - name: "Perform static analysis"
         run: |
