@@ -64,7 +64,7 @@
     },
     "scripts": {
         "test:types": "phpstan analyse --ansi --memory-limit 256M",
-        "test:unit": "phpunit --colors=always -d memory_limit=2G",
+        "test:unit": "phpunit --colors=always -d memory_limit=1280M",
         "test": [
             "@test:types",
             "@test:unit"
