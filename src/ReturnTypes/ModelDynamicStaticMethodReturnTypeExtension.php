@@ -11,9 +11,11 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Methods\BuilderHelper;
 use PhpParser\Node\Expr\StaticCall;
+use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntegerType;
@@ -27,13 +29,16 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
 {
     /** @var BuilderHelper */
     private $builderHelper;
+    /** @var ReflectionProvider */
+    private $reflectionProvider;
 
     /**
      * @param  BuilderHelper  $builderHelper
      */
-    public function __construct(BuilderHelper $builderHelper)
+    public function __construct(BuilderHelper $builderHelper, ReflectionProvider $reflectionProvider)
     {
         $this->builderHelper = $builderHelper;
+        $this->reflectionProvider = $reflectionProvider;
     }
 
     /**
@@ -72,7 +77,10 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
 
         $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
 
-        return (count(array_intersect([EloquentBuilder::class, QueryBuilder::class, Collection::class], $returnType->getReferencedClasses()))) > 0;
+        return $this->doesClassesContainTypeOrSubType(
+            $returnType->getReferencedClasses(),
+            [EloquentBuilder::class, QueryBuilder::class, Collection::class]
+        );
     }
 
     /**
@@ -88,7 +96,7 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
 
         $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
 
-        if ((count(array_intersect([EloquentBuilder::class], $returnType->getReferencedClasses())) > 0)
+        if ($this->doesClassesContainTypeOrSubType($returnType->getReferencedClasses(), [EloquentBuilder::class])
             && $methodCall->class instanceof \PhpParser\Node\Name
         ) {
             $returnType = new GenericObjectType(
@@ -99,7 +107,7 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
 
         if (
             $methodCall->class instanceof \PhpParser\Node\Name
-            && in_array(Collection::class, $returnType->getReferencedClasses(), true)
+            && $this->doesClassesContainTypeOrSubType($returnType->getReferencedClasses(), [Collection::class])
             && in_array($methodReflection->getName(), ['get', 'hydrate', 'fromQuery', 'all', 'findMany'], true)
         ) {
             $collectionClassName = $this->builderHelper->determineCollectionClassName($scope->resolveName($methodCall->class));
@@ -108,5 +116,29 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
         }
 
         return $returnType;
+    }
+
+    /**
+     * @param array<string> $givenClassNames
+     * @param array<class-string> $neededClassNames
+     * @return bool
+     */
+    private function doesClassesContainTypeOrSubType(array $givenClassNames, array $neededClassNames): bool
+    {
+        foreach ($givenClassNames as $givenClassName) {
+            $givenClassReflection = $this->reflectionProvider->getClass($givenClassName);
+
+            foreach ($neededClassNames as $neededClassName) {
+                if ($givenClassName === $neededClassName) {
+                    return true;
+                }
+
+                if ($givenClassReflection->isSubclassOf($neededClassName)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }
