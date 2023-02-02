@@ -119,8 +119,8 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
     }
 
     /**
-     * @param array<string> $givenClassNames
-     * @param array<class-string> $neededClassNames
+     * @param  array<string>  $givenClassNames
+     * @param  array<class-string>  $neededClassNames
      * @return bool
      */
     private function doesClassesContainTypeOrSubType(array $givenClassNames, array $neededClassNames): bool

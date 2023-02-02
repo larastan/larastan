@@ -29,12 +29,11 @@ function testAccessProperty()
 
 /**
  * @template TModelClass of CustomEloquentModel
-
+ *
  * @extends \Illuminate\Database\Eloquent\Builder<TModelClass>
  */
 class CustomEloquentBuilder extends EloquentBuilder
 {
-
 }
 
 /**
@@ -43,7 +42,7 @@ class CustomEloquentBuilder extends EloquentBuilder
 class CustomEloquentModel extends Model
 {
     /**
-     * @param Builder $query
+     * @param  Builder  $query
      * @return CustomEloquentBuilder
      */
     public function newEloquentBuilder($query): CustomEloquentBuilder
