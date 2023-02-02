@@ -64,11 +64,11 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
             return true;
         }
 
-        if (! $methodReflection->getDeclaringClass()->hasNativeMethod($name)) {
+        if (! $methodReflection->getDeclaringClass()->hasMethod($name)) {
             return false;
         }
 
-        $method = $methodReflection->getDeclaringClass()->getNativeMethod($methodReflection->getName());
+        $method = $methodReflection->getDeclaringClass()->getMethod($methodReflection->getName(), new OutOfClassScope());
 
         $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
 
