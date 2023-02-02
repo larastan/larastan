@@ -15,6 +15,7 @@ use App\User;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Stringable;
 use function PHPStan\Testing\assertType;
 
 function foo(User $user, Account $account, Role $role, Group $group, Team $team, GuardedModel $guardedModel, Thread $thread, Address $address)
@@ -47,6 +48,9 @@ function foo(User $user, Account $account, Role $role, Group $group, Team $team,
     assertType('\'active\'|\'inactive\'', $user->enum_status);
     assertType(BasicEnumeration::class, $user->basic_enum);
     assertType(BackedEnumeration::class, $user->backed_enum);
+
+    // Castable
+    assertType(Stringable::class, $user->castable_with_argument);
 
     // CastsAttributes
     assertType('App\ValueObjects\Favorites', $user->favorites);

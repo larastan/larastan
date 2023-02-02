@@ -10,6 +10,7 @@ use function get_class;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
+use Illuminate\Database\Eloquent\Casts\AsStringable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -54,6 +55,7 @@ class User extends Authenticatable
         'floatButRoundedDecimalString' => 'decimal:1',
         'options' => AsArrayObject::class,
         'properties' => AsCollection::class,
+        'castable_with_argument' => AsStringable::class.':argument',
         'favorites' => Favorites::class,
         'secret' => Hash::class.':sha256',
         'basic_enum' => BasicEnumeration::class,

@@ -34,6 +34,7 @@ class CreateUsersTable extends Migration
             $table->enum('enum_status', ['active', 'inactive']);
             $table->string('basic_enum');
             $table->string('backed_enum');
+            $table->string('castable_with_argument');
 
             // Testing property casts
             $table->integer('int');
