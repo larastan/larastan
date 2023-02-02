@@ -78,7 +78,7 @@ jobs:
           cd e2e/
           composer install --no-scripts --no-interaction
           composer config repositories.0 '{ "type": "path", "url": "../larastan" }'
-          composer require --dev --update-with-dependencies "nunomaduro/larastan:dev-${{ github.sha }}" "laravel/framework:^9.47.0"
+          composer require --dev --update-with-dependencies "nunomaduro/larastan:dev-${{ github.sha }} || dev-${{ github.ref_name }}" "laravel/framework:^9.47.0"
 
       - name: "Perform static analysis"
         run: |
