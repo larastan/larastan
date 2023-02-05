@@ -33,11 +33,14 @@ final class HigherOrderCollectionProxyExtension implements MethodsClassReflectio
         /** @var Type\ObjectType $valueType */
         $valueType = $activeTemplateTypeMap->getType('TValue');
 
+        /** @var Type\ObjectType $collectionType */
+        $collectionType = $activeTemplateTypeMap->getType('TCollection');
+
         $modelMethodReflection = $valueType->getMethod($methodName, new OutOfClassScope());
 
         $modelMethodReturnType = ParametersAcceptorSelector::selectSingle($modelMethodReflection->getVariants())->getReturnType();
 
-        $returnType = HigherOrderCollectionProxyHelper::determineReturnType($methodType->getValue(), $valueType, $modelMethodReturnType);
+        $returnType = HigherOrderCollectionProxyHelper::determineReturnType($methodType->getValue(), $valueType, $modelMethodReturnType, $collectionType->getClassName());
 
         return new class($classReflection, $methodName, $modelMethodReflection, $returnType) implements MethodReflection
         {
