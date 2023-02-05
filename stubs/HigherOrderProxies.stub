@@ -17,6 +17,7 @@ class HigherOrderTapProxy
 /**
  * @template T
  * @template TValue
+ * @template TCollection
  */
 class HigherOrderCollectionProxy
 {}

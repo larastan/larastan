@@ -31,9 +31,12 @@ final class HigherOrderCollectionProxyPropertyExtension implements PropertiesCla
         /** @var Type\ObjectType $modelType */
         $modelType = $activeTemplateTypeMap->getType('TValue');
 
+        /** @var Type\ObjectType $collectionType */
+        $collectionType = $activeTemplateTypeMap->getType('TCollection');
+
         $propertyType = $modelType->getProperty($propertyName, new OutOfClassScope())->getReadableType();
 
-        $returnType = HigherOrderCollectionProxyHelper::determineReturnType($methodType->getValue(), $modelType, $propertyType);
+        $returnType = HigherOrderCollectionProxyHelper::determineReturnType($methodType->getValue(), $modelType, $propertyType, $collectionType->getClassName());
 
         return new class($classReflection, $returnType) implements PropertyReflection
         {

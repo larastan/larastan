@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Support;
 
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\HigherOrderCollectionProxy;
 use PHPStan\Reflection\ClassReflection;
@@ -24,7 +22,7 @@ class HigherOrderCollectionProxyHelper
 
         $activeTemplateTypeMap = $classReflection->getActiveTemplateTypeMap();
 
-        if ($activeTemplateTypeMap->count() !== 2) {
+        if ($activeTemplateTypeMap->count() !== 3) {
             return false;
         }
 
@@ -35,7 +33,9 @@ class HigherOrderCollectionProxyHelper
             return false;
         }
 
-        if (! $methodType instanceof Type\Constant\ConstantStringType) {
+        $constants = $methodType->getConstantStrings();
+
+        if (count($constants) !== 1) {
             return false;
         }
 
@@ -50,14 +50,8 @@ class HigherOrderCollectionProxyHelper
         return $valueType->hasProperty($name)->yes();
     }
 
-    public static function determineReturnType(string $name, Type\Type $valueType, Type\Type $methodOrPropertyReturnType): Type\Type
+    public static function determineReturnType(string $name, Type\Type $valueType, Type\Type $methodOrPropertyReturnType, string $collectionType): Type\Type
     {
-        if ((new Type\ObjectType(Model::class))->isSuperTypeOf($valueType)->yes()) {
-            $collectionType = Collection::class;
-        } else {
-            $collectionType = SupportCollection::class;
-        }
-
         $types = [new Type\IntegerType(), $valueType];
 
         switch ($name) {
