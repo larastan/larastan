@@ -11,8 +11,9 @@ use function PHPStan\Testing\assertType;
 /**
  * @param  Collection<int, User>  $users
  * @param  SupportCollection<int, Importer>  $collection
+ * @param  SupportCollection<int, User>  $supportCollectionWithModels
  */
-function doFoo(Collection $users, User $user, SupportCollection $collection)
+function doFoo(Collection $users, User $user, SupportCollection $collection, SupportCollection $supportCollectionWithModels)
 {
     assertType('float', $users->avg->id() + $users->average->id());
     assertType('bool', $users->contains->isActive());
@@ -64,5 +65,6 @@ function doFoo(Collection $users, User $user, SupportCollection $collection)
     assertType('int', $users->sum->id);
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->takeUntil->email);
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->takeWhile->email);
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->unique->email);
+
+    assertType('Illuminate\Support\Collection<int, App\User>', $supportCollectionWithModels->reject->isActive());
 }

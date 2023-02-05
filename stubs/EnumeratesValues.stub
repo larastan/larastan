@@ -8,31 +8,31 @@ use Illuminate\Support\HigherOrderCollectionProxy;
  * @template TKey of array-key
  * @template TValue
  *
- * @property-read HigherOrderCollectionProxy<'average', TValue> $average
- * @property-read HigherOrderCollectionProxy<'avg', TValue> $avg
- * @property-read HigherOrderCollectionProxy<'contains', TValue> $contains
- * @property-read HigherOrderCollectionProxy<'each', TValue> $each
- * @property-read HigherOrderCollectionProxy<'every', TValue> $every
- * @property-read HigherOrderCollectionProxy<'filter', TValue> $filter
- * @property-read HigherOrderCollectionProxy<'first', TValue> $first
- * @property-read HigherOrderCollectionProxy<'flatMap', TValue> $flatMap
- * @property-read HigherOrderCollectionProxy<'groupBy', TValue> $groupBy
- * @property-read HigherOrderCollectionProxy<'keyBy', TValue> $keyBy
- * @property-read HigherOrderCollectionProxy<'map', TValue> $map
- * @property-read HigherOrderCollectionProxy<'max', TValue> $max
- * @property-read HigherOrderCollectionProxy<'min', TValue> $min
- * @property-read HigherOrderCollectionProxy<'partition', TValue> $partition
- * @property-read HigherOrderCollectionProxy<'reject', TValue> $reject
- * @property-read HigherOrderCollectionProxy<'some', TValue> $some
- * @property-read HigherOrderCollectionProxy<'sortBy', TValue> $sortBy
- * @property-read HigherOrderCollectionProxy<'sortByDesc', TValue> $sortByDesc
- * @property-read HigherOrderCollectionProxy<'skipUntil', TValue> $skipUntil
- * @property-read HigherOrderCollectionProxy<'skipWhile', TValue> $skipWhile
- * @property-read HigherOrderCollectionProxy<'sum', TValue> $sum
- * @property-read HigherOrderCollectionProxy<'takeUntil', TValue> $takeUntil
- * @property-read HigherOrderCollectionProxy<'takeWhile', TValue> $takeWhile
- * @property-read HigherOrderCollectionProxy<'unique', TValue> $unique
- * @property-read HigherOrderCollectionProxy<'until', TValue> $until
+ * @property-read HigherOrderCollectionProxy<'average', TValue, static> $average
+ * @property-read HigherOrderCollectionProxy<'avg', TValue, static> $avg
+ * @property-read HigherOrderCollectionProxy<'contains', TValue, static> $contains
+ * @property-read HigherOrderCollectionProxy<'each', TValue, static> $each
+ * @property-read HigherOrderCollectionProxy<'every', TValue, static> $every
+ * @property-read HigherOrderCollectionProxy<'filter', TValue, static> $filter
+ * @property-read HigherOrderCollectionProxy<'first', TValue, static> $first
+ * @property-read HigherOrderCollectionProxy<'flatMap', TValue, static> $flatMap
+ * @property-read HigherOrderCollectionProxy<'groupBy', TValue, static> $groupBy
+ * @property-read HigherOrderCollectionProxy<'keyBy', TValue, static> $keyBy
+ * @property-read HigherOrderCollectionProxy<'map', TValue, static> $map
+ * @property-read HigherOrderCollectionProxy<'max', TValue, static> $max
+ * @property-read HigherOrderCollectionProxy<'min', TValue, static> $min
+ * @property-read HigherOrderCollectionProxy<'partition', TValue, static> $partition
+ * @property-read HigherOrderCollectionProxy<'reject', TValue, static> $reject
+ * @property-read HigherOrderCollectionProxy<'some', TValue, static> $some
+ * @property-read HigherOrderCollectionProxy<'sortBy', TValue, static> $sortBy
+ * @property-read HigherOrderCollectionProxy<'sortByDesc', TValue, static> $sortByDesc
+ * @property-read HigherOrderCollectionProxy<'skipUntil', TValue, static> $skipUntil
+ * @property-read HigherOrderCollectionProxy<'skipWhile', TValue, static> $skipWhile
+ * @property-read HigherOrderCollectionProxy<'sum', TValue, static> $sum
+ * @property-read HigherOrderCollectionProxy<'takeUntil', TValue, static> $takeUntil
+ * @property-read HigherOrderCollectionProxy<'takeWhile', TValue, static> $takeWhile
+ * @property-read HigherOrderCollectionProxy<'unique', TValue, static> $unique
+ * @property-read HigherOrderCollectionProxy<'until', TValue, static> $until
  */
 trait EnumeratesValues
 {
