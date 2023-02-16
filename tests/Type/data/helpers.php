@@ -161,3 +161,24 @@ function valueHelper()
 
     assertType('5', value(5));
 }
+
+function transformHelper()
+{
+    assertType('array|null', transform(User::first(), fn (User $user) => $user->toArray()));
+    assertType('array', transform(User::sole(), fn (User $user) => $user->toArray()));
+
+    // falls back to default if provided
+    assertType('int|string', transform(optional(), fn () => 1, 'default'));
+    // default as callable
+    assertType('int|string', transform(optional(), fn () => 1, fn () => 'string'));
+
+    // non empty values
+    assertType('int', transform('filled', fn () => 1));
+    assertType('int', transform(['filled'], fn () => 1));
+    assertType('int', transform(new User(), fn () => 1));
+
+    // "empty" values
+    assertType('null', transform(null, fn () => 1));
+    assertType('null', transform('', fn () => 1));
+    assertType('null', transform([], fn () => 1));
+}
