@@ -29,7 +29,7 @@ jobs:
             checkout-with: |
               {
                 "repository": "monicahq/chandler",
-                "ref": "02b815ab7911ec7341cd55a4eecf352e666b649f",
+                "ref": "d95e055e50fc583435c0a363666f947054663f88",
                 "path": "e2e"
               }
           - repo: "koel/koel"
@@ -37,7 +37,7 @@ jobs:
             checkout-with: |
               {
                 "repository": "koel/koel",
-                "ref": "bf29f7e32e4cb6fd330ef3225864fd4234a93f0a",
+                "ref": "545a303e0a3eca6a10909cdda73dd04264683727",
                 "path": "e2e"
               }
           - repo: "canvural/larastan-test"
