@@ -152,9 +152,9 @@ assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', EloquentCol
 assertType('App\TransactionCollection<int, App\Transaction>', TransactionCollection::make([new Transaction()]));
 assertType('Illuminate\Support\Collection<int, int>', SupportCollection::make([1, 2, 3]));
 
-assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', EloquentCollection::wrap([new User()]));
-assertType('App\TransactionCollection<int, App\Transaction>', TransactionCollection::wrap([new Transaction()]));
-assertType('Illuminate\Support\Collection<int, int>', SupportCollection::wrap([1, 2, 3]));
+assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', EloquentCollection::wrap([new User()]));
+assertType('App\TransactionCollection<(int|string), App\Transaction>', TransactionCollection::wrap([new Transaction()]));
+assertType('Illuminate\Support\Collection<(int|string), int>', SupportCollection::wrap([1, 2, 3]));
 
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', EloquentCollection::times(10, fn ($int) => new User));
 assertType('App\TransactionCollection<int, App\Transaction>', TransactionCollection::times(10, fn ($int) => new Transaction));
