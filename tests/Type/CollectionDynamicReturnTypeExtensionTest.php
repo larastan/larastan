@@ -12,6 +12,7 @@ class CollectionDynamicReturnTypeExtensionTest extends \PHPStan\Testing\TypeInfe
     public function dataFileAsserts(): iterable
     {
         yield from $this->gatherAssertTypes(__DIR__.'/data/collection-filter.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/data/collection-where-not-null.php');
 
         if (PHP_VERSION_ID >= 70400) {
             yield from $this->gatherAssertTypes(__DIR__.'/data/collection-filter-arrow-function.php');
