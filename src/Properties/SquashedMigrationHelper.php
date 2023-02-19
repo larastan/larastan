@@ -107,7 +107,7 @@ final class SquashedMigrationHelper
                 $schemaFiles += iterator_to_array(
                     new RegexIterator(
                         new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
-                        '/\.dump/i'
+                        '/\.dump|\.sql/i'
                     )
                 );
             }
