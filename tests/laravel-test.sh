@@ -3,9 +3,6 @@
 set -e
 
 LARAVEL_VERSION_CONSTRAINT="${1:-^9.0}"
-if [ "${LARAVEL_VERSION_CONSTRAINT}" == "^10.0" ]; then
-    LARAVEL_VERSION_CONSTRAINT="dev-master"
-fi
 
 echo "Install Laravel ${LARAVEL_VERSION_CONSTRAINT}"
 composer create-project --quiet --prefer-dist "laravel/laravel:${LARAVEL_VERSION_CONSTRAINT}" ../laravel
