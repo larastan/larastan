@@ -14,9 +14,6 @@ composer config repositories.0 '{ "type": "path", "url": "../larastan", "options
 # No version information with "type":"path"
 composer require --dev "nunomaduro/larastan:*"
 
-echo "Fix commented namespace property in RouteServiceProvider"
-sed -i -e 's|^\(\s*\)// \(protected \$namespace =\).*$|\1\2 null;|' app/Providers/RouteServiceProvider.php
-
 cat >phpstan.neon <<"EOF"
 includes:
     - ./vendor/nunomaduro/larastan/extension.neon
