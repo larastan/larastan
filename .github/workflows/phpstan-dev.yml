@@ -1,8 +1,9 @@
 name: "PHPStan dev"
 
 on:
-  schedule:
-    - cron: "1 0 * * *"
+  #schedule:
+  #  - cron: "1 0 * * *"
+  workflow_dispatch: null
 
 jobs:
   phpstan-dev:
