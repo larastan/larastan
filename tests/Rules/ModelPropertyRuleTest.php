@@ -25,7 +25,7 @@ class ModelPropertyRuleTest extends RuleTestCase
 
     public function testModelPropertyRuleOnBuilder(): void
     {
-        $this->analyse([__DIR__ . '/data/model-property-builder.php'], [
+        $this->analyse([__DIR__.'/data/model-property-builder.php'], [
             [
                 'Property \'foo\' does not exist in App\\User model.',
                 4,
@@ -71,7 +71,7 @@ class ModelPropertyRuleTest extends RuleTestCase
 
     public function testModelPropertyRuleOnRelation(): void
     {
-        $this->analyse([__DIR__ . '/data/model-property-relation.php'], [
+        $this->analyse([__DIR__.'/data/model-property-relation.php'], [
             [
                 'Property \'foo\' does not exist in App\\Account model.',
                 4,
@@ -101,7 +101,7 @@ class ModelPropertyRuleTest extends RuleTestCase
 
     public function testModelPropertyRuleOnModel(): void
     {
-        $this->analyse([__DIR__ . '/data/model-property-model.php'], [
+        $this->analyse([__DIR__.'/data/model-property-model.php'], [
             [
                 'Property \'foo\' does not exist in ModelPropertyModel\ModelPropertyOnModel model.',
                 9,
@@ -119,7 +119,7 @@ class ModelPropertyRuleTest extends RuleTestCase
 
     public function testModelPropertyRuleOnModelFactory(): void
     {
-        $this->analyse([__DIR__ . '/data/model-property-model-factory.php'], [
+        $this->analyse([__DIR__.'/data/model-property-model-factory.php'], [
             [
                 'Property \'foo\' does not exist in App\\User model.',
                 7,
@@ -130,7 +130,7 @@ class ModelPropertyRuleTest extends RuleTestCase
     public static function getAdditionalConfigFiles(): array
     {
         return [
-            __DIR__ . '/data/modelPropertyConfig.neon',
+            __DIR__.'/data/modelPropertyConfig.neon',
         ];
     }
 }
