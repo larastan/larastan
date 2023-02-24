@@ -19,7 +19,7 @@ class RelationExistenceRuleTest extends RuleTestCase
 
     public function testRule(): void
     {
-        $this->analyse([__DIR__.'/Data/relation-existence-rule.php'], [
+        $this->analyse([__DIR__ . '/data/relation-existence-rule.php'], [
             [
                 'Relation \'foo\' is not found in App\User model.',
                 5,

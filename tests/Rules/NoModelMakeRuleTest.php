@@ -18,12 +18,12 @@ class NoModelMakeRuleTest extends RuleTestCase
 
     public function testNoFalsePositives(): void
     {
-        $this->analyse([__DIR__.'/Data/CorrectModelInstantiation.php'], []);
+        $this->analyse([__DIR__ . '/data/CorrectModelInstantiation.php'], []);
     }
 
     public function testModelMake(): void
     {
-        $this->analyse([__DIR__.'/Data/ModelMake.php'], [
+        $this->analyse([__DIR__ . '/data/ModelMake.php'], [
             ["Called 'Model::make()' which performs unnecessary work, use 'new Model()'.", 13],
             ["Called 'Model::make()' which performs unnecessary work, use 'new Model()'.", 20],
         ]);

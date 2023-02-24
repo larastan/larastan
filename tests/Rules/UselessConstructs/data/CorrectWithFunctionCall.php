@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rules\Data\UselessConstructs;
+namespace Rules\UselessConstructs\data;
 
 class CorrectWithFunctionCall
 {
