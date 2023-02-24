@@ -25,7 +25,7 @@
     },
     "require-dev": {
         "nikic/php-parser": "^4.15.2",
-        "orchestra/testbench": "^7.19.0|^8.0.0",
+        "orchestra/testbench": "^7.19.0 || ^8.0.0",
         "phpunit/phpunit": "^9.5.27"
     },
     "suggest": {
