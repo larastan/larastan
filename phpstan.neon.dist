@@ -6,5 +6,5 @@ parameters:
     phpVersion: 80000
     paths:
         - src
-	featureToggles:
-		instanceofType: false
+    featureToggles:
+        instanceofType: false
