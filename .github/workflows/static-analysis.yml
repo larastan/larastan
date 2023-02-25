@@ -26,11 +26,16 @@ jobs:
       matrix:
         php: ["8.0", "8.1", "8.2"]
         laravel: ["^9.0", "^10.0"]
+        dependencies: ["highest"]
         exclude:
           - php: "8.0"
             laravel: "^10.0"
+        include:
+          - php: "8.0"
+            laravel: "^9.0"
+            dependencies: "lowest"
 
-    name: "PHP ${{ matrix.php }} - L${{ matrix.laravel }}"
+    name: "PHP ${{ matrix.php }} - L${{ matrix.laravel }} ${{ matrix.dependencies == 'highest' && '↑' || '↓' }}"
 
     runs-on: "ubuntu-latest"
 
@@ -47,7 +52,12 @@ jobs:
           coverage: "none"
 
       - name: "Install dependencies from composer.json"
+        if: "matrix.dependencies != 'lowest'"
         run: "composer update --with='laravel/framework:${{ matrix.laravel }}' --no-interaction --no-progress"
+
+      - name: "Install lowest dependencies from composer.json"
+        if: "matrix.dependencies == 'lowest'"
+        run: "composer update --with='laravel/framework:${{ matrix.laravel }}' --no-interaction --no-progress --prefer-lowest"
 
       - name: "Execute static analysis"
         run: "composer run-script test:types"
