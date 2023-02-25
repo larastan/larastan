@@ -37,7 +37,7 @@ jobs:
             checkout-with: |
               {
                 "repository": "koel/koel",
-                "ref": "545a303e0a3eca6a10909cdda73dd04264683727",
+                "ref": "050d898857e7876685bb0c38eaea3651b915651a",
                 "path": "e2e"
               }
           - repo: "canvural/larastan-test"
