@@ -1,12 +1,227 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^PHPDoc tag @var with type string is not subtype of native type non\\-empty\\-string\\|false\\.$#"
+			count: 1
+			path: src/ApplicationResolver.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\Generic\\\\GenericObjectType is error\\-prone and deprecated\\.$#"
+			count: 1
+			path: src/Methods/BuilderHelper.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\TypeWithClassName is error\\-prone and deprecated\\. Use Type\\:\\:getObjectClassNames\\(\\) or Type\\:\\:getObjectClassReflections\\(\\) instead\\.$#"
+			count: 2
+			path: src/Methods/BuilderHelper.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\TypeWithClassName is error\\-prone and deprecated\\. Use Type\\:\\:getObjectClassNames\\(\\) or Type\\:\\:getObjectClassReflections\\(\\) instead\\.$#"
+			count: 1
+			path: src/Methods/EloquentBuilderForwardsCallsExtension.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\TypeWithClassName is error\\-prone and deprecated\\. Use Type\\:\\:getObjectClassNames\\(\\) or Type\\:\\:getObjectClassReflections\\(\\) instead\\.$#"
+			count: 1
+			path: src/Methods/HigherOrderTapProxyExtension.php
+
+		-
 			message: "#^Creating new PHPStan\\\\Reflection\\\\Php\\\\DummyParameter is not covered by backward compatibility promise\\. The class might change in a minor PHPStan version\\.$#"
 			count: 1
 			path: src/Methods/ModelForwardsCallsExtension.php
 
 		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\TypeWithClassName is error\\-prone and deprecated\\. Use Type\\:\\:getObjectClassNames\\(\\) or Type\\:\\:getObjectClassReflections\\(\\) instead\\.$#"
+			count: 1
+			path: src/Methods/RelationForwardsCallsExtension.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\Generic\\\\GenericObjectType is error\\-prone and deprecated\\.$#"
+			count: 1
+			path: src/Properties/ModelAccessorExtension.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\ObjectType is error\\-prone and deprecated\\. Use Type\\:\\:isObject\\(\\) or Type\\:\\:getObjectClassNames\\(\\) instead\\.$#"
+			count: 1
+			path: src/Properties/ModelCastHelper.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\TypeWithClassName is error\\-prone and deprecated\\. Use Type\\:\\:getObjectClassNames\\(\\) or Type\\:\\:getObjectClassReflections\\(\\) instead\\.$#"
+			count: 1
+			path: src/Properties/ModelCastHelper.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\Generic\\\\GenericObjectType is error\\-prone and deprecated\\.$#"
+			count: 1
+			path: src/Properties/ModelRelationsExtension.php
+
+		-
+			message: "#^Instanceof between PhpMyAdmin\\\\SqlParser\\\\Components\\\\CreateDefinition and PhpMyAdmin\\\\SqlParser\\\\Components\\\\CreateDefinition will always evaluate to true\\.$#"
+			count: 1
+			path: src/Properties/SquashedMigrationHelper.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\TypeWithClassName is error\\-prone and deprecated\\. Use Type\\:\\:getObjectClassNames\\(\\) or Type\\:\\:getObjectClassReflections\\(\\) instead\\.$#"
+			count: 1
+			path: src/ReturnTypes/BuilderModelFindExtension.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\Generic\\\\GenericObjectType is error\\-prone and deprecated\\.$#"
+			count: 1
+			path: src/ReturnTypes/CollectionFilterDynamicReturnTypeExtension.php
+
+		-
 			message: "#^Constant LARAVEL_VERSION not found\\.$#"
 			count: 1
 			path: src/ReturnTypes/CollectionGenericStaticMethodDynamicMethodReturnTypeExtension.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\Generic\\\\GenericObjectType is error\\-prone and deprecated\\.$#"
+			count: 1
+			path: src/ReturnTypes/CollectionGenericStaticMethodDynamicMethodReturnTypeExtension.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\ObjectType is error\\-prone and deprecated\\. Use Type\\:\\:isObject\\(\\) or Type\\:\\:getObjectClassNames\\(\\) instead\\.$#"
+			count: 1
+			path: src/ReturnTypes/CollectionGenericStaticMethodDynamicMethodReturnTypeExtension.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\TypeWithClassName is error\\-prone and deprecated\\. Use Type\\:\\:getObjectClassNames\\(\\) or Type\\:\\:getObjectClassReflections\\(\\) instead\\.$#"
+			count: 1
+			path: src/ReturnTypes/CollectionGenericStaticMethodDynamicMethodReturnTypeExtension.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\Generic\\\\GenericObjectType is error\\-prone and deprecated\\.$#"
+			count: 1
+			path: src/ReturnTypes/CollectionGenericStaticMethodDynamicStaticMethodReturnTypeExtension.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\ObjectType is error\\-prone and deprecated\\. Use Type\\:\\:isObject\\(\\) or Type\\:\\:getObjectClassNames\\(\\) instead\\.$#"
+			count: 1
+			path: src/ReturnTypes/CollectionGenericStaticMethodDynamicStaticMethodReturnTypeExtension.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\Generic\\\\GenericObjectType is error\\-prone and deprecated\\.$#"
+			count: 1
+			path: src/ReturnTypes/CollectionWhereNotNullDynamicReturnTypeExtension.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\ObjectType is error\\-prone and deprecated\\. Use Type\\:\\:isObject\\(\\) or Type\\:\\:getObjectClassNames\\(\\) instead\\.$#"
+			count: 1
+			path: src/ReturnTypes/EloquentBuilderExtension.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\TypeWithClassName is error\\-prone and deprecated\\. Use Type\\:\\:getObjectClassNames\\(\\) or Type\\:\\:getObjectClassReflections\\(\\) instead\\.$#"
+			count: 1
+			path: src/ReturnTypes/EloquentBuilderExtension.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\Generic\\\\GenericObjectType is error\\-prone and deprecated\\.$#"
+			count: 1
+			path: src/ReturnTypes/HigherOrderTapProxyExtension.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\TypeWithClassName is error\\-prone and deprecated\\. Use Type\\:\\:getObjectClassNames\\(\\) or Type\\:\\:getObjectClassReflections\\(\\) instead\\.$#"
+			count: 1
+			path: src/ReturnTypes/HigherOrderTapProxyExtension.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\TypeWithClassName is error\\-prone and deprecated\\. Use Type\\:\\:getObjectClassNames\\(\\) or Type\\:\\:getObjectClassReflections\\(\\) instead\\.$#"
+			count: 1
+			path: src/ReturnTypes/ModelFindExtension.php
+
+		-
+			message: "#^Instanceof between PhpParser\\\\Node\\\\Expr and PhpParser\\\\Node\\\\Expr will always evaluate to true\\.$#"
+			count: 1
+			path: src/ReturnTypes/ModelFindExtension.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\TypeWithClassName is error\\-prone and deprecated\\. Use Type\\:\\:getObjectClassNames\\(\\) or Type\\:\\:getObjectClassReflections\\(\\) instead\\.$#"
+			count: 1
+			path: src/ReturnTypes/NewModelQueryDynamicMethodReturnTypeExtension.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\TypeWithClassName is error\\-prone and deprecated\\. Use Type\\:\\:getObjectClassNames\\(\\) or Type\\:\\:getObjectClassReflections\\(\\) instead\\.$#"
+			count: 1
+			path: src/ReturnTypes/RelationCollectionExtension.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\TypeWithClassName is error\\-prone and deprecated\\. Use Type\\:\\:getObjectClassNames\\(\\) or Type\\:\\:getObjectClassReflections\\(\\) instead\\.$#"
+			count: 1
+			path: src/ReturnTypes/RelationFindExtension.php
+
+		-
+			message: "#^Instanceof between PhpParser\\\\Node\\\\Expr and PhpParser\\\\Node\\\\Expr will always evaluate to true\\.$#"
+			count: 1
+			path: src/Rules/ModelProperties/ModelPropertiesRuleHelper.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\TypeWithClassName is error\\-prone and deprecated\\. Use Type\\:\\:getObjectClassNames\\(\\) or Type\\:\\:getObjectClassReflections\\(\\) instead\\.$#"
+			count: 1
+			path: src/Rules/ModelProperties/ModelPropertyStaticCallRule.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\Generic\\\\GenericObjectType is error\\-prone and deprecated\\.$#"
+			count: 2
+			path: src/Rules/ModelRuleHelper.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\TypeWithClassName is error\\-prone and deprecated\\. Use Type\\:\\:getObjectClassNames\\(\\) or Type\\:\\:getObjectClassReflections\\(\\) instead\\.$#"
+			count: 1
+			path: src/Rules/ModelRuleHelper.php
+
+		-
+			message: "#^Instanceof between PhpParser\\\\Node\\\\Name and PhpParser\\\\Node\\\\Name will always evaluate to true\\.$#"
+			count: 1
+			path: src/Rules/NoUnnecessaryCollectionCallRule.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\TypeWithClassName is error\\-prone and deprecated\\. Use Type\\:\\:getObjectClassNames\\(\\) or Type\\:\\:getObjectClassReflections\\(\\) instead\\.$#"
+			count: 1
+			path: src/Rules/OctaneCompatibilityRule.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\TypeWithClassName is error\\-prone and deprecated\\. Use Type\\:\\:getObjectClassNames\\(\\) or Type\\:\\:getObjectClassReflections\\(\\) instead\\.$#"
+			count: 1
+			path: src/Support/CollectionHelper.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\Constant\\\\ConstantStringType is error\\-prone and deprecated\\. Use Type\\:\\:getConstantStrings\\(\\) instead\\.$#"
+			count: 2
+			path: src/Types/ModelProperty/GenericModelPropertyType.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\IntersectionType is error\\-prone and deprecated\\.$#"
+			count: 1
+			path: src/Types/ModelProperty/GenericModelPropertyType.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\TypeWithClassName is error\\-prone and deprecated\\. Use Type\\:\\:getObjectClassNames\\(\\) or Type\\:\\:getObjectClassReflections\\(\\) instead\\.$#"
+			count: 1
+			path: src/Types/ModelRelationsDynamicMethodReturnTypeExtension.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\TypeWithClassName is error\\-prone and deprecated\\. Use Type\\:\\:getObjectClassNames\\(\\) or Type\\:\\:getObjectClassReflections\\(\\) instead\\.$#"
+			count: 1
+			path: src/Types/RelationDynamicMethodReturnTypeExtension.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\Generic\\\\GenericClassStringType is error\\-prone and deprecated\\. Use Type\\:\\:isClassStringType\\(\\) and Type\\:\\:getClassStringObjectType\\(\\) instead\\.$#"
+			count: 1
+			path: src/Types/RelationParserHelper.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\TypeWithClassName is error\\-prone and deprecated\\. Use Type\\:\\:getObjectClassNames\\(\\) or Type\\:\\:getObjectClassReflections\\(\\) instead\\.$#"
+			count: 1
+			path: src/Types/RelationParserHelper.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\Constant\\\\ConstantStringType is error\\-prone and deprecated\\. Use Type\\:\\:getConstantStrings\\(\\) instead\\.$#"
+			count: 2
+			path: src/Types/ViewStringType.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\StringType is error\\-prone and deprecated\\. Use Type\\:\\:isString\\(\\) instead\\.$#"
+			count: 2
+			path: src/Types/ViewStringType.php
 
