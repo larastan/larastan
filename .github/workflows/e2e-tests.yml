@@ -37,7 +37,7 @@ jobs:
             checkout-with: |
               {
                 "repository": "koel/koel",
-                "ref": "545a303e0a3eca6a10909cdda73dd04264683727",
+                "ref": "050d898857e7876685bb0c38eaea3651b915651a",
                 "path": "e2e"
               }
           - repo: "canvural/larastan-test"
@@ -53,7 +53,7 @@ jobs:
             checkout-with: |
               {
                 "repository": "canvural/larastan-strict-rules",
-                "ref": "872048172bb2b3501f92438e0462aa7f80111f44",
+                "ref": "16ceaa41a54aacc5481d957dd625590e6acd321c",
                 "path": "e2e"
               }
 
