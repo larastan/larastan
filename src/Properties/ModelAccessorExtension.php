@@ -12,7 +12,7 @@ use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\ObjectType;
+use PHPStan\Type\MixedType;
 
 /**
  * @internal
@@ -36,11 +36,11 @@ final class ModelAccessorExtension implements PropertiesClassReflectionExtension
 
             $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
 
-            if (! $returnType instanceof GenericObjectType) {
+            if ($returnType->getObjectClassReflections() === [] || ! $returnType->getObjectClassReflections()[0]->isGeneric()) {
                 return false;
             }
 
-            if (! (new ObjectType(Attribute::class))->isSuperTypeOf($returnType)->yes()) {
+            if (! (new GenericObjectType(Attribute::class, [new MixedType(), new MixedType()]))->isSuperTypeOf($returnType)->yes()) {
                 return false;
             }
 

@@ -20,7 +20,7 @@ use function PHPStan\Testing\assertType;
 
 function foo(User $user, Account $account, Role $role, Group $group, Team $team, GuardedModel $guardedModel, Thread $thread, Address $address)
 {
-    assertType('int', $user->newStyleAttribute);
+    assertType('*ERROR*', $user->newStyleAttribute); // Doesn't have generic type, so we treat as it doesnt exist
     assertType('int', $user->stringButInt);
     assertType('string', $user->email);
     assertType('array', $user->allowed_ips);

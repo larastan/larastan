@@ -17,6 +17,7 @@ function foo(Foo $foo, Bar $bar, Account $account): void
     assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelations\Bar>', $foo->hasManyThroughRelation);
     assertType('ModelPropertiesRelations\Foo', $bar->belongsToRelation);
     assertType('mixed', $bar->morphToRelation);
+    assertType('App\Account|App\User', $bar->morphToUnionRelation);
     assertType('ModelPropertiesRelations\Bar|null', $foo->hasManyRelation->first());
     assertType('ModelPropertiesRelations\Bar|null', $foo->hasManyRelation()->find(1));
     assertType('App\User|null', $account->ownerRelation);
@@ -64,6 +65,12 @@ class Bar extends Model
 
     /** @return MorphTo<Model, Bar> */
     public function morphToRelation(): MorphTo
+    {
+        return $this->morphTo('foo');
+    }
+
+    /** @return MorphTo<User|Account, Bar> */
+    public function morphToUnionRelation(): MorphTo
     {
         return $this->morphTo('foo');
     }

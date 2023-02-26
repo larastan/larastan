@@ -9,8 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
-use NunoMaduro\Larastan\Methods\BuilderHelper;
-use PhpParser\Node\Expr;
+use NunoMaduro\Larastan\Support\CollectionHelper;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
@@ -19,29 +18,18 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\ErrorType;
-use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\IntegerType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\TypeWithClassName;
 
 /**
  * @internal
  */
 final class ModelFindExtension implements DynamicStaticMethodReturnTypeExtension
 {
-    /** @var BuilderHelper */
-    private $builderHelper;
-
-    /** @var ReflectionProvider */
-    private $reflectionProvider;
-
-    public function __construct(ReflectionProvider $reflectionProvider, BuilderHelper $builderHelper)
+    public function __construct(private ReflectionProvider $reflectionProvider, private CollectionHelper $collectionHelper)
     {
-        $this->builderHelper = $builderHelper;
-        $this->reflectionProvider = $reflectionProvider;
     }
 
     /**
@@ -86,47 +74,51 @@ final class ModelFindExtension implements DynamicStaticMethodReturnTypeExtension
         $class = $methodCall->class;
 
         if ($class instanceof Name) {
-            $modelName = $class->toString();
-        } elseif ($class instanceof Expr) {
+            $modelNames = [$class->toString()];
+        } else {
             $type = $scope->getType($class);
 
-            if ($type instanceof TypeWithClassName) {
-                $modelName = $type->getClassName();
+            if ($type->getObjectClassNames() !== []) {
+                $modelNames = $type->getObjectClassNames();
             } elseif (
                 $type->isClassStringType()->yes() &&
-                count($type->getReferencedClasses()) === 1
+                count($type->getReferencedClasses()) > 0
             ) {
-                $modelName = $type->getReferencedClasses()[0];
+                $modelNames = $type->getReferencedClasses();
             } else {
                 return new ErrorType();
             }
-        } else {
-            return new ErrorType();
         }
 
-        $returnType = $methodReflection->getVariants()[0]->getReturnType();
-        $argType = $scope->getType($methodCall->getArgs()[0]->value);
+        $types = [];
 
-        if ($argType->isIterable()->yes()) {
-            if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
-                $collectionClassName = $this->builderHelper->determineCollectionClassName($modelName);
+        foreach ($modelNames as $modelName) {
+            $returnType = $methodReflection->getVariants()[0]->getReturnType();
+            $argType = $scope->getType($methodCall->getArgs()[0]->value);
 
-                return new GenericObjectType($collectionClassName, [new IntegerType(), new ObjectType($modelName)]);
+            if ($argType->isIterable()->yes()) {
+                if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
+                    $types[] = $this->collectionHelper->determineCollectionClass($modelName);
+                    continue;
+                }
+
+                $types[] = TypeCombinator::remove($returnType, new ObjectType($modelName));
+                continue;
             }
 
-            return TypeCombinator::remove($returnType, new ObjectType($modelName));
+            if ($argType instanceof MixedType) {
+                $types[] = $returnType;
+            } else {
+                $types[] = TypeCombinator::remove(
+                    TypeCombinator::remove(
+                        $returnType,
+                        new ArrayType(new MixedType(), new ObjectType($modelName))
+                    ),
+                    new ObjectType(Collection::class)
+                );
+            }
         }
 
-        if ($argType instanceof MixedType) {
-            return $returnType;
-        }
-
-        return TypeCombinator::remove(
-            TypeCombinator::remove(
-                $returnType,
-                new ArrayType(new MixedType(), new ObjectType($modelName))
-            ),
-            new ObjectType(Collection::class)
-        );
+        return TypeCombinator::union(...$types);
     }
 }

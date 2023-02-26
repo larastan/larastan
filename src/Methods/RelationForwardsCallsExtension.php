@@ -17,10 +17,8 @@ use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\Generic\TemplateMixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
-use PHPStan\Type\TypeWithClassName;
 
 final class RelationForwardsCallsExtension implements MethodsClassReflectionExtension
 {
@@ -77,21 +75,16 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
             return null;
         }
 
-        /** @var Type|TemplateMixedType|null $relatedModel */
         $relatedModel = $classReflection->getActiveTemplateTypeMap()->getType('TRelatedModel');
 
         if ($relatedModel === null) {
             return null;
         }
 
-        if ($relatedModel instanceof TypeWithClassName) {
-            $modelReflection = $relatedModel->getClassReflection();
+        if ($relatedModel->getObjectClassReflections() !== []) {
+            $modelReflection = $relatedModel->getObjectClassReflections()[0];
         } else {
             $modelReflection = $this->reflectionProvider->getClass(Model::class);
-        }
-
-        if ($modelReflection === null) {
-            return null;
         }
 
         $builderName = $this->builderHelper->determineBuilderName($modelReflection->getName());

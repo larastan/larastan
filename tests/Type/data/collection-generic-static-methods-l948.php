@@ -84,6 +84,7 @@ assertType('App\Transaction|App\TransactionCollection<int, App\Transaction>|null
 assertType('App\User|App\UserCollection|null', $secondCustomEloquentCollection->pop(2));
 assertType('Illuminate\Support\Collection<int, int>|int|null', $items->pop(3));
 
+assertType('App\RoleCollection', User::firstOrFail(1)->roles->random());
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->random(1));
 assertType('App\TransactionCollection<int, App\Transaction>', $customEloquentCollection->random(2));
 assertType('App\UserCollection', $secondCustomEloquentCollection->random(2));
