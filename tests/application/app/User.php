@@ -125,6 +125,18 @@ class User extends Authenticatable
         return $this->hasMany(Account::class);
     }
 
+    /** @phpstan-return HasMany<ModelWithNonGenericCollection> */
+    public function modelsWithNonGenericCollection(): HasMany
+    {
+        return $this->hasMany(ModelWithNonGenericCollection::class);
+    }
+
+    /** @phpstan-return HasMany<ModelWithOnlyValueGenericCollection> */
+    public function modelsWithOnlyValueGenericCollection(): HasMany
+    {
+        return $this->hasMany(ModelWithOnlyValueGenericCollection::class);
+    }
+
     public function transactions(): HasManyThrough
     {
         return $this->hasManyThrough(Transaction::class, Account::class);
@@ -190,9 +202,6 @@ class User extends Authenticatable
         $this->active = 1;
     }
 
-    /**
-     * @return Attribute<int, never>
-     */
     protected function newStyleAttribute(): Attribute
     {
         return Attribute::make(

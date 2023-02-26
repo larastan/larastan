@@ -77,6 +77,6 @@ class ContainerArrayAccessDynamicMethodReturnTypeExtension implements DynamicMet
             $argTypes[] = $scope->getTypeFromValue($resolvedValue);
         }
 
-        return count($argTypes) > 1 ? TypeCombinator::union(...$argTypes) : $argTypes[0];
+        return TypeCombinator::union(...$argTypes);
     }
 }

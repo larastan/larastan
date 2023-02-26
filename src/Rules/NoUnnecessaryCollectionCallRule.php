@@ -287,7 +287,6 @@ class NoUnnecessaryCollectionCallRule implements Rule
         }
 
         if ($call instanceof Node\Expr\StaticCall) {
-            /** @var Node\Name $class */
             $class = $call->class;
             if ($class instanceof Node\Name) {
                 $modelClassName = $class->toCodeString();

@@ -6,7 +6,6 @@ namespace NunoMaduro\Larastan\Types\ModelProperty;
 
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\CompoundType;
-use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\TemplateType;
 use PHPStan\Type\Generic\TemplateTypeMap;
 use PHPStan\Type\Generic\TemplateTypeVariance;
@@ -41,8 +40,10 @@ class GenericModelPropertyType extends ModelPropertyType
 
     public function isSuperTypeOf(Type $type): TrinaryLogic
     {
-        if ($type instanceof ConstantStringType) {
-            return $this->getGenericType()->hasProperty($type->getValue());
+        $constantStrings = $type->getConstantStrings();
+
+        if (count($constantStrings) === 1) {
+            return $this->getGenericType()->hasProperty($constantStrings[0]->getValue());
         }
 
         if ($type instanceof self) {
@@ -73,12 +74,14 @@ class GenericModelPropertyType extends ModelPropertyType
 
     public function inferTemplateTypes(Type $receivedType): TemplateTypeMap
     {
-        if ($receivedType instanceof UnionType || $receivedType instanceof IntersectionType) {
+        if ($receivedType instanceof UnionType || $receivedType instanceof IntersectionType) { // @phpstan-ignore-line
             return $receivedType->inferTemplateTypesOn($this);
         }
 
-        if ($receivedType instanceof ConstantStringType) {
-            $typeToInfer = new ObjectType($receivedType->getValue());
+        $constantStrings = $receivedType->getConstantStrings();
+
+        if (count($constantStrings) === 1) {
+            $typeToInfer = new ObjectType($constantStrings[0]->getValue());
         } elseif ($receivedType instanceof self) {
             $typeToInfer = $receivedType->type;
         } elseif ($receivedType->isClassStringType()->yes()) {
