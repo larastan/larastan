@@ -71,35 +71,33 @@ class BuilderHelper
             return null;
         }
 
-        if ($returnObject instanceof GenericObjectType && $this->checkProperties) {
-            $returnClassReflection = $returnObject->getClassReflection();
+        if (count($returnObject->getObjectClassReflections()) > 0 && $this->checkProperties) {
+            $returnClassReflection = $returnObject->getObjectClassReflections()[0];
 
-            if ($returnClassReflection !== null) {
-                $modelType = $returnClassReflection->getActiveTemplateTypeMap()->getType('TModelClass');
+            $modelType = $returnClassReflection->getActiveTemplateTypeMap()->getType('TModelClass');
 
-                if ($modelType === null) {
-                    $modelType = $returnClassReflection->getActiveTemplateTypeMap()->getType('TRelatedModel');
-                }
+            if ($modelType === null) {
+                $modelType = $returnClassReflection->getActiveTemplateTypeMap()->getType('TRelatedModel');
+            }
 
-                if ($modelType !== null) {
-                    $finder = substr($methodName, 5);
+            if ($modelType !== null) {
+                $finder = substr($methodName, 5);
 
-                    $segments = preg_split(
-                        '/(And|Or)(?=[A-Z])/', $finder, -1, PREG_SPLIT_DELIM_CAPTURE
-                    );
+                $segments = preg_split(
+                    '/(And|Or)(?=[A-Z])/', $finder, -1, PREG_SPLIT_DELIM_CAPTURE
+                );
 
-                    if ($segments !== false) {
-                        $trinaryLogic = TrinaryLogic::createYes();
+                if ($segments !== false) {
+                    $trinaryLogic = TrinaryLogic::createYes();
 
-                        foreach ($segments as $segment) {
-                            if ($segment !== 'And' && $segment !== 'Or') {
-                                $trinaryLogic = $trinaryLogic->and($modelType->hasProperty(Str::snake($segment)));
-                            }
+                    foreach ($segments as $segment) {
+                        if ($segment !== 'And' && $segment !== 'Or') {
+                            $trinaryLogic = $trinaryLogic->and($modelType->hasProperty(Str::snake($segment)));
                         }
+                    }
 
-                        if (! $trinaryLogic->yes()) {
-                            return null;
-                        }
+                    if (! $trinaryLogic->yes()) {
+                        return null;
                     }
                 }
             }
@@ -212,25 +210,12 @@ class BuilderHelper
             return EloquentBuilder::class;
         }
 
-        if ($returnType instanceof TypeWithClassName) {
-            return $returnType->getClassName();
+        $classNames = $returnType->getObjectClassNames();
+
+        if (count($classNames) === 1) {
+            return $classNames[0];
         }
 
         return $returnType->describe(VerbosityLevel::value());
-    }
-
-    public function determineCollectionClassName(string $modelClassName): string
-    {
-        try {
-            $newCollectionMethod = $this->reflectionProvider->getClass($modelClassName)->getNativeMethod('newCollection');
-            $returnType = ParametersAcceptorSelector::selectSingle($newCollectionMethod->getVariants())->getReturnType();
-            if ($returnType instanceof TypeWithClassName) {
-                return $returnType->getClassName();
-            }
-
-            return $returnType->describe(VerbosityLevel::value());
-        } catch (MissingMethodFromReflectionException|ShouldNotHappenException $e) {
-            return Collection::class;
-        }
     }
 }

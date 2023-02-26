@@ -34,24 +34,24 @@ class CollectionFilterDynamicReturnTypeExtension implements DynamicMethodReturnT
         MethodReflection $methodReflection,
         MethodCall $methodCall,
         Scope $scope
-    ): Type {
+    ): ?Type {
         $calledOnType = $scope->getType($methodCall->var);
 
-        if (! $calledOnType instanceof \PHPStan\Type\Generic\GenericObjectType) {
-            return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+        if ($calledOnType->getObjectClassReflections() === [] || ! $calledOnType->getObjectClassReflections()[0]->isGeneric()) {
+            return null;
         }
 
         $keyType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TKey');
         $valueType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TValue');
 
         if ($keyType === null || $valueType === null) {
-            return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+            return null;
         }
 
         if (count($methodCall->getArgs()) < 1) {
             $nonFalseyTypes = TypeCombinator::removeFalsey($valueType);
 
-            return new GenericObjectType($calledOnType->getClassName(), [$keyType, $nonFalseyTypes]);
+            return new GenericObjectType($calledOnType->getObjectClassNames()[0], [$keyType, $nonFalseyTypes]);
         }
 
         $callbackArg = $methodCall->getArgs()[0]->value;
@@ -84,6 +84,6 @@ class CollectionFilterDynamicReturnTypeExtension implements DynamicMethodReturnT
             $valueType = $scope->getVariableType($itemVariableName);
         }
 
-        return new GenericObjectType($calledOnType->getClassName(), [$keyType, $valueType]);
+        return new GenericObjectType($calledOnType->getObjectClassNames()[0], [$keyType, $valueType]);
     }
 }

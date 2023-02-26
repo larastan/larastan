@@ -76,7 +76,6 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             return null;
         }
 
-        /** @var Type|TemplateMixedType|null $modelType */
         $modelType = $classReflection->getActiveTemplateTypeMap()->getType('TModelClass');
 
         // Generic type is not specified
@@ -88,14 +87,10 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             $modelType = $modelType->getBound();
         }
 
-        if ($modelType instanceof TypeWithClassName) {
-            $modelReflection = $modelType->getClassReflection();
+        if ($modelType->getObjectClassReflections() !== []) {
+            $modelReflection = $modelType->getObjectClassReflections()[0];
         } else {
             $modelReflection = $this->reflectionProvider->getClass(Model::class);
-        }
-
-        if ($modelReflection === null) {
-            return null;
         }
 
         $ref = $this->builderHelper->searchOnEloquentBuilder($classReflection, $methodName, $modelReflection);
@@ -104,7 +99,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             // Special case for `SoftDeletes` trait
             if (
                 in_array($methodName, ['withTrashed', 'onlyTrashed', 'withoutTrashed', 'restore'], true) &&
-                in_array(SoftDeletes::class, array_keys($modelReflection->getTraits(true)))
+                array_key_exists(SoftDeletes::class, $modelReflection->getTraits(true))
             ) {
                 $ref = $this->reflectionProvider->getClass(SoftDeletes::class)->getMethod($methodName, new OutOfClassScope());
 

@@ -74,10 +74,6 @@ final class SquashedMigrationHelper
                 }
 
                 foreach ($createStatement->fields as $field) {
-                    if (! $field instanceof CreateDefinition) {
-                        continue;
-                    }
-
                     if ($field->name === null || $field->type === null) {
                         continue;
                     }

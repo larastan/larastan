@@ -36,7 +36,7 @@ final class ModelAccessorExtension implements PropertiesClassReflectionExtension
 
             $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
 
-            if (! $returnType instanceof GenericObjectType) {
+            if ($returnType->getObjectClassReflections() === [] || ! $returnType->getObjectClassReflections()[0]->isGeneric()) {
                 return false;
             }
 

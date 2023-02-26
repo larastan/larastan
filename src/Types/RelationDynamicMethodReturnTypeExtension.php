@@ -56,7 +56,9 @@ class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTyp
         $functionVariant = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
         $returnType = $functionVariant->getReturnType();
 
-        if (! $returnType instanceof TypeWithClassName) {
+        $classNames = $returnType->getObjectClassNames();
+
+        if (count($classNames) !== 1) {
             return $returnType;
         }
 
@@ -69,7 +71,7 @@ class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTyp
         if (count($methodCall->getArgs()) === 0) {
             // Special case for MorphTo. `morphTo` can be called without arguments.
             if ($methodReflection->getName() === 'morphTo') {
-                return new GenericObjectType($returnType->getClassName(), [new ObjectType(Model::class), $calledOnType]);
+                return new GenericObjectType($classNames[0], [new ObjectType(Model::class), $calledOnType]);
             }
 
             return $returnType;
@@ -90,9 +92,9 @@ class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTyp
 
         // Special case for BelongsTo. We need to add the child model as a generic type also.
         if ((new ObjectType(BelongsTo::class))->isSuperTypeOf($returnType)->yes()) {
-            return new GenericObjectType($returnType->getClassName(), [new ObjectType($argClassName), $calledOnType]);
+            return new GenericObjectType($classNames[0], [new ObjectType($argClassName), $calledOnType]);
         }
 
-        return new GenericObjectType($returnType->getClassName(), [new ObjectType($argClassName)]);
+        return new GenericObjectType($classNames[0], [new ObjectType($argClassName)]);
     }
 }

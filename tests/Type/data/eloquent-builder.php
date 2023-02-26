@@ -7,10 +7,13 @@ namespace EloquentBuilder;
 use App\Post;
 use App\PostBuilder;
 use App\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use function PHPStan\Testing\assertType;
+
+interface OnlyUsers {}
 
 function foo(): void
 {
@@ -195,7 +198,8 @@ function testCallingQueryBuilderMethodOnEloquentBuilderReturnsEloquentBuilder(Bu
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $builder->whereNotNull('test'));
 }
 
-function doFoo(User $user, Post $post): void
+/** @param OnlyUsers&User $userAndAuth */
+function doFoo(User $user, Post $post, $userAndAuth): void
 {
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->newQuery());
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->newModelQuery());
@@ -210,6 +214,13 @@ function doFoo(User $user, Post $post): void
     assertType('App\PostBuilder<App\Post>', $post->newQueryWithoutScopes());
     assertType('App\PostBuilder<App\Post>', $post->newQueryWithoutScope('foo'));
     assertType('App\PostBuilder<App\Post>', $post->newQueryForRestoration([1]));
+
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $userAndAuth->newQuery());
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $userAndAuth->newModelQuery());
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $userAndAuth->newQueryWithoutRelationships());
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $userAndAuth->newQueryWithoutScopes());
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $userAndAuth->newQueryWithoutScope('foo'));
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $userAndAuth->newQueryForRestoration([1]));
 
     assertType('Illuminate\Support\LazyCollection<int, App\User>', User::query()->lazy());
     assertType('Illuminate\Support\LazyCollection<int, App\User>', User::query()->lazyById());

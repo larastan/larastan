@@ -2,6 +2,7 @@
 
 namespace Model;
 
+use App\Account;
 use App\Post;
 use App\PostBuilder;
 use App\Thread;
@@ -27,6 +28,18 @@ function testFindOnGenericModel(Model $model)
 function testFindOnModelClassString(string $modelClass)
 {
     assertType('Illuminate\Database\Eloquent\Model|null', $modelClass::find(1));
+}
+
+/**
+ * @param class-string<User>|class-string<Post> $modelClass
+ * @param class-string<User>|class-string<Account> $customCollectionModelClass
+ */
+function testUnionOfClassStrings(string $modelClass, string $customCollectionModelClass)
+{
+    assertType('App\Post|App\User|null', $modelClass::find(1));
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\Post>|Illuminate\Database\Eloquent\Collection<int, App\User>', $modelClass::find([1, 2, 3]));
+    assertType('App\AccountCollection<int, App\Account>|Illuminate\Database\Eloquent\Collection<int, App\User>', $customCollectionModelClass::find([1, 2, 3]));
+    assertType('App\AccountCollection<int, App\Account>|Illuminate\Database\Eloquent\Collection<int, App\User>', $customCollectionModelClass::all());
 }
 
 function testFindCanReturnCollection()

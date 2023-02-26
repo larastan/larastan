@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Methods\BuilderHelper;
+use NunoMaduro\Larastan\Support\CollectionHelper;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
@@ -23,16 +24,9 @@ use PHPStan\Type\TypeWithClassName;
 
 final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
 {
-    /** @var BuilderHelper */
-    private $builderHelper;
 
-    /** @var ReflectionProvider */
-    private $reflectionProvider;
-
-    public function __construct(ReflectionProvider $reflectionProvider, BuilderHelper $builderHelper)
+    public function __construct(private ReflectionProvider $reflectionProvider, private CollectionHelper $collectionHelper)
     {
-        $this->builderHelper = $builderHelper;
-        $this->reflectionProvider = $reflectionProvider;
     }
 
     public function getClass(): string
@@ -59,7 +53,11 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
 
         $templateTypeMap = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap();
 
-        if (! $templateTypeMap->getType('TModelClass') instanceof TypeWithClassName) {
+        if (! $templateTypeMap->hasType('TModelClass')) {
+            return false;
+        }
+
+        if ($templateTypeMap->getType('TModelClass')?->getObjectClassNames() === []) {
             return false;
         }
 
@@ -70,19 +68,40 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
         MethodReflection $methodReflection,
         MethodCall $methodCall,
         Scope $scope
-    ): Type {
+    ): ?Type {
         $returnType = ParametersAcceptorSelector::selectFromArgs($scope, $methodCall->getArgs(), $methodReflection->getVariants())->getReturnType();
         $templateTypeMap = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap();
 
-        /** @var Type|ObjectType|TemplateMixedType $modelType */
         $modelType = $templateTypeMap->getType('TModelClass');
-
-        if ($modelType instanceof ObjectType && in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
-            $collectionClassName = $this->builderHelper->determineCollectionClassName($modelType->getClassName());
-
-            return new GenericObjectType($collectionClassName, [new IntegerType(), $modelType]);
+        if ($modelType === null) {
+            return null;
         }
 
-        return $returnType;
+        $classNames = $modelType->getObjectClassNames();
+
+        if ($classNames !== [] && $modelType->isObject()->yes() && in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
+            $collectionClassName = $this->collectionHelper->determineCollectionClassName($classNames[0]);
+
+            $collectionReflection = $this->reflectionProvider->getClass($collectionClassName);
+
+            if($collectionReflection->isGeneric()) {
+                $typeMap = $collectionReflection->getActiveTemplateTypeMap();
+
+                // Specifies key and value
+                if ($typeMap->count() === 2) {
+                    return new GenericObjectType($collectionClassName, [new IntegerType(), $modelType]);
+                }
+
+                // Specifies only value
+                if (($typeMap->count() === 1) && $typeMap->hasType('TModel')) {
+                    return new GenericObjectType($collectionClassName, [$modelType]);
+                }
+            } else {
+                // Not generic. So return the type as is
+                return new ObjectType($collectionClassName);
+            }
+        }
+
+        return null;
     }
 }

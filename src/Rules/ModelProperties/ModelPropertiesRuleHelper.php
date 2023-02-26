@@ -53,10 +53,6 @@ class ModelPropertiesRuleHelper
 
         $argValue = $args[$parameterIndex]->value;
 
-        if (! $argValue instanceof Node\Expr) {
-            return [];
-        }
-
         $argType = $scope->getType($argValue);
 
         if ($argType->isConstantArray()->yes()) {

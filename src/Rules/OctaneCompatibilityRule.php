@@ -44,11 +44,13 @@ class OctaneCompatibilityRule implements Rule
 
         $calledOnType = $scope->getType($node->var);
 
-        if (! $calledOnType instanceof TypeWithClassName) {
+        $classNames = $calledOnType->getObjectClassNames();
+
+        if (count($classNames) !== 1) {
             return [];
         }
 
-        if ($calledOnType->getClassName() !== Application::class &&
+        if ($classNames[0] !== Application::class &&
             ! (new ObjectType(Application::class))->isSuperTypeOf($calledOnType)->yes()
         ) {
             return [];

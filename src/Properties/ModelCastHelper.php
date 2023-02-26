@@ -69,8 +69,8 @@ class ModelCastHelper
             $methodReflection = $classReflection->getNativeMethod('castUsing');
             $castUsingReturn = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
 
-            if ($castUsingReturn instanceof ObjectType && $castReflection = $castUsingReturn->getClassReflection()) {
-                $classReflection = $castReflection;
+            if ($castUsingReturn->getObjectClassReflections() !== []) {
+                $classReflection = $castUsingReturn->getObjectClassReflections()[0];
             }
         }
 
@@ -126,8 +126,8 @@ class ModelCastHelper
             $methodReflection = $classReflection->getNativeMethod('castUsing');
             $castUsingReturn = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
 
-            if ($castUsingReturn instanceof TypeWithClassName && $castReflection = $castUsingReturn->getClassReflection()) {
-                $classReflection = $castReflection;
+            if ($castUsingReturn->getObjectClassReflections() !== []) {
+                $classReflection = $castUsingReturn->getObjectClassReflections()[0];
             }
         }
 

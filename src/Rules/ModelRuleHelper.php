@@ -40,17 +40,15 @@ final class ModelRuleHelper
 
         $modelType = TypeCombinator::removeNull($modelType);
 
-        if (! $modelType instanceof TypeWithClassName) {
+        $classReflections = $modelType->getObjectClassReflections();
+
+        if (count($classReflections) !== 1) {
             return null;
         }
 
-        if ($modelType->getClassName() === Model::class) {
-            return null;
-        }
+        $modelReflection = $classReflections[0];
 
-        $modelReflection = $modelType->getClassReflection();
-
-        if ($modelReflection === null) {
+        if ($modelReflection->getName() === Model::class) {
             return null;
         }
 

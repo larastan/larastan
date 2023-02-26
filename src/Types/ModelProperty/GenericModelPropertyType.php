@@ -41,8 +41,10 @@ class GenericModelPropertyType extends ModelPropertyType
 
     public function isSuperTypeOf(Type $type): TrinaryLogic
     {
-        if ($type instanceof ConstantStringType) {
-            return $this->getGenericType()->hasProperty($type->getValue());
+        $constantStrings = $type->getConstantStrings();
+
+        if (count($constantStrings) === 1) {
+            return $this->getGenericType()->hasProperty($constantStrings[0]->getValue());
         }
 
         if ($type instanceof self) {
@@ -73,12 +75,14 @@ class GenericModelPropertyType extends ModelPropertyType
 
     public function inferTemplateTypes(Type $receivedType): TemplateTypeMap
     {
-        if ($receivedType instanceof UnionType || $receivedType instanceof IntersectionType) {
+        if ($receivedType instanceof UnionType || $receivedType instanceof IntersectionType) { // @phpstan-ignore-line
             return $receivedType->inferTemplateTypesOn($this);
         }
 
-        if ($receivedType instanceof ConstantStringType) {
-            $typeToInfer = new ObjectType($receivedType->getValue());
+        $constantStrings = $receivedType->getConstantStrings();
+
+        if (count($constantStrings) === 1) {
+            $typeToInfer = new ObjectType($constantStrings[0]->getValue());
         } elseif ($receivedType instanceof self) {
             $typeToInfer = $receivedType->type;
         } elseif ($receivedType->isClassStringType()->yes()) {

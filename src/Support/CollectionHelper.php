@@ -9,6 +9,10 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Enumerable;
 use Iterator;
 use IteratorAggregate;
+use PHPStan\Reflection\MissingMethodFromReflectionException;
+use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Reflection\ReflectionProvider;
+use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntegerType;
@@ -17,15 +21,23 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeWithClassName;
+use PHPStan\Reflection\ClassReflection;
+use PHPStan\Type\VerbosityLevel;
 use Traversable;
 
 final class CollectionHelper
 {
+    public function __construct(private ReflectionProvider $reflectionProvider)
+    {
+    }
+
     public function determineGenericCollectionTypeFromType(Type $type): ?GenericObjectType
     {
-        if ($type instanceof TypeWithClassName) {
+        $classReflections = $type->getObjectClassReflections();
+
+        if (count($classReflections) > 0) {
             if ((new ObjectType(Enumerable::class))->isSuperTypeOf($type)->yes()) {
-                return $this->getTypeFromEloquentCollection($type);
+                return $this->getTypeFromEloquentCollection($classReflections[0]);
             }
 
             if (
@@ -33,7 +45,7 @@ final class CollectionHelper
                 (new ObjectType(IteratorAggregate::class))->isSuperTypeOf($type)->yes() ||
                 (new ObjectType(Iterator::class))->isSuperTypeOf($type)->yes()
             ) {
-                return $this->getTypeFromIterator($type);
+                return $this->getTypeFromIterator($classReflections[0]);
             }
         }
 
@@ -48,15 +60,50 @@ final class CollectionHelper
         return null;
     }
 
-    private function getTypeFromEloquentCollection(TypeWithClassName $valueType): ?GenericObjectType
+    public function determineCollectionClassName(string $modelClassName): string
+    {
+        try {
+            $newCollectionMethod = $this->reflectionProvider->getClass($modelClassName)->getNativeMethod('newCollection');
+            $returnType = ParametersAcceptorSelector::selectSingle($newCollectionMethod->getVariants())->getReturnType();
+
+            $classNames = $returnType->getObjectClassNames();
+
+            if (count($classNames) === 1) {
+                return $classNames[0];
+            }
+
+            return $returnType->describe(VerbosityLevel::value());
+        } catch (MissingMethodFromReflectionException|ShouldNotHappenException) {
+            return EloquentCollection::class;
+        }
+    }
+
+    public function determineCollectionClass(string $modelClassName): Type
+    {
+        $collectionClassName  = $this->determineCollectionClassName($modelClassName);
+        $collectionReflection = $this->reflectionProvider->getClass($collectionClassName);
+
+        if($collectionReflection->isGeneric()) {
+            $typeMap = $collectionReflection->getActiveTemplateTypeMap();
+
+            // Specifies key and value
+            if ($typeMap->count() === 2) {
+                return new GenericObjectType($collectionClassName, [new IntegerType(), new ObjectType($modelClassName)]);
+            }
+
+            // Specifies only value
+            if (($typeMap->count() === 1) && $typeMap->hasType('TModel')) {
+                return new GenericObjectType($collectionClassName, [new ObjectType($modelClassName)]);
+            }
+        }
+
+        // Not generic. So return the type as is
+        return new ObjectType($collectionClassName);
+    }
+
+    private function getTypeFromEloquentCollection(ClassReflection $classReflection): ?GenericObjectType
     {
         $keyType = new BenevolentUnionType([new IntegerType(), new StringType()]);
-
-        $classReflection = $valueType->getClassReflection();
-
-        if ($classReflection === null) {
-            return null;
-        }
 
         $innerValueType = $classReflection->getActiveTemplateTypeMap()->getType('TModel');
 
@@ -71,15 +118,9 @@ final class CollectionHelper
         return null;
     }
 
-    private function getTypeFromIterator(TypeWithClassName $valueType): ?GenericObjectType
+    private function getTypeFromIterator(ClassReflection $classReflection): GenericObjectType
     {
         $keyType = new BenevolentUnionType([new IntegerType(), new StringType()]);
-
-        $classReflection = $valueType->getClassReflection();
-
-        if ($classReflection === null) {
-            return null;
-        }
 
         $templateTypes = array_values($classReflection->getActiveTemplateTypeMap()->getTypes());
 

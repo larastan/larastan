@@ -42,7 +42,9 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
 
         $returnType = $variants->getReturnType();
 
-        if (! $returnType instanceof TypeWithClassName) {
+        $classNames = $returnType->getObjectClassNames();
+
+        if (count($classNames) !== 1) {
             return false;
         }
 
