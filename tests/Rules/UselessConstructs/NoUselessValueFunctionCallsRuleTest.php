@@ -15,7 +15,7 @@ class NoUselessValueFunctionCallsRuleTest extends RuleTestCase
     {
         $this->analyse(
             [
-                __DIR__.'/../data/UselessConstructs/CorrectValueFunctionCall.php',
+                __DIR__.'/data/CorrectValueFunctionCall.php',
             ],
             []
         );
