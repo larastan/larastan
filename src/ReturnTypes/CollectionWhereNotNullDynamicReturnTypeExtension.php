@@ -9,10 +9,16 @@ use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Type\BooleanType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
+use PHPStan\Type\FloatType;
 use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\IntegerType;
+use PHPStan\Type\NullType;
+use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\UnionType;
 
 class CollectionWhereNotNullDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
@@ -46,6 +52,30 @@ class CollectionWhereNotNullDynamicReturnTypeExtension implements DynamicMethodR
 
         $nonFalseyTypes = TypeCombinator::removeNull($valueType);
 
+        if (! $this->argumentIsString($methodCall, $scope)) {
+            return new GenericObjectType($calledOnType->getClassName(), [$keyType, $nonFalseyTypes]);
+        }
+
+        $scalarTypes = new UnionType([
+            new StringType(),
+            new IntegerType(),
+            new FloatType(),
+            new BooleanType(),
+        ]);
+
+        $nonFalseyTypes = TypeCombinator::remove($nonFalseyTypes, $scalarTypes);
+
         return new GenericObjectType($calledOnType->getClassName(), [$keyType, $nonFalseyTypes]);
+    }
+
+    public function argumentIsString(MethodCall $methodCall, Scope $scope): bool
+    {
+        if (count($methodCall->getArgs()) === 0) {
+            return false;
+        }
+
+        $argType = $scope->getType($methodCall->getArgs()[0]->value);
+
+        return (new NullType())->isSuperTypeOf($argType)->no();
     }
 }
