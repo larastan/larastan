@@ -1,7 +1,5 @@
 <?php
 
-namespace BladeViewString;
-
 class BladeViewType
 {
     public function testBladeView(): void
