@@ -33,9 +33,9 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\": "tests/Application/app/",
-            "Database\\Factories\\": "tests/Application/database/factories/",
-            "Database\\Migrations\\": "tests/Application/database/migrations/"
+            "App\\": "tests/application/app/",
+            "Database\\Factories\\": "tests/application/database/factories/",
+            "Database\\Migrations\\": "tests/application/database/migrations/"
         },
       "classmap": [
         "tests/"
