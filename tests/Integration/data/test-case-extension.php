@@ -1,7 +1,5 @@
 <?php
 
-namespace TestCase;
-
 use App\User;
 use Illuminate\Foundation\Application;
 

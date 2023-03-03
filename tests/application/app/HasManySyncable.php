@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Application;
+namespace App;
 
 use Illuminate\Database\Eloquent\Relations\HasMany;
 

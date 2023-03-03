@@ -25,7 +25,7 @@
     },
     "require-dev": {
         "nikic/php-parser": "^4.15.2",
-        "orchestra/testbench": "^7.19.0|^8.0.0",
+        "orchestra/testbench": "^7.19.0 || ^8.0.0",
         "phpunit/phpunit": "^9.5.27"
     },
     "suggest": {
@@ -33,9 +33,9 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\": "tests/Application/app/",
-            "Database\\Factories\\": "tests/Application/database/factories/",
-            "Database\\Migrations\\": "tests/Application/database/migrations/"
+            "App\\": "tests/application/app/",
+            "Database\\Factories\\": "tests/application/database/factories/",
+            "Database\\Migrations\\": "tests/application/database/migrations/"
         },
       "classmap": [
         "tests/"

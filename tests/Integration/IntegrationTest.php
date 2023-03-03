@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Integration;
+
 use PHPStan\Analyser\Analyser;
 use PHPStan\Analyser\Error;
 use PHPStan\File\FileHelper;
@@ -12,9 +14,9 @@ class IntegrationTest extends PHPStanTestCase
      */
     public function dataIntegrationTests(): iterable
     {
-        yield [__DIR__.'/integration/data/test-case-extension.php'];
-        yield [__DIR__.'/integration/data/model-properties.php'];
-        yield [__DIR__.'/integration/data/blade-view.php'];
+        yield [__DIR__.'/data/test-case-extension.php'];
+        yield [__DIR__.'/data/model-properties.php'];
+        yield [__DIR__.'/data/blade-view.php'];
     }
 
     /**
@@ -59,6 +61,6 @@ class IntegrationTest extends PHPStanTestCase
 
     public static function getAdditionalConfigFiles(): array
     {
-        return [__DIR__.'/phpstan-tests.neon'];
+        return [__DIR__.'/../phpstan-tests.neon'];
     }
 }

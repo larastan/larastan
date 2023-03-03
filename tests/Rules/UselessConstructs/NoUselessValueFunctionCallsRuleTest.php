@@ -15,7 +15,7 @@ class NoUselessValueFunctionCallsRuleTest extends RuleTestCase
     {
         $this->analyse(
             [
-                __DIR__.'/../Data/UselessConstructs/CorrectValueFunctionCall.php',
+                __DIR__.'/data/CorrectValueFunctionCall.php',
             ],
             []
         );
@@ -25,7 +25,7 @@ class NoUselessValueFunctionCallsRuleTest extends RuleTestCase
     {
         $this->analyse(
             [
-                __DIR__.'/../Data/UselessConstructs/UselessValueFunctionCall.php',
+                __DIR__.'/data/UselessValueFunctionCall.php',
             ],
             [
                 ["Calling the helper function 'value()' without a closure as the first argument simply returns the first argument without doing anything", 11],

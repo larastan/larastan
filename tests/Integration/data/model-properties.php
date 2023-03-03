@@ -1,7 +1,5 @@
 <?php
 
-namespace ModelPropertiesIntegration;
-
 use App\Group;
 use App\Role;
 use App\Team;

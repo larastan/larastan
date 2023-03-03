@@ -20,7 +20,7 @@ class OctaneCompatibilityRuleTest extends RuleTestCase
 
     public function testNoContainerInjection(): void
     {
-        $this->analyse([__DIR__.'/Data/ContainerInjection.php'], [
+        $this->analyse([__DIR__.'/data/ContainerInjection.php'], [
             ['Consider using bind method instead or pass a closure.', 12, 'See: https://laravel.com/docs/octane#dependency-injection-and-octane'],
             ['Consider using bind method instead or pass a closure.', 16, 'See: https://laravel.com/docs/octane#dependency-injection-and-octane'],
             ['Consider using bind method instead or pass a closure.', 25, 'See: https://laravel.com/docs/octane#dependency-injection-and-octane'],

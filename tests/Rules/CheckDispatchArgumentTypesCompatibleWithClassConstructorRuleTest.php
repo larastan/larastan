@@ -35,7 +35,7 @@ class CheckDispatchArgumentTypesCompatibleWithClassConstructorRuleTest extends R
     {
         $this->dispatchableClass = Dispatchable::class;
 
-        $this->analyse([__DIR__.'/Data/job-dispatch.php'], [
+        $this->analyse([__DIR__.'/data/job-dispatch.php'], [
             ['Job class Tests\Rules\Data\LaravelJob constructor invoked with 0 parameters in Tests\Rules\Data\LaravelJob::dispatch(), 2 required.', 5],
             ['Job class Tests\Rules\Data\LaravelJob constructor invoked with 0 parameters in Tests\Rules\Data\LaravelJob::dispatchSync(), 2 required.', 6],
             ['Job class Tests\Rules\Data\LaravelJob constructor invoked with 0 parameters in Tests\Rules\Data\LaravelJob::dispatchNow(), 2 required.', 7],
@@ -75,7 +75,7 @@ class CheckDispatchArgumentTypesCompatibleWithClassConstructorRuleTest extends R
     {
         $this->dispatchableClass = EventDispatchable::class;
 
-        $this->analyse([__DIR__.'/Data/event-dispatch.php'], [
+        $this->analyse([__DIR__.'/data/event-dispatch.php'], [
             ['Event class Tests\Rules\Data\LaravelEvent constructor invoked with 0 parameters in Tests\Rules\Data\LaravelEvent::dispatch(), 2 required.', 5],
             ['Event class Tests\Rules\Data\LaravelEvent constructor invoked with 1 parameter in Tests\Rules\Data\LaravelEvent::dispatch(), 2 required.', 7],
             ['Parameter #1 $foo of event class Tests\Rules\Data\LaravelEvent constructor expects string in Tests\Rules\Data\LaravelEvent::dispatch(), int given.', 8],
