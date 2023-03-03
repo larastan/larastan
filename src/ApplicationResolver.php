@@ -58,7 +58,7 @@ final class ApplicationResolver
      */
     public static function resolve(): Application
     {
-        /** @var string $workingPath */
+        /** @var non-empty-string $workingPath */
         $workingPath = getcwd();
         if (! defined('TESTBENCH_WORKING_PATH')) {
             define('TESTBENCH_WORKING_PATH', $workingPath);
