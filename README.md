@@ -109,6 +109,11 @@ To get around this a baseline file can be generated. The baseline file will crea
 
 A list of configurable rules specific to Laravel can be found [here](docs/rules.md).
 
+
+## Features
+
+A list of features specific to Laravel can be found [here](docs/features.md).
+
 ## Custom PHPDoc types
 
 A list of PHPDoc types specific to Larastan can be found [here](docs/custom-types.md).

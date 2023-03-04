@@ -32,6 +32,15 @@ parameters:
         - app/Domain/DomainB/schema
 ```
 
+#### PostgreSQL
+
+The package used to parse the schema dumps, [phpmyadmin/sql-parser](https://github.com/phpmyadmin/sql-parser), is primarily focused on the MySQL dialect.
+It can read (or rather, try to read) PostgreSQL dumps provided they are in the *plain text (and not the 'custom') format*, but the mileage may vary as problems have been noted with timestamp columns and lengthy parse time on more complicated dumps.
+
+The viable options for PostgreSQL at the moment are:
+1. Use the [laravel-ide-helper](https://github.com/barryvdh/laravel-ide-helper) package to write PHPDocs directly to the Models. 
+2. Use the [laravel-migrations-generator](https://github.com/kitloong/laravel-migrations-generator) to generate migration files (or a singular squashed migration file) for Larastan to scan with the `databaseMigrationsPath` setting.
+
 ## `checkModelProperties`
 **default**: `false`
 
