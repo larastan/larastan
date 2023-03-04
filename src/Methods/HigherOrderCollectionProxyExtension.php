@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
+use Illuminate\Database\Eloquent\Collection;
 use NunoMaduro\Larastan\Support\HigherOrderCollectionProxyHelper;
 use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\ClassReflection;
@@ -33,14 +34,20 @@ final class HigherOrderCollectionProxyExtension implements MethodsClassReflectio
         /** @var Type\ObjectType $valueType */
         $valueType = $activeTemplateTypeMap->getType('TValue');
 
-        /** @var Type\ObjectType $collectionType */
+        /** @var Type\Type $collectionType */
         $collectionType = $activeTemplateTypeMap->getType('TCollection');
+
+        if ($collectionType->getObjectClassNames() !== []) {
+            $collectionClassName = $collectionType->getObjectClassNames()[0];
+        } else {
+            $collectionClassName = Collection::class;
+        }
 
         $modelMethodReflection = $valueType->getMethod($methodName, new OutOfClassScope());
 
         $modelMethodReturnType = ParametersAcceptorSelector::selectSingle($modelMethodReflection->getVariants())->getReturnType();
 
-        $returnType = HigherOrderCollectionProxyHelper::determineReturnType($methodType->getValue(), $valueType, $modelMethodReturnType, $collectionType->getClassName());
+        $returnType = HigherOrderCollectionProxyHelper::determineReturnType($methodType->getValue(), $valueType, $modelMethodReturnType, $collectionClassName);
 
         return new class($classReflection, $methodName, $modelMethodReflection, $returnType) implements MethodReflection
         {
