@@ -9,8 +9,6 @@ use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
-use PHPStan\Type\ObjectType;
-use PHPStan\Type\TypeWithClassName;
 
 final class HigherOrderTapProxyExtension implements MethodsClassReflectionExtension
 {

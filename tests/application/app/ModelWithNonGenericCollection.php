@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class ModelWithNonGenericCollection extends Model
 {
     /**
-     * @param ModelWithNonGenericCollection[] $models
+     * @param  ModelWithNonGenericCollection[]  $models
      */
     public function newCollection(array $models = []): NonGenericCollection
     {

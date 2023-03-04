@@ -7,13 +7,14 @@ namespace EloquentBuilder;
 use App\Post;
 use App\PostBuilder;
 use App\User;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use function PHPStan\Testing\assertType;
 
-interface OnlyUsers {}
+interface OnlyUsers
+{
+}
 
 function foo(): void
 {

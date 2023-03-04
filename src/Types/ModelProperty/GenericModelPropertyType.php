@@ -6,7 +6,6 @@ namespace NunoMaduro\Larastan\Types\ModelProperty;
 
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\CompoundType;
-use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\TemplateType;
 use PHPStan\Type\Generic\TemplateTypeMap;
 use PHPStan\Type\Generic\TemplateTypeVariance;

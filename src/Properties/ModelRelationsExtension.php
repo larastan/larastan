@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Concerns;
-use NunoMaduro\Larastan\Methods\BuilderHelper;
 use NunoMaduro\Larastan\Reflection\ReflectionHelper;
 use NunoMaduro\Larastan\Support\CollectionHelper;
 use NunoMaduro\Larastan\Types\RelationParserHelper;
@@ -18,16 +17,13 @@ use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\IntegerType;
 use PHPStan\Type\IntersectionType;
-use PHPStan\Type\MixedType;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\TypeTraverser;
-use PHPStan\Type\TypeWithClassName;
 use PHPStan\Type\UnionType;
 
 /**

@@ -9,6 +9,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Enumerable;
 use Iterator;
 use IteratorAggregate;
+use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
@@ -20,8 +21,6 @@ use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
-use PHPStan\Type\TypeWithClassName;
-use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\VerbosityLevel;
 use Traversable;
 
@@ -80,10 +79,10 @@ final class CollectionHelper
 
     public function determineCollectionClass(string $modelClassName): Type
     {
-        $collectionClassName  = $this->determineCollectionClassName($modelClassName);
+        $collectionClassName = $this->determineCollectionClassName($modelClassName);
         $collectionReflection = $this->reflectionProvider->getClass($collectionClassName);
 
-        if($collectionReflection->isGeneric()) {
+        if ($collectionReflection->isGeneric()) {
             $typeMap = $collectionReflection->getActiveTemplateTypeMap();
 
             // Specifies key and value

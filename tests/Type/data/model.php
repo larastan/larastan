@@ -31,8 +31,8 @@ function testFindOnModelClassString(string $modelClass)
 }
 
 /**
- * @param class-string<User>|class-string<Post> $modelClass
- * @param class-string<User>|class-string<Account> $customCollectionModelClass
+ * @param  class-string<User>|class-string<Post>  $modelClass
+ * @param  class-string<User>|class-string<Account>  $customCollectionModelClass
  */
 function testUnionOfClassStrings(string $modelClass, string $customCollectionModelClass)
 {

@@ -7,7 +7,6 @@ namespace NunoMaduro\Larastan\ReturnTypes;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
-use NunoMaduro\Larastan\Methods\BuilderHelper;
 use NunoMaduro\Larastan\Support\CollectionHelper;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
@@ -16,15 +15,12 @@ use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\Generic\TemplateMixedType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
-use PHPStan\Type\TypeWithClassName;
 
 final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
 {
-
     public function __construct(private ReflectionProvider $reflectionProvider, private CollectionHelper $collectionHelper)
     {
     }
@@ -84,7 +80,7 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
 
             $collectionReflection = $this->reflectionProvider->getClass($collectionClassName);
 
-            if($collectionReflection->isGeneric()) {
+            if ($collectionReflection->isGeneric()) {
                 $typeMap = $collectionReflection->getActiveTemplateTypeMap();
 
                 // Specifies key and value

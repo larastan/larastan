@@ -19,7 +19,6 @@ use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
@@ -33,7 +32,8 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
         private BuilderHelper $builderHelper,
         private CollectionHelper $collectionHelper,
         private ReflectionProvider $reflectionProvider,
-    ) {}
+    ) {
+    }
 
     /**
      * {@inheritdoc}

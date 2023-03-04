@@ -13,7 +13,6 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\ObjectType;
-use PHPStan\Type\TypeWithClassName;
 
 /**
  * @implements Rule<MethodCall>

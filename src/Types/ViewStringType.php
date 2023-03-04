@@ -6,7 +6,6 @@ namespace NunoMaduro\Larastan\Types;
 
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\CompoundType;
-use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 
