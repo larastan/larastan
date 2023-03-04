@@ -13,7 +13,6 @@ use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\MixedType;
-use PHPStan\Type\ObjectType;
 
 /**
  * @internal
