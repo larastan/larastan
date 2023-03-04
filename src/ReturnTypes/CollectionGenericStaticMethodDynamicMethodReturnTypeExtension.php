@@ -17,7 +17,6 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeTraverser;
-use PHPStan\Type\TypeWithClassName;
 use PHPStan\Type\UnionType;
 
 class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
@@ -30,7 +29,7 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
         if ($methodReflection->getDeclaringClass()->getName() === EloquentCollection::class) {
-            return in_array($methodReflection->getName(), ['find']);
+            return $methodReflection->getName() === 'find';
         }
 
         $methods = [
@@ -63,21 +62,17 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
             $methodReflection->getVariants()
         )->getReturnType();
 
-        if (! $returnType instanceof ObjectType && ! $returnType instanceof UnionType) {
+        if ((! $returnType instanceof UnionType) && $returnType->isObject()->no()) {
             return $returnType;
         }
 
         $calledOnType = $scope->getType($methodCall->var);
 
-        if (! $calledOnType instanceof TypeWithClassName) {
+        if ($calledOnType->getObjectClassReflections() === []) {
             return $returnType;
         }
 
-        $classReflection = $calledOnType->getClassReflection();
-
-        if ($classReflection === null) {
-            return $returnType;
-        }
+        $classReflection = $calledOnType->getObjectClassReflections()[0];
 
         // Special cases for methods returning single models
         if ($classReflection->getName() === EloquentCollection::class && (new ObjectType(Model::class))->isSuperTypeOf($returnType)->yes()) {
@@ -87,7 +82,7 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
         // If it's a UnionType, traverse the types and try to find a collection object type
         if ($returnType instanceof UnionType) {
             return $returnType->traverse(function (Type $type) use ($classReflection) {
-                if ($type instanceof GenericObjectType && (($innerReflection = $type->getClassReflection())) !== null) {
+                if ($type instanceof GenericObjectType && (($innerReflection = $type->getClassReflection())) !== null) { // @phpstan-ignore-line
                     return $this->handleGenericObjectType($classReflection, $innerReflection);
                 }
 
@@ -95,13 +90,11 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
             });
         }
 
-        $returnTypeClassReflection = $returnType->getClassReflection();
-
-        if ($returnTypeClassReflection === null) {
+        if ($returnType->getObjectClassReflections() === []) {
             return $returnType;
         }
 
-        return $this->handleGenericObjectType($classReflection, $returnTypeClassReflection);
+        return $this->handleGenericObjectType($classReflection, $returnType->getObjectClassReflections()[0]);
     }
 
     private function handleGenericObjectType(ClassReflection $classReflection, ClassReflection $returnTypeClassReflection): ObjectType

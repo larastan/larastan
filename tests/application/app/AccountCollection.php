@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Collection;
 
 /**
  * @template TKey of array-key
- * @template TValue
- * @extends Collection<TKey, TValue>
+ * @template TModel
+ * @extends Collection<TKey, TModel>
  */
 class AccountCollection extends Collection
 {
     /**
-     * @return self<TKey, TValue>
+     * @return self<TKey, TModel>
      */
     public function filterByActive(): self
     {

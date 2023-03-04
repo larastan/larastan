@@ -13,7 +13,7 @@ use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
-use PHPStan\Type\TypeWithClassName;
+use PHPStan\Type\TypeCombinator;
 
 class NewModelQueryDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
@@ -41,12 +41,28 @@ class NewModelQueryDynamicMethodReturnTypeExtension implements DynamicMethodRetu
     ): ?Type {
         $calledOnType = $scope->getType($methodCall->var);
 
-        if (! $calledOnType instanceof TypeWithClassName) {
+        $classReflections = $calledOnType->getObjectClassReflections();
+
+        if ($classReflections === []) {
             return null;
         }
 
-        $builderName = $this->builderHelper->determineBuilderName($calledOnType->getClassName());
+        $types = [];
 
-        return new GenericObjectType($builderName, [new ObjectType($calledOnType->getClassName())]);
+        foreach ($classReflections as $classReflection) {
+            if (! $classReflection->isSubclassOf(Model::class)) {
+                continue;
+            }
+
+            $builderName = $this->builderHelper->determineBuilderName($classReflection->getName());
+
+            $types[] = new GenericObjectType($builderName, [new ObjectType($classReflection->getName())]);
+        }
+
+        if ($types === []) {
+            return null;
+        }
+
+        return TypeCombinator::union(...$types);
     }
 }

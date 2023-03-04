@@ -8,37 +8,26 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
-use NunoMaduro\Larastan\Methods\BuilderHelper;
 use NunoMaduro\Larastan\Methods\ModelTypeHelper;
+use NunoMaduro\Larastan\Support\CollectionHelper;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
-use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\IntegerType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\TypeWithClassName;
 
 /**
  * @internal
  */
 final class BuilderModelFindExtension implements DynamicMethodReturnTypeExtension
 {
-    /** @var BuilderHelper */
-    private $builderHelper;
-
-    /** @var ReflectionProvider */
-    private $reflectionProvider;
-
-    public function __construct(ReflectionProvider $reflectionProvider, BuilderHelper $builderHelper)
+    public function __construct(private ReflectionProvider $reflectionProvider, private CollectionHelper $collectionHelper)
     {
-        $this->builderHelper = $builderHelper;
-        $this->reflectionProvider = $reflectionProvider;
     }
 
     /**
@@ -62,7 +51,7 @@ final class BuilderModelFindExtension implements DynamicMethodReturnTypeExtensio
 
         $model = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TModelClass');
 
-        if (! $model instanceof TypeWithClassName) {
+        if ($model === null || $model->getObjectClassNames() === []) {
             return false;
         }
 
@@ -95,9 +84,7 @@ final class BuilderModelFindExtension implements DynamicMethodReturnTypeExtensio
 
         if ($argType->isIterable()->yes()) {
             if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
-                $collectionClassName = $this->builderHelper->determineCollectionClassName($model->getClassName());
-
-                return new GenericObjectType($collectionClassName, [new IntegerType(), $model]);
+                return $this->collectionHelper->determineCollectionClass($model->getClassName());
             }
 
             return TypeCombinator::remove($returnType, $model);

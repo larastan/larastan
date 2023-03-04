@@ -22,7 +22,6 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\TypeWithClassName;
 
 class ModelCastHelper
 {
@@ -69,8 +68,8 @@ class ModelCastHelper
             $methodReflection = $classReflection->getNativeMethod('castUsing');
             $castUsingReturn = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
 
-            if ($castUsingReturn instanceof ObjectType && $castReflection = $castUsingReturn->getClassReflection()) {
-                $classReflection = $castReflection;
+            if ($castUsingReturn->getObjectClassReflections() !== []) {
+                $classReflection = $castUsingReturn->getObjectClassReflections()[0];
             }
         }
 
@@ -126,8 +125,8 @@ class ModelCastHelper
             $methodReflection = $classReflection->getNativeMethod('castUsing');
             $castUsingReturn = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
 
-            if ($castUsingReturn instanceof TypeWithClassName && $castReflection = $castUsingReturn->getClassReflection()) {
-                $classReflection = $castReflection;
+            if ($castUsingReturn->getObjectClassReflections() !== []) {
+                $classReflection = $castUsingReturn->getObjectClassReflections()[0];
             }
         }
 

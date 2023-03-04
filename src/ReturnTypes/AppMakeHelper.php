@@ -46,7 +46,7 @@ final class AppMakeHelper
                 }
             }
 
-            return count($types) === 1 ? $types[0] : TypeCombinator::union(...$types);
+            return TypeCombinator::union(...$types);
         }
 
         return new MixedType();

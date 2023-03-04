@@ -10,30 +10,29 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Methods\BuilderHelper;
+use NunoMaduro\Larastan\Support\CollectionHelper;
 use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
 
 /**
  * @internal
  */
 final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
 {
-    /** @var BuilderHelper */
-    private $builderHelper;
-
-    /**
-     * @param  BuilderHelper  $builderHelper
-     */
-    public function __construct(BuilderHelper $builderHelper)
-    {
-        $this->builderHelper = $builderHelper;
+    public function __construct(
+        private BuilderHelper $builderHelper,
+        private CollectionHelper $collectionHelper,
+        private ReflectionProvider $reflectionProvider,
+    ) {
     }
 
     /**
@@ -64,11 +63,11 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
             return true;
         }
 
-        if (! $methodReflection->getDeclaringClass()->hasNativeMethod($name)) {
+        if (! $this->reflectionProvider->getClass(Model::class)->hasNativeMethod($name)) {
             return false;
         }
 
-        $method = $methodReflection->getDeclaringClass()->getNativeMethod($methodReflection->getName());
+        $method = $this->reflectionProvider->getClass(Model::class)->getNativeMethod($methodReflection->getName());
 
         $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
 
@@ -89,7 +88,7 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
         $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
 
         if ((count(array_intersect([EloquentBuilder::class], $returnType->getReferencedClasses())) > 0)
-            && $methodCall->class instanceof \PhpParser\Node\Name
+            && $methodCall->class instanceof Name
         ) {
             $returnType = new GenericObjectType(
                 $this->builderHelper->determineBuilderName($scope->resolveName($methodCall->class)),
@@ -97,14 +96,22 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
             );
         }
 
-        if (
-            $methodCall->class instanceof \PhpParser\Node\Name
-            && in_array(Collection::class, $returnType->getReferencedClasses(), true)
-            && in_array($methodReflection->getName(), ['get', 'hydrate', 'fromQuery', 'all', 'findMany'], true)
-        ) {
-            $collectionClassName = $this->builderHelper->determineCollectionClassName($scope->resolveName($methodCall->class));
+        if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
+            if ($methodCall->class instanceof Name) {
+                $modelNames = [$scope->resolveName($methodCall->class)];
+            } else {
+                $modelNames = $scope->getType($methodCall->class)->getObjectTypeOrClassStringObjectType()->getObjectClassNames();
+            }
 
-            return new GenericObjectType($collectionClassName, [new IntegerType(), new ObjectType($scope->resolveName($methodCall->class))]);
+            $types = [];
+
+            foreach ($modelNames as $modelName) {
+                $types[] = $this->collectionHelper->determineCollectionClass($modelName);
+            }
+
+            if ($types !== []) {
+                return TypeCombinator::union(...$types);
+            }
         }
 
         return $returnType;

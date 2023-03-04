@@ -8,7 +8,6 @@ use Illuminate\Support\Enumerable;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\BooleanType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\FloatType;
@@ -36,24 +35,25 @@ class CollectionWhereNotNullDynamicReturnTypeExtension implements DynamicMethodR
         MethodReflection $methodReflection,
         MethodCall $methodCall,
         Scope $scope
-    ): Type {
+    ): ?Type {
         $calledOnType = $scope->getType($methodCall->var);
 
-        if (! $calledOnType instanceof \PHPStan\Type\Generic\GenericObjectType) {
-            return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+        if ($calledOnType->getObjectClassNames() === []) {
+            return null;
         }
 
         $keyType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TKey');
-        $valueType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TValue');
+        $valueType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TValue') ??
+            $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TModel');
 
         if ($keyType === null || $valueType === null) {
-            return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+            return null;
         }
 
         $nonFalseyTypes = TypeCombinator::removeNull($valueType);
 
         if (! $this->argumentIsString($methodCall, $scope)) {
-            return new GenericObjectType($calledOnType->getClassName(), [$keyType, $nonFalseyTypes]);
+            return new GenericObjectType($calledOnType->getObjectClassNames()[0], [$keyType, $nonFalseyTypes]);
         }
 
         $scalarTypes = new UnionType([
@@ -65,7 +65,7 @@ class CollectionWhereNotNullDynamicReturnTypeExtension implements DynamicMethodR
 
         $nonFalseyTypes = TypeCombinator::remove($nonFalseyTypes, $scalarTypes);
 
-        return new GenericObjectType($calledOnType->getClassName(), [$keyType, $nonFalseyTypes]);
+        return new GenericObjectType($calledOnType->getObjectClassNames()[0], [$keyType, $nonFalseyTypes]);
     }
 
     public function argumentIsString(MethodCall $methodCall, Scope $scope): bool

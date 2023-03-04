@@ -10,3 +10,8 @@ parameters:
 			count: 1
 			path: src/ReturnTypes/CollectionGenericStaticMethodDynamicMethodReturnTypeExtension.php
 
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\Generic\\\\GenericObjectType is error\\-prone and deprecated\\.$#"
+			count: 2
+			path: src/Rules/ModelRuleHelper.php
+

@@ -6,7 +6,6 @@ namespace NunoMaduro\Larastan\Types;
 
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\CompoundType;
-use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 
@@ -27,18 +26,20 @@ class ViewStringType extends StringType
             return $type->isAcceptedBy($this, $strictTypes);
         }
 
-        if ($type instanceof ConstantStringType) {
+        $constantStrings = $type->getConstantStrings();
+
+        if (count($constantStrings) === 1) {
             /** @var \Illuminate\View\Factory $view */
             $view = view();
 
-            return TrinaryLogic::createFromBoolean($view->exists($type->getValue()));
+            return TrinaryLogic::createFromBoolean($view->exists($constantStrings[0]->getValue()));
         }
 
         if ($type instanceof self) {
             return TrinaryLogic::createYes();
         }
 
-        if ($type instanceof StringType) {
+        if ($type->isString()->yes()) {
             return TrinaryLogic::createMaybe();
         }
 
@@ -47,18 +48,20 @@ class ViewStringType extends StringType
 
     public function isSuperTypeOf(Type $type): TrinaryLogic
     {
-        if ($type instanceof ConstantStringType) {
+        $constantStrings = $type->getConstantStrings();
+
+        if (count($constantStrings) === 1) {
             /** @var \Illuminate\View\Factory $view */
             $view = view();
 
-            return TrinaryLogic::createFromBoolean($view->exists($type->getValue()));
+            return TrinaryLogic::createFromBoolean($view->exists($constantStrings[0]->getValue()));
         }
 
         if ($type instanceof self) {
             return TrinaryLogic::createYes();
         }
 
-        if ($type instanceof parent) {
+        if ($type->isString()->yes()) {
             return TrinaryLogic::createMaybe();
         }
 

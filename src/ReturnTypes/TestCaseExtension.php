@@ -59,8 +59,6 @@ final class TestCaseExtension implements DynamicMethodReturnTypeExtension
             $returnTypes[] = TypeCombinator::intersect($defaultReturnType, $objectType);
         }
 
-        return count($returnTypes) === 1
-            ? $returnTypes[0]
-            : TypeCombinator::union(...$returnTypes);
+        return TypeCombinator::union(...$returnTypes);
     }
 }
