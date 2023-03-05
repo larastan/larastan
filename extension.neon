@@ -18,6 +18,8 @@ parameters:
     noUnnecessaryCollectionCallExcept: []
     squashedMigrationsPath: []
     databaseMigrationsPath: []
+    disableMigrationScan: false
+    disableSchemaScan: false
     viewDirectories: []
     checkModelProperties: false
     checkPhpDocMissingReturn: false
@@ -30,8 +32,10 @@ parametersSchema:
     noUnnecessaryCollectionCallOnly: listOf(string())
     noUnnecessaryCollectionCallExcept: listOf(string())
     databaseMigrationsPath: listOf(string())
+    disableMigrationScan: bool()
     viewDirectories: listOf(string())
     squashedMigrationsPath: listOf(string())
+    disableSchemaScan: bool()
     checkModelProperties: bool()
     checkUnusedViews: bool()
 
@@ -407,12 +411,14 @@ services:
         class: NunoMaduro\Larastan\Properties\MigrationHelper
         arguments:
             databaseMigrationPath: %databaseMigrationsPath%
+            disableMigrationScan: %disableMigrationScan%
             parser: @currentPhpVersionSimpleDirectParser
 
     -
         class: NunoMaduro\Larastan\Properties\SquashedMigrationHelper
         arguments:
             schemaPaths: %squashedMigrationsPath%
+            disableSchemaScan: %disableSchemaScan%
 
     -
         class: NunoMaduro\Larastan\Properties\ModelCastHelper

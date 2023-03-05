@@ -23,12 +23,17 @@ final class SquashedMigrationHelper
         private array $schemaPaths,
         private FileHelper $fileHelper,
         private PhpMyAdminDataTypeToPhpTypeConverter $converter,
+        private bool $disableSchemaScan,
     ) {
     }
 
     /** @return SchemaTable[] */
     public function initializeTables(): array
     {
+        if ($this->disableSchemaScan) {
+            return [];
+        }
+
         if (empty($this->schemaPaths)) {
             $this->schemaPaths = [database_path('schema')];
         }
