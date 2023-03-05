@@ -1,8 +1,10 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Rules\ConsoleCommand;
 
-use InvalidArgumentException;
+use function count;
 use NunoMaduro\Larastan\Internal\ConsoleApplicationResolver;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
@@ -11,7 +13,6 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\ObjectType;
-use function count;
 use function sprintf;
 
 /**
@@ -79,14 +80,12 @@ final class UndefinedArgumentOrOptionRule implements Rule
                         ->identifier('larastan.undefinedArgument')
                         ->build();
                 }
-            } else if (! $command->getDefinition()->hasOption($argName) && ! $command->getDefinition()->hasShortcut($argName)) {
+            } elseif (! $command->getDefinition()->hasOption($argName) && ! $command->getDefinition()->hasShortcut($argName)) {
                 $errors[] = RuleErrorBuilder::message(sprintf('Command "%s" does not have option "%s".', $name, $argName))
                     ->line($node->getLine())
                     ->identifier('larastan.undefinedOption')
                     ->build();
             }
-
-
         }
 
         return $errors;

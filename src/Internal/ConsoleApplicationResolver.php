@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Internal;
 
-use App\Console\Commands\FooCommand;
 use Illuminate\Console\Application;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Container\Container;

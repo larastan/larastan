@@ -54,13 +54,13 @@ final class ConsoleApplicationHelper
         if ($argument->isArray()) {
             $argType = new ArrayType(new IntegerType(), new StringType());
 
-            if (!$argument->isRequired() && $argument->getDefault() !== []) {
+            if (! $argument->isRequired() && $argument->getDefault() !== []) {
                 $argType = TypeCombinator::union($argType, $scope->getTypeFromValue($argument->getDefault()));
             }
         } else {
             $argType = new StringType();
 
-            if (!$argument->isRequired()) {
+            if (! $argument->isRequired()) {
                 $argType = TypeCombinator::union($argType, $scope->getTypeFromValue($argument->getDefault()));
             }
         }
@@ -112,6 +112,4 @@ final class ConsoleApplicationHelper
 
         return TypeCombinator::union($optType, $scope->getTypeFromValue($option->getDefault()));
     }
-
-
 }
