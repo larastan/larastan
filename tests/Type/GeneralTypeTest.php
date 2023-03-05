@@ -52,6 +52,13 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from $this->gatherAssertTypes(__DIR__.'/data/gate-facade.php');
         yield from $this->gatherAssertTypes(__DIR__.'/data/helpers.php');
         yield from $this->gatherAssertTypes(__DIR__.'/data/custom-eloquent-collection.php');
+
+        ###############################################################################################################
+
+        // Console Commands
+        yield from $this->gatherAssertTypes(__DIR__.'/../application/app/Console/Commands/FooCommand.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/../application/app/Console/Commands/BarCommand.php');
+        yield from $this->gatherAssertTypes(__DIR__.'/../application/app/Console/Commands/BazCommand.php');
     }
 
     /**
