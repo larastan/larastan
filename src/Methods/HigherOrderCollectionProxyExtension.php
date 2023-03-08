@@ -37,11 +37,9 @@ final class HigherOrderCollectionProxyExtension implements MethodsClassReflectio
         /** @var Type\Type $collectionType */
         $collectionType = $activeTemplateTypeMap->getType('TCollection');
 
-        if ($collectionType->getObjectClassNames() !== []) {
-            $collectionClassName = $collectionType->getObjectClassNames()[0];
-        } else {
-            $collectionClassName = Collection::class;
-        }
+        $collectionClassName = count($collectionType->getObjectClassNames()) === 0
+            ? Collection::class
+            : $collectionType->getObjectClassNames()[0];
 
         $modelMethodReflection = $valueType->getMethod($methodName, new OutOfClassScope());
 
