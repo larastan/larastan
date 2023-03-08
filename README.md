@@ -112,7 +112,7 @@ A list of configurable rules specific to Laravel can be found [here](docs/rules.
 
 ## Features
 
-A list of features specific to Laravel can be found [here](docs/features.md).
+A list of Larastan features can be found [here](docs/features.md).
 
 ## Custom PHPDoc types
 

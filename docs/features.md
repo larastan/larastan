@@ -1,4 +1,4 @@
-# Rules
+# Features
 
 All features that are specific to Laravel applications 
 are listed here.
