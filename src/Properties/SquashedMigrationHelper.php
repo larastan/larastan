@@ -51,9 +51,8 @@ final class SquashedMigrationHelper
                 continue;
             }
 
-            $parser = new Parser($fileContents);
             try {
-                $parser->parse();
+                $parser = new Parser($fileContents);
             } catch (ParserException $exception) {
                 // TODO: re-throw the exception with a clear message?
                 continue;
