@@ -3,6 +3,11 @@
 namespace HigherOrderCollectionProxyMethods;
 
 use App\Importer;
+use App\ModelWithOnlyValueGenericCollection;
+use App\NonGenericCollection;
+use App\OnlyValueGenericCollection;
+use App\Transaction;
+use App\TransactionCollection;
 use App\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
@@ -12,8 +17,10 @@ use function PHPStan\Testing\assertType;
  * @param  Collection<int, User>  $users
  * @param  SupportCollection<int, Importer>  $collection
  * @param  SupportCollection<int, User>  $supportCollectionWithModels
+ * @param OnlyValueGenericCollection<ModelWithOnlyValueGenericCollection> $onlyValueGenericCollection
+ * @param TransactionCollection<int, Transaction> $transactionCollection
  */
-function doFoo(Collection $users, User $user, SupportCollection $collection, SupportCollection $supportCollectionWithModels)
+function doFoo(Collection $users, User $user, SupportCollection $collection, SupportCollection $supportCollectionWithModels, NonGenericCollection $nonGenericCollection, OnlyValueGenericCollection $onlyValueGenericCollection, TransactionCollection $transactionCollection)
 {
     assertType('float', $users->avg->id() + $users->average->id());
     assertType('bool', $users->contains->isActive());
@@ -67,4 +74,12 @@ function doFoo(Collection $users, User $user, SupportCollection $collection, Sup
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->takeWhile->email);
 
     assertType('Illuminate\Support\Collection<int, App\User>', $supportCollectionWithModels->reject->isActive());
+
+    // Custom collections
+    assertType('App\NonGenericCollection', $nonGenericCollection->each->count());
+    assertType('App\NonGenericCollection', $nonGenericCollection->reject->id);
+    assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', $onlyValueGenericCollection->each->count());
+    assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', $onlyValueGenericCollection->reject->id);
+    assertType('App\TransactionCollection<int, App\Transaction>', $transactionCollection->each->count());
+    assertType('App\TransactionCollection<int, App\Transaction>', $transactionCollection->reject->id);
 }
