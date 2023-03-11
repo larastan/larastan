@@ -17,6 +17,7 @@ use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\IntegerRangeType;
 use PHPStan\Type\IntersectionType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NeverType;
@@ -48,6 +49,10 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
             return false;
         }
 
+        if (str_ends_with($propertyName, '_count')) {
+            $propertyName = Str::before($propertyName, '_count');
+        }
+
         $hasNativeMethod = $classReflection->hasNativeMethod($propertyName);
 
         if (! $hasNativeMethod) {
@@ -65,6 +70,10 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
 
     public function getProperty(ClassReflection $classReflection, string $propertyName): PropertyReflection
     {
+        if (str_ends_with($propertyName, '_count')) {
+            return new ModelProperty($classReflection, IntegerRangeType::createAllGreaterThanOrEqualTo(0), new NeverType(), false);
+        }
+
         $method = $classReflection->getMethod($propertyName, new OutOfClassScope());
 
         $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
