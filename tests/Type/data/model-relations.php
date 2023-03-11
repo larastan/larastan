@@ -12,223 +12,71 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use function PHPStan\Testing\assertType;
 
-function testFirstOrCreateWithRelation(User $user)
+function test(User $user, \App\Address $address, Account $account, ExtendsModelWithPropertyAnnotations $model, Tag $tag)
 {
     assertType('App\Account', $user->accounts()->firstOrCreate([]));
-}
-
-function testRelationWhere()
-{
-    assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account>', (new User())->accounts()->where('name', 'bar'));
-}
-
-function testRelationWhereIn()
-{
-    assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account>', (new User())->accounts()->whereIn('id', [1, 2, 3]));
-}
-
-function testRelationDynamicWhere()
-{
-    assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account>', (new User())->accounts()->whereActive(true));
-}
-
-function testCreateWithRelation(User $user)
-{
+    assertType(Post::class, $user->posts()->create());
     assertType('App\Account', $user->accounts()->create());
-}
-
-function testCustomRelationCreate(User $user)
-{
     assertType('App\Account', $user->syncableRelation()->create());
-}
-
-function testCreateWithGettingModelFromMethod()
-{
-    assertType('App\Account', getUser()->accounts()->create());
-}
-
-function testFirstWithRelation()
-{
-    assertType('App\Account|null', (new User())->accounts()->where('name', 'bar')->first());
-}
-
-function testIncrementOnRelation(User $user)
-{
     assertType('int', $user->accounts()->increment('id'));
-}
-
-function testDecrementOnRelation(User $user)
-{
     assertType('int', $user->accounts()->decrement('id'));
-}
-
-function testIncrementWithAmountOnRelation(User $user)
-{
     assertType('int', $user->accounts()->increment('id', 5));
-}
-
-function testDecrementWithAmountOnRelation(User $user)
-{
     assertType('int', $user->accounts()->decrement('id', 5));
-}
-
-function testPaginate(User $user)
-{
     assertType('Illuminate\Pagination\LengthAwarePaginator<App\Account>', $user->accounts()->paginate(5));
-}
-
-function testMorphTo(\App\Address $address)
-{
     assertType(
         'Illuminate\Database\Eloquent\Relations\MorphTo<Illuminate\Database\Eloquent\Model, App\Address>',
         $address->addressable()->where('name', 'bar')
     );
-}
-
-function testMorphMany(User $user)
-{
     assertType('Illuminate\Database\Eloquent\Relations\MorphMany<App\Address>', $user->address()->where('name', 'bar'));
-}
-
-function testModelScopesOnRelation(User $user)
-{
     assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account>', $user->accounts()->active());
-}
-
-function testRelationWithPivot(User $user)
-{
     assertType('App\RoleCollection<int, App\Role>', $user->roles()->get());
-}
-
-function testGetOnRelationAndBuilder(User $user)
-{
     /** @var Group $group */
     $group = $user->group;
 
     assertType('App\AccountCollection<int, App\Account>', $group->accounts()->where('active', 1)->get());
-}
-
-function testMakeOnRelation(User $user)
-{
     assertType('App\Account', $user->accounts()->make());
-}
-
-function getUser(): User
-{
-    return User::firstOrFail();
-}
-
-/**
- * @see https://github.com/nunomaduro/larastan/issues/476
- */
-function testRelationshipPropertyHasCorrectReturnTypeWithIdeHelperDocblocks()
-{
-    $user = new User();
-
-    assertType('App\Account|null', $user->accounts->first());
-}
-
-function it_doesnt_treat_whereHas_as_dynamic_where()
-{
+    assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account>', (new User())->accounts()->where('name', 'bar'));
+    assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account>', (new User())->accounts()->whereIn('id', [1, 2, 3]));
+    assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account>', (new User())->accounts()->whereActive(true));
+    assertType('App\Account', getUser()->accounts()->create());
+    assertType('App\Account|null', (new User())->accounts()->where('name', 'bar')->first());
     assertType('App\User', User::with('accounts')->whereHas('accounts')->firstOrFail());
-}
-
-function testRelationWithTrait(Account $account)
-{
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\User, App\Account>', $account->ownerRelation());
-}
-
-function testRelationInTraitWithStaticClass(Account $account)
-{
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Account, App\Account>', $account->parent());
-}
-
-function testSameClassRelation(User $user)
-{
     assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\User>', $user->children());
-}
-
-function testSameClassRelationWithGetClass(User $user)
-{
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\User, App\User>', $user->parent());
-}
-
-function testFirstWhereWithHasManyRelation(User $user)
-{
     assertType('App\Account|null', $user->accounts()->firstWhere('name', 'bar'));
-}
-
-function testFirstWhereWithBelongsToRelation(User $user)
-{
     assertType('App\Group|null', $user->group()->firstWhere('name', 'bar'));
-}
-
-function testWithTrashedWithBelongsToRelation(User $user)
-{
+    assertType('App\Account|null', $user->accounts->first());
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\User>', $user->group()->withTrashed());
-}
-
-function testOnlyTrashedWithBelongsToRelation(User $user)
-{
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\User>', $user->group()->onlyTrashed());
-}
-
-function testWithoutTrashedWithBelongsToRelation(User $user)
-{
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\User>', $user->group()->withoutTrashed());
-}
-
-function testMorphToManyWithTimestamps(Tag $tag)
-{
     assertType('Illuminate\Database\Eloquent\Relations\MorphToMany<ModelRelations\Address>', $tag->addresses());
-}
-
-function testMorphToManyWithPivot(Tag $tag)
-{
     assertType('Illuminate\Database\Eloquent\Relations\MorphToMany<ModelRelations\Address>', $tag->addresses());
-}
-
-function testRelationWithWithOnModel()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::with([
         'accounts' => function (HasMany $query) {
             return $query->where('foo', 'bar');
         },
     ]));
-}
-
-function testRelationWithArrayWithOnModel()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::with([
         'group' => [
             'accounts',
         ],
     ]));
-}
-
-function testBelongsToManyCreateReturnsCorrectModel(User $user)
-{
-    assertType(Post::class, $user->posts()->create());
-}
-
-function testNullableUser(ExtendsModelWithPropertyAnnotations $model)
-{
     assertType('App\User|null', $model->nullableUser);
-}
-
-function testNonNullableUser(ExtendsModelWithPropertyAnnotations $model)
-{
     assertType('App\User', $model->nonNullableUser);
-}
-
-function testNullableFoo(ExtendsModelWithPropertyAnnotations $model)
-{
     assertType('string|null', $model->nullableFoo);
+    assertType('string', $model->nonNullableFoo);
+
+    // Relationship counts
+    assertType('int<0, max>', $user->group_count);
+    assertType('int<0, max>', $user->accounts_count);
+    assertType('int<0, max>', $user->syncableRelation_count);
 }
 
-function testNonNullableFoo(ExtendsModelWithPropertyAnnotations $model)
+function getUser(): User
 {
-    assertType('string', $model->nonNullableFoo);
+    return User::firstOrFail();
 }
 
 /**
