@@ -10,7 +10,6 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type;
 use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 
 class HigherOrderCollectionProxyHelper

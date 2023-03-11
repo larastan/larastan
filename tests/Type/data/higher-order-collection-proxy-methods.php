@@ -17,8 +17,8 @@ use function PHPStan\Testing\assertType;
  * @param  Collection<int, User>  $users
  * @param  SupportCollection<int, Importer>  $collection
  * @param  SupportCollection<int, User>  $supportCollectionWithModels
- * @param OnlyValueGenericCollection<ModelWithOnlyValueGenericCollection> $onlyValueGenericCollection
- * @param TransactionCollection<int, Transaction> $transactionCollection
+ * @param  OnlyValueGenericCollection<ModelWithOnlyValueGenericCollection>  $onlyValueGenericCollection
+ * @param  TransactionCollection<int, Transaction>  $transactionCollection
  */
 function doFoo(Collection $users, User $user, SupportCollection $collection, SupportCollection $supportCollectionWithModels, NonGenericCollection $nonGenericCollection, OnlyValueGenericCollection $onlyValueGenericCollection, TransactionCollection $transactionCollection)
 {
