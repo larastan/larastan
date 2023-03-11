@@ -517,6 +517,7 @@ services:
     - NunoMaduro\Larastan\ReturnTypes\AppMakeHelper
     - NunoMaduro\Larastan\Internal\ConsoleApplicationResolver
     - NunoMaduro\Larastan\Internal\ConsoleApplicationHelper
+    - NunoMaduro\Larastan\Support\HigherOrderCollectionProxyHelper
 
 rules:
     - NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule

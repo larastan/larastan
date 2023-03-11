@@ -17,9 +17,13 @@ use PHPStan\Type;
 
 final class HigherOrderCollectionProxyExtension implements MethodsClassReflectionExtension
 {
+    public function __construct(private HigherOrderCollectionProxyHelper $higherOrderCollectionProxyHelper)
+    {
+    }
+
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        return HigherOrderCollectionProxyHelper::hasPropertyOrMethod($classReflection, $methodName, 'method');
+        return $this->higherOrderCollectionProxyHelper->hasPropertyOrMethod($classReflection, $methodName, 'method');
     }
 
     public function getMethod(
@@ -45,7 +49,7 @@ final class HigherOrderCollectionProxyExtension implements MethodsClassReflectio
 
         $modelMethodReturnType = ParametersAcceptorSelector::selectSingle($modelMethodReflection->getVariants())->getReturnType();
 
-        $returnType = HigherOrderCollectionProxyHelper::determineReturnType($methodType->getValue(), $valueType, $modelMethodReturnType, $collectionClassName);
+        $returnType = $this->higherOrderCollectionProxyHelper->determineReturnType($methodType->getValue(), $valueType, $modelMethodReturnType, $collectionClassName);
 
         return new class($classReflection, $methodName, $modelMethodReflection, $returnType) implements MethodReflection
         {

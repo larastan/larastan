@@ -15,9 +15,13 @@ use PHPStan\Type;
 
 final class HigherOrderCollectionProxyPropertyExtension implements PropertiesClassReflectionExtension
 {
+    public function __construct(private HigherOrderCollectionProxyHelper $higherOrderCollectionProxyHelper)
+    {
+    }
+
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
     {
-        return HigherOrderCollectionProxyHelper::hasPropertyOrMethod($classReflection, $propertyName, 'property');
+        return $this->higherOrderCollectionProxyHelper->hasPropertyOrMethod($classReflection, $propertyName, 'property');
     }
 
     public function getProperty(
@@ -43,7 +47,7 @@ final class HigherOrderCollectionProxyPropertyExtension implements PropertiesCla
             $collectionClassName = Collection::class;
         }
 
-        $returnType = HigherOrderCollectionProxyHelper::determineReturnType($methodType->getValue(), $modelType, $propertyType, $collectionClassName);
+        $returnType = $this->higherOrderCollectionProxyHelper->determineReturnType($methodType->getValue(), $modelType, $propertyType, $collectionClassName);
 
         return new class($classReflection, $returnType) implements PropertyReflection
         {
