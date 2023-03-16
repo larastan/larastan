@@ -149,7 +149,7 @@ class Builder
      * Add a "having between " clause to the query.
      *
      * @param  string  $column
-     * @param  iterable  $values
+     * @param  iterable<mixed, mixed>  $values
      * @param  string  $boolean
      * @param  bool  $not
      * @return $this
