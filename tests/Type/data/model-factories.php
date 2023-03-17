@@ -84,4 +84,5 @@ function doBar()
     assertType('App\Post', Post::factory()->makeOne());
     assertType('Database\Factories\PostFactory', Post::factory()->afterMaking(fn (Post $post) => $post));
     assertType('Database\Factories\PostFactory', Post::factory()->afterCreating(fn (Post $post) => $post));
+    assertType('App\Post', Post::factory()->updateOrCreate(['name' => 'foo']));
 }

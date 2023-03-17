@@ -27,6 +27,8 @@ Carbon::macro('foo', static function (): string {
 \Illuminate\Support\Str::macro('trimMacro', 'trim');
 \Illuminate\Support\Str::macro('asciiAliasMacro', \Illuminate\Support\Str::class.'::ascii');
 
+\Illuminate\Database\Eloquent\Factories\Factory::mixin(new \Database\Factories\FactoryMacros());
+
 class CustomCollectionMacro
 {
     public function registerMacro()
