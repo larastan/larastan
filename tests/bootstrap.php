@@ -24,6 +24,9 @@ Carbon::macro('foo', static function (): string {
     return 5;
 });
 
+\Illuminate\Support\Str::macro('trimMacro', 'trim');
+\Illuminate\Support\Str::macro('asciiAliasMacro', \Illuminate\Support\Str::class.'::ascii');
+
 class CustomCollectionMacro
 {
     public function registerMacro()
