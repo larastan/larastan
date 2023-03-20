@@ -15,6 +15,21 @@ class FactoryMacros
 {
     /**
      * @param  array<model-property<TModel>, mixed>  $attributes
+     * @return \Closure(array<model-property<TModel>, mixed>, array<model-property<TModel>, mixed>):TModel
+     */
+    public function firstOrCreate(array $attributes = []): \Closure
+    {
+        return function (array $attributes = [], array $values = []): \Illuminate\Database\Eloquent\Model {
+            if ($instance = $this->model::where($attributes)->first()) {
+                return $instance;
+            }
+
+            return $this->create($attributes);
+        };
+    }
+
+    /**
+     * @param  array<model-property<TModel>, mixed>  $attributes
      * @param  array<model-property<TModel>, mixed>  $values
      * @return \Closure(array<model-property<TModel>, mixed>, array<model-property<TModel>, mixed>):TModel
      */
