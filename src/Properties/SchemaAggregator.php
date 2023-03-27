@@ -207,6 +207,14 @@ final class SchemaAggregator
                     }
 
                     if (! $firstArg instanceof PhpParser\Node\Scalar\String_) {
+                        if ($firstArg instanceof PhpParser\Node\Expr\Array_ && $firstMethodCall->name->name === 'dropColumn') {
+                            foreach ($firstArg->items as $array_item) {
+                                if ($array_item !== null && $array_item->value instanceof PhpParser\Node\Scalar\String_) {
+                                    $table->dropColumn($array_item->value->value);
+                                }
+                            }
+                        }
+
                         if ($firstMethodCall->name->name === 'timestamps'
                             || $firstMethodCall->name->name === 'timestampsTz'
                             || $firstMethodCall->name->name === 'nullableTimestamps'
