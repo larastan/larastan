@@ -28,6 +28,7 @@ function test(User $user, \App\Address $address, Account $account, ExtendsModelW
         $address->addressable()->where('name', 'bar')
     );
     assertType('Illuminate\Database\Eloquent\Relations\MorphMany<App\Address>', $user->address()->where('name', 'bar'));
+    assertType('Illuminate\Database\Eloquent\Relations\MorphOne<App\Address>', $user->address()->one());
     assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account>', $user->accounts()->active());
     assertType('App\RoleCollection<int, App\Role>', $user->roles()->get());
     /** @var Group $group */
@@ -38,6 +39,9 @@ function test(User $user, \App\Address $address, Account $account, ExtendsModelW
     assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account>', (new User())->accounts()->where('name', 'bar'));
     assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account>', (new User())->accounts()->whereIn('id', [1, 2, 3]));
     assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account>', (new User())->accounts()->whereActive(true));
+    assertType('Illuminate\Database\Eloquent\Relations\HasOne<App\Account>', (new User())->accounts()->one());
+    assertType('Illuminate\Database\Eloquent\Relations\HasManyThrough<App\Transaction>', (new User())->transactions());
+    assertType('Illuminate\Database\Eloquent\Relations\HasOneThrough<App\Transaction>', (new User())->transactions()->one());
     assertType('App\Account', getUser()->accounts()->create());
     assertType('App\Account|null', (new User())->accounts()->where('name', 'bar')->first());
     assertType('App\User', User::with('accounts')->whereHas('accounts')->firstOrFail());

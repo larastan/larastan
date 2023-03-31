@@ -65,4 +65,9 @@ class HasManyThrough extends Relation
      * @return TRelatedModel|\Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function findOrFail($id, $columns = ['*']);
+
+    /**
+     * @phpstan-return \Illuminate\Database\Eloquent\Relations\HasOneThrough<TRelatedModel>
+     */
+    public function one();
 }

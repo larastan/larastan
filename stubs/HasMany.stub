@@ -14,4 +14,11 @@ class HasMany extends HasOneOrMany
      * @phpstan-return \Traversable<int, TRelatedModel>
      */
     public function getResults();
+
+    /**
+     * Convert the relationship to a "has one" relationship.
+     *
+     * @phpstan-return \Illuminate\Database\Eloquent\Relations\HasOne<TRelatedModel>
+     */
+    public function one();
 }
