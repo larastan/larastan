@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+
 use function PHPStan\Testing\assertType;
 
 class BazCommand extends Command

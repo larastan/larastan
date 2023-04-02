@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace DatabaseTransaction;
 
 use Illuminate\Support\Facades\DB;
+
 use function PHPStan\Testing\assertType;
 
 assertType('int', DB::transaction(fn () => 1));

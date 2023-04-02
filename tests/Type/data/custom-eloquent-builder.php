@@ -6,6 +6,7 @@ use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+
 use function PHPStan\Testing\assertType;
 
 class CustomEloquentBuilderTest
@@ -193,6 +194,7 @@ class ModelWithCustomBuilder extends Model
 
     /**
      * @param  CustomEloquentBuilder<ModelWithCustomBuilder>  $query
+     *
      * @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder>
      */
     public function scopeFoo(CustomEloquentBuilder $query, string $foo): CustomEloquentBuilder
@@ -218,6 +220,7 @@ class ModelWithCustomBuilder extends Model
 
 /**
  * @template TModelClass of ModelWithCustomBuilder
+ *
  * @extends Builder<ModelWithCustomBuilder>
  */
 class CustomEloquentBuilder extends Builder
@@ -240,6 +243,7 @@ class CustomEloquentBuilder extends Builder
 
     /**
      * @param  string[]  $categories
+     *
      * @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder>
      */
     public function categories(array $categories): CustomEloquentBuilder
@@ -296,6 +300,7 @@ class ModelWithCustomBuilderAndDocBlocks extends Model
 
 /**
  * @template TModelClass of ModelWithCustomBuilderAndDocBlocks
+ *
  * @extends Builder<TModelClass>
  */
 class CustomBuilder2 extends Builder

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PaginatorExtension;
 
 use App\User;
+
 use function PHPStan\Testing\assertType;
 
 assertType('Illuminate\Pagination\LengthAwarePaginator<App\User>', User::paginate());

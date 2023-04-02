@@ -3,6 +3,7 @@
 namespace Throw;
 
 use Illuminate\Validation\ValidationException;
+
 use function PHPStan\Testing\assertType;
 
 class ThrowTest

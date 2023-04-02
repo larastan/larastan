@@ -5,6 +5,7 @@ namespace CollectionMake;
 use App\User;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection as SupportCollection;
+
 use function PHPStan\Testing\assertType;
 
 //assertType('Illuminate\Support\Collection<int|string, mixed>', SupportCollection::make([]));

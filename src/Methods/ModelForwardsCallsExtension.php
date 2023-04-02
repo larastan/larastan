@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Methods;
 
-use function array_map;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
@@ -27,6 +26,8 @@ use PHPStan\Type\StaticType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeTraverser;
 use PHPStan\Type\TypeWithClassName;
+
+use function array_map;
 
 final class ModelForwardsCallsExtension implements MethodsClassReflectionExtension
 {

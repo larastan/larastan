@@ -2,9 +2,10 @@
 
 namespace OptionalType;
 
+use StdClass;
+
 use function optional;
 use function PHPStan\Testing\assertType;
-use StdClass;
 
 assertType('mixed', optional(['foo' => 'bar']));
 

@@ -4,6 +4,7 @@ namespace ContainerMake;
 
 use Illuminate\Contracts\Config\Repository;
 use Illuminate\Database\Eloquent\Model;
+
 use function PHPStan\Testing\assertType;
 
 function doFoo(\Illuminate\Container\Container $container, \Illuminate\Contracts\Container\Container $container2)

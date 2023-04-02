@@ -10,6 +10,7 @@ use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
+
 use function PHPStan\Testing\assertType;
 
 function testFind()

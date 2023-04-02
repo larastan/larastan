@@ -4,6 +4,7 @@ namespace GateFacade;
 
 use App\User;
 use Illuminate\Support\Facades\Gate;
+
 use function PHPStan\Testing\assertType;
 
 function foo(): void
