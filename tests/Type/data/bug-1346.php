@@ -3,6 +3,7 @@
 namespace Bug1346;
 
 use Illuminate\Database\Eloquent\Builder;
+
 use function PHPStan\Testing\assertType;
 
 /**

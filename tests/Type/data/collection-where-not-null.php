@@ -3,6 +3,7 @@
 namespace CollectionWhereNotNull;
 
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+
 use function PHPStan\Testing\assertType;
 
 assertType('Illuminate\Support\Collection<int, int|string>', collect([1, 2, null, '', 'hello'])->whereNotNull());

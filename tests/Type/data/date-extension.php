@@ -3,6 +3,7 @@
 namespace DateExtension;
 
 use Illuminate\Support\Facades\Date;
+
 use function PHPStan\Testing\assertType;
 
 /** @param mixed $date */

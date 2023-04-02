@@ -2,6 +2,6 @@
 
 namespace App\Casts;
 
-enum BackedEnumeration : string
+enum BackedEnumeration: string
 {
 }

@@ -72,7 +72,7 @@ class CollectionGenericStaticMethodDynamicStaticMethodReturnTypeExtension implem
         // If it's a UnionType, traverse the types and try to find a collection object type
         if ($returnType instanceof UnionType) {
             return $returnType->traverse(function (Type $type) use ($classReflection) {
-                if ($type instanceof GenericObjectType && (($innerReflection = $type->getClassReflection())) !== null) { // @phpstan-ignore-line
+                if ($type instanceof GenericObjectType && ($innerReflection = $type->getClassReflection()) !== null) { // @phpstan-ignore-line
                     return $this->handleGenericObjectType($classReflection, $innerReflection);
                 }
 

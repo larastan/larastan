@@ -5,6 +5,7 @@ namespace ConditionableStubs;
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Traits\Conditionable;
+
 use function PHPStan\Testing\assertType;
 
 class Foo

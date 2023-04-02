@@ -8,6 +8,7 @@ use App\ModelWithNonGenericCollection;
 use App\ModelWithOnlyValueGenericCollection;
 use App\Role;
 use App\User;
+
 use function PHPStan\Testing\assertType;
 
 function foo()

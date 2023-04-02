@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Rules\ConsoleCommand;
 
-use function count;
 use NunoMaduro\Larastan\Internal\ConsoleApplicationResolver;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
@@ -13,6 +12,8 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\ObjectType;
+
+use function count;
 use function sprintf;
 
 /**

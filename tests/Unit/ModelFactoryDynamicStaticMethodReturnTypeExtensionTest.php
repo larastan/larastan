@@ -43,11 +43,12 @@ class ModelFactoryDynamicStaticMethodReturnTypeExtensionTest extends PHPStanTest
         );
 
         $this->assertInstanceOf(ModelFactoryType::class, $type);
-        $this->assertTrue((TrinaryLogic::createYes())->equals($type->isSingleModel()));
+        $this->assertTrue(TrinaryLogic::createYes()->equals($type->isSingleModel()));
     }
 
     /**
      * @test
+     *
      * @dataProvider argumentProvider
      */
     public function it_sets_the_is_single_model_flag_correctly(Type $phpstanType, TrinaryLogic $expected): void
