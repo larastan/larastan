@@ -26,11 +26,11 @@ class UndefinedArgumentOrOptionRuleTest extends RuleTestCase
         ], [
             [
                 'Command "foo" does not have argument "foobar".',
-                21,
+                22,
             ],
             [
                 'Command "foo" does not have option "foobar".',
-                35,
+                36,
             ],
         ]);
     }
