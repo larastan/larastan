@@ -12,7 +12,7 @@ class Request {
      * @param  string|null  $key
      * @param  TDefault $default
      *
-     * @return ($key is null ? array<string, string> : string|TDefault)
+     * @return ($key is null ? array<string, array<int, string>> : string|TDefault)
      */
     public function header($key = null, $default = null);
 }
