@@ -3,6 +3,7 @@
 namespace Tappable;
 
 use Illuminate\Support\Traits\Tappable;
+
 use function PHPStan\Testing\assertType;
 
 class TappableClass
