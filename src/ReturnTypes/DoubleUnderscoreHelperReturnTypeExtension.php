@@ -7,20 +7,21 @@ namespace NunoMaduro\Larastan\ReturnTypes;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\FunctionReflection;
+use PHPStan\Type\ArrayType;
+use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
+use PHPStan\Type\MixedType;
 use PHPStan\Type\NullType;
+use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
+
+use function count;
 
 /**
  * @internal
  */
 final class DoubleUnderscoreHelperReturnTypeExtension implements DynamicFunctionReturnTypeExtension
 {
-    public function __construct(
-        private TranslatorHelper $translatorHelper
-    ) {
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -41,6 +42,9 @@ final class DoubleUnderscoreHelperReturnTypeExtension implements DynamicFunction
             return new NullType();
         }
 
-        return $this->translatorHelper->resolveTypeFromCall($functionReflection, $functionCall, $scope);
+        return new BenevolentUnionType([
+            new ArrayType(new MixedType(), new MixedType()),
+            new StringType(),
+        ]);
     }
 }

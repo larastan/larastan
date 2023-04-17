@@ -527,7 +527,6 @@ services:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
 
     - NunoMaduro\Larastan\ReturnTypes\AppMakeHelper
-    - NunoMaduro\Larastan\ReturnTypes\TranslatorHelper
     - NunoMaduro\Larastan\Internal\ConsoleApplicationResolver
     - NunoMaduro\Larastan\Internal\ConsoleApplicationHelper
     - NunoMaduro\Larastan\Support\HigherOrderCollectionProxyHelper

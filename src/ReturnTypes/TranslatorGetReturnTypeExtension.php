@@ -8,7 +8,11 @@ use Illuminate\Contracts\Translation\Translator;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Type\ArrayType;
+use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
+use PHPStan\Type\MixedType;
+use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 
 /**
@@ -16,11 +20,6 @@ use PHPStan\Type\Type;
  */
 final class TranslatorGetReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
-    public function __construct(
-        private TranslatorHelper $translatorHelper
-    ) {
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -45,6 +44,9 @@ final class TranslatorGetReturnTypeExtension implements DynamicMethodReturnTypeE
         MethodCall $methodCall,
         Scope $scope
     ): Type {
-        return $this->translatorHelper->resolveTypeFromCall($methodReflection, $methodCall, $scope);
+        return new BenevolentUnionType([
+            new ArrayType(new MixedType(), new MixedType()),
+            new StringType(),
+        ]);
     }
 }

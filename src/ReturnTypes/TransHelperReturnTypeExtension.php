@@ -8,20 +8,21 @@ use Illuminate\Contracts\Translation\Translator;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\FunctionReflection;
+use PHPStan\Type\ArrayType;
+use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
+use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
+
+use function count;
 
 /**
  * @internal
  */
 final class TransHelperReturnTypeExtension implements DynamicFunctionReturnTypeExtension
 {
-    public function __construct(
-        private TranslatorHelper $translatorHelper
-    ) {
-    }
-
     /**
      * {@inheritdoc}
      */
@@ -42,6 +43,9 @@ final class TransHelperReturnTypeExtension implements DynamicFunctionReturnTypeE
             return new ObjectType(Translator::class);
         }
 
-        return $this->translatorHelper->resolveTypeFromCall($functionReflection, $functionCall, $scope);
+        return new BenevolentUnionType([
+            new ArrayType(new MixedType(), new MixedType()),
+            new StringType(),
+        ]);
     }
 }
