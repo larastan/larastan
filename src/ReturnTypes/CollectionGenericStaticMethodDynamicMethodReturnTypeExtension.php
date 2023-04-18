@@ -106,7 +106,7 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
         $genericTypes = $returnTypeClassReflection->typeMapToList($returnTypeClassReflection->getActiveTemplateTypeMap());
 
         // If the key type is gonna be a model, we change it to string
-        if ((new ObjectType(Model::class))->isSuperTypeOf($genericTypes[0])->yes()) {
+        if (! is_null($genericTypes[0]) && (new ObjectType(Model::class))->isSuperTypeOf($genericTypes[0])->yes()) {
             $genericTypes[0] = new StringType();
         }
 
