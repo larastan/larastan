@@ -72,7 +72,7 @@ function test(User $user, \App\Address $address, Account $account, ExtendsModelW
     // Relationship counts
     assertType('int<0, max>', $user->group_count);
     assertType('int<0, max>', $user->accounts_count);
-    assertType('int<0, max>', $user->syncableRelation_count);
+    assertType('int<0, max>', $user->syncable_relation_count);
 
     $users = (new Post())->users();
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->getEager());
