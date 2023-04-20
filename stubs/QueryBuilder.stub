@@ -210,7 +210,7 @@ class Builder
      *
      * @param  string|\Illuminate\Database\Query\Expression  $column
      * @param  string|null  $key
-     * @return \Illuminate\Support\Collection<string, mixed>
+     * @return \Illuminate\Support\Collection<array-key, mixed>
      */
     public function pluck($column, $key = null);
 

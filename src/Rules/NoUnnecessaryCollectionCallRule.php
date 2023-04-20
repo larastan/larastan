@@ -188,7 +188,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
             return [$this->formatError($name->toString())];
         } elseif ($this->isRiskyParamMethod($name)) {
             if (count($node->args) === 0) {
-                // Calling e.g. DB::table()->pluck($columnName)-sum()
+                // Calling e.g. DB::table()->pluck($columnName)->sum()
                 // We have to check whether $columnName is actually a database column
                 // and not an alias for some computed attribute
                 if ($previousCall->name->name === 'pluck' && $this->firstArgIsDatabaseColumn($previousCall, $scope)) {
