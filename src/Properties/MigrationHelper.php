@@ -20,17 +20,25 @@ class MigrationHelper
     /** @var string[] */
     private $databaseMigrationPath;
 
+    /** @var bool */
+    private $disableMigrationScan;
+
     /** @var FileHelper */
     private $fileHelper;
 
     /**
      * @param  string[]  $databaseMigrationPath
      */
-    public function __construct(Parser $parser, array $databaseMigrationPath, FileHelper $fileHelper)
-    {
+    public function __construct(
+        Parser $parser,
+        array $databaseMigrationPath,
+        FileHelper $fileHelper,
+        bool $disableMigrationScan,
+    ) {
         $this->parser = $parser;
         $this->databaseMigrationPath = $databaseMigrationPath;
         $this->fileHelper = $fileHelper;
+        $this->disableMigrationScan = $disableMigrationScan;
     }
 
     /**
@@ -39,6 +47,10 @@ class MigrationHelper
      */
     public function initializeTables(array $tables = []): array
     {
+        if ($this->disableMigrationScan) {
+            return $tables;
+        }
+
         if (count($this->databaseMigrationPath) === 0) {
             $this->databaseMigrationPath = [database_path('migrations')];
         }

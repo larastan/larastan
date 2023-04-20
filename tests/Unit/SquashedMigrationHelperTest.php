@@ -16,7 +16,8 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
         $schemaParser = new SquashedMigrationHelper(
             [__DIR__.'/data/schema/basic_schema'],
             self::getContainer()->getByType(FileHelper::class),
-            new PhpMyAdminDataTypeToPhpTypeConverter()
+            new PhpMyAdminDataTypeToPhpTypeConverter(),
+            false
         );
 
         $tables = $schemaParser->initializeTables();
@@ -39,7 +40,8 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
         $schemaParser = new SquashedMigrationHelper(
             [__DIR__.'/data/schema/multiple_schemas_for_same_table'],
             self::getContainer()->getByType(FileHelper::class),
-            new PhpMyAdminDataTypeToPhpTypeConverter()
+            new PhpMyAdminDataTypeToPhpTypeConverter(),
+            false,
         );
 
         $tables = $schemaParser->initializeTables();
@@ -62,7 +64,8 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
         $schemaParser = new SquashedMigrationHelper(
             [__DIR__.'/data/schema/basic_schema_with_sql_extension'],
             self::getContainer()->getByType(FileHelper::class),
-            new PhpMyAdminDataTypeToPhpTypeConverter()
+            new PhpMyAdminDataTypeToPhpTypeConverter(),
+            false
         );
 
         $tables = $schemaParser->initializeTables();
@@ -85,7 +88,8 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
         $schemaParser = new SquashedMigrationHelper(
             [__DIR__.'/data/schema/multiple_schemas_with_different_extensions'],
             self::getContainer()->getByType(FileHelper::class),
-            new PhpMyAdminDataTypeToPhpTypeConverter()
+            new PhpMyAdminDataTypeToPhpTypeConverter(),
+            false
         );
 
         $tables = $schemaParser->initializeTables();
@@ -109,5 +113,20 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
         $this->assertSame('string', $tables['users']->columns['description']->readableType);
         $this->assertSame('string', $tables['users']->columns['created_at']->readableType);
         $this->assertSame('string', $tables['users']->columns['updated_at']->readableType);
+    }
+
+    /** @test */
+    public function it_can_disable_schema_scanning(): void
+    {
+        $schemaParser = new SquashedMigrationHelper(
+            [__DIR__.'/data/schema/multiple_schemas_with_different_extensions'],
+            self::getContainer()->getByType(FileHelper::class),
+            new PhpMyAdminDataTypeToPhpTypeConverter(),
+            true
+        );
+
+        $tables = $schemaParser->initializeTables();
+
+        $this->assertSame([], $tables);
     }
 }
