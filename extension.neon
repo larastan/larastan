@@ -519,6 +519,18 @@ services:
         class: NunoMaduro\Larastan\ReturnTypes\ConsoleCommand\HasOptionDynamicReturnTypeExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\TranslatorGetReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\TransHelperReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicFunctionReturnTypeExtension
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\DoubleUnderscoreHelperReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicFunctionReturnTypeExtension
 
     - NunoMaduro\Larastan\ReturnTypes\AppMakeHelper
     - NunoMaduro\Larastan\Internal\ConsoleApplicationResolver
