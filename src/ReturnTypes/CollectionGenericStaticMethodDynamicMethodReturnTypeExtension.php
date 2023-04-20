@@ -75,7 +75,7 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
         $classReflection = $calledOnType->getObjectClassReflections()[0];
 
         // Special cases for methods returning single models
-        if ($classReflection->getName() === EloquentCollection::class && (new ObjectType(Model::class))->isSuperTypeOf($returnType)->yes()) {
+        if (($classReflection->getName() === EloquentCollection::class || $classReflection->getName() === Collection::class) && (new ObjectType(Model::class))->isSuperTypeOf($returnType)->yes()) {
             return $returnType;
         }
 
