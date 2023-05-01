@@ -3,7 +3,6 @@
 namespace BlankHelper;
 
 use Illuminate\Support\Collection;
-
 use stdClass;
 
 use function PHPStan\Testing\assertType;
