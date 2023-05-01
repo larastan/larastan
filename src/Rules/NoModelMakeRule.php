@@ -7,7 +7,6 @@ namespace NunoMaduro\Larastan\Rules;
 use Illuminate\Database\Eloquent\Model;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
@@ -27,7 +26,7 @@ use PHPStan\Type\ObjectType;
  * It is functionally equivalent to simply use the constructor:
  * new User()
  *
- * @implements Rule<MethodCall>
+ * @implements Rule<StaticCall>
  */
 class NoModelMakeRule implements Rule
 {
