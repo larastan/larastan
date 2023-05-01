@@ -26,6 +26,7 @@ class NoModelMakeRuleTest extends RuleTestCase
         $this->analyse([__DIR__.'/data/ModelMake.php'], [
             ["Called 'Model::make()' which performs unnecessary work, use 'new Model()'.", 13],
             ["Called 'Model::make()' which performs unnecessary work, use 'new Model()'.", 20],
+            ["Called 'Model::make()' which performs unnecessary work, use 'new Model()'.", 25],
         ]);
     }
 }

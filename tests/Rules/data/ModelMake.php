@@ -19,4 +19,9 @@ class ModelMake
 
         return $class::make();
     }
+
+    public function makeRelativeClass(): User
+    {
+        return namespace\User::make();
+    }
 }
