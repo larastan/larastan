@@ -51,10 +51,7 @@
     },
     "config": {
         "sort-packages": true,
-        "preferred-install": "dist",
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
-        }
+        "preferred-install": "dist"
     },
     "extra": {
         "branch-alias": {
