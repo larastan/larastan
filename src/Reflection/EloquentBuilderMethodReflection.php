@@ -9,7 +9,6 @@ use PHPStan\Reflection\ClassMemberReflection;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\ParameterReflection;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\Generic\TemplateTypeMap;
 use PHPStan\Type\ObjectType;
@@ -47,10 +46,10 @@ final class EloquentBuilderMethodReflection implements MethodReflection
 
     /**
      * @param  string  $methodName
-     * @param \PHPStan\Reflection\ClassReflection $classReflection
-     * @param \PHPStan\Reflection\MethodReflection $originalMethodReflection
-     * @param \PHPStan\Reflection\ParameterReflection[] $parameters
-     * @param \PHPStan\Type\Type|null $returnType
+     * @param  \PHPStan\Reflection\ClassReflection  $classReflection
+     * @param  \PHPStan\Reflection\MethodReflection  $originalMethodReflection
+     * @param  \PHPStan\Reflection\ParameterReflection[]  $parameters
+     * @param  \PHPStan\Type\Type|null  $returnType
      * @param  bool  $isVariadic
      */
     public function __construct(string $methodName, ClassReflection $classReflection, MethodReflection $originalMethodReflection, array $parameters, ?Type $returnType = null, bool $isVariadic = false)

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Rules;
 
-use Illuminate\View\Factory;
 use NunoMaduro\Larastan\Collectors\UsedEmailViewCollector;
 use NunoMaduro\Larastan\Collectors\UsedRouteFacadeViewCollector;
 use NunoMaduro\Larastan\Collectors\UsedViewFacadeMakeCollector;

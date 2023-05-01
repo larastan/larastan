@@ -2,7 +2,6 @@
 
 namespace CollectionMake;
 
-use App\User;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection as SupportCollection;
 

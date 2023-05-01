@@ -43,8 +43,8 @@ class ModelPropertyStaticCallRule implements Rule
     }
 
     /**
-     * @param \PhpParser\Node\Expr\StaticCall $node
-     * @param \PHPStan\Analyser\Scope $scope
+     * @param  \PhpParser\Node\Expr\StaticCall  $node
+     * @param  \PHPStan\Analyser\Scope  $scope
      * @return string[]
      *
      * @throws \PHPStan\ShouldNotHappenException

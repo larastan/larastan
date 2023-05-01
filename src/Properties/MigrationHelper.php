@@ -10,7 +10,6 @@ use PHPStan\Parser\ParserErrorsException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
-use SplFileInfo;
 
 class MigrationHelper
 {
@@ -42,7 +41,7 @@ class MigrationHelper
     }
 
     /**
-     * @param array<string, \NunoMaduro\Larastan\Properties\SchemaTable> $tables
+     * @param  array<string, \NunoMaduro\Larastan\Properties\SchemaTable>  $tables
      * @return array<string, \NunoMaduro\Larastan\Properties\SchemaTable>
      */
     public function initializeTables(array $tables = []): array

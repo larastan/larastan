@@ -193,7 +193,7 @@ class ModelWithCustomBuilder extends Model
     }
 
     /**
-     * @param \CustomEloquentBuilder\CustomEloquentBuilder<\CustomEloquentBuilder\ModelWithCustomBuilder> $query
+     * @param  \CustomEloquentBuilder\CustomEloquentBuilder<\CustomEloquentBuilder\ModelWithCustomBuilder>  $query
      *
      * @phpstan-return \CustomEloquentBuilder\CustomEloquentBuilder<\CustomEloquentBuilder\ModelWithCustomBuilder>
      */

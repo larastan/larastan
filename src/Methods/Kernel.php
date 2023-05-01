@@ -30,7 +30,7 @@ final class Kernel
     /**
      * Kernel constructor.
      *
-     * @param \PHPStan\Reflection\Php\PhpMethodReflectionFactory $methodReflectionFactory
+     * @param  \PHPStan\Reflection\Php\PhpMethodReflectionFactory  $methodReflectionFactory
      */
     public function __construct(
         PhpMethodReflectionFactory $methodReflectionFactory,
@@ -41,7 +41,7 @@ final class Kernel
     }
 
     /**
-     * @param \PHPStan\Reflection\ClassReflection $classReflection
+     * @param  \PHPStan\Reflection\ClassReflection  $classReflection
      * @param  string  $methodName
      * @return \NunoMaduro\Larastan\Contracts\Methods\PassableContract
      */

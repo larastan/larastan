@@ -2,9 +2,6 @@
 
 namespace Translator;
 
-use Illuminate\Contracts\Translation\Translator as TranslatorContract;
-use Illuminate\Translation\Translator;
-
 use function PHPStan\Testing\assertType;
 
 /** @var \Illuminate\Translation\Translator $trans */

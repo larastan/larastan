@@ -13,10 +13,8 @@ use NunoMaduro\Larastan\Reflection\DynamicWhereParameterReflection;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
-use PHPStan\ShouldNotHappenException;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
@@ -120,9 +118,9 @@ class BuilderHelper
      * Does not handle the case where $methodName exists in `EloquentBuilder`,
      * that should be checked by caller before calling this method.
      *
-     * @param \PHPStan\Reflection\ClassReflection $eloquentBuilder Can be `EloquentBuilder` or a custom builder extending it.
+     * @param  \PHPStan\Reflection\ClassReflection  $eloquentBuilder  Can be `EloquentBuilder` or a custom builder extending it.
      * @param  string  $methodName
-     * @param \PHPStan\Reflection\ClassReflection $model
+     * @param  \PHPStan\Reflection\ClassReflection  $model
      * @return \PHPStan\Reflection\MethodReflection|null
      *
      * @throws \PHPStan\Reflection\MissingMethodFromReflectionException

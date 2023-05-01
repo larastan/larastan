@@ -2,7 +2,6 @@
 
 namespace Model;
 
-use App\Account;
 use App\Post;
 use App\PostBuilder;
 use App\Thread;
@@ -24,7 +23,7 @@ function testFindOnGenericModel(Model $model)
 }
 
 /**
- * @param class-string<\Illuminate\Database\Eloquent\Model> $modelClass
+ * @param  class-string<\Illuminate\Database\Eloquent\Model>  $modelClass
  */
 function testFindOnModelClassString(string $modelClass)
 {
@@ -32,8 +31,8 @@ function testFindOnModelClassString(string $modelClass)
 }
 
 /**
- * @param class-string<\App\User>|class-string<\App\Post> $modelClass
- * @param class-string<\App\User>|class-string<\App\Account> $customCollectionModelClass
+ * @param  class-string<\App\User>|class-string<\App\Post>  $modelClass
+ * @param  class-string<\App\User>|class-string<\App\Account>  $customCollectionModelClass
  */
 function testUnionOfClassStrings(string $modelClass, string $customCollectionModelClass)
 {

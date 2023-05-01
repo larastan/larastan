@@ -12,7 +12,6 @@ use PHPStan\File\FileHelper;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
-use SplFileInfo;
 
 final class SquashedMigrationHelper
 {

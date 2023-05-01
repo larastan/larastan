@@ -4,7 +4,6 @@ namespace CollectionFilter;
 
 use App\Account;
 use App\User;
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 
 use function PHPStan\Testing\assertType;
@@ -19,7 +18,7 @@ function foo(Collection $foo): void
 }
 
 /**
- * @param array<int, \App\User> $attachments
+ * @param  array<int, \App\User>  $attachments
  */
 function storeAttachments(array $attachments): void
 {

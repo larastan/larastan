@@ -8,7 +8,6 @@ use PHPStan\Reflection\ClassMemberReflection;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\ParametersAcceptor;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\Generic\TemplateTypeMap;
 use PHPStan\Type\Type;
@@ -38,9 +37,9 @@ final class AnnotationScopeMethodReflection implements MethodReflection
 
     /**
      * @param  string  $name
-     * @param \PHPStan\Reflection\ClassReflection $declaringClass
-     * @param \PHPStan\Type\Type $returnType
-     * @param \NunoMaduro\Larastan\Reflection\AnnotationScopeMethodParameterReflection[] $parameters
+     * @param  \PHPStan\Reflection\ClassReflection  $declaringClass
+     * @param  \PHPStan\Type\Type  $returnType
+     * @param  \NunoMaduro\Larastan\Reflection\AnnotationScopeMethodParameterReflection[]  $parameters
      * @param  bool  $isStatic
      * @param  bool  $isVariadic
      */

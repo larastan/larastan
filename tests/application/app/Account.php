@@ -24,7 +24,7 @@ class Account extends Model
     }
 
     /**
-     * @param array<int, \App\Account> $models
+     * @param  array<int, \App\Account>  $models
      * @return \App\AccountCollection<int, \App\Account>
      */
     public function newCollection(array $models = []): AccountCollection

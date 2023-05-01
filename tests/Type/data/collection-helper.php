@@ -4,7 +4,6 @@ namespace CollectionHelper;
 
 use App\User;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Support\Collection;
 
 use function PHPStan\Testing\assertType;
 

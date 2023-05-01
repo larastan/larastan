@@ -12,7 +12,6 @@ use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
-use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
@@ -76,9 +75,9 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
     }
 
     /**
-     * @param \PHPStan\Reflection\MethodReflection $methodReflection
-     * @param \PhpParser\Node\Expr\MethodCall $methodCall
-     * @param \PHPStan\Analyser\Scope $scope
+     * @param  \PHPStan\Reflection\MethodReflection  $methodReflection
+     * @param  \PhpParser\Node\Expr\MethodCall  $methodCall
+     * @param  \PHPStan\Analyser\Scope  $scope
      * @return \PHPStan\Type\Type
      *
      * @throws \PHPStan\ShouldNotHappenException

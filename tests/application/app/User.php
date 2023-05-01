@@ -106,7 +106,7 @@ class User extends Authenticatable
     }
 
     /**
-     * @param \Illuminate\Database\Eloquent\Builder<\App\User> $query
+     * @param  \Illuminate\Database\Eloquent\Builder<\App\User>  $query
      * @return \Illuminate\Database\Eloquent\Builder<\App\User>
      */
     public function scopeWhereActive(Builder $query): Builder

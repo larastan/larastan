@@ -13,7 +13,6 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
-use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
 /**

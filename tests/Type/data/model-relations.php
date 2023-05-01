@@ -3,7 +3,6 @@
 namespace ModelRelations;
 
 use App\Account;
-use App\Group;
 use App\Post;
 use App\User;
 use Illuminate\Database\Eloquent\Model;

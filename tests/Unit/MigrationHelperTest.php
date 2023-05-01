@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit;
 
 use NunoMaduro\Larastan\Properties\MigrationHelper;
-use NunoMaduro\Larastan\Properties\SchemaTable;
 use PHPStan\File\FileHelper;
-use PHPStan\Parser\Parser;
 use PHPStan\Testing\PHPStanTestCase;
 
 class MigrationHelperTest extends PHPStanTestCase
@@ -170,7 +168,7 @@ class MigrationHelperTest extends PHPStanTestCase
     }
 
     /**
-     * @param array<string, \NunoMaduro\Larastan\Properties\SchemaTable> $tables
+     * @param  array<string, \NunoMaduro\Larastan\Properties\SchemaTable>  $tables
      */
     private function assertUsersTableSchema(array $tables): void
     {

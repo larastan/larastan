@@ -7,14 +7,12 @@ namespace NunoMaduro\Larastan\Rules;
 use Illuminate\Database\Eloquent\Model;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\ObjectType;
 
@@ -37,7 +35,7 @@ class NoModelMakeRule implements Rule
     protected $reflectionProvider;
 
     /**
-     * @param \PHPStan\Reflection\ReflectionProvider $reflectionProvider
+     * @param  \PHPStan\Reflection\ReflectionProvider  $reflectionProvider
      */
     public function __construct(ReflectionProvider $reflectionProvider)
     {
@@ -53,8 +51,8 @@ class NoModelMakeRule implements Rule
     }
 
     /**
-     * @param \PhpParser\Node $node
-     * @param \PHPStan\Analyser\Scope $scope
+     * @param  \PhpParser\Node  $node
+     * @param  \PHPStan\Analyser\Scope  $scope
      * @return array<int, \PHPStan\Rules\RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
@@ -85,8 +83,8 @@ class NoModelMakeRule implements Rule
     /**
      * Was the expression called on a Model instance?
      *
-     * @param \PhpParser\Node\Expr\StaticCall $call
-     * @param \PHPStan\Analyser\Scope $scope
+     * @param  \PhpParser\Node\Expr\StaticCall  $call
+     * @param  \PHPStan\Analyser\Scope  $scope
      * @return bool
      */
     protected function isCalledOnModel(StaticCall $call, Scope $scope): bool

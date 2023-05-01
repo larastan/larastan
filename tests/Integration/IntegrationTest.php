@@ -3,7 +3,6 @@
 namespace Tests\Integration;
 
 use PHPStan\Analyser\Analyser;
-use PHPStan\Analyser\Error;
 use PHPStan\File\FileHelper;
 use PHPStan\Testing\PHPStanTestCase;
 

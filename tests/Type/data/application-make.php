@@ -3,7 +3,6 @@
 namespace ApplicationMake;
 
 use Illuminate\Contracts\Config\Repository;
-use Illuminate\Database\Eloquent\Model;
 
 use function PHPStan\Testing\assertType;
 

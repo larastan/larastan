@@ -193,7 +193,7 @@ function foo(): void
 }
 
 /**
- * @param \Illuminate\Database\Eloquent\Builder<\App\User> $builder
+ * @param  \Illuminate\Database\Eloquent\Builder<\App\User>  $builder
  */
 function testCallingQueryBuilderMethodOnEloquentBuilderReturnsEloquentBuilder(Builder $builder): void
 {
@@ -425,7 +425,7 @@ function testJoinSubAllowsEloquentBuilder()
 /**
  * @template TModelClass of \Illuminate\Database\Eloquent\Model
  *
- * @param \Illuminate\Database\Eloquent\Builder<TModelClass> $query
+ * @param  \Illuminate\Database\Eloquent\Builder<TModelClass>  $query
  */
 function testQueryBuilderOnEloquentBuilderWithBaseModel(EloquentBuilder $query): void
 {

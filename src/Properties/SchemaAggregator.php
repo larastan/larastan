@@ -24,7 +24,7 @@ final class SchemaAggregator
     }
 
     /**
-     * @param array<int, \PhpParser\Node\Stmt> $stmts
+     * @param  array<int, \PhpParser\Node\Stmt>  $stmts
      */
     public function addStatements(array $stmts): void
     {
@@ -39,7 +39,7 @@ final class SchemaAggregator
     }
 
     /**
-     * @param array<int, \PhpParser\Node\Stmt> $stmts
+     * @param  array<int, \PhpParser\Node\Stmt>  $stmts
      */
     private function addClassStatements(array $stmts): void
     {
@@ -54,7 +54,7 @@ final class SchemaAggregator
     }
 
     /**
-     * @param \PhpParser\Node\Stmt[] $stmts
+     * @param  \PhpParser\Node\Stmt[]  $stmts
      */
     private function addUpMethodStatements(array $stmts): void
     {
@@ -144,7 +144,7 @@ final class SchemaAggregator
     /**
      * @param  string  $tableName
      * @param  string  $argName
-     * @param \PhpParser\Node\Stmt[] $stmts
+     * @param  \PhpParser\Node\Stmt[]  $stmts
      *
      * @throws \Exception
      */

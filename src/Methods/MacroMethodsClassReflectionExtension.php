@@ -14,11 +14,9 @@ use NunoMaduro\Larastan\Concerns\HasContainer;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
-use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\ClosureTypeFactory;
-use ReflectionException;
 
 class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExtension
 {

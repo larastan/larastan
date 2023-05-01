@@ -8,25 +8,22 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use NunoMaduro\Larastan\Types\ModelProperty\GenericModelPropertyType;
 use NunoMaduro\Larastan\Types\ModelProperty\ModelPropertyType;
-use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
-use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\GeneralizePrecision;
 use PHPStan\Type\ObjectType;
-use PHPStan\Type\Type;
 use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
 
 class ModelPropertiesRuleHelper
 {
     /**
-     * @param \PHPStan\Reflection\MethodReflection $methodReflection
-     * @param \PHPStan\Analyser\Scope $scope
-     * @param \PhpParser\Node\Arg[] $args
-     * @param \PHPStan\Reflection\ClassReflection|null $modelReflection
+     * @param  \PHPStan\Reflection\MethodReflection  $methodReflection
+     * @param  \PHPStan\Analyser\Scope  $scope
+     * @param  \PhpParser\Node\Arg[]  $args
+     * @param  \PHPStan\Reflection\ClassReflection|null  $modelReflection
      * @return string[]
      *
      * @throws \PHPStan\ShouldNotHappenException
@@ -129,10 +126,10 @@ class ModelPropertiesRuleHelper
     }
 
     /**
-     * @param \PHPStan\Reflection\MethodReflection $methodReflection
-     * @param \PHPStan\Analyser\Scope $scope
-     * @param \PhpParser\Node\Arg[] $args
-     * @param \PHPStan\Reflection\ClassReflection|null $modelReflection
+     * @param  \PHPStan\Reflection\MethodReflection  $methodReflection
+     * @param  \PHPStan\Analyser\Scope  $scope
+     * @param  \PhpParser\Node\Arg[]  $args
+     * @param  \PHPStan\Reflection\ClassReflection|null  $modelReflection
      * @return array<int, (int|\PHPStan\Type\Type)>
      */
     public function hasModelPropertyParameter(

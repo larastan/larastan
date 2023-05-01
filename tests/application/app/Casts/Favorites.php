@@ -20,7 +20,7 @@ class Favorites implements CastsAttributes
     /**
      * Prepare the given value for storage.
      *
-     * @param \App\Casts\Favorites $value
+     * @param  \App\Casts\Favorites  $value
      */
     public function set($model, $key, $value, $attributes)
     {

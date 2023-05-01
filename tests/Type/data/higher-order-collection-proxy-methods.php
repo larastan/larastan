@@ -2,11 +2,8 @@
 
 namespace HigherOrderCollectionProxyMethods;
 
-use App\Importer;
-use App\ModelWithOnlyValueGenericCollection;
 use App\NonGenericCollection;
 use App\OnlyValueGenericCollection;
-use App\Transaction;
 use App\TransactionCollection;
 use App\User;
 use Illuminate\Database\Eloquent\Collection;
@@ -15,11 +12,11 @@ use Illuminate\Support\Collection as SupportCollection;
 use function PHPStan\Testing\assertType;
 
 /**
- * @param \Illuminate\Database\Eloquent\Collection<int, \App\User> $users
- * @param \Illuminate\Support\Collection<int, \App\Importer> $collection
- * @param \Illuminate\Support\Collection<int, \App\User> $supportCollectionWithModels
- * @param \App\OnlyValueGenericCollection<\App\ModelWithOnlyValueGenericCollection> $onlyValueGenericCollection
- * @param \App\TransactionCollection<int, \App\Transaction> $transactionCollection
+ * @param  \Illuminate\Database\Eloquent\Collection<int, \App\User>  $users
+ * @param  \Illuminate\Support\Collection<int, \App\Importer>  $collection
+ * @param  \Illuminate\Support\Collection<int, \App\User>  $supportCollectionWithModels
+ * @param  \App\OnlyValueGenericCollection<\App\ModelWithOnlyValueGenericCollection>  $onlyValueGenericCollection
+ * @param  \App\TransactionCollection<int, \App\Transaction>  $transactionCollection
  */
 function doFoo(Collection $users, User $user, SupportCollection $collection, SupportCollection $supportCollectionWithModels, NonGenericCollection $nonGenericCollection, OnlyValueGenericCollection $onlyValueGenericCollection, TransactionCollection $transactionCollection)
 {
