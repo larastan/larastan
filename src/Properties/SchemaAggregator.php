@@ -14,23 +14,23 @@ use PHPStan\Type\ObjectType;
  */
 final class SchemaAggregator
 {
-    /** @var array<string, SchemaTable> */
+    /** @var array<string, \NunoMaduro\Larastan\Properties\SchemaTable> */
     public array $tables = [];
 
-    /** @param array<string, SchemaTable> $tables */
+    /** @param array<string, \NunoMaduro\Larastan\Properties\SchemaTable> $tables */
     public function __construct(array $tables = [])
     {
         $this->tables = $tables;
     }
 
     /**
-     * @param  array<int, PhpParser\Node\Stmt>  $stmts
+     * @param array<int, \PhpParser\Node\Stmt> $stmts
      */
     public function addStatements(array $stmts): void
     {
         $nodeFinder = new NodeFinder();
 
-        /** @var PhpParser\Node\Stmt\Class_[] $classes */
+        /** @var \PhpParser\Node\Stmt\Class_[] $classes */
         $classes = $nodeFinder->findInstanceOf($stmts, PhpParser\Node\Stmt\Class_::class);
 
         foreach ($classes as $stmt) {
@@ -39,7 +39,7 @@ final class SchemaAggregator
     }
 
     /**
-     * @param  array<int, PhpParser\Node\Stmt>  $stmts
+     * @param array<int, \PhpParser\Node\Stmt> $stmts
      */
     private function addClassStatements(array $stmts): void
     {
@@ -54,7 +54,7 @@ final class SchemaAggregator
     }
 
     /**
-     * @param  PhpParser\Node\Stmt[]  $stmts
+     * @param \PhpParser\Node\Stmt[] $stmts
      */
     private function addUpMethodStatements(array $stmts): void
     {
@@ -144,7 +144,7 @@ final class SchemaAggregator
     /**
      * @param  string  $tableName
      * @param  string  $argName
-     * @param  PhpParser\Node\Stmt[]  $stmts
+     * @param \PhpParser\Node\Stmt[] $stmts
      *
      * @throws \Exception
      */
@@ -456,7 +456,7 @@ final class SchemaAggregator
             return;
         }
 
-        /** @var PhpParser\Node\Scalar\String_ $methodCallArgument */
+        /** @var \PhpParser\Node\Scalar\String_ $methodCallArgument */
         $methodCallArgument = $call->getArgs()[0]->value;
 
         $oldTableName = $oldTable->name;

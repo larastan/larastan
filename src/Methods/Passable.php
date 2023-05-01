@@ -27,7 +27,7 @@ final class Passable implements PassableContract
     private $methodReflectionFactory;
 
     /**
-     * @var ReflectionProvider
+     * @var \PHPStan\Reflection\ReflectionProvider
      */
     private $reflectionProvider;
 
@@ -60,7 +60,7 @@ final class Passable implements PassableContract
      * Method constructor.
      *
      * @param  \PHPStan\Reflection\Php\PhpMethodReflectionFactory  $methodReflectionFactory
-     * @param  ReflectionProvider  $reflectionProvider
+     * @param \PHPStan\Reflection\ReflectionProvider $reflectionProvider
      * @param  \Illuminate\Contracts\Pipeline\Pipeline  $pipeline
      * @param  \PHPStan\Reflection\ClassReflection  $classReflection
      * @param  string  $methodName

@@ -17,7 +17,7 @@ use PHPStan\Reflection\ReflectionProvider;
 class StorageMethodsClassReflectionExtension implements MethodsClassReflectionExtension
 {
     /**
-     * @var ReflectionProvider
+     * @var \PHPStan\Reflection\ReflectionProvider
      */
     private $reflectionProvider;
 

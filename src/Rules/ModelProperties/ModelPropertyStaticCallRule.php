@@ -21,13 +21,13 @@ use PHPStan\Type\Type;
  */
 class ModelPropertyStaticCallRule implements Rule
 {
-    /** @var ReflectionProvider */
+    /** @var \PHPStan\Reflection\ReflectionProvider */
     private $reflectionProvider;
 
-    /** @var ModelPropertiesRuleHelper */
+    /** @var \NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertiesRuleHelper */
     private $modelPropertiesRuleHelper;
 
-    /** @var RuleLevelHelper */
+    /** @var \PHPStan\Rules\RuleLevelHelper */
     private $ruleLevelHelper;
 
     public function __construct(ReflectionProvider $reflectionProvider, ModelPropertiesRuleHelper $ruleHelper, RuleLevelHelper $ruleLevelHelper)
@@ -43,8 +43,8 @@ class ModelPropertyStaticCallRule implements Rule
     }
 
     /**
-     * @param  Node\Expr\StaticCall  $node
-     * @param  Scope  $scope
+     * @param \PhpParser\Node\Expr\StaticCall $node
+     * @param \PHPStan\Analyser\Scope $scope
      * @return string[]
      *
      * @throws \PHPStan\ShouldNotHappenException

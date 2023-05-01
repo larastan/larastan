@@ -31,16 +31,16 @@ use function array_map;
 
 final class ModelForwardsCallsExtension implements MethodsClassReflectionExtension
 {
-    /** @var BuilderHelper */
+    /** @var \NunoMaduro\Larastan\Methods\BuilderHelper */
     private $builderHelper;
 
-    /** @var ReflectionProvider */
+    /** @var \PHPStan\Reflection\ReflectionProvider */
     private $reflectionProvider;
 
-    /** @var EloquentBuilderForwardsCallsExtension */
+    /** @var \NunoMaduro\Larastan\Methods\EloquentBuilderForwardsCallsExtension */
     private $eloquentBuilderForwardsCallsExtension;
 
-    /** @var array<string, MethodReflection> */
+    /** @var array<string, \PHPStan\Reflection\MethodReflection> */
     private $cache = [];
 
     public function __construct(BuilderHelper $builderHelper, ReflectionProvider $reflectionProvider, EloquentBuilderForwardsCallsExtension $eloquentBuilderForwardsCallsExtension)
@@ -51,8 +51,8 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
     }
 
     /**
-     * @throws MissingMethodFromReflectionException
-     * @throws ShouldNotHappenException
+     * @throws \PHPStan\Reflection\MissingMethodFromReflectionException
+     * @throws \PHPStan\ShouldNotHappenException
      */
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
@@ -72,9 +72,9 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
     }
 
     /**
-     * @param  ClassReflection  $classReflection
+     * @param \PHPStan\Reflection\ClassReflection $classReflection
      * @param  string  $methodName
-     * @return MethodReflection
+     * @return \PHPStan\Reflection\MethodReflection
      */
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
@@ -82,8 +82,8 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
     }
 
     /**
-     * @throws ShouldNotHappenException
-     * @throws MissingMethodFromReflectionException
+     * @throws \PHPStan\ShouldNotHappenException
+     * @throws \PHPStan\Reflection\MissingMethodFromReflectionException
      */
     private function findMethod(ClassReflection $classReflection, string $methodName): ?MethodReflection
     {
@@ -98,13 +98,13 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
 
             return new class($classReflection, $methodName, $methodReflection) implements MethodReflection
             {
-                /** @var ClassReflection */
+                /** @var \PHPStan\Reflection\ClassReflection */
                 private $classReflection;
 
                 /** @var string */
                 private $methodName;
 
-                /** @var MethodReflection */
+                /** @var \PHPStan\Reflection\MethodReflection */
                 private $methodReflection;
 
                 public function __construct(ClassReflection $classReflection, string $methodName, MethodReflection $methodReflection)
@@ -219,7 +219,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
     }
 
     /**
-     * @return ParametersAcceptor[]
+     * @return \PHPStan\Reflection\ParametersAcceptor[]
      */
     private function transformStaticParameters(MethodReflection $method, GenericObjectType $builder): array
     {

@@ -23,7 +23,7 @@ use PHPStan\Type\TypeCombinator;
  */
 final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 {
-    /** @var array<string, SchemaTable> */
+    /** @var array<string, \NunoMaduro\Larastan\Properties\SchemaTable> */
     private array $tables = [];
 
     public function __construct(
@@ -57,7 +57,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
         }
 
         try {
-            /** @var Model $modelInstance */
+            /** @var \Illuminate\Database\Eloquent\Model $modelInstance */
             $modelInstance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
         } catch (\ReflectionException $e) {
             return false;
@@ -120,7 +120,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
         string $propertyName
     ): PropertyReflection {
         try {
-            /** @var Model $modelInstance */
+            /** @var \Illuminate\Database\Eloquent\Model $modelInstance */
             $modelInstance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
         } catch (\ReflectionException $e) {
             throw new ShouldNotHappenException();

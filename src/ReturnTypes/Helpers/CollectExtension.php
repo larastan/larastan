@@ -20,7 +20,7 @@ use PHPStan\Type\Type;
 final class CollectExtension implements DynamicFunctionReturnTypeExtension
 {
     /**
-     * @var CollectionHelper
+     * @var \NunoMaduro\Larastan\Support\CollectionHelper
      */
     private $collectionHelper;
 

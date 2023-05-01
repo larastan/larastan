@@ -17,7 +17,7 @@ use function count;
 use function sprintf;
 
 /**
- * @implements Rule<MethodCall>
+ * @implements \PHPStan\Rules\Rule<\PhpParser\Node\Expr\MethodCall>
  */
 final class UndefinedArgumentOrOptionRule implements Rule
 {
@@ -31,7 +31,7 @@ final class UndefinedArgumentOrOptionRule implements Rule
     }
 
     /**
-     * @return RuleError[] errors
+     * @return \PHPStan\Rules\RuleError[] errors
      */
     public function processNode(Node $node, Scope $scope): array
     {

@@ -14,7 +14,7 @@ use SplFileInfo;
 
 class MigrationHelper
 {
-    /** @var Parser */
+    /** @var \PHPStan\Parser\Parser */
     private $parser;
 
     /** @var string[] */
@@ -23,7 +23,7 @@ class MigrationHelper
     /** @var bool */
     private $disableMigrationScan;
 
-    /** @var FileHelper */
+    /** @var \PHPStan\File\FileHelper */
     private $fileHelper;
 
     /**
@@ -42,8 +42,8 @@ class MigrationHelper
     }
 
     /**
-     * @param  array<string, SchemaTable>  $tables
-     * @return array<string, SchemaTable>
+     * @param array<string, \NunoMaduro\Larastan\Properties\SchemaTable> $tables
+     * @return array<string, \NunoMaduro\Larastan\Properties\SchemaTable>
      */
     public function initializeTables(array $tables = []): array
     {
@@ -76,11 +76,11 @@ class MigrationHelper
     }
 
     /**
-     * @return SplFileInfo[]
+     * @return \SplFileInfo[]
      */
     private function getMigrationFiles(): array
     {
-        /** @var SplFileInfo[] $migrationFiles */
+        /** @var \SplFileInfo[] $migrationFiles */
         $migrationFiles = [];
 
         foreach ($this->databaseMigrationPath as $additionalPath) {

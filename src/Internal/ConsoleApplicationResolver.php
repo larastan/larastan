@@ -17,7 +17,7 @@ final class ConsoleApplicationResolver
     private ?Application $application = null;
 
     /**
-     * @return Command[]
+     * @return \Illuminate\Console\Command[]
      */
     public function findCommands(ClassReflection $classReflection): array
     {

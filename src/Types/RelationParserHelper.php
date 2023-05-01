@@ -16,13 +16,13 @@ use PHPStan\Type\Generic\TemplateTypeMap;
 
 class RelationParserHelper
 {
-    /** @var Parser */
+    /** @var \PHPStan\Parser\Parser */
     private $parser;
 
-    /** @var ScopeFactory */
+    /** @var \PHPStan\Analyser\ScopeFactory */
     private $scopeFactory;
 
-    /** @var ReflectionProvider */
+    /** @var \PHPStan\Reflection\ReflectionProvider */
     private $reflectionProvider;
 
     public function __construct(Parser $parser, ScopeFactory $scopeFactory, ReflectionProvider $reflectionProvider)
@@ -51,14 +51,14 @@ class RelationParserHelper
 
         $fileStmts = $this->parser->parseFile($fileName);
 
-        /** @var Node\Stmt\ClassMethod|null $relationMethod */
+        /** @var \PhpParser\Node\Stmt\ClassMethod|null $relationMethod */
         $relationMethod = $this->findMethod($methodReflection->getName(), $fileStmts);
 
         if ($relationMethod === null) {
             return null;
         }
 
-        /** @var Node\Stmt\Return_|null $returnStmt */
+        /** @var \PhpParser\Node\Stmt\Return_|null $returnStmt */
         $returnStmt = $this->findReturn($relationMethod);
 
         if ($returnStmt === null || ! $returnStmt->expr instanceof MethodCall) {
@@ -112,7 +112,7 @@ class RelationParserHelper
     /**
      * @param  string  $method
      * @param  mixed  $statements
-     * @return Node|null
+     * @return \PhpParser\Node|null
      */
     private function findMethod(string $method, $statements): ?Node
     {
@@ -124,7 +124,7 @@ class RelationParserHelper
 
     private function findReturn(Node\Stmt\ClassMethod $relationMethod): ?Node
     {
-        /** @var Node[] $statements */
+        /** @var \PhpParser\Node[] $statements */
         $statements = $relationMethod->stmts;
 
         return (new NodeFinder)->findFirstInstanceOf($statements, Node\Stmt\Return_::class);

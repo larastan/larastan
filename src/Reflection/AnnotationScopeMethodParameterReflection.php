@@ -13,10 +13,10 @@ final class AnnotationScopeMethodParameterReflection implements ParameterReflect
     /** @var string */
     private $name;
 
-    /** @var Type */
+    /** @var \PHPStan\Type\Type */
     private $type;
 
-    /** @var PassedByReference */
+    /** @var \PHPStan\Reflection\PassedByReference */
     private $passedByReference;
 
     /** @var bool */
@@ -25,7 +25,7 @@ final class AnnotationScopeMethodParameterReflection implements ParameterReflect
     /** @var bool */
     private $isVariadic;
 
-    /** @var Type|null */
+    /** @var \PHPStan\Type\Type|null */
     private $defaultValue;
 
     public function __construct(string $name, Type $type, PassedByReference $passedByReference, bool $isOptional, bool $isVariadic, ?Type $defaultValue)

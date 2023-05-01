@@ -44,14 +44,14 @@ class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTyp
     }
 
     /**
-     * @throws ShouldNotHappenException
+     * @throws \PHPStan\ShouldNotHappenException
      */
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,
         Scope $scope
     ): Type {
-        /** @var FunctionVariant $functionVariant */
+        /** @var \PHPStan\Reflection\FunctionVariant $functionVariant */
         $functionVariant = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
         $returnType = $functionVariant->getReturnType();
 

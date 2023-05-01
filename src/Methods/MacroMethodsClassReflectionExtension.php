@@ -24,7 +24,7 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
 {
     use HasContainer;
 
-    /** @var array<string, MethodReflection> */
+    /** @var array<string, \PHPStan\Reflection\MethodReflection> */
     private array $methods = [];
 
     public function __construct(private ReflectionProvider $reflectionProvider, private ClosureTypeFactory $closureTypeFactory)
@@ -32,9 +32,9 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
     }
 
     /**
-     * @throws ReflectionException
-     * @throws ShouldNotHappenException
-     * @throws MissingMethodFromReflectionException
+     * @throws \ReflectionException
+     * @throws \PHPStan\ShouldNotHappenException
+     * @throws \PHPStan\Reflection\MissingMethodFromReflectionException
      */
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {

@@ -34,7 +34,7 @@ final class UsedViewInAnotherViewCollector
     }
 
     /**
-     * @param  Node\Stmt[]  $nodes
+     * @param \PhpParser\Node\Stmt[] $nodes
      * @return list<string>
      */
     private function processNodes(array $nodes): array

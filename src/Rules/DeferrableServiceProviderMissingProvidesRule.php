@@ -14,7 +14,7 @@ use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\ShouldNotHappenException;
 
 /**
- * @implements Rule<InClassNode>
+ * @implements \PHPStan\Rules\Rule<\PHPStan\Node\InClassNode>
  */
 class DeferrableServiceProviderMissingProvidesRule implements Rule
 {

@@ -12,7 +12,7 @@ final class SchemaTable
     /** @var string */
     public $name;
 
-    /** @var array<string, SchemaColumn> */
+    /** @var array<string, \NunoMaduro\Larastan\Properties\SchemaColumn> */
     public $columns = [];
 
     public function __construct(string $name)

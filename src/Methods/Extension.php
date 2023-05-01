@@ -17,11 +17,11 @@ use PHPStan\Reflection\ReflectionProvider;
 final class Extension implements MethodsClassReflectionExtension
 {
     /**
-     * @var Kernel
+     * @var \NunoMaduro\Larastan\Methods\Kernel
      */
     private $kernel;
 
-    /** @var MethodReflection[] */
+    /** @var \PHPStan\Reflection\MethodReflection[] */
     private $methodReflections = [];
 
     public function __construct(PhpMethodReflectionFactory $methodReflectionFactory, ReflectionProvider $reflectionProvider, Kernel $kernel = null)

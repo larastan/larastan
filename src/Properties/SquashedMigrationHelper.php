@@ -27,7 +27,7 @@ final class SquashedMigrationHelper
     ) {
     }
 
-    /** @return SchemaTable[] */
+    /** @return \NunoMaduro\Larastan\Properties\SchemaTable[] */
     public function initializeTables(): array
     {
         if ($this->disableSchemaScan) {
@@ -46,7 +46,7 @@ final class SquashedMigrationHelper
 
         ksort($filesArray);
 
-        /** @var array<string, SchemaTable> $tables */
+        /** @var array<string, \NunoMaduro\Larastan\Properties\SchemaTable> $tables */
         $tables = [];
 
         foreach ($filesArray as $file) {
@@ -63,7 +63,7 @@ final class SquashedMigrationHelper
                 continue;
             }
 
-            /** @var CreateStatement[] $createStatements */
+            /** @var \PhpMyAdmin\SqlParser\Statements\CreateStatement[] $createStatements */
             $createStatements = array_filter($parser->statements, static fn (Statement $statement) => $statement instanceof CreateStatement && $statement->name !== null);
 
             foreach ($createStatements as $createStatement) {
@@ -93,11 +93,11 @@ final class SquashedMigrationHelper
     }
 
     /**
-     * @return SplFileInfo[]
+     * @return \SplFileInfo[]
      */
     private function getSchemaFiles(): array
     {
-        /** @var SplFileInfo[] $schemaFiles */
+        /** @var \SplFileInfo[] $schemaFiles */
         $schemaFiles = [];
 
         foreach ($this->schemaPaths as $additionalPath) {

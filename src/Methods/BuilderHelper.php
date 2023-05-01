@@ -49,7 +49,7 @@ class BuilderHelper
         'toSql',
     ];
 
-    /** @var ReflectionProvider */
+    /** @var \PHPStan\Reflection\ReflectionProvider */
     private $reflectionProvider;
 
     /** @var bool */
@@ -120,13 +120,13 @@ class BuilderHelper
      * Does not handle the case where $methodName exists in `EloquentBuilder`,
      * that should be checked by caller before calling this method.
      *
-     * @param  ClassReflection  $eloquentBuilder  Can be `EloquentBuilder` or a custom builder extending it.
+     * @param \PHPStan\Reflection\ClassReflection $eloquentBuilder Can be `EloquentBuilder` or a custom builder extending it.
      * @param  string  $methodName
-     * @param  ClassReflection  $model
-     * @return MethodReflection|null
+     * @param \PHPStan\Reflection\ClassReflection $model
+     * @return \PHPStan\Reflection\MethodReflection|null
      *
-     * @throws MissingMethodFromReflectionException
-     * @throws ShouldNotHappenException
+     * @throws \PHPStan\Reflection\MissingMethodFromReflectionException
+     * @throws \PHPStan\ShouldNotHappenException
      */
     public function searchOnEloquentBuilder(ClassReflection $eloquentBuilder, string $methodName, ClassReflection $model): ?MethodReflection
     {
@@ -195,8 +195,8 @@ class BuilderHelper
      * @param  string  $modelClassName
      * @return string
      *
-     * @throws MissingMethodFromReflectionException
-     * @throws ShouldNotHappenException
+     * @throws \PHPStan\Reflection\MissingMethodFromReflectionException
+     * @throws \PHPStan\ShouldNotHappenException
      */
     public function determineBuilderName(string $modelClassName): string
     {

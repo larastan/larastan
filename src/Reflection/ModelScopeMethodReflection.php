@@ -21,12 +21,12 @@ final class ModelScopeMethodReflection implements MethodReflection
     private $methodName;
 
     /**
-     * @var ClassReflection
+     * @var \PHPStan\Reflection\ClassReflection
      */
     private $classReflection;
 
     /**
-     * @var ClassReflection
+     * @var \PHPStan\Reflection\ClassReflection
      */
     private $relation;
 

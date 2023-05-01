@@ -15,7 +15,7 @@ use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\ObjectType;
 
 /**
- * @implements Rule<MethodCall>
+ * @implements \PHPStan\Rules\Rule<\PhpParser\Node\Expr\MethodCall>
  */
 class OctaneCompatibilityRule implements Rule
 {
@@ -24,7 +24,7 @@ class OctaneCompatibilityRule implements Rule
         return MethodCall::class;
     }
 
-    /** @param MethodCall $node */
+    /** @param \PhpParser\Node\Expr\MethodCall $node */
     public function processNode(Node $node, Scope $scope): array
     {
         if (! $node->name instanceof Node\Identifier) {
@@ -59,10 +59,10 @@ class OctaneCompatibilityRule implements Rule
             return [];
         }
 
-        /** @var Node\Expr\Closure $closure */
+        /** @var \PhpParser\Node\Expr\Closure $closure */
         $closure = $args[1]->value;
 
-        /** @var Node\Param[] $closureParams */
+        /** @var \PhpParser\Node\Param[] $closureParams */
         $closureParams = $closure->getParams();
 
         // Closure should have at least one parameter. First param
@@ -97,7 +97,7 @@ class OctaneCompatibilityRule implements Rule
             }
 
             if ($node->getArgs()[0]->value instanceof Node\Expr\ArrayDimFetch) {
-                /** @var Node\Expr\Variable $var */
+                /** @var \PhpParser\Node\Expr\Variable $var */
                 $var = $node->getArgs()[0]->value->var;
 
                 if ($var->name !== $containerParameterName) {

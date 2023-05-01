@@ -32,13 +32,13 @@ final class HigherOrderCollectionProxyExtension implements MethodsClassReflectio
     ): MethodReflection {
         $activeTemplateTypeMap = $classReflection->getActiveTemplateTypeMap();
 
-        /** @var Type\Constant\ConstantStringType $methodType */
+        /** @var \PHPStan\Type\Constant\ConstantStringType $methodType */
         $methodType = $activeTemplateTypeMap->getType('T');
 
-        /** @var Type\ObjectType $valueType */
+        /** @var \PHPStan\Type\ObjectType $valueType */
         $valueType = $activeTemplateTypeMap->getType('TValue');
 
-        /** @var Type\Type $collectionType */
+        /** @var \PHPStan\Type\Type $collectionType */
         $collectionType = $activeTemplateTypeMap->getType('TCollection');
 
         $collectionClassName = count($collectionType->getObjectClassNames()) === 0
@@ -53,16 +53,16 @@ final class HigherOrderCollectionProxyExtension implements MethodsClassReflectio
 
         return new class($classReflection, $methodName, $modelMethodReflection, $returnType) implements MethodReflection
         {
-            /** @var ClassReflection */
+            /** @var \PHPStan\Reflection\ClassReflection */
             private $classReflection;
 
             /** @var string */
             private $methodName;
 
-            /** @var MethodReflection */
+            /** @var \PHPStan\Reflection\MethodReflection */
             private $modelMethodReflection;
 
-            /** @var Type\Type */
+            /** @var \PHPStan\Type\Type */
             private $returnType;
 
             public function __construct(ClassReflection $classReflection, string $methodName, MethodReflection $modelMethodReflection, Type\Type $returnType)

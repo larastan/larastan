@@ -11,13 +11,13 @@ use PHPStan\Type\Type;
 
 class ModelProperty implements PropertyReflection
 {
-    /** @var ClassReflection */
+    /** @var \PHPStan\Reflection\ClassReflection */
     private $declaringClass;
 
-    /** @var Type */
+    /** @var \PHPStan\Type\Type */
     private $readableType;
 
-    /** @var Type */
+    /** @var \PHPStan\Type\Type */
     private $writableType;
 
     /** @var bool */

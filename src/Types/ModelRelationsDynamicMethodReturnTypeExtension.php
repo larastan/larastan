@@ -22,7 +22,7 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
 {
     use HasContainer;
 
-    /** @var RelationParserHelper */
+    /** @var \NunoMaduro\Larastan\Types\RelationParserHelper */
     private $relationParserHelper;
 
     public function __construct(RelationParserHelper $relationParserHelper)
@@ -76,19 +76,19 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
     }
 
     /**
-     * @param  MethodReflection  $methodReflection
-     * @param  MethodCall  $methodCall
-     * @param  Scope  $scope
-     * @return Type
+     * @param \PHPStan\Reflection\MethodReflection $methodReflection
+     * @param \PhpParser\Node\Expr\MethodCall $methodCall
+     * @param \PHPStan\Analyser\Scope $scope
+     * @return \PHPStan\Type\Type
      *
-     * @throws ShouldNotHappenException
+     * @throws \PHPStan\ShouldNotHappenException
      */
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,
         Scope $scope
     ): Type {
-        /** @var ObjectType $returnType */
+        /** @var \PHPStan\Type\ObjectType $returnType */
         $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
 
         /** @var string $relatedModelClassName */

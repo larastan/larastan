@@ -59,7 +59,7 @@ final class ModelAccessorExtension implements PropertiesClassReflectionExtension
         if ($classReflection->hasNativeMethod($studlyName)) {
             $methodReflection = $classReflection->getNativeMethod($studlyName);
 
-            /** @var GenericObjectType $returnType */
+            /** @var \PHPStan\Type\Generic\GenericObjectType $returnType */
             $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
 
             return new ModelProperty(

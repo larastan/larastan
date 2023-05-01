@@ -25,7 +25,7 @@ final class ModelPropertyTypeNodeResolverExtension implements TypeNodeResolverEx
     /** @var bool */
     protected $active;
 
-    /** @var TypeNodeResolver */
+    /** @var \PHPStan\PhpDoc\TypeNodeResolver */
     protected $baseResolver;
 
     public function __construct(TypeNodeResolver $baseResolver, bool $active)

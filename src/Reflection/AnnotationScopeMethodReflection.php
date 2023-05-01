@@ -18,29 +18,29 @@ final class AnnotationScopeMethodReflection implements MethodReflection
     /** @var string */
     private $name;
 
-    /** @var ClassReflection */
+    /** @var \PHPStan\Reflection\ClassReflection */
     private $declaringClass;
 
-    /** @var Type */
+    /** @var \PHPStan\Type\Type */
     private $returnType;
 
     /** @var bool */
     private $isStatic;
 
-    /** @var AnnotationScopeMethodParameterReflection[] */
+    /** @var \NunoMaduro\Larastan\Reflection\AnnotationScopeMethodParameterReflection[] */
     private $parameters;
 
     /** @var bool */
     private $isVariadic;
 
-    /** @var FunctionVariant[]|null */
+    /** @var \PHPStan\Reflection\FunctionVariant[]|null */
     private $variants = null;
 
     /**
      * @param  string  $name
-     * @param  ClassReflection  $declaringClass
-     * @param  Type  $returnType
-     * @param  AnnotationScopeMethodParameterReflection[]  $parameters
+     * @param \PHPStan\Reflection\ClassReflection $declaringClass
+     * @param \PHPStan\Type\Type $returnType
+     * @param \NunoMaduro\Larastan\Reflection\AnnotationScopeMethodParameterReflection[] $parameters
      * @param  bool  $isStatic
      * @param  bool  $isVariadic
      */
@@ -85,7 +85,7 @@ final class AnnotationScopeMethodReflection implements MethodReflection
     }
 
     /**
-     * @return ParametersAcceptor[]
+     * @return \PHPStan\Reflection\ParametersAcceptor[]
      */
     public function getVariants(): array
     {

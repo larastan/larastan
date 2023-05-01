@@ -53,7 +53,7 @@ class ModelFactoryMethodsClassReflectionExtension implements MethodsClassReflect
     ): MethodReflection {
         return new class($classReflection, $methodName) implements MethodReflection
         {
-            /** @var ClassReflection */
+            /** @var \PHPStan\Reflection\ClassReflection */
             private $classReflection;
 
             /** @var string */

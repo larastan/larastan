@@ -17,13 +17,13 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\BooleanType;
 
-/** @implements Rule<StaticCall> */
+/** @implements \PHPStan\Rules\Rule<\PhpParser\Node\Expr\StaticCall> */
 class CheckDispatchArgumentTypesCompatibleWithClassConstructorRule implements Rule
 {
-    /** @var ReflectionProvider */
+    /** @var \PHPStan\Reflection\ReflectionProvider */
     private $reflectionProvider;
 
-    /** @var FunctionCallParametersCheck */
+    /** @var \PHPStan\Rules\FunctionCallParametersCheck */
     private $check;
 
     /** @var string */

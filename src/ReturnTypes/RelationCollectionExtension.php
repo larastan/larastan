@@ -69,7 +69,7 @@ final class RelationCollectionExtension implements DynamicMethodReturnTypeExtens
         MethodCall $methodCall,
         Scope $scope
     ): Type {
-        /** @var ObjectType $modelType */
+        /** @var \PHPStan\Type\ObjectType $modelType */
         $modelType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TRelatedModel');
 
         $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();

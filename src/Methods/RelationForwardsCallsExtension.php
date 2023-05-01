@@ -22,16 +22,16 @@ use PHPStan\Type\Type;
 
 final class RelationForwardsCallsExtension implements MethodsClassReflectionExtension
 {
-    /** @var BuilderHelper */
+    /** @var \NunoMaduro\Larastan\Methods\BuilderHelper */
     private $builderHelper;
 
-    /** @var array<string, MethodReflection> */
+    /** @var array<string, \PHPStan\Reflection\MethodReflection> */
     private $cache = [];
 
-    /** @var ReflectionProvider */
+    /** @var \PHPStan\Reflection\ReflectionProvider */
     private $reflectionProvider;
 
-    /** @var EloquentBuilderForwardsCallsExtension */
+    /** @var \NunoMaduro\Larastan\Methods\EloquentBuilderForwardsCallsExtension */
     private $eloquentBuilderForwardsCallsExtension;
 
     public function __construct(BuilderHelper $builderHelper, ReflectionProvider $reflectionProvider, EloquentBuilderForwardsCallsExtension $eloquentBuilderForwardsCallsExtension)
@@ -66,8 +66,8 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
     }
 
     /**
-     * @throws MissingMethodFromReflectionException
-     * @throws ShouldNotHappenException
+     * @throws \PHPStan\Reflection\MissingMethodFromReflectionException
+     * @throws \PHPStan\ShouldNotHappenException
      */
     private function findMethod(ClassReflection $classReflection, string $methodName): ?MethodReflection
     {

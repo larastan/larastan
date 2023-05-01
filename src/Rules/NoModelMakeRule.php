@@ -27,7 +27,7 @@ use PHPStan\Type\ObjectType;
  * It is functionally equivalent to simply use the constructor:
  * new User()
  *
- * @implements Rule<MethodCall>
+ * @implements \PHPStan\Rules\Rule<\PhpParser\Node\Expr\MethodCall>
  */
 class NoModelMakeRule implements Rule
 {
@@ -37,7 +37,7 @@ class NoModelMakeRule implements Rule
     protected $reflectionProvider;
 
     /**
-     * @param  ReflectionProvider  $reflectionProvider
+     * @param \PHPStan\Reflection\ReflectionProvider $reflectionProvider
      */
     public function __construct(ReflectionProvider $reflectionProvider)
     {
@@ -53,13 +53,13 @@ class NoModelMakeRule implements Rule
     }
 
     /**
-     * @param  Node  $node
-     * @param  Scope  $scope
-     * @return array<int, RuleError>
+     * @param \PhpParser\Node $node
+     * @param \PHPStan\Analyser\Scope $scope
+     * @return array<int, \PHPStan\Rules\RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
     {
-        /** @var StaticCall $node due to @see getNodeType() */
+        /** @var \PhpParser\Node\Expr\StaticCall $node due to @see getNodeType() */
         $name = $node->name;
         if (! $name instanceof Identifier) {
             return [];
@@ -85,8 +85,8 @@ class NoModelMakeRule implements Rule
     /**
      * Was the expression called on a Model instance?
      *
-     * @param  StaticCall  $call
-     * @param  Scope  $scope
+     * @param \PhpParser\Node\Expr\StaticCall $call
+     * @param \PHPStan\Analyser\Scope $scope
      * @return bool
      */
     protected function isCalledOnModel(StaticCall $call, Scope $scope): bool

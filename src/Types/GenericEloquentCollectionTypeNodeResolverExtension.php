@@ -35,7 +35,7 @@ use function count;
 class GenericEloquentCollectionTypeNodeResolverExtension implements TypeNodeResolverExtension
 {
     /**
-     * @var TypeNodeResolver
+     * @var \PHPStan\PhpDoc\TypeNodeResolver
      */
     private $typeNodeResolver;
 

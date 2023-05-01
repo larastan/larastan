@@ -13,7 +13,7 @@ use PHPStan\Type\ClosureType;
 use PHPStan\Type\MixedType;
 
 /**
- * @implements Rule<FuncCall>
+ * @implements \PHPStan\Rules\Rule<\PhpParser\Node\Expr\FuncCall>
  */
 class NoUselessValueFunctionCallsRule implements Rule
 {

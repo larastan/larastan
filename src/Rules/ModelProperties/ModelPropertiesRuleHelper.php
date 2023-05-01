@@ -23,13 +23,13 @@ use PHPStan\Type\VerbosityLevel;
 class ModelPropertiesRuleHelper
 {
     /**
-     * @param  MethodReflection  $methodReflection
-     * @param  Scope  $scope
-     * @param  Node\Arg[]  $args
-     * @param  ClassReflection|null  $modelReflection
+     * @param \PHPStan\Reflection\MethodReflection $methodReflection
+     * @param \PHPStan\Analyser\Scope $scope
+     * @param \PhpParser\Node\Arg[] $args
+     * @param \PHPStan\Reflection\ClassReflection|null $modelReflection
      * @return string[]
      *
-     * @throws ShouldNotHappenException
+     * @throws \PHPStan\ShouldNotHappenException
      */
     public function check(MethodReflection $methodReflection, Scope $scope, array $args, ?ClassReflection $modelReflection = null): array
     {
@@ -40,7 +40,7 @@ class ModelPropertiesRuleHelper
         }
 
         /** @var int $parameterIndex */
-        /** @var Type $modelType */
+        /** @var \PHPStan\Type\Type $modelType */
         [$parameterIndex, $modelType] = $modelPropertyParameter;
 
         if (! (new ObjectType(Model::class))->isSuperTypeOf($modelType)->yes() || $modelType->equals(new ObjectType(Model::class))) {
@@ -129,11 +129,11 @@ class ModelPropertiesRuleHelper
     }
 
     /**
-     * @param  MethodReflection  $methodReflection
-     * @param  Scope  $scope
-     * @param  Node\Arg[]  $args
-     * @param  ClassReflection|null  $modelReflection
-     * @return array<int, int|Type>
+     * @param \PHPStan\Reflection\MethodReflection $methodReflection
+     * @param \PHPStan\Analyser\Scope $scope
+     * @param \PhpParser\Node\Arg[] $args
+     * @param \PHPStan\Reflection\ClassReflection|null $modelReflection
+     * @return array<int, (int|\PHPStan\Type\Type)>
      */
     public function hasModelPropertyParameter(
         MethodReflection $methodReflection,

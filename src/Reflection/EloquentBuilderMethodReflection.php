@@ -23,20 +23,20 @@ final class EloquentBuilderMethodReflection implements MethodReflection
     private $methodName;
 
     /**
-     * @var ClassReflection
+     * @var \PHPStan\Reflection\ClassReflection
      */
     private $classReflection;
 
-    /** @var MethodReflection */
+    /** @var \PHPStan\Reflection\MethodReflection */
     private $originalMethodReflection;
 
     /**
-     * @var ParameterReflection[]
+     * @var \PHPStan\Reflection\ParameterReflection[]
      */
     private $parameters;
 
     /**
-     * @var Type
+     * @var \PHPStan\Type\Type
      */
     private $returnType;
 
@@ -47,10 +47,10 @@ final class EloquentBuilderMethodReflection implements MethodReflection
 
     /**
      * @param  string  $methodName
-     * @param  ClassReflection  $classReflection
-     * @param  MethodReflection  $originalMethodReflection
-     * @param  ParameterReflection[]  $parameters
-     * @param  Type|null  $returnType
+     * @param \PHPStan\Reflection\ClassReflection $classReflection
+     * @param \PHPStan\Reflection\MethodReflection $originalMethodReflection
+     * @param \PHPStan\Reflection\ParameterReflection[] $parameters
+     * @param \PHPStan\Type\Type|null $returnType
      * @param  bool  $isVariadic
      */
     public function __construct(string $methodName, ClassReflection $classReflection, MethodReflection $originalMethodReflection, array $parameters, ?Type $returnType = null, bool $isVariadic = false)
@@ -145,7 +145,7 @@ final class EloquentBuilderMethodReflection implements MethodReflection
     }
 
     /**
-     * @return MethodReflection
+     * @return \PHPStan\Reflection\MethodReflection
      */
     public function getOriginalMethodReflection(): MethodReflection
     {

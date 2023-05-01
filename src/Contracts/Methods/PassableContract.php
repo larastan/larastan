@@ -34,7 +34,7 @@ interface PassableContract
 
     /**
      * @param  \PHPStan\Reflection\ClassReflection  $classReflection
-     * @return PassableContract
+     * @return \NunoMaduro\Larastan\Contracts\Methods\PassableContract
      */
     public function setClassReflection(ClassReflection $classReflection): PassableContract;
 

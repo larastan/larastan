@@ -18,13 +18,13 @@ use PHPStan\Type\Type;
  */
 class ModelPropertyRule implements Rule
 {
-    /** @var ModelPropertiesRuleHelper */
+    /** @var \NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertiesRuleHelper */
     private $modelPropertiesRuleHelper;
 
-    /** @var RuleLevelHelper */
+    /** @var \PHPStan\Rules\RuleLevelHelper */
     private $ruleLevelHelper;
 
-    /** @var ModelRuleHelper */
+    /** @var \NunoMaduro\Larastan\Rules\ModelRuleHelper */
     private $modelRuleHelper;
 
     public function __construct(ModelPropertiesRuleHelper $ruleHelper, RuleLevelHelper $ruleLevelHelper, ModelRuleHelper $modelRuleHelper)
@@ -40,8 +40,8 @@ class ModelPropertyRule implements Rule
     }
 
     /**
-     * @param  MethodCall  $node
-     * @param  Scope  $scope
+     * @param \PhpParser\Node\Expr\MethodCall $node
+     * @param \PHPStan\Analyser\Scope $scope
      * @return string[]
      */
     public function processNode(Node $node, Scope $scope): array

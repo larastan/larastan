@@ -15,7 +15,7 @@ use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
-/** @implements Rule<Node\Expr\CallLike> */
+/** @implements \PHPStan\Rules\Rule<\PhpParser\Node\Expr\CallLike> */
 class RelationExistenceRule implements Rule
 {
     public function __construct(private ModelRuleHelper $modelRuleHelper)
@@ -67,7 +67,7 @@ class RelationExistenceRule implements Rule
 
         $valueType = $scope->getType($args[0]->value);
 
-        /** @var ConstantStringType[] $relations */
+        /** @var \PHPStan\Type\Constant\ConstantStringType[] $relations */
         $relations = [];
 
         if ($valueType->isConstantArray()->yes()) {

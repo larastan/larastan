@@ -23,13 +23,13 @@ use PHPStan\Type\Type;
 
 final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflectionExtension
 {
-    /** @var array<string, MethodReflection> */
+    /** @var array<string, \PHPStan\Reflection\MethodReflection> */
     private $cache = [];
 
-    /** @var BuilderHelper */
+    /** @var \NunoMaduro\Larastan\Methods\BuilderHelper */
     private $builderHelper;
 
-    /** @var ReflectionProvider */
+    /** @var \PHPStan\Reflection\ReflectionProvider */
     private $reflectionProvider;
 
     public function __construct(BuilderHelper $builderHelper, ReflectionProvider $reflectionProvider)
@@ -39,8 +39,8 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
     }
 
     /**
-     * @throws ShouldNotHappenException
-     * @throws MissingMethodFromReflectionException
+     * @throws \PHPStan\ShouldNotHappenException
+     * @throws \PHPStan\Reflection\MissingMethodFromReflectionException
      */
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
@@ -65,8 +65,8 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
     }
 
     /**
-     * @throws MissingMethodFromReflectionException
-     * @throws ShouldNotHappenException
+     * @throws \PHPStan\Reflection\MissingMethodFromReflectionException
+     * @throws \PHPStan\ShouldNotHappenException
      */
     private function findMethod(ClassReflection $classReflection, string $methodName): ?MethodReflection
     {

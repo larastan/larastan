@@ -11,7 +11,7 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 
 /**
- * @implements Rule<FuncCall>
+ * @implements \PHPStan\Rules\Rule<\PhpParser\Node\Expr\FuncCall>
  */
 class NoUselessWithFunctionCallsRule implements Rule
 {

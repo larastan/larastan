@@ -30,13 +30,13 @@ final class HigherOrderCollectionProxyPropertyExtension implements PropertiesCla
     ): PropertyReflection {
         $activeTemplateTypeMap = $classReflection->getActiveTemplateTypeMap();
 
-        /** @var Type\Constant\ConstantStringType $methodType */
+        /** @var \PHPStan\Type\Constant\ConstantStringType $methodType */
         $methodType = $activeTemplateTypeMap->getType('T');
 
-        /** @var Type\ObjectType $modelType */
+        /** @var \PHPStan\Type\ObjectType $modelType */
         $modelType = $activeTemplateTypeMap->getType('TValue');
 
-        /** @var Type\Type $collectionType */
+        /** @var \PHPStan\Type\Type $collectionType */
         $collectionType = $activeTemplateTypeMap->getType('TCollection');
 
         $propertyType = $modelType->getProperty($propertyName, new OutOfClassScope())->getReadableType();
@@ -51,10 +51,10 @@ final class HigherOrderCollectionProxyPropertyExtension implements PropertiesCla
 
         return new class($classReflection, $returnType) implements PropertyReflection
         {
-            /** @var ClassReflection */
+            /** @var \PHPStan\Reflection\ClassReflection */
             private $classReflection;
 
-            /** @var Type\Type */
+            /** @var \PHPStan\Type\Type */
             private $returnType;
 
             public function __construct(ClassReflection $classReflection, Type\Type $returnType)

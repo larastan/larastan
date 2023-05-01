@@ -19,18 +19,18 @@ final class Kernel
     use Concerns\HasContainer;
 
     /**
-     * @var PhpMethodReflectionFactory
+     * @var \PHPStan\Reflection\Php\PhpMethodReflectionFactory
      */
     private $methodReflectionFactory;
     /**
-     * @var ReflectionProvider
+     * @var \PHPStan\Reflection\ReflectionProvider
      */
     private $reflectionProvider;
 
     /**
      * Kernel constructor.
      *
-     * @param  PhpMethodReflectionFactory  $methodReflectionFactory
+     * @param \PHPStan\Reflection\Php\PhpMethodReflectionFactory $methodReflectionFactory
      */
     public function __construct(
         PhpMethodReflectionFactory $methodReflectionFactory,
@@ -41,9 +41,9 @@ final class Kernel
     }
 
     /**
-     * @param  ClassReflection  $classReflection
+     * @param \PHPStan\Reflection\ClassReflection $classReflection
      * @param  string  $methodName
-     * @return PassableContract
+     * @return \NunoMaduro\Larastan\Contracts\Methods\PassableContract
      */
     public function handle(ClassReflection $classReflection, string $methodName): PassableContract
     {

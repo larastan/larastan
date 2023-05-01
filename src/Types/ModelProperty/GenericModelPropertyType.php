@@ -18,7 +18,7 @@ use PHPStan\Type\UnionType;
 
 class GenericModelPropertyType extends ModelPropertyType
 {
-    /** @var Type */
+    /** @var \PHPStan\Type\Type */
     private $type;
 
     public function __construct(Type $type)
@@ -112,7 +112,7 @@ class GenericModelPropertyType extends ModelPropertyType
 
     /**
      * @param  mixed[]  $properties
-     * @return Type
+     * @return \PHPStan\Type\Type
      */
     public static function __set_state(array $properties): Type
     {

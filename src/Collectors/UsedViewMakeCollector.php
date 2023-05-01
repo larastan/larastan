@@ -11,7 +11,7 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
 use PHPStan\Type\ObjectType;
 
-/** @implements Collector<Node\Expr\MethodCall, string> */
+/** @implements \PHPStan\Collectors\Collector<\PhpParser\Node\Expr\MethodCall, string> */
 final class UsedViewMakeCollector implements Collector
 {
     public function getNodeType(): string
@@ -19,7 +19,7 @@ final class UsedViewMakeCollector implements Collector
         return Node\Expr\MethodCall::class;
     }
 
-    /** @param Node\Expr\MethodCall $node */
+    /** @param \PhpParser\Node\Expr\MethodCall $node */
     public function processNode(Node $node, Scope $scope): ?string
     {
         $name = $node->name;

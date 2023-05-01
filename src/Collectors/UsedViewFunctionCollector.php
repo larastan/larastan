@@ -9,7 +9,7 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
 
-/** @implements Collector<Node\Expr\FuncCall, string> */
+/** @implements \PHPStan\Collectors\Collector<\PhpParser\Node\Expr\FuncCall, string> */
 final class UsedViewFunctionCollector implements Collector
 {
     public function getNodeType(): string
@@ -17,7 +17,7 @@ final class UsedViewFunctionCollector implements Collector
         return Node\Expr\FuncCall::class;
     }
 
-    /** @param Node\Expr\FuncCall $node */
+    /** @param \PhpParser\Node\Expr\FuncCall $node */
     public function processNode(Node $node, Scope $scope): ?string
     {
         $funcName = $node->name;

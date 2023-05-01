@@ -15,7 +15,7 @@ use PHPStan\Type\FunctionTypeSpecifyingExtension;
 
 final class AbortIfFunctionTypeSpecifyingExtension implements FunctionTypeSpecifyingExtension, TypeSpecifierAwareExtension
 {
-    /** @var TypeSpecifier */
+    /** @var \PHPStan\Analyser\TypeSpecifier */
     private $typeSpecifier;
 
     /** @var bool */

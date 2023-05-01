@@ -20,7 +20,7 @@ use PHPStan\Rules\RuleErrorBuilder;
 
 use function collect;
 
-/** @implements Rule<CollectedDataNode> */
+/** @implements \PHPStan\Rules\Rule<\PHPStan\Node\CollectedDataNode> */
 final class UnusedViewsRule implements Rule
 {
     /** @var list<string>|null */
@@ -54,7 +54,7 @@ final class UnusedViewsRule implements Rule
 
         $existingViews = [];
 
-        /** @var Factory $view */
+        /** @var \Illuminate\View\Factory $view */
         $view = view();
 
         foreach ($usedViews as $viewName) {
