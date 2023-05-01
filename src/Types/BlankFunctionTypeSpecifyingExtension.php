@@ -70,11 +70,7 @@ final class BlankFunctionTypeSpecifyingExtension implements FunctionTypeSpecifyi
 
         if ($type instanceof UnionType) {
             return (bool) collect($type->getTypes())->first(function ($innerType) {
-                if ($innerType->isIterable()->yes() && (! $innerType->isArray()->yes())) {
-                    return true;
-                }
-
-                return false;
+                return $innerType->isIterable()->yes() && (! $innerType->isArray()->yes());
             });
         }
 
