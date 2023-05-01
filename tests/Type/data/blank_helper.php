@@ -3,8 +3,10 @@
 namespace BlankHelper;
 
 use Illuminate\Support\Collection;
-use function PHPStan\Testing\assertType;
+
 use stdClass;
+
+use function PHPStan\Testing\assertType;
 
 function asString(?string $foo)
 {
