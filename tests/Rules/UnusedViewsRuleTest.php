@@ -13,7 +13,7 @@ use NunoMaduro\Larastan\Support\ViewFileHelper;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
-/** @extends RuleTestCase<UnusedViewsRule> */
+/** @extends \PHPStan\Testing\RuleTestCase<\NunoMaduro\Larastan\Rules\UnusedViewsRule> */
 class UnusedViewsRuleTest extends RuleTestCase
 {
     protected function getRule(): Rule

@@ -9,7 +9,7 @@ use NunoMaduro\Larastan\Rules\RelationExistenceRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
-/** @extends RuleTestCase<RelationExistenceRule> */
+/** @extends \PHPStan\Testing\RuleTestCase<\NunoMaduro\Larastan\Rules\RelationExistenceRule> */
 class RelationExistenceRuleTest extends RuleTestCase
 {
     protected function getRule(): Rule

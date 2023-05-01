@@ -9,7 +9,7 @@ use App\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Post>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Post>
  */
 class PostFactory extends Factory
 {

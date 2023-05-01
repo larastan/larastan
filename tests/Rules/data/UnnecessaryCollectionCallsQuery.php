@@ -20,7 +20,7 @@ class UnnecessaryCollectionCallsQuery
         return DB::table('users')->pluck('id')->isNotEmpty();
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return \Illuminate\Support\Collection<int, mixed> */
     public function queryPluck(): Collection
     {
         return DB::table('users')->get()->pluck('arbitraryName');

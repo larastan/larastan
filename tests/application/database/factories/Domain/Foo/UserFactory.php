@@ -5,7 +5,7 @@ namespace Database\Factories\Domain\Foo;
 use App\Domain\Foo\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/** @extends Factory<User> */
+/** @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Domain\Foo\User> */
 class UserFactory extends Factory
 {
     public function definition(): array

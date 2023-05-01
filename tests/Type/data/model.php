@@ -24,7 +24,7 @@ function testFindOnGenericModel(Model $model)
 }
 
 /**
- * @param  class-string<Model>  $modelClass
+ * @param class-string<\Illuminate\Database\Eloquent\Model> $modelClass
  */
 function testFindOnModelClassString(string $modelClass)
 {
@@ -32,8 +32,8 @@ function testFindOnModelClassString(string $modelClass)
 }
 
 /**
- * @param  class-string<User>|class-string<Post>  $modelClass
- * @param  class-string<User>|class-string<Account>  $customCollectionModelClass
+ * @param class-string<\App\User>|class-string<\App\Post> $modelClass
+ * @param class-string<\App\User>|class-string<\App\Account> $customCollectionModelClass
  */
 function testUnionOfClassStrings(string $modelClass, string $customCollectionModelClass)
 {

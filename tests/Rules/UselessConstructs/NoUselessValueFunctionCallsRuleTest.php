@@ -8,7 +8,7 @@ use NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessValueFunctionCallsRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
-/** @extends RuleTestCase<NoUselessValueFunctionCallsRule> */
+/** @extends \PHPStan\Testing\RuleTestCase<\NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessValueFunctionCallsRule> */
 class NoUselessValueFunctionCallsRuleTest extends RuleTestCase
 {
     public function testNoFalsePositives(): void

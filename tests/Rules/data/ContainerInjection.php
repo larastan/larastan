@@ -54,7 +54,7 @@ function foo(Application $app): void
 class Service
 {
     /**
-     * @var Application
+     * @var \Illuminate\Contracts\Foundation\Application
      */
     private $application;
 

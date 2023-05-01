@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
  * @template TKey of array-key
  * @template TValue of \Illuminate\Database\Eloquent\Model
  *
- * @extends Collection<TKey, TValue>
+ * @extends \Illuminate\Database\Eloquent\Collection<TKey, TValue>
  */
 class RoleCollection extends Collection
 {

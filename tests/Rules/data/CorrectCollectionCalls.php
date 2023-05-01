@@ -25,19 +25,19 @@ class CorrectCollectionCalls
         return User::hydrate($users)->first();
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return \Illuminate\Support\Collection<int, mixed> */
     public function pluckQuery(): Collection
     {
         return User::query()->pluck('id');
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return \Illuminate\Support\Collection<int, mixed> */
     public function pluckComputed(): Collection
     {
         return User::all()->pluck('allCapsName');
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return \Illuminate\Support\Collection<int, mixed> */
     public function pluckRelation(): Collection
     {
         return User::with(['accounts'])->get()->pluck('accounts');
@@ -85,7 +85,7 @@ class CorrectCollectionCalls
     /**
      * Can't analyze the closure as a parameter to first, so should not throw any error.
      *
-     * @return User|null
+     * @return \App\User|null
      */
     public function testFirstClosure(): ?User
     {
@@ -97,7 +97,7 @@ class CorrectCollectionCalls
     /**
      * Can't analyze the arrow function as a parameter to first, so should not throw any error.
      *
-     * @return User|null
+     * @return \App\User|null
      */
     public function testFirstArrowFunction(): ?User
     {
@@ -129,7 +129,7 @@ class Foo extends Model
 {
     /**
      * @param  \Illuminate\Database\Query\Builder  $query
-     * @return FooBuilder
+     * @return \Tests\Rules\Data\FooBuilder
      */
     public function newEloquentBuilder($query): FooBuilder
     {
@@ -138,7 +138,7 @@ class Foo extends Model
 }
 
 /**
- * @extends Builder<Foo>
+ * @extends \Illuminate\Database\Eloquent\Builder<\Tests\Rules\Data\Foo>
  */
 class FooBuilder extends Builder
 {

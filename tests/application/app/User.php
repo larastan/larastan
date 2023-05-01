@@ -27,7 +27,7 @@ use function get_class;
 /**
  * @property string $propertyDefinedOnlyInAnnotation
  *
- * @method Builder<static> scopeSomeScope(Builder $builder)
+ * @method \Illuminate\Database\Eloquent\Builder<static> scopeSomeScope(\Illuminate\Database\Eloquent\Builder $builder)
  *
  * @mixin \Eloquent
  */
@@ -106,33 +106,33 @@ class User extends Authenticatable
     }
 
     /**
-     * @param  Builder<User>  $query
-     * @return Builder<User>
+     * @param \Illuminate\Database\Eloquent\Builder<\App\User> $query
+     * @return \Illuminate\Database\Eloquent\Builder<\App\User>
      */
     public function scopeWhereActive(Builder $query): Builder
     {
         return $query->where('active', 1);
     }
 
-    /** @phpstan-return BelongsTo<Group, User> */
+    /** @phpstan-return \Illuminate\Database\Eloquent\Relations\BelongsTo<\App\Group, \App\User> */
     public function group(): BelongsTo
     {
         return $this->belongsTo(Group::class)->withTrashed();
     }
 
-    /** @phpstan-return HasMany<Account> */
+    /** @phpstan-return \Illuminate\Database\Eloquent\Relations\HasMany<\App\Account> */
     public function accounts(): HasMany
     {
         return $this->hasMany(Account::class);
     }
 
-    /** @phpstan-return HasMany<ModelWithNonGenericCollection> */
+    /** @phpstan-return \Illuminate\Database\Eloquent\Relations\HasMany<\App\ModelWithNonGenericCollection> */
     public function modelsWithNonGenericCollection(): HasMany
     {
         return $this->hasMany(ModelWithNonGenericCollection::class);
     }
 
-    /** @phpstan-return HasMany<ModelWithOnlyValueGenericCollection> */
+    /** @phpstan-return \Illuminate\Database\Eloquent\Relations\HasMany<\App\ModelWithOnlyValueGenericCollection> */
     public function modelsWithOnlyValueGenericCollection(): HasMany
     {
         return $this->hasMany(ModelWithOnlyValueGenericCollection::class);
@@ -211,7 +211,7 @@ class User extends Authenticatable
     }
 
     /**
-     * @return Attribute<int, string>
+     * @return \Illuminate\Database\Eloquent\Casts\Attribute<int, string>
      */
     protected function stringButInt(): Attribute
     {

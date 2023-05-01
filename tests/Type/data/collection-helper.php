@@ -23,13 +23,13 @@ assertType("Illuminate\Support\Collection<int, array{string, string, string}>", 
 assertType("Illuminate\Support\Collection<int, App\User>", collect([new User, new User]));
 assertType("Illuminate\Support\Collection<int, array{App\User, App\User, App\User}>", collect([[new User, new User, new User]]));
 
-/**  @phpstan-param EloquentCollection<int, int> $eloquentCollection */
+/**  @phpstan-param \Illuminate\Database\Eloquent\Collection<int, int> $eloquentCollection */
 function eloquentCollectionInteger(EloquentCollection $eloquentCollection): void
 {
     assertType('Illuminate\Support\Collection<int, int>', collect($eloquentCollection));
 }
 
-/**  @phpstan-param EloquentCollection<int, User> $eloquentCollection */
+/**  @phpstan-param \Illuminate\Database\Eloquent\Collection<int, \App\User> $eloquentCollection */
 function eloquentCollectionUser(EloquentCollection $eloquentCollection): void
 {
     assertType('Illuminate\Support\Collection<int, App\User>', collect($eloquentCollection));
@@ -38,7 +38,7 @@ function eloquentCollectionUser(EloquentCollection $eloquentCollection): void
 /**
  * @phpstan-param \Traversable<int, int> $foo
  *
- * @phpstan-return Collection<int, int>
+ * @phpstan-return \Illuminate\Support\Collection<int, int>
  */
 function testIterable(\Traversable $foo): void
 {

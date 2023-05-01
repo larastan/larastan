@@ -11,7 +11,7 @@ use PHPStan\Rules\FunctionCallParametersCheck;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
-/** @extends RuleTestCase<CheckDispatchArgumentTypesCompatibleWithClassConstructorRule> */
+/** @extends \PHPStan\Testing\RuleTestCase<\NunoMaduro\Larastan\Rules\CheckDispatchArgumentTypesCompatibleWithClassConstructorRule> */
 class CheckDispatchArgumentTypesCompatibleWithClassConstructorRuleTest extends RuleTestCase
 {
     /** @var string */

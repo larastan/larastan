@@ -10,7 +10,7 @@ use function PHPStan\Testing\assertType;
 
 class Scopes extends Model
 {
-    /** @var User */
+    /** @var \App\User */
     private $user;
 
     public function testScopeAfterRelation()
@@ -52,7 +52,7 @@ class Scopes extends Model
         assertType('ModelScope\Scopes|null', $this->withVoidReturn()->first());
     }
 
-    /** @phpstan-param Builder<Scopes> $query */
+    /** @phpstan-param \Illuminate\Database\Eloquent\Builder<\ModelScope\Scopes> $query */
     public function scopeWithVoidReturn(Builder $query): void
     {
         $query->where('whyuse', 'void');

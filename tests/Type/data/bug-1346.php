@@ -12,7 +12,7 @@ use function PHPStan\Testing\assertType;
 class DailyQuery
 {
     /**
-     * @var Builder<TModel>
+     * @var \Illuminate\Database\Eloquent\Builder<TModel>
      */
     private Builder $query;
 

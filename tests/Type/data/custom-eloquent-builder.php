@@ -76,7 +76,7 @@ class CustomEloquentBuilderTest
         assertType('CustomEloquentBuilder\ModelWithCustomBuilder', ModelWithCustomBuilder::firstOrFail());
     }
 
-    /** @phpstan-return ModelWithCustomBuilder */
+    /** @phpstan-return \CustomEloquentBuilder\ModelWithCustomBuilder */
     public function testFindOrFailWithCustomBuilder(): ModelWithCustomBuilder
     {
         assertType('CustomEloquentBuilder\ModelWithCustomBuilder', ModelWithCustomBuilder::findOrFail(1));
@@ -186,23 +186,23 @@ class CustomEloquentBuilderTest
 class ModelWithCustomBuilder extends Model
 {
     // Dummy relation
-    /** @return HasMany<User> */
+    /** @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\User> */
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
     }
 
     /**
-     * @param  CustomEloquentBuilder<ModelWithCustomBuilder>  $query
+     * @param \CustomEloquentBuilder\CustomEloquentBuilder<\CustomEloquentBuilder\ModelWithCustomBuilder> $query
      *
-     * @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder>
+     * @phpstan-return \CustomEloquentBuilder\CustomEloquentBuilder<\CustomEloquentBuilder\ModelWithCustomBuilder>
      */
     public function scopeFoo(CustomEloquentBuilder $query, string $foo): CustomEloquentBuilder
     {
         return $query->where(['email' => $foo]);
     }
 
-    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    /** @phpstan-return \CustomEloquentBuilder\CustomEloquentBuilder<\CustomEloquentBuilder\ModelWithCustomBuilder> */
     public function testCustomBuilderReturnType(): CustomEloquentBuilder
     {
         return $this->where('email', 'bar');
@@ -210,7 +210,7 @@ class ModelWithCustomBuilder extends Model
 
     /**
      * @param  \Illuminate\Database\Query\Builder  $query
-     * @return CustomEloquentBuilder<ModelWithCustomBuilder>
+     * @return \CustomEloquentBuilder\CustomEloquentBuilder<\CustomEloquentBuilder\ModelWithCustomBuilder>
      */
     public function newEloquentBuilder($query): CustomEloquentBuilder
     {
@@ -219,13 +219,13 @@ class ModelWithCustomBuilder extends Model
 }
 
 /**
- * @template TModelClass of ModelWithCustomBuilder
+ * @template TModelClass of \CustomEloquentBuilder\ModelWithCustomBuilder
  *
- * @extends Builder<ModelWithCustomBuilder>
+ * @extends \Illuminate\Database\Eloquent\Builder<\CustomEloquentBuilder\ModelWithCustomBuilder>
  */
 class CustomEloquentBuilder extends Builder
 {
-    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    /** @phpstan-return \CustomEloquentBuilder\CustomEloquentBuilder<\CustomEloquentBuilder\ModelWithCustomBuilder> */
     public function category(string $category): CustomEloquentBuilder
     {
         assertType('static(CustomEloquentBuilder\CustomEloquentBuilder<TModelClass of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->where('category', $category));
@@ -233,7 +233,7 @@ class CustomEloquentBuilder extends Builder
         return $this->where('category', $category);
     }
 
-    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
+    /** @phpstan-return \CustomEloquentBuilder\CustomEloquentBuilder<\CustomEloquentBuilder\ModelWithCustomBuilder> */
     public function type(string $type): CustomEloquentBuilder
     {
         assertType('static(CustomEloquentBuilder\CustomEloquentBuilder<TModelClass of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->where(['type' => $type]));
@@ -244,7 +244,7 @@ class CustomEloquentBuilder extends Builder
     /**
      * @param  string[]  $categories
      *
-     * @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder>
+     * @phpstan-return \CustomEloquentBuilder\CustomEloquentBuilder<\CustomEloquentBuilder\ModelWithCustomBuilder>
      */
     public function categories(array $categories): CustomEloquentBuilder
     {
@@ -256,7 +256,7 @@ class CustomEloquentBuilder extends Builder
 
 class FooModel extends Model
 {
-    /** @return HasMany<ModelWithCustomBuilder> */
+    /** @return \Illuminate\Database\Eloquent\Relations\HasMany<\CustomEloquentBuilder\ModelWithCustomBuilder> */
     public function customModels(): HasMany
     {
         return $this->hasMany(ModelWithCustomBuilder::class);
@@ -282,15 +282,15 @@ class CustomEloquentBuilderTest1
 }
 
 /**
- * @method static CustomBuilder2|ModelWithCustomBuilderAndDocBlocks newModelQuery()
- * @method static CustomBuilder2|ModelWithCustomBuilderAndDocBlocks newQuery()
- * @method static CustomBuilder2|ModelWithCustomBuilderAndDocBlocks query()
+ * @method static \CustomEloquentBuilder\CustomBuilder2|\CustomEloquentBuilder\ModelWithCustomBuilderAndDocBlocks newModelQuery()
+ * @method static \CustomEloquentBuilder\CustomBuilder2|\CustomEloquentBuilder\ModelWithCustomBuilderAndDocBlocks newQuery()
+ * @method static \CustomEloquentBuilder\CustomBuilder2|\CustomEloquentBuilder\ModelWithCustomBuilderAndDocBlocks query()
  */
 class ModelWithCustomBuilderAndDocBlocks extends Model
 {
     /**
      * @param  \Illuminate\Database\Query\Builder  $query
-     * @return CustomBuilder2<ModelWithCustomBuilderAndDocBlocks>
+     * @return \CustomEloquentBuilder\CustomBuilder2<\CustomEloquentBuilder\ModelWithCustomBuilderAndDocBlocks>
      */
     public function newEloquentBuilder($query): CustomBuilder2
     {
@@ -299,9 +299,9 @@ class ModelWithCustomBuilderAndDocBlocks extends Model
 }
 
 /**
- * @template TModelClass of ModelWithCustomBuilderAndDocBlocks
+ * @template TModelClass of \CustomEloquentBuilder\ModelWithCustomBuilderAndDocBlocks
  *
- * @extends Builder<TModelClass>
+ * @extends \Illuminate\Database\Eloquent\Builder<TModelClass>
  */
 class CustomBuilder2 extends Builder
 {

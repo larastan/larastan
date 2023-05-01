@@ -9,17 +9,17 @@ use Illuminate\Support\Collection;
 
 use function PHPStan\Testing\assertType;
 
-/** @var User $user */
+/** @var \App\User $user */
 assertType('Illuminate\Support\Collection<int, non-falsy-string>', collect(['foo', null, '', 'bar', null])->filter());
 
-/** @param Collection<int, mixed> $foo */
+/** @param \Illuminate\Support\Collection<int, mixed> $foo */
 function foo(Collection $foo): void
 {
     assertType("Illuminate\Support\Collection<int, mixed~0|0.0|''|'0'|array{}|false|null>", $foo->filter());
 }
 
 /**
- * @param  array<int, User>  $attachments
+ * @param array<int, \App\User> $attachments
  */
 function storeAttachments(array $attachments): void
 {
@@ -42,7 +42,7 @@ assertType('Illuminate\Support\Collection<int, int<3, max>>', collect([1, 2, 3, 
     return $value > 2;
 }));
 
-/** @param EloquentCollection<int, User> $foo */
+/** @param \Illuminate\Database\Eloquent\Collection<int, \App\User> $foo */
 function bar(Collection $foo): void
 {
     assertType("Illuminate\Database\Eloquent\Collection<int, App\User>", $foo->filter(function (User $user): bool {

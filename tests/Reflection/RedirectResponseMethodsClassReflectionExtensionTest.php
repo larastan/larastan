@@ -12,12 +12,12 @@ use PHPStan\Type\VerbosityLevel;
 class RedirectResponseMethodsClassReflectionExtensionTest extends PHPStanTestCase
 {
     /**
-     * @var ReflectionProvider
+     * @var \PHPStan\Reflection\ReflectionProvider
      */
     private $reflectionProvider;
 
     /**
-     * @var RedirectResponseMethodsClassReflectionExtension
+     * @var \NunoMaduro\Larastan\Methods\RedirectResponseMethodsClassReflectionExtension
      */
     private $reflectionExtension;
 

@@ -17,8 +17,8 @@ class Role extends Model
     }
 
     /**
-     * @param  array<int, Role>  $models
-     * @return RoleCollection<int, Role>
+     * @param array<int, \App\Role> $models
+     * @return \App\RoleCollection<int, \App\Role>
      */
     public function newCollection(array $models = []): RoleCollection
     {

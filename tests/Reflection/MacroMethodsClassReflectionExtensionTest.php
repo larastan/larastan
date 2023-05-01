@@ -14,12 +14,12 @@ use PHPStan\Type\ObjectType;
 class MacroMethodsClassReflectionExtensionTest extends PHPStanTestCase
 {
     /**
-     * @var ReflectionProvider
+     * @var \PHPStan\Reflection\ReflectionProvider
      */
     private $reflectionProvider;
 
     /**
-     * @var MacroMethodsClassReflectionExtension
+     * @var \NunoMaduro\Larastan\Methods\MacroMethodsClassReflectionExtension
      */
     private $reflectionExtension;
 

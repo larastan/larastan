@@ -11,7 +11,7 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleLevelHelper;
 use PHPStan\Testing\RuleTestCase;
 
-/** @extends RuleTestCase<ModelPropertyRule> */
+/** @extends \PHPStan\Testing\RuleTestCase<\NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertyRule> */
 class ModelPropertyRuleTest extends RuleTestCase
 {
     protected function getRule(): Rule

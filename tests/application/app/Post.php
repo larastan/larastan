@@ -16,7 +16,7 @@ class Post extends Model
     }
 
     /**
-     * @return PostBuilder<Post>
+     * @return \App\PostBuilder<\App\Post>
      */
     public static function query(): PostBuilder
     {
@@ -25,7 +25,7 @@ class Post extends Model
 
     /**
      * @param  \Illuminate\Database\Query\Builder  $query
-     * @return PostBuilder<Post>
+     * @return \App\PostBuilder<\App\Post>
      */
     public function newEloquentBuilder($query): PostBuilder
     {

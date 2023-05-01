@@ -10,7 +10,7 @@ class ModelWithOnlyValueGenericCollection extends Model
      * @template TModel
      *
      * @param  TModel[]  $models
-     * @return OnlyValueGenericCollection<TModel>
+     * @return \App\OnlyValueGenericCollection<TModel>
      */
     public function newCollection(array $models = []): OnlyValueGenericCollection
     {

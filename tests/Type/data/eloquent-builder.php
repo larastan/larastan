@@ -193,14 +193,14 @@ function foo(): void
 }
 
 /**
- * @param  Builder<User>  $builder
+ * @param \Illuminate\Database\Eloquent\Builder<\App\User> $builder
  */
 function testCallingQueryBuilderMethodOnEloquentBuilderReturnsEloquentBuilder(Builder $builder): void
 {
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $builder->whereNotNull('test'));
 }
 
-/** @param OnlyUsers&User $userAndAuth */
+/** @param \EloquentBuilder\OnlyUsers&\App\User $userAndAuth */
 function doFoo(User $user, Post $post, $userAndAuth): void
 {
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->newQuery());
@@ -340,14 +340,14 @@ function testDecrementWithQueryExpression()
     assertType('int', User::query()->decrement(\Illuminate\Support\Facades\DB::raw('counter')));
 }
 
-/** @param EloquentBuilder<User> $query */
+/** @param \Illuminate\Database\Eloquent\Builder<\App\User> $query */
 function testMacro(EloquentBuilder $query): void
 {
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query->macro('customMacro', function () {
     }));
 }
 
-/** @param EloquentBuilder<User> $query */
+/** @param \Illuminate\Database\Eloquent\Builder<\App\User> $query */
 function testGlobalMacro(\Illuminate\Database\Eloquent\Builder $query)
 {
     assertType('string', $query->globalCustomMacro('foo'));
@@ -425,7 +425,7 @@ function testJoinSubAllowsEloquentBuilder()
 /**
  * @template TModelClass of \Illuminate\Database\Eloquent\Model
  *
- * @param  EloquentBuilder<TModelClass>  $query
+ * @param \Illuminate\Database\Eloquent\Builder<TModelClass> $query
  */
 function testQueryBuilderOnEloquentBuilderWithBaseModel(EloquentBuilder $query): void
 {
@@ -438,7 +438,7 @@ function testPaginate()
 }
 
 /**
- * @phpstan-return array<User>
+ * @phpstan-return array<\App\User>
  */
 function testPaginateItems()
 {
@@ -452,14 +452,14 @@ function testChunkOnEloquentBuilder()
 
 class Foo extends Model
 {
-    /** @phpstan-use FooTrait<Foo> */
+    /** @phpstan-use \EloquentBuilder\FooTrait<\EloquentBuilder\Foo> */
     use FooTrait;
 }
 
-/** @template TModelClass of Model */
+/** @template TModelClass of \Illuminate\Database\Eloquent\Model */
 trait FooTrait
 {
-    /** @return Builder<TModelClass> */
+    /** @return \Illuminate\Database\Eloquent\Builder<TModelClass> */
     public function doFoo(): Builder
     {
         return $this->newQuery();
@@ -487,7 +487,7 @@ class TestModel extends Model
     }
 }
 
-/** @extends Builder<Model> */
+/** @extends \Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model> */
 class CustomBuilder extends Builder
 {
 }

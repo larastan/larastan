@@ -37,11 +37,11 @@ assertType('int', (new Foo())->unless(true, function (Foo $foo): int {
     return rand();
 }));
 
-/** @param Builder<User> $query */
+/** @param \Illuminate\Database\Eloquent\Builder<\App\User> $query */
 function doFoo(Builder $query): void
 {
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query->when(true, static function (Builder $query): Builder {
-        /** @phpstan-var Builder<User> $query */
+        /** @phpstan-var \Illuminate\Database\Eloquent\Builder<\App\User> $query */
 
         return $query->whereNull('name');
     }));

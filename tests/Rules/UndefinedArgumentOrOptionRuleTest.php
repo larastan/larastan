@@ -9,7 +9,7 @@ use NunoMaduro\Larastan\Rules\ConsoleCommand\UndefinedArgumentOrOptionRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
-/** @extends RuleTestCase<UndefinedArgumentOrOptionRule> */
+/** @extends \PHPStan\Testing\RuleTestCase<\NunoMaduro\Larastan\Rules\ConsoleCommand\UndefinedArgumentOrOptionRule> */
 class UndefinedArgumentOrOptionRuleTest extends RuleTestCase
 {
     protected function getRule(): Rule

@@ -5,9 +5,9 @@ namespace App;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * @template TModelClass of Post
+ * @template TModelClass of \App\Post
  *
- * @extends Builder<TModelClass>
+ * @extends \Illuminate\Database\Eloquent\Builder<TModelClass>
  */
 class PostBuilder extends Builder
 {

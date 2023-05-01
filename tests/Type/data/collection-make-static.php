@@ -14,13 +14,13 @@ assertType('Illuminate\Support\Collection<int, string>', SupportCollection::make
 assertType('Illuminate\Support\Collection<int, float>', SupportCollection::make([1.0, 2.0, 3.0]));
 assertType('Illuminate\Support\Collection<int, float|int|string>', SupportCollection::make([1, 'foo', 1.0]));
 
-/**  @phpstan-param EloquentCollection<int, \App\User> $eloquentCollection */
+/**  @phpstan-param \Illuminate\Database\Eloquent\Collection<int, \App\User> $eloquentCollection */
 function eloquentCollectionInteger(EloquentCollection $eloquentCollection): void
 {
     assertType('Illuminate\Support\Collection<(int|string), mixed>', SupportCollection::make($eloquentCollection));
 }
 
-/**  @phpstan-param EloquentCollection<int, User> $eloquentCollection */
+/**  @phpstan-param \Illuminate\Database\Eloquent\Collection<int, \App\User> $eloquentCollection */
 function eloquentCollectionUser(EloquentCollection $eloquentCollection): void
 {
     assertType('Illuminate\Support\Collection<(int|string), mixed>', SupportCollection::make($eloquentCollection));

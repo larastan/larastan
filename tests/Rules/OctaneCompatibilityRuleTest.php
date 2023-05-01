@@ -9,7 +9,7 @@ use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
 /**
- * @extends RuleTestCase<OctaneCompatibilityRule>
+ * @extends \PHPStan\Testing\RuleTestCase<\NunoMaduro\Larastan\Rules\OctaneCompatibilityRule>
  */
 class OctaneCompatibilityRuleTest extends RuleTestCase
 {

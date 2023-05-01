@@ -12,10 +12,10 @@ use PHPStan\Testing\PHPStanTestCase;
 
 class MigrationHelperTest extends PHPStanTestCase
 {
-    /** @var Parser */
+    /** @var \PHPStan\Parser\Parser */
     private $parser;
 
-    /** @var FileHelper */
+    /** @var \PHPStan\File\FileHelper */
     private $fileHelper;
 
     public function setUp(): void
@@ -170,7 +170,7 @@ class MigrationHelperTest extends PHPStanTestCase
     }
 
     /**
-     * @param  array<string, SchemaTable>  $tables
+     * @param array<string, \NunoMaduro\Larastan\Properties\SchemaTable> $tables
      */
     private function assertUsersTableSchema(array $tables): void
     {

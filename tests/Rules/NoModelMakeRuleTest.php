@@ -8,7 +8,7 @@ use NunoMaduro\Larastan\Rules\NoModelMakeRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
-/** @extends RuleTestCase<NoModelMakeRule> */
+/** @extends \PHPStan\Testing\RuleTestCase<\NunoMaduro\Larastan\Rules\NoModelMakeRule> */
 class NoModelMakeRuleTest extends RuleTestCase
 {
     protected function getRule(): Rule

@@ -31,7 +31,7 @@ function test(User $user, \App\Address $address, Account $account, ExtendsModelW
     assertType('Illuminate\Database\Eloquent\Relations\MorphMany<App\Address>', $user->address()->where('name', 'bar'));
     assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account>', $user->accounts()->active());
     assertType('App\RoleCollection<int, App\Role>', $user->roles()->get());
-    /** @var Group $group */
+    /** @var \App\Group $group */
     $group = $user->group;
 
     assertType('App\AccountCollection<int, App\Account>', $group->accounts()->where('active', 1)->get());
@@ -87,11 +87,11 @@ function getUser(): User
 }
 
 /**
- * @property-read User $relation
+ * @property-read \App\User $relation
  */
 class RelationCreateExample extends Model
 {
-    /** @return HasMany<User> */
+    /** @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\User> */
     public function relation(): HasMany
     {
         return $this->hasMany(User::class);
@@ -105,7 +105,7 @@ class RelationCreateExample extends Model
 
 class ModelWithoutPropertyAnnotation extends Model
 {
-    /** @return HasMany<User> */
+    /** @return \Illuminate\Database\Eloquent\Relations\HasMany<\App\User> */
     public function relation(): HasMany
     {
         return $this->hasMany(User::class);
@@ -113,20 +113,20 @@ class ModelWithoutPropertyAnnotation extends Model
 }
 
 /**
- * @property-read User|null $nullableUser
- * @property-read User $nonNullableUser
+ * @property-read \App\User|null $nullableUser
+ * @property-read \App\User $nonNullableUser
  * @property-read string|null $nullableFoo
  * @property-read string $nonNullableFoo
  */
 class ModelWithPropertyAnnotations extends Model
 {
-    /** @return HasOne<User> */
+    /** @return \Illuminate\Database\Eloquent\Relations\HasOne<\App\User> */
     public function nullableUser(): HasOne
     {
         return $this->hasOne(User::class);
     }
 
-    /** @return HasOne<User> */
+    /** @return \Illuminate\Database\Eloquent\Relations\HasOne<\App\User> */
     public function nonNullableUser(): HasOne
     {
         return $this->hasOne(User::class);
@@ -150,7 +150,7 @@ class ExtendsModelWithPropertyAnnotations extends ModelWithPropertyAnnotations
 class Tag extends Model
 {
     /**
-     * @phpstan-return MorphToMany<Address>
+     * @phpstan-return \Illuminate\Database\Eloquent\Relations\MorphToMany<\ModelRelations\Address>
      */
     public function addresses(): MorphToMany
     {
@@ -158,7 +158,7 @@ class Tag extends Model
     }
 
     /**
-     * @phpstan-return MorphToMany<Address>
+     * @phpstan-return \Illuminate\Database\Eloquent\Relations\MorphToMany<\ModelRelations\Address>
      */
     public function addressesWithPivot(): MorphToMany
     {

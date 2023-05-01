@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Collection;
 
-/** @extends Collection<int, ModelWithNonGenericCollection> */
+/** @extends \Illuminate\Database\Eloquent\Collection<int, \App\ModelWithNonGenericCollection> */
 class NonGenericCollection extends Collection
 {
 }

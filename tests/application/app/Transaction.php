@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Transaction extends Model
 {
     /**
-     * @param  array<int, Transaction>  $models
-     * @return TransactionCollection<int, Transaction>
+     * @param array<int, \App\Transaction> $models
+     * @return \App\TransactionCollection<int, \App\Transaction>
      */
     public function newCollection(array $models = []): TransactionCollection
     {

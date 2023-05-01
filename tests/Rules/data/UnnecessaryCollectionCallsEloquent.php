@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class UnnecessaryCollectionCallsEloquent
 {
-    /** @return Collection<int, mixed> */
+    /** @return \Illuminate\Support\Collection<int, mixed> */
     public function pluckId(): Collection
     {
         return User::all()->pluck('id');
@@ -23,7 +23,7 @@ class UnnecessaryCollectionCallsEloquent
         return User::where('id', '>', 5)->get()->count();
     }
 
-    /** @return Collection<int, mixed> */
+    /** @return \Illuminate\Support\Collection<int, mixed> */
     public function testCallGetPluckWrong(): Collection
     {
         return User::query()->get()->pluck('id');
@@ -39,7 +39,7 @@ class UnnecessaryCollectionCallsEloquent
         return User::all()->first();
     }
 
-    /** @return AccountCollection<int, \App\Account> */
+    /** @return \App\AccountCollection<int, \App\Account> */
     public function testCallRelationTakeWrongly(): AccountCollection
     {
         return User::firstOrFail()->accounts()->get()->take(2);
@@ -72,13 +72,13 @@ class UnnecessaryCollectionCallsEloquent
         return User::query()->pluck('id')->count();
     }
 
-    /** @return EloquentCollection<int, User> */
+    /** @return \Illuminate\Database\Eloquent\Collection<int, \App\User> */
     public function testCallWhereWrong(): EloquentCollection
     {
         return User::all()->where('id', '<', 4);
     }
 
-    /** @return EloquentCollection<int, User> */
+    /** @return \Illuminate\Database\Eloquent\Collection<int, \App\User> */
     public function testCallDiffWrong(): EloquentCollection
     {
         return User::all()->diff([new User]);

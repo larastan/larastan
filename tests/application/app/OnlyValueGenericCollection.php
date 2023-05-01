@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @template TModel of Model
+ * @template TModel of \Illuminate\Database\Eloquent\Model
  *
- * @extends Collection<int, TModel>
+ * @extends \Illuminate\Database\Eloquent\Collection<int, TModel>
  */
 class OnlyValueGenericCollection extends Collection
 {

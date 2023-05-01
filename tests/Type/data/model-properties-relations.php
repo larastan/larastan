@@ -29,13 +29,13 @@ function foo(Foo $foo, Bar $bar, Account $account): void
 /** @property string $name */
 class Foo extends Model
 {
-    /** @return HasMany<Bar> */
+    /** @return \Illuminate\Database\Eloquent\Relations\HasMany<\ModelPropertiesRelations\Bar> */
     public function hasManyRelation(): HasMany
     {
         return $this->hasMany(Bar::class);
     }
 
-    /** @return HasManyThrough<Bar> */
+    /** @return \Illuminate\Database\Eloquent\Relations\HasManyThrough<\ModelPropertiesRelations\Bar> */
     public function hasManyThroughRelation(): HasManyThrough
     {
         return $this->hasManyThrough(Bar::class, User::class);
@@ -46,7 +46,7 @@ class Foo extends Model
         return $this->name === 'foo' ? $this->hasMany(Bar::class) : $this->belongsTo(Baz::class);
     }
 
-    /** @return HasMany<Bar>|BelongsTo<Baz, Foo> */
+    /** @return \Illuminate\Database\Eloquent\Relations\HasMany<\ModelPropertiesRelations\Bar>|\Illuminate\Database\Eloquent\Relations\BelongsTo<\ModelPropertiesRelations\Baz, \ModelPropertiesRelations\Foo> */
     public function relationReturningUnion2(): HasMany|BelongsTo
     {
         return $this->name === 'foo' ? $this->hasMany(Bar::class) : $this->belongsTo(Baz::class);
@@ -54,23 +54,23 @@ class Foo extends Model
 }
 
 /**
- * @property Foo $belongsToRelation
+ * @property \ModelPropertiesRelations\Foo $belongsToRelation
  */
 class Bar extends Model
 {
-    /** @return BelongsTo<Foo, Bar> */
+    /** @return \Illuminate\Database\Eloquent\Relations\BelongsTo<\ModelPropertiesRelations\Foo, \ModelPropertiesRelations\Bar> */
     public function belongsToRelation(): BelongsTo
     {
         return $this->belongsTo(Foo::class);
     }
 
-    /** @return MorphTo<Model, Bar> */
+    /** @return \Illuminate\Database\Eloquent\Relations\MorphTo<\Illuminate\Database\Eloquent\Model, \ModelPropertiesRelations\Bar> */
     public function morphToRelation(): MorphTo
     {
         return $this->morphTo('foo');
     }
 
-    /** @return MorphTo<User|Account, Bar> */
+    /** @return \Illuminate\Database\Eloquent\Relations\MorphTo<(\App\User|\App\Account), \ModelPropertiesRelations\Bar> */
     public function morphToUnionRelation(): MorphTo
     {
         return $this->morphTo('foo');

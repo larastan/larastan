@@ -7,8 +7,8 @@ use Illuminate\Translation\Translator;
 
 use function PHPStan\Testing\assertType;
 
-/** @var Translator $trans */
+/** @var \Illuminate\Translation\Translator $trans */
 assertType('(array|string)', $trans->get('language.string'));
 
-/** @var TranslatorContract $transContract */
+/** @var \Illuminate\Contracts\Translation\Translator $transContract */
 assertType('(array|string)', $transContract->get('language.string'));

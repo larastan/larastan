@@ -9,7 +9,7 @@ use NunoMaduro\Larastan\Rules\NoUnnecessaryCollectionCallRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
-/** @extends RuleTestCase<NoUnnecessaryCollectionCallRule> */
+/** @extends \PHPStan\Testing\RuleTestCase<\NunoMaduro\Larastan\Rules\NoUnnecessaryCollectionCallRule> */
 class NoUnnecessaryCollectionCallRuleTest extends RuleTestCase
 {
     protected function getRule(): Rule

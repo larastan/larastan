@@ -15,7 +15,7 @@ class Address extends Model
 {
     protected $keyType = 'uuid';
 
-    /** @return MorphTo<Model, Address> */
+    /** @return \Illuminate\Database\Eloquent\Relations\MorphTo<\Illuminate\Database\Eloquent\Model, \App\Address> */
     public function addressable(): MorphTo
     {
         return $this->morphTo();

@@ -8,11 +8,11 @@ use Illuminate\Support\Collection as SupportCollection;
 
 use function PHPStan\Testing\assertType;
 
-/** @var EloquentCollection<int, User> $collection */
-/** @var SupportCollection<string, int> $items */
-/** @var App\TransactionCollection<int, Transaction> $customEloquentCollection */
-/** @var App\UserCollection $secondCustomEloquentCollection */
-/** @var User $user */
+/** @var \Illuminate\Database\Eloquent\Collection<int, \App\User> $collection */
+/** @var \Illuminate\Support\Collection<string, int> $items */
+/** @var \App\TransactionCollection<int, \App\Transaction> $customEloquentCollection */
+/** @var \App\UserCollection $secondCustomEloquentCollection */
+/** @var \App\User $user */
 assertType('Illuminate\Database\Eloquent\Collection<int, int>', EloquentCollection::range(1, 10));
 
 assertType('Illuminate\Support\Collection<int, mixed>', $collection->collapse());

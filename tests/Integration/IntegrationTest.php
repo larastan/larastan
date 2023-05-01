@@ -39,16 +39,16 @@ class IntegrationTest extends PHPStanTestCase
      * @see https://github.com/phpstan/phpstan/discussions/6888#discussioncomment-2423613
      *
      * @param  string[]|null  $allAnalysedFiles
-     * @return Error[]
+     * @return \PHPStan\Analyser\Error[]
      */
     private function runAnalyse(string $file, ?array $allAnalysedFiles = null): array
     {
         $file = $this->getFileHelper()->normalizePath($file);
 
-        /** @var Analyser $analyser */
+        /** @var \PHPStan\Analyser\Analyser $analyser */
         $analyser = self::getContainer()->getByType(Analyser::class); // @phpstan-ignore-line
 
-        /** @var FileHelper $fileHelper */
+        /** @var \PHPStan\File\FileHelper $fileHelper */
         $fileHelper = self::getContainer()->getByType(FileHelper::class);
 
         $errors = $analyser->analyse([$file], null, null, true, $allAnalysedFiles)->getErrors(); // @phpstan-ignore-line

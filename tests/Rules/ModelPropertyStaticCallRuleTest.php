@@ -10,7 +10,7 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleLevelHelper;
 use PHPStan\Testing\RuleTestCase;
 
-/** @extends RuleTestCase<ModelPropertyStaticCallRule> */
+/** @extends \PHPStan\Testing\RuleTestCase<\NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertyStaticCallRule> */
 class ModelPropertyStaticCallRuleTest extends RuleTestCase
 {
     protected function getRule(): Rule
