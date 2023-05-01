@@ -129,7 +129,7 @@ class OctaneCompatibilityRule implements Rule
         return [];
     }
 
-    /** @return \PHPStan\Rules\RuleError[] */
+    /** @return RuleError[] */
     private function checkForThisAppUsage(Scope $scope, Node\Expr\Closure $closure): array
     {
         $nodes = (new NodeFinder)->find($closure->getStmts(), function (Node $node): bool {

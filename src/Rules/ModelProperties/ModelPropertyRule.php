@@ -14,7 +14,7 @@ use PHPStan\Type\ErrorType;
 use PHPStan\Type\Type;
 
 /**
- * @implements \PHPStan\Rules\Rule<\PhpParser\Node\Expr\MethodCall>
+ * @implements Rule<MethodCall>
  */
 class ModelPropertyRule implements Rule
 {

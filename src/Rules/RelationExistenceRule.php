@@ -8,8 +8,10 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\ObjectType;
@@ -164,9 +166,9 @@ class RelationExistenceRule implements Rule
 
     private function getRuleError(
         string $relationName,
-        \PHPStan\Reflection\ClassReflection $modelReflection,
+        ClassReflection $modelReflection,
         Node $node
-    ): \PHPStan\Rules\RuleError {
+    ): RuleError {
         return RuleErrorBuilder::message(sprintf("Relation '%s' is not found in %s model.", $relationName,
             $modelReflection->getName()))
             ->identifier('rules.relationExistence')

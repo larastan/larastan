@@ -12,8 +12,10 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Properties\ModelPropertyExtension;
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
+use PhpParser\Node\Scalar\String_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
@@ -83,7 +85,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
     protected $shouldHandle;
 
     /**
-     * @var \PHPStan\Reflection\ReflectionProvider
+     * @var ReflectionProvider
      */
     protected $reflectionProvider;
 
@@ -148,12 +150,12 @@ class NoUnnecessaryCollectionCallRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
-        /** @var \PhpParser\Node\Expr\MethodCall $node */
+        /** @var MethodCall $node */
         if (! $node->name instanceof Identifier) {
             return [];
         }
 
-        /** @var \PhpParser\Node\Identifier $name */
+        /** @var Identifier $name */
         $name = $node->name;
 
         if (! $this->isCalledOnCollection($node->var, $scope)) {
@@ -168,7 +170,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
             return [];
         }
 
-        /** @var Node\Expr\MethodCall|Node\Expr\StaticCall $previousCall */
+        /** @var MethodCall|Node\Expr\StaticCall $previousCall */
         if (! ($previousCall->name instanceof Identifier)) {
             // Previous call was made dynamically e.g. User::query()->{$method}()
             // Can't really analyze it in this scenario so no errors.
@@ -202,7 +204,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
             }
         } elseif (in_array($name->toLowerString(), ['contains', 'containsstrict'], true)) {
             // 'contains' can also be called with Model instances or keys as its first argument
-            /** @var \PhpParser\Node\Arg[] $args */
+            /** @var Arg[] $args */
             $args = $node->args;
             if (count($args) === 1 && ! ($args[0]->value instanceof Node\FunctionLike)) {
                 return [$this->formatError($name->toString())];
@@ -225,9 +227,9 @@ class NoUnnecessaryCollectionCallRule implements Rule
      */
     protected function firstArgIsDatabaseColumn($node, Scope $scope): bool
     {
-        /** @var \PhpParser\Node\Arg[] $args */
+        /** @var Arg[] $args */
         $args = $node->args;
-        if (count($args) === 0 || ! ($args[0]->value instanceof Node\Scalar\String_)) {
+        if (count($args) === 0 || ! ($args[0]->value instanceof String_)) {
             return false;
         }
 
@@ -237,7 +239,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
             $modelReflection = $this->reflectionProvider->getClass($class->toCodeString());
 
-            /** @var \PhpParser\Node\Scalar\String_ $firstArg */
+            /** @var String_ $firstArg */
             $firstArg = $args[0]->value;
 
             return $this->propertyExtension->hasProperty($modelReflection, $firstArg->value);
@@ -258,11 +260,11 @@ class NoUnnecessaryCollectionCallRule implements Rule
             return false;
         }
 
-        /** @var \PHPStan\Type\ObjectType $iterableType */
+        /** @var ObjectType $iterableType */
         if ((new ObjectType(Model::class))->isSuperTypeOf($iterableType)->yes()) {
             $modelReflection = $this->reflectionProvider->getClass($iterableType->getClassName());
 
-            /** @var \PhpParser\Node\Scalar\String_ $firstArg */
+            /** @var String_ $firstArg */
             $firstArg = $args[0]->value;
 
             return $this->propertyExtension->hasProperty($modelReflection, $firstArg->value);

@@ -31,7 +31,7 @@ use PHPStan\Type\ObjectType;
 class NoModelMakeRule implements Rule
 {
     /**
-     * @var \PHPStan\Reflection\ReflectionProvider
+     * @var ReflectionProvider
      */
     protected $reflectionProvider;
 

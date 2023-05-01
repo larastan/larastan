@@ -9,15 +9,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder;
 use PhpParser\Node;
+use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleLevelHelper;
+use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\Type;
 
 /**
- * @implements \PHPStan\Rules\Rule<\PhpParser\Node\Expr\StaticCall>
+ * @implements Rule<StaticCall>
  */
 class ModelPropertyStaticCallRule implements Rule
 {
@@ -39,7 +41,7 @@ class ModelPropertyStaticCallRule implements Rule
 
     public function getNodeType(): string
     {
-        return Node\Expr\StaticCall::class;
+        return StaticCall::class;
     }
 
     /**
@@ -47,7 +49,7 @@ class ModelPropertyStaticCallRule implements Rule
      * @param  Scope  $scope
      * @return string[]
      *
-     * @throws \PHPStan\ShouldNotHappenException
+     * @throws ShouldNotHappenException
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -87,7 +89,7 @@ class ModelPropertyStaticCallRule implements Rule
                 }
 
                 if ($scope->getFunctionName() === null) {
-                    throw new \PHPStan\ShouldNotHappenException();
+                    throw new ShouldNotHappenException();
                 }
 
                 $modelReflection = $parentClass;

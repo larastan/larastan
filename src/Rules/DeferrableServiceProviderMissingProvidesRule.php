@@ -9,6 +9,7 @@ use Illuminate\Support\ServiceProvider;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\InClassNode;
+use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\ShouldNotHappenException;
@@ -24,8 +25,8 @@ class DeferrableServiceProviderMissingProvidesRule implements Rule
     }
 
     /**
-     * @throws \PHPStan\ShouldNotHappenException
-     * @throws \PHPStan\Reflection\MissingMethodFromReflectionException
+     * @throws ShouldNotHappenException
+     * @throws MissingMethodFromReflectionException
      */
     public function processNode(Node $node, Scope $scope): array
     {
