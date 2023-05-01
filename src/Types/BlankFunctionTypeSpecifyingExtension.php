@@ -30,7 +30,7 @@ final class BlankFunctionTypeSpecifyingExtension implements FunctionTypeSpecifyi
         FuncCall $node,
         TypeSpecifierContext $context
     ): bool {
-        return $functionReflection->getName() === 'blank' && ! $context->null() && isset($node->getArgs()[0]);
+        return $functionReflection->getName() === 'blank';
     }
 
     public function specifyTypes(
@@ -43,6 +43,10 @@ final class BlankFunctionTypeSpecifyingExtension implements FunctionTypeSpecifyi
         $typeBefore = $scope->getType($expr);
 
         $falseyTypes = $this->getFalseyTypes();
+
+        if ($context->null()) {
+            return $this->typeSpecifier->create($expr, $typeBefore, TypeSpecifierContext::createTruthy());
+        }
 
         if ($this->isCalledOnIterable($typeBefore)) {
             if ($context->falsey()) {
