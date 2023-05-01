@@ -35,7 +35,8 @@
         "psr-4": {
             "App\\": "tests/application/app/",
             "Database\\Factories\\": "tests/application/database/factories/",
-            "Database\\Migrations\\": "tests/application/database/migrations/"
+            "Database\\Migrations\\": "tests/application/database/migrations/",
+            "Tests\\": "tests/"
         },
       "classmap": [
         "tests/"
