@@ -1,6 +1,6 @@
 <?php
 
-namespace Reflection;
+namespace Tests\Reflection;
 
 use Illuminate\Http\RedirectResponse;
 use NunoMaduro\Larastan\Methods\RedirectResponseMethodsClassReflectionExtension;

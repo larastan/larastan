@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Rules\UselessConstructs;
+namespace Tests\Rules\UselessConstructs;
 
 use NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule;
 use PHPStan\Rules\Rule;

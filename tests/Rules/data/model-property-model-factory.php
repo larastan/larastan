@@ -1,6 +1,6 @@
 <?php
 
-namespace ModelPropertyModelFactory;
+namespace Tests\Rules\data;
 
 function foo(): void
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Rules;
+namespace Tests\Rules;
 
 use NunoMaduro\Larastan\Collectors\UsedEmailViewCollector;
 use NunoMaduro\Larastan\Collectors\UsedRouteFacadeViewCollector;

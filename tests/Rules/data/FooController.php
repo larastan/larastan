@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Rules\Data;
+namespace Tests\Rules\data;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Mail\Mailable;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Type;
+namespace Tests\Type;
 
 use PHPStan\Testing\TypeInferenceTestCase;
 

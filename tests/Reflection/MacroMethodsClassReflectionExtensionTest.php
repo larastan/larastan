@@ -1,6 +1,6 @@
 <?php
 
-namespace Reflection;
+namespace Tests\Reflection;
 
 use Generator;
 use Illuminate\Http\Request;
@@ -71,8 +71,8 @@ class MacroMethodsClassReflectionExtensionTest extends PHPStanTestCase
 
     public function methodAndThrowTypeProvider(): Generator
     {
-        yield [Request::class, 'validate', ValidationException::class];
-        yield [Request::class, 'validateWithBag', ValidationException::class];
+        yield [Request::class, 'validate', \Illuminate\Validation\ValidationException::class];
+        yield [Request::class, 'validateWithBag', \Illuminate\Validation\ValidationException::class];
     }
 
     public static function getAdditionalConfigFiles(): array

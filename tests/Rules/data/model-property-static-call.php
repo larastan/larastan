@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Rules\Data;
+namespace Tests\Rules\data;
 
 $foo = \App\User::class;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Type;
+namespace Tests\Type;
 
 class MethodsClassReflectionExtensionTest extends \PHPStan\Testing\TypeInferenceTestCase
 {

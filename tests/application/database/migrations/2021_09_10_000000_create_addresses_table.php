@@ -2,15 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Database\Migrations;
-
 use App\Address;
 use App\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAddressesTable extends Migration
+return new class() extends Migration
 {
     /**
      * Run the migrations.
@@ -27,4 +25,4 @@ class CreateAddressesTable extends Migration
             $table->foreignId('nullable_foreign_id_constrained')->nullable()->constrained('users');
         });
     }
-}
+};

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Rules\Data;
+namespace Tests\Rules\data;
 
 LaravelJob::dispatch();
 LaravelJob::dispatchSync();

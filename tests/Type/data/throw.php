@@ -11,7 +11,7 @@ class ThrowTest
     public function testThrowIfTryCatch(?int $foo): void
     {
         try {
-            throw_if(! $foo, ValidationException::withMessages(['$foo is null']));
+            throw_if(! $foo, \Illuminate\Validation\ValidationException::withMessages(['$foo is null']));
 
             assertType('int<min, -1>|int<1, max>', $foo);
         } catch (\Exception $e) {
@@ -29,7 +29,7 @@ class ThrowTest
 
     public function testThrowUnless(?int $foo): void
     {
-        throw_unless(! is_null($foo), ValidationException::withMessages(['$foo is null']));
+        throw_unless(! is_null($foo), \Illuminate\Validation\ValidationException::withMessages(['$foo is null']));
 
         assertType('int', $foo);
     }

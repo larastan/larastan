@@ -59,7 +59,7 @@ function rescueHelper()
 {
     assertType('string|null', rescue(function () {
         if (mt_rand(0, 1)) {
-            throw new Exception();
+            throw new \Exception();
         }
 
         return 'ok';
@@ -67,7 +67,7 @@ function rescueHelper()
 
     assertType('string', rescue(function () {
         if (mt_rand(0, 1)) {
-            throw new Exception();
+            throw new \Exception();
         }
 
         return 'ok';
@@ -75,7 +75,7 @@ function rescueHelper()
 
     assertType('int|string', rescue(function () {
         if (mt_rand(0, 1)) {
-            throw new Exception();
+            throw new \Exception();
         }
 
         return 'ok';
@@ -85,17 +85,17 @@ function rescueHelper()
 
     assertType('int|string', rescue(function () {
         if (mt_rand(0, 1)) {
-            throw new Exception();
+            throw new \Exception();
         }
 
         return 'ok';
-    }, function (Throwable $e) {
+    }, function (\Throwable $e) {
         return 0;
     }));
 
     assertType('string', rescue(function () {
         if (mt_rand(0, 1)) {
-            throw new Exception();
+            throw new \Exception();
         }
 
         return 'ok';
@@ -125,7 +125,7 @@ function retryHelper()
 
     assertType('bool', retry(5, function (int $attempt): bool {
         return false;
-    }, 0, function (Exception $e): bool {
+    }, 0, function (\Exception $e): bool {
         return true;
     }));
 }

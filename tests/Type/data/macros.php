@@ -18,7 +18,7 @@ use function PHPStan\Testing\assertVariableCertainty;
 
 try {
     Request::validate([]);
-} catch (ValidationException $e) {
+} catch (\Illuminate\Validation\ValidationException $e) {
     $foo = 'foo';
 }
 

@@ -25,7 +25,7 @@ class Favorites implements CastsAttributes
     public function set($model, $key, $value, $attributes)
     {
         if (! $value instanceof \App\ValueObjects\Favorites) {
-            throw new InvalidArgumentException('The given value is not a Favorites instance.');
+            throw new \InvalidArgumentException('The given value is not a Favorites instance.');
         }
 
         return [];

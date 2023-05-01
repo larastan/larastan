@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Rules\Data;
+namespace Tests\Rules\data;
 
 use Illuminate\Contracts\Support\DeferrableProvider;
 

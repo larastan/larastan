@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Rules\Data;
+namespace Tests\Rules\data;
 
 use App\Account;
 use App\User;
@@ -129,7 +129,7 @@ class Foo extends Model
 {
     /**
      * @param  \Illuminate\Database\Query\Builder  $query
-     * @return FooBuilder
+     * @return \Tests\Rules\data\FooBuilder
      */
     public function newEloquentBuilder($query): FooBuilder
     {
@@ -138,7 +138,7 @@ class Foo extends Model
 }
 
 /**
- * @extends Builder<Foo>
+ * @extends \Illuminate\Database\Eloquent\Builder<\Tests\Rules\data\Foo>
  */
 class FooBuilder extends Builder
 {

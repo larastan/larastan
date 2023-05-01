@@ -1,6 +1,6 @@
 <?php
 
-namespace ModelPropertyModel;
+namespace Tests\Rules\data;
 
 class ModelPropertyOnModel extends \Illuminate\Database\Eloquent\Model
 {

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tests\Rules\Data;
+namespace Tests\Rules\data;
 
-use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Foundation\Bus\Dispatchable;
 
-class LaravelEvent
+class LaravelJob
 {
     use Dispatchable;
 
@@ -21,9 +21,4 @@ class LaravelEvent
         $this->foo = $foo;
         $this->bar = $bar;
     }
-}
-
-class LaravelEventWithoutConstructor
-{
-    use Dispatchable;
 }

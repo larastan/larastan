@@ -35,11 +35,12 @@
         "psr-4": {
             "App\\": "tests/application/app/",
             "Database\\Factories\\": "tests/application/database/factories/",
-            "Database\\Migrations\\": "tests/application/database/migrations/"
-        },
-      "classmap": [
-        "tests/"
-      ]
+            "Tests\\Integration\\": "tests/Integration/",
+            "Tests\\Reflection\\": "tests/Reflection/",
+            "Tests\\Rules\\": "tests/Rules/",
+            "Tests\\Type\\": "tests/Type/",
+            "Tests\\Unit\\": "tests/Unit/"
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -50,7 +51,10 @@
     },
     "config": {
         "sort-packages": true,
-        "preferred-install": "dist"
+        "preferred-install": "dist",
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     },
     "extra": {
         "branch-alias": {
