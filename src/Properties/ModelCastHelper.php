@@ -83,7 +83,7 @@ class ModelCastHelper
             $methodReturnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
 
             // If the caster is generic and the first supplied parameter is a class, we will bind that in the template type map.
-            return $this->resolveTemplateTypes($methodReturnType, $cast);
+            return TypeCombinator::removeNull($this->resolveTemplateTypes($methodReturnType, $cast));
         }
 
         if ($classReflection->isSubclassOf(CastsInboundAttributes::class)) {
@@ -148,7 +148,7 @@ class ModelCastHelper
             $valueParameterType = $valueParameter->getType();
 
             // If the caster is generic and the first supplied parameter is a class, we will bind that in the template type map.
-            return $this->resolveTemplateTypes($valueParameterType, $cast);
+            return TypeCombinator::removeNull($this->resolveTemplateTypes($valueParameterType, $cast));
         }
 
         return new MixedType();

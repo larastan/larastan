@@ -28,7 +28,7 @@ class ModelCastHelperTest extends PHPStanTestCase
     }
 
     /**
-     * @dataProvider testGetReadableTypeCases
+     * @dataProvider getReadableTypeCases
      */
     public function testGetReadableType($cast, Type\Type $expected): void
     {
@@ -37,7 +37,7 @@ class ModelCastHelperTest extends PHPStanTestCase
         $this->assertEquals($expected, $helper->getReadableType($cast, new Type\StringType()));
     }
 
-    public function testGetReadableTypeCases(): \Generator
+    public function getReadableTypeCases(): \Generator
     {
         yield ['int', new Type\IntegerType()];
         yield ['integer', new Type\IntegerType()];
@@ -53,32 +53,28 @@ class ModelCastHelperTest extends PHPStanTestCase
         yield ['datetime', new Type\ObjectType('Carbon\Carbon')];
         yield ['immutable_date', new Type\ObjectType('Carbon\CarbonImmutable')];
         yield ['immutable_datetime', new Type\ObjectType('Carbon\CarbonImmutable')];
-        yield ['Illuminate\Database\Eloquent\Casts\AsArrayObject', TypeCombinator::addNull(new Type\ObjectType('Illuminate\Database\Eloquent\Casts\ArrayObject'))];
-        yield ['Illuminate\Database\Eloquent\Casts\AsEncryptedArrayObject', TypeCombinator::addNull(new Type\ObjectType('Illuminate\Database\Eloquent\Casts\ArrayObject'))];
-        yield ['Illuminate\Database\Eloquent\Casts\AsCollection', TypeCombinator::addNull(new GenericObjectType('Illuminate\Support\Collection', [new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()]))];
-        yield ['Illuminate\Database\Eloquent\Casts\AsEncryptedCollection', TypeCombinator::addNull(new GenericObjectType('Illuminate\Support\Collection', [new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()]))];
-        yield ['Illuminate\Database\Eloquent\Casts\AsStringable', TypeCombinator::addNull(new Type\ObjectType('Illuminate\Support\Stringable'))];
+        yield ['Illuminate\Database\Eloquent\Casts\AsArrayObject', new Type\ObjectType('Illuminate\Database\Eloquent\Casts\ArrayObject')];
+        yield ['Illuminate\Database\Eloquent\Casts\AsEncryptedArrayObject', new Type\ObjectType('Illuminate\Database\Eloquent\Casts\ArrayObject')];
+        yield ['Illuminate\Database\Eloquent\Casts\AsCollection', new GenericObjectType('Illuminate\Support\Collection', [new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()])];
+        yield ['Illuminate\Database\Eloquent\Casts\AsEncryptedCollection', new GenericObjectType('Illuminate\Support\Collection', [new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()])];
+        yield ['Illuminate\Database\Eloquent\Casts\AsStringable', new Type\ObjectType('Illuminate\Support\Stringable')];
 
         yield [
             'Illuminate\Database\Eloquent\Casts\AsEnumArrayObject:App\Casts\BackedEnumeration',
-            TypeCombinator::addNull(
-                new Type\Generic\GenericObjectType(
-                    'Illuminate\Database\Eloquent\Casts\ArrayObject', [
-                        new Type\BenevolentUnionType([new Type\IntegerType(), new Type\StringType()]),
-                        new Type\ObjectType('App\Casts\BackedEnumeration'),
-                    ]
-                )
+            new Type\Generic\GenericObjectType(
+                'Illuminate\Database\Eloquent\Casts\ArrayObject', [
+                    new Type\BenevolentUnionType([new Type\IntegerType(), new Type\StringType()]),
+                    new Type\ObjectType('App\Casts\BackedEnumeration'),
+                ]
             )];
 
         yield [
             'Illuminate\Database\Eloquent\Casts\AsEnumCollection:App\Casts\BackedEnumeration',
-            TypeCombinator::addNull(
-                new Type\Generic\GenericObjectType(
-                    'Illuminate\Support\Collection', [
-                        new Type\BenevolentUnionType([new Type\IntegerType(), new Type\StringType()]),
-                        new Type\ObjectType('App\Casts\BackedEnumeration'),
-                    ]
-                )
+            new Type\Generic\GenericObjectType(
+                'Illuminate\Support\Collection', [
+                    new Type\BenevolentUnionType([new Type\IntegerType(), new Type\StringType()]),
+                    new Type\ObjectType('App\Casts\BackedEnumeration'),
+                ]
             )];
     }
 }
