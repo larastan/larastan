@@ -140,7 +140,7 @@ class ModelCastHelper
             $methodReflection = $classReflection->getNativeMethod('set');
             $parameters = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getParameters();
 
-            $valueParameter = Arr::first($parameters, fn(ParameterReflection $parameterReflection) => $parameterReflection->getName() === 'value');
+            $valueParameter = Arr::first($parameters, fn (ParameterReflection $parameterReflection) => $parameterReflection->getName() === 'value');
             $valueParameterType = $valueParameter->getType();
 
             // If the caster is generic and the first supplied parameter is a class, we will bind that in the template type map.
@@ -164,8 +164,8 @@ class ModelCastHelper
     }
 
     /**
-     * @param Type $valueParameterType
-     * @param EloquentCast $cast
+     * @param  Type  $valueParameterType
+     * @param  EloquentCast  $cast
      * @return Type
      */
     private function resolveTemplateTypes(Type $valueParameterType, EloquentCast $cast): Type

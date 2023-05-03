@@ -3,15 +3,15 @@
 namespace Unit;
 
 use NunoMaduro\Larastan\Properties\ModelCastHelper;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Testing\PHPStanTestCase;
+use PHPStan\Type;
 use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\TypeCombinator;
-use PHPStan\Reflection\ReflectionProvider;
-use PHPStan\Type;
 
 class ModelCastHelperTest extends PHPStanTestCase
 {
@@ -65,7 +65,7 @@ class ModelCastHelperTest extends PHPStanTestCase
                 new Type\Generic\GenericObjectType(
                     'Illuminate\Database\Eloquent\Casts\ArrayObject', [
                         new Type\BenevolentUnionType([new Type\IntegerType(), new Type\StringType()]),
-                        new Type\ObjectType('App\Casts\BackedEnumeration')
+                        new Type\ObjectType('App\Casts\BackedEnumeration'),
                     ]
                 )
             )];
@@ -76,7 +76,7 @@ class ModelCastHelperTest extends PHPStanTestCase
                 new Type\Generic\GenericObjectType(
                     'Illuminate\Support\Collection', [
                         new Type\BenevolentUnionType([new Type\IntegerType(), new Type\StringType()]),
-                        new Type\ObjectType('App\Casts\BackedEnumeration')
+                        new Type\ObjectType('App\Casts\BackedEnumeration'),
                     ]
                 )
             )];

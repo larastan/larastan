@@ -14,8 +14,8 @@ class PHPStanTypeComparator extends Comparator
     }
 
     /**
-     * @param Type $expected
-     * @param Type $actual
+     * @param  Type  $expected
+     * @param  Type  $actual
      */
     public function assertEquals($expected, $actual, $delta = 0.0, $canonicalize = false, $ignoreCase = false): void
     {
