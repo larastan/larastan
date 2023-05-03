@@ -37,7 +37,7 @@ class ModelCastHelperTest extends PHPStanTestCase
         $this->assertEquals($expected, $helper->getReadableType($cast, new Type\StringType()));
     }
 
-    protected function testGetReadableTypeCases(): \Generator
+    public function testGetReadableTypeCases(): \Generator
     {
         yield ['int', new Type\IntegerType()];
         yield ['integer', new Type\IntegerType()];
