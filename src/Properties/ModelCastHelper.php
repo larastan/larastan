@@ -15,6 +15,7 @@ use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\BooleanType;
 use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\FloatType;
+use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Generic\TemplateTypeHelper;
 use PHPStan\Type\Generic\TemplateTypeMap;
 use PHPStan\Type\Generic\TemplateTypeVariance;
@@ -47,6 +48,9 @@ class ModelCastHelper
             'collection' => new ObjectType('Illuminate\Support\Collection'),
             'date', 'datetime' => $this->getDateType(),
             'immutable_date', 'immutable_datetime' => new ObjectType('Carbon\CarbonImmutable'),
+            'Illuminate\Database\Eloquent\Casts\AsArrayObject', 'Illuminate\Database\Eloquent\Casts\AsEncryptedArrayObject' => new GenericObjectType('Illuminate\Database\Eloquent\Casts\ArrayObject', [new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()]),
+            'Illuminate\Database\Eloquent\Casts\AsCollection', 'Illuminate\Database\Eloquent\Casts\AsEncryptedCollection' => new GenericObjectType('Illuminate\Support\Collection', [new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()]),
+            'Illuminate\Database\Eloquent\Casts\AsStringable' => new ObjectType('Illuminate\Support\Stringable'),
             default => null,
         };
 
