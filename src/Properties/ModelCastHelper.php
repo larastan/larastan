@@ -15,13 +15,16 @@ use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\BooleanType;
 use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\FloatType;
-use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\Generic\TemplateTypeHelper;
+use PHPStan\Type\Generic\TemplateTypeMap;
+use PHPStan\Type\Generic\TemplateTypeVariance;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\TypeUtils;
 
 class ModelCastHelper
 {
@@ -31,9 +34,9 @@ class ModelCastHelper
 
     public function getReadableType(string $cast, Type $originalType): Type
     {
-        $cast = $this->parseCast($cast);
+        $cast = EloquentCast::fromString($cast);
 
-        $attributeType = match ($cast) {
+        $attributeType = match ($cast->type) {
             'int', 'integer', 'timestamp' => new IntegerType(),
             'real', 'float', 'double' => new FloatType(),
             'decimal' => TypeCombinator::intersect(new StringType(), new AccessoryNumericStringType()),
@@ -44,9 +47,6 @@ class ModelCastHelper
             'collection' => new ObjectType('Illuminate\Support\Collection'),
             'date', 'datetime' => $this->getDateType(),
             'immutable_date', 'immutable_datetime' => new ObjectType('Carbon\CarbonImmutable'),
-            'Illuminate\Database\Eloquent\Casts\AsArrayObject', 'Illuminate\Database\Eloquent\Casts\AsEncryptedArrayObject' => new ObjectType('Illuminate\Database\Eloquent\Casts\ArrayObject'),
-            'Illuminate\Database\Eloquent\Casts\AsCollection', 'Illuminate\Database\Eloquent\Casts\AsEncryptedCollection' => new GenericObjectType('Illuminate\Support\Collection', [new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()]),
-            'Illuminate\Database\Eloquent\Casts\AsStringable' => new ObjectType('Illuminate\Support\Stringable'),
             default => null,
         };
 
@@ -54,14 +54,14 @@ class ModelCastHelper
             return $attributeType;
         }
 
-        if (! $this->reflectionProvider->hasClass($cast)) {
+        if (! $this->reflectionProvider->hasClass($cast->type)) {
             return $originalType;
         }
 
-        $classReflection = $this->reflectionProvider->getClass($cast);
+        $classReflection = $this->reflectionProvider->getClass($cast->type);
 
         if ($classReflection->isEnum()) {
-            return new ObjectType($cast);
+            return new ObjectType($classReflection->getName());
         }
 
         if ($classReflection->isSubclassOf(Castable::class)) {
@@ -73,10 +73,13 @@ class ModelCastHelper
             }
         }
 
-        if ($classReflection->isSubclassOf(CastsAttributes::class)) {
+        if ($classReflection->is(CastsAttributes::class) || $classReflection->isSubclassOf(CastsAttributes::class)) {
             $methodReflection = $classReflection->getNativeMethod('get');
 
-            return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+            $methodReturnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+
+            // If the caster is generic and the first supplied parameter is a class, we will bind that in the template type map.
+            return $this->resolveTemplateTypes($methodReturnType, $cast);
         }
 
         if ($classReflection->isSubclassOf(CastsInboundAttributes::class)) {
@@ -88,9 +91,9 @@ class ModelCastHelper
 
     public function getWriteableType(string $cast, Type $originalType): Type
     {
-        $cast = $this->parseCast($cast);
+        $cast = EloquentCast::fromString($cast);
 
-        $attributeType = match ($cast) {
+        $attributeType = match ($cast->type) {
             'int', 'integer', 'timestamp' => new IntegerType(),
             'real', 'float', 'double' => new FloatType(),
             'decimal' => TypeCombinator::intersect(new StringType(), new AccessoryNumericStringType()),
@@ -111,14 +114,14 @@ class ModelCastHelper
             return $attributeType;
         }
 
-        if (! $this->reflectionProvider->hasClass($cast)) {
+        if (! $this->reflectionProvider->hasClass($cast->type)) {
             return $originalType;
         }
 
-        $classReflection = $this->reflectionProvider->getClass($cast);
+        $classReflection = $this->reflectionProvider->getClass($cast->type);
 
         if ($classReflection->isEnum()) {
-            return new ObjectType($cast);
+            return new ObjectType($cast->type);
         }
 
         if ($classReflection->isSubclassOf(Castable::class)) {
@@ -130,16 +133,18 @@ class ModelCastHelper
             }
         }
 
-        if (
-            $classReflection->isSubclassOf(CastsAttributes::class)
-            || $classReflection->isSubclassOf(CastsInboundAttributes::class)
-        ) {
+        if ($classReflection->is(CastsAttributes::class)
+            || $classReflection->isSubclassOf(CastsAttributes::class)
+            || $classReflection->is(CastsInboundAttributes::class)
+            || $classReflection->isSubclassOf(CastsInboundAttributes::class)) {
             $methodReflection = $classReflection->getNativeMethod('set');
             $parameters = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getParameters();
 
-            $valueParameter = Arr::first($parameters, fn (ParameterReflection $parameterReflection) => $parameterReflection->getName() === 'value');
+            $valueParameter = Arr::first($parameters, fn(ParameterReflection $parameterReflection) => $parameterReflection->getName() === 'value');
+            $valueParameterType = $valueParameter->getType();
 
-            return $valueParameter->getType();
+            // If the caster is generic and the first supplied parameter is a class, we will bind that in the template type map.
+            return $this->resolveTemplateTypes($valueParameterType, $cast);
         }
 
         return new MixedType();
@@ -159,20 +164,26 @@ class ModelCastHelper
     }
 
     /**
-     * @param  string  $cast
-     * @return string
+     * @param Type $valueParameterType
+     * @param EloquentCast $cast
+     * @return Type
      */
-    private function parseCast(string $cast): string
+    private function resolveTemplateTypes(Type $valueParameterType, EloquentCast $cast): Type
     {
-        foreach (explode(':', $cast) as $part) {
-            // If the cast is prefixed with `encrypted:` we need to skip to the next
-            if ($part === 'encrypted') {
-                continue;
-            }
+        if (TypeUtils::containsTemplateType($valueParameterType) && $this->reflectionProvider->hasClass($cast->parameters[0])) {
+            $parameterType = new ObjectType($cast->parameters[0]);
 
-            return $part;
+            [$templateTypeReference] = $valueParameterType->getReferencedTemplateTypes(TemplateTypeVariance::createStatic());
+
+            $templateTypeMap = new TemplateTypeMap([
+                /** @phpstan-ignore-next-line PHPStan warns for this API not being covered by BC promise. */
+                $templateTypeReference->getType()->getName() => $parameterType,
+            ]);
+
+            /** @phpstan-ignore-next-line PHPStan warns for this API not being covered by BC promise. */
+            $valueParameterType = TemplateTypeHelper::resolveTemplateTypes($valueParameterType, $templateTypeMap);
         }
 
-        return $cast;
+        return $valueParameterType;
     }
 }

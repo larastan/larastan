@@ -66,7 +66,7 @@ function foo(User $user, Account $account, Role $role, Group $group, Team $team,
     assertType('int', $group->id);
     assertType('string', $guardedModel->name);
     assertType('string', $thread->custom_property);
-    assertType('Illuminate\Database\Eloquent\Casts\ArrayObject', $user->options);
+    assertType('Illuminate\Database\Eloquent\Casts\ArrayObject<(int|string), mixed>', $user->options);
     assertType('int<0, max>', count($user->options));
     assertType('Illuminate\Support\Collection<(int|string), mixed>', $user->properties);
     assertType('int<0, max>', count($user->properties));

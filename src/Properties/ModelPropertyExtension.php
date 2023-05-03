@@ -171,6 +171,9 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
         if ($column->nullable) {
             $readableType = TypeCombinator::addNull($readableType);
             $writableType = TypeCombinator::addNull($writableType);
+        } else {
+            $readableType = TypeCombinator::removeNull($readableType);
+            $writableType = TypeCombinator::removeNull($writableType);
         }
 
         return new ModelProperty(
