@@ -56,7 +56,12 @@ parameters:
 			path: src/Rules/NoUnnecessaryCollectionCallRule.php
 
 		-
-			message: "#^PHPDoc tag @var assumes the expression with type PHPStan\\\\Type\\\\Type is always PHPStan\\\\Type\\\\ObjectType but it's error\\-prone and dangerous\\.$#"
+			message: "#^Call to PHPStan\\\\Type\\\\Type\\:\\:getTemplateType\\(\\) references unknown template type TChildModel on class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsTo\\.$#"
+			count: 1
+			path: src/Types/ModelRelationsDynamicMethodReturnTypeExtension.php
+
+		-
+			message: "#^Call to PHPStan\\\\Type\\\\Type\\:\\:getTemplateType\\(\\) references unknown template type TRelatedModel on class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\Relation\\.$#"
 			count: 1
 			path: src/Types/ModelRelationsDynamicMethodReturnTypeExtension.php
 

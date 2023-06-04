@@ -14,9 +14,13 @@ use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
+use PHPStan\Type\GeneralizePrecision;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeUtils;
+use PHPStan\Type\UnionType;
+use PHPStan\Type\UnionTypeHelper;
 
 class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
@@ -87,24 +91,43 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
         MethodReflection $methodReflection,
         MethodCall $methodCall,
         Scope $scope
-    ): Type {
-        /** @var ObjectType $returnType */
+    ): ?Type {
         $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+        $returnTypeObjectClassNames = $returnType->getObjectClassNames();
+
+        if ($returnTypeObjectClassNames === []) {
+            return null;
+        }
 
         /** @var string $relatedModelClassName */
         $relatedModelClassName = $this
             ->relationParserHelper
             ->findRelatedModelInRelationMethod($methodReflection);
 
-        $classReflection = $methodReflection->getDeclaringClass();
+        if ((new ObjectType(BelongsTo::class))->isSuperTypeOf($returnType)->yes()) {
+            $classReflection = $methodReflection->getDeclaringClass();
+            $types = [];
 
-        if ($returnType->isInstanceOf(BelongsTo::class)->yes()) {
-            return new GenericObjectType($returnType->getClassName(), [
+            foreach (TypeUtils::flattenTypes($returnType) as $flattenType) {
+                if ((new ObjectType(BelongsTo::class))->isSuperTypeOf($flattenType)->yes()) {
+                    $types[] = $flattenType->getTemplateType(BelongsTo::class, 'TChildModel');
+                } else {
+                    $types[] = $flattenType->getTemplateType(Relation::class, 'TRelatedModel');
+                }
+            }
+
+            if (count($types) >= 2) {
+                $childType = new UnionType(array_map(fn(Type $type) => new ObjectType($type->getObjectClassNames()[0]), $types));
+            } else {
+                $childType = new ObjectType($classReflection->getName());
+            }
+
+            return new GenericObjectType($returnTypeObjectClassNames[0], [
                 new ObjectType($relatedModelClassName),
-                new ObjectType($classReflection->getName()),
+                $childType,
             ]);
         }
 
-        return new GenericObjectType($returnType->getClassName(), [new ObjectType($relatedModelClassName)]);
+        return new GenericObjectType($returnTypeObjectClassNames[0], [new ObjectType($relatedModelClassName)]);
     }
 }

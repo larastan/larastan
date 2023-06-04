@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 use function PHPStan\Testing\assertType;
 
-function test(User $user, \App\Address $address, Account $account, ExtendsModelWithPropertyAnnotations $model, Tag $tag)
+function test(User $user, \App\Address $address, Account $account, ExtendsModelWithPropertyAnnotations $model, Tag $tag, User|Account $union)
 {
     assertType('App\Account', $user->accounts()->firstOrCreate([]));
     assertType(Post::class, $user->posts()->create());
@@ -39,7 +39,7 @@ function test(User $user, \App\Address $address, Account $account, ExtendsModelW
     assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account>', (new User())->accounts()->where('name', 'bar'));
     assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account>', (new User())->accounts()->whereIn('id', [1, 2, 3]));
     assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account>', (new User())->accounts()->whereActive(true));
-    assertType('App\Account', getUser()->accounts()->create());
+    assertType('App\Account', $user->accounts()->create());
     assertType('App\Account|null', (new User())->accounts()->where('name', 'bar')->first());
     assertType('App\User', User::with('accounts')->whereHas('accounts')->firstOrFail());
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\User, App\Account>', $account->ownerRelation());
@@ -79,11 +79,8 @@ function test(User $user, \App\Address $address, Account $account, ExtendsModelW
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->get());
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $users->getQuery());
     assertType('App\User', $users->make());
-}
-
-function getUser(): User
-{
-    return User::firstOrFail();
+    assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\Account|App\User>', $union->group());
+    assertType('Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Post>', $union->posts());
 }
 
 /**
