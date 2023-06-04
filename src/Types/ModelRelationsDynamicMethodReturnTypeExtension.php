@@ -14,13 +14,11 @@ use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
-use PHPStan\Type\GeneralizePrecision;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeUtils;
 use PHPStan\Type\UnionType;
-use PHPStan\Type\UnionTypeHelper;
 
 class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
@@ -117,7 +115,7 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
             }
 
             if (count($types) >= 2) {
-                $childType = new UnionType(array_map(fn(Type $type) => new ObjectType($type->getObjectClassNames()[0]), $types));
+                $childType = new UnionType(array_map(fn (Type $type) => new ObjectType($type->getObjectClassNames()[0]), $types));
             } else {
                 $childType = new ObjectType($classReflection->getName());
             }
