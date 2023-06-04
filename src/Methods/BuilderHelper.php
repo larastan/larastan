@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Reflection\AnnotationScopeMethodParameterReflection;
-use NunoMaduro\Larastan\Reflection\AnnotationScopeMethodReflection;
 use NunoMaduro\Larastan\Reflection\DynamicWhereParameterReflection;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Reflection\ClassReflection;
