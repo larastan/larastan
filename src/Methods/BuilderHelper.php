@@ -108,7 +108,6 @@ class BuilderHelper
         return new EloquentBuilderMethodReflection(
             $methodName,
             $classReflection,
-            $methodReflection,
             [new DynamicWhereParameterReflection],
             $returnObject,
             true
@@ -151,7 +150,6 @@ class BuilderHelper
             return new EloquentBuilderMethodReflection(
                 'scope'.ucfirst($methodName),
                 $model,
-                new AnnotationScopeMethodReflection('scope'.ucfirst($methodName), $model, $methodTag->getReturnType(), $parameters, $methodTag->isStatic(), false),
                 $parameters,
                 $methodTag->getReturnType()
             );
@@ -171,7 +169,6 @@ class BuilderHelper
             return new EloquentBuilderMethodReflection(
                 'scope'.ucfirst($methodName),
                 $methodReflection->getDeclaringClass(),
-                $methodReflection,
                 $parameters,
                 $returnType,
                 $parametersAcceptor->isVariadic()

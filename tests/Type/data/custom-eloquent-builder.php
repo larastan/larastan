@@ -9,173 +9,44 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 use function PHPStan\Testing\assertType;
 
-class CustomEloquentBuilderTest
-{
-    public function testModelWithCustomBuilderReturnsCorrectModelAfterBuilderMethod()
-    {
-        assertType('CustomEloquentBuilder\ModelWithCustomBuilder|null', ModelWithCustomBuilder::where('email', 'bar')->first());
-    }
-
-    public function testEloquentBuilderMethodReturnsCustomBuilder()
-    {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::where('email', 'bar'));
-    }
-
-    public function testModelScopeReturnsCustomBuilder(): CustomEloquentBuilder
-    {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::foo('foo')->foo('bar'));
-    }
-
-    public function testCustomBuilderMethodReturnsBuilder()
-    {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::type('foo'));
-    }
-
-    public function testCustomBuilderMethodThroughRelation(FooModel $foo)
-    {
-        assertType('Illuminate\Database\Eloquent\Relations\HasMany<CustomEloquentBuilder\ModelWithCustomBuilder>', $foo->customModels()->category('foo'));
-    }
-
-    public function testCustomBuilderMethodAfterDynamicWhere()
-    {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::whereEmail(['bar'])->type('foo')->whereEmail(['bar']));
-    }
-
-    public function testCustomBuilderMethodWithQueryBuilderMethod()
-    {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::whereEmail(['bar'])->categories(['foo'])->whereType(['bar']));
-    }
-
-    public function testFindAfterCustomBuilderMethodAfterDynamicWhere()
-    {
-        assertType('CustomEloquentBuilder\ModelWithCustomBuilder|null', ModelWithCustomBuilder::whereEmail(['bar'])->type('foo')->first());
-    }
-
-    public function testFindAfterCustomBuilderMethodAfterDynamicWhereOnExistingVariable()
-    {
-        assertType('CustomEloquentBuilder\ModelWithCustomBuilder|null', ModelWithCustomBuilder::whereEmail(['bar'])->type('foo')->first());
-    }
-
-    public function testCustomBuilderCountMethodThroughRelation(FooModel $foo)
-    {
-        assertType('int', $foo->customModels()->count());
-    }
-
-    public function testCustomBuilderExistsMethodThroughRelation(FooModel $foo)
-    {
-        assertType('bool', $foo->customModels()->exists());
-    }
-
-    public function testWeirdErrorMessage()
-    {
-        assertType('Illuminate\Database\Eloquent\Collection<int, CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::get());
-    }
-
-    public function testFirstOrFailWithCustomBuilder()
-    {
-        assertType('CustomEloquentBuilder\ModelWithCustomBuilder', ModelWithCustomBuilder::firstOrFail());
-    }
-
-    /** @phpstan-return ModelWithCustomBuilder */
-    public function testFindOrFailWithCustomBuilder(): ModelWithCustomBuilder
-    {
-        assertType('CustomEloquentBuilder\ModelWithCustomBuilder', ModelWithCustomBuilder::findOrFail(1));
-    }
-
-    public function testFindOrFailWithCustomBuilderWithCollection()
-    {
-        assertType('Illuminate\Database\Eloquent\Collection<int, CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::findOrFail([1, 2, 3]));
-    }
-
-    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterHasBuilderMethod()
-    {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->has('users'));
-    }
-
-    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterOrHasBuilderMethod()
-    {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->orHas('users'));
-    }
-
-    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterDoesntHaveBuilderMethod()
-    {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->doesntHave('users'));
-    }
-
-    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterOrDoesntHaveBuilderMethod()
-    {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->orDoesntHave('users'));
-    }
-
-    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterWhereHasBuilderMethod()
-    {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->whereHas('users'));
-    }
-
-    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterOrWhereHasBuilderMethod()
-    {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->orWhereHas('users'));
-    }
-
-    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterWhereDoesntHaveBuilderMethod()
-    {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->whereDoesntHave('users'));
-    }
-
-    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterOrWhereDoesntHaveBuilderMethod()
-    {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->orWhereDoesntHave('users'));
-    }
-
-    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterHasMorphBuilderMethod()
-    {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->hasMorph('users', 'types'));
-    }
-
-    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterOrHasMorphBuilderMethod()
-    {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->orHasMorph('users', 'types'));
-    }
-
-    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterDoesntHaveMorphBuilderMethod()
-    {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->doesntHaveMorph('users', 'types'));
-    }
-
-    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterOrDoesntHaveMorphBuilderMethod()
-    {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->orDoesntHaveMorph('users', 'types'));
-    }
-
-    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterWhereHasMorphBuilderMethod()
-    {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->whereHasMorph('users', 'types'));
-    }
-
-    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterOrWhereHasMorphBuilderMethod()
-    {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->orWhereHasMorph('users', 'types'));
-    }
-
-    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterWhereDoesntHaveMorphBuilderMethod()
-    {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->whereDoesntHaveMorph('users', 'types'));
-    }
-
-    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterOrWhereDoesntHaveMorphMorphBuilderMethod()
-    {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->orWhereDoesntHaveMorph('users', 'types'));
-    }
-
-    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterMergeConstraintsFromBuilderMethod()
-    {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->mergeConstraintsFrom(ModelWithCustomBuilder::query()));
-    }
-
-    public function testModelWithCustomBuilderReturnsCustomEloquentBuilderAfterCustomBuilderMethodRelationChainedWithExplicitQueryMethod()
-    {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->whereHas('users')->type('foo'));
-    }
+function doFoo(FooModel $foo, NonGenericBuilder $nonGenericBuilder): void {
+    assertType('CustomEloquentBuilder\ModelWithCustomBuilder|null', ModelWithCustomBuilder::where('email', 'bar')->first());
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::where('email', 'bar'));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::foo('foo')->foo('bar'));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::type('foo'));
+    assertType('Illuminate\Database\Eloquent\Relations\HasMany<CustomEloquentBuilder\ModelWithCustomBuilder>', $foo->customModels()->category('foo'));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::whereEmail(['bar'])->type('foo')->whereEmail(['bar']));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::whereEmail(['bar'])->categories(['foo'])->whereType(['bar']));
+    assertType('CustomEloquentBuilder\ModelWithCustomBuilder|null', ModelWithCustomBuilder::whereEmail(['bar'])->type('foo')->first());
+    assertType('CustomEloquentBuilder\ModelWithCustomBuilder|null', ModelWithCustomBuilder::whereEmail(['bar'])->type('foo')->first());
+    assertType('int', $foo->customModels()->count());
+    assertType('bool', $foo->customModels()->exists());
+    assertType('Illuminate\Database\Eloquent\Collection<int, CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::get());
+    assertType('CustomEloquentBuilder\ModelWithCustomBuilder', ModelWithCustomBuilder::firstOrFail());
+    assertType('CustomEloquentBuilder\ModelWithCustomBuilder', ModelWithCustomBuilder::findOrFail(1));
+    assertType('Illuminate\Database\Eloquent\Collection<int, CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::findOrFail([1, 2, 3]));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->has('users'));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->orHas('users'));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->doesntHave('users'));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->orDoesntHave('users'));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->whereHas('users'));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->orWhereHas('users'));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->whereDoesntHave('users'));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->orWhereDoesntHave('users'));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->hasMorph('users', 'types'));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->orHasMorph('users', 'types'));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->doesntHaveMorph('users', 'types'));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->orDoesntHaveMorph('users', 'types'));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->whereHasMorph('users', 'types'));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->orWhereHasMorph('users', 'types'));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->whereDoesntHaveMorph('users', 'types'));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->orWhereDoesntHaveMorph('users', 'types'));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->mergeConstraintsFrom(ModelWithCustomBuilder::query()));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->whereHas('users')->type('foo'));
+    assertType('Illuminate\Database\Eloquent\Collection<int, CustomEloquentBuilder\ModelWithCustomBuilderAndDocBlocks>', ModelWithCustomBuilderAndDocBlocks::query()->get());
+    assertType('Illuminate\Database\Eloquent\Collection<int, CustomEloquentBuilder\ModelWithCustomBuilderAndDocBlocks>', ModelWithCustomBuilderAndDocBlocks::all());
+    assertType('CustomEloquentBuilder\CustomBuilder2<CustomEloquentBuilder\ModelWithCustomBuilderAndDocBlocks>', ModelWithCustomBuilderAndDocBlocks::query());
+    assertType('CustomEloquentBuilder\NonGenericBuilder', $nonGenericBuilder->skip(5));
 }
 
 /**
@@ -263,24 +134,6 @@ class FooModel extends Model
     }
 }
 
-class CustomEloquentBuilderTest1
-{
-    public function testGetModelFromModelWithCustomBuilderQuery()
-    {
-        assertType('Illuminate\Database\Eloquent\Collection<int, CustomEloquentBuilder\ModelWithCustomBuilderAndDocBlocks>', ModelWithCustomBuilderAndDocBlocks::query()->get());
-    }
-
-    public function testAllModelFromModelWithCustomBuilderQuery()
-    {
-        assertType('Illuminate\Database\Eloquent\Collection<int, CustomEloquentBuilder\ModelWithCustomBuilderAndDocBlocks>', ModelWithCustomBuilderAndDocBlocks::all());
-    }
-
-    public function testQueryModelFromModelWithCustomBuilderQuery()
-    {
-        assertType('CustomEloquentBuilder\CustomBuilder2<CustomEloquentBuilder\ModelWithCustomBuilderAndDocBlocks>', ModelWithCustomBuilderAndDocBlocks::query());
-    }
-}
-
 /**
  * @method static CustomBuilder2|ModelWithCustomBuilderAndDocBlocks newModelQuery()
  * @method static CustomBuilder2|ModelWithCustomBuilderAndDocBlocks newQuery()
@@ -304,5 +157,24 @@ class ModelWithCustomBuilderAndDocBlocks extends Model
  * @extends Builder<TModelClass>
  */
 class CustomBuilder2 extends Builder
+{
+}
+
+class ModelWithNonGenericBuilder extends Model
+{
+    /**
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @return NonGenericBuilder
+     */
+    public function newEloquentBuilder($query): NonGenericBuilder
+    {
+        return new NonGenericBuilder($query);
+    }
+}
+
+/**
+ * @extends Builder<ModelWithNonGenericBuilder>
+ */
+class NonGenericBuilder extends Builder
 {
 }
