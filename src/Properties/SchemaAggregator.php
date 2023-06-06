@@ -239,13 +239,18 @@ final class SchemaAggregator
                             continue;
                         }
 
-                        if ($firstMethodCall->name->name === 'softDeletes'
-                            || $firstMethodCall->name->name === 'softDeletesTz'
-                            || $firstMethodCall->name->name === 'dropSoftDeletes'
-                            || $firstMethodCall->name->name === 'dropSoftDeletesTz'
-                        ) {
-                            $columnName = 'deleted_at';
-                        } else {
+                        $defaultsMap = [
+                            'softDeletes' => 'deleted_at',
+                            'softDeletesTz' => 'deleted_at',
+                            'dropSoftDeletes' => 'deleted_at',
+                            'dropSoftDeletesTz' => 'deleted_at',
+
+                            'uuid' => 'uuid',
+                        ];
+                        if (array_key_exists($firstMethodCall->name->name, $defaultsMap)) {
+                            $columnName = $defaultsMap[$firstMethodCall->name->name];
+                        }
+                        else {
                             continue;
                         }
                     } else {
