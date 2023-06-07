@@ -79,4 +79,5 @@ function foo(User $user, Account $account, Role $role, Group $group, Team $team,
     assertType('int', $address->foreign_id_constrained);
     assertType('int|null', $address->nullable_foreign_id_constrained);
     assertType('App\ValueObjects\Favorites', $user->favorites);
+    assertType('string', $address->uuid);
 }

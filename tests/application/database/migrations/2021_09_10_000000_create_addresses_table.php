@@ -19,6 +19,7 @@ class CreateAddressesTable extends Migration
     {
         Schema::create('addresses', static function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->uuid();
             $table->foreignIdFor(User::class);
             $table->foreignIdFor(User::class, 'custom_foreign_id_for_name');
             $table->foreignIdFor(Address::class);
