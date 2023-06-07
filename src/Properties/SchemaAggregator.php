@@ -244,13 +244,11 @@ final class SchemaAggregator
                             'softDeletesTz' => 'deleted_at',
                             'dropSoftDeletes' => 'deleted_at',
                             'dropSoftDeletesTz' => 'deleted_at',
-
                             'uuid' => 'uuid',
                         ];
                         if (array_key_exists($firstMethodCall->name->name, $defaultsMap)) {
                             $columnName = $defaultsMap[$firstMethodCall->name->name];
-                        }
-                        else {
+                        } else {
                             continue;
                         }
                     } else {
