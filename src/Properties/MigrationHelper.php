@@ -62,7 +62,9 @@ class MigrationHelper
             return $tables;
         }
 
-        ksort($filesArray);
+        uasort($filesArray, function (SplFileInfo $a, SplFileInfo $b) {
+            return $a->getFilename() <=> $b->getFilename();
+        });
 
         foreach ($filesArray as $file) {
             try {
