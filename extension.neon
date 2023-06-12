@@ -413,6 +413,7 @@ services:
             databaseMigrationPath: %databaseMigrationsPath%
             disableMigrationScan: %disableMigrationScan%
             parser: @currentPhpVersionSimpleDirectParser
+            reflectionProvider: @reflectionProvider
 
     -
         class: NunoMaduro\Larastan\Properties\SquashedMigrationHelper
