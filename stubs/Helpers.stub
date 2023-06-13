@@ -184,4 +184,4 @@ function blank($value): bool {}
  * @param mixed $value
  * @return bool
  */
-function blank($value): bool {}
+function filled($value): bool {}
