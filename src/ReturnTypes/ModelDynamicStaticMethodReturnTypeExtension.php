@@ -88,7 +88,7 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
 
         $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
 
-        if ((count(array_intersect([EloquentBuilder::class], $returnType->getReferencedClasses())) > 0)) {
+        if (count(array_intersect([EloquentBuilder::class], $returnType->getReferencedClasses())) > 0) {
             if ($methodCall->class instanceof Name) {
                 $returnType = new GenericObjectType(
                     $this->builderHelper->determineBuilderName($scope->resolveName($methodCall->class)),

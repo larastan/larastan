@@ -18,7 +18,6 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
-use PHPStan\Type\Type;
 
 final class RelationForwardsCallsExtension implements MethodsClassReflectionExtension
 {
