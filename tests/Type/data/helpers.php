@@ -194,7 +194,7 @@ function blankHelper()
 
 function filledHelper()
 {
-    assertType('bool', blank(''));
-    assertType('bool', blank(0));
-    assertType('bool', blank([]));
+    assertType('bool', filled(''));
+    assertType('bool', filled(0));
+    assertType('bool', filled([]));
 }
