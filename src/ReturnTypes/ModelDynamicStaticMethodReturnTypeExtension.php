@@ -11,6 +11,7 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Methods\BuilderHelper;
 use NunoMaduro\Larastan\Support\CollectionHelper;
+use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
@@ -87,13 +88,32 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
 
         $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
 
-        if ((count(array_intersect([EloquentBuilder::class], $returnType->getReferencedClasses())) > 0)
-            && $methodCall->class instanceof Name
-        ) {
-            $returnType = new GenericObjectType(
-                $this->builderHelper->determineBuilderName($scope->resolveName($methodCall->class)),
-                [new ObjectType($scope->resolveName($methodCall->class))]
-            );
+        if ((count(array_intersect([EloquentBuilder::class], $returnType->getReferencedClasses())) > 0)) {
+            if ($methodCall->class instanceof Name) {
+                $returnType = new GenericObjectType(
+                    $this->builderHelper->determineBuilderName($scope->resolveName($methodCall->class)),
+                    [new ObjectType($scope->resolveName($methodCall->class))]
+                );
+            } elseif ($methodCall->class instanceof Expr) {
+                $type = $scope->getType($methodCall->class);
+
+                $classNames = $type->getObjectClassNames();
+
+                $types = [];
+
+                foreach ($classNames as $className) {
+                    if ($this->reflectionProvider->hasClass($className)) {
+                        $types[] = new GenericObjectType(
+                            $this->builderHelper->determineBuilderName($className),
+                            [new ObjectType($className)]
+                        );
+                    }
+                }
+
+                if ($types !== []) {
+                    $returnType = TypeCombinator::union(...$types);
+                }
+            }
         }
 
         if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {

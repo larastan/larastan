@@ -440,3 +440,15 @@ function testRelationMethods(): void
         assertType('App\PostBuilder<App\Post>', $query);
     });
 }
+
+class Foo
+{
+    public function __construct(private User $user)
+    {
+    }
+
+    public function doFoo(): void
+    {
+        assertType('Illuminate\Database\Eloquent\Builder<App\User>', $this->user::query());
+    }
+}
