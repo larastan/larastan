@@ -169,3 +169,19 @@ function optional($value = null, callable $callback = null) {}
  * @return ($value is empty ? TDefault : TReturn)
  */
 function transform($value, callable $callback, $default = null): mixed {}
+
+/**
+ * Determine if the given value is "blank".
+ *
+ * @param mixed $value
+ * @return bool
+ */
+function blank($value): bool {}
+
+/**
+ * Determine if the given value is "filled".
+ *
+ * @param mixed $value
+ * @return bool
+ */
+function blank($value): bool {}

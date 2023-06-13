@@ -4,6 +4,7 @@ namespace Helpers;
 
 use App\User;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use NunoMaduro\Larastan\ApplicationResolver;
 use Throwable;
 
@@ -182,4 +183,18 @@ function transformHelper()
     assertType('null', transform(null, fn () => 1));
     assertType('null', transform('', fn () => 1));
     assertType('null', transform([], fn () => 1));
+}
+
+function blankHelper()
+{
+    assertType('bool', blank(''));
+    assertType('bool', blank(0));
+    assertType('bool', blank([]));
+}
+
+function filledHelper()
+{
+    assertType('bool', blank(''));
+    assertType('bool', blank(0));
+    assertType('bool', blank([]));
 }
