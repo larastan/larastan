@@ -44,7 +44,7 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
             'splitIn', 'values', 'wrap', 'zip',
         ];
 
-        if (version_compare(LARAVEL_VERSION, '9.48.0', '<')) {
+        if (version_compare(\LARAVEL_VERSION, '9.48.0', '<')) {
             $methods[] = 'countBy';
         }
 
