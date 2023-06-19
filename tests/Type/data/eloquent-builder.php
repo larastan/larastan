@@ -223,6 +223,7 @@ function doFoo(User $user, Post $post, $userAndAuth): void
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $userAndAuth->newQueryWithoutScopes());
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $userAndAuth->newQueryWithoutScope('foo'));
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $userAndAuth->newQueryForRestoration([1]));
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $userAndAuth::query());
 
     assertType('Illuminate\Support\LazyCollection<int, App\User>', User::query()->lazy());
     assertType('Illuminate\Support\LazyCollection<int, App\User>', User::query()->lazyById());
