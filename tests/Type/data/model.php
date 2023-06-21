@@ -450,5 +450,6 @@ class Foo
     public function doFoo(): void
     {
         assertType('Illuminate\Database\Eloquent\Builder<App\User>', $this->user::query());
+        assertType('Illuminate\Database\Eloquent\Builder<App\User>', $this->user->query());
     }
 }
