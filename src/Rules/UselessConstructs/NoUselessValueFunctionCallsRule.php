@@ -12,6 +12,9 @@ use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\ClosureType;
 use PHPStan\Type\MixedType;
 
+use function count;
+use function strtolower;
+
 /**
  * @implements Rule<FuncCall>
  */

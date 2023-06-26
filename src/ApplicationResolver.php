@@ -12,6 +12,11 @@ use Orchestra\Testbench\Foundation\Application as Testbench;
 use Orchestra\Testbench\Foundation\Bootstrap\CreateVendorSymlink;
 use Orchestra\Testbench\Foundation\Config;
 
+use function class_exists;
+use function defined;
+use function file_exists;
+use function getcwd;
+
 /**
  * @internal
  */

@@ -21,6 +21,8 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
+use function in_array;
+
 /**
  * @internal
  */

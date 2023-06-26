@@ -18,7 +18,10 @@ use PHPStan\Node\CollectedDataNode;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 
+use function array_diff;
+use function array_filter;
 use function collect;
+use function iterator_to_array;
 
 /** @implements Rule<CollectedDataNode> */
 final class UnusedViewsRule implements Rule

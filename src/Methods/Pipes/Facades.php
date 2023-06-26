@@ -12,6 +12,12 @@ use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 use NunoMaduro\Larastan\Reflection\ReflectionHelper;
 
+use function class_exists;
+use function get_class;
+use function sprintf;
+use function strrpos;
+use function substr;
+
 /**
  * @internal
  */

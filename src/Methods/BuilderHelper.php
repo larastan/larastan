@@ -22,6 +22,14 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\VerbosityLevel;
 
+use function array_key_exists;
+use function array_shift;
+use function count;
+use function in_array;
+use function preg_split;
+use function substr;
+use function ucfirst;
+
 class BuilderHelper
 {
     /** @var string[] */

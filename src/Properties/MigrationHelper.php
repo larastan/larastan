@@ -12,6 +12,11 @@ use RecursiveIteratorIterator;
 use RegexIterator;
 use SplFileInfo;
 
+use function count;
+use function database_path;
+use function is_dir;
+use function iterator_to_array;
+
 class MigrationHelper
 {
     /** @var Parser */

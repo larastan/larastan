@@ -9,6 +9,8 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
 
+use function count;
+
 /** @implements Collector<Node\Expr\FuncCall, string> */
 final class UsedViewFunctionCollector implements Collector
 {

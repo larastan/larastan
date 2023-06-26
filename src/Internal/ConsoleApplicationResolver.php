@@ -11,6 +11,8 @@ use Illuminate\Contracts\Events\Dispatcher;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
 
+use function get_class;
+
 /** @internal */
 final class ConsoleApplicationResolver
 {

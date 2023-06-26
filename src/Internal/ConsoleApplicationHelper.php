@@ -20,6 +20,8 @@ use PHPStan\Type\UnionType;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
+use function count;
+
 final class ConsoleApplicationHelper
 {
     public function __construct(private ConsoleApplicationResolver $consoleApplicationResolver)

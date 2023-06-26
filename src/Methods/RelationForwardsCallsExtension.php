@@ -19,6 +19,8 @@ use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 
+use function array_key_exists;
+
 final class RelationForwardsCallsExtension implements MethodsClassReflectionExtension
 {
     /** @var BuilderHelper */

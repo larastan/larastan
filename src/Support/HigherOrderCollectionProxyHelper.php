@@ -12,6 +12,8 @@ use PHPStan\Type;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 
+use function count;
+
 class HigherOrderCollectionProxyHelper
 {
     public function __construct(private ReflectionProvider $reflectionProvider)

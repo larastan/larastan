@@ -20,6 +20,10 @@ use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\ClosureTypeFactory;
 use ReflectionException;
 
+use function array_key_exists;
+use function get_class;
+use function is_array;
+
 class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExtension
 {
     use HasContainer;

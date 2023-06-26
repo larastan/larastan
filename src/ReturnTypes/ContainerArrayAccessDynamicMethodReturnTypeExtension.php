@@ -14,6 +14,10 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
+use function count;
+use function get_class;
+use function is_object;
+
 class ContainerArrayAccessDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
     use HasContainer;

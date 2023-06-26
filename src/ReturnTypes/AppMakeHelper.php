@@ -14,6 +14,9 @@ use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use Throwable;
 
+use function count;
+use function get_class;
+
 final class AppMakeHelper
 {
     use HasContainer;

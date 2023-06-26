@@ -10,6 +10,12 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
 
+use function count;
+use function explode;
+use function is_dir;
+use function iterator_to_array;
+use function str_replace;
+
 final class ViewFileHelper
 {
     /**
