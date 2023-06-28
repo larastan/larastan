@@ -35,6 +35,14 @@ final class UndefinedArgumentOrOptionRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
+        if (! $node->name instanceof Node\Identifier || ! in_array($node->name->name, ['argument', 'option'], true)) {
+            return [];
+        }
+
+        if (count($node->getArgs()) !== 1) {
+            return [];
+        }
+
         $classReflection = $scope->getClassReflection();
 
         if ($classReflection === null) {
@@ -49,15 +57,7 @@ final class UndefinedArgumentOrOptionRule implements Rule
             return [];
         }
 
-        if (! $node->name instanceof Node\Identifier || ! in_array($node->name->name, ['argument', 'option'], true)) {
-            return [];
-        }
-
         $methodName = $node->name->name;
-
-        if (count($node->getArgs()) !== 1) {
-            return [];
-        }
 
         $argType = $scope->getType($node->getArgs()[0]->value);
 
