@@ -156,6 +156,10 @@ class NoUnnecessaryCollectionCallRule implements Rule
         /** @var \PhpParser\Node\Identifier $name */
         $name = $node->name;
 
+        if (! in_array($name->toLowerString(), $this->shouldHandle, true)) {
+            return [];
+        }
+
         if (! $this->isCalledOnCollection($node->var, $scope)) {
             // Method was not called on a collection, so no errors.
             return [];
@@ -172,10 +176,6 @@ class NoUnnecessaryCollectionCallRule implements Rule
         if (! ($previousCall->name instanceof Identifier)) {
             // Previous call was made dynamically e.g. User::query()->{$method}()
             // Can't really analyze it in this scenario so no errors.
-            return [];
-        }
-
-        if (! in_array($name->toLowerString(), $this->shouldHandle, true)) {
             return [];
         }
 
