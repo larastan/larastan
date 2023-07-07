@@ -21,4 +21,9 @@ class MorphMany extends MorphOneOrMany
      * @phpstan-return \Traversable<int, TRelatedModel>
      */
     public function getResults();
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphOne<TRelatedModel>
+     */
+    public function one();
 }
