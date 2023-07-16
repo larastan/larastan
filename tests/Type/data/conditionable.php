@@ -25,6 +25,11 @@ assertType('int', (new Foo())->when(true, function (Foo $foo): int {
     return rand();
 }));
 
+// Test to make sure the callback has a non-null value.
+(new Foo())->when(User::first(), function (Foo $foo, $user): void {
+    assertType(User::class, $user);
+});
+
 assertType('ConditionableStubs\Foo', (new Foo())->unless(true, function (Foo $foo) {
     // do nothing
 }));
