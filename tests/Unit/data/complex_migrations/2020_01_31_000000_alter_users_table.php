@@ -33,6 +33,8 @@ class AlterUsersTable extends Migration
             $table->bigIncrements('id');
             $table->string('name')->nullable();
             $table->string('email')->unique();
+            $table->string('address1')->nullable();
+            $table->string('address2')->nullable();
             $table->date('birthday');
             $table->timestamps();
         });
@@ -42,6 +44,7 @@ class AlterUsersTable extends Migration
     {
         Schema::table('users', static function (Blueprint $table) {
             $table->dropColumn('name');
+            $table->dropColumn(['address1', 'address2']);
             $table->integer('active');
         });
     }
