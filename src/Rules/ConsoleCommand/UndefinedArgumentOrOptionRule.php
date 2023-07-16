@@ -14,6 +14,7 @@ use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\ObjectType;
 
 use function count;
+use function in_array;
 use function sprintf;
 
 /**

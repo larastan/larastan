@@ -20,6 +20,10 @@ use PHPStan\Type\Type;
 use PHPStan\Type\TypeUtils;
 use PHPStan\Type\UnionType;
 
+use function array_map;
+use function count;
+use function in_array;
+
 class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
     use HasContainer;

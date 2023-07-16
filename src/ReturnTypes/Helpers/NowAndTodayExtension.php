@@ -20,6 +20,9 @@ use PHPStan\Type\DynamicFunctionReturnTypeExtension;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
+use function get_class;
+use function now;
+
 /**
  * @internal
  */

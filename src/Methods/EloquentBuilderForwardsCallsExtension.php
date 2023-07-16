@@ -21,6 +21,9 @@ use PHPStan\Type\Generic\TemplateObjectType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 
+use function array_key_exists;
+use function in_array;
+
 final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflectionExtension
 {
     /** @var array<string, MethodReflection> */

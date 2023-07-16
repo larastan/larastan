@@ -13,6 +13,8 @@ use PHPStan\Type\DynamicFunctionReturnTypeExtension;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
+use function count;
+
 class AppExtension implements DynamicFunctionReturnTypeExtension
 {
     public function __construct(

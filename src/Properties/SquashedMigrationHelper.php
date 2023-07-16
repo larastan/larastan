@@ -14,6 +14,14 @@ use RecursiveIteratorIterator;
 use RegexIterator;
 use SplFileInfo;
 
+use function array_filter;
+use function array_key_exists;
+use function file_get_contents;
+use function is_array;
+use function is_dir;
+use function iterator_to_array;
+use function ksort;
+
 final class SquashedMigrationHelper
 {
     /**

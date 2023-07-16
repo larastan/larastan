@@ -15,6 +15,8 @@ use PHPStan\Type\Generic\TemplateTypeMap;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
+use function array_key_exists;
+
 final class Macro implements MethodReflection
 {
     /**

@@ -27,7 +27,9 @@ use PHPStan\Type\Type;
 use PHPStan\Type\TypeTraverser;
 use PHPStan\Type\TypeWithClassName;
 
+use function array_key_exists;
 use function array_map;
+use function in_array;
 
 final class ModelForwardsCallsExtension implements MethodsClassReflectionExtension
 {

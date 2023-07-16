@@ -16,6 +16,7 @@ use PHPStan\Type\TypeCombinator;
 
 use function get_class;
 use function in_array;
+use function now;
 
 class DateExtension implements DynamicStaticMethodReturnTypeExtension
 {

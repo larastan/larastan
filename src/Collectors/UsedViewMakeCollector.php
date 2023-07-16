@@ -11,6 +11,8 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
 use PHPStan\Type\ObjectType;
 
+use function count;
+
 /** @implements Collector<Node\Expr\MethodCall, string> */
 final class UsedViewMakeCollector implements Collector
 {

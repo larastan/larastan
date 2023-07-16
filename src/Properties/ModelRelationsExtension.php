@@ -28,6 +28,8 @@ use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\TypeTraverser;
 use PHPStan\Type\UnionType;
 
+use function str_ends_with;
+
 /**
  * @internal
  */

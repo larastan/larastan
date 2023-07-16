@@ -21,6 +21,12 @@ use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
+use function array_diff;
+use function array_map;
+use function array_merge;
+use function count;
+use function in_array;
+
 /**
  * This rule checks for unnecessary heavy operations on the Collection class
  * that could have instead been performed on the Builder class.

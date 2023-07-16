@@ -12,6 +12,9 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
 use PHPStan\Type\ObjectType;
 
+use function count;
+use function in_array;
+
 /** @implements Collector<Node\Expr\MethodCall, string> */
 final class UsedEmailViewCollector implements Collector
 {

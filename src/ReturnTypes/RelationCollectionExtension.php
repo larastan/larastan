@@ -16,6 +16,9 @@ use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
+use function count;
+use function in_array;
+
 /**
  * @internal
  */

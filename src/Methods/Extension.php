@@ -11,6 +11,8 @@ use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
 use PHPStan\Reflection\ReflectionProvider;
 
+use function array_key_exists;
+
 /**
  * @internal
  */

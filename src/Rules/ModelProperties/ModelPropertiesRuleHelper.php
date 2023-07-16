@@ -20,6 +20,12 @@ use PHPStan\Type\Type;
 use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
 
+use function array_key_exists;
+use function array_merge;
+use function count;
+use function mb_strpos;
+use function sprintf;
+
 class ModelPropertiesRuleHelper
 {
     /**

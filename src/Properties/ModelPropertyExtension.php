@@ -18,6 +18,13 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\TypeCombinator;
 
+use function array_key_exists;
+use function count;
+use function implode;
+use function in_array;
+use function method_exists;
+use function sprintf;
+
 /**
  * @internal
  */

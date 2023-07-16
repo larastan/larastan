@@ -15,6 +15,8 @@ use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type;
 
+use function count;
+
 final class HigherOrderCollectionProxyExtension implements MethodsClassReflectionExtension
 {
     public function __construct(private HigherOrderCollectionProxyHelper $higherOrderCollectionProxyHelper)
