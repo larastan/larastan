@@ -7,6 +7,7 @@ namespace NunoMaduro\Larastan\Properties;
 use Illuminate\Support\Str;
 use PhpParser;
 use PhpParser\NodeFinder;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ObjectType;
 
 use function count;
@@ -21,10 +22,14 @@ final class SchemaAggregator
     /** @var array<string, SchemaTable> */
     public array $tables = [];
 
+    /** @var ReflectionProvider */
+    private $reflectionProvider;
+
     /** @param array<string, SchemaTable> $tables */
-    public function __construct(array $tables = [])
+    public function __construct(ReflectionProvider $reflectionProvider, array $tables = [])
     {
         $this->tables = $tables;
+        $this->reflectionProvider = $reflectionProvider;
     }
 
     /**
@@ -205,7 +210,8 @@ final class SchemaAggregator
                             $columnName = $secondArg->value;
                         }
 
-                        $table->setColumn(new SchemaColumn($columnName, 'int', $nullable));
+                        $type = $this->getModelReferenceType($modelClass);
+                        $table->setColumn(new SchemaColumn($columnName, $type ?? 'int', $nullable));
 
                         continue;
                     }
@@ -485,5 +491,31 @@ final class SchemaAggregator
         $table->name = $newTableName;
 
         $this->tables[$newTableName] = $table;
+    }
+
+    private function getModelReferenceType(string $modelClass): ?string
+    {
+        $classReflection = $this->reflectionProvider->getClass($modelClass);
+        try {
+            /** @var \Illuminate\Database\Eloquent\Model $modelInstance */
+            $modelInstance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
+        } catch (\ReflectionException $e) {
+            return null;
+        }
+
+        $tableName = $modelInstance->getTable();
+
+        if (! array_key_exists($tableName, $this->tables)) {
+            return null;
+        }
+
+        $table = $this->tables[$tableName];
+        $column = $modelInstance->getKeyName();
+
+        if (! array_key_exists($column, $table->columns)) {
+            return null;
+        }
+
+        return $table->columns[$column]->readableType;
     }
 }

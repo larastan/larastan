@@ -7,6 +7,7 @@ namespace NunoMaduro\Larastan\Properties;
 use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
 use PHPStan\Parser\ParserErrorsException;
+use PHPStan\Reflection\ReflectionProvider;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
@@ -31,6 +32,9 @@ class MigrationHelper
     /** @var FileHelper */
     private $fileHelper;
 
+    /** @var ReflectionProvider */
+    private $reflectionProvider;
+
     /**
      * @param  string[]  $databaseMigrationPath
      */
@@ -39,11 +43,13 @@ class MigrationHelper
         array $databaseMigrationPath,
         FileHelper $fileHelper,
         bool $disableMigrationScan,
+        ReflectionProvider $reflectionProvider
     ) {
         $this->parser = $parser;
         $this->databaseMigrationPath = $databaseMigrationPath;
         $this->fileHelper = $fileHelper;
         $this->disableMigrationScan = $disableMigrationScan;
+        $this->reflectionProvider = $reflectionProvider;
     }
 
     /**
@@ -60,7 +66,7 @@ class MigrationHelper
             $this->databaseMigrationPath = [database_path('migrations')];
         }
 
-        $schemaAggregator = new SchemaAggregator($tables);
+        $schemaAggregator = new SchemaAggregator($this->reflectionProvider, $tables);
         $filesArray = $this->getMigrationFiles();
 
         if (empty($filesArray)) {
