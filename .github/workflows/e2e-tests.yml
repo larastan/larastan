@@ -33,7 +33,7 @@ jobs:
 
           -
             repository: koel/koel
-            ref: 22946a6413546a1c97ddf7bb4f5254bc6d129dd7
+            ref: de88d23b9564d2f7b496b9cd141fc9e648b7feeb
             php-version: "8.1"
             config: koel-koel.neon
             baseline: koel-koel.baseline.neon
@@ -47,7 +47,7 @@ jobs:
 
           -
             repository: canvural/larastan-strict-rules
-            ref: 16ceaa41a54aacc5481d957dd625590e6acd321c
+            ref: 3d9ba8263f8fcb6f9d7e5c3d05af7f58c5537540
             php-version: "8.1"
             config: canvural-larastan-strict-rules.neon
             baseline: canvural-larastan-strict-rules.baseline.neon
