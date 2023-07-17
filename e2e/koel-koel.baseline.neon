@@ -1,0 +1,46 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Method App\\\\Builders\\\\ArtistBuilder\\:\\:isStandard\\(\\) should return static\\(App\\\\Builders\\\\ArtistBuilder\\) but returns App\\\\Builders\\\\ArtistBuilder\\.$#"
+			count: 1
+			path: ../../e2e/app/Builders/ArtistBuilder.php
+
+		-
+			message: "#^Method App\\\\Builders\\\\SongBuilder\\:\\:withMeta\\(\\) should return static\\(App\\\\Builders\\\\SongBuilder\\) but returns App\\\\Builders\\\\SongBuilder\\.$#"
+			count: 1
+			path: ../../e2e/app/Builders/SongBuilder.php
+
+		-
+			message: "#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$genre\\.$#"
+			count: 1
+			path: ../../e2e/app/Repositories/GenreRepository.php
+
+		-
+			message: "#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$length\\.$#"
+			count: 1
+			path: ../../e2e/app/Repositories/GenreRepository.php
+
+		-
+			message: "#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$song_count\\.$#"
+			count: 1
+			path: ../../e2e/app/Repositories/GenreRepository.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<int,Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:transform\\(\\) expects callable\\(Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\)\\: Illuminate\\\\Database\\\\Eloquent\\\\Model, Closure\\(object\\)\\: App\\\\Values\\\\Genre given\\.$#"
+			count: 1
+			path: ../../e2e/app/Repositories/GenreRepository.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:reduce\\(\\) expects callable\\(Illuminate\\\\Support\\\\Collection, Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: Illuminate\\\\Support\\\\Collection, Closure\\(Illuminate\\\\Support\\\\Collection, App\\\\Models\\\\Album\\)\\: Illuminate\\\\Support\\\\Collection given\\.$#"
+			count: 1
+			path: ../../e2e/app/Services/DownloadService.php
+
+		-
+			message: "#^Method App\\\\Services\\\\LibraryManager\\:\\:prune\\(\\) should return array\\{albums\\: Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<\\(int\\|string\\), App\\\\Models\\\\Album\\>, artists\\: Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<\\(int\\|string\\), App\\\\Models\\\\Artist\\>\\} but returns array\\{albums\\: Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, artists\\: Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\}\\.$#"
+			count: 1
+			path: ../../e2e/app/Services/LibraryManager.php
+
+		-
+			message: "#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:each\\(\\) expects callable\\(Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: mixed, Closure\\(App\\\\Models\\\\Song\\)\\: void given\\.$#"
+			count: 1
+			path: ../../e2e/database/migrations/2017_04_21_092159_copy_artist_to_contributing_artist.php
