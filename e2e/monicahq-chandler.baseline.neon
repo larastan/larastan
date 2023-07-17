@@ -1,0 +1,41 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Left side of && is always true\\.$#"
+			count: 1
+			path: ../../e2e/app/Console/Commands/SetupDummyAccount.php
+
+		-
+			message: "#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$id\\.$#"
+			count: 2
+			path: ../../e2e/app/Domains/Contact/ManageContact/Web/ViewHelpers/ContactShowViewHelper.php
+
+		-
+			message: "#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$name\\.$#"
+			count: 1
+			path: ../../e2e/app/Domains/Contact/ManageContact/Web/ViewHelpers/ContactShowViewHelper.php
+
+		-
+			message: "#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$slug\\.$#"
+			count: 1
+			path: ../../e2e/app/Domains/Contact/ManageContact/Web/ViewHelpers/ContactShowViewHelper.php
+
+		-
+			message: "#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$type\\.$#"
+			count: 2
+			path: ../../e2e/app/Domains/Contact/ManageContact/Web/ViewHelpers/ContactShowViewHelper.php
+
+		-
+			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:modules\\(\\)\\.$#"
+			count: 1
+			path: ../../e2e/app/Domains/Contact/ManageContact/Web/ViewHelpers/ContactShowViewHelper.php
+
+		-
+			message: "#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$id\\.$#"
+			count: 1
+			path: ../../e2e/app/Domains/Contact/ManageRelationships/Web/ViewHelpers/ModuleFamilySummaryViewHelper.php
+
+		-
+			message: "#^Function trans_ignore\\(\\) never returns null so it can be removed from the return type\\.$#"
+			count: 1
+			path: ../../e2e/app/Helpers/helpers.php
