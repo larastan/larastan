@@ -73,4 +73,4 @@ jobs:
         env:
           REPOSITORY: "${{ matrix.repository }}"
         run: |
-          composer exec -- phpstan analyse -- -c "../larastan/e2e/${REPOSITORY/\//-}.neon"
+          composer exec -- phpstan analyse -c "../larastan/e2e/${REPOSITORY/\//-}.neon"
