@@ -34,8 +34,8 @@ class ModelPropertyStaticCallRuleTest extends RuleTestCase
     public function testModelPropertyRuleOnStaticCallsInClass(): void
     {
         $this->analyse([__DIR__.'/data/ModelPropertyStaticCallsInClass.php'], [
-            ['Property \'foo\' does not exist in Tests\\Rules\\Data\\ModelPropertyStaticCallsInClass model.', 16],
-            ['Property \'foo\' does not exist in Tests\\Rules\\Data\\ModelPropertyStaticCallsInClass model.', 24],
+            ['Property \'foo\' does not exist in Tests\\Rules\\data\\ModelPropertyStaticCallsInClass model.', 16],
+            ['Property \'foo\' does not exist in Tests\\Rules\\data\\ModelPropertyStaticCallsInClass model.', 24],
         ]);
     }
 

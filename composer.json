@@ -31,6 +31,11 @@
     "suggest": {
         "orchestra/testbench": "Using Larastan for analysing a package needs Testbench"
     },
+    "autoload": {
+        "psr-4": {
+            "NunoMaduro\\Larastan\\": "src/"
+        }
+    },
     "autoload-dev": {
         "psr-4": {
             "App\\": "tests/application/app/",
@@ -44,11 +49,6 @@
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
-    "autoload": {
-        "psr-4": {
-            "NunoMaduro\\Larastan\\": "src/"
-        }
-    },
     "config": {
         "sort-packages": true,
         "preferred-install": "dist"

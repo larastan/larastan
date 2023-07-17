@@ -101,9 +101,9 @@ class ModelPropertyRuleTest extends RuleTestCase
 
     public function testModelPropertyRuleOnModel(): void
     {
-        $this->analyse([__DIR__.'/data/model-property-model.php'], [
+        $this->analyse([__DIR__.'/data/ModelPropertyOnModel.php'], [
             [
-                'Property \'foo\' does not exist in ModelPropertyModel\ModelPropertyOnModel model.',
+                'Property \'foo\' does not exist in Tests\Rules\data\ModelPropertyOnModel model.',
                 9,
             ],
             [

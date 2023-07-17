@@ -3,6 +3,11 @@
 use Illuminate\Filesystem\Filesystem;
 
 require_once __DIR__.'/vendor/autoload.php';
+require_once __DIR__.'/tests/Integration/data/blade-view.php';
+require_once __DIR__.'/tests/Integration/data/test-case-extension.php';
+require_once __DIR__.'/tests/Type/data/custom-eloquent-builder.php';
+require_once __DIR__.'/tests/Type/data/eloquent-builder.php';
+require_once __DIR__.'/tests/Type/data/model-scopes.php';
 
 $filesystem = new Filesystem();
 
