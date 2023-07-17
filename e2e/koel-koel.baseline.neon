@@ -39,8 +39,3 @@ parameters:
 			message: "#^Method App\\\\Services\\\\LibraryManager\\:\\:prune\\(\\) should return array\\{albums\\: Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<\\(int\\|string\\), App\\\\Models\\\\Album\\>, artists\\: Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<\\(int\\|string\\), App\\\\Models\\\\Artist\\>\\} but returns array\\{albums\\: Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, artists\\: Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\}\\.$#"
 			count: 1
 			path: ../../e2e/app/Services/LibraryManager.php
-
-		-
-			message: "#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:each\\(\\) expects callable\\(Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: mixed, Closure\\(App\\\\Models\\\\Song\\)\\: void given\\.$#"
-			count: 1
-			path: ../../e2e/database/migrations/2017_04_21_092159_copy_artist_to_contributing_artist.php
