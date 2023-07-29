@@ -512,6 +512,7 @@ abstract class UnionClass
     public function test(int $id): Model
     {
         assertType('TModel of App\Team|App\User (class EloquentBuilder\UnionClass, argument)', $this->getQuery()->findOrFail($id));
+
         return $this->getQuery()->findOrFail($id);
     }
 
