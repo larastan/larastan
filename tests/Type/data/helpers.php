@@ -4,6 +4,7 @@ namespace Helpers;
 
 use App\User;
 use Exception;
+use Illuminate\Support\Str;
 use Larastan\Larastan\ApplicationResolver;
 use Throwable;
 
@@ -134,6 +135,10 @@ function strHelper()
 {
     assertType('Illuminate\Support\Stringable', str('foo'));
     assertType('mixed', str());
+
+    assertType('string', Str::replace('foo', 'bar', 'Laravel'));
+    assertType('array{string, string}', Str::replace('foo', 'bar', ['Laravel', 'Framework']));
+    assertType('array<int|string, string>', Str::replace('foo', 'bar', collect(['Laravel', 'Framework'])));
 }
 
 function tapHelper()
