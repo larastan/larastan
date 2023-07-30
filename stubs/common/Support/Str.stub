@@ -2,7 +2,8 @@
 
 namespace Illuminate\Support;
 
-class Str {
+class Str
+{
     /**
      * @template TSubject of string|iterable<string>
      * @param string|iterable<string> $search
@@ -11,5 +12,5 @@ class Str {
      * @param bool $caseSensitive
      * @return TSubject
      */
-    public static function replace($search, $replace, $subject, $caseSensitive = true) {}
+    public static function replace($search, $replace, $subject, $caseSensitive = true);
 }
