@@ -1,0 +1,15 @@
+<?php
+
+namespace Illuminate\Support;
+
+class Str {
+    /**
+     * @template TSubject of string|iterable<string>
+     * @param string|iterable<string> $search
+     * @param string|iterable<string> $replace
+     * @param TSubject $subject
+     * @param bool $caseSensitive
+     * @return TSubject
+     */
+    public static function replace($search, $replace, $subject, $caseSensitive = true) {}
+}
