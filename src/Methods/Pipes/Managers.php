@@ -11,6 +11,8 @@ use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 
+use function get_class;
+
 /**
  * @internal
  */

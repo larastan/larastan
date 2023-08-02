@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Types;
 
-use function count;
 use Illuminate\Database\Eloquent\Collection;
 use PHPStan\Analyser\NameScope;
 use PHPStan\PhpDoc\TypeNodeResolver;
@@ -16,6 +15,8 @@ use PHPStan\PhpDocParser\Ast\Type\UnionTypeNode;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\Type;
+
+use function count;
 
 /**
  * @see https://github.com/nunomaduro/larastan/issues/476

@@ -6,6 +6,7 @@ use App\User;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Support\Facades\Auth;
+
 use function PHPStan\Testing\assertType;
 
 class AuthExtension

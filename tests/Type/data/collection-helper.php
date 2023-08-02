@@ -5,6 +5,7 @@ namespace CollectionHelper;
 use App\User;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
+
 use function PHPStan\Testing\assertType;
 
 assertType('Illuminate\Support\Collection<(int|string), mixed>', collect());
@@ -36,6 +37,7 @@ function eloquentCollectionUser(EloquentCollection $eloquentCollection): void
 
 /**
  * @phpstan-param \Traversable<int, int> $foo
+ *
  * @phpstan-return Collection<int, int>
  */
 function testIterable(\Traversable $foo): void

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Rules;
 
-use function collect;
 use Illuminate\View\Factory;
 use NunoMaduro\Larastan\Collectors\UsedEmailViewCollector;
 use NunoMaduro\Larastan\Collectors\UsedRouteFacadeViewCollector;
@@ -18,6 +17,11 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Node\CollectedDataNode;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
+
+use function array_diff;
+use function array_filter;
+use function collect;
+use function iterator_to_array;
 
 /** @implements Rule<CollectedDataNode> */
 final class UnusedViewsRule implements Rule

@@ -18,6 +18,8 @@ parameters:
     noUnnecessaryCollectionCallExcept: []
     squashedMigrationsPath: []
     databaseMigrationsPath: []
+    disableMigrationScan: false
+    disableSchemaScan: false
     viewDirectories: []
     checkModelProperties: false
     checkPhpDocMissingReturn: false
@@ -30,8 +32,10 @@ parametersSchema:
     noUnnecessaryCollectionCallOnly: listOf(string())
     noUnnecessaryCollectionCallExcept: listOf(string())
     databaseMigrationsPath: listOf(string())
+    disableMigrationScan: bool()
     viewDirectories: listOf(string())
     squashedMigrationsPath: listOf(string())
+    disableSchemaScan: bool()
     checkModelProperties: bool()
     checkUnusedViews: bool()
 
@@ -407,12 +411,15 @@ services:
         class: NunoMaduro\Larastan\Properties\MigrationHelper
         arguments:
             databaseMigrationPath: %databaseMigrationsPath%
+            disableMigrationScan: %disableMigrationScan%
             parser: @currentPhpVersionSimpleDirectParser
+            reflectionProvider: @reflectionProvider
 
     -
         class: NunoMaduro\Larastan\Properties\SquashedMigrationHelper
         arguments:
             schemaPaths: %squashedMigrationsPath%
+            disableSchemaScan: %disableSchemaScan%
 
     -
         class: NunoMaduro\Larastan\Properties\ModelCastHelper
@@ -513,6 +520,18 @@ services:
         class: NunoMaduro\Larastan\ReturnTypes\ConsoleCommand\HasOptionDynamicReturnTypeExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\TranslatorGetReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\TransHelperReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicFunctionReturnTypeExtension
+    -
+        class: NunoMaduro\Larastan\ReturnTypes\DoubleUnderscoreHelperReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicFunctionReturnTypeExtension
 
     - NunoMaduro\Larastan\ReturnTypes\AppMakeHelper
     - NunoMaduro\Larastan\Internal\ConsoleApplicationResolver

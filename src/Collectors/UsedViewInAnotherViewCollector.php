@@ -7,6 +7,12 @@ use PhpParser\Node;
 use PHPStan\Parser\Parser;
 use PHPStan\Parser\ParserErrorsException;
 
+use function array_filter;
+use function array_map;
+use function array_merge;
+use function count;
+use function preg_match_all;
+
 final class UsedViewInAnotherViewCollector
 {
     /** @see https://regex101.com/r/OyHHCY/1 */

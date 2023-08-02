@@ -14,6 +14,8 @@ use PHPStan\Type\NeverType;
 use PHPStan\Type\ThisType;
 use PHPStan\Type\Type;
 
+use function count;
+
 class TapExtension implements DynamicFunctionReturnTypeExtension
 {
     /**

@@ -9,6 +9,7 @@ use App\Casts\BasicEnumeration;
 use App\Group;
 use App\GuardedModel;
 use App\Role;
+use App\RoleUser;
 use App\Team;
 use App\Thread;
 use App\User;
@@ -16,9 +17,10 @@ use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Stringable;
+
 use function PHPStan\Testing\assertType;
 
-function foo(User $user, Account $account, Role $role, Group $group, Team $team, GuardedModel $guardedModel, Thread $thread, Address $address)
+function foo(User $user, Account $account, Role $role, Group $group, Team $team, GuardedModel $guardedModel, Thread $thread, Address $address, RoleUser $roleUser)
 {
     assertType('*ERROR*', $user->newStyleAttribute); // Doesn't have generic type, so we treat as it doesnt exist
     assertType('int', $user->stringButInt);
@@ -78,4 +80,7 @@ function foo(User $user, Account $account, Role $role, Group $group, Team $team,
     assertType('int', $address->foreign_id_constrained);
     assertType('int|null', $address->nullable_foreign_id_constrained);
     assertType('App\ValueObjects\Favorites', $user->favorites);
+    assertType('string', $address->uuid);
+    assertType('string', $roleUser->role_id);
+    assertType('int', $roleUser->user_id);
 }

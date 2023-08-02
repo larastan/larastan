@@ -19,6 +19,9 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\StaticType;
 use PHPStan\Type\Type;
 
+use function count;
+use function in_array;
+
 class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
     private ReflectionProvider $provider;

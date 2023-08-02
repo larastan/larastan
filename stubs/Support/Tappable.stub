@@ -1,0 +1,12 @@
+<?php
+
+namespace Illuminate\Support\Traits;
+
+trait Tappable
+{
+    /**
+     * @param null|callable($this): mixed $callback
+     * @return ($callback is null ? \Illuminate\Support\HigherOrderTapProxy<$this> : $this)
+     */
+    function tap($callback = null) {}
+}

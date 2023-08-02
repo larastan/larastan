@@ -5,6 +5,7 @@ namespace ModelScope;
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+
 use function PHPStan\Testing\assertType;
 
 class Scopes extends Model

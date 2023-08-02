@@ -6,7 +6,6 @@ use App\Casts\BackedEnumeration;
 use App\Casts\BasicEnumeration;
 use App\Casts\Favorites;
 use App\Casts\Hash;
-use function get_class;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
@@ -22,6 +21,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+
+use function get_class;
 
 /**
  * @property string $propertyDefinedOnlyInAnnotation

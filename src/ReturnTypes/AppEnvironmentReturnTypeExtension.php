@@ -13,6 +13,8 @@ use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 
+use function count;
+
 class AppEnvironmentReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
     public function getClass(): string

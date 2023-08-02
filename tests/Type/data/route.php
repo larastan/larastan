@@ -6,6 +6,7 @@ namespace Route;
 
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
+
 use function PHPStan\Testing\assertType;
 
 assertType('Illuminate\Routing\Route', RouteFacade::get('/awesome', 'foobar')->middleware('foobar'));

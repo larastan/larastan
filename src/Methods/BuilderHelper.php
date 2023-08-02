@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Reflection\AnnotationScopeMethodParameterReflection;
-use NunoMaduro\Larastan\Reflection\AnnotationScopeMethodReflection;
 use NunoMaduro\Larastan\Reflection\DynamicWhereParameterReflection;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Reflection\ClassReflection;
@@ -22,6 +21,14 @@ use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\VerbosityLevel;
+
+use function array_key_exists;
+use function array_shift;
+use function count;
+use function in_array;
+use function preg_split;
+use function substr;
+use function ucfirst;
 
 class BuilderHelper
 {
@@ -108,7 +115,6 @@ class BuilderHelper
         return new EloquentBuilderMethodReflection(
             $methodName,
             $classReflection,
-            $methodReflection,
             [new DynamicWhereParameterReflection],
             $returnObject,
             true
@@ -151,7 +157,6 @@ class BuilderHelper
             return new EloquentBuilderMethodReflection(
                 'scope'.ucfirst($methodName),
                 $model,
-                new AnnotationScopeMethodReflection('scope'.ucfirst($methodName), $model, $methodTag->getReturnType(), $parameters, $methodTag->isStatic(), false),
                 $parameters,
                 $methodTag->getReturnType()
             );
@@ -171,7 +176,6 @@ class BuilderHelper
             return new EloquentBuilderMethodReflection(
                 'scope'.ucfirst($methodName),
                 $methodReflection->getDeclaringClass(),
-                $methodReflection,
                 $parameters,
                 $returnType,
                 $parametersAcceptor->isVariadic()

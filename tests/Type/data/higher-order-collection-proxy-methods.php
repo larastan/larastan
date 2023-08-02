@@ -11,6 +11,7 @@ use App\TransactionCollection;
 use App\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Collection as SupportCollection;
+
 use function PHPStan\Testing\assertType;
 
 /**

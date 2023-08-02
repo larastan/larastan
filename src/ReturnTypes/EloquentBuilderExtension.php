@@ -19,6 +19,8 @@ use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
+use function in_array;
+
 final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
 {
     public function __construct(private ReflectionProvider $reflectionProvider, private CollectionHelper $collectionHelper)

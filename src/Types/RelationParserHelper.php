@@ -14,6 +14,9 @@ use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\Generic\TemplateTypeMap;
 
+use function count;
+use function method_exists;
+
 class RelationParserHelper
 {
     /** @var Parser */

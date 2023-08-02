@@ -28,6 +28,8 @@ use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\TypeTraverser;
 use PHPStan\Type\UnionType;
 
+use function str_ends_with;
+
 /**
  * @internal
  */
@@ -50,7 +52,7 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
         }
 
         if (str_ends_with($propertyName, '_count')) {
-            $propertyName = Str::before($propertyName, '_count');
+            $propertyName = Str::camel(Str::before($propertyName, '_count'));
         }
 
         $hasNativeMethod = $classReflection->hasNativeMethod($propertyName);

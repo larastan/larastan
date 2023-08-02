@@ -16,6 +16,10 @@ use PHPStan\Rules\RuleLevelHelper;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\Type;
 
+use function count;
+use function in_array;
+use function strtolower;
+
 /**
  * @implements \PHPStan\Rules\Rule<\PhpParser\Node\Expr\StaticCall>
  */

@@ -17,6 +17,8 @@ use PHPStan\Type\MixedType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 
+use function count;
+
 final class CollectExtension implements DynamicFunctionReturnTypeExtension
 {
     /**

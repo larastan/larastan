@@ -3,6 +3,7 @@
 namespace WhereRelation;
 
 use Illuminate\Database\Eloquent\Model;
+
 use function PHPStan\Testing\assertType;
 
 class Field extends Model

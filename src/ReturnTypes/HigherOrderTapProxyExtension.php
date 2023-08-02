@@ -13,6 +13,8 @@ use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\Type;
 
+use function count;
+
 /**
  * @internal
  */

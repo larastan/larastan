@@ -21,6 +21,12 @@ use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
+use function array_diff;
+use function array_map;
+use function array_merge;
+use function count;
+use function in_array;
+
 /**
  * This rule checks for unnecessary heavy operations on the Collection class
  * that could have instead been performed on the Builder class.
@@ -156,6 +162,10 @@ class NoUnnecessaryCollectionCallRule implements Rule
         /** @var \PhpParser\Node\Identifier $name */
         $name = $node->name;
 
+        if (! in_array($name->toLowerString(), $this->shouldHandle, true)) {
+            return [];
+        }
+
         if (! $this->isCalledOnCollection($node->var, $scope)) {
             // Method was not called on a collection, so no errors.
             return [];
@@ -175,10 +185,6 @@ class NoUnnecessaryCollectionCallRule implements Rule
             return [];
         }
 
-        if (! in_array($name->toLowerString(), $this->shouldHandle, true)) {
-            return [];
-        }
-
         if ($name->toLowerString() === 'first') {
             if (count($node->args) === 0) {
                 // 'first', also accepts a closure as an argument.
@@ -188,7 +194,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
             return [$this->formatError($name->toString())];
         } elseif ($this->isRiskyParamMethod($name)) {
             if (count($node->args) === 0) {
-                // Calling e.g. DB::table()->pluck($columnName)-sum()
+                // Calling e.g. DB::table()->pluck($columnName)->sum()
                 // We have to check whether $columnName is actually a database column
                 // and not an alias for some computed attribute
                 if ($previousCall->name->name === 'pluck' && $this->firstArgIsDatabaseColumn($previousCall, $scope)) {

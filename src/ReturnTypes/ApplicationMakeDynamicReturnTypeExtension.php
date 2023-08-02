@@ -11,6 +11,8 @@ use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Type;
 
+use function in_array;
+
 final class ApplicationMakeDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
     public function __construct(

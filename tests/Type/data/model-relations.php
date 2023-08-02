@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 use function PHPStan\Testing\assertType;
 
-function test(User $user, \App\Address $address, Account $account, ExtendsModelWithPropertyAnnotations $model, Tag $tag)
+function test(User $user, \App\Address $address, Account $account, ExtendsModelWithPropertyAnnotations $model, Tag $tag, User|Account $union)
 {
     assertType('App\Account', $user->accounts()->firstOrCreate([]));
     assertType(Post::class, $user->posts()->create());
@@ -43,7 +43,7 @@ function test(User $user, \App\Address $address, Account $account, ExtendsModelW
     assertType('Illuminate\Database\Eloquent\Relations\HasOne<App\Account>', (new User())->accounts()->one());
     assertType('Illuminate\Database\Eloquent\Relations\HasManyThrough<App\Transaction>', (new User())->transactions());
     assertType('Illuminate\Database\Eloquent\Relations\HasOneThrough<App\Transaction>', (new User())->transactions()->one());
-    assertType('App\Account', getUser()->accounts()->create());
+    assertType('App\Account', $user->accounts()->create());
     assertType('App\Account|null', (new User())->accounts()->where('name', 'bar')->first());
     assertType('App\User', User::with('accounts')->whereHas('accounts')->firstOrFail());
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\User, App\Account>', $account->ownerRelation());
@@ -76,12 +76,15 @@ function test(User $user, \App\Address $address, Account $account, ExtendsModelW
     // Relationship counts
     assertType('int<0, max>', $user->group_count);
     assertType('int<0, max>', $user->accounts_count);
-    assertType('int<0, max>', $user->syncableRelation_count);
-}
+    assertType('int<0, max>', $user->syncable_relation_count);
 
-function getUser(): User
-{
-    return User::firstOrFail();
+    $users = (new Post())->users();
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->getEager());
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->get());
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $users->getQuery());
+    assertType('App\User', $users->make());
+    assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\Account|App\User>', $union->group());
+    assertType('Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Post>', $union->posts());
 }
 
 /**

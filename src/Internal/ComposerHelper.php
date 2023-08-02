@@ -4,6 +4,14 @@ namespace NunoMaduro\Larastan\Internal;
 
 use JsonException;
 
+use function basename;
+use function file_get_contents;
+use function getenv;
+use function is_file;
+use function is_string;
+use function json_decode;
+use function trim;
+
 /** @internal */
 final class ComposerHelper
 {

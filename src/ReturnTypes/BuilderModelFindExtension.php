@@ -6,6 +6,7 @@ namespace NunoMaduro\Larastan\ReturnTypes;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Methods\ModelTypeHelper;
@@ -20,6 +21,9 @@ use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+
+use function count;
+use function in_array;
 
 /**
  * @internal
@@ -75,31 +79,45 @@ final class BuilderModelFindExtension implements DynamicMethodReturnTypeExtensio
             return null;
         }
 
-        /** @var ObjectType $model */
-        $model = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TModelClass');
+        /** @var Type $modelClassType */
+        $modelClassType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TModelClass');
+
+        if ((new ObjectType(Model::class))->isSuperTypeOf($modelClassType)->no()) {
+            return null;
+        }
+
         $returnType = $methodReflection->getVariants()[0]->getReturnType();
         $argType = $scope->getType($methodCall->getArgs()[0]->value);
-
-        $returnType = ModelTypeHelper::replaceStaticTypeWithModel($returnType, $model->getClassName());
-
-        if ($argType->isIterable()->yes()) {
-            if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
-                return $this->collectionHelper->determineCollectionClass($model->getClassName());
-            }
-
-            return TypeCombinator::remove($returnType, $model);
-        }
 
         if ($argType instanceof MixedType) {
             return $returnType;
         }
 
-        return TypeCombinator::remove(
-            TypeCombinator::remove(
-                $returnType,
-                new ArrayType(new MixedType(), $model)
-            ),
-            new ObjectType(Collection::class)
-        );
+        $models = [];
+
+        foreach ($modelClassType->getObjectClassReflections() as $objectClassReflection) {
+            $modelName = $objectClassReflection->getName();
+
+            $returnType = ModelTypeHelper::replaceStaticTypeWithModel($returnType, $modelName);
+
+            if ($argType->isIterable()->yes()) {
+                if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
+                    $models[] = $this->collectionHelper->determineCollectionClass($modelName);
+                    continue;
+                }
+
+                $models[] = TypeCombinator::remove($returnType, new ObjectType($modelName));
+            } else {
+                $models[] = TypeCombinator::remove(
+                    TypeCombinator::remove(
+                        $returnType,
+                        new ArrayType(new MixedType(), $modelClassType)
+                    ),
+                    new ObjectType(Collection::class)
+                );
+            }
+        }
+
+        return count($models) > 0 ? TypeCombinator::union(...$models) : null;
     }
 }

@@ -7,10 +7,16 @@ namespace NunoMaduro\Larastan\Properties;
 use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
 use PHPStan\Parser\ParserErrorsException;
+use PHPStan\Reflection\ReflectionProvider;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
 use SplFileInfo;
+
+use function count;
+use function database_path;
+use function is_dir;
+use function iterator_to_array;
 
 class MigrationHelper
 {
@@ -20,17 +26,30 @@ class MigrationHelper
     /** @var string[] */
     private $databaseMigrationPath;
 
+    /** @var bool */
+    private $disableMigrationScan;
+
     /** @var FileHelper */
     private $fileHelper;
+
+    /** @var ReflectionProvider */
+    private $reflectionProvider;
 
     /**
      * @param  string[]  $databaseMigrationPath
      */
-    public function __construct(Parser $parser, array $databaseMigrationPath, FileHelper $fileHelper)
-    {
+    public function __construct(
+        Parser $parser,
+        array $databaseMigrationPath,
+        FileHelper $fileHelper,
+        bool $disableMigrationScan,
+        ReflectionProvider $reflectionProvider
+    ) {
         $this->parser = $parser;
         $this->databaseMigrationPath = $databaseMigrationPath;
         $this->fileHelper = $fileHelper;
+        $this->disableMigrationScan = $disableMigrationScan;
+        $this->reflectionProvider = $reflectionProvider;
     }
 
     /**
@@ -39,18 +58,24 @@ class MigrationHelper
      */
     public function initializeTables(array $tables = []): array
     {
+        if ($this->disableMigrationScan) {
+            return $tables;
+        }
+
         if (count($this->databaseMigrationPath) === 0) {
             $this->databaseMigrationPath = [database_path('migrations')];
         }
 
-        $schemaAggregator = new SchemaAggregator($tables);
+        $schemaAggregator = new SchemaAggregator($this->reflectionProvider, $tables);
         $filesArray = $this->getMigrationFiles();
 
         if (empty($filesArray)) {
             return $tables;
         }
 
-        ksort($filesArray);
+        uasort($filesArray, function (SplFileInfo $a, SplFileInfo $b) {
+            return $a->getFilename() <=> $b->getFilename();
+        });
 
         foreach ($filesArray as $file) {
             try {

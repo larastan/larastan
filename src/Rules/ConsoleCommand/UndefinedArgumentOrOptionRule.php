@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Rules\ConsoleCommand;
 
-use function count;
 use NunoMaduro\Larastan\Internal\ConsoleApplicationResolver;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
@@ -13,6 +12,9 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\ObjectType;
+
+use function count;
+use function in_array;
 use function sprintf;
 
 /**
@@ -34,6 +36,14 @@ final class UndefinedArgumentOrOptionRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
+        if (! $node->name instanceof Node\Identifier || ! in_array($node->name->name, ['argument', 'option'], true)) {
+            return [];
+        }
+
+        if (count($node->getArgs()) !== 1) {
+            return [];
+        }
+
         $classReflection = $scope->getClassReflection();
 
         if ($classReflection === null) {
@@ -48,15 +58,7 @@ final class UndefinedArgumentOrOptionRule implements Rule
             return [];
         }
 
-        if (! $node->name instanceof Node\Identifier || ! in_array($node->name->name, ['argument', 'option'], true)) {
-            return [];
-        }
-
         $methodName = $node->name->name;
-
-        if (count($node->getArgs()) !== 1) {
-            return [];
-        }
 
         $argType = $scope->getType($node->getArgs()[0]->value);
 

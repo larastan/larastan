@@ -10,6 +10,7 @@ use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
+
 use function PHPStan\Testing\assertType;
 
 function testFind()
@@ -438,4 +439,16 @@ function testRelationMethods(): void
     Post::firstWhere(function (PostBuilder $query) {
         assertType('App\PostBuilder<App\Post>', $query);
     });
+}
+
+class Foo
+{
+    public function __construct(private User $user)
+    {
+    }
+
+    public function doFoo(): void
+    {
+        assertType('Illuminate\Database\Eloquent\Builder<App\User>', $this->user::query());
+    }
 }

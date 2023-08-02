@@ -20,6 +20,17 @@ parameters:
         - app/Domain/DomainB/migrations
 ```
 
+## `disableMigrationScan`
+**default**: `false`
+
+You can disable use this config to disable migration scanning.
+
+#### Example
+```neon
+parameters:
+    disableMigrationScan: true
+```
+
 ## `squashedMigrationsPath`
 
 By default, Larastan will check `database/schema` directory to find schema dumps. If you have them in other locations or if you have multiple folders, you can use this config option to add them.
@@ -40,6 +51,17 @@ It can read (or rather, try to read) PostgreSQL dumps provided they are in the *
 The viable options for PostgreSQL at the moment are:
 1. Use the [laravel-ide-helper](https://github.com/barryvdh/laravel-ide-helper) package to write PHPDocs directly to the Models. 
 2. Use the [laravel-migrations-generator](https://github.com/kitloong/laravel-migrations-generator) to generate migration files (or a singular squashed migration file) for Larastan to scan with the `databaseMigrationsPath` setting.
+
+## `disableSchemaScan`
+**default**: `false`
+
+You can disable use this config to disable schema scanning.
+
+#### Example
+```neon
+parameters:
+    disableSchemaScan: true
+```
 
 ## `checkModelProperties`
 **default**: `false`

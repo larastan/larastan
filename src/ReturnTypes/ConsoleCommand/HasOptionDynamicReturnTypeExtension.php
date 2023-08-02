@@ -10,6 +10,9 @@ use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Type;
 
+use function array_unique;
+use function count;
+
 class HasOptionDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
     public function __construct(private ConsoleApplicationResolver $consoleApplicationResolver)

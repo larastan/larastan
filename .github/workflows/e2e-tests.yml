@@ -15,7 +15,7 @@ on:
 
 jobs:
   integration-tests:
-    name: "Test with ${{ matrix.repo }} on PHP ${{ matrix.php-version }}"
+    name: "Test with ${{ matrix.repository }} on PHP ${{ matrix.php-version }}"
 
     runs-on: "ubuntu-latest"
     timeout-minutes: 30
@@ -24,38 +24,33 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - repo: "monicahq/chandler"
+          -
+            repository: monicahq/chandler
+            ref: f57c49400dfa419e78bad240f018bce2949dcac2
             php-version: "8.1"
-            checkout-with: |
-              {
-                "repository": "monicahq/chandler",
-                "ref": "d95e055e50fc583435c0a363666f947054663f88",
-                "path": "e2e"
-              }
-          - repo: "koel/koel"
+            config: monicahq-chandler.neon
+            baseline: monicahq-chandler.baseline.neon
+
+          -
+            repository: koel/koel
+            ref: de88d23b9564d2f7b496b9cd141fc9e648b7feeb
             php-version: "8.1"
-            checkout-with: |
-              {
-                "repository": "koel/koel",
-                "ref": "050d898857e7876685bb0c38eaea3651b915651a",
-                "path": "e2e"
-              }
-          - repo: "canvural/larastan-test"
+            config: koel-koel.neon
+            baseline: koel-koel.baseline.neon
+
+          -
+            repository: canvural/larastan-test
+            ref: 686828b76a2e300b1a3cc99fdd8be9af3a3e7e60
             php-version: "8.1"
-            checkout-with: |
-              {
-                "repository": "canvural/larastan-test",
-                "ref": "686828b76a2e300b1a3cc99fdd8be9af3a3e7e60",
-                "path": "e2e"
-              }
-          - repo: "canvural/larastan-strict-rules"
+            config: canvural-larastan-test.neon
+            baseline: canvural-larastan-test.baseline.neon
+
+          -
+            repository: canvural/larastan-strict-rules
+            ref: 3d9ba8263f8fcb6f9d7e5c3d05af7f58c5537540
             php-version: "8.1"
-            checkout-with: |
-              {
-                "repository": "canvural/larastan-strict-rules",
-                "ref": "16ceaa41a54aacc5481d957dd625590e6acd321c",
-                "path": "e2e"
-              }
+            config: canvural-larastan-strict-rules.neon
+            baseline: canvural-larastan-strict-rules.baseline.neon
 
     steps:
       - name: "Checkout"
@@ -71,7 +66,10 @@ jobs:
 
       - name: "Checkout dependent repo"
         uses: "actions/checkout@v3"
-        with: "${{ fromJSON(matrix.checkout-with) }}"
+        with:
+          repository: "${{ matrix.repository }}"
+          ref: "${{ matrix.ref }}"
+          path: "e2e"
 
       - name: "Install dependencies"
         run: |
@@ -82,6 +80,17 @@ jobs:
           composer require --dev --update-with-all-dependencies "nunomaduro/larastan:*"
 
       - name: "Perform static analysis"
-        run: |
-          cd e2e/
-          composer exec phpstan
+        working-directory: e2e
+        run: composer exec phpstan analyse -- -c "../larastan/e2e/${{ matrix.config }}"
+
+      - name: "Generate baseline"
+        if: ${{ failure() }}
+        working-directory: e2e
+        run: composer exec phpstan analyse -- -c ../larastan/e2e/${{ matrix.config }} -b ../larastan/e2e/${{ matrix.baseline }}
+
+      - uses: actions/upload-artifact@v3
+        if: ${{ failure() }}
+        with:
+          name: baselines
+          path: "larastan/e2e/${{ matrix.baseline }}"
+

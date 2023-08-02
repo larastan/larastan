@@ -5,6 +5,7 @@ use App\Role;
 use App\Team;
 use App\User;
 use Carbon\Carbon as BaseCarbon;
+
 use function PHPStan\Testing\assertType;
 
 function testBooleanAcceptsZero(User $user): void

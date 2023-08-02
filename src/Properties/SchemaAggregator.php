@@ -7,7 +7,12 @@ namespace NunoMaduro\Larastan\Properties;
 use Illuminate\Support\Str;
 use PhpParser;
 use PhpParser\NodeFinder;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ObjectType;
+
+use function count;
+use function is_string;
+use function strtolower;
 
 /**
  * @see https://github.com/psalm/laravel-psalm-plugin/blob/master/src/SchemaAggregator.php
@@ -17,10 +22,14 @@ final class SchemaAggregator
     /** @var array<string, SchemaTable> */
     public array $tables = [];
 
+    /** @var ReflectionProvider */
+    private $reflectionProvider;
+
     /** @param array<string, SchemaTable> $tables */
-    public function __construct(array $tables = [])
+    public function __construct(ReflectionProvider $reflectionProvider, array $tables = [])
     {
         $this->tables = $tables;
+        $this->reflectionProvider = $reflectionProvider;
     }
 
     /**
@@ -201,12 +210,21 @@ final class SchemaAggregator
                             $columnName = $secondArg->value;
                         }
 
-                        $table->setColumn(new SchemaColumn($columnName, 'int', $nullable));
+                        $type = $this->getModelReferenceType($modelClass);
+                        $table->setColumn(new SchemaColumn($columnName, $type ?? 'int', $nullable));
 
                         continue;
                     }
 
                     if (! $firstArg instanceof PhpParser\Node\Scalar\String_) {
+                        if ($firstArg instanceof PhpParser\Node\Expr\Array_ && $firstMethodCall->name->name === 'dropColumn') {
+                            foreach ($firstArg->items as $array_item) {
+                                if ($array_item !== null && $array_item->value instanceof PhpParser\Node\Scalar\String_) {
+                                    $table->dropColumn($array_item->value->value);
+                                }
+                            }
+                        }
+
                         if ($firstMethodCall->name->name === 'timestamps'
                             || $firstMethodCall->name->name === 'timestampsTz'
                             || $firstMethodCall->name->name === 'nullableTimestamps'
@@ -239,12 +257,15 @@ final class SchemaAggregator
                             continue;
                         }
 
-                        if ($firstMethodCall->name->name === 'softDeletes'
-                            || $firstMethodCall->name->name === 'softDeletesTz'
-                            || $firstMethodCall->name->name === 'dropSoftDeletes'
-                            || $firstMethodCall->name->name === 'dropSoftDeletesTz'
-                        ) {
-                            $columnName = 'deleted_at';
+                        $defaultsMap = [
+                            'softDeletes' => 'deleted_at',
+                            'softDeletesTz' => 'deleted_at',
+                            'dropSoftDeletes' => 'deleted_at',
+                            'dropSoftDeletesTz' => 'deleted_at',
+                            'uuid' => 'uuid',
+                        ];
+                        if (array_key_exists($firstMethodCall->name->name, $defaultsMap)) {
+                            $columnName = $defaultsMap[$firstMethodCall->name->name];
                         } else {
                             continue;
                         }
@@ -478,5 +499,31 @@ final class SchemaAggregator
         $table->name = $newTableName;
 
         $this->tables[$newTableName] = $table;
+    }
+
+    private function getModelReferenceType(string $modelClass): ?string
+    {
+        $classReflection = $this->reflectionProvider->getClass($modelClass);
+        try {
+            /** @var \Illuminate\Database\Eloquent\Model $modelInstance */
+            $modelInstance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
+        } catch (\ReflectionException $e) {
+            return null;
+        }
+
+        $tableName = $modelInstance->getTable();
+
+        if (! array_key_exists($tableName, $this->tables)) {
+            return null;
+        }
+
+        $table = $this->tables[$tableName];
+        $column = $modelInstance->getKeyName();
+
+        if (! array_key_exists($column, $table->columns)) {
+            return null;
+        }
+
+        return $table->columns[$column]->readableType;
     }
 }

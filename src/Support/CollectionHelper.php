@@ -24,6 +24,9 @@ use PHPStan\Type\Type;
 use PHPStan\Type\VerbosityLevel;
 use Traversable;
 
+use function array_values;
+use function count;
+
 final class CollectionHelper
 {
     public function __construct(private ReflectionProvider $reflectionProvider)

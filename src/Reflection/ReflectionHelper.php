@@ -8,6 +8,8 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\Mixin\MixinMethodsClassReflectionExtension;
 use PHPStan\Reflection\Mixin\MixinPropertiesClassReflectionExtension;
 
+use function array_key_exists;
+
 final class ReflectionHelper
 {
     /**

@@ -15,6 +15,9 @@ use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
+use function count;
+use function in_array;
+
 class ArgumentDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
     public function __construct(private ConsoleApplicationResolver $consoleApplicationResolver, private ConsoleApplicationHelper $consoleApplicationHelper)

@@ -22,6 +22,11 @@ use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\UnionType;
 
+use function basename;
+use function class_exists;
+use function count;
+use function str_replace;
+
 final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
 {
     public function getClass(): string
