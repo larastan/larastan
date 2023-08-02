@@ -130,6 +130,12 @@ function retryHelper()
     }));
 }
 
+function strHelper()
+{
+    assertType('Illuminate\Support\Stringable', str('foo'));
+    assertType('mixed', str());
+}
+
 function tapHelper()
 {
     assertType('App\User', tap(new User(), function (User $user): void {
