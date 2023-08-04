@@ -6,7 +6,8 @@ use Illuminate\Support\HigherOrderCollectionProxy;
 
 /**
  * @template TKey of array-key
- * @template TValue
+ *
+ * @template-covariant TValue
  *
  * @property-read HigherOrderCollectionProxy<'average', TValue, static> $average
  * @property-read HigherOrderCollectionProxy<'avg', TValue, static> $avg
