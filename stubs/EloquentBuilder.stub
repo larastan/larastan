@@ -218,7 +218,7 @@ class Builder
     /**
      * Add a basic where clause to the query.
      *
-     * @param  (\Closure(static): void)|(\Closure(static): static)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
+     * @param  (\Closure(static): void)|(\Closure(static): static)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
@@ -229,7 +229,7 @@ class Builder
     /**
      * Add an "or where" clause to the query.
      *
-     * @param  (\Closure(static): void)|(\Closure(static): static)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
+     * @param  (\Closure(static): void)|(\Closure(static): static)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @return $this
@@ -262,7 +262,7 @@ class Builder
      * Add an "or where" clause to a relationship query.
      *
      * @param  string  $relation
-     * @param  \Closure|string|array<int, string>|\Illuminate\Database\Query\Expression  $column
+     * @param  \Closure|string|array<int, string>|\Illuminate\Contracts\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @return static
@@ -402,7 +402,7 @@ class Builder
     /**
      * Add a basic where clause to the query, and return the first result.
      *
-     * @param  (\Closure(static): void)|(\Closure(static): static)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Database\Query\Expression  $column
+     * @param  (\Closure(static): void)|(\Closure(static): static)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
@@ -429,7 +429,7 @@ class Builder
     /**
      * Get a single column's value from the first result of a query.
      *
-     * @param  model-property<TModelClass>|\Illuminate\Database\Query\Expression  $column
+     * @param  model-property<TModelClass>|\Illuminate\Contracts\Database\Query\Expression  $column
      * @return mixed
      */
     public function value($column);
@@ -507,7 +507,7 @@ class Builder
      * Add a basic where clause to a relationship query.
      *
      * @param  string  $relation
-     * @param  \Closure|string|array<mixed>|\Illuminate\Database\Query\Expression  $column
+     * @param  \Closure|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @return static
