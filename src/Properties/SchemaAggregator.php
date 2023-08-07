@@ -546,8 +546,6 @@ final class SchemaAggregator
             return true;
         }
 
-        $parts = $argExpression->name->getParts();
-
-        return array_key_exists(0, $parts) && $parts[0] === 'true';
+        return $argExpression->name->getFirst() === 'true';
     }
 }
