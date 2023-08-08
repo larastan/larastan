@@ -15,26 +15,21 @@ final class LarastanStubFilesExtension implements StubFilesExtension
      */
     public function getFiles(): array
     {
-        $stubDirectories = Finder::create()->directories()->in(__DIR__.'/../stubs')->depth(0);
+        $stubDirectories = Finder::create()->directories()->name('/^\d+/')->in(__DIR__.'/../stubs')->depth(0);
 
         // Include only applicable versions
-        $stubDirectories->filter(function (SplFileInfo $file) {
-            return version_compare($file->getFilename(), LARAVEL_VERSION, '<=');
-        });
-
-        // Sort by version
-        $stubDirectories->sort(function (SplFileInfo $a, SplFileInfo $b) {
-            return version_compare($a->getFilename(), $b->getFilename());
-        });
+        $stubDirectories
+            ->filter(fn(SplFileInfo $file) => version_compare($file->getFilename(), LARAVEL_VERSION, '<='))
+            ->sort(fn(SplFileInfo $a, SplFileInfo $b) => version_compare($a->getFilename(), $b->getFilename()));
 
         $files = [];
 
-        foreach ($stubDirectories as $stubDirectory) {
-            $stubFiles = Finder::create()->files()->name('*.stub')->in($stubDirectory->getRealPath());
+        $stubDirs = [__DIR__.'/../stubs/common', ...array_keys(iterator_to_array($stubDirectories))];
 
-            foreach ($stubFiles as $stubFile) {
-                $files[$stubFile->getRelativePathname()] = $stubFile->getRealPath();
-            }
+        $stubFiles = Finder::create()->files()->name('*.stub')->in($stubDirs);
+
+        foreach ($stubFiles as $stubFile) {
+            $files[$stubFile->getRelativePathname()] = $stubFile->getRealPath();
         }
 
         return array_values($files);
