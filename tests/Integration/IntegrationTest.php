@@ -14,10 +14,15 @@ class IntegrationTest extends PHPStanTestCase
      */
     public function dataIntegrationTests(): iterable
     {
+        self::getContainer();
         yield [__DIR__.'/data/test-case-extension.php'];
         yield [__DIR__.'/data/model-properties.php'];
         yield [__DIR__.'/data/blade-view.php'];
         yield [__DIR__.'/data/helpers.php'];
+
+        if (version_compare(LARAVEL_VERSION, '10.0.0', '>=')) {
+            yield [__DIR__.'/data/eloquent-builder-l10.php'];
+        }
     }
 
     /**
