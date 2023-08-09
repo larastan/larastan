@@ -197,4 +197,19 @@ class MigrationHelperTest extends PHPStanTestCase
         self::assertSame('string', $tables['users']->columns['created_at']->readableType);
         self::assertSame('string', $tables['users']->columns['updated_at']->readableType);
     }
+
+    /** @test */
+    public function it_can_handle_migrations_with_array_passed_to_drop_column()
+    {
+        $migrationHelper = new MigrationHelper($this->parser, [
+            __DIR__.'/data/migrations_using_drop_column',
+        ], $this->fileHelper, false, $this->reflectionProvider);
+
+        $tables = $migrationHelper->initializeTables();
+
+        self::assertCount(1, $tables);
+        self::assertArrayHasKey('users', $tables);
+        self::assertCount(5, $tables['users']->columns);
+        self::assertSame(['id', 'name', 'email', 'created_at', 'updated_at'], array_keys($tables['users']->columns));
+    }
 }
