@@ -19,12 +19,9 @@ class CreateAddDropToUsersTable extends Migration
             $table->bigIncrements('id');
             $table->string('name')->nullable();
             $table->string('email')->unique();
-            $table->timestamps();
-        });
-
-        Schema::table('users', static function (Blueprint $table) {
             $table->string('country')->nullable();
             $table->string('city')->nullable();
+            $table->timestamps();
         });
 
         Schema::table('users', static function (Blueprint $table) {
