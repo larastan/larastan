@@ -25,11 +25,6 @@ class CreateAddDropToUsersTable extends Migration
         });
 
         Schema::table('users', static function (Blueprint $table) {
-            $table->string('country')->nullable();
-            $table->string('city')->nullable();
-        });
-
-        Schema::table('users', static function (Blueprint $table) {
             $table->dropColumn(['country', 'city']);
         });
     }
