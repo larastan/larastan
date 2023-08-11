@@ -20,6 +20,8 @@ parameters:
         - app/Domain/DomainB/migrations
 ```
 
+**Note:** If your migrations are using `if` statements to conditionally alter database structure (ex: create table only if it's not there, add column only if table exists and column does not etc...) Larastan will assume those if statements evaluate to true and will consider everything from the `if` body.
+
 ## `disableMigrationScan`
 **default**: `false`
 
