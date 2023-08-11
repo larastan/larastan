@@ -551,7 +551,6 @@ final class SchemaAggregator
 
     /**
      * @param  PhpParser\Node\Expr  $updateClosure
-     *
      * @return PhpParser\Node\Stmt\Expression[]
      */
     private function getUpdateStatements(PhpParser\Node\Expr $updateClosure): array
