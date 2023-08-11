@@ -550,7 +550,7 @@ final class SchemaAggregator
     }
 
     /**
-     * @param PhpParser\Node\Expr $updateClosure
+     * @param  PhpParser\Node\Expr  $updateClosure
      *
      * @return PhpParser\Node\Stmt\Expression[]
      */
