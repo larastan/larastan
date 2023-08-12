@@ -27,16 +27,14 @@ final class LarastanStubFilesExtension implements StubFilesExtension
 
         $baseDirectories = [__DIR__.'/../stubs'];
 
-        if ($this->checkRawLiteralString)
-        {
+        if ($this->checkRawLiteralString) {
             $baseDirectories[] = __DIR__.'/../stubs/feature-literal-string';
         }
 
         $stubDirs = [];
 
         foreach ($baseDirectories as $baseDirectory) {
-
-            $stubDirs[] = $baseDirectory . '/common';
+            $stubDirs[] = $baseDirectory.'/common';
 
             $stubDirectories = Finder::create()->directories()->name('/^\d+/')->in($baseDirectory)->depth(0);
 
@@ -46,7 +44,6 @@ final class LarastanStubFilesExtension implements StubFilesExtension
                 ->sort(fn (SplFileInfo $a, SplFileInfo $b) => version_compare($a->getFilename(), $b->getFilename()));
 
             $stubDirs = array_merge($stubDirs, array_keys(iterator_to_array($stubDirectories)));
-
         }
 
         $stubFiles = Finder::create()->files()->name('*.stub')->in($stubDirs);
