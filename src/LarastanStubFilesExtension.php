@@ -10,7 +10,6 @@ use Symfony\Component\Finder\Finder;
 
 final class LarastanStubFilesExtension implements StubFilesExtension
 {
-
     /** @var bool */
     private $checkRawLiteralString;
 
@@ -24,7 +23,6 @@ final class LarastanStubFilesExtension implements StubFilesExtension
      */
     public function getFiles(): array
     {
-
         $baseDirectories = [__DIR__.'/../stubs'];
 
         if ($this->checkRawLiteralString) {
