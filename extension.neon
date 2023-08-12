@@ -24,6 +24,7 @@ parameters:
     checkModelProperties: false
     checkPhpDocMissingReturn: false
     checkUnusedViews: false
+    checkRawLiteralString: false
 
 parametersSchema:
     checkOctaneCompatibility: bool()
@@ -38,6 +39,7 @@ parametersSchema:
     disableSchemaScan: bool()
     checkModelProperties: bool()
     checkUnusedViews: bool()
+    checkRawLiteralString: bool()
 
 conditionalTags:
     NunoMaduro\Larastan\Rules\NoModelMakeRule:
@@ -462,6 +464,8 @@ services:
     -
         class: NunoMaduro\Larastan\LarastanStubFilesExtension
         tags: [phpstan.stubFilesExtension]
+        arguments:
+            checkRawLiteralString: %checkRawLiteralString%
 
     -
         class: NunoMaduro\Larastan\Rules\UnusedViewsRule
