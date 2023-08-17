@@ -16,6 +16,7 @@ class UserResourceInherited extends JsonResource
     {
         $array = parent::toArray($request);
         $array['has_verified_email'] = $this->hasVerifiedEmail();
+
         return $array;
     }
 }
