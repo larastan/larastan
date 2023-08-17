@@ -1,0 +1,18 @@
+<?php
+
+namespace Illuminate\Http\Resources\Json;
+
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Http\Request;
+use JsonSerializable;
+
+class JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array<mixed>|\Illuminate\Contracts\Support\Arrayable<array-key,mixed>|\JsonSerializable
+     */
+    public function toArray(Request $request);
+}
