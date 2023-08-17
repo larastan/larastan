@@ -16,7 +16,7 @@ class FormRequest
     /**
      * Get the validated data from the request.
      *
-     * @param  array|int|string|null  $key
+     * @param  array<string>|int|string|null  $key
      * @param  mixed  $default
      * @return ($key is null ? array<string, mixed> : mixed)
      */
