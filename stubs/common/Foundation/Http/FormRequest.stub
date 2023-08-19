@@ -12,4 +12,13 @@ class FormRequest
      * @return ($keys is null ? \Illuminate\Support\ValidatedInput : array<string, mixed>)
      */
     public function safe(array $keys = null);
+
+    /**
+     * Get the validated data from the request.
+     *
+     * @param  array<string>|int|string|null  $key
+     * @param  mixed  $default
+     * @return ($key is null ? array<string, mixed> : mixed)
+     */
+    public function validated($key = null, $default = null);
 }
