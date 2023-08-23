@@ -91,7 +91,7 @@ function url($path = null, $parameters = [], $secure = null) {}
  *
  * @param callable(): TValue $callback
  * @param TDefault|(callable(\Throwable): TDefault) $rescue
- * @param bool $report
+ * @param bool|(callable(\Throwable): TDefault) $report
  * @return TValue|TDefault
  */
 function rescue(callable $callback, $rescue = null, $report = true) {}
