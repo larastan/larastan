@@ -28,3 +28,8 @@ class Queue extends Facade {}
  * @mixin \Illuminate\Log\Logger
  */
 class Log extends Facade {}
+
+/**
+ * @mixin \Illuminate\Routing\UrlGenerator
+ */
+class URL extends Facade {}

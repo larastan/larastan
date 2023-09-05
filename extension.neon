@@ -32,6 +32,8 @@ parameters:
         - stubs/Redis/Connection.stub
         - stubs/Logger.stub
         - stubs/EnumeratesValues.stub
+        - stubs/Contracts/Routing.stub
+        - stubs/Routing/Redirector.stub
     scopeClass: NunoMaduro\Larastan\Analyser\Scope
     universalObjectCratesClasses:
         - Illuminate\Http\Request
@@ -320,6 +322,11 @@ services:
 
     -
         class: NunoMaduro\Larastan\Types\ViewStringTypeNodeResolverExtension
+        tags:
+            - phpstan.phpDoc.typeNodeResolverExtension
+
+    -
+        class: NunoMaduro\Larastan\Types\RouteNameStringTypeNodeResolverExtension
         tags:
             - phpstan.phpDoc.typeNodeResolverExtension
 
