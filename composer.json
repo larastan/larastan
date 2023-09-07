@@ -11,35 +11,36 @@
         }
     ],
     "require": {
-        "php": "^7.2 || ^8.0",
+        "php": "^8.0.2",
         "ext-json": "*",
-        "composer/composer": "^1.0 || ^2.0",
-        "illuminate/console": "^6.0 || ^7.0 || ^8.0 || ^9.0",
-        "illuminate/container": "^6.0 || ^7.0 || ^8.0 || ^9.0",
-        "illuminate/contracts": "^6.0 || ^7.0 || ^8.0 || ^9.0",
-        "illuminate/database": "^6.0 || ^7.0 || ^8.0 || ^9.0",
-        "illuminate/http": "^6.0 || ^7.0 || ^8.0 || ^9.0",
-        "illuminate/pipeline": "^6.0 || ^7.0 || ^8.0 || ^9.0",
-        "illuminate/routing": "^6.0 || ^7.0 || ^8.0 || ^9.0",
-        "illuminate/support": "^6.0 || ^7.0 || ^8.0 || ^9.0",
-        "mockery/mockery": "^0.9 || ^1.0",
-        "phpstan/phpstan": "^0.12.90",
-        "symfony/process": "^4.3 || ^5.0 || ^6.0"
+        "illuminate/console": "^9.47.0 || ^10.0.0 || ^11.0.0",
+        "illuminate/container": "^9.47.0 || ^10.0.0 || ^11.0.0",
+        "illuminate/contracts": "^9.47.0 || ^10.0.0 || ^11.0.0",
+        "illuminate/database": "^9.47.0 || ^10.0.0 || ^11.0.0",
+        "illuminate/http": "^9.47.0 || ^10.0.0 || ^11.0.0",
+        "illuminate/pipeline": "^9.47.0 || ^10.0.0 || ^11.0.0",
+        "illuminate/routing": "^9.47.0 || ^10.0.0 || ^11.0.0",
+        "illuminate/support": "^9.47.0 || ^10.0.0 || ^11.0.0",
+        "phpmyadmin/sql-parser": "^5.6.0",
+        "phpstan/phpstan": "~1.10.6"
     },
     "require-dev": {
-        "orchestra/testbench": "^4.0 || ^5.0 || ^6.0 || ^7.0",
-        "phpunit/phpunit": "^7.3 || ^8.2 || ^9.3"
+        "nikic/php-parser": "^4.15.2",
+        "orchestra/testbench": "^7.19.0 || ^8.0.0",
+        "phpunit/phpunit": "^9.5.27"
     },
     "suggest": {
         "orchestra/testbench": "Using Larastan for analysing a package needs Testbench"
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\": "tests/Application/app/",
-            "Laravel8\\": "tests/Laravel8Application/app/",
-            "Database\\Factories\\": "tests/Laravel8Application/database/factories/",
-            "Tests\\": "tests/"
-        }
+            "App\\": "tests/application/app/",
+            "Database\\Factories\\": "tests/application/database/factories/",
+            "Database\\Migrations\\": "tests/application/database/migrations/"
+        },
+      "classmap": [
+        "tests/"
+      ]
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -54,7 +55,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "0.6-dev"
+            "dev-master": "2.0-dev"
         },
         "phpstan": {
             "includes": [
@@ -63,8 +64,8 @@
         }
     },
     "scripts": {
-        "test:types": "phpstan analyse --ansi",
-        "test:unit": "phpunit --colors=always",
+        "test:types": "phpstan analyse --ansi --memory-limit 256M",
+        "test:unit": "phpunit --colors=always -d memory_limit=1408M",
         "test": [
             "@test:types",
             "@test:unit"

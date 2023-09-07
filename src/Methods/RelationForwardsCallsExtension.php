@@ -17,10 +17,9 @@ use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\Generic\TemplateMixedType;
 use PHPStan\Type\ObjectType;
-use PHPStan\Type\Type;
-use PHPStan\Type\TypeWithClassName;
+
+use function array_key_exists;
 
 final class RelationForwardsCallsExtension implements MethodsClassReflectionExtension
 {
@@ -77,21 +76,16 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
             return null;
         }
 
-        /** @var Type|TemplateMixedType|null $relatedModel */
         $relatedModel = $classReflection->getActiveTemplateTypeMap()->getType('TRelatedModel');
 
         if ($relatedModel === null) {
             return null;
         }
 
-        if ($relatedModel instanceof TypeWithClassName) {
-            $modelReflection = $relatedModel->getClassReflection();
+        if ($relatedModel->getObjectClassReflections() !== []) {
+            $modelReflection = $relatedModel->getObjectClassReflections()[0];
         } else {
             $modelReflection = $this->reflectionProvider->getClass(Model::class);
-        }
-
-        if ($modelReflection === null) {
-            return null;
         }
 
         $builderName = $this->builderHelper->determineBuilderName($modelReflection->getName());
@@ -112,7 +106,7 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
         $types = [$relatedModel];
 
         // BelongsTo relation needs second generic type
-        if ($classReflection->getName() === BelongsTo::class) {
+        if ((new ObjectType(BelongsTo::class))->isSuperTypeOf(new ObjectType($classReflection->getName()))->yes()) {
             $childType = $classReflection->getActiveTemplateTypeMap()->getType('TChildModel');
 
             if ($childType !== null) {
@@ -123,7 +117,7 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
         if ((new ObjectType(Builder::class))->isSuperTypeOf($returnType)->yes()) {
             return new EloquentBuilderMethodReflection(
                 $methodName, $classReflection,
-                $reflection, $parametersAcceptor->getParameters(),
+                $parametersAcceptor->getParameters(),
                 new GenericObjectType($classReflection->getName(), $types),
                 $parametersAcceptor->isVariadic()
             );
@@ -131,7 +125,7 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
 
         return new EloquentBuilderMethodReflection(
             $methodName, $classReflection,
-            $reflection, $parametersAcceptor->getParameters(),
+            $parametersAcceptor->getParameters(),
             $returnType,
             $parametersAcceptor->isVariadic()
         );

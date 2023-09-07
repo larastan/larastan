@@ -1,0 +1,53 @@
+<?php
+
+namespace Illuminate\Database\Eloquent\Casts;
+
+/**
+ * @template TGet
+ * @template TSet
+ */
+class Attribute
+{
+    /**
+     * The attribute accessor.
+     *
+     * @var callable(): TGet
+     */
+    public $get;
+
+    /**
+     * The attribute mutator.
+     *
+     * @var callable(TSet): mixed
+     */
+    public $set;
+
+    /**
+     * Create a new attribute accessor / mutator.
+     *
+     * @template TMakeGet
+     * @template TMakeSet
+     * @param  (callable(mixed, mixed): TMakeGet)|null  $get
+     * @param  (callable(TMakeSet, mixed=): mixed)|null  $set
+     * @return Attribute<TMakeGet, TMakeSet>
+     */
+    public static function make(callable $get = null, callable $set = null);
+
+    /**
+     * Create a new attribute accessor.
+     *
+     * @template T
+     * @param  callable(mixed, mixed=): T  $get
+     * @return Attribute<T, never>
+     */
+    public static function get(callable $get);
+
+    /**
+     * Create a new attribute mutator.
+     *
+     * @template T
+     * @param  callable(T, mixed=): mixed $set
+     * @return Attribute<never, T>
+     */
+    public static function set(callable $set);
+}

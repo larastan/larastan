@@ -1,0 +1,33 @@
+<?php
+
+namespace Illuminate\Contracts\Pagination;
+
+/**
+ * @template TItem
+ */
+interface Paginator
+{
+    /**
+     * @return array<TItem>
+     */
+    public function items(): array;
+}
+
+/**
+ * @template TItem
+ *
+ * @extends Paginator<TItem>
+ */
+interface LengthAwarePaginator extends Paginator
+{}
+
+/**
+ * @template TItem
+ */
+interface CursorPaginator
+{
+    /**
+     * @return array<TItem>
+     */
+    public function items(): array;
+}

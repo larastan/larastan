@@ -11,6 +11,8 @@ use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
 use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
 
+use function get_class;
+
 /**
  * @internal
  */
@@ -27,7 +29,7 @@ final class Managers implements PipeContract
 
         $found = false;
 
-        if ($classReflection->isSubclassOf(Manager::class)) {
+        if ($classReflection->isSubclassOf(Manager::class) && ! $classReflection->isAbstract()) {
             $driver = null;
 
             $concrete = $this->resolve(
@@ -41,7 +43,11 @@ final class Managers implements PipeContract
             }
 
             if ($driver !== null) {
-                $found = $passable->sendToPipeline(get_class($driver));
+                $class = get_class($driver);
+
+                if ($class) {
+                    $found = $passable->sendToPipeline($class);
+                }
             }
         }
 

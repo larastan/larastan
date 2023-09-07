@@ -6,14 +6,13 @@ namespace NunoMaduro\Larastan\Methods;
 
 use Illuminate\Contracts\Pipeline\Pipeline;
 use LogicException;
-use Mockery;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
-use PHPStan\Broker\Broker;
+use NunoMaduro\Larastan\Reflection\StaticMethodReflection;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\Php\PhpMethodReflection;
 use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
+use PHPStan\Reflection\ReflectionProvider;
 
 /**
  * @internal
@@ -28,9 +27,9 @@ final class Passable implements PassableContract
     private $methodReflectionFactory;
 
     /**
-     * @var \PHPStan\Broker\Broker
+     * @var ReflectionProvider
      */
-    private $broker;
+    private $reflectionProvider;
 
     /**
      * @var \Illuminate\Contracts\Pipeline\Pipeline
@@ -60,21 +59,21 @@ final class Passable implements PassableContract
     /**
      * Method constructor.
      *
-     * @param \PHPStan\Reflection\Php\PhpMethodReflectionFactory $methodReflectionFactory
-     * @param \PHPStan\Broker\Broker $broker
-     * @param \Illuminate\Contracts\Pipeline\Pipeline $pipeline
-     * @param \PHPStan\Reflection\ClassReflection $classReflection
-     * @param string $methodName
+     * @param  \PHPStan\Reflection\Php\PhpMethodReflectionFactory  $methodReflectionFactory
+     * @param  ReflectionProvider  $reflectionProvider
+     * @param  \Illuminate\Contracts\Pipeline\Pipeline  $pipeline
+     * @param  \PHPStan\Reflection\ClassReflection  $classReflection
+     * @param  string  $methodName
      */
     public function __construct(
         PhpMethodReflectionFactory $methodReflectionFactory,
-        Broker $broker,
+        ReflectionProvider $reflectionProvider,
         Pipeline $pipeline,
         ClassReflection $classReflection,
         string $methodName
     ) {
         $this->methodReflectionFactory = $methodReflectionFactory;
-        $this->broker = $broker;
+        $this->reflectionProvider = $reflectionProvider;
         $this->pipeline = $pipeline;
         $this->classReflection = $classReflection;
         $this->methodName = $methodName;
@@ -119,7 +118,7 @@ final class Passable implements PassableContract
      */
     public function searchOn(string $class): bool
     {
-        $classReflection = $this->broker->getClass($class);
+        $classReflection = $this->reflectionProvider->getClass($class);
 
         $found = $classReflection->hasNativeMethod($this->methodName);
 
@@ -171,7 +170,7 @@ final class Passable implements PassableContract
      */
     public function sendToPipeline(string $class, $staticAllowed = false): bool
     {
-        $classReflection = $this->broker->getClass($class);
+        $classReflection = $this->reflectionProvider->getClass($class);
 
         $this->setStaticAllowed($this->staticAllowed ?: $staticAllowed);
 
@@ -189,25 +188,15 @@ final class Passable implements PassableContract
             );
 
         if ($result = $this->hasFound()) {
-            $methodReflection = $this->getMethodReflection();
-            if (get_class($methodReflection) === PhpMethodReflection::class) {
-                $methodReflection = Mockery::mock($methodReflection);
-                $methodReflection->shouldReceive('isStatic')
-                    ->andReturn(true);
-            }
-
-            $this->setMethodReflection($methodReflection);
+            $this->setMethodReflection(new StaticMethodReflection($this->getMethodReflection()));
         }
 
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getBroker(): Broker
+    public function getReflectionProvider(): ReflectionProvider
     {
-        return $this->broker;
+        return $this->reflectionProvider;
     }
 
     /**

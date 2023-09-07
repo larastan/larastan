@@ -1,0 +1,122 @@
+<?php
+
+namespace Illuminate\Pagination;
+
+/**
+ * @template TValue
+ *
+ * @mixin \Illuminate\Support\Collection<mixed, TValue>
+ */
+abstract class AbstractPaginator implements \Illuminate\Contracts\Support\Htmlable
+{
+    /**
+     * @return array<TValue>
+     */
+    public function items(): array;
+
+    /**
+     * @return \Illuminate\Support\Collection<array-key, TValue>
+     */
+    public function getCollection(): \Illuminate\Support\Collection;
+
+    /**
+     * @return \ArrayIterator<array-key, TValue>
+     */
+    public function getIterator(): \Traversable;
+
+    public function offsetExists(mixed $offset): bool;
+
+    /**
+     * @return TValue|null
+     */
+    public function offsetGet(mixed $offset): mixed;
+
+    /**
+     * @param TValue $value
+     */
+    public function offsetSet(mixed $offset, $value): void;
+
+    public function offsetUnset(mixed $offset): void;
+}
+
+/**
+ * @template TValue
+ *
+ * @implements \ArrayAccess<array-key, TValue>
+ * @implements \IteratorAggregate<array-key, TValue>
+ * @implements \Illuminate\Contracts\Support\Arrayable<array-key, TValue>
+ * @implements \Illuminate\Contracts\Pagination\Paginator<TValue>
+ *
+ * @extends AbstractPaginator<TValue>
+ */
+class Paginator extends AbstractPaginator implements \Illuminate\Contracts\Support\Arrayable, \ArrayAccess, \Countable, \IteratorAggregate, \Illuminate\Contracts\Support\Jsonable, \JsonSerializable, \Illuminate\Contracts\Pagination\Paginator
+{}
+
+/**
+ * @template TValue
+ *
+ * @implements \ArrayAccess<array-key, TValue>
+ * @implements \IteratorAggregate<array-key, TValue>
+ * @implements \Illuminate\Contracts\Support\Arrayable<array-key, TValue>
+ * @implements \Illuminate\Contracts\Pagination\LengthAwarePaginator<TValue>
+ *
+ * @extends AbstractPaginator<TValue>
+ */
+class LengthAwarePaginator extends AbstractPaginator implements \Illuminate\Contracts\Support\Arrayable, \ArrayAccess, \Countable, \IteratorAggregate, \Illuminate\Contracts\Support\Jsonable, \JsonSerializable, \Illuminate\Contracts\Pagination\LengthAwarePaginator
+{}
+
+/**
+ * @template TValue
+ *
+ * @mixin \Illuminate\Support\Collection<mixed, TValue>
+ */
+abstract class AbstractCursorPaginator implements \Illuminate\Contracts\Support\Htmlable
+{
+    /**
+     * @return array<TValue>
+     */
+    public function items(): array;
+
+    /**
+     * @return \Illuminate\Support\Collection<array-key, TValue>
+     */
+    public function getCollection(): \Illuminate\Support\Collection;
+
+    /**
+     * @return \ArrayIterator<array-key, TValue>
+     */
+    public function getIterator(): \Traversable;
+
+    public function offsetExists(mixed $offset): bool;
+
+    /**
+     * @return TValue|null
+     */
+    public function offsetGet(mixed $offset): mixed;
+
+    /**
+     * @param TValue $value
+     */
+    public function offsetSet(mixed $offset, $value): void;
+
+    public function offsetUnset(mixed $offset): void;
+}
+
+/**
+ * @template TValue
+ *
+ * @implements \ArrayAccess<array-key, TValue>
+ * @implements \IteratorAggregate<array-key, TValue>
+ * @implements \Illuminate\Contracts\Support\Arrayable<array-key, TValue>
+ * @implements \Illuminate\Contracts\Pagination\CursorPaginator<TValue>
+ *
+ * @extends AbstractCursorPaginator<TValue>
+ */
+class CursorPaginator extends AbstractCursorPaginator implements \Illuminate\Contracts\Support\Arrayable, \ArrayAccess, \Countable, \IteratorAggregate, \Illuminate\Contracts\Support\Jsonable, \JsonSerializable, \Illuminate\Contracts\Pagination\CursorPaginator
+{}
+
+/**
+ * @implements \Illuminate\Contracts\Support\Arrayable<array-key, mixed>
+ */
+class Cursor implements \Illuminate\Contracts\Support\Arrayable
+{}

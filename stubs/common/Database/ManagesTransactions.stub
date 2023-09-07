@@ -1,0 +1,19 @@
+<?php
+
+namespace Illuminate\Database\Concerns;
+
+trait ManagesTransactions
+{
+    /**
+     * Execute a Closure within a transaction.
+     *
+     * @template TCallbackReturnType
+     *
+     * @param  \Closure($this): TCallbackReturnType  $callback
+     * @param  positive-int  $attempts
+     * @return TCallbackReturnType
+     *
+     * @throws \Throwable
+     */
+    public function transaction(\Closure $callback, $attempts = 1);
+}

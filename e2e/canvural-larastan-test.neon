@@ -1,0 +1,3 @@
+includes:
+	- ../../e2e/phpstan.neon.dist
+	- canvural-larastan-test.baseline.neon

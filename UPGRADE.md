@@ -1,5 +1,36 @@
 # Upgrade Guide
 
+## Upgrading to `2.0.0` from `1.x`
+
+### Eloquent Collection now requires 2 generic types
+
+In Larastan 1.x, Eloquent Collection was defined with only one generic type. Just the model type. But starting with Laravel 9, all collection stubs are now moved into the Laravel core. And as part of that migration process, the collection type is now defined with 2 generic types. First is collection item key, second is collection item value. So if you had a docblock like this `Collection<User>` now you should change it to `Collection<int, User>`.
+
+### Removed configuration `checkGenericClassInNonGenericObjectType: false` from default config
+
+In Larastan 1.x, we set the `checkGenericClassInNonGenericObjectType` to `false` by default. In 2.0.0, this is removed from the config. If you want to keep the same behavior, you can set it to `false` in your config.
+
+## Upgrading to `0.7.11`
+
+### Laravel 8 Model Factory support
+
+`0.7.11` adds support for Laravel 8 model factory return types and methods. But there is one step you need to do before taking advantage of this.
+
+Because `Factory` class is marked as generic now, you need to also specify this in your model factories.
+
+So for example if you have `UserFactory` class, the following change needs to be made:
+```php
+<?php
+
+/** @extends Factory<User> */
+class UserFactory extends Factory
+{
+    // ...
+}
+```
+
+So general rule is that `@extends Factory<MODELNAME>` PHPDoc needs to be added to factory class, where `MODELNAME` is the model class name which this factory is using.
+
 ## Upgrading to `0.7.0`
 
 ### `databaseMigrationsPath` parameter is now an array
@@ -99,7 +130,7 @@ class CustomRelation extends Relation
 In order to perform proper analysis on your Eloquent resources, you must typehint the underlying Eloquent model class.
 This will inform PHPStan that this resource uses `User` model. So calls to `$this` with model property or methods will be inferred correctly.
 
-```bash
+```php
 /**
  * @extends JsonResource<User>
  */
@@ -119,7 +150,7 @@ class UserResource extends JsonResource
 If you are taking advantage of custom Eloquent Builders for your models, you have to mark your custom builder class as generic like so:
 ```php
 /**
- * @template TModelClass
+ * @template TModelClass of \Illuminate\Database\Eloquent\Model
  * @extends Builder<TModelClass>
  */
 class CustomBuilder extends Builder

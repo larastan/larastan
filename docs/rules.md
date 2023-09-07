@@ -3,6 +3,34 @@
 All rules that are specific to Laravel applications 
 are listed here with their configurable options.
 
+## NoModelMake
+
+Checks for calls to the static method `make()` on subclasses of `Illuminate\Database\Eloquent\Model`.
+While its usage does not result in an error, unnecessary work is performed and the
+model is needlessly instantiated twice. Simply using `new` is more efficient.
+
+#### Examples
+
+```php
+User::make()
+```
+
+Will result in the following error:
+
+```
+Called 'Model::make()' which performs unnecessary work, use 'new Model()'.
+```
+
+#### Configuration
+
+This rule is enabled by default. To disable it completely, add:
+
+```neon
+parameters:
+    noModelMake: false
+```
+
+to your `phpstan.neon` file.
 
 ## NoUnnecessaryCollectionCall
 
@@ -137,3 +165,194 @@ public function register()
 Will result in the following error:
 
 `Consider using bind method instead or pass a closure.`
+
+## RelationExistenceRule
+
+This rule will check if the given relations to some Eloquent builder methods exists. It also supports nested relations.
+
+Supported Eloquent builder methods are:
+- `has`
+- `orHas`
+- `doesntHave`
+- `orDoesntHave`
+- `whereHas`
+- `orWhereHas`
+- `whereDoesntHave`
+- `orWhereDoesntHave`
+
+This rule is not optional.
+
+### Examples
+
+For the following code:
+```php
+\App\User::query()->has('foo');
+\App\Post::query()->has('users.transactions.foo');
+```
+
+Larastan will report two errors:
+```
+Relation 'foo' is not found in App\User model.
+Relation 'foo' is not found in App\Transaction model.
+```
+## CheckDispatchArgumentTypesCompatibleWithClassConstructorRule
+
+This rule will check if your job dispatch argument types are compatible with the constructor of the job class.
+
+## Examples
+
+Given the following job:
+```php
+class ExampleJob implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    /** @var int */
+    protected $foo;
+    
+    /** @var string */
+    protected $bar;
+    
+    public function __construct(int $foo, string $bar)
+    {
+        $this->foo = $foo;
+        $this->bar = $bar;
+    }
+
+    // Rest of the job class
+}
+```
+dispatching the job with the following examples
+```php
+ExampleJob::dispatch(1);
+ExampleJob::dispatch('bar', 1);
+```
+will result in errors:
+```
+Job class ExampleJob constructor invoked with 1 parameter in ExampleJob::dispatch(), 2 required.
+Parameter #1 $foo of job class ExampleJob constructor expects int in ExampleJob::dispatch(), string given.
+Parameter #2 $bar of job class ExampleJob constructor expects string in ExampleJob::dispatch(), int given.
+```
+
+## NoUselessValueFunctionCallsRule
+
+This rule will check if unnecessary calls to the 'value()' function are made
+
+### Examples
+
+Calling the following functions;
+
+```php
+$foo = value('foo');
+$bar = value(true);
+```
+
+will result in errors:
+
+```
+Calling the helper function 'value()' without a closure as the first argument simply returns the first argument without doing anything
+Calling the helper function 'value()' without a closure as the first argument simply returns the first argument without doing anything
+```
+
+## NoUselessWithFunctionCallsRuleTest
+
+This rule will check if unnecessary calls to the 'with()' function are made
+
+### Examples
+
+Calling the following functions;
+
+```php
+$foo = with('foo');
+$bar = with('bar', null);
+```
+
+will result in errors;
+
+```
+Calling the helper function 'with()' with only one argument simply returns the value itself. if you want to chain methods on a construct, use '(new ClassName())->foo()' instead
+Calling the helper function 'with()' without a closure as the second argument simply returns the value without doing anything
+```
+
+## DeferrableServiceProviderMissingProvidesRule
+
+This rule will check for a missing 'provides' method in deferrable ServiceProviders.
+
+### Examples
+
+A correct `DeferrableProvider` returns an array of `string`s or `class-string`s in the 'provides' method:
+
+```php
+use Illuminate\Contracts\Support\DeferrableProvider;
+use Illuminate\Support\ServiceProvider;
+
+class CorrectDeferrableProvider extends ServiceProvider implements DeferrableProvider
+{
+    public function register() {}
+    
+    public function provides(): array
+    {
+        return [
+            'foo',
+            'bar',
+        ];
+    }
+}
+```
+
+When the method is not present, the ServiceProvider will not be used.
+
+```php
+use Illuminate\Contracts\Support\DeferrableProvider;
+use Illuminate\Support\ServiceProvider;
+
+class IncorrectDeferrableProvider extends ServiceProvider implements DeferrableProvider
+{
+    public function register() {}
+}
+```
+
+This will result in the following error:
+
+```
+ServiceProviders that implement the "DeferrableProvider" interface should implement the "provides" method that returns an array of strings or class-strings
+```
+
+## UnusedViewsRule
+
+This rule will find any unused views in your application.
+
+> **NOTE**: Due to the nature of static analysis, this rule can produce false positives. It cannot find every usage of a view, so it is possible that a view is reported as unused when it is actually used. This is why it's an optional rule.
+
+### Configuration
+
+This rule is disabled by default. You can enable it by adding
+```neon
+parameters:
+    checkUnusedViews: true
+```
+to your `phpstan.neon` file.
+
+This rule analyzes your view files to find used views. By default, it checks the `resources/views` directory for Blade files. But if you have views in other directories you can use `viewDirectories` config option to specify them. For example:
+
+```neon
+parameters:
+    checkUnusedViews: true
+    viewDirectories:
+        - domainA/resources/views
+        - a/path/to/views
+```
+
+### Supported View Usages
+
+- `view` helper function.
+- `$this->markdown` and `$this->view` methods in Mailables.
+- `Illuminate\View\Factory::make` method.
+- `Illuminate\Support\Facades\View::make` method.
+- `Illuminate\Support\Facades\Route::view` method.
+- `@extends` Blade directive.
+- `@include` Blade directive.
+- `@includeIf` Blade directive.
+- `@includeUnless` Blade directive.
+- `@includeWhen` Blade directive.
+- `@includeFirst` Blade directive.

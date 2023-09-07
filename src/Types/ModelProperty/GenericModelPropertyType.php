@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Types\ModelProperty;
 
-use PHPStan\Type\ClassStringType;
-use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\TrinaryLogic;
+use PHPStan\Type\CompoundType;
 use PHPStan\Type\Generic\TemplateType;
 use PHPStan\Type\Generic\TemplateTypeMap;
 use PHPStan\Type\Generic\TemplateTypeVariance;
@@ -16,6 +16,8 @@ use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\UnionType;
 
+use function count;
+
 class GenericModelPropertyType extends ModelPropertyType
 {
     /** @var Type */
@@ -23,6 +25,8 @@ class GenericModelPropertyType extends ModelPropertyType
 
     public function __construct(Type $type)
     {
+        parent::__construct();
+
         $this->type = $type;
     }
 
@@ -34,6 +38,29 @@ class GenericModelPropertyType extends ModelPropertyType
     public function getGenericType(): Type
     {
         return $this->type;
+    }
+
+    public function isSuperTypeOf(Type $type): TrinaryLogic
+    {
+        $constantStrings = $type->getConstantStrings();
+
+        if (count($constantStrings) === 1) {
+            return $this->getGenericType()->hasProperty($constantStrings[0]->getValue());
+        }
+
+        if ($type instanceof self) {
+            return TrinaryLogic::createYes();
+        }
+
+        if ($type instanceof parent) {
+            return TrinaryLogic::createMaybe();
+        }
+
+        if ($type instanceof CompoundType) {
+            return $type->isSubTypeOf($this);
+        }
+
+        return TrinaryLogic::createNo();
     }
 
     public function traverse(callable $cb): Type
@@ -49,15 +76,17 @@ class GenericModelPropertyType extends ModelPropertyType
 
     public function inferTemplateTypes(Type $receivedType): TemplateTypeMap
     {
-        if ($receivedType instanceof UnionType || $receivedType instanceof IntersectionType) {
+        if ($receivedType instanceof UnionType || $receivedType instanceof IntersectionType) { // @phpstan-ignore-line
             return $receivedType->inferTemplateTypesOn($this);
         }
 
-        if ($receivedType instanceof ConstantStringType) {
-            $typeToInfer = new ObjectType($receivedType->getValue());
+        $constantStrings = $receivedType->getConstantStrings();
+
+        if (count($constantStrings) === 1) {
+            $typeToInfer = new ObjectType($constantStrings[0]->getValue());
         } elseif ($receivedType instanceof self) {
             $typeToInfer = $receivedType->type;
-        } elseif ($receivedType instanceof ClassStringType) {
+        } elseif ($receivedType->isClassStringType()->yes()) {
             $typeToInfer = $this->getGenericType();
 
             if ($typeToInfer instanceof TemplateType) {
@@ -84,7 +113,7 @@ class GenericModelPropertyType extends ModelPropertyType
     }
 
     /**
-     * @param mixed[] $properties
+     * @param  mixed[]  $properties
      * @return Type
      */
     public static function __set_state(array $properties): Type

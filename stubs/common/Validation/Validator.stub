@@ -1,0 +1,15 @@
+<?php
+
+namespace Illuminate\Validation;
+
+class Validator
+{
+    /**
+     * Get a validated input container for the validated input.
+     *
+     * @param  array<string>|null  $keys
+     *
+     * @return ($keys is null ? \Illuminate\Support\ValidatedInput : array<string, mixed>)
+     */
+    public function safe(array $keys = null);
+}

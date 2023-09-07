@@ -9,34 +9,27 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
-use NunoMaduro\Larastan\Methods\BuilderHelper;
+use NunoMaduro\Larastan\Support\CollectionHelper;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
-use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+
+use function in_array;
 
 /**
  * @internal
  */
 final class RelationFindExtension implements DynamicMethodReturnTypeExtension
 {
-    /** @var BuilderHelper */
-    private $builderHelper;
-
-    /** @var ReflectionProvider */
-    private $reflectionProvider;
-
-    public function __construct(ReflectionProvider $reflectionProvider, BuilderHelper $builderHelper)
+    public function __construct(private ReflectionProvider $reflectionProvider, private CollectionHelper $collectionHelper)
     {
-        $this->builderHelper = $builderHelper;
-        $this->reflectionProvider = $reflectionProvider;
     }
 
     /**
@@ -58,7 +51,11 @@ final class RelationFindExtension implements DynamicMethodReturnTypeExtension
 
         $modelType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TRelatedModel');
 
-        if (! $modelType instanceof ObjectType) {
+        if (! $modelType) {
+            return false;
+        }
+
+        if ($modelType->getObjectClassNames() === []) {
             return false;
         }
 
@@ -67,26 +64,25 @@ final class RelationFindExtension implements DynamicMethodReturnTypeExtension
             $this->reflectionProvider->getClass(QueryBuilder::class)->hasNativeMethod($methodReflection->getName());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,
         Scope $scope
-    ): Type {
-        /** @var ObjectType $modelType */
+    ): ?Type {
         $modelType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TRelatedModel');
+        if ($modelType === null) {
+            return null;
+        }
 
-        $argType = $scope->getType($methodCall->args[0]->value);
+        $modelName = $modelType->getObjectClassNames()[0];
+
+        $argType = $scope->getType($methodCall->getArgs()[0]->value);
 
         $returnType = $methodReflection->getVariants()[0]->getReturnType();
 
         if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
             if ($argType->isIterable()->yes()) {
-                $collectionClassName = $this->builderHelper->determineCollectionClassName($modelType->getClassname());
-
-                return new GenericObjectType($collectionClassName, [$modelType]);
+                return $this->collectionHelper->determineCollectionClass($modelName);
             }
 
             $returnType = TypeCombinator::remove($returnType, new ObjectType(Collection::class));

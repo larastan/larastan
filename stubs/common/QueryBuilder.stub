@@ -1,0 +1,314 @@
+<?php
+namespace Illuminate\Database\Query;
+
+class Expression {}
+
+class Builder
+{
+    /**
+     * Add a subquery join clause to the query.
+     *
+     * @template TAnyModelClass of \Illuminate\Database\Eloquent\Model
+     * @param  \Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<TAnyModelClass>|string  $query
+     * @param  string  $as
+     * @param  \Closure|string  $first
+     * @param  string|null  $operator
+     * @param  string|null  $second
+     * @param  string  $type
+     * @param  bool  $where
+     * @return $this
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function joinSub($query, $as, $first, $operator = null, $second = null, $type = 'inner', $where = false);
+
+    /**
+     * Add a basic where clause to the query.
+     *
+     * @param  \Closure|string|array<string|int, mixed>  $column
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @param  string  $boolean
+     * @return $this
+     */
+    public function where($column, $operator = null, $value = null, $boolean = 'and');
+
+    /**
+     * Add an array of where clauses to the query.
+     *
+     * @param  array<string|int, mixed>  $column
+     * @param  string  $boolean
+     * @param  string  $method
+     * @return $this
+     */
+    protected function addArrayOfWheres($column, $boolean, $method = 'where');
+
+    /**
+     * Add an "or where" clause to the query.
+     *
+     * @param  \Closure|model-property|array<model-property|int, mixed>  $column
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return $this
+     */
+    public function orWhere($column, $operator = null, $value = null);
+
+    /**
+     * Add a "where" clause comparing two columns to the query.
+     *
+     * @param  model-property|array<model-property|int, mixed>  $first
+     * @param  string|null  $operator
+     * @param  string|null  $second
+     * @param  string|null  $boolean
+     * @return $this
+     */
+    public function whereColumn($first, $operator = null, $second = null, $boolean = 'and');
+
+    /**
+     * Add a "where in raw" clause for integer values to the query.
+     *
+     * @param  string  $column
+     * @param  \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<int|string, mixed>  $values
+     * @param  string  $boolean
+     * @param  bool  $not
+     * @return $this
+     */
+    public function whereIntegerInRaw($column, $values, $boolean = 'and', $not = false);
+
+    /**
+     * Add an "or where in raw" clause for integer values to the query.
+     *
+     * @param  string  $column
+     * @param  \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<int|string, mixed>  $values
+     * @return $this
+     */
+    public function orWhereIntegerInRaw($column, $values);
+
+    /**
+     * Add a "where not in raw" clause for integer values to the query.
+     *
+     * @param  string  $column
+     * @param  \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<string, mixed>  $values
+     * @param  string  $boolean
+     * @return $this
+     */
+    public function whereIntegerNotInRaw($column, $values, $boolean = 'and');
+
+    /**
+     * Add an "or where not in raw" clause for integer values to the query.
+     *
+     * @param  string  $column
+     * @param  \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<string, mixed>  $values
+     * @return $this
+     */
+    public function orWhereIntegerNotInRaw($column, $values);
+
+    /**
+     * Add a "where null" clause to the query.
+     *
+     * @param  string|array<string>  $columns
+     * @param  string  $boolean
+     * @param  bool  $not
+     * @return $this
+     */
+    public function whereNull($columns, $boolean = 'and', $not = false);
+
+    /**
+     * Add a "where not null" clause to the query.
+     *
+     * @param  string|array<string>  $columns
+     * @param  string  $boolean
+     * @return $this
+     */
+    public function whereNotNull($columns, $boolean = 'and');
+
+    /**
+     * Adds a where condition using row values.
+     *
+     * @param  array<string>  $columns
+     * @param  string  $operator
+     * @param  array<string|int, mixed>  $values
+     * @param  string  $boolean
+     * @return $this
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function whereRowValues($columns, $operator, $values, $boolean = 'and');
+
+    /**
+     * Adds a or where condition using row values.
+     *
+     * @param  array<string>  $columns
+     * @param  string  $operator
+     * @param  array<string|int, mixed>  $values
+     * @return $this
+     */
+    public function orWhereRowValues($columns, $operator, $values);
+
+    /**
+     * Add a "having between " clause to the query.
+     *
+     * @param  string  $column
+     * @param  array<string, mixed>  $values
+     * @param  string  $boolean
+     * @param  bool  $not
+     * @return $this
+     */
+    public function havingBetween($column, array $values, $boolean = 'and', $not = false);
+
+    /**
+     * Add an "order by" clause to the query.
+     *
+     * @template TModelClass of \Illuminate\Database\Eloquent\Model
+     * @param  \Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<TModelClass>|\Illuminate\Database\Query\Expression|string  $column
+     * @param  string  $direction
+     * @return $this
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function orderBy($column, $direction = 'asc');
+
+    /**
+     * Add a descending "order by" clause to the query.
+     *
+     * @template TModelClass of \Illuminate\Database\Eloquent\Model
+     * @param  \Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<TModelClass>|\Illuminate\Database\Query\Expression|string  $column
+     * @return $this
+     */
+    public function orderByDesc($column);
+
+    /**
+     * Add a union statement to the query.
+     *
+     * @template TModelClass of \Illuminate\Database\Eloquent\Model
+     * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<TModelClass>|\Closure  $query
+     * @param  bool  $all
+     * @return $this
+     */
+    public function union($query, $all = false);
+
+    /**
+     * Add a union all statement to the query.
+     *
+     * @template TModelClass of \Illuminate\Database\Eloquent\Model
+     * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<TModelClass>|\Closure  $query
+     * @return $this
+     */
+    public function unionAll($query);
+
+    /**
+     * Execute a query for a single record by ID.
+     *
+     * @param  int|string  $id
+     * @param  array<string>  $columns
+     * @return mixed|static
+     */
+    public function find($id, $columns = ['*']);
+
+    /**
+     * Get an array with the values of a given column.
+     *
+     * @param  string|\Illuminate\Database\Query\Expression  $column
+     * @param  string|null  $key
+     * @return \Illuminate\Support\Collection<array-key, mixed>
+     */
+    public function pluck($column, $key = null);
+
+    /**
+     * Execute an aggregate function on the database.
+     *
+     * @param  string  $function
+     * @param  array<string>  $columns
+     * @return mixed
+     */
+    public function aggregate($function, $columns = ['*']);
+
+    /**
+     * Execute a numeric aggregate function on the database.
+     *
+     * @param  string  $function
+     * @param  array<string>  $columns
+     * @return float|int
+     */
+    public function numericAggregate($function, $columns = ['*']);
+
+    /**
+     * Set the aggregate property without running the query.
+     *
+     * @param  string  $function
+     * @param  array<string>  $columns
+     * @return $this
+     */
+    protected function setAggregate($function, $columns);
+
+    /**
+     * Execute the given callback while selecting the given columns.
+     *
+     * After running the callback, the columns are reset to the original value.
+     *
+     * @param  array<string>  $columns
+     * @param  callable  $callback
+     * @return mixed
+     */
+    protected function onceWithColumns($columns, $callback);
+
+    /**
+     * Insert a new record and get the value of the primary key.
+     *
+     * @param  array<string, mixed>  $values
+     * @param  string|null  $sequence
+     * @return int
+     */
+    public function insertGetId(array $values, $sequence = null);
+
+    /**
+     * Insert new records into the table using a subquery.
+     *
+     * @template TModelClass of \Illuminate\Database\Eloquent\Model
+     * @param  array<string>  $columns
+     * @param  \Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<TModelClass>|string  $query
+     * @return int
+     */
+    public function insertUsing(array $columns, $query);
+
+    /**
+     * Update a record in the database.
+     *
+     * @param  array<string, mixed>  $values
+     * @return int
+     */
+    public function update(array $values);
+
+    /**
+     * Insert or update a record matching the attributes, and fill it with values.
+     *
+     * @param  array<string, mixed>  $attributes
+     * @param  array<string, mixed>  $values
+     * @return bool
+     */
+    public function updateOrInsert(array $attributes, array $values = []);
+
+    /**
+     * Increment a column's value by a given amount.
+     *
+     * @param  string|\Illuminate\Database\Query\Expression  $column
+     * @param  float|int  $amount
+     * @param  array<string, mixed>  $extra
+     * @return int
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function increment($column, $amount = 1, array $extra = []);
+
+    /**
+     * Decrement a column's value by a given amount.
+     *
+     * @param  string|\Illuminate\Database\Query\Expression  $column
+     * @param  float|int  $amount
+     * @param  array<string, mixed>  $extra
+     * @return int
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function decrement($column, $amount = 1, array $extra = []);
+}

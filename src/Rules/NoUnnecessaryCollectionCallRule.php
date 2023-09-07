@@ -21,6 +21,12 @@ use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
+use function array_diff;
+use function array_map;
+use function array_merge;
+use function count;
+use function in_array;
+
 /**
  * This rule checks for unnecessary heavy operations on the Collection class
  * that could have instead been performed on the Builder class.
@@ -34,12 +40,14 @@ use PHPStan\Type\Type;
  * User::whereStatus('active')->get()->pluck('id')
  * could be simplified to:
  * User::whereStatus('active')->pluck('id')
+ *
  * @implements Rule<MethodCall>
  */
 class NoUnnecessaryCollectionCallRule implements Rule
 {
     /**
      * The method names that can be applied on a Collection, but should be applied on a Builder.
+     *
      * @var string[]
      */
     protected const RISKY_METHODS = [
@@ -62,6 +70,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
     /**
      * The method names that can be applied on a Collection, but should in some cases be applied
      * on a builder depending on what parameter is passed to the method.
+     *
      * @var string[]
      */
     protected const RISKY_PARAM_METHODS = [
@@ -91,10 +100,11 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
     /**
      * NoRedundantCollectionCallRule constructor.
-     * @param ReflectionProvider $reflectionProvider
-     * @param ModelPropertyExtension $propertyExtension
-     * @param string[] $onlyMethods
-     * @param string[] $excludeMethods
+     *
+     * @param  ReflectionProvider  $reflectionProvider
+     * @param  ModelPropertyExtension  $propertyExtension
+     * @param  string[]  $onlyMethods
+     * @param  string[]  $excludeMethods
      */
     public function __construct(
         ReflectionProvider $reflectionProvider,
@@ -138,8 +148,8 @@ class NoUnnecessaryCollectionCallRule implements Rule
     }
 
     /**
-     * @param Node $node
-     * @param Scope $scope
+     * @param  Node  $node
+     * @param  Scope  $scope
      * @return string[]
      */
     public function processNode(Node $node, Scope $scope): array
@@ -151,6 +161,10 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
         /** @var \PhpParser\Node\Identifier $name */
         $name = $node->name;
+
+        if (! in_array($name->toLowerString(), $this->shouldHandle, true)) {
+            return [];
+        }
 
         if (! $this->isCalledOnCollection($node->var, $scope)) {
             // Method was not called on a collection, so no errors.
@@ -171,10 +185,6 @@ class NoUnnecessaryCollectionCallRule implements Rule
             return [];
         }
 
-        if (! in_array($name->toLowerString(), $this->shouldHandle, true)) {
-            return [];
-        }
-
         if ($name->toLowerString() === 'first') {
             if (count($node->args) === 0) {
                 // 'first', also accepts a closure as an argument.
@@ -184,7 +194,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
             return [$this->formatError($name->toString())];
         } elseif ($this->isRiskyParamMethod($name)) {
             if (count($node->args) === 0) {
-                // Calling e.g. DB::table()->pluck($columnName)-sum()
+                // Calling e.g. DB::table()->pluck($columnName)->sum()
                 // We have to check whether $columnName is actually a database column
                 // and not an alias for some computed attribute
                 if ($previousCall->name->name === 'pluck' && $this->firstArgIsDatabaseColumn($previousCall, $scope)) {
@@ -200,7 +210,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
             // 'contains' can also be called with Model instances or keys as its first argument
             /** @var \PhpParser\Node\Arg[] $args */
             $args = $node->args;
-            if (count($args) === 1 && ! ($args[0]->value instanceof Node\Expr\Closure)) {
+            if (count($args) === 1 && ! ($args[0]->value instanceof Node\FunctionLike)) {
                 return [$this->formatError($name->toString())];
             }
 
@@ -214,8 +224,9 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
     /**
      * Determines whether the first argument is a string and references a database column.
-     * @param Node\Expr\StaticCall|MethodCall $node
-     * @param Scope $scope
+     *
+     * @param  Node\Expr\StaticCall|MethodCall  $node
+     * @param  Scope  $scope
      * @return bool
      */
     protected function firstArgIsDatabaseColumn($node, Scope $scope): bool
@@ -268,8 +279,9 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
     /**
      * Returns whether the method call is a call on a builder instance.
-     * @param Node\Expr $call
-     * @param Scope $scope
+     *
+     * @param  Node\Expr  $call
+     * @param  Scope  $scope
      * @return bool
      */
     protected function callIsQuery(Node\Expr $call, Scope $scope): bool
@@ -281,12 +293,11 @@ class NoUnnecessaryCollectionCallRule implements Rule
         }
 
         if ($call instanceof Node\Expr\StaticCall) {
-            /** @var Node\Name $class */
             $class = $call->class;
             if ($class instanceof Node\Name) {
                 $modelClassName = $class->toCodeString();
 
-                return is_subclass_of($modelClassName, Model::class)
+                return (new ObjectType(Model::class))->isSuperTypeOf(new ObjectType($modelClassName))->yes()
                     && $call->name instanceof Identifier
                     && in_array($call->name->toLowerString(), ['get', 'all', 'pluck'], true);
             }
@@ -297,7 +308,8 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
     /**
      * Returns whether the method is one of the risky methods.
-     * @param Identifier $name
+     *
+     * @param  Identifier  $name
      * @return bool
      */
     protected function isRiskyMethod(Identifier $name): bool
@@ -307,7 +319,8 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
     /**
      * Returns whether the method might be a risky method depending on the parameters passed.
-     * @param Identifier $name
+     *
+     * @param  Identifier  $name
      * @return bool
      */
     protected function isRiskyParamMethod(Identifier $name): bool
@@ -317,7 +330,8 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
     /**
      * Returns whether its argument is some builder instance.
-     * @param Type $type
+     *
+     * @param  Type  $type
      * @return bool
      */
     protected function isBuilder(Type $type): bool
@@ -329,8 +343,9 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
     /**
      * Returns whether the Expr was not called on a Collection instance.
-     * @param Node\Expr $expr
-     * @param Scope $scope
+     *
+     * @param  Node\Expr  $expr
+     * @param  Scope  $scope
      * @return bool
      */
     protected function isCalledOnCollection(Node\Expr $expr, Scope $scope): bool
@@ -342,7 +357,8 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
     /**
      * Formats the error.
-     * @param string $method_name
+     *
+     * @param  string  $method_name
      * @return string
      */
     protected function formatError(string $method_name): string

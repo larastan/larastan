@@ -5,20 +5,32 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Types;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
-use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\StaticType;
 use PHPStan\Type\Type;
+
+use function count;
+use function in_array;
 
 class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
+    private ReflectionProvider $provider;
+
+    public function __construct(ReflectionProvider $provider)
+    {
+        $this->provider = $provider;
+    }
+
     public function getClass(): string
     {
         return Model::class;
@@ -46,20 +58,45 @@ class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTyp
         $functionVariant = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
         $returnType = $functionVariant->getReturnType();
 
-        if (count($methodCall->args) === 0) {
+        $classNames = $returnType->getObjectClassNames();
+
+        if (count($classNames) !== 1) {
             return $returnType;
         }
 
-        $argType = $scope->getType($methodCall->args[0]->value);
+        $calledOnType = $scope->getType($methodCall->var);
 
-        if (! $argType instanceof ConstantStringType) {
+        if ($calledOnType instanceof StaticType) {
+            $calledOnType = new ObjectType($calledOnType->getClassName());
+        }
+
+        if (count($methodCall->getArgs()) === 0) {
+            // Special case for MorphTo. `morphTo` can be called without arguments.
+            if ($methodReflection->getName() === 'morphTo') {
+                return new GenericObjectType($classNames[0], [new ObjectType(Model::class), $calledOnType]);
+            }
+
             return $returnType;
         }
 
-        if (! $returnType instanceof ObjectType) {
+        $argType = $scope->getType($methodCall->getArgs()[0]->value);
+        $argStrings = $argType->getConstantStrings();
+
+        if (count($argStrings) !== 1) {
             return $returnType;
         }
 
-        return new GenericObjectType($returnType->getClassName(), [new ObjectType($argType->getValue())]);
+        $argClassName = $argStrings[0]->getValue();
+
+        if (! $this->provider->hasClass($argClassName)) {
+            $argClassName = Model::class;
+        }
+
+        // Special case for BelongsTo. We need to add the child model as a generic type also.
+        if ((new ObjectType(BelongsTo::class))->isSuperTypeOf($returnType)->yes()) {
+            return new GenericObjectType($classNames[0], [new ObjectType($argClassName), $calledOnType]);
+        }
+
+        return new GenericObjectType($classNames[0], [new ObjectType($argClassName)]);
     }
 }

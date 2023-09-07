@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Properties;
 
+use Illuminate\Database\Eloquent\Collection;
 use NunoMaduro\Larastan\Support\HigherOrderCollectionProxyHelper;
 use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\ClassReflection;
@@ -14,9 +15,13 @@ use PHPStan\Type;
 
 final class HigherOrderCollectionProxyPropertyExtension implements PropertiesClassReflectionExtension
 {
+    public function __construct(private HigherOrderCollectionProxyHelper $higherOrderCollectionProxyHelper)
+    {
+    }
+
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
     {
-        return HigherOrderCollectionProxyHelper::hasPropertyOrMethod($classReflection, $propertyName, 'property');
+        return $this->higherOrderCollectionProxyHelper->hasPropertyOrMethod($classReflection, $propertyName, 'property');
     }
 
     public function getProperty(
@@ -31,9 +36,18 @@ final class HigherOrderCollectionProxyPropertyExtension implements PropertiesCla
         /** @var Type\ObjectType $modelType */
         $modelType = $activeTemplateTypeMap->getType('TValue');
 
+        /** @var Type\Type $collectionType */
+        $collectionType = $activeTemplateTypeMap->getType('TCollection');
+
         $propertyType = $modelType->getProperty($propertyName, new OutOfClassScope())->getReadableType();
 
-        $returnType = HigherOrderCollectionProxyHelper::determineReturnType($methodType->getValue(), $modelType, $propertyType);
+        if ($collectionType->getObjectClassNames() !== []) {
+            $collectionClassName = $collectionType->getObjectClassNames()[0];
+        } else {
+            $collectionClassName = Collection::class;
+        }
+
+        $returnType = $this->higherOrderCollectionProxyHelper->determineReturnType($methodType->getValue(), $modelType, $propertyType, $collectionClassName);
 
         return new class($classReflection, $returnType) implements PropertyReflection
         {

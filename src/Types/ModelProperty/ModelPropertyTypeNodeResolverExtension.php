@@ -17,10 +17,12 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 
+use function count;
+
 /**
  * Ensures a 'model-property' type in PHPDoc is recognised to be of type ModelPropertyType.
  */
-class ModelPropertyTypeNodeResolverExtension implements TypeNodeResolverExtension
+final class ModelPropertyTypeNodeResolverExtension implements TypeNodeResolverExtension
 {
     /** @var bool */
     protected $active;

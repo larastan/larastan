@@ -4,136 +4,103 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan;
 
-use Composer\Autoload\ClassMapGenerator;
-use const DIRECTORY_SEPARATOR;
 use Illuminate\Contracts\Foundation\Application;
-use function in_array;
-use Orchestra\Testbench\Concerns\CreatesApplication;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Foundation\PackageManifest;
+use NunoMaduro\Larastan\Internal\ComposerHelper;
+use Orchestra\Testbench\Foundation\Application as Testbench;
+use Orchestra\Testbench\Foundation\Bootstrap\CreateVendorSymlink;
+use Orchestra\Testbench\Foundation\Config;
+
+use function class_exists;
+use function defined;
+use function file_exists;
+use function getcwd;
 
 /**
  * @internal
  */
 final class ApplicationResolver
 {
-    use CreatesApplication;
+    /**
+     * Create symlink on vendor path.
+     *
+     * @param  \Illuminate\Contracts\Foundation\Application  $app
+     * @return void
+     */
+    public static function createSymlinkToVendorPath($app, string $vendorDir): void
+    {
+        if (class_exists(CreateVendorSymlink::class)) {
+            (new CreateVendorSymlink($vendorDir))->bootstrap($app);
 
-    /** @var mixed */
-    public static $composer;
+            return;
+        }
+
+        $filesystem = new Filesystem();
+
+        $laravelVendorPath = $app->basePath('vendor');
+
+        if (
+            "$laravelVendorPath/autoload.php" !== "$vendorDir/autoload.php"
+        ) {
+            if ($filesystem->exists($app->bootstrapPath('cache/packages.php'))) {
+                $filesystem->delete($app->bootstrapPath('cache/packages.php'));
+            }
+
+            $filesystem->delete($laravelVendorPath);
+            $filesystem->link($vendorDir, $laravelVendorPath);
+        }
+
+        $app->flush();
+    }
 
     /**
      * Creates an application and registers service providers found.
      *
      * @return \Illuminate\Contracts\Foundation\Application
+     *
      * @throws \ReflectionException
      */
     public static function resolve(): Application
     {
-        $app = (new self)->createApplication();
+        /** @var non-empty-string $workingPath */
+        $workingPath = getcwd();
+        if (! defined('TESTBENCH_WORKING_PATH')) {
+            define('TESTBENCH_WORKING_PATH', $workingPath);
+        }
 
-        $composerFile = getcwd().DIRECTORY_SEPARATOR.'composer.json';
+        if ($composerConfig = ComposerHelper::getComposerConfig($workingPath)) {
+            $vendorDir = ComposerHelper::getVendorDirFromComposerConfig($workingPath, $composerConfig);
+        } else {
+            $vendorDir = $workingPath.'/vendor';
+        }
 
-        if (file_exists($composerFile)) {
-            self::$composer = json_decode((string) file_get_contents($composerFile), true);
-            $namespace = (string) key(self::$composer['autoload']['psr-4']);
-            $vendorDir = self::$composer['config']['vendor-dir'] ?? dirname($composerFile).DIRECTORY_SEPARATOR.'vendor';
-            $serviceProviders = array_values(array_filter(self::getProjectClasses($namespace, $vendorDir), function (string $class) use (
-                $namespace
-            ) {
-                /** @var class-string $class */
-                return substr($class, 0, strlen($namespace)) === $namespace && self::isServiceProvider($class);
-            }));
+        $resolvingCallback = function ($app) {
+            $packageManifest = $app->make(PackageManifest::class);
 
-            foreach ($serviceProviders as $serviceProvider) {
-                $app->register($serviceProvider);
+            if (! file_exists($packageManifest->manifestPath)) {
+                $packageManifest->build();
             }
+        };
+
+        if (class_exists(Config::class)) {
+            $config = Config::loadFromYaml($workingPath);
+
+            static::createSymlinkToVendorPath(Testbench::create($config['laravel'], null, ['extra' => ['dont-discover' => ['*']]]), $vendorDir);
+
+            return Testbench::create(
+                $config['laravel'],
+                $resolvingCallback,
+                ['enables_package_discoveries' => true, 'extra' => $config->getExtraAttributes()]
+            );
         }
 
-        return $app;
-    }
+        static::createSymlinkToVendorPath(Testbench::create(Testbench::applicationBasePath(), null, ['extra' => ['dont-discover' => ['*']]]), $vendorDir);
 
-    /**
-     * Define environment setup.
-     *
-     * @param  \Illuminate\Foundation\Application   $app
-     *
-     * @return void
-     */
-    protected function getEnvironmentSetUp($app)
-    {
-        // ..
-    }
-
-    /**
-     * @phpstan-param class-string $class
-     *
-     * @return bool
-     * @throws \ReflectionException
-     */
-    private static function isServiceProvider(string $class): bool
-    {
-        $classParents = class_parents($class);
-
-        if (! $classParents) {
-            return false;
-        }
-
-        return in_array(\Illuminate\Support\ServiceProvider::class, $classParents, true)
-            && ! (new \ReflectionClass($class))->isAbstract();
-    }
-
-    /**
-     * @param string $namespace
-     *
-     * @return string[]
-     * @throws \ReflectionException
-     */
-    private static function getProjectClasses(string $namespace, string $vendorDir): array
-    {
-        $projectDirs = self::getProjectSearchDirs($namespace, $vendorDir);
-        /** @var string[] $maps */
-        $maps = [];
-        // Use composer's ClassMapGenerator to pull the class list out of each project search directory
-        foreach ($projectDirs as $dir) {
-            $maps = array_merge($maps, ClassMapGenerator::createMap($dir));
-        }
-
-        // Create array of dev classes from Composer configuration.
-        $devClasses = [];
-        $autoloadDev = self::$composer['autoload-dev'] ?? [];
-        $autoloadDevPsr4 = $autoloadDev['psr-4'] ?? [];
-        foreach ($autoloadDevPsr4 as $paths) {
-            $paths = is_array($paths) ? $paths : [$paths];
-
-            foreach ($paths as $path) {
-                $devClasses = array_merge($devClasses, array_keys(ClassMapGenerator::createMap($path)));
-            }
-        }
-
-        // now class list of maps are assembled, use class_exists calls to explicitly autoload them,
-        // while not running them
-        foreach ($maps as $class => $file) {
-            if (! in_array($class, $devClasses)) {
-                class_exists($class, true);
-            }
-        }
-
-        return get_declared_classes();
-    }
-
-    /**
-     * @param string $namespace
-     * @param string $vendorDir
-     *
-     * @return string[]
-     * @throws \ReflectionException
-     */
-    private static function getProjectSearchDirs(string $namespace, string $vendorDir): array
-    {
-        $composerDir = $vendorDir.DIRECTORY_SEPARATOR.'composer';
-
-        $file = $composerDir.DIRECTORY_SEPARATOR.'autoload_psr4.php';
-        $raw = include $file;
-
-        return $raw[$namespace];
+        return Testbench::create(
+            null,
+            $resolvingCallback,
+            ['enables_package_discoveries' => true]
+        );
     }
 }

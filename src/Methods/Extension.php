@@ -5,20 +5,19 @@ declare(strict_types=1);
 namespace NunoMaduro\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Model;
-use NunoMaduro\Larastan\Concerns;
-use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
+use PHPStan\Reflection\ReflectionProvider;
+
+use function array_key_exists;
 
 /**
  * @internal
  */
-final class Extension implements MethodsClassReflectionExtension, BrokerAwareExtension
+final class Extension implements MethodsClassReflectionExtension
 {
-    use Concerns\HasBroker;
-
     /**
      * @var Kernel
      */
@@ -27,15 +26,9 @@ final class Extension implements MethodsClassReflectionExtension, BrokerAwareExt
     /** @var MethodReflection[] */
     private $methodReflections = [];
 
-    /**
-     * Extension constructor.
-     *
-     * @param PhpMethodReflectionFactory $methodReflectionFactory
-     * @param Kernel|null                $kernel
-     */
-    public function __construct(PhpMethodReflectionFactory $methodReflectionFactory, Kernel $kernel = null)
+    public function __construct(PhpMethodReflectionFactory $methodReflectionFactory, ReflectionProvider $reflectionProvider, Kernel $kernel = null)
     {
-        $this->kernel = $kernel ?? new Kernel($methodReflectionFactory);
+        $this->kernel = $kernel ?? new Kernel($methodReflectionFactory, $reflectionProvider);
     }
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
@@ -48,7 +41,7 @@ final class Extension implements MethodsClassReflectionExtension, BrokerAwareExt
             return true;
         }
 
-        $passable = $this->kernel->handle($this->broker, $classReflection, $methodName);
+        $passable = $this->kernel->handle($classReflection, $methodName);
 
         $found = $passable->hasFound();
 

@@ -9,17 +9,17 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\NodeFinder;
 use PHPStan\Analyser\ScopeContext;
 use PHPStan\Analyser\ScopeFactory;
-use PHPStan\Parser\CachedParser;
+use PHPStan\Parser\Parser;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ReflectionProvider;
-use PHPStan\Type\Constant\ConstantStringType;
-use PHPStan\Type\Generic\GenericClassStringType;
 use PHPStan\Type\Generic\TemplateTypeMap;
-use PHPStan\Type\ObjectType;
+
+use function count;
+use function method_exists;
 
 class RelationParserHelper
 {
-    /** @var CachedParser */
+    /** @var Parser */
     private $parser;
 
     /** @var ScopeFactory */
@@ -28,7 +28,7 @@ class RelationParserHelper
     /** @var ReflectionProvider */
     private $reflectionProvider;
 
-    public function __construct(CachedParser $parser, ScopeFactory $scopeFactory, ReflectionProvider $reflectionProvider)
+    public function __construct(Parser $parser, ScopeFactory $scopeFactory, ReflectionProvider $reflectionProvider)
     {
         $this->parser = $parser;
         $this->scopeFactory = $scopeFactory;
@@ -38,13 +38,17 @@ class RelationParserHelper
     public function findRelatedModelInRelationMethod(
         MethodReflection $methodReflection
     ): ?string {
-        $fileName = $methodReflection
-            ->getDeclaringClass()
-            ->getNativeReflection()
-            ->getMethod($methodReflection->getName())
-            ->getFileName();
+        if (method_exists($methodReflection, 'getDeclaringTrait') && $methodReflection->getDeclaringTrait() !== null) {
+            $fileName = $methodReflection->getDeclaringTrait()->getFileName();
+        } else {
+            $fileName = $methodReflection
+                ->getDeclaringClass()
+                ->getNativeReflection()
+                ->getMethod($methodReflection->getName())
+                ->getFileName();
+        }
 
-        if ($fileName === false) {
+        if ($fileName === false || $fileName === null) {
             return null;
         }
 
@@ -70,36 +74,35 @@ class RelationParserHelper
             $methodCall = $methodCall->var;
         }
 
-        if (count($methodCall->args) < 1) {
+        if (count($methodCall->getArgs()) < 1) {
             return null;
         }
 
-        $scope = $this->scopeFactory->create(
-            ScopeContext::create($fileName),
-            false,
-            [],
-            $methodReflection
-        );
+        $scope = $this->scopeFactory->create(ScopeContext::create($fileName));
 
         $methodScope = $scope
             ->enterClass($methodReflection->getDeclaringClass())
             ->enterClassMethod($relationMethod, TemplateTypeMap::createEmpty(), [], null, null, null, false, false, false);
 
-        $argType = $methodScope->getType($methodCall->args[0]->value);
+        $argType = $methodScope->getType($methodCall->getArgs()[0]->value);
         $returnClass = null;
 
-        if ($argType instanceof ConstantStringType) {
-            $returnClass = $argType->getValue();
+        $constantStrings = $argType->getConstantStrings();
+
+        if (count($constantStrings) === 1) {
+            $returnClass = $constantStrings[0]->getValue();
         }
 
-        if ($argType instanceof GenericClassStringType) {
-            $modelType = $argType->getGenericType();
+        if ($argType->isClassStringType()->yes()) {
+            $modelType = $argType->getClassStringObjectType();
 
-            if (! $modelType instanceof ObjectType) {
+            $classNames = $modelType->getObjectClassNames();
+
+            if (count($classNames) !== 1) {
                 return null;
             }
 
-            $returnClass = $modelType->getClassName();
+            $returnClass = $classNames[0];
         }
 
         if ($returnClass === null) {
@@ -110,8 +113,8 @@ class RelationParserHelper
     }
 
     /**
-     * @param string $method
-     * @param mixed $statements
+     * @param  string  $method
+     * @param  mixed  $statements
      * @return Node|null
      */
     private function findMethod(string $method, $statements): ?Node

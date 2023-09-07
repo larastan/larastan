@@ -1,0 +1,32 @@
+<?php
+
+namespace Illuminate\Support;
+
+/**
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @extends \IteratorAggregate<TKey, TValue>
+ */
+interface Enumerable extends \Countable, \IteratorAggregate, \JsonSerializable
+{
+    /**
+    * Get one or a specified number of items randomly from the collection.
+    *
+    * @param  (callable(TValue): int)|int|null  $number
+    * @return ($number is null ? TValue : static<int, TValue>)
+    *
+    * @throws \InvalidArgumentException
+    */
+   public function random($number = null);
+
+   /**
+    * Create a collection by using this collection for keys and another for its values.
+    *
+    * @template TCombineValue
+    *
+    * @param  \Illuminate\Contracts\Support\Arrayable<array-key, TCombineValue>|iterable<array-key, TCombineValue>  $values
+    * @return static<array-key, TCombineValue>
+    */
+   public function combine($values);
+}

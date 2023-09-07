@@ -7,9 +7,9 @@ namespace NunoMaduro\Larastan\Methods;
 use Illuminate\Pipeline\Pipeline;
 use NunoMaduro\Larastan\Concerns;
 use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
-use PHPStan\Broker\Broker;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
+use PHPStan\Reflection\ReflectionProvider;
 
 /**
  * @internal
@@ -22,42 +22,43 @@ final class Kernel
      * @var PhpMethodReflectionFactory
      */
     private $methodReflectionFactory;
+    /**
+     * @var ReflectionProvider
+     */
+    private $reflectionProvider;
 
     /**
      * Kernel constructor.
      *
-     * @param PhpMethodReflectionFactory $methodReflectionFactory
+     * @param  PhpMethodReflectionFactory  $methodReflectionFactory
      */
     public function __construct(
-        PhpMethodReflectionFactory $methodReflectionFactory
+        PhpMethodReflectionFactory $methodReflectionFactory,
+        ReflectionProvider $reflectionProvider
     ) {
         $this->methodReflectionFactory = $methodReflectionFactory;
+        $this->reflectionProvider = $reflectionProvider;
     }
 
     /**
-     * @param Broker          $broker
-     * @param ClassReflection $classReflection
-     * @param string          $methodName
-     *
+     * @param  ClassReflection  $classReflection
+     * @param  string  $methodName
      * @return PassableContract
      */
-    public function handle(Broker $broker, ClassReflection $classReflection, string $methodName): PassableContract
+    public function handle(ClassReflection $classReflection, string $methodName): PassableContract
     {
         $pipeline = new Pipeline($this->getContainer());
 
-        $passable = new Passable($this->methodReflectionFactory, $broker, $pipeline, $classReflection, $methodName);
+        $passable = new Passable($this->methodReflectionFactory, $this->reflectionProvider, $pipeline, $classReflection, $methodName);
 
         $pipeline->send($passable)
             ->through(
                 [
                     Pipes\SelfClass::class,
-                    Pipes\Macros::class,
                     Pipes\Contracts::class,
                     Pipes\Facades::class,
                     Pipes\Managers::class,
                     Pipes\Auths::class,
-                    Pipes\BuilderLocalMacros::class,
-                    Pipes\RedirectResponseWiths::class,
                 ]
             )
             ->then(

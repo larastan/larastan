@@ -1,0 +1,67 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^PHPDoc tag @var assumes the expression with type PHPStan\\\\Type\\\\Type\\|null is always PHPStan\\\\Type\\\\Constant\\\\ConstantStringType but it's error\\-prone and dangerous\\.$#"
+			count: 1
+			path: src/Methods/HigherOrderCollectionProxyExtension.php
+
+		-
+			message: "#^PHPDoc tag @var assumes the expression with type PHPStan\\\\Type\\\\Type\\|null is always PHPStan\\\\Type\\\\ObjectType but it's error\\-prone and dangerous\\.$#"
+			count: 1
+			path: src/Methods/HigherOrderCollectionProxyExtension.php
+
+		-
+			message: "#^Creating new PHPStan\\\\Reflection\\\\Php\\\\DummyParameter is not covered by backward compatibility promise\\. The class might change in a minor PHPStan version\\.$#"
+			count: 1
+			path: src/Methods/ModelForwardsCallsExtension.php
+
+		-
+			message: "#^PHPDoc tag @var assumes the expression with type PHPStan\\\\Type\\\\Type\\|null is always PHPStan\\\\Type\\\\Constant\\\\ConstantStringType but it's error\\-prone and dangerous\\.$#"
+			count: 1
+			path: src/Properties/HigherOrderCollectionProxyPropertyExtension.php
+
+		-
+			message: "#^PHPDoc tag @var assumes the expression with type PHPStan\\\\Type\\\\Type\\|null is always PHPStan\\\\Type\\\\ObjectType but it's error\\-prone and dangerous\\.$#"
+			count: 1
+			path: src/Properties/HigherOrderCollectionProxyPropertyExtension.php
+
+		-
+			message: "#^PHPDoc tag @var assumes the expression with type PHPStan\\\\Type\\\\Type is always PHPStan\\\\Type\\\\Generic\\\\GenericObjectType but it's error\\-prone and dangerous\\.$#"
+			count: 1
+			path: src/Properties/ModelAccessorExtension.php
+
+		-
+			message: "#^Constant LARAVEL_VERSION not found\\.$#"
+			count: 1
+			path: src/ReturnTypes/CollectionGenericStaticMethodDynamicMethodReturnTypeExtension.php
+
+		-
+			message: "#^Constant LARAVEL_VERSION not found\\.$#"
+			count: 1
+			path: src/LarastanStubFilesExtension.php
+
+		-
+			message: "#^PHPDoc tag @var assumes the expression with type PHPStan\\\\Type\\\\Type\\|null is always PHPStan\\\\Type\\\\ObjectType but it's error\\-prone and dangerous\\.$#"
+			count: 1
+			path: src/ReturnTypes/RelationCollectionExtension.php
+
+		-
+			message: "#^Doing instanceof PHPStan\\\\Type\\\\Generic\\\\GenericObjectType is error\\-prone and deprecated\\.$#"
+			count: 2
+			path: src/Rules/ModelRuleHelper.php
+
+		-
+			message: "#^PHPDoc tag @var assumes the expression with type PHPStan\\\\Type\\\\Type is always PHPStan\\\\Type\\\\ObjectType but it's error\\-prone and dangerous\\.$#"
+			count: 1
+			path: src/Rules/NoUnnecessaryCollectionCallRule.php
+
+		-
+			message: "#^Call to PHPStan\\\\Type\\\\Type\\:\\:getTemplateType\\(\\) references unknown template type TChildModel on class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsTo\\.$#"
+			count: 1
+			path: src/Types/ModelRelationsDynamicMethodReturnTypeExtension.php
+
+		-
+			message: "#^Call to PHPStan\\\\Type\\\\Type\\:\\:getTemplateType\\(\\) references unknown template type TRelatedModel on class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\Relation\\.$#"
+			count: 1
+			path: src/Types/ModelRelationsDynamicMethodReturnTypeExtension.php
+

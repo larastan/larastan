@@ -1,0 +1,35 @@
+<?php
+
+namespace Illuminate\Database\Eloquent\Relations;
+
+use Illuminate\Database\Eloquent\Builder;
+
+/**
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ */
+abstract class Relation
+{
+    /**
+      * @phpstan-return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
+      */
+     public function getEager();
+
+    /**
+     * Execute the query as a "select" statement.
+     *
+     * @param array<int, string> $columns
+     * @phpstan-return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
+     */
+    public function get($columns = ['*']);
+
+    /**
+     * @phpstan-return \Illuminate\Database\Eloquent\Builder<TRelatedModel>
+     */
+    public function getQuery();
+
+    /**
+     * @param array<model-property<TRelatedModel>, mixed> $attributes
+     * @phpstan-return TRelatedModel
+     */
+    public function make(array $attributes = []);
+}

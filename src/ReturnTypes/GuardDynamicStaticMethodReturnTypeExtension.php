@@ -11,11 +11,13 @@ use NunoMaduro\Larastan\Concerns\HasContainer;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+
+use function array_key_exists;
+use function count;
 
 class GuardDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
 {
@@ -46,7 +48,7 @@ class GuardDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethod
         /** @var string $defaultGuard */
         $defaultGuard = $config->get('auth.defaults.guard');
 
-        if (count($methodCall->args) === 0) {
+        if (count($methodCall->getArgs()) === 0) {
             /** @var array<string, mixed> $guards */
             $guards = $config->get('auth.guards');
 
@@ -57,26 +59,23 @@ class GuardDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethod
             return $this->findTypeFromGuardDriver($guards[$defaultGuard]['driver']) ?? $defaultReturnType;
         }
 
-        $argType = $scope->getType($methodCall->args[0]->value);
+        $argType = $scope->getType($methodCall->getArgs()[0]->value);
+        $argStrings = $argType->getConstantStrings();
 
-        if (! $argType instanceof ConstantStringType) {
+        if (count($argStrings) !== 1) {
             return $defaultReturnType;
         }
 
-        return $this->findTypeFromGuardDriver($argType->getValue()) ?? $defaultReturnType;
+        return $this->findTypeFromGuardDriver($argStrings[0]->getValue()) ?? $defaultReturnType;
     }
 
     private function findTypeFromGuardDriver(string $driver): ?Type
     {
-        switch ($driver) {
-            case 'session':
-                return new ObjectType(\Illuminate\Auth\SessionGuard::class);
-            case 'token':
-                return new ObjectType(\Illuminate\Auth\TokenGuard::class);
-            case 'passport':
-                return new ObjectType(\Illuminate\Auth\RequestGuard::class);
-            default:
-                return null;
-        }
+        return match ($driver) {
+            'session' => new ObjectType('Illuminate\Auth\SessionGuard'),
+            'token' => new ObjectType(\Illuminate\Auth\TokenGuard::class),
+            'passport' => new ObjectType(\Illuminate\Auth\RequestGuard::class),
+            default => null,
+        };
     }
 }

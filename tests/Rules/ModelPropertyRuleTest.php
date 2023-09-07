@@ -4,60 +4,133 @@ declare(strict_types=1);
 
 namespace Tests\Rules;
 
-use Tests\RulesTest;
+use NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertiesRuleHelper;
+use NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertyRule;
+use NunoMaduro\Larastan\Rules\ModelRuleHelper;
+use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleLevelHelper;
+use PHPStan\Testing\RuleTestCase;
 
-class ModelPropertyRuleTest extends RulesTest
+/** @extends RuleTestCase<ModelPropertyRule> */
+class ModelPropertyRuleTest extends RuleTestCase
 {
+    protected function getRule(): Rule
+    {
+        return new ModelPropertyRule(
+            new ModelPropertiesRuleHelper,
+            $this->getContainer()->getByType(RuleLevelHelper::class),
+            new ModelRuleHelper
+        );
+    }
+
     public function testModelPropertyRuleOnBuilder(): void
     {
-        $errors = $this->setConfigPath(__DIR__.DIRECTORY_SEPARATOR.'Data/modelPropertyConfig.neon')->findErrorsByLine(__DIR__.'/Data/model-property-builder.php');
-
-        self::assertEquals([
-            3 => 'Property \'foo\' does not exist in App\\User model.',
-            4 => 'Property \'foo\' does not exist in App\\User model.',
-            8 => 'Property \'foo\' does not exist in App\\User model.',
-            18 => 'Property \'foo\' does not exist in App\\User model.',
-            23 => 'Property \'foo\' does not exist in App\\User model.',
-            25 => 'Property \'foo\' does not exist in App\\User model.',
-            26 => 'Property \'foo\' does not exist in App\\User model.',
-            27 => 'Property \'foo\' does not exist in App\\User model.',
-            30 => 'Property \'foo\' does not exist in App\\User model.',
-        ], $errors);
+        $this->analyse([__DIR__.'/data/model-property-builder.php'], [
+            [
+                'Property \'foo\' does not exist in App\\User model.',
+                4,
+            ],
+            [
+                'Property \'unionNotExisting\' does not exist in App\\User model.',
+                5,
+            ],
+            [
+                'Property \'foo\' does not exist in App\\User model.',
+                6,
+            ],
+            [
+                'Property \'foo\' does not exist in App\\User model.',
+                11,
+            ],
+            [
+                'Property \'foo\' does not exist in App\\User model.',
+                20,
+            ],
+            [
+                'Property \'foo\' does not exist in App\\User model.',
+                25,
+            ],
+            [
+                'Property \'foo\' does not exist in App\\User model.',
+                27,
+            ],
+            [
+                'Property \'foo\' does not exist in App\\User model.',
+                28,
+            ],
+            [
+                'Property \'foo\' does not exist in App\\User model.',
+                29,
+            ],
+            [
+                'Property \'foo\' does not exist in App\\User model.',
+                32,
+            ],
+        ]);
     }
 
     public function testModelPropertyRuleOnRelation(): void
     {
-        $errors = $this->setConfigPath(__DIR__.DIRECTORY_SEPARATOR.'Data/modelPropertyConfig.neon')->findErrorsByLine(__DIR__.'/Data/model-property-relation.php');
-
-        self::assertEquals([
-            6 => 'Property \'foo\' does not exist in App\\Account model.',
-            7 => 'Property \'foo\' does not exist in App\\Account model.',
-            8 => 'Property \'foo\' does not exist in App\\Account model.',
-            9 => 'Property \'foo\' does not exist in App\\Account model.',
-            10 => 'Property \'foo\' does not exist in App\\Account model.',
-            12 => 'Property \'foo\' does not exist in App\Post model. If \'foo\' exists as a column on the pivot table, consider using \'wherePivot\' or prefix the column with table name instead.',
-        ], $errors);
+        $this->analyse([__DIR__.'/data/model-property-relation.php'], [
+            [
+                'Property \'foo\' does not exist in App\\Account model.',
+                4,
+            ],
+            [
+                'Property \'foo\' does not exist in App\\Account model.',
+                5,
+            ],
+            [
+                'Property \'foo\' does not exist in App\\Account model.',
+                6,
+            ],
+            [
+                'Property \'foo\' does not exist in App\\Account model.',
+                7,
+            ],
+            [
+                'Property \'foo\' does not exist in App\\Account model.',
+                8,
+            ],
+            [
+                'Property \'foo\' does not exist in App\\Post model. If \'foo\' exists as a column on the pivot table, consider using \'wherePivot\' or prefix the column with table name instead.',
+                10,
+            ],
+        ]);
     }
 
     public function testModelPropertyRuleOnModel(): void
     {
-        $errors = $this->setConfigPath(__DIR__.DIRECTORY_SEPARATOR.'Data/modelPropertyConfig.neon')->findErrorsByLine(__DIR__.'/Data/model-property-model.php');
-
-        self::assertEquals([
-            7 => 'Property \'foo\' does not exist in ModelPropertyOnModel model.',
-        ], $errors);
+        $this->analyse([__DIR__.'/data/model-property-model.php'], [
+            [
+                'Property \'foo\' does not exist in ModelPropertyModel\ModelPropertyOnModel model.',
+                9,
+            ],
+            [
+                'Property \'foo\' does not exist in App\Account|App\User model.',
+                16,
+            ],
+            [
+                'Property \'email_verified_at\' does not exist in App\Account|App\User model.',
+                23,
+            ],
+        ]);
     }
 
     public function testModelPropertyRuleOnModelFactory(): void
     {
-        if (version_compare(app()->version(), '8.0.0', '<')) {
-            $this->markTestSkipped('Test required Laravel 8');
-        }
+        $this->analyse([__DIR__.'/data/model-property-model-factory.php'], [
+            [
+                'Property \'foo\' does not exist in App\\User model.',
+                7,
+            ],
+        ]);
+    }
 
-        $errors = $this->setConfigPath(__DIR__.DIRECTORY_SEPARATOR.'Data/modelPropertyConfig.neon')->findErrorsByLine(__DIR__.'/Data/model-property-model-factory.php');
-
-        self::assertEquals([
-            5 => 'Property \'foo\' does not exist in Laravel8\\Models\\User model.',
-        ], $errors);
+    public static function getAdditionalConfigFiles(): array
+    {
+        return [
+            __DIR__.'/data/modelPropertyConfig.neon',
+        ];
     }
 }

@@ -1,0 +1,63 @@
+name: "Static Analysis"
+
+on:
+  push:
+    paths-ignore:
+      - "**.md"
+      - 'docs/**'
+    # Prevent duplicating jobs on PR-s from local branches
+    branches:
+      - "master"
+  pull_request:
+    paths-ignore:
+      - "**.md"
+      - 'docs/**'
+  schedule:
+    - cron: "0 0 * * *"
+
+concurrency:
+  group: sa-${{ github.head_ref || github.run_id }} # will be canceled on subsequent pushes in pull requests but not branches
+  cancel-in-progress: true
+
+jobs:
+  static-analysis:
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["8.0", "8.1", "8.2"]
+        laravel: ["^9.0", "^10.0"]
+        dependencies: ["highest"]
+        exclude:
+          - php: "8.0"
+            laravel: "^10.0"
+        include:
+          - php: "8.0"
+            laravel: "^9.0"
+            dependencies: "lowest"
+
+    name: "PHP ${{ matrix.php }} - L${{ matrix.laravel }} ${{ matrix.dependencies == 'highest' && '↑' || '↓' }}"
+
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout code"
+        uses: "actions/checkout@v3"
+
+      - name: "Setup PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php }}"
+          extensions: "dom, curl, libxml, mbstring, zip, fileinfo"
+          tools: "composer:v2"
+          coverage: "none"
+
+      - name: "Install dependencies from composer.json"
+        if: "matrix.dependencies != 'lowest'"
+        run: "composer update --with='laravel/framework:${{ matrix.laravel }}' --no-interaction --no-progress"
+
+      - name: "Install lowest dependencies from composer.json"
+        if: "matrix.dependencies == 'lowest'"
+        run: "composer update --with='laravel/framework:${{ matrix.laravel }}' --no-interaction --no-progress --prefer-lowest"
+
+      - name: "Execute static analysis"
+        run: "composer run-script test:types"

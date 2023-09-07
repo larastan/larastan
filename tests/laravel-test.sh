@@ -2,61 +2,30 @@
 
 set -e
 
-echo "Install Laravel"
-composer create-project --quiet --prefer-dist "laravel/laravel" ../laravel
+LARAVEL_VERSION_CONSTRAINT="${1:-^9.0}"
+
+echo "Install Laravel ${LARAVEL_VERSION_CONSTRAINT}"
+composer create-project --quiet --prefer-dist "laravel/laravel:${LARAVEL_VERSION_CONSTRAINT}" ../laravel
 cd ../laravel/
 
-echo "Add package from source"
-sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan" } ],|' -i composer.json
+echo "Add Larastan from source"
+composer config minimum-stability dev
+composer config repositories.0 '{ "type": "path", "url": "../larastan", "options": { "symlink": false } }'
+# No version information with "type":"path"
 composer require --dev "nunomaduro/larastan:*"
 
-echo "Fix https://github.com/laravel/framework/pull/23825"
-sed -e 's|@return \\Illuminate\\Http\\Response$|@return \\Symfony\\Component\\HttpFoundation\\Response|' \
-    -i app/Exceptions/Handler.php
-
-echo "Fix https://github.com/nunomaduro/larastan/pull/378#issuecomment-565706907"
-sed -e 's/string/string|void/' -i app/Http/Middleware/Authenticate.php
-sed '0,/}/s/}/}\nreturn;/' -i app/Http/Middleware/Authenticate.php
-
-echo "Test Laravel"
-vendor/bin/phpstan analyse app --level=5 -c vendor/nunomaduro/larastan/extension.neon
-cd -
-
-echo "Install Lumen"
-composer create-project --quiet --prefer-dist "laravel/lumen" ../lumen
-cd ../lumen/
-
-echo "Add package from source"
-sed -e 's|"type": "project",|&\n"repositories": [ { "type": "path", "url": "../larastan" } ],|' -i composer.json
-composer require --dev "nunomaduro/larastan:*"
-
-echo "Fix Handler::render return type"
-sed -e 's/@return \\Illuminate\\Http\\Response|\\Illuminate\\Http\\JsonResponse$/@return \\Symfony\\Component\\HttpFoundation\\Response/' \
-    -i app/Exceptions/Handler.php
-
-echo "Add Larastan to Lumen"
-cat <<"EOF" | patch -p 0
---- bootstrap/app.php     2019-02-15 12:31:48.469773495 +0000
-+++ bootstrap/app.php     2019-02-15 12:27:43.358369317 +0000
-@@ -23,6 +23,9 @@
-     dirname(__DIR__)
- );
-
-+$app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');
-+$app->configure('view');
-+
- // $app->withFacades();
-
- // $app->withEloquent();
-@@ -78,6 +80,7 @@
- |
- */
-
-+
- // $app->register(App\Providers\AppServiceProvider::class);
- // $app->register(App\Providers\AuthServiceProvider::class);
- // $app->register(App\Providers\EventServiceProvider::class);
+cat >phpstan.neon <<"EOF"
+includes:
+    - ./vendor/nunomaduro/larastan/extension.neon
+parameters:
+    level: 5
+    paths:
+        - app/
 EOF
 
-echo "Test Lumen"
-vendor/bin/phpstan analyse app --level=5 -c vendor/nunomaduro/larastan/extension.neon
+echo "Test Laravel"
+vendor/bin/phpstan analyse
+cd -
+
+echo "Test Laravel from other working directories"
+../laravel/vendor/bin/phpstan analyse --configuration=../laravel/phpstan.neon ../laravel/app

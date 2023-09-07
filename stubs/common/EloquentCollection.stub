@@ -1,0 +1,26 @@
+<?php
+
+namespace Illuminate\Database\Eloquent;
+
+use Illuminate\Contracts\Queue\QueueableCollection;
+use Illuminate\Support\Collection as BaseCollection;
+
+/**
+ * @template TKey of array-key
+ * @template TModel of \Illuminate\Database\Eloquent\Model
+ *
+ * @extends \Illuminate\Support\Collection<TKey, TModel>
+ */
+class Collection extends BaseCollection implements QueueableCollection
+{
+    /**
+     * Find a model in the collection by key.
+     *
+     * @template TFindDefault
+     *
+     * @param  mixed  $key
+     * @param  TFindDefault  $default
+     * @phpstan-return ($key is \Illuminate\Database\Eloquent\Model ? TModel|TFindDefault : ($key is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? static<TKey, TModel> : TModel|TFindDefault))
+     */
+    public function find($key, $default = null);
+}

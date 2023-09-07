@@ -7,19 +7,29 @@ namespace NunoMaduro\Larastan\Methods;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use NunoMaduro\Larastan\Reflection\EloquentBuilderMethodReflection;
+use PHPStan\Reflection\ClassMemberReflection;
 use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
+use PHPStan\Reflection\ParameterReflection;
+use PHPStan\Reflection\ParametersAcceptor;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Reflection\Php\DummyParameter;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\StaticType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeTraverser;
 use PHPStan\Type\TypeWithClassName;
+
+use function array_key_exists;
+use function array_map;
+use function in_array;
 
 final class ModelForwardsCallsExtension implements MethodsClassReflectionExtension
 {
@@ -64,9 +74,8 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
     }
 
     /**
-     * @param ClassReflection $classReflection
-     * @param string          $methodName
-     *
+     * @param  ClassReflection  $classReflection
+     * @param  string  $methodName
      * @return MethodReflection
      */
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
@@ -107,7 +116,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
                     $this->methodReflection = $methodReflection;
                 }
 
-                public function getDeclaringClass(): \PHPStan\Reflection\ClassReflection
+                public function getDeclaringClass(): ClassReflection
                 {
                     return $this->classReflection;
                 }
@@ -137,7 +146,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
                     return $this->methodName;
                 }
 
-                public function getPrototype(): \PHPStan\Reflection\ClassMemberReflection
+                public function getPrototype(): ClassMemberReflection
                 {
                     return $this;
                 }
@@ -147,7 +156,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
                     return $this->methodReflection->getVariants();
                 }
 
-                public function isDeprecated(): \PHPStan\TrinaryLogic
+                public function isDeprecated(): TrinaryLogic
                 {
                     return TrinaryLogic::createNo();
                 }
@@ -157,22 +166,22 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
                     return null;
                 }
 
-                public function isFinal(): \PHPStan\TrinaryLogic
+                public function isFinal(): TrinaryLogic
                 {
                     return TrinaryLogic::createNo();
                 }
 
-                public function isInternal(): \PHPStan\TrinaryLogic
+                public function isInternal(): TrinaryLogic
                 {
                     return TrinaryLogic::createNo();
                 }
 
-                public function getThrowType(): ?\PHPStan\Type\Type
+                public function getThrowType(): ?Type
                 {
                     return null;
                 }
 
-                public function hasSideEffects(): \PHPStan\TrinaryLogic
+                public function hasSideEffects(): TrinaryLogic
                 {
                     return TrinaryLogic::createYes();
                 }
@@ -185,7 +194,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
         if ($builderReflection->hasNativeMethod($methodName)) {
             $reflection = $builderReflection->getNativeMethod($methodName);
 
-            $parametersAcceptor = ParametersAcceptorSelector::selectSingle($reflection->getVariants());
+            $parametersAcceptor = ParametersAcceptorSelector::selectSingle($this->transformStaticParameters($reflection, $genericBuilderAndModelType));
 
             $returnType = TypeTraverser::map($parametersAcceptor->getReturnType(), static function (Type $type, callable $traverse) use ($genericBuilderAndModelType) {
                 if ($type instanceof TypeWithClassName && $type->getClassName() === Builder::class) {
@@ -196,8 +205,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
             });
 
             return new EloquentBuilderMethodReflection(
-                $methodName, $classReflection,
-                $reflection,
+                $methodName, $builderReflection,
                 $parametersAcceptor->getParameters(),
                 $returnType,
                 $parametersAcceptor->isVariadic()
@@ -209,5 +217,36 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
         }
 
         return null;
+    }
+
+    /**
+     * @return ParametersAcceptor[]
+     */
+    private function transformStaticParameters(MethodReflection $method, GenericObjectType $builder): array
+    {
+        return array_map(function (ParametersAcceptor $acceptor) use ($builder): ParametersAcceptor {
+            return new FunctionVariant($acceptor->getTemplateTypeMap(), $acceptor->getResolvedTemplateTypeMap(), array_map(function (
+                ParameterReflection $parameter) use ($builder): ParameterReflection {
+                return new DummyParameter(
+                    $parameter->getName(),
+                    $this->transformStaticType($parameter->getType(), $builder),
+                    $parameter->isOptional(),
+                    $parameter->passedByReference(),
+                    $parameter->isVariadic(),
+                    $parameter->getDefaultValue()
+                );
+            }, $acceptor->getParameters()), $acceptor->isVariadic(), $this->transformStaticType($acceptor->getReturnType(), $builder));
+        }, $method->getVariants());
+    }
+
+    private function transformStaticType(Type $type, GenericObjectType $builder): Type
+    {
+        return TypeTraverser::map($type, function (Type $type, callable $traverse) use ($builder): Type {
+            if ($type instanceof StaticType) {
+                return $builder;
+            }
+
+            return $traverse($type);
+        });
     }
 }

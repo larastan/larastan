@@ -1,0 +1,19 @@
+<?php
+
+namespace Illuminate\Contracts\View;
+
+interface Factory
+{
+    /**
+     * Determine if a given view exists.
+     *
+     * @param  string  $view
+     * @return bool
+     *
+     * @phpstan-assert-if-true view-string $view
+     */
+    public function exists($view);
+}
+
+interface View
+{}

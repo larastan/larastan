@@ -1,0 +1,51 @@
+<?php
+
+namespace Illuminate\Support\Traits;
+
+use Illuminate\Support\HigherOrderCollectionProxy;
+
+/**
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @property-read HigherOrderCollectionProxy<'average', TValue, static> $average
+ * @property-read HigherOrderCollectionProxy<'avg', TValue, static> $avg
+ * @property-read HigherOrderCollectionProxy<'contains', TValue, static> $contains
+ * @property-read HigherOrderCollectionProxy<'each', TValue, static> $each
+ * @property-read HigherOrderCollectionProxy<'every', TValue, static> $every
+ * @property-read HigherOrderCollectionProxy<'filter', TValue, static> $filter
+ * @property-read HigherOrderCollectionProxy<'first', TValue, static> $first
+ * @property-read HigherOrderCollectionProxy<'flatMap', TValue, static> $flatMap
+ * @property-read HigherOrderCollectionProxy<'groupBy', TValue, static> $groupBy
+ * @property-read HigherOrderCollectionProxy<'keyBy', TValue, static> $keyBy
+ * @property-read HigherOrderCollectionProxy<'map', TValue, static> $map
+ * @property-read HigherOrderCollectionProxy<'max', TValue, static> $max
+ * @property-read HigherOrderCollectionProxy<'min', TValue, static> $min
+ * @property-read HigherOrderCollectionProxy<'partition', TValue, static> $partition
+ * @property-read HigherOrderCollectionProxy<'reject', TValue, static> $reject
+ * @property-read HigherOrderCollectionProxy<'some', TValue, static> $some
+ * @property-read HigherOrderCollectionProxy<'sortBy', TValue, static> $sortBy
+ * @property-read HigherOrderCollectionProxy<'sortByDesc', TValue, static> $sortByDesc
+ * @property-read HigherOrderCollectionProxy<'skipUntil', TValue, static> $skipUntil
+ * @property-read HigherOrderCollectionProxy<'skipWhile', TValue, static> $skipWhile
+ * @property-read HigherOrderCollectionProxy<'sum', TValue, static> $sum
+ * @property-read HigherOrderCollectionProxy<'takeUntil', TValue, static> $takeUntil
+ * @property-read HigherOrderCollectionProxy<'takeWhile', TValue, static> $takeWhile
+ * @property-read HigherOrderCollectionProxy<'unique', TValue, static> $unique
+ * @property-read HigherOrderCollectionProxy<'until', TValue, static> $until
+ */
+trait EnumeratesValues
+{
+    /**
+     * NOTE: This stub is needed to support older Laravel versions.
+     *
+     * Map a collection and flatten the result by a single level.
+     *
+     * @template TFlatMapKey of array-key
+     * @template TFlatMapValue
+     *
+     * @param  callable(TValue, TKey): (\Illuminate\Support\Collection<TFlatMapKey, TFlatMapValue>|array<TFlatMapKey, TFlatMapValue>)  $callback
+     * @return static<TFlatMapKey, TFlatMapValue>
+     */
+    public function flatMap(callable $callback);
+}

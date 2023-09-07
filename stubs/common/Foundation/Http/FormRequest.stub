@@ -1,0 +1,24 @@
+<?php
+
+namespace Illuminate\Foundation\Http;
+
+class FormRequest
+{
+    /**
+     * Get a validated input container for the validated input.
+     *
+     * @param  array<string>|null  $keys
+     *
+     * @return ($keys is null ? \Illuminate\Support\ValidatedInput : array<string, mixed>)
+     */
+    public function safe(array $keys = null);
+
+    /**
+     * Get the validated data from the request.
+     *
+     * @param  array<string>|int|string|null  $key
+     * @param  mixed  $default
+     * @return ($key is null ? array<string, mixed> : mixed)
+     */
+    public function validated($key = null, $default = null);
+}

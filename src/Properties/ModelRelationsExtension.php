@@ -8,47 +8,37 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 use NunoMaduro\Larastan\Concerns;
-use NunoMaduro\Larastan\Methods\BuilderHelper;
+use NunoMaduro\Larastan\Reflection\ReflectionHelper;
+use NunoMaduro\Larastan\Support\CollectionHelper;
 use NunoMaduro\Larastan\Types\RelationParserHelper;
 use PHPStan\Analyser\OutOfClassScope;
-use PHPStan\Reflection\Annotations\AnnotationsPropertiesClassReflectionExtension;
-use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\IntegerRangeType;
+use PHPStan\Type\IntersectionType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\TypeTraverser;
 use PHPStan\Type\UnionType;
+
+use function str_ends_with;
 
 /**
  * @internal
  */
-final class ModelRelationsExtension implements PropertiesClassReflectionExtension, BrokerAwareExtension
+final class ModelRelationsExtension implements PropertiesClassReflectionExtension
 {
-    use Concerns\HasBroker;
     use Concerns\HasContainer;
 
-    /** @var RelationParserHelper */
-    private $relationParserHelper;
-
-    /** @var AnnotationsPropertiesClassReflectionExtension */
-    private $annotationExtension;
-
-    /** @var BuilderHelper */
-    private $builderHelper;
-
-    public function __construct(
-        RelationParserHelper $relationParserHelper,
-        AnnotationsPropertiesClassReflectionExtension $annotationExtension,
-        BuilderHelper $builderHelper)
+    public function __construct(private RelationParserHelper $relationParserHelper, private CollectionHelper $collectionHelper)
     {
-        $this->relationParserHelper = $relationParserHelper;
-        $this->annotationExtension = $annotationExtension;
-        $this->builderHelper = $builderHelper;
     }
 
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
@@ -57,8 +47,12 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
             return false;
         }
 
-        if ($this->annotationExtension->hasProperty($classReflection, $propertyName)) {
+        if (ReflectionHelper::hasPropertyTag($classReflection, $propertyName)) {
             return false;
+        }
+
+        if (str_ends_with($propertyName, '_count')) {
+            $propertyName = Str::camel(Str::before($propertyName, '_count'));
         }
 
         $hasNativeMethod = $classReflection->hasNativeMethod($propertyName);
@@ -78,46 +72,78 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
 
     public function getProperty(ClassReflection $classReflection, string $propertyName): PropertyReflection
     {
+        if (str_ends_with($propertyName, '_count')) {
+            return new ModelProperty($classReflection, IntegerRangeType::createAllGreaterThanOrEqualTo(0), new NeverType(), false);
+        }
+
         $method = $classReflection->getMethod($propertyName, new OutOfClassScope());
 
-        /** @var ObjectType $returnType */
         $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
 
-        if ($returnType instanceof GenericObjectType) {
-            /** @var ObjectType $relatedModelType */
-            $relatedModelType = $returnType->getTypes()[0];
-            $relatedModelClassName = $relatedModelType->getClassName();
+        if ($returnType instanceof GenericObjectType) { // @phpstan-ignore-line This is a special shortcut we take
+            $relatedModel = $returnType->getTypes()[0];
+
+            if ($relatedModel->getObjectClassNames() === []) {
+                $relatedModelClassNames = [Model::class];
+            } else {
+                $relatedModelClassNames = $relatedModel->getObjectClassNames();
+            }
         } else {
-            $relatedModelClassName = $this
-                ->relationParserHelper
-                ->findRelatedModelInRelationMethod($method);
+            $modelName = $this->relationParserHelper->findRelatedModelInRelationMethod($method) ?? Model::class;
+            $relatedModel = new ObjectType($modelName);
+            $relatedModelClassNames = [$modelName];
         }
 
-        if ($relatedModelClassName === null) {
-            $relatedModelClassName = Model::class;
-        }
+        $relationType = TypeTraverser::map($returnType, function (Type $type, callable $traverse) use ($relatedModelClassNames, $relatedModel) {
+            if ($type instanceof UnionType || $type instanceof IntersectionType) {
+                return $traverse($type);
+            }
 
-        $relatedModel = new ObjectType($relatedModelClassName);
-        $collectionClass = $this->builderHelper->determineCollectionClassName($relatedModelClassName);
+            if ($type->getObjectClassNames() === []) {
+                return $traverse($type);
+            }
 
-        if (Str::contains($returnType->getClassName(), 'Many')) {
-            return new ModelProperty(
-                $classReflection,
-                new GenericObjectType($collectionClass, [$relatedModel]),
-                new NeverType(), false
-            );
-        }
+            if ($type instanceof GenericObjectType) {
+                $relatedModel = $type->getTypes()[0];
+                $relatedModelClassNames = $relatedModel->getObjectClassNames();
+            }
 
-        if (Str::endsWith($returnType->getClassName(), 'MorphTo')) {
-            return new ModelProperty($classReflection, new UnionType([
-                new ObjectType(Model::class),
-                new MixedType(),
-            ]), new NeverType(), false);
-        }
+            if (Str::contains($type->getObjectClassNames()[0], 'Many')) {
+                $types = [];
 
-        return new ModelProperty($classReflection, new UnionType([
-            $relatedModel,
-            new NullType(),
-        ]), new NeverType(), false);
+                foreach ($relatedModelClassNames as $relatedModelClassName) {
+                    $types[] = $this->collectionHelper->determineCollectionClass($relatedModelClassName);
+                }
+
+                if ($types !== []) {
+                    return TypeCombinator::union(...$types);
+                }
+            }
+
+            if (Str::endsWith($type->getObjectClassNames()[0], 'MorphTo')) {
+                // There was no generic type, or it was just Model
+                // so we will return mixed to avoid errors.
+                if ($relatedModel->getObjectClassNames()[0] === Model::class) {
+                    return new MixedType();
+                }
+
+                $types = [];
+
+                foreach ($relatedModelClassNames as $relatedModelClassName) {
+                    $types[] = new ObjectType($relatedModelClassName);
+                }
+
+                if ($types !== []) {
+                    return TypeCombinator::union(...$types);
+                }
+            }
+
+            return new UnionType([
+                $relatedModel,
+                new NullType(),
+            ]);
+        });
+
+        return new ModelProperty($classReflection, $relationType, new NeverType(), false);
     }
 }

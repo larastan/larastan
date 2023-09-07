@@ -1,0 +1,43 @@
+<?php
+
+namespace Illuminate\Database\Eloquent;
+
+/**
+ * @implements \ArrayAccess<string, mixed>
+ */
+abstract class Model implements \JsonSerializable, \ArrayAccess
+{
+    /**
+     * @var array<string, string>
+     */
+    protected $casts = [];
+
+    /**
+     * @var list<string>
+     */
+    protected $hidden = [];
+
+    /**
+     * @var list<string>
+     */
+    protected $visible = [];
+
+    /**
+     * Update the model in the database.
+     *
+     * @param  array<model-property<static>, mixed>  $attributes
+     * @param  array<int|string, mixed>  $options
+     * @return bool
+     */
+    public function update(array $attributes = [], array $options = []);
+
+    /**
+     * Begin querying a model with eager loading.
+     *
+     * @param  string|array<int|string, (\Closure)|string|array<int|string, string>>  $relations
+     * @return \Illuminate\Database\Eloquent\Builder<static>
+     */
+    public static function with($relations);
+}
+
+class ModelNotFoundException extends \RuntimeException {}

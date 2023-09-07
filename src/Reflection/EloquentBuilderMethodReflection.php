@@ -27,9 +27,6 @@ final class EloquentBuilderMethodReflection implements MethodReflection
      */
     private $classReflection;
 
-    /** @var MethodReflection */
-    private $originalMethodReflection;
-
     /**
      * @var ParameterReflection[]
      */
@@ -46,18 +43,16 @@ final class EloquentBuilderMethodReflection implements MethodReflection
     private $isVariadic;
 
     /**
-     * @param string                $methodName
-     * @param ClassReflection       $classReflection
-     * @param MethodReflection      $originalMethodReflection
-     * @param ParameterReflection[] $parameters
-     * @param Type|null             $returnType
-     * @param bool                  $isVariadic
+     * @param  string  $methodName
+     * @param  ClassReflection  $classReflection
+     * @param  ParameterReflection[]  $parameters
+     * @param  Type|null  $returnType
+     * @param  bool  $isVariadic
      */
-    public function __construct(string $methodName, ClassReflection $classReflection, MethodReflection $originalMethodReflection, array $parameters, ?Type $returnType = null, bool $isVariadic = false)
+    public function __construct(string $methodName, ClassReflection $classReflection, array $parameters, ?Type $returnType = null, bool $isVariadic = false)
     {
         $this->methodName = $methodName;
         $this->classReflection = $classReflection;
-        $this->originalMethodReflection = $originalMethodReflection;
         $this->parameters = $parameters;
         $this->returnType = $returnType ?? new ObjectType(Builder::class);
         $this->isVariadic = $isVariadic;
@@ -142,13 +137,5 @@ final class EloquentBuilderMethodReflection implements MethodReflection
     public function hasSideEffects(): TrinaryLogic
     {
         return TrinaryLogic::createMaybe();
-    }
-
-    /**
-     * @return MethodReflection
-     */
-    public function getOriginalMethodReflection(): MethodReflection
-    {
-        return $this->originalMethodReflection;
     }
 }

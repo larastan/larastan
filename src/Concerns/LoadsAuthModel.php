@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan\Concerns;
 
-use Illuminate\Config\Repository as ConfigRepository;
+use Illuminate\Contracts\Config\Repository as ConfigRepository;
 
 trait LoadsAuthModel
 {
+    /** @phpstan-return class-string|null */
     private function getAuthModel(ConfigRepository $config, ?string $guard = null): ?string
     {
         if (
