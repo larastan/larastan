@@ -1,7 +1,0 @@
-<?php
-
-namespace Illuminate\Routing;
-
-class Redirector
-{
-}
