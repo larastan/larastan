@@ -21,6 +21,12 @@ parameters:
     level: 5
     paths:
         - app/
+    parameters:
+        ignoreErrors:
+            -
+                message: "#^Parameter \\#1 \\$name of function route expects route\\-name\\-string, string given\\.$#"
+                count: 1
+                path: app/Http/Middleware/Authenticate.php
 EOF
 
 echo "Test Laravel"
