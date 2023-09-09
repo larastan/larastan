@@ -36,7 +36,7 @@ class RouteNameStringTypeTest extends RuleTestCase
         self::getContainer()->getByType(RouteNameStringTypeNodeResolverExtension::class)->refreshRoutes();
 
         $this->analyse([
-            __DIR__.'/data/route-access.php'
+            __DIR__.'/data/route-access.php',
         ], [
             ['Parameter #1 $name of function route expects route-name-string, string given.', 4, "Route 'existingg' does not exist. Did you mean 'existing'?"],
             ['Parameter #1 $name of function route expects route-name-string, string given.', 5, "Route 'abcdefghjkl' does not exist."],

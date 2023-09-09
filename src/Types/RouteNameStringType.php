@@ -8,6 +8,7 @@ use PHPStan\Type\CompoundType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\VerbosityLevel;
+
 use function array_map;
 use function array_slice;
 use function count;
@@ -19,7 +20,7 @@ use function usort;
 class RouteNameStringType extends StringType
 {
     /**
-     * @param list<string> $existingRouteNames
+     * @param  list<string>  $existingRouteNames
      */
     public function __construct(private array $existingRouteNames)
     {
@@ -93,7 +94,7 @@ class RouteNameStringType extends StringType
     }
 
     /**
-     * @param mixed[] $properties
+     * @param  mixed[]  $properties
      * @return Type
      */
     public static function __set_state(array $properties): Type
@@ -112,10 +113,10 @@ class RouteNameStringType extends StringType
 
         $alternatives = $this->closestRouteNamesTo($routeName);
         if (count($alternatives) > 0) {
-            $quoted = array_map(fn(string $name) => "'$name'", $alternatives);
+            $quoted = array_map(fn (string $name) => "'$name'", $alternatives);
 
             if (count($alternatives) === 1) {
-                $message .= ' Did you mean ' . $quoted[0] . '?';
+                $message .= ' Did you mean '.$quoted[0].'?';
             } else {
                 $list = implode(', ', array_slice($quoted, 0, -1));
                 $last = $quoted[count($quoted) - 1];
@@ -130,9 +131,9 @@ class RouteNameStringType extends StringType
      * Tries to find similarly named routes to the given one using
      * the {@link levenshtein()}-distance.
      *
-     * @param string $query A route name that probably does not exist, but we search a similarly named route for
-     * @param int $threshold Max. acceptable edit distance. Inversely proportional to the number of returned results.
-     * @param int $maxResults Max. number of returned results
+     * @param  string  $query  A route name that probably does not exist, but we search a similarly named route for
+     * @param  int  $threshold  Max. acceptable edit distance. Inversely proportional to the number of returned results.
+     * @param  int  $maxResults  Max. number of returned results
      * @return list<string>
      */
     private function closestRouteNamesTo(
@@ -149,16 +150,20 @@ class RouteNameStringType extends StringType
         usort(
             $withDistance,
             /**
-             * @param array{0: string, 1: int} $a
-             * @param array{0: string, 1: int} $b
+             * @param  array{0: string, 1: int}  $a
+             * @param  array{0: string, 1: int}  $b
              */
-            fn(array $a, array $b): int => $a[1] - $b[1]
+            fn (array $a, array $b): int => $a[1] - $b[1]
         );
 
         $results = [];
         foreach ($withDistance as [$route, $distance]) {
-            if (count($results) === $maxResults) break;
-            if ($distance > $threshold) break;
+            if (count($results) === $maxResults) {
+                break;
+            }
+            if ($distance > $threshold) {
+                break;
+            }
 
             $results[] = $route;
         }
