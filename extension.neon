@@ -374,6 +374,11 @@ services:
             - phpstan.phpDoc.typeNodeResolverExtension
 
     -
+        class: NunoMaduro\Larastan\Types\RouteNameStringTypeNodeResolverExtension
+        tags:
+            - phpstan.phpDoc.typeNodeResolverExtension
+
+    -
         class: NunoMaduro\Larastan\Rules\OctaneCompatibilityRule
 
     -
