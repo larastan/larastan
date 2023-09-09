@@ -186,7 +186,7 @@ function route($name, $parameters = [], $absolute = true) {}
  * @param  route-name-string  $route
  * @param  mixed  $parameters
  * @param  int  $status
- * @param  array  $headers
+ * @param  array<string, mixed>  $headers
  * @return \Illuminate\Http\RedirectResponse
  */
 function to_route($route, $parameters = [], $status = 302, $headers = [])
