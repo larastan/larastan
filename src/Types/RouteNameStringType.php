@@ -9,6 +9,7 @@ use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\VerbosityLevel;
 
+use function app;
 use function array_map;
 use function array_slice;
 use function count;
@@ -19,14 +20,6 @@ use function usort;
 
 class RouteNameStringType extends StringType
 {
-    /**
-     * @param  list<string>  $existingRouteNames
-     */
-    public function __construct(private array $existingRouteNames)
-    {
-        parent::__construct();
-    }
-
     public function describe(VerbosityLevel $level): string
     {
         return 'route-name-string';
@@ -51,16 +44,17 @@ class RouteNameStringType extends StringType
 
         $constantStrings = $type->getConstantStrings();
         if (count($constantStrings) === 1) {
+            $existingRouteNames = $this->resolveExistingRouteNames();
             $routeName = $constantStrings[0]->getValue();
 
-            if ($this->routeExists($routeName)) {
+            if (in_array($routeName, $existingRouteNames)) {
                 return AcceptsResult::createYes();
             }
 
             // @phpstan-ignore-next-line Phpstan tells me, that this function is not covered by their BC promise, even though the class clearly has the @api tag in its doc-comment.
             return new AcceptsResult(
                 TrinaryLogic::createNo(),
-                [$this->describeWhyNotAccepted($routeName)],
+                [$this->describeWhyNotAccepted($routeName, $existingRouteNames)],
             );
         }
 
@@ -75,7 +69,12 @@ class RouteNameStringType extends StringType
     {
         $constantStrings = $type->getConstantStrings();
         if (count($constantStrings) === 1) {
-            return TrinaryLogic::createFromBoolean($this->routeExists($constantStrings[0]->getValue()));
+            $routeName = $constantStrings[0]->getValue();
+            $existingRouteNames = $this->resolveExistingRouteNames();
+
+            return TrinaryLogic::createFromBoolean(
+                in_array($routeName, $existingRouteNames),
+            );
         }
 
         if ($type instanceof self) {
@@ -99,19 +98,37 @@ class RouteNameStringType extends StringType
      */
     public static function __set_state(array $properties): Type
     {
-        return new self($properties['existingRouteNames']);
+        return new self();
     }
 
-    private function routeExists(string $name): bool
+    /**
+     * @return list<string>
+     */
+    private function resolveExistingRouteNames(): array
     {
-        return in_array($name, $this->existingRouteNames);
+        $names = [];
+
+        foreach (app('router')->getRoutes()->getRoutes() as $route) {
+            $name = $route->getName();
+            if ($name !== null) {
+                $names[] = $name;
+            }
+        }
+
+        return $names;
     }
 
-    private function describeWhyNotAccepted(string $routeName): string
+    /**
+     * @param list<string> $existingRouteNames
+     */
+    private function describeWhyNotAccepted(
+        string $routeName,
+        array $existingRouteNames,
+    ): string
     {
         $message = "Route '$routeName' does not exist.";
 
-        $alternatives = $this->closestRouteNamesTo($routeName);
+        $alternatives = $this->closestRouteNamesTo($routeName, $existingRouteNames);
         if (count($alternatives) > 0) {
             $quoted = array_map(fn (string $name) => "'$name'", $alternatives);
 
@@ -132,18 +149,20 @@ class RouteNameStringType extends StringType
      * the {@link levenshtein()}-distance.
      *
      * @param  string  $query  A route name that probably does not exist, but we search a similarly named route for
+     * @param  list<string>  $existingRouteNames  All known route names
      * @param  int  $threshold  Max. acceptable edit distance. Inversely proportional to the number of returned results.
      * @param  int  $maxResults  Max. number of returned results
      * @return list<string>
      */
     private function closestRouteNamesTo(
         string $query,
+        array $existingRouteNames,
         int $threshold = 3,
         int $maxResults = 3,
     ): array {
         $withDistance = array_map(function (string $existingRoute) use ($query) {
             return [$existingRoute, levenshtein($query, $existingRoute)];
-        }, $this->existingRouteNames);
+        }, $existingRouteNames);
 
         // This sorts the name-distance pairs in ascending order. Therefore, the
         // most similar names are at the top

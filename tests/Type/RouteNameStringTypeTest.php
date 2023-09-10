@@ -4,7 +4,6 @@ namespace Type;
 
 use Illuminate\Foundation\Application;
 use Illuminate\Routing\Router;
-use NunoMaduro\Larastan\Types\RouteNameStringTypeNodeResolverExtension;
 use PHPStan\Rules\Functions\CallToFunctionParametersRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
@@ -33,7 +32,6 @@ class RouteNameStringTypeTest extends RuleTestCase
         $router->get('also-another-existing')->name('also-another-existing');
 
         $router->getRoutes()->refreshNameLookups();
-        self::getContainer()->getByType(RouteNameStringTypeNodeResolverExtension::class)->refreshRoutes();
 
         $this->analyse([
             __DIR__.'/data/route-access.php',
