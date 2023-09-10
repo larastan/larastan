@@ -26,7 +26,7 @@ class ViewStringType extends StringType
     public function acceptsWithReason(Type $type, bool $strictTypes): AcceptsResult
     {
         if ($type instanceof CompoundType) {
-            return $type->isAcceptedBy($this, $strictTypes);
+            return $type->isAcceptedWithReasonBy($this, $strictTypes);
         }
 
         $constantStrings = $type->getConstantStrings();
