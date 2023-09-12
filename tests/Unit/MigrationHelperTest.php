@@ -212,4 +212,18 @@ class MigrationHelperTest extends PHPStanTestCase
         self::assertCount(5, $tables['users']->columns);
         self::assertSame(['id', 'name', 'email', 'created_at', 'updated_at'], array_keys($tables['users']->columns));
     }
+
+    /** @test */
+    public function it_can_handle_migrations_with_if_statements()
+    {
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__.'/data/conditional_migrations'], $this->fileHelper, false, $this->reflectionProvider);
+
+        $tables = $migrationHelper->initializeTables();
+
+        self::assertArrayHasKey('id', $tables['users']->columns);
+        self::assertArrayHasKey('name', $tables['users']->columns);
+        self::assertArrayHasKey('email', $tables['users']->columns);
+        self::assertArrayHasKey('address1', $tables['users']->columns);
+        self::assertArrayHasKey('address2', $tables['users']->columns);
+    }
 }

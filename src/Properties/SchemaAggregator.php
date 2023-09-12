@@ -146,7 +146,7 @@ final class SchemaAggregator
         ) {
             $argName = $call->getArgs()[1]->value->params[0]->var->name;
 
-            $this->processColumnUpdates($tableName, $argName, $updateClosure->stmts);
+            $this->processColumnUpdates($tableName, $argName, $this->getUpdateStatements($updateClosure));
         }
     }
 
@@ -547,5 +547,34 @@ final class SchemaAggregator
         }
 
         return $argExpression->name->getFirst() === 'true';
+    }
+
+    /**
+     * @param  PhpParser\Node\Expr  $updateClosure
+     * @return PhpParser\Node\Stmt\Expression[]
+     */
+    private function getUpdateStatements(PhpParser\Node\Expr $updateClosure): array
+    {
+        if (! property_exists($updateClosure, 'stmts')) {
+            return [];
+        }
+
+        $statements = [];
+        $nodeFinder = new NodeFinder();
+
+        foreach ($updateClosure->stmts as $updateStatement) {
+            if ($updateStatement instanceof PhpParser\Node\Stmt\If_) {
+                $statements = array_merge(
+                    $statements,
+                    $nodeFinder->findInstanceOf($updateStatement, PhpParser\Node\Stmt\Expression::class)
+                );
+
+                continue;
+            }
+
+            $statements[] = $updateStatement;
+        }
+
+        return $statements;
     }
 }
