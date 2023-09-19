@@ -16,6 +16,7 @@ use function PHPStan\Testing\assertType;
 function test(User $user, \App\Address $address, Account $account, ExtendsModelWithPropertyAnnotations $model, Tag $tag, User|Account $union)
 {
     assertType('App\Account', $user->accounts()->firstOrCreate([]));
+    assertType('App\Account', $user->accounts()->createOrFirst([]));
     assertType(Post::class, $user->posts()->create());
     assertType('App\Account', $user->accounts()->create());
     assertType('App\Account', $user->syncableRelation()->create());
