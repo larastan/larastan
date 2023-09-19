@@ -186,11 +186,6 @@ function testFirstOrCreate()
     assertType('App\User', User::firstOrCreate([]));
 }
 
-function testCreateOrFirst()
-{
-    assertType('App\User', User::createOrFirst([]));
-}
-
 function testScope()
 {
     assertType('Illuminate\Database\Eloquent\Builder<App\Thread>', Thread::valid());

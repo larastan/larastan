@@ -53,6 +53,15 @@ abstract class HasOneOrMany extends Relation
     public function firstOrCreate(array $attributes, array $values = []);
 
     /**
+     * Attempt to create the record. If a unique constraint violation occurs, attempt to find the matching record.
+     *
+     * @param  array<model-property<TRelatedModel>, mixed>  $attributes
+     * @param  array<mixed, mixed>  $values
+     * @return TRelatedModel
+     */
+    public function createOrFirst(array $attributes, array $values = []);
+
+    /**
      * Create or update a related record matching the attributes, and fill it with values.
      *
      * @param  array<model-property<TRelatedModel>, mixed>  $attributes
