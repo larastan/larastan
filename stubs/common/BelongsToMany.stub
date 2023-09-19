@@ -36,6 +36,16 @@ class BelongsToMany extends Relation
     public function firstOrCreate(array $attributes, array $joining = [], $touch = true);
 
     /**
+     * Attempt to create the record. If a unique constraint violation occurs, attempt to find the matching record.
+     *
+     * @param  array<string, mixed>  $attributes
+     * @param  array<mixed>  $joining
+     * @param  bool  $touch
+     * @return TRelatedModel
+     */
+    public function createOrFirst(array $attributes, array $joining = [], $touch = true);
+
+    /**
      * Create or update a related record matching the attributes, and fill it with values.
      *
      * @param  array<string, mixed>  $attributes
