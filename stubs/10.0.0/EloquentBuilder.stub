@@ -131,7 +131,7 @@ class Builder
      * @param  array<model-property<TModelClass>, mixed>  $values
      * @phpstan-return TModelClass
      */
-    public function createOrFirst(array $attributes = [], array $values = [])
+    public function createOrFirst(array $attributes = [], array $values = []);
 
     /**
      * Create or update a record matching the attributes, and fill it with values.
