@@ -8,7 +8,12 @@ Carbon::macro('foo', static function (): string {
     return 'foo';
 });
 
-\Illuminate\Database\Eloquent\Builder::macro('globalCustomMacro', function (string $arg = 'foobar', int $b = 5): string {
+enum SomeEnum {
+    case A;
+    case B;
+}
+
+\Illuminate\Database\Eloquent\Builder::macro('globalCustomMacro', function (string $arg = 'foobar', int $b = 5, SomeEnum $enum = SomeEnum::A): string {
     return $arg;
 });
 
