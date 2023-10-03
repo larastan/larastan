@@ -1,5 +1,4 @@
-.idea/*
-.idea/codeStyleSettings.xml
+/.idea/
 composer.lock
 /vendor/
 coverage.xml
