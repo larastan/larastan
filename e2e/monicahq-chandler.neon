@@ -4,5 +4,3 @@ includes:
 parameters:
 	ignoreErrors:
 		- '#^Property App\\.+ \(never\) does not accept mixed\.$#'
-	# Mute irrelevant ignored errors.
-	reportUnmatchedIgnoredErrors: false
