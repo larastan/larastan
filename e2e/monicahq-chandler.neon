@@ -5,4 +5,4 @@ parameters:
     # Mute irrelevant ignored errors.
 	reportUnmatchedIgnoredErrors: false
     ignoreErrors:
-        - '#^Property App\\.+::\$label \(never\) does not accept mixed\.$#'
+        - '#^Property App\\.+ \(never\) does not accept mixed\.$#'
