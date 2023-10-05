@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: ["8.0", "8.1", "8.2"]
+        php: ["8.0", "8.1", "8.2", "8.3"]
         laravel: ["^9.0", "^10.0"]
         dependencies:
             - "lowest"
