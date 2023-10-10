@@ -123,7 +123,9 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
                 if ($type instanceof GenericObjectType && (($innerTypeReflection = $type->getClassReflection()) !== null)) {
                     $genericTypes = $innerTypeReflection->typeMapToList($innerTypeReflection->getActiveTemplateTypeMap());
 
-                    return new GenericObjectType($classReflection->getName(), $genericTypes);
+                    if ($classReflection->isSubclassOf($type->getClassName())) {
+                        return new GenericObjectType($classReflection->getName(), $genericTypes);
+                    }
                 }
 
                 return $traverse($type);
