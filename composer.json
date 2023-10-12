@@ -25,6 +25,7 @@
     },
     "require-dev": {
         "nikic/php-parser": "^4.17.1",
+        "orchestra/canvas": "^8.11.0",
         "orchestra/testbench": "^7.33.0 || ^8.13.0",
         "phpunit/phpunit": "^9.6.13"
     },
