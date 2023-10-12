@@ -7,7 +7,7 @@ on:
       - 'docs/**'
     # Prevent duplicating jobs on PR-s from local branches
     branches:
-      - "2.x"
+      - "master"
   pull_request:
     paths-ignore:
       - "**.md"
