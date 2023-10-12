@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-
+        include:
           -
             repository: koel/koel
             ref: de88d23b9564d2f7b496b9cd141fc9e648b7feeb
