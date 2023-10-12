@@ -25,13 +25,6 @@ jobs:
       matrix:
         include:
           -
-            repository: monicahq/chandler
-            ref: f57c49400dfa419e78bad240f018bce2949dcac2
-            php-version: "8.2"
-            config: monicahq-chandler.neon
-            baseline: monicahq-chandler.baseline.neon
-
-          -
             repository: koel/koel
             ref: de88d23b9564d2f7b496b9cd141fc9e648b7feeb
             php-version: "8.2"
