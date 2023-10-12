@@ -23,27 +23,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        - repository: koel/koel
+          ref: de88d23b9564d2f7b496b9cd141fc9e648b7feeb
+          php-version: "8.1"
+          config: koel-koel.neon
+          baseline: koel-koel.baseline.neon
 
-          -
-            repository: koel/koel
-            ref: de88d23b9564d2f7b496b9cd141fc9e648b7feeb
-            php-version: "8.1"
-            config: koel-koel.neon
-            baseline: koel-koel.baseline.neon
+        - repository: canvural/larastan-test
+          ref: 686828b76a2e300b1a3cc99fdd8be9af3a3e7e60
+          php-version: "8.1"
+          config: canvural-larastan-test.neon
+          baseline: canvural-larastan-test.baseline.neon
 
-          -
-            repository: canvural/larastan-test
-            ref: 686828b76a2e300b1a3cc99fdd8be9af3a3e7e60
-            php-version: "8.1"
-            config: canvural-larastan-test.neon
-            baseline: canvural-larastan-test.baseline.neon
-
-          -
-            repository: canvural/larastan-strict-rules
-            ref: 3d9ba8263f8fcb6f9d7e5c3d05af7f58c5537540
-            php-version: "8.1"
-            config: canvural-larastan-strict-rules.neon
-            baseline: canvural-larastan-strict-rules.baseline.neon
+        - repository: canvural/larastan-strict-rules
+          ref: 3d9ba8263f8fcb6f9d7e5c3d05af7f58c5537540
+          php-version: "8.1"
+          config: canvural-larastan-strict-rules.neon
+          baseline: canvural-larastan-strict-rules.baseline.neon
 
     steps:
       - name: "Checkout"
