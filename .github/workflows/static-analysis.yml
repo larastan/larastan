@@ -25,7 +25,7 @@ jobs:
       fail-fast: false
       matrix:
         php: ["8.2", "8.3"]
-        laravel: [""^11.0"]
+        laravel: ["^11.0"]
         dependencies: ["highest"]
 
     name: "PHP ${{ matrix.php }} - L${{ matrix.laravel }} ${{ matrix.dependencies == 'highest' && '↑' || '↓' }}"
