@@ -26,6 +26,7 @@
     "require-dev": {
         "laravel/pint": "^1.13.3",
         "nikic/php-parser": "^4.17.1",
+        "orchestra/canvas": "^9.0.0",
         "orchestra/testbench": "^9.0.0",
         "phpunit/phpunit": "^10.4.1"
     },
