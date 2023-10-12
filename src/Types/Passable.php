@@ -19,25 +19,17 @@ final class Passable implements PassableContract
 
     /**
      * Passable constructor.
-     *
-     * @param  \PHPStan\Type\Type  $type
      */
     public function __construct(Type $type)
     {
         $this->type = $type;
     }
 
-    /**
-     * @return \PHPStan\Type\Type
-     */
     public function getType(): Type
     {
         return $this->type;
     }
 
-    /**
-     * @param  \PHPStan\Type\Type  $type
-     */
     public function setType(Type $type): void
     {
         $this->type = $type;

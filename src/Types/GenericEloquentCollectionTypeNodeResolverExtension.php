@@ -55,6 +55,7 @@ class GenericEloquentCollectionTypeNodeResolverExtension implements TypeNodeReso
         foreach ($typeNode->types as $innerTypeNode) {
             if ($innerTypeNode instanceof ArrayTypeNode) {
                 $arrayTypeNode = $innerTypeNode;
+
                 continue;
             }
 

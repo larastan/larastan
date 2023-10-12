@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Date;
 
 use function PHPStan\Testing\assertType;
 
-/** @param mixed $date */
+/** @param  mixed  $date */
 function foo($date): void
 {
     assertType('Illuminate\Support\Carbon', Date::create());

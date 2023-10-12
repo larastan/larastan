@@ -102,10 +102,12 @@ final class ModelFindExtension implements DynamicStaticMethodReturnTypeExtension
             if ($argType->isIterable()->yes()) {
                 if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
                     $types[] = $this->collectionHelper->determineCollectionClass($modelName);
+
                     continue;
                 }
 
                 $types[] = TypeCombinator::remove($returnType, new ObjectType($modelName));
+
                 continue;
             }
 

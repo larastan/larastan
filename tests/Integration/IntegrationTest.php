@@ -28,7 +28,7 @@ class IntegrationTest extends PHPStanTestCase
     /**
      * @dataProvider dataIntegrationTests
      */
-    public function testIntegration(string $file, ?array $expectedErrors = null): void
+    public function testIntegration(string $file, array $expectedErrors = null): void
     {
         $errors = $this->runAnalyse($file);
 
@@ -46,7 +46,7 @@ class IntegrationTest extends PHPStanTestCase
      * @param  string[]|null  $allAnalysedFiles
      * @return Error[]
      */
-    private function runAnalyse(string $file, ?array $allAnalysedFiles = null): array
+    private function runAnalyse(string $file, array $allAnalysedFiles = null): array
     {
         $file = $this->getFileHelper()->normalizePath($file);
 

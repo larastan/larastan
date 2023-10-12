@@ -15,9 +15,9 @@ class ModelFactoryType extends ObjectType
 
     public function __construct(
         string $className,
-        ?Type $subtractedType = null,
-        ?ClassReflection $classReflection = null,
-        ?TrinaryLogic $isSingleModel = null,
+        Type $subtractedType = null,
+        ClassReflection $classReflection = null,
+        TrinaryLogic $isSingleModel = null,
     ) {
         parent::__construct($className, $subtractedType, $classReflection);
 

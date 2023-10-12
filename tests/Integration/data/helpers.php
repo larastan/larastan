@@ -11,9 +11,9 @@ function retryAcceptsCallableAsSleepMilliseconds(): void
 {
     retry(5, function (int $attempt): bool {
         return false;
-    }, function (int $attempt, \Exception $e): int {
+    }, function (int $attempt, Exception $e): int {
         return 0;
-    }, function (\Exception $e): bool {
+    }, function (Exception $e): bool {
         return true;
     });
 }

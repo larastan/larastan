@@ -18,7 +18,7 @@ class CheckDispatchArgumentTypesCompatibleWithClassConstructorRuleTest extends R
     private $dispatchableClass;
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     protected function getRule(): Rule
     {

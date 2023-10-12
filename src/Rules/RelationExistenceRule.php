@@ -30,7 +30,7 @@ class RelationExistenceRule implements Rule
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getNodeType(): string
     {
@@ -38,7 +38,7 @@ class RelationExistenceRule implements Rule
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function processNode(Node $node, Scope $scope): array
     {

@@ -26,7 +26,6 @@ final class ApplicationResolver
      * Create symlink on vendor path.
      *
      * @param  \Illuminate\Contracts\Foundation\Application  $app
-     * @return void
      */
     public static function createSymlinkToVendorPath($app, string $vendorDir): void
     {
@@ -57,7 +56,6 @@ final class ApplicationResolver
     /**
      * Creates an application and registers service providers found.
      *
-     * @return \Illuminate\Contracts\Foundation\Application
      *
      * @throws \ReflectionException
      */
@@ -86,7 +84,7 @@ final class ApplicationResolver
         if (class_exists(Config::class)) {
             $config = Config::loadFromYaml($workingPath);
 
-            static::createSymlinkToVendorPath(Testbench::create($config['laravel'], null, ['extra' => ['dont-discover' => ['*']]]), $vendorDir);
+            self::createSymlinkToVendorPath(Testbench::create($config['laravel'], null, ['extra' => ['dont-discover' => ['*']]]), $vendorDir);
 
             return Testbench::create(
                 $config['laravel'],
@@ -95,7 +93,7 @@ final class ApplicationResolver
             );
         }
 
-        static::createSymlinkToVendorPath(Testbench::create(Testbench::applicationBasePath(), null, ['extra' => ['dont-discover' => ['*']]]), $vendorDir);
+        self::createSymlinkToVendorPath(Testbench::create(Testbench::applicationBasePath(), null, ['extra' => ['dont-discover' => ['*']]]), $vendorDir);
 
         return Testbench::create(
             null,

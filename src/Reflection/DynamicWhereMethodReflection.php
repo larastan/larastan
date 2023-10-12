@@ -77,7 +77,7 @@ final class DynamicWhereMethodReflection implements Reflection\MethodReflection
                             return false;
                         }
 
-                        public function getType(): \PHPStan\Type\Type
+                        public function getType(): Type
                         {
                             return new MixedType();
                         }
@@ -92,7 +92,7 @@ final class DynamicWhereMethodReflection implements Reflection\MethodReflection
                             return false;
                         }
 
-                        public function getDefaultValue(): ?\PHPStan\Type\Type
+                        public function getDefaultValue(): ?Type
                         {
                             return null;
                         }

@@ -72,9 +72,6 @@ final class Macro implements MethodReflection
 
     /**
      * Set the is static value.
-     *
-     * @param  bool  $isStatic
-     * @return void
      */
     public function setIsStatic(bool $isStatic): void
     {
@@ -108,7 +105,7 @@ final class Macro implements MethodReflection
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getVariants(): array
     {

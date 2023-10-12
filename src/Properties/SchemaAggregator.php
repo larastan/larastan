@@ -25,7 +25,7 @@ final class SchemaAggregator
     /** @var ReflectionProvider */
     private $reflectionProvider;
 
-    /** @param array<string, SchemaTable> $tables */
+    /** @param  array<string, SchemaTable>  $tables */
     public function __construct(ReflectionProvider $reflectionProvider, array $tables = [])
     {
         $this->tables = $tables;
@@ -151,8 +151,6 @@ final class SchemaAggregator
     }
 
     /**
-     * @param  string  $tableName
-     * @param  string  $argName
      * @param  PhpParser\Node\Stmt[]  $stmts
      *
      * @throws \Exception
@@ -550,7 +548,6 @@ final class SchemaAggregator
     }
 
     /**
-     * @param  PhpParser\Node\Expr  $updateClosure
      * @return PhpParser\Node\Stmt\Expression[]
      */
     private function getUpdateStatements(PhpParser\Node\Expr $updateClosure): array

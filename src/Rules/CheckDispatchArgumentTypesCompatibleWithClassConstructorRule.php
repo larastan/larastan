@@ -36,9 +36,6 @@ class CheckDispatchArgumentTypesCompatibleWithClassConstructorRule implements Ru
     /** @var string */
     private $dispatchableClass;
 
-    /**
-     * @param  string  $dispatchableClass
-     */
     public function __construct(
         ReflectionProvider $reflectionProvider,
         FunctionCallParametersCheck $check,
@@ -50,7 +47,7 @@ class CheckDispatchArgumentTypesCompatibleWithClassConstructorRule implements Ru
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getNodeType(): string
     {
@@ -58,7 +55,7 @@ class CheckDispatchArgumentTypesCompatibleWithClassConstructorRule implements Ru
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function processNode(Node $node, Scope $scope): array
     {

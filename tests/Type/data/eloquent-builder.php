@@ -201,7 +201,7 @@ function testCallingQueryBuilderMethodOnEloquentBuilderReturnsEloquentBuilder(Bu
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $builder->whereNotNull('test'));
 }
 
-/** @param OnlyUsers&User $userAndAuth */
+/** @param  OnlyUsers&User  $userAndAuth */
 function doFoo(User $user, Post $post, $userAndAuth): void
 {
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->newQuery());
@@ -342,15 +342,15 @@ function testDecrementWithQueryExpression()
     assertType('int', User::query()->decrement(\Illuminate\Support\Facades\DB::raw('counter')));
 }
 
-/** @param EloquentBuilder<User> $query */
+/** @param  EloquentBuilder<User>  $query */
 function testMacro(EloquentBuilder $query): void
 {
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query->macro('customMacro', function () {
     }));
 }
 
-/** @param EloquentBuilder<User> $query */
-function testGlobalMacro(\Illuminate\Database\Eloquent\Builder $query)
+/** @param  EloquentBuilder<User>  $query */
+function testGlobalMacro(EloquentBuilder $query)
 {
     assertType('string', $query->globalCustomMacro('foo'));
 }
@@ -452,7 +452,7 @@ function testChunkOnEloquentBuilder()
     User::chunk(1000, fn ($collection) => assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection));
 }
 
-/** @param Builder<User|Team> $builder */
+/** @param  Builder<User|Team>  $builder */
 function testUnionBuilder(Builder $builder)
 {
     assertType('App\Team|App\User', $builder->findOrFail(4));

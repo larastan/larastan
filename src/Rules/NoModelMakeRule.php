@@ -36,25 +36,17 @@ class NoModelMakeRule implements Rule
      */
     protected $reflectionProvider;
 
-    /**
-     * @param  ReflectionProvider  $reflectionProvider
-     */
     public function __construct(ReflectionProvider $reflectionProvider)
     {
         $this->reflectionProvider = $reflectionProvider;
     }
 
-    /**
-     * @return string
-     */
     public function getNodeType(): string
     {
-        return StaticCall::class;
+        return StaticCall::class; // @phpstan-ignore-line
     }
 
     /**
-     * @param  Node  $node
-     * @param  Scope  $scope
      * @return array<int, RuleError>
      */
     public function processNode(Node $node, Scope $scope): array
@@ -84,10 +76,6 @@ class NoModelMakeRule implements Rule
 
     /**
      * Was the expression called on a Model instance?
-     *
-     * @param  StaticCall  $call
-     * @param  Scope  $scope
-     * @return bool
      */
     protected function isCalledOnModel(StaticCall $call, Scope $scope): bool
     {

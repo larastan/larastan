@@ -48,7 +48,6 @@ class ModelPropertyStaticCallRule implements Rule
 
     /**
      * @param  Node\Expr\StaticCall  $node
-     * @param  Scope  $scope
      * @return string[]
      *
      * @throws \PHPStan\ShouldNotHappenException

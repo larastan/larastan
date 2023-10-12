@@ -12,7 +12,7 @@ use function PHPStan\Testing\assertType;
 /** @var User $user */
 assertType('Illuminate\Support\Collection<int, non-falsy-string>', collect(['foo', null, '', 'bar', null])->filter());
 
-/** @param Collection<int, mixed> $foo */
+/** @param  Collection<int, mixed>  $foo */
 function foo(Collection $foo): void
 {
     assertType("Illuminate\Support\Collection<int, mixed~0|0.0|''|'0'|array{}|false|null>", $foo->filter());
@@ -26,10 +26,10 @@ function storeAttachments(array $attachments): void
     assertType(
         'Illuminate\Support\Collection<int, App\Account>',
         collect($attachments)
-        ->map(function (User $attachment): ?Account {
-            return convertToAccount($attachment);
-        })
-        ->filter()
+            ->map(function (User $attachment): ?Account {
+                return convertToAccount($attachment);
+            })
+            ->filter()
     );
 }
 
@@ -42,7 +42,7 @@ assertType('Illuminate\Support\Collection<int, int<3, max>>', collect([1, 2, 3, 
     return $value > 2;
 }));
 
-/** @param EloquentCollection<int, User> $foo */
+/** @param  EloquentCollection<int, User>  $foo */
 function bar(Collection $foo): void
 {
     assertType("Illuminate\Database\Eloquent\Collection<int, App\User>", $foo->filter(function (User $user): bool {
@@ -60,9 +60,9 @@ assertType('App\AccountCollection<int, App\Account>', $accounts->filter(function
 $accounts->filter(function ($account) {
     return dummyFilter($account);
 })
-->map(function ($account) {
-    assertType('App\Account', $account);
-});
+    ->map(function ($account) {
+        assertType('App\Account', $account);
+    });
 
 function dummyFilter($value)
 {

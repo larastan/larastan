@@ -23,7 +23,7 @@ final class UsedEmailViewCollector implements Collector
         return Node\Expr\MethodCall::class;
     }
 
-    /** @param Node\Expr\MethodCall $node */
+    /** @param  Node\Expr\MethodCall  $node */
     public function processNode(Node $node, Scope $scope): ?string
     {
         $name = $node->name;

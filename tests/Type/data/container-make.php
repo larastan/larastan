@@ -18,7 +18,7 @@ function doFoo(\Illuminate\Container\Container $container, \Illuminate\Contracts
     assertType('Illuminate\Config\Repository', $container2->resolve(Repository::class));
 }
 
-/** @param class-string<Model> $foo */
+/** @param  class-string<Model>  $foo */
 function doBar(string $foo, \Illuminate\Contracts\Container\Container $container)
 {
     assertType('mixed', $container->make($foo));

@@ -29,15 +29,12 @@ use function sprintf;
 class ModelPropertiesRuleHelper
 {
     /**
-     * @param  MethodReflection  $methodReflection
-     * @param  Scope  $scope
      * @param  Node\Arg[]  $args
-     * @param  ClassReflection|null  $modelReflection
      * @return string[]
      *
      * @throws ShouldNotHappenException
      */
-    public function check(MethodReflection $methodReflection, Scope $scope, array $args, ?ClassReflection $modelReflection = null): array
+    public function check(MethodReflection $methodReflection, Scope $scope, array $args, ClassReflection $modelReflection = null): array
     {
         $modelPropertyParameter = $this->hasModelPropertyParameter($methodReflection, $scope, $args, $modelReflection);
 
@@ -135,17 +132,14 @@ class ModelPropertiesRuleHelper
     }
 
     /**
-     * @param  MethodReflection  $methodReflection
-     * @param  Scope  $scope
      * @param  Node\Arg[]  $args
-     * @param  ClassReflection|null  $modelReflection
      * @return array<int, int|Type>
      */
     public function hasModelPropertyParameter(
         MethodReflection $methodReflection,
         Scope $scope,
         array $args,
-        ?ClassReflection $modelReflection = null
+        ClassReflection $modelReflection = null
     ): array {
         $parameters = ParametersAcceptorSelector::selectFromArgs($scope, $args, $methodReflection->getVariants())->getParameters();
 
