@@ -67,5 +67,5 @@ jobs:
         run: "composer run-script test:unit"
 
       - name: "Run Larastan on a sample Laravel application"
-        run: "tests/laravel-test.sh ^11.0"
+        run: "tests/laravel-test.sh dev-master"
         if: "matrix.laravel == '^11.0'"
