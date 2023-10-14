@@ -23,37 +23,6 @@ use function getcwd;
 final class ApplicationResolver
 {
     /**
-     * Create symlink on vendor path.
-     *
-     * @param  \Illuminate\Contracts\Foundation\Application  $app
-     */
-    public static function createSymlinkToVendorPath($app, string $vendorDir): void
-    {
-        if (class_exists(CreateVendorSymlink::class)) {
-            (new CreateVendorSymlink($vendorDir))->bootstrap($app);
-
-            return;
-        }
-
-        $filesystem = new Filesystem();
-
-        $laravelVendorPath = $app->basePath('vendor');
-
-        if (
-            "$laravelVendorPath/autoload.php" !== "$vendorDir/autoload.php"
-        ) {
-            if ($filesystem->exists($app->bootstrapPath('cache/packages.php'))) {
-                $filesystem->delete($app->bootstrapPath('cache/packages.php'));
-            }
-
-            $filesystem->delete($laravelVendorPath);
-            $filesystem->link($vendorDir, $laravelVendorPath);
-        }
-
-        $app->flush();
-    }
-
-    /**
      * Creates an application and registers service providers found.
      *
      *
@@ -81,24 +50,16 @@ final class ApplicationResolver
             }
         };
 
-        if (class_exists(Config::class)) {
-            $config = Config::loadFromYaml($workingPath);
+        $config = Config::loadFromYaml($workingPath);
 
-            self::createSymlinkToVendorPath(Testbench::create($config['laravel'], null, ['extra' => ['dont-discover' => ['*']]]), $vendorDir);
-
-            return Testbench::create(
-                $config['laravel'],
-                $resolvingCallback,
-                ['enables_package_discoveries' => true, 'extra' => $config->getExtraAttributes()]
-            );
-        }
-
-        self::createSymlinkToVendorPath(Testbench::create(Testbench::applicationBasePath(), null, ['extra' => ['dont-discover' => ['*']]]), $vendorDir);
+        (new CreateVendorSymlink($vendorDir))->bootstrap(
+            Testbench::create($config['laravel'], null, ['extra' => ['dont-discover' => ['*']]])
+        );
 
         return Testbench::create(
-            null,
+            $config['laravel'],
             $resolvingCallback,
-            ['enables_package_discoveries' => true]
+            ['enables_package_discoveries' => true, 'extra' => $config->getExtraAttributes()]
         );
     }
 }
