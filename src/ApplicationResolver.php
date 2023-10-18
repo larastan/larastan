@@ -8,7 +8,6 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Foundation\PackageManifest;
 use NunoMaduro\Larastan\Internal\ComposerHelper;
 use Orchestra\Testbench\Foundation\Application as Testbench;
-use Orchestra\Testbench\Foundation\Bootstrap\CreateVendorSymlink;
 use Orchestra\Testbench\Foundation\Config;
 
 use function defined;
