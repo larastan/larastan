@@ -50,14 +50,12 @@ final class ApplicationResolver
 
         $config = Config::loadFromYaml($workingPath);
 
-        (new CreateVendorSymlink($vendorDir))->bootstrap(
-            Testbench::create($config['laravel'], null, ['extra' => ['dont-discover' => ['*']]])
-        );
+        Testbench::createVendorSymlink($config['laravel'], $vendorDir);
 
-        return Testbench::create(
-            $config['laravel'],
+        return Testbench::createFromConfig(
+            $config,
             $resolvingCallback,
-            ['enables_package_discoveries' => true, 'extra' => $config->getExtraAttributes()]
+            ['enables_package_discoveries' => true]
         );
     }
 }
