@@ -73,6 +73,8 @@ function test(User $user, \App\Address $address, Account $account, ExtendsModelW
     assertType('int<0, max>', $user->group_count);
     assertType('int<0, max>', $user->accounts_count);
     assertType('int<0, max>', $user->accounts_snake_count);
+    assertType('int<0, max>', $user->accounts_camel_count);
+    assertType('int<0, max>', $user->accountsCamel_count);
     assertType('int<0, max>', $user->syncable_relation_count);
 
     $users = (new Post())->users();

@@ -52,22 +52,24 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
         }
 
         if (str_ends_with($propertyName, '_count')) {
-            $propertyName = Str::camel(Str::before($propertyName, '_count'));
+            $propertyName = Str::before($propertyName, '_count');
         }
 
-        $hasNativeMethod = $classReflection->hasNativeMethod($propertyName);
+        foreach ([Str::camel($propertyName), $propertyName] as $methodName) {
+            $hasNativeMethod = $classReflection->hasNativeMethod($methodName);
 
-        if (! $hasNativeMethod) {
-            return false;
+            if (! $hasNativeMethod) {
+                continue;
+            }
+
+            $returnType = ParametersAcceptorSelector::selectSingle($classReflection->getNativeMethod($methodName)->getVariants())->getReturnType();
+
+            if ((new ObjectType(Relation::class))->isSuperTypeOf($returnType)->yes()) {
+                return true;
+            }
         }
 
-        $returnType = ParametersAcceptorSelector::selectSingle($classReflection->getNativeMethod($propertyName)->getVariants())->getReturnType();
-
-        if (! (new ObjectType(Relation::class))->isSuperTypeOf($returnType)->yes()) {
-            return false;
-        }
-
-        return true;
+        return false;
     }
 
     public function getProperty(ClassReflection $classReflection, string $propertyName): PropertyReflection
