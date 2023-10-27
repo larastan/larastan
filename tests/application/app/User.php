@@ -126,6 +126,16 @@ class User extends Authenticatable
         return $this->hasMany(Account::class);
     }
 
+    public function accounts_snake(): HasMany
+    {
+        return $this->hasMany(Account::class);
+    }
+
+    public function accountsCamel(): HasMany
+    {
+        return $this->hasMany(Account::class);
+    }
+
     /** @phpstan-return HasMany<ModelWithNonGenericCollection> */
     public function modelsWithNonGenericCollection(): HasMany
     {
