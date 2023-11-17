@@ -22,10 +22,10 @@ function foo()
     assertType('void', Event::assertNotDispatched('FooEvent'));
 
     $redis = Redis::connection();
-    assertType('array', $redis->lrange('some-key', 0, -1));
-    assertType('array', Redis::lrange('some-key', 0, -1));
-    assertType('bool', Redis::expire('foo', 3));
-    assertType('array', Redis::hmget('h', ['field1', 'field2']));
+    assertType('(array|Redis|false)', $redis->lrange('some-key', 0, -1));
+    assertType('(array|Redis|false)', Redis::lrange('some-key', 0, -1));
+    assertType('(bool|Redis)', Redis::expire('foo', 3));
+    assertType('(array<string, mixed>|Redis|false)', Redis::hmget('h', ['field1', 'field2']));
 
     assertType('Illuminate\Database\Query\Builder', DB::query());
     assertType('int', DB::transactionLevel());
