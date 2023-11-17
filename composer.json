@@ -21,7 +21,7 @@
         "illuminate/pipeline": "^9.52.16 || ^10.28.0",
         "illuminate/support": "^9.52.16 || ^10.28.0",
         "phpmyadmin/sql-parser": "^5.8.2",
-        "phpstan/phpstan": "^1.10.38"
+        "phpstan/phpstan": "^1.10.41"
     },
     "require-dev": {
         "nikic/php-parser": "^4.17.1",
