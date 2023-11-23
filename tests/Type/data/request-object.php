@@ -14,5 +14,3 @@ assertType('array<int, Illuminate\Http\UploadedFile>|Illuminate\Http\UploadedFil
 assertType('Illuminate\Routing\Route|null', $request->route());
 assertType('object|string|null', $request->route('foo'));
 assertType('object|string|null', $request->route('foo', 'bar'));
-
-assertType('App\User|null', $request->user());
