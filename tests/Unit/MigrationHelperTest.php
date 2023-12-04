@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use NunoMaduro\Larastan\Properties\MigrationHelper;
-use NunoMaduro\Larastan\Properties\SchemaTable;
+use Larastan\Larastan\Properties\MigrationHelper;
+use Larastan\Larastan\Properties\SchemaTable;
 use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
 use PHPStan\Testing\PHPStanTestCase;

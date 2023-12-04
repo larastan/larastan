@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Properties;
+namespace Larastan\Larastan\Properties;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
-use NunoMaduro\Larastan\Concerns;
-use NunoMaduro\Larastan\Reflection\ReflectionHelper;
-use NunoMaduro\Larastan\Support\CollectionHelper;
-use NunoMaduro\Larastan\Types\RelationParserHelper;
+use Larastan\Larastan\Concerns;
+use Larastan\Larastan\Reflection\ReflectionHelper;
+use Larastan\Larastan\Support\CollectionHelper;
+use Larastan\Larastan\Types\RelationParserHelper;
 use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;

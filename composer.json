@@ -1,10 +1,14 @@
 {
-    "name": "nunomaduro/larastan",
+    "name": "larastan/larastan",
     "type": "phpstan-extension",
     "description": "Larastan - Discover bugs in your code without running it. A phpstan/phpstan wrapper for Laravel",
     "keywords": ["laravel", "larastan", "phpstan", "php", "package", "static analysis", "code analysis", "code analyse"],
     "license": "MIT",
     "authors": [
+        {
+            "name": "Can Vural",
+            "email": "can9119@gmail.com"
+        },
         {
             "name": "Nuno Maduro",
             "email": "enunomaduro@gmail.com"
@@ -46,7 +50,7 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
-            "NunoMaduro\\Larastan\\": "src/"
+            "Larastan\\Larastan\\": "src/"
         }
     },
     "config": {

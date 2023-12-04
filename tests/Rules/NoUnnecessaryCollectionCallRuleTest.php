@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Rules;
 
-use NunoMaduro\Larastan\Properties\ModelPropertyExtension;
-use NunoMaduro\Larastan\Rules\NoUnnecessaryCollectionCallRule;
+use Larastan\Larastan\Properties\ModelPropertyExtension;
+use Larastan\Larastan\Rules\NoUnnecessaryCollectionCallRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 

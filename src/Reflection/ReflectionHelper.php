@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Reflection;
+namespace Larastan\Larastan\Reflection;
 
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\Mixin\MixinMethodsClassReflectionExtension;

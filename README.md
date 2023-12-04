@@ -1,23 +1,26 @@
+1. nunomaduro/larastan -> Laravel Forge...
+
+
 <p align="center">
-    <img src="https://raw.githubusercontent.com/nunomaduro/larastan/master/docs/logo.png" alt="Larastan Logo" width="300">
+    <img src="https://raw.githubusercontent.com/larastan/larastan/master/docs/logo.png" alt="Larastan Logo" width="300">
     <br><br>
-    <img src="https://raw.githubusercontent.com/nunomaduro/larastan/master/docs/example.png" alt="Larastan Example" height="300">
+    <img src="https://raw.githubusercontent.com/larastan/larastan/master/docs/example.png" alt="Larastan Example" height="300">
 </p>
 
 <p align="center">
-  <a href="https://github.com/nunomaduro/larastan/actions"><img src="https://github.com/nunomaduro/larastan/workflows/tests/badge.svg" alt="Build Status"></a>
-  <a href="https://packagist.org/packages/nunomaduro/larastan/stats"><img src="https://poser.pugx.org/nunomaduro/larastan/d/total.svg" alt="Total Downloads"></a>
-  <a href="https://packagist.org/packages/nunomaduro/larastan"><img src="https://poser.pugx.org/nunomaduro/larastan/v/stable.svg" alt="Latest Version"></a>
-  <a href="https://github.com/nunomaduro/larastan/blob/master/LICENSE.md"><img src="https://poser.pugx.org/nunomaduro/larastan/license.svg" alt="License"></a>
+  <a href="https://github.com/larastan/larastan/actions"><img src="https://github.com/larastan/larastan/workflows/tests/badge.svg" alt="Build Status"></a>
+  <a href="https://packagist.org/packages/larastan/larastan/stats"><img src="https://poser.pugx.org/larastan/larastan/d/total.svg" alt="Total Downloads"></a>
+  <a href="https://packagist.org/packages/larastan/larastan"><img src="https://poser.pugx.org/larastan/larastan/v/stable.svg" alt="Latest Version"></a>
+  <a href="https://github.com/larastan/larastan/blob/master/LICENSE.md"><img src="https://poser.pugx.org/larastan/larastan/license.svg" alt="License"></a>
 </p>
 
 ------
 
 ## ⚗️ About Larastan
 
-> If you are using a Laravel version older than 9.x, please refer to [Larastan v1.x](https://github.com/nunomaduro/larastan/tree/1.x) with [PHPStan 1.8.x](https://github.com/nunomaduro/larastan/pull/1431#issuecomment-1303332293).
+> If you are using a Laravel version older than 9.x, please refer to [Larastan v1.x](https://github.com/larastan/larastan/tree/1.x) with [PHPStan 1.8.x](https://github.com/larastan/larastan/pull/1431#issuecomment-1303332293).
 
-Larastan was created by [Can Vural](https://github.com/canvural) and [Nuno Maduro](https://github.com/nunomaduro), got artwork designed by [@Caneco](http://github.com/caneco), is maintained by [Can Vural](https://github.com/canvural), [Nuno Maduro](https://github.com/nunomaduro), and [Viktor Szépe](https://github.com/szepeviktor), and is a [PHPStan](https://phpstan.org/) wrapper for Laravel. Larastan focuses on **finding errors in your code**. It catches whole classes of bugs even **before you write tests** for the code.
+Larastan was created by [Can Vural](https://github.com/canvural) and [Nuno Maduro](https://github.com/larastan), got artwork designed by [@Caneco](http://github.com/caneco), is maintained by [Can Vural](https://github.com/canvural), [Nuno Maduro](https://github.com/larastan), and [Viktor Szépe](https://github.com/szepeviktor), and is a [PHPStan](https://phpstan.org/) wrapper for Laravel. Larastan focuses on **finding errors in your code**. It catches whole classes of bugs even **before you write tests** for the code.
 
 - Adds static typing to Laravel to improve developer productivity and **code quality**
 - Supports most of [Laravel](https://laravel.com)'s **beautiful magic**
@@ -34,7 +37,7 @@ Larastan was created by [Can Vural](https://github.com/canvural) and [Nuno Madur
 **1**: First, you may use [Composer](https://getcomposer.org) to install Larastan as a development dependency into your Laravel project:
 
 ```bash
-composer require nunomaduro/larastan:^2.0 --dev
+composer require larastan/larastan:^2.0 --dev
 ```
 
 > Using Larastan for analysing Laravel packages? You may need to install `orchestra/testbench`.
@@ -43,7 +46,7 @@ composer require nunomaduro/larastan:^2.0 --dev
 
 ```
 includes:
-    - ./vendor/nunomaduro/larastan/extension.neon
+    - ./vendor/larastan/larastan/extension.neon
 
 parameters:
 
@@ -131,7 +134,7 @@ We listed common [errors to ignore](docs/errors-to-ignore.md), add them as neede
 
 Thank you for considering contributing to Larastan. All the contribution guidelines are mentioned [here](CONTRIBUTING.md).
 
-You can have a look at the [CHANGELOG](CHANGELOG.md) for constant updates & detailed information about the changes. You can also follow the Twitter account for the latest announcements or just come say hi!: [@enunomaduro](https://twitter.com/enunomaduro), [@can__vural](https://twitter.com/can__vural).
+You can have a look at the [CHANGELOG](CHANGELOG.md) for constant updates & detailed information about the changes. You can also follow the Twitter account for the latest announcements or just come say hi!: [@elarastan](https://twitter.com/elarastan), [@can__vural](https://twitter.com/can__vural).
 
 ## 📖 License
 

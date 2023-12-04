@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Rules\ConsoleCommand;
+namespace Larastan\Larastan\Rules\ConsoleCommand;
 
-use NunoMaduro\Larastan\Internal\ConsoleApplicationResolver;
+use Larastan\Larastan\Internal\ConsoleApplicationResolver;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Rules\UselessConstructs;
+namespace Larastan\Larastan\Rules\UselessConstructs;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;

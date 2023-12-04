@@ -4,7 +4,7 @@ namespace Helpers;
 
 use App\User;
 use Exception;
-use NunoMaduro\Larastan\ApplicationResolver;
+use Larastan\Larastan\ApplicationResolver;
 use Throwable;
 
 use function PHPStan\Testing\assertType;
@@ -12,9 +12,9 @@ use function PHPStan\Testing\assertType;
 function appHelper()
 {
     assertType('Illuminate\Foundation\Application', app());
-    assertType('NunoMaduro\Larastan\ApplicationResolver', app(ApplicationResolver::class));
+    assertType('Larastan\Larastan\ApplicationResolver', app(ApplicationResolver::class));
     assertType('Illuminate\Auth\AuthManager', app('auth'));
-    assertType('NunoMaduro\Larastan\ApplicationResolver', resolve(ApplicationResolver::class));
+    assertType('Larastan\Larastan\ApplicationResolver', resolve(ApplicationResolver::class));
     assertType('Illuminate\Auth\AuthManager', resolve('auth'));
 }
 

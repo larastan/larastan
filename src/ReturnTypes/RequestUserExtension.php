@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\ReturnTypes;
+namespace Larastan\Larastan\ReturnTypes;
 
 use Illuminate\Http\Request;
-use NunoMaduro\Larastan\Concerns\HasContainer;
-use NunoMaduro\Larastan\Concerns\LoadsAuthModel;
+use Larastan\Larastan\Concerns\HasContainer;
+use Larastan\Larastan\Concerns\LoadsAuthModel;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;

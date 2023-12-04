@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Types\Factory;
+namespace Larastan\Larastan\Types\Factory;
 
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\TrinaryLogic;

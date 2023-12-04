@@ -1,6 +1,6 @@
 <?php
 
-namespace NunoMaduro\Larastan\Properties\Schema;
+namespace Larastan\Larastan\Properties\Schema;
 
 use PhpMyAdmin\SqlParser\Components\DataType;
 

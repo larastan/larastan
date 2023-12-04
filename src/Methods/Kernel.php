@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Methods;
+namespace Larastan\Larastan\Methods;
 
 use Illuminate\Pipeline\Pipeline;
-use NunoMaduro\Larastan\Concerns;
-use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
+use Larastan\Larastan\Concerns;
+use Larastan\Larastan\Contracts\Methods\PassableContract;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
 use PHPStan\Reflection\ReflectionProvider;

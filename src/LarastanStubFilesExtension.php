@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan;
+namespace Larastan\Larastan;
 
 use PHPStan\PhpDoc\StubFilesExtension;
 use SplFileInfo;

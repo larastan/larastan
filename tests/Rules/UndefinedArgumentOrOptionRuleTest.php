@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Rules;
 
-use NunoMaduro\Larastan\Internal\ConsoleApplicationResolver;
-use NunoMaduro\Larastan\Rules\ConsoleCommand\UndefinedArgumentOrOptionRule;
+use Larastan\Larastan\Internal\ConsoleApplicationResolver;
+use Larastan\Larastan\Rules\ConsoleCommand\UndefinedArgumentOrOptionRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 

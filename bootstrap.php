@@ -5,7 +5,7 @@ declare(strict_types=1);
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Contracts\Foundation\Application;
 use Laravel\Lumen\Application as LumenApplication;
-use NunoMaduro\Larastan\ApplicationResolver;
+use Larastan\Larastan\ApplicationResolver;
 use Orchestra\Testbench\Concerns\CreatesApplication;
 
 if (! defined('LARAVEL_START')) {

@@ -12,11 +12,11 @@ echo "Add Larastan from source"
 composer config minimum-stability dev
 composer config repositories.0 '{ "type": "path", "url": "../larastan", "options": { "symlink": false } }'
 # No version information with "type":"path"
-composer require --dev "nunomaduro/larastan:*"
+composer require --dev "larastan/larastan:*"
 
 cat >phpstan.neon <<"EOF"
 includes:
-    - ./vendor/nunomaduro/larastan/extension.neon
+    - ./vendor/larastan/larastan/extension.neon
 parameters:
     level: 5
     paths:

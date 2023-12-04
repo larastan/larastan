@@ -70,7 +70,7 @@ jobs:
           composer install --no-scripts --no-interaction
           composer config repositories.0 '{ "type": "path", "url": "../larastan" }'
           composer config minimum-stability dev
-          composer require --dev --update-with-all-dependencies "nunomaduro/larastan:*"
+          composer require --dev --update-with-all-dependencies "larastan/larastan:*"
 
       - name: "Perform static analysis"
         working-directory: e2e
