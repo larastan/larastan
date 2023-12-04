@@ -131,7 +131,7 @@ We listed common [errors to ignore](docs/errors-to-ignore.md), add them as neede
 
 Thank you for considering contributing to Larastan. All the contribution guidelines are mentioned [here](CONTRIBUTING.md).
 
-You can have a look at the [CHANGELOG](CHANGELOG.md) for constant updates & detailed information about the changes. You can also follow the Twitter account for the latest announcements or just come say hi!: [@elarastan](https://twitter.com/elarastan), [@can__vural](https://twitter.com/can__vural).
+You can have a look at the [CHANGELOG](CHANGELOG.md) for constant updates & detailed information about the changes. You can also follow the Twitter account for the latest announcements or just come say hi!: [@enunomaduro](https://twitter.com/enunomaduro), [@can__vural](https://twitter.com/can__vural).
 
 ## 📖 License
 
