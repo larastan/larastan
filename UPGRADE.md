@@ -1,5 +1,27 @@
 # Upgrade Guide
 
+## Upgrading to `2.7.0` from `2.6.5`
+
+### Organization Change
+
+Starting Larastan 2.7.0, the Larastan repository will now be handled within the [Larastan](https://github.com/larastan) organization. To receive the latest Larastan updates, please modify your composer Larastan entry:
+
+```diff
+    "require-dev": {
+-        "nunomaduro/larastan": "^2.6.0",
++        "larastan/larastan": "^2.7.0",
+    },
+```
+
+If you are using the `includes` option in your `phpstan.neon` configuration file, please update it as well:
+
+```diff
+includes:
+-    - ./vendor/nunomaduro/larastan/extension.neon
++    - ./vendor/larastan/larastan/extension.neon
+    },
+```
+
 ## Upgrading to `2.0.0` from `1.x`
 
 ### Eloquent Collection now requires 2 generic types
