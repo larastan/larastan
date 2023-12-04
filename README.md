@@ -1,6 +1,3 @@
-1. nunomaduro/larastan -> Laravel Forge...
-
-
 <p align="center">
     <img src="https://raw.githubusercontent.com/larastan/larastan/master/docs/logo.png" alt="Larastan Logo" width="300">
     <br><br>
