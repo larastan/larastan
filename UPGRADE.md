@@ -19,7 +19,6 @@ If you are using the `includes` option in your `phpstan.neon` configuration file
 includes:
 -    - ./vendor/nunomaduro/larastan/extension.neon
 +    - ./vendor/larastan/larastan/extension.neon
-    },
 ```
 
 ## Upgrading to `2.0.0` from `1.x`
