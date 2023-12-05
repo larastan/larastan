@@ -53,9 +53,13 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
 
         if (str_ends_with($propertyName, '_count')) {
             $propertyName = Str::before($propertyName, '_count');
+
+            $methodNames = [Str::camel($propertyName), $propertyName];
+        } else {
+            $methodNames = [$propertyName];
         }
 
-        foreach ([Str::camel($propertyName), $propertyName] as $methodName) {
+        foreach ($methodNames as $methodName) {
             $hasNativeMethod = $classReflection->hasNativeMethod($methodName);
 
             if (! $hasNativeMethod) {

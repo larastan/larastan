@@ -34,6 +34,8 @@ function test(User $user, \App\Address $address, Account $account, ExtendsModelW
     /** @var Group $group */
     $group = $user->group;
 
+    $user->__children = $user->children;
+
     assertType('App\AccountCollection<int, App\Account>', $group->accounts()->where('active', 1)->get());
     assertType('App\Account', $user->accounts()->make());
     assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account>', (new User())->accounts()->where('name', 'bar'));
@@ -45,6 +47,7 @@ function test(User $user, \App\Address $address, Account $account, ExtendsModelW
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\User, App\Account>', $account->ownerRelation());
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Account, App\Account>', $account->parent());
     assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\User>', $user->children());
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $user->__children);
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\User, App\User>', $user->parent());
     assertType('App\Account|null', $user->accounts()->firstWhere('name', 'bar'));
     assertType('App\Group|null', $user->group()->firstWhere('name', 'bar'));
