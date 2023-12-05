@@ -4,7 +4,7 @@
 
 ### Organization Change
 
-Starting Larastan 2.7.0, the Larastan repository will now be handled within the [Larastan](https://github.com/larastan) organization. To receive the latest Larastan updates, please modify your composer Larastan entry:
+Starting with Larastan 2.7.0, the Larastan repository will now be managed under the [Larastan](https://github.com/larastan) organization. To receive the latest updates, please modify your composer's Larastan entry as follows:
 
 ```diff
     "require-dev": {
