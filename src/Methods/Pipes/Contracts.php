@@ -39,7 +39,6 @@ final class Contracts implements PipeContract
     }
 
     /**
-     * @param  \PHPStan\Reflection\ClassReflection  $classReflection
      * @return class-string[]
      */
     private function concretes(ClassReflection $classReflection): array

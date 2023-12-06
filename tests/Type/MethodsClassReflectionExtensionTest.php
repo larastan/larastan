@@ -7,10 +7,10 @@ class MethodsClassReflectionExtensionTest extends \PHPStan\Testing\TypeInference
     /**
      * @return iterable<mixed>
      */
-    public function dataFileAsserts(): iterable
+    public static function dataFileAsserts(): iterable
     {
-        yield from $this->gatherAssertTypes(__DIR__.'/data/macros.php');
-        yield from $this->gatherAssertTypes(__DIR__.'/data/redirect-response.php');
+        yield from self::gatherAssertTypes(__DIR__.'/data/macros.php');
+        yield from self::gatherAssertTypes(__DIR__.'/data/redirect-response.php');
     }
 
     /**

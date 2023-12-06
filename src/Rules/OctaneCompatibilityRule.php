@@ -28,7 +28,7 @@ class OctaneCompatibilityRule implements Rule
         return MethodCall::class;
     }
 
-    /** @param MethodCall $node */
+    /** @param  MethodCall  $node */
     public function processNode(Node $node, Scope $scope): array
     {
         if (! $node->name instanceof Node\Identifier) {

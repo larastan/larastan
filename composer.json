@@ -11,22 +11,24 @@
         }
     ],
     "require": {
-        "php": "^8.0.2",
+        "php": "^8.2",
         "ext-json": "*",
-        "illuminate/console": "^9.47.0 || ^10.0.0",
-        "illuminate/container": "^9.47.0 || ^10.0.0",
-        "illuminate/contracts": "^9.47.0 || ^10.0.0",
-        "illuminate/database": "^9.47.0 || ^10.0.0",
-        "illuminate/http": "^9.47.0 || ^10.0.0",
-        "illuminate/pipeline": "^9.47.0 || ^10.0.0",
-        "illuminate/support": "^9.47.0 || ^10.0.0",
-        "phpmyadmin/sql-parser": "^5.6.0",
-        "phpstan/phpstan": "~1.10.6"
+        "illuminate/console": "^11.0.0",
+        "illuminate/container": "^11.0.0",
+        "illuminate/contracts": "^11.0.0",
+        "illuminate/database": "^11.0.0",
+        "illuminate/http": "^11.0.0",
+        "illuminate/pipeline": "^11.0.0",
+        "illuminate/support": "^11.0.0",
+        "phpmyadmin/sql-parser": "^5.8.2",
+        "phpstan/phpstan": "^1.10.38"
     },
     "require-dev": {
-        "nikic/php-parser": "^4.15.2",
-        "orchestra/testbench": "^7.19.0 || ^8.0.0",
-        "phpunit/phpunit": "^9.5.27"
+        "laravel/pint": "^1.13.3",
+        "nikic/php-parser": "^4.17.1",
+        "orchestra/canvas": "^9.0.0",
+        "orchestra/testbench": "^9.0.0",
+        "phpunit/phpunit": "^10.4.1"
     },
     "suggest": {
         "orchestra/testbench": "Using Larastan for analysing a package needs Testbench"
@@ -54,7 +56,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.0-dev"
+            "dev-master": "3.0-dev"
         },
         "phpstan": {
             "includes": [
@@ -63,9 +65,12 @@
         }
     },
     "scripts": {
+        "lint": "pint",
+        "test:lint": "pint --test",
         "test:types": "phpstan analyse --ansi --memory-limit 256M",
-        "test:unit": "phpunit --colors=always -d memory_limit=1280M",
+        "test:unit": "phpunit --colors=always -d memory_limit=1408M",
         "test": [
+            "@test:lint",
             "@test:types",
             "@test:unit"
         ]

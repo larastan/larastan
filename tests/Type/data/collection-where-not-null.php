@@ -14,19 +14,19 @@ assertType(
     collect([new \App\User, new \stdClass, ['id' => 'foo'], 'foo', true, 22])->whereNotNull('id')
 );
 
-/** @param \Illuminate\Database\Eloquent\Collection<int, \App\User> $foo */
+/** @param  \Illuminate\Database\Eloquent\Collection<int, \App\User>  $foo */
 function objectAndParam(EloquentCollection $foo): void
 {
     assertType("Illuminate\Database\Eloquent\Collection<int, App\User>", $foo->whereNotNull('blocked'));
 }
 
-/** @param \Illuminate\Database\Eloquent\Collection<int, ?\App\User> $foo */
+/** @param  \Illuminate\Database\Eloquent\Collection<int, ?\App\User>  $foo */
 function objectOrNullAndParam(EloquentCollection $foo): void
 {
     assertType("Illuminate\Database\Eloquent\Collection<int, App\User>", $foo->whereNotNull('blocked'));
 }
 
-/** @param \Illuminate\Database\Eloquent\Collection<int, ?\App\User> $foo */
+/** @param  \Illuminate\Database\Eloquent\Collection<int, ?\App\User>  $foo */
 function objectOrNull(EloquentCollection $foo): void
 {
     assertType("Illuminate\Database\Eloquent\Collection<int, App\User>", $foo->whereNotNull());

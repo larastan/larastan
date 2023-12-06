@@ -75,7 +75,7 @@ final class HigherOrderCollectionProxyExtension implements MethodsClassReflectio
                 $this->returnType = $returnType;
             }
 
-            public function getDeclaringClass(): \PHPStan\Reflection\ClassReflection
+            public function getDeclaringClass(): ClassReflection
             {
                 return $this->classReflection;
             }

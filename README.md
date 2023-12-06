@@ -1,3 +1,9 @@
+## Todo
+
+- Re-enable E2E tests
+
+------
+
 <p align="center">
     <img src="https://raw.githubusercontent.com/nunomaduro/larastan/master/docs/logo.png" alt="Larastan Logo" width="300">
     <br><br>
@@ -15,7 +21,7 @@
 
 ## ⚗️ About Larastan
 
-> If you are using a Laravel version older than 9.x, please refer to [Larastan v1.x](https://github.com/nunomaduro/larastan/tree/1.x) with [PHPStan 1.8.x](https://github.com/nunomaduro/larastan/pull/1431#issuecomment-1303332293).
+> If you are using a Laravel version older than 11.x, please refer to [Larastan v2.x](https://github.com/nunomaduro/larastan/tree/2.x).
 
 Larastan was created by [Can Vural](https://github.com/canvural) and [Nuno Maduro](https://github.com/nunomaduro), got artwork designed by [@Caneco](http://github.com/caneco), is maintained by [Can Vural](https://github.com/canvural), [Nuno Maduro](https://github.com/nunomaduro), and [Viktor Szépe](https://github.com/szepeviktor), and is a [PHPStan](https://phpstan.org/) wrapper for Laravel. Larastan focuses on **finding errors in your code**. It catches whole classes of bugs even **before you write tests** for the code.
 
@@ -28,13 +34,13 @@ Larastan was created by [Can Vural](https://github.com/canvural) and [Nuno Madur
 ## ✨ Getting Started In 3 Steps
 
 > **Requires:**
-- **[PHP 8.0+](https://php.net/releases/)**
-- **[Laravel 9.0+](https://github.com/laravel/laravel)**
+- **[PHP 8.2+](https://php.net/releases/)**
+- **[Laravel 11.0+](https://github.com/laravel/laravel)**
 
 **1**: First, you may use [Composer](https://getcomposer.org) to install Larastan as a development dependency into your Laravel project:
 
 ```bash
-composer require nunomaduro/larastan:^2.0 --dev
+composer require nunomaduro/larastan:^3.0 --dev
 ```
 
 > Using Larastan for analysing Laravel packages? You may need to install `orchestra/testbench`.

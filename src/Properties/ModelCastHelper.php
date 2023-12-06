@@ -161,10 +161,6 @@ class ModelCastHelper
         return new ObjectType($dateClass);
     }
 
-    /**
-     * @param  string  $cast
-     * @return string
-     */
     private function parseCast(string $cast): string
     {
         foreach (explode(':', $cast) as $part) {

@@ -6,8 +6,6 @@ class ModelPropertyCustomMethods extends Model
 {
     /**
      * @phpstan-param model-property<\App\User> $property
-     *
-     * @param  string  $property
      */
     public function foo(string $property): void
     {
@@ -25,8 +23,6 @@ class ModelPropertyCustomMethodsInNormalClass
 {
     /**
      * @phpstan-param model-property<\App\User> $property
-     *
-     * @param  string  $property
      */
     public function foo(string $property): void
     {

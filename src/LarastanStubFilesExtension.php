@@ -11,7 +11,7 @@ use Symfony\Component\Finder\Finder;
 final class LarastanStubFilesExtension implements StubFilesExtension
 {
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public function getFiles(): array
     {

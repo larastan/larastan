@@ -73,11 +73,6 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
         return false;
     }
 
-    /**
-     * @param  ClassReflection  $classReflection
-     * @param  string  $methodName
-     * @return MethodReflection
-     */
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
         return $this->cache[$classReflection->getCacheKey().'-'.$methodName];

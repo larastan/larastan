@@ -24,18 +24,11 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: ["8.0", "8.1", "8.2"]
-        laravel: ["^9.0", "^10.0"]
+        php: ["8.2", "8.3"]
+        laravel: ["^11.0"]
         dependencies:
             - "lowest"
             - "highest"
-        exclude:
-          - php: "8.0"
-            laravel: "^10.0"
-            dependencies: "lowest"
-          - php: "8.0"
-            laravel: "^10.0"
-            dependencies: "highest"
 
     name: "PHP${{ matrix.php }} - Laravel${{ matrix.laravel }} ${{ matrix.dependencies == 'highest' && '↑' || '↓' }}"
 
@@ -43,7 +36,7 @@ jobs:
 
     steps:
       - name: "Checkout code"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
 
       - name: "Setup PHP"
         uses: "shivammathur/setup-php@v2"
@@ -74,4 +67,5 @@ jobs:
         run: "composer run-script test:unit"
 
       - name: "Run Larastan on a sample Laravel application"
-        run: "tests/laravel-test.sh ${{ matrix.laravel }}"
+        run: "tests/laravel-test.sh dev-master"
+        if: "matrix.laravel == '^11.0'"

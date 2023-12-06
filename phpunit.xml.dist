@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-    beStrictAboutOutputDuringTests="true"
-    beStrictAboutChangesToGlobalState="true"
-    bootstrap="phpunit-bootstrap.php"
-    colors="true"
-    failOnRisky="true"
-    failOnWarning="true"
-    verbose="true"
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd"
+         backupGlobals="false"
+         beStrictAboutTestsThatDoNotTestAnything="true"
+         beStrictAboutOutputDuringTests="true"
+         bootstrap="phpunit-bootstrap.php"
+         colors="true"
+         failOnRisky="true"
+         failOnWarning="false"
+         processIsolation="false"
+         stopOnError="false"
+         stopOnFailure="false"
+         backupStaticProperties="false"
 >
   <testsuites>
-    <testsuite name="Test Suite">
+    <testsuite name="default">
       <directory>./tests</directory>
     </testsuite>
   </testsuites>
+  <source>
+    <include>
+      <directory suffix=".php">./src</directory>
+    </include>
+  </source>
 </phpunit>
+

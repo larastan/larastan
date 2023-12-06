@@ -37,12 +37,7 @@ final class AnnotationScopeMethodReflection implements MethodReflection
     private $variants = null;
 
     /**
-     * @param  string  $name
-     * @param  ClassReflection  $declaringClass
-     * @param  Type  $returnType
      * @param  AnnotationScopeMethodParameterReflection[]  $parameters
-     * @param  bool  $isStatic
-     * @param  bool  $isVariadic
      */
     public function __construct(string $name, ClassReflection $declaringClass, Type $returnType, array $parameters, bool $isStatic, bool $isVariadic)
     {

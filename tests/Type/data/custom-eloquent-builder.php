@@ -165,7 +165,6 @@ class ModelWithNonGenericBuilder extends Model
 {
     /**
      * @param  \Illuminate\Database\Query\Builder  $query
-     * @return NonGenericBuilder
      */
     public function newEloquentBuilder($query): NonGenericBuilder
     {

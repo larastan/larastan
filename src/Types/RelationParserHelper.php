@@ -113,9 +113,7 @@ class RelationParserHelper
     }
 
     /**
-     * @param  string  $method
      * @param  mixed  $statements
-     * @return Node|null
      */
     private function findMethod(string $method, $statements): ?Node
     {

@@ -7,17 +7,17 @@ class TestCaseExtension
 {
     public function testMockMethod(): void
     {
-        (new TestTestCase())->testMockMethod();
+        (new TestTestCase('dummy'))->testMockMethod();
     }
 
     public function testPartialMockMethod(): void
     {
-        (new TestTestCase())->testPartialMockMethod();
+        (new TestTestCase('dummy'))->testPartialMockMethod();
     }
 
     public function testSpyMethod(): void
     {
-        (new TestTestCase())->testSpyMethod();
+        (new TestTestCase('dummy'))->testSpyMethod();
     }
 }
 

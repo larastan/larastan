@@ -17,14 +17,7 @@ use PHPStan\Type\Type;
  */
 interface PassableContract
 {
-    /**
-     * @return \PHPStan\Type\Type
-     */
     public function getType(): Type;
 
-    /**
-     * @param  \PHPStan\Type\Type  $type
-     * @return void
-     */
     public function setType(Type $type): void;
 }

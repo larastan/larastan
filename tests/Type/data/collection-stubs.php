@@ -41,11 +41,11 @@ assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection
 
 $foo = collect([
     [
-        'id'   => 1,
+        'id' => 1,
         'type' => 'A',
     ],
     [
-        'id'   => 1,
+        'id' => 1,
         'type' => 'B',
     ],
 ]);

@@ -5,7 +5,7 @@ set -e
 LARAVEL_VERSION_CONSTRAINT="${1:-^9.0}"
 
 echo "Install Laravel ${LARAVEL_VERSION_CONSTRAINT}"
-composer create-project --quiet --prefer-dist "laravel/laravel:${LARAVEL_VERSION_CONSTRAINT}" ../laravel
+composer create-project "laravel/laravel:${LARAVEL_VERSION_CONSTRAINT}" ../laravel
 cd ../laravel/
 
 echo "Add Larastan from source"

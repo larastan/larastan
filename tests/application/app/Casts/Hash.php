@@ -28,7 +28,6 @@ class Hash implements CastsInboundAttributes
      * Prepare the given value for storage.
      *
      * @param  \Illuminate\Database\Eloquent\Model  $model
-     * @param  string  $key
      * @param  string  $value
      * @param  array  $attributes
      * @return string

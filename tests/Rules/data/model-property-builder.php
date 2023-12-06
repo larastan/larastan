@@ -6,7 +6,7 @@
 \App\User::query()->where('foo', 'bar')->get();
 
 /** @return \Illuminate\Database\Eloquent\Builder<\App\User> */
-function foo(\App\User $user): \Illuminate\Database\Eloquent\Builder
+function foo(App\User $user): Illuminate\Database\Eloquent\Builder
 {
     return $user->where('foo', 'bar');
 }
@@ -15,7 +15,7 @@ function foo(\App\User $user): \Illuminate\Database\Eloquent\Builder
  * @param  \Illuminate\Database\Eloquent\Builder<\App\User>  $builder
  * @return \Illuminate\Database\Eloquent\Builder<\App\User>
  */
-function bar(\Illuminate\Database\Eloquent\Builder $builder): \Illuminate\Database\Eloquent\Builder
+function bar(Illuminate\Database\Eloquent\Builder $builder): Illuminate\Database\Eloquent\Builder
 {
     return $builder->where('foo', 'bar');
 }
@@ -37,7 +37,7 @@ function bar(\Illuminate\Database\Eloquent\Builder $builder): \Illuminate\Databa
 // Currently, there is no way to change the type of `$query` inside the callback.
 // So until we have a way to do that, we will ignore errors for `Builder<Model>`
 // @see https://github.com/phpstan/phpstan/discussions/6850
-\App\User::query()->whereHas('accounts', function (\Illuminate\Database\Eloquent\Builder $query) {
+\App\User::query()->whereHas('accounts', function (Illuminate\Database\Eloquent\Builder $query) {
     $query->where('foo', 'bar');
 });
 

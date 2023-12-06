@@ -61,7 +61,7 @@ class MacroMethodsClassReflectionExtensionTest extends PHPStanTestCase
         $this->assertSame($exceptionClass, $method->getThrowType()->getClassName());
     }
 
-    public function methodAndClassProvider(): Generator
+    public static function methodAndClassProvider(): Generator
     {
         yield [Request::class, 'validate'];
         yield [Request::class, 'validateWithBag'];
@@ -69,7 +69,7 @@ class MacroMethodsClassReflectionExtensionTest extends PHPStanTestCase
         yield [Request::class, 'hasValidRelativeSignature'];
     }
 
-    public function methodAndThrowTypeProvider(): Generator
+    public static function methodAndThrowTypeProvider(): Generator
     {
         yield [Request::class, 'validate', ValidationException::class];
         yield [Request::class, 'validateWithBag', ValidationException::class];

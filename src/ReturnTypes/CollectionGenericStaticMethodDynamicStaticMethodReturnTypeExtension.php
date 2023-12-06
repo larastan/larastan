@@ -44,7 +44,7 @@ class CollectionGenericStaticMethodDynamicStaticMethodReturnTypeExtension implem
         MethodReflection $methodReflection,
         StaticCall $methodCall,
         Scope $scope
-    ): \PHPStan\Type\Type {
+    ): Type {
         $returnType = ParametersAcceptorSelector::selectFromArgs(
             $scope,
             $methodCall->getArgs(),

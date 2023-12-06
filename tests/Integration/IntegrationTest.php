@@ -12,23 +12,21 @@ class IntegrationTest extends PHPStanTestCase
     /**
      * @return iterable<mixed>
      */
-    public function dataIntegrationTests(): iterable
+    public static function dataIntegrationTests(): iterable
     {
         self::getContainer();
+
         yield [__DIR__.'/data/test-case-extension.php'];
         yield [__DIR__.'/data/model-properties.php'];
         yield [__DIR__.'/data/blade-view.php'];
         yield [__DIR__.'/data/helpers.php'];
-
-        if (version_compare(LARAVEL_VERSION, '10.0.0', '>=')) {
-            yield [__DIR__.'/data/eloquent-builder-l10.php'];
-        }
+        yield [__DIR__.'/data/eloquent-builder-l10.php'];
     }
 
     /**
      * @dataProvider dataIntegrationTests
      */
-    public function testIntegration(string $file, ?array $expectedErrors = null): void
+    public function testIntegration(string $file, array $expectedErrors = null): void
     {
         $errors = $this->runAnalyse($file);
 
@@ -46,7 +44,7 @@ class IntegrationTest extends PHPStanTestCase
      * @param  string[]|null  $allAnalysedFiles
      * @return Error[]
      */
-    private function runAnalyse(string $file, ?array $allAnalysedFiles = null): array
+    private function runAnalyse(string $file, array $allAnalysedFiles = null): array
     {
         $file = $this->getFileHelper()->normalizePath($file);
 

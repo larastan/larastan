@@ -22,6 +22,7 @@ final class Kernel
      * @var PhpMethodReflectionFactory
      */
     private $methodReflectionFactory;
+
     /**
      * @var ReflectionProvider
      */
@@ -29,8 +30,6 @@ final class Kernel
 
     /**
      * Kernel constructor.
-     *
-     * @param  PhpMethodReflectionFactory  $methodReflectionFactory
      */
     public function __construct(
         PhpMethodReflectionFactory $methodReflectionFactory,
@@ -40,11 +39,6 @@ final class Kernel
         $this->reflectionProvider = $reflectionProvider;
     }
 
-    /**
-     * @param  ClassReflection  $classReflection
-     * @param  string  $methodName
-     * @return PassableContract
-     */
     public function handle(ClassReflection $classReflection, string $methodName): PassableContract
     {
         $pipeline = new Pipeline($this->getContainer());

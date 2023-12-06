@@ -21,7 +21,7 @@ final class UsedRouteFacadeViewCollector implements Collector
         return Node\Expr\StaticCall::class;
     }
 
-    /** @param Node\Expr\StaticCall $node */
+    /** @param  Node\Expr\StaticCall  $node */
     public function processNode(Node $node, Scope $scope): ?string
     {
         $name = $node->name;

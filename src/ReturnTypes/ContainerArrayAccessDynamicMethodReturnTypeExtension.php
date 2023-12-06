@@ -68,6 +68,7 @@ class ContainerArrayAccessDynamicMethodReturnTypeExtension implements DynamicMet
 
             if ($resolvedValue === null) {
                 $argTypes[] = new ErrorType();
+
                 continue;
             }
 
@@ -75,6 +76,7 @@ class ContainerArrayAccessDynamicMethodReturnTypeExtension implements DynamicMet
                 $class = get_class($resolvedValue);
 
                 $argTypes[] = new ObjectType($class);
+
                 continue;
             }
 

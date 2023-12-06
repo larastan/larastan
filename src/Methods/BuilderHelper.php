@@ -127,9 +127,6 @@ class BuilderHelper
      * that should be checked by caller before calling this method.
      *
      * @param  ClassReflection  $eloquentBuilder  Can be `EloquentBuilder` or a custom builder extending it.
-     * @param  string  $methodName
-     * @param  ClassReflection  $model
-     * @return MethodReflection|null
      *
      * @throws MissingMethodFromReflectionException
      * @throws ShouldNotHappenException
@@ -196,9 +193,6 @@ class BuilderHelper
     }
 
     /**
-     * @param  string  $modelClassName
-     * @return string
-     *
      * @throws MissingMethodFromReflectionException
      * @throws ShouldNotHappenException
      */
