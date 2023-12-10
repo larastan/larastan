@@ -26,7 +26,7 @@ jobs:
         include:
           -
             repository: koel/koel
-            ref: de88d23b9564d2f7b496b9cd141fc9e648b7feeb
+            ref: d1441382a388e1ebbc88fd88945d483765d79172
             php-version: "8.1"
             config: koel-koel.neon
             baseline: koel-koel.baseline.neon
