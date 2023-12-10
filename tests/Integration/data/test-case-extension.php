@@ -23,6 +23,11 @@ class TestCaseExtension
 
 class TestTestCase extends \Illuminate\Foundation\Testing\TestCase
 {
+    public function __construct()
+    {
+        parent::__construct('testcase');
+    }
+
     public function testMockMethod(): void
     {
         $mock = $this->mock(User::class);
