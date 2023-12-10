@@ -30,7 +30,7 @@ final class ApplicationMakeDynamicReturnTypeExtension implements DynamicMethodRe
         return in_array($methodReflection->getName(), ['make', 'makeWith', 'resolve'], true);
     }
 
-    public function getTypeFromMethodCall(MethodReflection $methodReflection, MethodCall $methodCall, Scope $scope): ?Type
+    public function getTypeFromMethodCall(MethodReflection $methodReflection, MethodCall $methodCall, Scope $scope): Type
     {
         return $this->appMakeHelper->resolveTypeFromCall($methodCall, $scope);
     }
