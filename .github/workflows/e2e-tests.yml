@@ -26,21 +26,21 @@ jobs:
         include:
           -
             repository: koel/koel
-            ref: de88d23b9564d2f7b496b9cd141fc9e648b7feeb
+            ref: a6a0edb110dfb5aa56fb8a74d583221cb30a7353
             php-version: "8.1"
             config: koel-koel.neon
             baseline: koel-koel.baseline.neon
 
           -
             repository: canvural/larastan-test
-            ref: 686828b76a2e300b1a3cc99fdd8be9af3a3e7e60
+            ref: 7ec9bcb4f8cf3b07c5a298504df6a8568fb65221
             php-version: "8.1"
             config: canvural-larastan-test.neon
             baseline: canvural-larastan-test.baseline.neon
 
           -
             repository: canvural/larastan-strict-rules
-            ref: 3d9ba8263f8fcb6f9d7e5c3d05af7f58c5537540
+            ref: 4f658a8f9ca5334de22f733bdba1d24cbe9303a6
             php-version: "8.1"
             config: canvural-larastan-strict-rules.neon
             baseline: canvural-larastan-strict-rules.baseline.neon
