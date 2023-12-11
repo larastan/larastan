@@ -25,7 +25,7 @@ jobs:
       fail-fast: true
       matrix:
         php: ["8.0", "8.1", "8.2", "8.3"]
-        laravel: ["^9.52.16", "^10.28.0"]
+        laravel: ["^9.52.16", "^10.28.0", "^11.0"]
         dependencies:
             - "lowest"
             - "highest"
@@ -36,6 +36,18 @@ jobs:
           - php: "8.0"
             laravel: "^10.28.0"
             dependencies: "highest"
+          - php: "8.0"
+            laravel: "^11.0"
+            dependencies: "highest"
+          - php: "8.0"
+            laravel: "^11.0"
+            dependencies: "lowest"
+          - php: "8.1"
+            laravel: "^11.0"
+            dependencies: "highest"
+          - php: "8.1"
+            laravel: "^11.0"
+            dependencies: "lowest"
 
     name: "PHP${{ matrix.php }} - Laravel${{ matrix.laravel }} ${{ matrix.dependencies == 'highest' && '↑' || '↓' }}"
 
@@ -80,3 +92,7 @@ jobs:
       - name: "Run Larastan on a sample Laravel application"
         run: "tests/laravel-test.sh ^10.0"
         if: "matrix.laravel == '^10.28.0'"
+
+      - name: "Run Larastan on a sample Laravel application"
+        run: "tests/laravel-test.sh dev-master"
+        if: "matrix.laravel == '^11.0'"
