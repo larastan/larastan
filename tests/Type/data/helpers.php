@@ -33,7 +33,7 @@ function authHelper()
     assertType('int|string|null', auth('web')->id());
     assertType('int|string|null', auth('admin')->id());
     assertType('Illuminate\Contracts\Auth\Authenticatable|false', auth()->loginUsingId(1));
-    assertType('void', auth()->login(new User()));
+    assertType('null', auth()->login(new User()));
 }
 
 function nowAndToday()
@@ -110,7 +110,7 @@ function responseHelper()
 
 function retryHelper()
 {
-    assertType('void', retry(3, function () {
+    assertType('null', retry(3, function () {
     }));
 
     assertType('int', retry(3, function (): int {

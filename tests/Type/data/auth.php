@@ -28,7 +28,7 @@ class AuthExtension
 
     public function testLogout(): void
     {
-        assertType('void', Auth::guard()->logout());
+        assertType('null', Auth::guard()->logout());
     }
 
     public function testGuard(): void
@@ -53,6 +53,6 @@ class AuthExtension
 
     public function testLogin(User $user): void
     {
-        assertType('void', Auth::guard()->login($user));
+        assertType('null', Auth::guard()->login($user));
     }
 }

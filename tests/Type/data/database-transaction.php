@@ -13,7 +13,7 @@ assertType('string', DB::transaction(fn () => 'lorem'));
 assertType('float', DB::transaction(fn () => 8.1));
 assertType('bool', DB::transaction(fn () => true));
 
-assertType('void', DB::transaction(function () {
+assertType('null', DB::transaction(function () {
     echo 'ipsum';
 }));
 

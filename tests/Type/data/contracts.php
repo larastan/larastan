@@ -14,5 +14,5 @@ function testApplicationIsLocal(Application $app)
 
 function testSessionAgeFlashData(Session $session)
 {
-    assertType('void', $session->ageFlashData());
+    assertType('null', $session->ageFlashData());
 }

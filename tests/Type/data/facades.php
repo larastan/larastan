@@ -17,9 +17,9 @@ function foo()
 {
     assertType('Illuminate\Http\Request', Request::instance());
 
-    assertType('void', Event::assertDispatched('FooEvent'));
-    assertType('void', Event::assertDispatchedTimes('FooEvent', 5));
-    assertType('void', Event::assertNotDispatched('FooEvent'));
+    assertType('null', Event::assertDispatched('FooEvent'));
+    assertType('null', Event::assertDispatchedTimes('FooEvent', 5));
+    assertType('null', Event::assertNotDispatched('FooEvent'));
 
     $redis = Redis::connection();
     assertType('(array|Redis|false)', $redis->lrange('some-key', 0, -1));
@@ -30,7 +30,7 @@ function foo()
     assertType('Illuminate\Database\Query\Builder', DB::query());
     assertType('int', DB::transactionLevel());
 
-    assertType('void', Queue::createPayloadUsing(function () {
+    assertType('null', Queue::createPayloadUsing(function () {
     }));
 
     assertType('Psr\Log\LoggerInterface', Log::getLogger());
