@@ -36,6 +36,8 @@ class AlterUsersTable extends Migration
             $table->string('address1')->nullable();
             $table->string('address2')->nullable();
             $table->date('birthday');
+            $table->addColumn('string', 'city')->nullable();
+            $table->addColumn('integer', 'zip');
             $table->timestamps();
         });
     }
