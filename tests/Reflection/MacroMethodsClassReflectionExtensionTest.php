@@ -5,7 +5,7 @@ namespace Reflection;
 use Generator;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
-use NunoMaduro\Larastan\Methods\MacroMethodsClassReflectionExtension;
+use Larastan\Larastan\Methods\MacroMethodsClassReflectionExtension;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Testing\PHPStanTestCase;
 use PHPStan\Type\ClosureTypeFactory;

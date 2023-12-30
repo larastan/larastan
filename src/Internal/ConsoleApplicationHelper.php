@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Internal;
+namespace Larastan\Larastan\Internal;
 
 use InvalidArgumentException;
 use PHPStan\Analyser\Scope;

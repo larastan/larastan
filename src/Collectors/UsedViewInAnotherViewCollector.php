@@ -1,8 +1,8 @@
 <?php
 
-namespace NunoMaduro\Larastan\Collectors;
+namespace Larastan\Larastan\Collectors;
 
-use NunoMaduro\Larastan\Support\ViewFileHelper;
+use Larastan\Larastan\Support\ViewFileHelper;
 use PhpParser\Node;
 use PHPStan\Parser\Parser;
 use PHPStan\Parser\ParserErrorsException;

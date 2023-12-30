@@ -1,6 +1,6 @@
 <?php
 
-namespace NunoMaduro\Larastan\Reflection;
+namespace Larastan\Larastan\Reflection;
 
 use PHPStan\Reflection;
 use PHPStan\Reflection\FunctionVariant;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Concerns;
+namespace Larastan\Larastan\Concerns;
 
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 

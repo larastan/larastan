@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Rules;
 
-use NunoMaduro\Larastan\Rules\NoModelMakeRule;
+use Larastan\Larastan\Rules\NoModelMakeRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace NunoMaduro\Larastan\Properties;
+namespace Larastan\Larastan\Properties;
 
 use Illuminate\Contracts\Database\Eloquent\Castable;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;

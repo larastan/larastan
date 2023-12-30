@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use NunoMaduro\Larastan\Properties\MigrationHelper;
-use NunoMaduro\Larastan\Properties\SchemaTable;
+use Larastan\Larastan\Properties\MigrationHelper;
+use Larastan\Larastan\Properties\SchemaTable;
 use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
 use PHPStan\Testing\PHPStanTestCase;
@@ -62,11 +62,15 @@ class MigrationHelperTest extends PHPStanTestCase
 
         self::assertCount(1, $tables);
         self::assertArrayHasKey('users', $tables);
-        self::assertCount(6, $tables['users']->columns);
-        self::assertSame(['id', 'email', 'birthday', 'created_at', 'updated_at', 'active'], array_keys($tables['users']->columns));
+        self::assertCount(8, $tables['users']->columns);
+        self::assertSame(['id', 'email', 'birthday', 'city', 'zip', 'created_at', 'updated_at', 'active'], array_keys($tables['users']->columns));
         self::assertSame('int', $tables['users']->columns['id']->readableType);
         self::assertSame('string', $tables['users']->columns['email']->readableType);
         self::assertSame('string', $tables['users']->columns['birthday']->readableType);
+        self::assertSame('string', $tables['users']->columns['city']->readableType);
+        self::assertSame(true, $tables['users']->columns['city']->nullable);
+        self::assertSame('int', $tables['users']->columns['zip']->readableType);
+        self::assertSame(false, $tables['users']->columns['zip']->nullable);
         self::assertSame('string', $tables['users']->columns['created_at']->readableType);
         self::assertSame('string', $tables['users']->columns['updated_at']->readableType);
         self::assertSame('int', $tables['users']->columns['active']->readableType);

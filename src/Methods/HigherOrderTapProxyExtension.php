@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Methods;
+namespace Larastan\Larastan\Methods;
 
 use Illuminate\Support\HigherOrderTapProxy;
 use PHPStan\Analyser\OutOfClassScope;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Rules;
 
-use NunoMaduro\Larastan\Rules\DeferrableServiceProviderMissingProvidesRule;
+use Larastan\Larastan\Rules\DeferrableServiceProviderMissingProvidesRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 

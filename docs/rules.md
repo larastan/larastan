@@ -86,7 +86,7 @@ parameters:
 
 ---
 
-**NOTE**: This rule is currently in beta! If you want to improve it's analysis you can check out the issue [here](https://github.com/nunomaduro/larastan/issues/676) and contribute!
+**NOTE**: This rule is currently in beta! If you want to improve it's analysis you can check out the issue [here](https://github.com/larastan/larastan/issues/676) and contribute!
 
 ---
 

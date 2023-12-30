@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Types\ModelProperty;
+namespace Larastan\Larastan\Types\ModelProperty;
 
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;

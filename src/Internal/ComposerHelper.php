@@ -1,6 +1,6 @@
 <?php
 
-namespace NunoMaduro\Larastan\Internal;
+namespace Larastan\Larastan\Internal;
 
 use JsonException;
 

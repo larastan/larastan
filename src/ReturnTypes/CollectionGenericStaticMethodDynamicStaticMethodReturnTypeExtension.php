@@ -1,6 +1,6 @@
 <?php
 
-namespace NunoMaduro\Larastan\ReturnTypes;
+namespace Larastan\Larastan\ReturnTypes;
 
 use Illuminate\Support\Collection;
 use PhpParser\Node\Expr\StaticCall;

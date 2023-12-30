@@ -3,7 +3,7 @@
 namespace Reflection;
 
 use Illuminate\Http\RedirectResponse;
-use NunoMaduro\Larastan\Methods\RedirectResponseMethodsClassReflectionExtension;
+use Larastan\Larastan\Methods\RedirectResponseMethodsClassReflectionExtension;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Testing\PHPStanTestCase;

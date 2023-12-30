@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\ReturnTypes\Helpers;
+namespace Larastan\Larastan\ReturnTypes\Helpers;
 
 use Illuminate\Support\HigherOrderTapProxy;
 use PhpParser\Node\Expr\FuncCall;

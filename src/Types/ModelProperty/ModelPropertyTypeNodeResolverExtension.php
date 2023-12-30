@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Types\ModelProperty;
+namespace Larastan\Larastan\Types\ModelProperty;
 
 use Illuminate\Database\Eloquent\Model;
 use PHPStan\Analyser\NameScope;

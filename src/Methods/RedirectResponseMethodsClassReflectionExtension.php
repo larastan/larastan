@@ -1,8 +1,8 @@
 <?php
 
-namespace NunoMaduro\Larastan\Methods;
+namespace Larastan\Larastan\Methods;
 
-use NunoMaduro\Larastan\Reflection\DynamicWhereMethodReflection;
+use Larastan\Larastan\Reflection\DynamicWhereMethodReflection;
 use PHPStan\Reflection;
 
 use function str_starts_with;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\ReturnTypes;
+namespace Larastan\Larastan\ReturnTypes;
 
 use Illuminate\Support\Facades\App;
 use PhpParser\Node\Expr\StaticCall;
@@ -28,7 +28,7 @@ final class AppMakeDynamicReturnTypeExtension implements DynamicStaticMethodRetu
         return $methodReflection->getName() === 'make' || $methodReflection->getName() === 'makeWith';
     }
 
-    public function getTypeFromStaticMethodCall(MethodReflection $methodReflection, StaticCall $methodCall, Scope $scope): ?Type
+    public function getTypeFromStaticMethodCall(MethodReflection $methodReflection, StaticCall $methodCall, Scope $scope): Type
     {
         return $this->appMakeHelper->resolveTypeFromCall($methodCall, $scope);
     }

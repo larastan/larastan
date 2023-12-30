@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Rules;
+namespace Larastan\Larastan\Rules;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use NunoMaduro\Larastan\Properties\ModelPropertyExtension;
+use Larastan\Larastan\Properties\ModelPropertyExtension;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
@@ -94,7 +94,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
     protected $reflectionProvider;
 
     /**
-     * @var \NunoMaduro\Larastan\Properties\ModelPropertyExtension
+     * @var \Larastan\Larastan\Properties\ModelPropertyExtension
      */
     protected $propertyExtension;
 

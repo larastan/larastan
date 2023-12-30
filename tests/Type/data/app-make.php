@@ -3,7 +3,7 @@
 namespace AppMake;
 
 use Illuminate\Support\Facades\App;
-use NunoMaduro\Larastan\ApplicationResolver;
+use Larastan\Larastan\ApplicationResolver;
 
 use function PHPStan\Testing\assertType;
 

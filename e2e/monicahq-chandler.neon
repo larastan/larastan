@@ -2,5 +2,7 @@ includes:
 	- ../../e2e/phpstan.neon
 	- monicahq-chandler.baseline.neon
 parameters:
-# Mute irrelevant ignored errors.
+	ignoreErrors:
+		- '#^Property App\\.+ \(never\) does not accept mixed\.$#'
+	# Mute irrelevant ignored errors.
 	reportUnmatchedIgnoredErrors: false

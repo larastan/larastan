@@ -7,7 +7,7 @@ on:
       - 'docs/**'
     # Prevent duplicating jobs on PR-s from local branches
     branches:
-      - "master"
+      - "2.x"
   pull_request:
     paths-ignore:
       - "**.md"
@@ -24,18 +24,30 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: ["8.0", "8.1", "8.2"]
-        laravel: ["^9.0", "^10.0"]
+        php: ["8.0", "8.1", "8.2", "8.3"]
+        laravel: ["^9.52.16", "^10.28.0", "^11.0"]
         dependencies:
             - "lowest"
             - "highest"
         exclude:
           - php: "8.0"
-            laravel: "^10.0"
+            laravel: "^10.28.0"
             dependencies: "lowest"
           - php: "8.0"
-            laravel: "^10.0"
+            laravel: "^10.28.0"
             dependencies: "highest"
+          - php: "8.0"
+            laravel: "^11.0"
+            dependencies: "highest"
+          - php: "8.0"
+            laravel: "^11.0"
+            dependencies: "lowest"
+          - php: "8.1"
+            laravel: "^11.0"
+            dependencies: "highest"
+          - php: "8.1"
+            laravel: "^11.0"
+            dependencies: "lowest"
 
     name: "PHP${{ matrix.php }} - Laravel${{ matrix.laravel }} ${{ matrix.dependencies == 'highest' && '↑' || '↓' }}"
 
@@ -74,4 +86,13 @@ jobs:
         run: "composer run-script test:unit"
 
       - name: "Run Larastan on a sample Laravel application"
-        run: "tests/laravel-test.sh ${{ matrix.laravel }}"
+        run: "tests/laravel-test.sh ^9.0"
+        if: "matrix.laravel == '^9.52.16'"
+
+      - name: "Run Larastan on a sample Laravel application"
+        run: "tests/laravel-test.sh ^10.0"
+        if: "matrix.laravel == '^10.28.0'"
+
+      - name: "Run Larastan on a sample Laravel application"
+        run: "tests/laravel-test.sh dev-master"
+        if: "matrix.laravel == '^11.0'"

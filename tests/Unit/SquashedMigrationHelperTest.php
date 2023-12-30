@@ -2,12 +2,12 @@
 
 namespace Tests\Unit;
 
-use NunoMaduro\Larastan\Properties\Schema\PhpMyAdminDataTypeToPhpTypeConverter;
-use NunoMaduro\Larastan\Properties\SquashedMigrationHelper;
+use Larastan\Larastan\Properties\Schema\PhpMyAdminDataTypeToPhpTypeConverter;
+use Larastan\Larastan\Properties\SquashedMigrationHelper;
 use PHPStan\File\FileHelper;
 use PHPStan\Testing\PHPStanTestCase;
 
-/** @covers \NunoMaduro\Larastan\Properties\SquashedMigrationHelper */
+/** @covers \Larastan\Larastan\Properties\SquashedMigrationHelper */
 class SquashedMigrationHelperTest extends PHPStanTestCase
 {
     /** @test */

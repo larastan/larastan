@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Methods\Pipes;
+namespace Larastan\Larastan\Methods\Pipes;
 
 use Closure;
 use Illuminate\Support\Manager;
 use InvalidArgumentException;
-use NunoMaduro\Larastan\Concerns;
-use NunoMaduro\Larastan\Contracts\Methods\PassableContract;
-use NunoMaduro\Larastan\Contracts\Methods\Pipes\PipeContract;
+use Larastan\Larastan\Concerns;
+use Larastan\Larastan\Contracts\Methods\PassableContract;
+use Larastan\Larastan\Contracts\Methods\Pipes\PipeContract;
 
 use function get_class;
 

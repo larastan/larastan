@@ -7,7 +7,7 @@ on:
       - 'docs/**'
     # Prevent duplicating jobs on PR-s from local branches
     branches:
-      - "master"
+      - "2.x"
   pull_request:
     paths-ignore:
       - "**.md"
@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ["8.0", "8.1", "8.2"]
+        php: ["8.0", "8.1", "8.2", "8.3"]
         laravel: ["^9.0", "^10.0"]
         dependencies: ["highest"]
         exclude:

@@ -1,14 +1,6 @@
 <?php
-/*
- * This file is part of PhpStorm.
- *
- * (c) Nuno Maduro <enunomaduro@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
 
-namespace NunoMaduro\Larastan\Contracts\Methods;
+namespace Larastan\Larastan\Contracts\Methods;
 
 use Illuminate\Contracts\Container\Container as ContainerContract;
 use PHPStan\Reflection\ClassReflection;

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Rules;
 
-use NunoMaduro\Larastan\Rules\ModelRuleHelper;
-use NunoMaduro\Larastan\Rules\RelationExistenceRule;
+use Larastan\Larastan\Rules\ModelRuleHelper;
+use Larastan\Larastan\Rules\RelationExistenceRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\ReturnTypes;
+namespace Larastan\Larastan\ReturnTypes;
 
 use Illuminate\Contracts\Container\Container;
 use PhpParser\Node\Expr\MethodCall;
@@ -30,7 +30,7 @@ final class ContainerMakeDynamicReturnTypeExtension implements DynamicMethodRetu
         return in_array($methodReflection->getName(), ['make', 'makeWith', 'resolve'], true);
     }
 
-    public function getTypeFromMethodCall(MethodReflection $methodReflection, MethodCall $methodCall, Scope $scope): ?Type
+    public function getTypeFromMethodCall(MethodReflection $methodReflection, MethodCall $methodCall, Scope $scope): Type
     {
         return $this->appMakeHelper->resolveTypeFromCall($methodCall, $scope);
     }

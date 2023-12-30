@@ -2,8 +2,8 @@
 
 namespace Unit;
 
-use NunoMaduro\Larastan\ReturnTypes\ModelFactoryDynamicStaticMethodReturnTypeExtension;
-use NunoMaduro\Larastan\Types\Factory\ModelFactoryType;
+use Larastan\Larastan\ReturnTypes\ModelFactoryDynamicStaticMethodReturnTypeExtension;
+use Larastan\Larastan\Types\Factory\ModelFactoryType;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;

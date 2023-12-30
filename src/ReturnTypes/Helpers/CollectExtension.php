@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\ReturnTypes\Helpers;
+namespace Larastan\Larastan\ReturnTypes\Helpers;
 
 use Illuminate\Support\Collection;
-use NunoMaduro\Larastan\Support\CollectionHelper;
+use Larastan\Larastan\Support\CollectionHelper;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\FunctionReflection;

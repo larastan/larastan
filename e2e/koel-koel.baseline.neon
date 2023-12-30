@@ -1,14 +1,24 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Method App\\\\Builders\\\\ArtistBuilder\\:\\:isStandard\\(\\) should return static\\(App\\\\Builders\\\\ArtistBuilder\\) but returns App\\\\Builders\\\\ArtistBuilder\\.$#"
-			count: 1
-			path: ../../e2e/app/Builders/ArtistBuilder.php
+			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\:\\:isStandard\\(\\)\\.$#"
+			count: 2
+			path: ../../e2e/app/Repositories/AlbumRepository.php
 
 		-
-			message: "#^Method App\\\\Builders\\\\SongBuilder\\:\\:withMeta\\(\\) should return static\\(App\\\\Builders\\\\SongBuilder\\) but returns App\\\\Builders\\\\SongBuilder\\.$#"
+			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:isStandard\\(\\)\\.$#"
 			count: 1
-			path: ../../e2e/app/Builders/SongBuilder.php
+			path: ../../e2e/app/Repositories/AlbumRepository.php
+
+		-
+			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\:\\:isStandard\\(\\)\\.$#"
+			count: 2
+			path: ../../e2e/app/Repositories/ArtistRepository.php
+
+		-
+			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:isStandard\\(\\)\\.$#"
+			count: 1
+			path: ../../e2e/app/Repositories/ArtistRepository.php
 
 		-
 			message: "#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$genre\\.$#"
@@ -31,6 +41,16 @@ parameters:
 			path: ../../e2e/app/Repositories/GenreRepository.php
 
 		-
+			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\:\\:hostedOnS3\\(\\)\\.$#"
+			count: 1
+			path: ../../e2e/app/Repositories/SongRepository.php
+
+		-
+			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\:\\:withMeta\\(\\)\\.$#"
+			count: 14
+			path: ../../e2e/app/Repositories/SongRepository.php
+
+		-
 			message: "#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:reduce\\(\\) expects callable\\(Illuminate\\\\Support\\\\Collection, Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: Illuminate\\\\Support\\\\Collection, Closure\\(Illuminate\\\\Support\\\\Collection, App\\\\Models\\\\Album\\)\\: Illuminate\\\\Support\\\\Collection given\\.$#"
 			count: 1
 			path: ../../e2e/app/Services/DownloadService.php
@@ -39,6 +59,16 @@ parameters:
 			message: "#^Method App\\\\Services\\\\LibraryManager\\:\\:prune\\(\\) should return array\\{albums\\: Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<\\(int\\|string\\), App\\\\Models\\\\Album\\>, artists\\: Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<\\(int\\|string\\), App\\\\Models\\\\Artist\\>\\} but returns array\\{albums\\: Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, artists\\: Illuminate\\\\Database\\\\Eloquent\\\\Collection\\<int, Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\}\\.$#"
 			count: 1
 			path: ../../e2e/app/Services/LibraryManager.php
+
+		-
+			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\:\\:inDirectory\\(\\)\\.$#"
+			count: 1
+			path: ../../e2e/app/Services/MediaSyncService.php
+
+		-
+			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\:\\:withMeta\\(\\)\\.$#"
+			count: 1
+			path: ../../e2e/app/Services/SmartPlaylistService.php
 
 		-
 			message: "#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:each\\(\\) expects callable\\(Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: mixed, Closure\\(App\\\\Models\\\\Song\\)\\: void given\\.$#"

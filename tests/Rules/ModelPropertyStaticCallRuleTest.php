@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Rules;
 
-use NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertiesRuleHelper;
-use NunoMaduro\Larastan\Rules\ModelProperties\ModelPropertyStaticCallRule;
+use Larastan\Larastan\Rules\ModelProperties\ModelPropertiesRuleHelper;
+use Larastan\Larastan\Rules\ModelProperties\ModelPropertyStaticCallRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleLevelHelper;
 use PHPStan\Testing\RuleTestCase;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Internal;
+namespace Larastan\Larastan\Internal;
 
 use Illuminate\Console\Application;
 use Illuminate\Console\Command;

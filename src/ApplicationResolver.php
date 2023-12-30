@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan;
+namespace Larastan\Larastan;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Foundation\PackageManifest;
-use NunoMaduro\Larastan\Internal\ComposerHelper;
+use Larastan\Larastan\Internal\ComposerHelper;
 use Orchestra\Testbench\Foundation\Application as Testbench;
 use Orchestra\Testbench\Foundation\Bootstrap\CreateVendorSymlink;
 use Orchestra\Testbench\Foundation\Config;

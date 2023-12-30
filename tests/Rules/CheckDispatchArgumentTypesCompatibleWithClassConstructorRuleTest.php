@@ -6,7 +6,7 @@ namespace Tests\Rules;
 
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Events\Dispatchable as EventDispatchable;
-use NunoMaduro\Larastan\Rules\CheckDispatchArgumentTypesCompatibleWithClassConstructorRule;
+use Larastan\Larastan\Rules\CheckDispatchArgumentTypesCompatibleWithClassConstructorRule;
 use PHPStan\Rules\FunctionCallParametersCheck;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;

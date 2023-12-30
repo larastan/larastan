@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\Properties;
+namespace Larastan\Larastan\Properties;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use NunoMaduro\Larastan\Reflection\ReflectionHelper;
+use Larastan\Larastan\Reflection\ReflectionHelper;
 use PHPStan\PhpDoc\TypeStringResolver;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;

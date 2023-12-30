@@ -4,7 +4,7 @@ namespace Helpers;
 
 use App\User;
 use Exception;
-use NunoMaduro\Larastan\ApplicationResolver;
+use Larastan\Larastan\ApplicationResolver;
 use Throwable;
 
 use function PHPStan\Testing\assertType;
@@ -12,9 +12,9 @@ use function PHPStan\Testing\assertType;
 function appHelper()
 {
     assertType('Illuminate\Foundation\Application', app());
-    assertType('NunoMaduro\Larastan\ApplicationResolver', app(ApplicationResolver::class));
+    assertType('Larastan\Larastan\ApplicationResolver', app(ApplicationResolver::class));
     assertType('Illuminate\Auth\AuthManager', app('auth'));
-    assertType('NunoMaduro\Larastan\ApplicationResolver', resolve(ApplicationResolver::class));
+    assertType('Larastan\Larastan\ApplicationResolver', resolve(ApplicationResolver::class));
     assertType('Illuminate\Auth\AuthManager', resolve('auth'));
 }
 
@@ -33,7 +33,7 @@ function authHelper()
     assertType('int|string|null', auth('web')->id());
     assertType('int|string|null', auth('admin')->id());
     assertType('Illuminate\Contracts\Auth\Authenticatable|false', auth()->loginUsingId(1));
-    assertType('void', auth()->login(new User()));
+    assertType('null', auth()->login(new User()));
 }
 
 function nowAndToday()
@@ -110,7 +110,7 @@ function responseHelper()
 
 function retryHelper()
 {
-    assertType('void', retry(3, function () {
+    assertType('null', retry(3, function () {
     }));
 
     assertType('int', retry(3, function (): int {

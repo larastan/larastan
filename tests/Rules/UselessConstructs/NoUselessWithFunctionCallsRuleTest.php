@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Rules\UselessConstructs;
 
-use NunoMaduro\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule;
+use Larastan\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 

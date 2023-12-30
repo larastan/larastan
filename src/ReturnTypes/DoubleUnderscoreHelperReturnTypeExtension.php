@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace NunoMaduro\Larastan\ReturnTypes;
+namespace Larastan\Larastan\ReturnTypes;
 
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;

@@ -1,6 +1,6 @@
 <?php
 
-namespace NunoMaduro\Larastan\ReturnTypes\Helpers;
+namespace Larastan\Larastan\ReturnTypes\Helpers;
 
 use Illuminate\Support\Stringable;
 use PhpParser\Node\Expr\FuncCall;

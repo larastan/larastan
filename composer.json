@@ -1,10 +1,14 @@
 {
-    "name": "nunomaduro/larastan",
+    "name": "larastan/larastan",
     "type": "phpstan-extension",
     "description": "Larastan - Discover bugs in your code without running it. A phpstan/phpstan wrapper for Laravel",
     "keywords": ["laravel", "larastan", "phpstan", "php", "package", "static analysis", "code analysis", "code analyse"],
     "license": "MIT",
     "authors": [
+        {
+            "name": "Can Vural",
+            "email": "can9119@gmail.com"
+        },
         {
             "name": "Nuno Maduro",
             "email": "enunomaduro@gmail.com"
@@ -13,20 +17,21 @@
     "require": {
         "php": "^8.0.2",
         "ext-json": "*",
-        "illuminate/console": "^9.47.0 || ^10.0.0 || ^11.0.0",
-        "illuminate/container": "^9.47.0 || ^10.0.0 || ^11.0.0",
-        "illuminate/contracts": "^9.47.0 || ^10.0.0 || ^11.0.0",
-        "illuminate/database": "^9.47.0 || ^10.0.0 || ^11.0.0",
-        "illuminate/http": "^9.47.0 || ^10.0.0 || ^11.0.0",
-        "illuminate/pipeline": "^9.47.0 || ^10.0.0 || ^11.0.0",
-        "illuminate/support": "^9.47.0 || ^10.0.0 || ^11.0.0",
-        "phpmyadmin/sql-parser": "^5.6.0",
-        "phpstan/phpstan": "~1.10.6"
+        "illuminate/console": "^9.52.16 || ^10.28.0 || ^11.0",
+        "illuminate/container": "^9.52.16 || ^10.28.0 || ^11.0",
+        "illuminate/contracts": "^9.52.16 || ^10.28.0 || ^11.0",
+        "illuminate/database": "^9.52.16 || ^10.28.0 || ^11.0",
+        "illuminate/http": "^9.52.16 || ^10.28.0 || ^11.0",
+        "illuminate/pipeline": "^9.52.16 || ^10.28.0 || ^11.0",
+        "illuminate/support": "^9.52.16 || ^10.28.0 || ^11.0",
+        "phpmyadmin/sql-parser": "^5.8.2",
+        "phpstan/phpstan": "^1.10.50"
     },
     "require-dev": {
-        "nikic/php-parser": "^4.15.2",
-        "orchestra/testbench": "^7.19.0 || ^8.0.0",
-        "phpunit/phpunit": "^9.5.27"
+        "nikic/php-parser": "^4.17.1",
+        "orchestra/canvas": "^7.11.1 || ^8.11.0 || ^9.0.0",
+        "orchestra/testbench": "^7.33.0 || ^8.13.0 || ^9.0.0",
+        "phpunit/phpunit": "^9.6.13 || ^10.5"
     },
     "suggest": {
         "orchestra/testbench": "Using Larastan for analysing a package needs Testbench"
@@ -45,7 +50,7 @@
     "prefer-stable": true,
     "autoload": {
         "psr-4": {
-            "NunoMaduro\\Larastan\\": "src/"
+            "Larastan\\Larastan\\": "src/"
         }
     },
     "config": {
