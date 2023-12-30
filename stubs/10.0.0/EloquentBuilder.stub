@@ -125,6 +125,15 @@ class Builder
     public function firstOrCreate(array $attributes, array $values = []);
 
     /**
+     * Attempt to create the record. If a unique constraint violation occurs, attempt to find the matching record.
+     *
+     * @param  array<model-property<TModelClass>, mixed>  $attributes
+     * @param  array<model-property<TModelClass>, mixed>  $values
+     * @phpstan-return TModelClass
+     */
+    public function createOrFirst(array $attributes = [], array $values = []);
+
+    /**
      * Create or update a record matching the attributes, and fill it with values.
      *
      * @param  array<model-property<TModelClass>, mixed>  $attributes
