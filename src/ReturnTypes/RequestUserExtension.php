@@ -52,7 +52,8 @@ final class RequestUserExtension implements DynamicMethodReturnTypeExtension
         $authModel = null;
 
         if ($config !== null) {
-            $authModel = $this->getAuthModel($config);
+            $guard = $this->getGuardFromMethodCall($scope, $methodCall);
+            $authModel = $this->getAuthModel($config, $guard);
         }
 
         if ($authModel === null) {
@@ -60,5 +61,23 @@ final class RequestUserExtension implements DynamicMethodReturnTypeExtension
         }
 
         return TypeCombinator::addNull(new ObjectType($authModel));
+    }
+
+    private function getGuardFromMethodCall(Scope $scope, MethodCall $methodCall): ?string
+    {
+        $args = $methodCall->getArgs();
+
+        if (count($args) !== 1) {
+            return null;
+        }
+
+        $guardType = $scope->getType($args[0]->value);
+        $constantStrings = $guardType->getConstantStrings();
+
+        if (count($constantStrings) !== 1) {
+            return null;
+        }
+
+        return $constantStrings[0]->getValue();
     }
 }
