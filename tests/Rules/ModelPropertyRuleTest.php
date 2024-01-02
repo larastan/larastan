@@ -97,6 +97,15 @@ class ModelPropertyRuleTest extends RuleTestCase
                 10,
             ],
         ]);
+
+        if (version_compare(LARAVEL_VERSION, '10.20.0', '>=')) {
+            $this->analyse([__DIR__.'/data/model-property-relation-l10-20.php'], [
+                [
+                    'Property \'foo\' does not exist in App\\Account model.',
+                    4,
+                ]
+            ]);
+        }
     }
 
     public function testModelPropertyRuleOnModel(): void
