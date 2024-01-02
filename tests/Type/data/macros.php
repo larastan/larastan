@@ -44,3 +44,5 @@ assertType('string', Str::trimMacro(''));
 assertType('string', Str::asciiAliasMacro(''));
 
 assertVariableCertainty(TrinaryLogic::createMaybe(), $foo);
+
+assertType('string', Builder::macroWithEnumDefaultValue());
