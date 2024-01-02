@@ -192,6 +192,11 @@ class BuilderHelper
             return $queryBuilderReflection->getNativeMethod($methodName);
         }
 
+        // Check for query builder macros
+        if ($this->macroMethodsClassReflectionExtension->hasMethod($queryBuilderReflection, $methodName)) {
+            return $this->macroMethodsClassReflectionExtension->getMethod($queryBuilderReflection, $methodName);
+        }
+
         return $this->dynamicWhere($methodName, new GenericObjectType($eloquentBuilder->getName(), [new ObjectType($model->getName())]));
     }
 

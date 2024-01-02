@@ -12,6 +12,10 @@ Carbon::macro('foo', static function (): string {
     return $arg;
 });
 
+\Illuminate\Database\Query\Builder::macro('globalCustomDatabaseQueryMacro', function (string $arg = 'foobar', int $b = 5): string {
+    return $arg;
+});
+
 \Illuminate\Support\Facades\Route::macro('facadeMacro', function (): int {
     return 5;
 });

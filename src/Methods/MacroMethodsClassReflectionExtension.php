@@ -6,6 +6,7 @@ use Carbon\Traits\Macro as CarbonMacro;
 use Exception;
 use Illuminate\Auth\RequestGuard;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Str;
@@ -59,7 +60,12 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
                     $macroTraitProperty = 'macros';
                 }
             }
-        } elseif ($this->hasIndirectTraitUse($classReflection, Macroable::class) || $classReflection->getName() === Builder::class || $classReflection->isSubclassOf(Builder::class)) {
+        } elseif (
+            $this->hasIndirectTraitUse($classReflection, Macroable::class) ||
+            $classReflection->getName() === Builder::class ||
+            $classReflection->isSubclassOf(Builder::class) ||
+            $classReflection->getName() === QueryBuilder::class
+        ) {
             $classNames = [$classReflection->getName()];
             $macroTraitProperty = 'macros';
 
