@@ -1,0 +1,75 @@
+<?php
+
+namespace Illuminate\Database\Eloquent\Relations;
+
+/**
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @extends Relation<TRelatedModel>
+ */
+class HasManyThrough extends Relation
+{
+    /**
+     * Get the results of the relationship.
+     *
+     * @phpstan-return \Traversable<int, TRelatedModel>
+     */
+    public function getResults();
+
+    /**
+     * Get a paginator for the "select" statement.
+     *
+     * @param  int|null  $perPage
+     * @param  array<int, mixed>  $columns
+     * @param  string  $pageName
+     * @param  int|null  $page
+     * @return \Illuminate\Pagination\LengthAwarePaginator<TRelatedModel>
+     */
+    public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null);
+
+    /**
+     * Paginate the given query into a simple paginator.
+     *
+     * @param  int|null  $perPage
+     * @param  array<int, mixed>  $columns
+     * @param  string  $pageName
+     * @param  int|null  $page
+     * @return \Illuminate\Pagination\Paginator<TRelatedModel>
+     */
+    public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null);
+
+    /**
+     * Paginate the given query into a cursor paginator.
+     *
+     * @param  int|null  $perPage
+     * @param  array<int, mixed>  $columns
+     * @param  string  $cursorName
+     * @param  string|null  $cursor
+     * @return \Illuminate\Pagination\CursorPaginator<TRelatedModel>
+     */
+    public function cursorPaginate($perPage = null, $columns = ['*'], $cursorName = 'cursor', $cursor = null);
+
+    /**
+     * Find a related model by its primary key.
+     *
+     * @param  mixed  $id
+     * @param  array<int, string>  $columns
+     * @return TRelatedModel|\Illuminate\Database\Eloquent\Collection<int, TRelatedModel>|null
+     */
+    public function find($id, $columns = ['*']);
+
+    /**
+     * Find a related model by its primary key or throw an exception.
+     *
+     * @param  mixed  $id
+     * @param  array<int, string>  $columns
+     * @return TRelatedModel|\Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
+     */
+    public function findOrFail($id, $columns = ['*']);
+
+    /**
+     * Convert the relationship to a "has one through" relationship.
+     *
+     * @return HasOneThrough<TRelatedModel>
+     */
+    public function one();
+}

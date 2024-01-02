@@ -1,0 +1,24 @@
+<?php
+
+namespace Illuminate\Database\Eloquent\Relations;
+
+/**
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @extends HasOneOrMany<TRelatedModel>
+ */
+class HasMany extends HasOneOrMany
+{
+    /**
+     * Get the results of the relationship.
+     *
+     * @phpstan-return \Traversable<int, TRelatedModel>
+     */
+    public function getResults();
+
+    /**
+     * Convert the relationship to a "has one" relationship.
+     *
+     * @return HasOne<TRelatedModel>
+     */
+    public function one();
+}
