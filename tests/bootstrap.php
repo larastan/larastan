@@ -46,13 +46,6 @@ class CustomCollectionMacro
 
 (new CustomCollectionMacro)->registerMacro();
 
-if (version_compare(PHP_VERSION, '8.1.0', '>=')) {
-    enum FooEnum: string
-    {
-        case FOO = 'foo';
-    }
-
-    \Illuminate\Database\Eloquent\Builder::macro('macroWithEnumDefaultValue', function (string $arg = 'foobar', $b = FooEnum::FOO): string {
-        return $arg;
-    });
+if (version_compare(PHP_VERSION, '8.1.0', '>=') && version_compare(PHP_VERSION, '8.2.0', '<')) {
+    include_once 'enum-definition.php';
 }

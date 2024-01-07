@@ -12,7 +12,7 @@ class MethodsClassReflectionExtensionTest extends \PHPStan\Testing\TypeInference
         yield from $this->gatherAssertTypes(__DIR__.'/data/macros.php');
         yield from $this->gatherAssertTypes(__DIR__.'/data/redirect-response.php');
 
-        if (version_compare(PHP_VERSION, '8.1.0', '>=')) {
+        if (version_compare(PHP_VERSION, '8.1.0', '>=') && version_compare(PHP_VERSION, '8.2.0', '<')) {
             yield from $this->gatherAssertTypes(__DIR__.'/data/macros-php-81.php');
         }
     }

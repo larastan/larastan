@@ -13,6 +13,7 @@ composer config minimum-stability dev
 composer config repositories.0 '{ "type": "path", "url": "../larastan", "options": { "symlink": false } }'
 # No version information with "type":"path"
 composer require --dev "larastan/larastan:*"
+composer du -o
 
 cat >phpstan.neon <<"EOF"
 includes:
