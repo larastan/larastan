@@ -77,7 +77,7 @@ final class ModelFindExtension implements DynamicStaticMethodReturnTypeExtension
         $class = $methodCall->class;
 
         if ($class instanceof Name) {
-            $modelNames = [$class->toString()];
+            $modelNames = [$scope->resolveName($class)];
         } else {
             $type = $scope->getType($class);
 

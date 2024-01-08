@@ -16,6 +16,7 @@ use function PHPStan\Testing\assertType;
 function testFind()
 {
     assertType('App\User|null', User::find(1));
+    assertType('Model\Bar|null', Bar::findByHashId(1));
 }
 
 function testFindOnGenericModel(Model $model)
@@ -450,5 +451,23 @@ class Foo
     public function doFoo(): void
     {
         assertType('Illuminate\Database\Eloquent\Builder<App\User>', $this->user::query());
+    }
+}
+
+class Bar extends Model
+{
+    use HasBar;
+}
+
+trait HasBar
+{
+    public static function decodeHashId(string $hash_id): array
+    {
+        return [];
+    }
+
+    public static function findByHashId(string $id): ?self
+    {
+        return self::find(static::decodeHashId($id))->first();
     }
 }
