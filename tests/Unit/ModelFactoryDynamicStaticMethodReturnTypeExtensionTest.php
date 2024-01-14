@@ -73,7 +73,7 @@ class ModelFactoryDynamicStaticMethodReturnTypeExtensionTest extends PHPStanTest
         return [__DIR__.'/../phpstan-tests.neon'];
     }
 
-    public function argumentProvider(): \Generator
+    public static function argumentProvider(): \Generator
     {
         yield [new ConstantIntegerType(1), TrinaryLogic::createNo()];
         yield [new ConstantIntegerType(0), TrinaryLogic::createNo()];

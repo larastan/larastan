@@ -12,7 +12,7 @@ class IntegrationTest extends PHPStanTestCase
     /**
      * @return iterable<mixed>
      */
-    public function dataIntegrationTests(): iterable
+    public static function dataIntegrationTests(): iterable
     {
         self::getContainer();
         yield [__DIR__.'/data/test-case-extension.php'];
