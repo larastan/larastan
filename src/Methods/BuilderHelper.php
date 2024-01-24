@@ -53,7 +53,7 @@ class BuilderHelper
         'max', 'min',
         'raw',
         'sum',
-        'toSql',
+        'toSql', 'toRawSql', 'dumpRawSql', 'ddRawSql'
     ];
 
     /** @var ReflectionProvider */
