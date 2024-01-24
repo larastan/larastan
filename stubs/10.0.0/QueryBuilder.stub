@@ -311,4 +311,25 @@ class Builder
      * @throws \InvalidArgumentException
      */
     public function decrement($column, $amount = 1, array $extra = []);
+
+    /**
+     * Get the raw SQL representation of the query with embedded bindings.
+     *
+     * @return string
+     */
+    public function toRawSql();
+
+    /**
+     * Dump the raw current SQL with embedded bindings.
+     *
+     * @return $this
+     */
+    public function dumpRawSql();
+
+    /**
+     * Die and dump the current SQL with embedded bindings.
+     *
+     * @return never
+     */
+    public function ddRawSql();
 }
