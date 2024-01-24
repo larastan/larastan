@@ -197,6 +197,16 @@ function testScopeWithOrWhereHigherOrderBuilderProxyProperty()
     assertType('Illuminate\Database\Eloquent\Builder<App\Thread>', Thread::valid()->orWhere->valid());
 }
 
+function testToRawSql()
+{
+    assertType('string', Thread::valid()->toRawSql());
+}
+
+function testDumpRawSql()
+{
+    assertType('Illuminate\Database\Eloquent\Builder<App\Thread>', Thread::valid()->dumpRawSql());
+}
+
 function testWithAcceptsArrayOfClosures()
 {
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::with(['accounts' => function ($relation) {
