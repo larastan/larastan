@@ -419,6 +419,13 @@ class Builder
     public function get($columns = ['*']);
 
     /**
+     * Get a lazy collection for the given query.
+     *
+     * @phpstan-return \Illuminate\Support\LazyCollection<int, TModelClass>
+     */
+    public function cursor();
+
+    /**
      * Get the hydrated models without eager loading.
      *
      * @param  array<int, (model-property<TModelClass>|'*')>|model-property<TModelClass>|'*'  $columns

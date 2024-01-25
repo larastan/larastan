@@ -229,6 +229,7 @@ function doFoo(User $user, Post $post, $userAndAuth): void
     assertType('Illuminate\Support\LazyCollection<int, App\User>', User::query()->lazy());
     assertType('Illuminate\Support\LazyCollection<int, App\User>', User::query()->lazyById());
     assertType('Illuminate\Support\LazyCollection<int, App\User>', User::query()->lazyByIdDesc());
+    assertType('Illuminate\Support\LazyCollection<int, App\User>', User::query()->cursor());
     assertType('Illuminate\Support\LazyCollection<int, App\Post>', $post->newQuery()->lazy());
     assertType('Illuminate\Support\LazyCollection<int, App\Post>', $post->newQuery()->lazyById());
     assertType('Illuminate\Support\LazyCollection<int, App\Post>', $post->newQuery()->lazyByIdDesc());
