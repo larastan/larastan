@@ -478,6 +478,13 @@ class Builder
      */
      public function cursorPaginate($perPage = null, $columns = ['*'], $cursorName = 'cursor', $cursor = null);
 
+    /**
+     * Get a lazy collection for the given query.
+     *
+     * @phpstan-return \Illuminate\Support\LazyCollection<int, TModelClass>
+     */
+    public function cursor();
+
      /**
       * Query lazily, by chunks of the given size.
       *

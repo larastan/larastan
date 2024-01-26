@@ -332,4 +332,11 @@ class Builder
      * @return never
      */
     public function ddRawSql();
+
+    /**
+     * Get a lazy collection for the given query.
+     *
+     * @phpstan-return \Illuminate\Support\LazyCollection<int, mixed>
+     */
+    public function cursor();
 }

@@ -206,6 +206,13 @@ class Builder
     public function find($id, $columns = ['*']);
 
     /**
+     * Get a lazy collection for the given query.
+     *
+     * @return \Illuminate\Support\LazyCollection<int, mixed>
+     */
+    public function cursor();
+
+    /**
      * Get an array with the values of a given column.
      *
      * @param  string|\Illuminate\Database\Query\Expression  $column
