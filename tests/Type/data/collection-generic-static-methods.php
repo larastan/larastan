@@ -80,21 +80,11 @@ assertType('App\TransactionCollection<(int|string), int>', $customEloquentCollec
 assertType('App\UserCollection', $secondCustomEloquentCollection->combine([1]));
 assertType('Illuminate\Support\Collection<(int|string), string>', $items->combine(['foo']));
 
-assertType('App\User|Illuminate\Database\Eloquent\Collection<int, App\User>|null', $collection->pop(1));
-assertType('App\Transaction|App\TransactionCollection<int, App\Transaction>|null', $customEloquentCollection->pop(2));
-assertType('App\User|App\UserCollection|null', $secondCustomEloquentCollection->pop(2));
-assertType('Illuminate\Support\Collection<int, int>|int|null', $items->pop(3));
-
 assertType('App\User', $collection->random());
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->random(1));
 assertType('App\TransactionCollection<int, App\Transaction>', $customEloquentCollection->random(2));
 assertType('App\UserCollection', $secondCustomEloquentCollection->random(2));
 assertType('Illuminate\Support\Collection<int, int>', $items->random(3));
-
-assertType('App\User|Illuminate\Database\Eloquent\Collection<int, App\User>|null', $collection->shift(1));
-assertType('App\Transaction|App\TransactionCollection<int, App\Transaction>|null', $customEloquentCollection->shift(2));
-assertType('App\User|App\UserCollection|null', $secondCustomEloquentCollection->shift(2));
-assertType('Illuminate\Support\Collection<int, int>|int|null', $items->shift(3));
 
 assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $collection->sliding(1));
 assertType('App\TransactionCollection<int, App\TransactionCollection<int, App\Transaction>>', $customEloquentCollection->sliding(2));

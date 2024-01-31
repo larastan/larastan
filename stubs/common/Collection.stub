@@ -39,6 +39,22 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      * @return static<array-key, TCombineValue>
      */
     public function combine($values);
+
+    /**
+     * Get and remove the last N items from the collection.
+     *
+     * @param  int  $count
+     * @return ($count is 1 ? TValue|null : static<int, TValue>)
+     */
+    public function pop($count = 1);
+
+    /**
+     * Get and remove the first N items from the collection.
+     *
+     * @param  int  $count
+     * @return ($count is 1 ? TValue|null : static<int, TValue>)
+     */
+    public function shift($count = 1);
 }
 
 /**
