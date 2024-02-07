@@ -25,6 +25,8 @@ Larastan was created by [Can Vural](https://github.com/canvural) and [Nuno Madur
 
 > While by definition, "static analysis" doesn't load any of your application's code. Larastan boots your application's container, so it can resolve types that are only possible to compute at runtime. That's why we use the term "code analysis" instead of "static analysis".
 
+> For Livewire support, check out [larastan-livewire](https://github.com/calebdw/larastan-livewire).
+
 ## ✨ Getting Started In 3 Steps
 
 > **Requires:**
