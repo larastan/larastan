@@ -48,6 +48,7 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
             'splitIn', 'values', 'wrap', 'zip',
         ];
 
+        /** @phpstan-ignore-next-line Version is not constant */
         if (version_compare(LARAVEL_VERSION, '9.48.0', '<')) {
             $methods[] = 'countBy';
         }

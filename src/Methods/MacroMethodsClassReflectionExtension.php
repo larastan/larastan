@@ -75,6 +75,7 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
                 $classNames[] = Builder::class;
             }
         } elseif ($this->hasIndirectTraitUse($classReflection, CarbonMacro::class)) {
+            /** @phpstan-ignore-next-line Version is not constant */
             if (version_compare(CARBON_VERSION, '3.0.0', '>=')) {
                 $classNames = [FactoryImmutable::class];
                 $macroTraitProperty = 'notUsed';

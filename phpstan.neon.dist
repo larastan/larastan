@@ -6,3 +6,5 @@ parameters:
     phpVersion: 80000
     paths:
         - src
+    bootstrapFiles:
+        - bootstrap.php
