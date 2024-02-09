@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Composer\InstalledVersions;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Contracts\Foundation\Application;
 use Laravel\Lumen\Application as LumenApplication;
@@ -30,4 +31,8 @@ if ($app instanceof Application) {
 
 if (! defined('LARAVEL_VERSION')) {
     define('LARAVEL_VERSION', $app->version());
+}
+
+if (! defined('CARBON_VERSION')) {
+    define('CARBON_VERSION', InstalledVersions::getVersion('nesbot/carbon'));
 }

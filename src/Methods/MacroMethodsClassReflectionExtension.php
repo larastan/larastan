@@ -2,6 +2,8 @@
 
 namespace Larastan\Larastan\Methods;
 
+use Carbon\Carbon;
+use Carbon\FactoryImmutable;
 use Carbon\Traits\Macro as CarbonMacro;
 use Exception;
 use Illuminate\Auth\RequestGuard;
@@ -73,8 +75,13 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
                 $classNames[] = Builder::class;
             }
         } elseif ($this->hasIndirectTraitUse($classReflection, CarbonMacro::class)) {
-            $classNames = [$classReflection->getName()];
-            $macroTraitProperty = 'globalMacros';
+            if (version_compare(CARBON_VERSION, '3.0.0', '>=')) {
+                $classNames = [FactoryImmutable::class];
+                $macroTraitProperty = 'notUsed';
+            } else {
+                $classNames = [Carbon::class];
+                $macroTraitProperty = 'globalMacros';
+            }
         } elseif ($classReflection->isSubclassOf(Facade::class)) {
             $facadeClass = $classReflection->getName();
 
@@ -104,52 +111,63 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
         if ($classNames !== [] && $macroTraitProperty) {
             foreach ($classNames as $className) {
                 $macroClassReflection = $this->reflectionProvider->getClass($className);
+                $macros = [];
 
-                if ($macroClassReflection->getNativeReflection()->hasProperty($macroTraitProperty)) {
+                if ($className === FactoryImmutable::class) {
+                    /** @phpstan-ignore-next-line method exists in Carbon v3 */
+                    $macros = FactoryImmutable::getDefaultInstance()->getSettings()['macros'] ?? [];
+                } elseif ($macroClassReflection->getNativeReflection()->hasProperty($macroTraitProperty)) {
                     $refProperty = $macroClassReflection->getNativeReflection()->getProperty($macroTraitProperty);
                     $refProperty->setAccessible(true);
+                    $macros = $refProperty->getValue();
+                }
 
-                    $found = array_key_exists($methodName, $refProperty->getValue());
+                $found = array_key_exists($methodName, $macros);
 
-                    if ($found) {
-                        $macroDefinition = $refProperty->getValue()[$methodName];
+                if (! $found) {
+                    continue;
+                }
 
-                        if (is_string($macroDefinition)) {
-                            if (str_contains($macroDefinition, '::')) {
-                                $macroDefinition = explode('::', $macroDefinition, 2);
-                                $macroClassName = $macroDefinition[0];
-                                if (! $this->reflectionProvider->hasClass($macroClassName) || ! $this->reflectionProvider->getClass($macroClassName)->hasNativeMethod($macroDefinition[1])) {
-                                    throw new ShouldNotHappenException('Class '.$macroClassName.' does not exist');
-                                }
+                $macroDefinition = $macros[$methodName];
 
-                                $methodReflection = $this->reflectionProvider->getClass($macroClassName)->getNativeMethod($macroDefinition[1]);
-                            } elseif (is_callable($macroDefinition)) {
-                                $methodReflection = new Macro(
-                                    $macroClassReflection, $methodName, $this->closureTypeFactory->fromClosureObject(\Closure::fromCallable($macroDefinition))
-                                );
-                            } else {
-                                throw new ShouldNotHappenException('Function '.$macroDefinition.' does not exist');
-                            }
-                        } elseif (is_array($macroDefinition)) {
-                            $macroClassName = get_class($macroDefinition[0]);
-                            if ($macroClassName === false || ! $this->reflectionProvider->hasClass($macroClassName) || ! $this->reflectionProvider->getClass($macroClassName)->hasNativeMethod($macroDefinition[1])) {
-                                throw new ShouldNotHappenException('Class '.$macroClassName.' does not exist');
-                            }
-
-                            $methodReflection = $this->reflectionProvider->getClass($macroClassName)->getNativeMethod($macroDefinition[1]);
-                        } else {
-                            $methodReflection = new Macro(
-                                $macroClassReflection, $methodName, $this->closureTypeFactory->fromClosureObject($refProperty->getValue()[$methodName])
-                            );
-
-                            $methodReflection->setIsStatic(true);
+                if (is_string($macroDefinition)) {
+                    if (str_contains($macroDefinition, '::')) {
+                        $macroDefinition = explode('::', $macroDefinition, 2);
+                        $macroClassName = $macroDefinition[0];
+                        if (! $this->reflectionProvider->hasClass($macroClassName) || ! $this->reflectionProvider->getClass($macroClassName)->hasNativeMethod($macroDefinition[1])) {
+                            throw new ShouldNotHappenException('Class '.$macroClassName.' does not exist');
                         }
 
-                        $this->methods[$classReflection->getName().'-'.$methodName] = $methodReflection;
-
-                        break;
+                        $methodReflection = $this->reflectionProvider->getClass($macroClassName)->getNativeMethod($macroDefinition[1]);
+                    } elseif (is_callable($macroDefinition)) {
+                        $methodReflection = new Macro(
+                            $macroClassReflection, $methodName, $this->closureTypeFactory->fromClosureObject(\Closure::fromCallable($macroDefinition))
+                        );
+                    } else {
+                        throw new ShouldNotHappenException('Function '.$macroDefinition.' does not exist');
                     }
+                } elseif (is_array($macroDefinition)) {
+                    $macroClassName = get_class($macroDefinition[0]);
+                    if (
+                        $macroClassName === false
+                        || ! $this->reflectionProvider->hasClass($macroClassName)
+                        || ! $this->reflectionProvider->getClass($macroClassName)->hasNativeMethod($macroDefinition[1])
+                    ) {
+                        throw new ShouldNotHappenException('Class '.$macroClassName.' does not exist');
+                    }
+
+                    $methodReflection = $this->reflectionProvider->getClass($macroClassName)->getNativeMethod($macroDefinition[1]);
+                } else {
+                    $methodReflection = new Macro(
+                        $macroClassReflection, $methodName, $this->closureTypeFactory->fromClosureObject($macros[$methodName])
+                    );
+
+                    $methodReflection->setIsStatic(true);
                 }
+
+                $this->methods[$classReflection->getName().'-'.$methodName] = $methodReflection;
+
+                break;
             }
         }
 

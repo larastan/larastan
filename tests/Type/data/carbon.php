@@ -1,6 +1,6 @@
 <?php
 
-namespace Carbon;
+use Carbon\Carbon;
 
 use function PHPStan\Testing\assertType;
 
