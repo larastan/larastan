@@ -7,21 +7,17 @@ namespace Larastan\Larastan\ReturnTypes;
 use Illuminate\Database\Eloquent\Model;
 use PHPStan\Type\NullType;
 use PHPStan\Type\StringType;
-use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\MethodCall;
-use PhpParser\Node\Scalar\String_;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\Constant\ConstantArrayTypeBuilder;
-use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\Type;
 
-use function array_map;
-use function array_filter;
+use function array_reduce;
 use function count;
 
 final class ModelOnlyDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
@@ -41,34 +37,48 @@ final class ModelOnlyDynamicMethodReturnTypeExtension implements DynamicMethodRe
         MethodCall $methodCall,
         Scope $scope
     ): Type {
-        $fields = $methodCall->getArgs();
+        $args = $methodCall->getArgs();
 
-        if (count($fields) < 1) {
+        if (count($args) < 1) {
             return new ErrorType();
         }
 
-        if ($fields[0]->value instanceof Array_) {
-            $fields = $fields[0]->value->items;
-        }
+        $keys = [];
 
-        $fields = array_map(static fn ($f) => $f->value, array_filter($fields));
+        foreach ($args as $arg) {
+            $type = $scope->getType($arg->value);
 
-        $model = $scope->getType($methodCall->var);
-        $array = ConstantArrayTypeBuilder::createEmpty();
+            $stringsArray = [];
+            $stringsArray[] = $type->getConstantStrings();
 
-        foreach ($fields as $field) {
-            if (! $field instanceof String_) {
-                return new ArrayType(new StringType(), new MixedType());
+            foreach ($type->getArrays() as $array) {
+                $stringsArray[] = $array->getItemType()->getConstantStrings();
             }
 
-            $name = $field->value;
+            foreach ($stringsArray as $strings) {
+                if (count($strings) > 0) {
+                    array_push($keys, ...$strings);
+                    continue 2;
+                }
+            }
+
+            // encountered an argument that does not resolve to a constant string
+            return new ArrayType(new StringType(), new MixedType());
+        }
+
+        $model = $scope->getType($methodCall->var);
+
+        $array = array_reduce($keys, function ($array, $key) use ($model, $scope) {
+            $name = $key->getValue();
 
             $valueType = $model->hasProperty($name)->yes()
                 ? $model->getProperty($name, $scope)->getReadableType()
                 : new NullType();
 
-            $array->setOffsetValueType(new ConstantStringType($name), $valueType);
-        }
+            $array->setOffsetValueType($key, $valueType);
+
+            return $array;
+        }, ConstantArrayTypeBuilder::createEmpty());
 
         return $array->getArray();
     }
