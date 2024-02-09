@@ -1,10 +1,11 @@
 includes:
-    - vendor/phpstan/phpstan/conf/bleedingEdge.neon
-    - phpstan-baseline.neon
+  - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+  - phpstan-baseline.neon
 parameters:
-    level: 8
-    phpVersion: 80000
-    paths:
-        - src
-    bootstrapFiles:
-        - bootstrap.php
+  level: 8
+  phpVersion: 80000
+  paths:
+    - src
+  bootstrapFiles:
+    - bootstrap.php
+  reportUnmatchedIgnoredErrors: false
