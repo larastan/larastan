@@ -5,6 +5,12 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Properties;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 use Larastan\Larastan\Concerns;
@@ -114,7 +120,13 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
                 $relatedModelClassNames = $relatedModel->getObjectClassNames();
             }
 
-            if (Str::contains($type->getObjectClassNames()[0], 'Many')) {
+            if (
+                (new ObjectType(BelongsToMany::class))->isSuperTypeOf($type)->yes()
+                || (new ObjectType(HasMany::class))->isSuperTypeOf($type)->yes()
+                || (new ObjectType(HasManyThrough::class))->isSuperTypeOf($type)->yes()
+                || (new ObjectType(MorphMany::class))->isSuperTypeOf($type)->yes()
+                || (new ObjectType(MorphToMany::class))->isSuperTypeOf($type)->yes()
+            ) {
                 $types = [];
 
                 foreach ($relatedModelClassNames as $relatedModelClassName) {
@@ -126,7 +138,7 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
                 }
             }
 
-            if (Str::endsWith($type->getObjectClassNames()[0], 'MorphTo')) {
+            if ((new ObjectType(MorphTo::class))->isSuperTypeOf($type)->yes()) {
                 // There was no generic type, or it was just Model
                 // so we will return mixed to avoid errors.
                 if ($relatedModel->getObjectClassNames()[0] === Model::class) {
