@@ -28,7 +28,7 @@ class Account extends Model
     /** @phpstan-return BelongsTo<Group, Account> */
     public function group(): BelongsTo
     {
-        return $this->belongsTo(Group::class);
+        return $this->belongsTo(Group::class)->withDefault();
     }
 
     public function posts(): BelongsToMany
