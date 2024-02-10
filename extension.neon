@@ -441,6 +441,9 @@ services:
         class: Larastan\Larastan\Properties\ModelCastHelper
 
     -
+        class: Larastan\Larastan\Properties\ModelPropertyHelper
+
+    -
         class: Larastan\Larastan\Rules\ModelProperties\ModelPropertiesRuleHelper
 
     -
