@@ -400,6 +400,11 @@ services:
         class: Larastan\Larastan\Rules\ModelProperties\ModelPropertyRule
 
     -
+        class: Larastan\Larastan\Rules\ModelAppendsRule
+        tags:
+            - phpstan.rules.rule
+
+    -
         class: Larastan\Larastan\Rules\ModelProperties\ModelPropertyStaticCallRule
 
     -
