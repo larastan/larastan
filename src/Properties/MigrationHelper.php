@@ -21,9 +21,9 @@ use function uasort;
 
 class MigrationHelper
 {
-    /** @param  string[] $databaseMigrationPath */
     public function __construct(
         private Parser $parser,
+        /** @var string[] */
         private array $databaseMigrationPath,
         private FileHelper $fileHelper,
         private bool $disableMigrationScan,
