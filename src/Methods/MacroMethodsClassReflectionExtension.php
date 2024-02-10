@@ -2,6 +2,7 @@
 
 namespace Larastan\Larastan\Methods;
 
+use Carbon\Carbon;
 use Carbon\Traits\Macro as CarbonMacro;
 use Exception;
 use Illuminate\Auth\RequestGuard;
@@ -72,9 +73,6 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
             if ($classReflection->isSubclassOf(Builder::class)) {
                 $classNames[] = Builder::class;
             }
-        } elseif ($this->hasIndirectTraitUse($classReflection, CarbonMacro::class)) {
-            $classNames = [$classReflection->getName()];
-            $macroTraitProperty = 'globalMacros';
         } elseif ($classReflection->isSubclassOf(Facade::class)) {
             $facadeClass = $classReflection->getName();
 
@@ -99,6 +97,16 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
                     }
                 }
             }
+        }
+
+        if ($this->hasIndirectTraitUse($classReflection, CarbonMacro::class) && Carbon::hasMacro($methodName)) {
+            $methodReflection = new Macro(
+                $classReflection, $methodName, $this->closureTypeFactory->fromClosureObject(\Closure::fromCallable(Carbon::getMacro($methodName))) // @phpstan-ignore-line hasMacro guarantees no null return
+            );
+
+            $this->methods[$classReflection->getName().'-'.$methodName] = $methodReflection;
+
+            return true;
         }
 
         if ($classNames !== [] && $macroTraitProperty) {
