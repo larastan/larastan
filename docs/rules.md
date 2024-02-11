@@ -356,3 +356,31 @@ parameters:
 - `@includeUnless` Blade directive.
 - `@includeWhen` Blade directive.
 - `@includeFirst` Blade directive.
+
+## NoEnvCallsOutsideOfConfig
+
+Checks for `env` calls out side of the config directory which returns null
+when the config is cached.
+
+#### Examples
+
+```php
+env(...);
+```
+
+Will result in the following error:
+
+```
+Called 'env' outside of the config directory which returns null when the config is cached, use 'config'.")
+```
+
+#### Configuration
+
+This rule is disabled by default. To enable, add:
+
+```neon
+parameters:
+    noEnvCallsOutsideOfConfig: true
+```
+
+to your `phpstan.neon` file.

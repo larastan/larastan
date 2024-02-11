@@ -12,6 +12,7 @@ parameters:
     bootstrapFiles:
         - bootstrap.php
     checkOctaneCompatibility: false
+    noEnvCallsOutsideOfConfig: false
     noModelMake: true
     noUnnecessaryCollectionCall: true
     noUnnecessaryCollectionCallOnly: []
@@ -27,6 +28,7 @@ parameters:
 
 parametersSchema:
     checkOctaneCompatibility: bool()
+    noEnvCallsOutsideOfConfig: bool()
     noModelMake: bool()
     noUnnecessaryCollectionCall: bool()
     noUnnecessaryCollectionCallOnly: listOf(string())
@@ -40,6 +42,8 @@ parametersSchema:
     checkUnusedViews: bool()
 
 conditionalTags:
+    Larastan\Larastan\Rules\NoEnvCallsOutsideOfConfigRule:
+        phpstan.rules.rule: %noEnvCallsOutsideOfConfig%
     Larastan\Larastan\Rules\NoModelMakeRule:
         phpstan.rules.rule: %noModelMake%
     Larastan\Larastan\Rules\NoUnnecessaryCollectionCallRule:
@@ -379,6 +383,9 @@ services:
 
     -
         class: Larastan\Larastan\Rules\OctaneCompatibilityRule
+
+    -
+        class: Larastan\Larastan\Rules\NoEnvCallsOutsideOfConfigRule
 
     -
         class: Larastan\Larastan\Rules\NoModelMakeRule
