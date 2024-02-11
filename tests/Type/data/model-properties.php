@@ -70,6 +70,7 @@ function test(
     assertType('int', $user->id);
     assertType('bool', $user->blocked);
     assertType('Carbon\Carbon|null', $user->created_at);
+    assertType('string|null', $user->updated_at);
     assertType('array', $user->meta);
     assertType('string', $account->active);
     assertType('string', $role->id);
