@@ -163,6 +163,10 @@ services:
         class: Larastan\Larastan\Properties\ModelRelationsExtension
         tags:
             - phpstan.broker.propertiesClassReflectionExtension
+    -
+        class: Larastan\Larastan\ReturnTypes\ModelOnlyDynamicMethodReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
         class: Larastan\Larastan\ReturnTypes\ModelFactoryDynamicStaticMethodReturnTypeExtension
