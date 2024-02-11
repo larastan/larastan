@@ -103,10 +103,7 @@ class ModelPropertyHelper
 
         $column = $this->tables[$tableName]->columns[$propertyName];
 
-        if ($this->hasDate($modelInstance, $propertyName)) {
-            $readableType = $this->modelCastHelper->getDateType();
-            $writableType = TypeCombinator::union($this->modelCastHelper->getDateType(), new StringType());
-        } elseif ($modelInstance->hasCast($propertyName)) {
+        if ($modelInstance->hasCast($propertyName)) {
             $cast = $modelInstance->getCasts()[$propertyName];
 
             $readableType = $this->modelCastHelper->getReadableType(
@@ -117,6 +114,9 @@ class ModelPropertyHelper
                 $cast,
                 $this->stringResolver->resolve($column->writeableType),
             );
+        } elseif ($this->hasDate($modelInstance, $propertyName)) {
+            $readableType = $this->modelCastHelper->getDateType();
+            $writableType = TypeCombinator::union($this->modelCastHelper->getDateType(), new StringType());
         } else {
             if (in_array($column->readableType, ['enum', 'set'], true)) {
                 if ($column->options === null || count($column->options) < 1) {
