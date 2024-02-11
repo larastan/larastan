@@ -1,6 +1,6 @@
 <?php
 
-namespace ModelRelations;
+namespace ModelMethods;
 
 use App\User;
 
