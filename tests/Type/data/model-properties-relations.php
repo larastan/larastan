@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 use function PHPStan\Testing\assertType;
@@ -16,6 +17,7 @@ function foo(Foo $foo, Bar $bar, Account $account): void
 {
     assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelations\Bar>', $foo->hasManyRelation);
     assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelations\Bar>', $foo->hasManyThroughRelation);
+    assertType('ModelPropertiesRelations\Baz|null', $foo->hasOneThroughRelation);
     assertType('ModelPropertiesRelations\Foo', $bar->belongsToRelation);
     assertType('mixed', $bar->morphToRelation);
     assertType('App\Account|App\User', $bar->morphToUnionRelation);
@@ -40,6 +42,12 @@ class Foo extends Model
     public function hasManyThroughRelation(): HasManyThrough
     {
         return $this->hasManyThrough(Bar::class, User::class);
+    }
+
+    /** @return HasOneThrough<Baz> */
+    public function hasOneThroughRelation(): HasOneThrough
+    {
+        return $this->hasOneThrough(Baz::class, User::class);
     }
 
     public function relationReturningUnion(): HasMany|BelongsTo
