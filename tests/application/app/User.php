@@ -63,6 +63,7 @@ class User extends Authenticatable
         'secret' => Hash::class.':sha256',
         'basic_enum' => BasicEnumeration::class,
         'backed_enum' => BackedEnumeration::class,
+        'updated_at' => 'string', // used to test default date casting
 
         'int' => 'int',
         'integer' => 'integer',
