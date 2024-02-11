@@ -24,6 +24,7 @@ function foo(Foo $foo, Bar $bar, Account $account): void
     assertType('App\User|null', $account->ownerRelation);
     assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Model>|Illuminate\Database\Eloquent\Model|null', $foo->relationReturningUnion);
     assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelations\Bar>|ModelPropertiesRelations\Baz|null', $foo->relationReturningUnion2);
+    assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelations\Foo>', $foo->ancestors);
 }
 
 /** @property string $name */
@@ -50,6 +51,12 @@ class Foo extends Model
     public function relationReturningUnion2(): HasMany|BelongsTo
     {
         return $this->name === 'foo' ? $this->hasMany(Bar::class) : $this->belongsTo(Baz::class);
+    }
+
+    /** @return Ancestors<Foo> */
+    public function ancestors(): Ancestors
+    {
+        //
     }
 }
 
@@ -78,5 +85,9 @@ class Bar extends Model
 }
 
 class Baz extends Model
+{
+}
+
+class Ancestors extends HasMany
 {
 }
