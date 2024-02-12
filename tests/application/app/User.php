@@ -74,6 +74,7 @@ class User extends Authenticatable
         'array' => 'array',
         'json' => 'json',
         'collection' => 'collection',
+        'nullable_collection' => 'collection',
         'date' => 'date',
         'datetime' => 'datetime',
         'immutable_date' => 'immutable_date',

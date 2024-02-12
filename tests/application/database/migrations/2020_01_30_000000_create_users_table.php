@@ -50,6 +50,7 @@ class CreateUsersTable extends Migration
             $table->json('array');
             $table->json('json');
             $table->json('collection');
+            $table->json('nullable_collection')->nullable();
             $table->date('date');
             $table->dateTime('datetime');
             $table->date('immutable_date');
