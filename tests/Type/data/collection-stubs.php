@@ -98,3 +98,15 @@ assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection
 
 assertType('App\User', $collectionOfUsers->random());
 assertType('Illuminate\Support\Collection<int, App\User>', $collectionOfUsers->random(5));
+
+assertType('App\User|null', $collection->pop());
+assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->pop(5));
+
+assertType('App\User|null', $collectionOfUsers->pop());
+assertType('Illuminate\Support\Collection<int, App\User>', $collectionOfUsers->pop(5));
+
+assertType('App\User|null', $collection->shift());
+assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->shift(5));
+
+assertType('App\User|null', $collectionOfUsers->shift());
+assertType('Illuminate\Support\Collection<int, App\User>', $collectionOfUsers->shift(5));
