@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace EloquentBuilder;
+namespace QueryBuilder;
 
 use Illuminate\Support\Facades\DB;
 
