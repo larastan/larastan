@@ -27,7 +27,9 @@ final class ReflectionHelper
             }
         }
 
-        return (new MixinPropertiesClassReflectionExtension([]))->hasProperty($classReflection, $propertyName); // @phpstan-ignore-line
+        /** @phpstan-ignore-next-line */
+        return (new MixinPropertiesClassReflectionExtension([$classReflection->getName()]))
+            ->hasProperty($classReflection, $propertyName);
     }
 
     /**
@@ -45,6 +47,8 @@ final class ReflectionHelper
             }
         }
 
-        return (new MixinMethodsClassReflectionExtension([]))->hasMethod($classReflection, $methodName); // @phpstan-ignore-line
+        /** @phpstan-ignore-next-line */
+        return (new MixinMethodsClassReflectionExtension([$classReflection->getName()]))
+            ->hasMethod($classReflection, $methodName);
     }
 }
