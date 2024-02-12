@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -123,9 +124,14 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
             if (
                 (new ObjectType(BelongsToMany::class))->isSuperTypeOf($type)->yes()
                 || (new ObjectType(HasMany::class))->isSuperTypeOf($type)->yes()
-                || (new ObjectType(HasManyThrough::class))->isSuperTypeOf($type)->yes()
+                || (
+                    (new ObjectType(HasManyThrough::class))->isSuperTypeOf($type)->yes()
+                    // HasOneThrough extends HasManyThrough
+                    && ! (new ObjectType(HasOneThrough::class))->isSuperTypeOf($type)->yes()
+                )
                 || (new ObjectType(MorphMany::class))->isSuperTypeOf($type)->yes()
                 || (new ObjectType(MorphToMany::class))->isSuperTypeOf($type)->yes()
+                || Str::contains($type->getObjectClassNames()[0], 'Many') // fallback
             ) {
                 $types = [];
 
@@ -138,7 +144,10 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
                 }
             }
 
-            if ((new ObjectType(MorphTo::class))->isSuperTypeOf($type)->yes()) {
+            if (
+                (new ObjectType(MorphTo::class))->isSuperTypeOf($type)->yes()
+                || Str::endsWith($type->getObjectClassNames()[0], 'MorphTo') // fallback
+            ) {
                 // There was no generic type, or it was just Model
                 // so we will return mixed to avoid errors.
                 if ($relatedModel->getObjectClassNames()[0] === Model::class) {
