@@ -74,6 +74,9 @@ assertType('App\User|bool', $collection->first(function (User $user) {
 assertType('App\User|null', $collection->firstWhere('blocked'));
 assertType('App\User|null', $collection->firstWhere('blocked', true));
 assertType('App\User|null', $collection->firstWhere('blocked', '=', true));
+assertType('App\User|null', $collectionOfUsers->firstWhere('name', 'Taylor'));
+assertType('array{id: int, type: string}|null', $foo->firstWhere('type', 'A'));
+assertType('string|null', $foo->firstWhere('type', 'A')['type'] ?? null);
 
 assertType('App\User|null', $collection->last());
 assertType('App\User|bool', $collection->last(null, false));
