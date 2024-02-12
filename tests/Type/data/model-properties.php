@@ -42,6 +42,7 @@ function foo(User $user, Account $account, Role $role, Group $group, Team $team,
     assertType('array', $user->array);
     assertType('array', $user->json);
     assertType(Collection::class, $user->collection);
+    assertType(Collection::class.'|null', $user->nullable_collection);
     assertType(Carbon::class, $user->date);
     assertType(Carbon::class, $user->datetime);
     assertType(CarbonImmutable::class, $user->immutable_date);
