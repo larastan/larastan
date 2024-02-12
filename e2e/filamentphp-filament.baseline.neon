@@ -1,0 +1,16 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Call to function is_null\\(\\) with mixed will always evaluate to false\\.$#"
+			count: 1
+			path: ../../e2e/packages/forms/src/Commands/MakeFormCommand.php
+
+		-
+			message: "#^Variable \\$modifyQueryUsing on left side of \\?\\? always exists and is not nullable\\.$#"
+			count: 1
+			path: ../../e2e/packages/panels/src/Commands/MakePageCommand.php
+
+		-
+			message: "#^Call to function is_null\\(\\) with mixed will always evaluate to false\\.$#"
+			count: 1
+			path: ../../e2e/packages/panels/src/Commands/MakeResourceCommand.php

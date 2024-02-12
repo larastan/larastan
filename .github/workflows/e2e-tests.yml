@@ -25,8 +25,14 @@ jobs:
       matrix:
         include:
           -
+            repository: monicahq/monica
+            ref: 12a6f08c8ce65eb022f91195a0b1317aed78955d
+            php-version: "8.2"
+            config: monicahq-monica.neon
+            baseline: monicahq-monica.baseline.neon
+          -
             repository: koel/koel
-            ref: a6a0edb110dfb5aa56fb8a74d583221cb30a7353
+            ref: e2838f3c9e1cf7826227aac450d38bd7fc8843f9
             php-version: "8.1"
             config: koel-koel.neon
             baseline: koel-koel.baseline.neon
@@ -45,9 +51,16 @@ jobs:
             config: canvural-larastan-strict-rules.neon
             baseline: canvural-larastan-strict-rules.baseline.neon
 
+          -
+            repository: filamentphp/filament
+            ref: c3501678694b43b416143fe68fb305acdb575a4d
+            php-version: "8.2"
+            config: filamentphp-filament.neon
+            baseline: filamentphp-filament.baseline.neon
+
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
         with:
           path: "larastan"
 
@@ -58,7 +71,7 @@ jobs:
           php-version: "${{ matrix.php-version }}"
 
       - name: "Checkout dependent repo"
-        uses: "actions/checkout@v3"
+        uses: "actions/checkout@v4"
         with:
           repository: "${{ matrix.repository }}"
           ref: "${{ matrix.ref }}"
