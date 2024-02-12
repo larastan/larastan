@@ -101,7 +101,7 @@ class Builder
     /**
      * Execute the query and get the first result.
      *
-     * @param  array<model-property<TModelClass>|int, mixed>|string  $columns
+     * @param  array<int, (model-property<TModelClass>|'*')>|model-property<TModelClass>|'*'  $columns
      * @return TModelClass|null
      */
     public function first($columns = ['*']);
