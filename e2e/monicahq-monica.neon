@@ -1,6 +1,6 @@
 includes:
 	- ../../e2e/phpstan.neon
-	- monicahq-chandler.baseline.neon
+	- monicahq-monica.baseline.neon
 parameters:
 	ignoreErrors:
 		- '#^Property App\\.+ \(never\) does not accept mixed\.$#'

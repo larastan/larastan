@@ -47,7 +47,7 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\:\\:withMeta\\(\\)\\.$#"
-			count: 14
+			count: 15
 			path: ../../e2e/app/Repositories/SongRepository.php
 
 		-

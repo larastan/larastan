@@ -1,0 +1,3 @@
+includes:
+	- ../../e2e/phpstan.neon.dist
+	- filamentphp-filament.baseline.neon
