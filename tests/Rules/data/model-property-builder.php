@@ -49,3 +49,6 @@ function getKey(): string
 
     return 'bar';
 }
+
+\App\User::query()->first(['foo', 'bar']);
+\App\User::query()->first('foo');
