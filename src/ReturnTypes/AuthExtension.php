@@ -48,16 +48,21 @@ final class AuthExtension implements DynamicStaticMethodReturnTypeExtension
         Scope $scope
     ): Type {
         $config = $this->getContainer()->get('config');
-        $authModel = null;
+        $authModels = [];
 
         if ($config !== null) {
-            $authModel = $this->getAuthModel($config);
+            $authModels = $this->getAuthModels($config);
         }
 
-        if ($authModel === null) {
+        if (count($authModels) === 0) {
             return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
         }
 
-        return TypeCombinator::addNull(new ObjectType($authModel));
+        return TypeCombinator::addNull(
+            TypeCombinator::union(...array_map(
+                fn (string $authModel): Type => new ObjectType($authModel),
+                $authModels,
+            )),
+        );
     }
 }

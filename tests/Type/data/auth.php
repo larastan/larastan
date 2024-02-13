@@ -13,7 +13,7 @@ class AuthExtension
 {
     public function testUser(): void
     {
-        assertType('App\User|null', Auth::user());
+        assertType('App\Admin|App\User|null', Auth::user());
     }
 
     public function testCheck(): void
