@@ -86,7 +86,7 @@ assertType('App\TransactionCollection<int, App\Transaction>', $customEloquentCol
 assertType('App\UserCollection', $secondCustomEloquentCollection->pop(2));
 assertType('Illuminate\Support\Collection<int, int>', $items->pop(3));
 
-assertType('App\User', $collection->random());
+assertType('App\RoleCollection', User::firstOrFail(1)->roles->random());
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->random(1));
 assertType('App\TransactionCollection<int, App\Transaction>', $customEloquentCollection->random(2));
 assertType('App\UserCollection', $secondCustomEloquentCollection->random(2));
@@ -142,9 +142,9 @@ assertType('Illuminate\Support\Collection<int, App\Transaction|string>', $custom
 assertType('Illuminate\Support\Collection<int, App\User|string>', $secondCustomEloquentCollection->pad(10, 'foo'));
 assertType('Illuminate\Support\Collection<int, int|string>', $items->pad(1, 'bar'));
 
-assertType('Illuminate\Database\Eloquent\Collection<(int|string), int>', $collection->countBy('email'));
-assertType('App\TransactionCollection<(int|string), int>', $customEloquentCollection->countBy('foo'));
-assertType('App\UserCollection', $secondCustomEloquentCollection->countBy('foo'));
+assertType('Illuminate\Support\Collection<(int|string), int>', $collection->countBy('email'));
+assertType('Illuminate\Support\Collection<(int|string), int>', $customEloquentCollection->countBy('foo'));
+assertType('Illuminate\Support\Collection<(int|string), int>', $secondCustomEloquentCollection->countBy('foo'));
 assertType('Illuminate\Support\Collection<(int|string), int>', $items->countBy('bar'));
 
 ////////////////////////////
@@ -155,9 +155,9 @@ assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', EloquentCol
 assertType('App\TransactionCollection<int, App\Transaction>', TransactionCollection::make([new Transaction()]));
 assertType('Illuminate\Support\Collection<int, int>', SupportCollection::make([1, 2, 3]));
 
-assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', EloquentCollection::wrap([new User()]));
-assertType('App\TransactionCollection<int, App\Transaction>', TransactionCollection::wrap([new Transaction()]));
-assertType('Illuminate\Support\Collection<int, int>', SupportCollection::wrap([1, 2, 3]));
+assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', EloquentCollection::wrap([new User()]));
+assertType('App\TransactionCollection<(int|string), App\Transaction>', TransactionCollection::wrap([new Transaction()]));
+assertType('Illuminate\Support\Collection<(int|string), int>', SupportCollection::wrap([1, 2, 3]));
 
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', EloquentCollection::times(10, fn ($int) => new User));
 assertType('App\TransactionCollection<int, App\Transaction>', TransactionCollection::times(10, fn ($int) => new Transaction));
