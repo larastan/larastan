@@ -6,6 +6,7 @@ use App\TransactionCollection;
 use App\User;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection as SupportCollection;
+use Illuminate\Support\LazyCollection;
 
 use function PHPStan\Testing\assertType;
 
@@ -166,6 +167,7 @@ assertType('Illuminate\Support\Collection<(int|string), int>', SupportCollection
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', EloquentCollection::times(10, fn ($int) => new User));
 assertType('App\TransactionCollection<int, App\Transaction>', TransactionCollection::times(10, fn ($int) => new Transaction));
 assertType('Illuminate\Support\Collection<int, int>', SupportCollection::times(10, fn ($int) => 5));
+assertType('Illuminate\Support\LazyCollection<int, int>', LazyCollection::times(10, fn ($int) => 5));
 
 // In runtime it returns `Illuminate\Support\Collection<string, Illuminate\Database\Eloquent\Collection<int, int>>`
 // Might be fixed in Laravel or needs a separate extension
@@ -186,6 +188,11 @@ assertType(
     $items->flatMap(function (int $int) {
         return [$int * 2];
     })
+);
+
+assertType(
+    'Illuminate\Support\LazyCollection<int, int>',
+    LazyCollection::times(10, fn ($int) => 5)->flatMap(fn ($i) => [$i * 2]),
 );
 
 assertType('Illuminate\Support\Collection<(int|string), Illuminate\Support\Collection<(int|string), array{id: int, type: string}>>', collect([
