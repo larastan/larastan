@@ -13,6 +13,7 @@ use function PHPStan\Testing\assertType;
 /** @var SupportCollection<string, int> $items */
 /** @var App\TransactionCollection<int, Transaction> $customEloquentCollection */
 /** @var App\UserCollection $secondCustomEloquentCollection */
+/** @var LazyCollection<int, User> $lazyCollection */
 /** @var User $user */
 assertType('Illuminate\Database\Eloquent\Collection<int, int>', EloquentCollection::range(1, 10));
 
@@ -187,7 +188,14 @@ assertType(
 
 assertType(
     'Illuminate\Support\LazyCollection<int, int>',
-    LazyCollection::times(10, fn ($int) => 5)->flatMap(fn ($i) => [$i * 2]),
+    $lazyCollection->flatMap(function (User $user, int $id) {
+        return [$user->id];
+    })
+);
+
+assertType(
+    'Illuminate\Support\LazyCollection<int, int>',
+    LazyCollection::times(10, fn ($int) => 5)->flatMap(fn (int $i) => [$i * 2]),
 );
 
 assertType('Illuminate\Support\Collection<(int|string), Illuminate\Support\Collection<(int|string), array{id: int, type: string}>>', collect([
