@@ -23,7 +23,6 @@ use PHPStan\Type\UnionType;
 
 use function array_map;
 use function in_array;
-use function version_compare;
 
 class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
@@ -69,10 +68,6 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
             'wrap',
             'zip',
         ];
-
-        if (version_compare(LARAVEL_VERSION, '9.48.0', '<')) {
-            $methods[] = 'countBy';
-        }
 
         return in_array($methodReflection->getName(), $methods, true);
     }
