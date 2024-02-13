@@ -6,7 +6,6 @@ namespace Larastan\Larastan\ReturnTypes;
 
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Enumerable;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
@@ -97,7 +96,7 @@ class EnumerableGenericStaticMethodDynamicMethodReturnTypeExtension implements D
         $classReflection = $calledOnType->getObjectClassReflections()[0];
 
         // Special cases for methods returning single models
-        if (($classReflection->getName() === EloquentCollection::class || $classReflection->getName() === Collection::class) && (new ObjectType(Model::class))->isSuperTypeOf($returnType)->yes()) {
+        if ((new ObjectType(Model::class))->isSuperTypeOf($returnType)->yes()) {
             return $returnType;
         }
 
