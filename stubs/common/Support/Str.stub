@@ -1,0 +1,19 @@
+<?php
+
+namespace Illuminate\Support;
+
+use Traversable;
+
+class Str
+{
+    /**
+     * @template TKey of scalar
+     * @template TSubject of string|iterable<string>|Traversable<TKey,string>
+     * @param string|iterable<string> $search
+     * @param string|iterable<string> $replace
+     * @param TSubject $subject
+     * @param bool $caseSensitive
+     * @return ($subject is Traversable ? array<TKey,string> : TSubject)
+     */
+    public static function replace($search, $replace, $subject, $caseSensitive = true) {}
+}
