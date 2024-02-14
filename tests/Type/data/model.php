@@ -343,6 +343,16 @@ function testRelationMethods(): void
         //assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
     });
 
+    User::withWhereHas('accounts', function (Builder $query) {
+        assertType('Illuminate\Database\Eloquent\Builder', $query);
+        //assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
+    });
+
+    Post::withWhereHas('users', function (Builder $query) {
+        assertType('Illuminate\Database\Eloquent\Builder', $query);
+        //assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
+    });
+
     User::orWhereHas('accounts', function (Builder $query) {
         assertType('Illuminate\Database\Eloquent\Builder', $query);
         //assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
