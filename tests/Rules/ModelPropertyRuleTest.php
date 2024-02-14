@@ -69,6 +69,9 @@ class ModelPropertyRuleTest extends RuleTestCase
             ["Property 'foo' does not exist in App\\User model.", 53],
             ["Property 'bar' does not exist in App\\User model.", 53],
             ["Property 'foo' does not exist in App\\User model.", 54],
+            ["Property 'foo' does not exist in App\\User model.", 56],
+            ["Property 'bar' does not exist in App\\User model.", 56],
+            ["Property 'foo' does not exist in App\\User model.", 57],
         ]);
     }
 

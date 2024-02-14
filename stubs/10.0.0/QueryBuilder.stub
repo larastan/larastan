@@ -242,6 +242,14 @@ class Builder
     protected function setAggregate($function, $columns);
 
     /**
+     * Set the columns to be selected.
+     *
+     * @param  array<int, (model-property|'*')>|model-property|'*'  $columns
+     * @return $this
+     */
+    public function select($columns = ['*']);
+
+    /**
      * Execute the given callback while selecting the given columns.
      *
      * After running the callback, the columns are reset to the original value.

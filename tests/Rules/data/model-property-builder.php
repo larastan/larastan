@@ -52,3 +52,6 @@ function getKey(): string
 
 \App\User::query()->first(['foo', 'bar']);
 \App\User::query()->first('foo');
+
+\App\User::query()->select(['foo', 'bar']);
+\App\User::query()->select('foo');

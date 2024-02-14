@@ -34,6 +34,14 @@ class Builder
     public function where($column, $operator = null, $value = null, $boolean = 'and');
 
     /**
+     * Set the columns to be selected.
+     *
+     * @param  array<int, (model-property|'*')>|model-property|'*'  $columns
+     * @return $this
+     */
+    public function select($columns = ['*']);
+
+    /**
      * Add an array of where clauses to the query.
      *
      * @param  array<string|int, mixed>  $column
