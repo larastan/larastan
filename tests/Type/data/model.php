@@ -137,6 +137,13 @@ function testWhereIn()
     assertType('Illuminate\Database\Eloquent\Builder<App\Thread>', (new Thread)->whereIn('id', [1, 2, 3]));
 }
 
+function testWithWhereHas()
+{
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', (new User)->withWhereHas('accounts', function ($query) {
+        return $query->where('active', true);
+    }));
+}
+
 function testIncrement(User $user)
 {
     assertType('int', $user->increment('counter'));
