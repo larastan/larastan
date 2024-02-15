@@ -22,7 +22,7 @@ includes:
 parameters:
     level: 5
     paths:
-        - app
+        - app/
 EOF
 
 echo "Test Laravel"
