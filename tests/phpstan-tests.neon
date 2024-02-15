@@ -1,5 +1,6 @@
 includes:
     - ../extension.neon
+    # A typical Laravel project using phpstan/extension-installer will also include this
     - ../vendor/nesbot/carbon/extension.neon
 parameters:
     level: max
