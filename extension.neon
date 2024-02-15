@@ -178,6 +178,11 @@ services:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
 
     -
+        class: Larastan\Larastan\ReturnTypes\ArrGetPullExtension
+        tags:
+            - phpstan.broker.dynamicStaticMethodReturnTypeExtension
+
+    -
         class: Larastan\Larastan\ReturnTypes\ModelDynamicStaticMethodReturnTypeExtension
         tags:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
@@ -313,6 +318,11 @@ services:
         class: Larastan\Larastan\ReturnTypes\CollectionGenericStaticMethodDynamicStaticMethodReturnTypeExtension
         tags:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
+
+    -
+        class: Larastan\Larastan\Types\ArrPullTypeSpecifyingExtension
+        tags:
+            - phpstan.typeSpecifier.staticMethodTypeSpecifyingExtension
 
     -
         class: Larastan\Larastan\Types\AbortIfFunctionTypeSpecifyingExtension
@@ -559,3 +569,4 @@ rules:
     - Larastan\Larastan\Rules\UselessConstructs\NoUselessValueFunctionCallsRule
     - Larastan\Larastan\Rules\DeferrableServiceProviderMissingProvidesRule
     - Larastan\Larastan\Rules\ConsoleCommand\UndefinedArgumentOrOptionRule
+    - Larastan\Larastan\Rules\ArrGetPullRule
