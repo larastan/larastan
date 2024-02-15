@@ -2,26 +2,27 @@
 
 set -e
 
-LARAVEL_VERSION_CONSTRAINT="${1:-^9.0}"
+LARAVEL_VERSION_CONSTRAINT="${1:-^10}"
 
 echo "Install Laravel ${LARAVEL_VERSION_CONSTRAINT}"
-composer create-project --quiet --prefer-dist "laravel/laravel:${LARAVEL_VERSION_CONSTRAINT}" ../laravel
-cd ../laravel/
+rm -rf tests/laravel
+composer create-project --quiet --prefer-dist "laravel/laravel:${LARAVEL_VERSION_CONSTRAINT}" tests/laravel
+cd tests/laravel
 
 echo "Add Larastan from source"
 composer config minimum-stability dev
-composer config repositories.0 '{ "type": "path", "url": "../larastan", "options": { "symlink": false } }'
+composer config repositories.0 '{ "type": "path", "url": "../", "options": { "symlink": false } }'
 # No version information with "type":"path"
 composer require --dev "larastan/larastan:*"
-composer du -o
+composer du --optimize
 
 cat >phpstan.neon <<"EOF"
 includes:
-    - ./vendor/larastan/larastan/extension.neon
+    - vendor/larastan/larastan/extension.neon
 parameters:
     level: 5
     paths:
-        - app/
+        - app
 EOF
 
 echo "Test Laravel"
@@ -29,4 +30,4 @@ vendor/bin/phpstan analyse
 cd -
 
 echo "Test Laravel from other working directories"
-../laravel/vendor/bin/phpstan analyse --configuration=../laravel/phpstan.neon ../laravel/app
+tests/laravel/vendor/bin/phpstan analyse --configuration=tests/laravel/phpstan.neon tests/laravel/app

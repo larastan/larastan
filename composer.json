@@ -70,9 +70,11 @@
     "scripts": {
         "test:types": "phpstan analyse --ansi --memory-limit 256M",
         "test:unit": "phpunit --colors=always -d memory_limit=1408M",
+        "test:application": "tests/laravel-test.sh",
         "test": [
             "@test:types",
-            "@test:unit"
+            "@test:unit",
+            "@test:application"
         ]
     }
 }
