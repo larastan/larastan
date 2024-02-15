@@ -2,6 +2,7 @@ includes:
     - ../extension.neon
     - ../vendor/nesbot/carbon/extension.neon
 parameters:
+    level: max
     bootstrapFiles:
         - ../bootstrap.php
         - bootstrap.php
