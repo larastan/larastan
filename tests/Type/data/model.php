@@ -137,6 +137,13 @@ function testWhereIn()
     assertType('Illuminate\Database\Eloquent\Builder<App\Thread>', (new Thread)->whereIn('id', [1, 2, 3]));
 }
 
+function testWithWhereHas()
+{
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', (new User)->withWhereHas('accounts', function ($query) {
+        return $query->where('active', true);
+    }));
+}
+
 function testIncrement(User $user)
 {
     assertType('int', $user->increment('counter'));
@@ -339,6 +346,16 @@ function testRelationMethods(): void
     });
 
     Post::whereHas('users', function (Builder $query) {
+        assertType('Illuminate\Database\Eloquent\Builder', $query);
+        //assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
+    });
+
+    User::withWhereHas('accounts', function (Builder $query) {
+        assertType('Illuminate\Database\Eloquent\Builder', $query);
+        //assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
+    });
+
+    Post::withWhereHas('users', function (Builder $query) {
         assertType('Illuminate\Database\Eloquent\Builder', $query);
         //assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
     });

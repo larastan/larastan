@@ -57,6 +57,7 @@ class RelationExistenceRule implements Rule
             'doesntHave',
             'orDoesntHave',
             'whereHas',
+            'withWhereHas',
             'orWhereHas',
             'whereDoesntHave',
             'orWhereDoesntHave',

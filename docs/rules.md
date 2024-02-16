@@ -176,6 +176,7 @@ Supported Eloquent builder methods are:
 - `doesntHave`
 - `orDoesntHave`
 - `whereHas`
+- `withWhereHas`
 - `orWhereHas`
 - `whereDoesntHave`
 - `orWhereDoesntHave`
