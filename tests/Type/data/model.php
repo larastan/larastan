@@ -488,3 +488,8 @@ trait HasBar
         return self::find(static::decodeHashId($id))->first();
     }
 }
+
+function testRestoreOrCreate(): void
+{
+    assertType('App\User', User::restoreOrCreate(['id' => 1]));
+}

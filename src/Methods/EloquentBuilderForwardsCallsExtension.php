@@ -105,7 +105,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
         if ($ref === null) {
             // Special case for `SoftDeletes` trait
             if (
-                in_array($methodName, ['withTrashed', 'onlyTrashed', 'withoutTrashed', 'restore'], true) &&
+                in_array($methodName, ['withTrashed', 'onlyTrashed', 'withoutTrashed', 'restore', 'createOrRestore', 'restoreOrCreate'], true) &&
                 array_key_exists(SoftDeletes::class, $modelReflection->getTraits(true))
             ) {
                 $ref = $this->reflectionProvider->getClass(SoftDeletes::class)->getMethod($methodName, new OutOfClassScope());
@@ -116,6 +116,16 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
                         $classReflection,
                         ParametersAcceptorSelector::selectSingle($ref->getVariants())->getParameters(),
                         new IntegerType(),
+                        ParametersAcceptorSelector::selectSingle($ref->getVariants())->isVariadic()
+                    );
+                }
+
+                if ($methodName === 'restoreOrCreate' || $methodName === 'createOrRestore') {
+                    return new EloquentBuilderMethodReflection(
+                        $methodName,
+                        $classReflection,
+                        ParametersAcceptorSelector::selectSingle($ref->getVariants())->getParameters(),
+                        $modelType,
                         ParametersAcceptorSelector::selectSingle($ref->getVariants())->isVariadic()
                     );
                 }

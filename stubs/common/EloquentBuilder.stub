@@ -551,5 +551,6 @@ class Scope {}
  * @method static \Illuminate\Database\Eloquent\Builder<static> onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static> withoutTrashed()
  * @method static bool restore()
+ * @method static static restoreOrCreate(array<string, mixed> $attributes = [], array<string, mixed> $values = [])
  */
 trait SoftDeletes {}
