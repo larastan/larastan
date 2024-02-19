@@ -70,8 +70,10 @@ final class UnusedViewsRule implements Rule
 
         $errors = [];
         foreach ($unusedViews as $file) {
+            $path = $view->getFinder()->find($file);
+
             $errors[] = RuleErrorBuilder::message('This view is not used in the project.')
-                ->file($file.'.blade.php')
+                ->file($path)
                 ->line(0)
                 ->build();
         }
