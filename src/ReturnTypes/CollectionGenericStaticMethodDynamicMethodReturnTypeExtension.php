@@ -39,7 +39,7 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
         $methods = [
             'chunk', 'chunkWhile', 'collapse', 'combine',
             'crossJoin', 'flatMap', 'flip',
-            'groupBy', 'keyBy', 'keys',
+            'keyBy', 'keys',
             'make', 'map', 'mapInto',
             'mapToDictionary', 'mapToGroups',
             'mapWithKeys', 'mergeRecursive',

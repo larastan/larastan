@@ -12,6 +12,7 @@ use function PHPStan\Testing\assertType;
 /** @var SupportCollection<string, int> $items */
 /** @var SupportCollection<int, User> $collectionOfUsers */
 /** @var User $user */
+/** @var bool $preserve */
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::all()->each(function (User $user, int $key): void {
 }));
 
@@ -51,9 +52,21 @@ $foo = collect([
 ]);
 
 $foo
-    ->groupBy('type')
+    ->groupBy('type', $preserve)
     ->map(function ($grouped, $groupKey): array {
-        assertType('(int|string)', $groupKey);
+        assertType('string', $groupKey);
+    });
+
+$foo
+    ->groupBy('type', true)
+    ->map(function ($grouped, $groupKey): array {
+        assertType('string', $groupKey);
+    });
+
+$foo
+    ->groupBy('type', false)
+    ->map(function ($grouped, $groupKey): array {
+        assertType('string', $groupKey);
     });
 
 assertType('App\User|null', $collection->first());
