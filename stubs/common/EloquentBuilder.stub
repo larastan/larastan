@@ -248,6 +248,19 @@ class Builder
     public function whereHas($relation, \Closure $callback = null, $operator = '>=', $count = 1);
 
     /**
+     * Add a relationship count / exists condition to the query with where clauses.
+     *
+     * Also load the relationship with same condition.
+     *
+     * @param  string  $relation
+     * @param  \Closure|null  $callback
+     * @param  string  $operator
+     * @param  int  $count
+     * @return static
+     */
+    public function withWhereHas($relation, \Closure $callback = null, $operator = '>=', $count = 1);
+
+    /**
      * Add a relationship count / exists condition to the query with where clauses and an "or".
      *
      * @param  string  $relation
@@ -538,5 +551,6 @@ class Scope {}
  * @method static \Illuminate\Database\Eloquent\Builder<static> onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder<static> withoutTrashed()
  * @method static bool restore()
+ * @method static static restoreOrCreate(array<string, mixed> $attributes = [], array<string, mixed> $values = [])
  */
 trait SoftDeletes {}
