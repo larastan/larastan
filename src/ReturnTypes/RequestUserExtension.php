@@ -7,7 +7,6 @@ namespace Larastan\Larastan\ReturnTypes;
 use Illuminate\Http\Request;
 use Larastan\Larastan\Concerns\HasContainer;
 use Larastan\Larastan\Concerns\LoadsAuthModel;
-use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
@@ -15,6 +14,7 @@ use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use PhpParser\Node\Expr\MethodCall;
 
 /**
  * @internal
@@ -48,6 +48,10 @@ final class RequestUserExtension implements DynamicMethodReturnTypeExtension
         MethodCall $methodCall,
         Scope $scope
     ): Type {
+        if ($methodReflection->getDeclaringClass()->getName() !== Request::class) {
+            return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+        }
+
         $config = $this->getContainer()->get('config');
         $authModel = null;
 
