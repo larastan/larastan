@@ -4,9 +4,27 @@ declare(strict_types=1);
 
 use Carbon\Carbon;
 
-Carbon::macro('foo', static function (): string {
+Carbon::macro('customCarbonMacro', static function (): string {
     return 'foo';
 });
+
+class CarbonMixin
+{
+    public static function customCarbonMixinStatic(): \Closure
+    {
+        return static function (): int {
+            return 69;
+        };
+    }
+
+    public function customCarbonMixinInstance(): \Closure
+    {
+        return function (): bool {
+            return true;
+        };
+    }
+}
+Carbon::mixin(new CarbonMixin);
 
 \Illuminate\Database\Eloquent\Builder::macro('globalCustomMacro', function (string $arg = 'foobar', int $b = 5): string {
     return $arg;

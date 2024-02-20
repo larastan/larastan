@@ -77,7 +77,7 @@ function foo(User $user, Account $account, Role $role, Group $group, Team $team,
     assertType('int', $address->user_id);
     assertType('int', $address->custom_foreign_id_for_name);
     assertType('string', $address->address_id);
-    assertType('string', $address->nullable_address_id); // overriden by a @property
+    assertType('string', $address->nullable_address_id); // overridden by a @property
     assertType('int', $address->foreign_id_constrained);
     assertType('int|null', $address->nullable_foreign_id_constrained);
     assertType('App\ValueObjects\Favorites', $user->favorites);
