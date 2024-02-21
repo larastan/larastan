@@ -16,6 +16,7 @@ use function PHPStan\Testing\assertType;
 /** @var LazyCollection<int, User> $lazyCollection */
 /** @var User $user */
 assertType('Illuminate\Database\Eloquent\Collection<int, int>', EloquentCollection::range(1, 10));
+assertType('Illuminate\Support\LazyCollection<int, int>', LazyCollection::range(1, 10));
 
 assertType('Illuminate\Support\Collection<int, mixed>', $collection->collapse());
 assertType('Illuminate\Support\Collection<int, mixed>', $items->collapse());
