@@ -6,6 +6,7 @@ namespace Larastan\Larastan\ReturnTypes;
 
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Enumerable;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
@@ -22,6 +23,7 @@ use PHPStan\Type\TypeTraverser;
 use PHPStan\Type\UnionType;
 
 use function array_map;
+use function array_merge;
 use function in_array;
 
 class EnumerableGenericStaticMethodDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
@@ -48,7 +50,6 @@ class EnumerableGenericStaticMethodDynamicMethodReturnTypeExtension implements D
             'groupBy',
             'keyBy',
             'keys',
-            'make',
             'map',
             'mapInto',
             'mapToDictionary',
@@ -58,9 +59,7 @@ class EnumerableGenericStaticMethodDynamicMethodReturnTypeExtension implements D
             'pad',
             'partition',
             'pluck',
-            'pop',
             'random',
-            'shift',
             'sliding',
             'split',
             'splitIn',
@@ -68,6 +67,10 @@ class EnumerableGenericStaticMethodDynamicMethodReturnTypeExtension implements D
             'wrap',
             'zip',
         ];
+
+        if ($methodReflection->getDeclaringClass()->getName() === Collection::class) {
+            $methods = array_merge($methods, ['pop', 'shift']);
+        }
 
         return in_array($methodReflection->getName(), $methods, true);
     }
