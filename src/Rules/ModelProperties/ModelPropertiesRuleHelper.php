@@ -13,6 +13,8 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Rules\RuleError;
+use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\GeneralizePrecision;
 use PHPStan\Type\ObjectType;
@@ -33,7 +35,7 @@ class ModelPropertiesRuleHelper
      * @param  Scope  $scope
      * @param  Node\Arg[]  $args
      * @param  ClassReflection|null  $modelReflection
-     * @return string[]
+     * @return RuleError[]
      *
      * @throws ShouldNotHappenException
      */
@@ -100,7 +102,9 @@ class ModelPropertiesRuleHelper
                             $error .= sprintf(" If '%s' exists as a column on the pivot table, consider using 'wherePivot' or prefix the column with table name instead.", $string->getValue());
                         }
 
-                        $errors[] = $error;
+                        $errors[] = RuleErrorBuilder::message($error)
+                            ->identifier('larastan.modelProperty.notFound')
+                            ->build();
                     }
                 }
             }
@@ -127,7 +131,11 @@ class ModelPropertiesRuleHelper
                     $error .= sprintf(" If '%s' exists as a column on the pivot table, consider using 'wherePivot' or prefix the column with table name instead.", $argString->getValue());
                 }
 
-                return [$error];
+                return [
+                    RuleErrorBuilder::message($error)
+                    ->identifier('larastan.modelProperty.notFound')
+                    ->build()
+                ];
             }
         }
 

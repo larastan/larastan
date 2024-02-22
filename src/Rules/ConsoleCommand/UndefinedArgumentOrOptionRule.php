@@ -79,13 +79,13 @@ final class UndefinedArgumentOrOptionRule implements Rule
                 if (! $command->getDefinition()->hasArgument($argName)) {
                     $errors[] = RuleErrorBuilder::message(sprintf('Command "%s" does not have argument "%s".', $name, $argName))
                         ->line($node->getLine())
-                        ->identifier('larastan.undefinedArgument')
+                        ->identifier('larastan.console.undefinedArgument')
                         ->build();
                 }
             } elseif (! $command->getDefinition()->hasOption($argName) && ! $command->getDefinition()->hasShortcut($argName)) {
                 $errors[] = RuleErrorBuilder::message(sprintf('Command "%s" does not have option "%s".', $name, $argName))
                     ->line($node->getLine())
-                    ->identifier('larastan.undefinedOption')
+                    ->identifier('larastan.console.undefinedOption')
                     ->build();
             }
         }

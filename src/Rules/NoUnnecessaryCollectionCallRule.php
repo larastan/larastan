@@ -17,6 +17,8 @@ use PhpParser\Node\Identifier;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
+use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
@@ -150,7 +152,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
     /**
      * @param  Node  $node
      * @param  Scope  $scope
-     * @return string[]
+     * @return RuleError[]
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -359,10 +361,15 @@ class NoUnnecessaryCollectionCallRule implements Rule
      * Formats the error.
      *
      * @param  string  $method_name
-     * @return string
+     * @return RuleError
      */
-    protected function formatError(string $method_name): string
+    protected function formatError(string $method_name): RuleError
     {
-        return "Called '{$method_name}' on Laravel collection, but could have been retrieved as a query.";
+        return RuleErrorBuilder::message(sprintf(
+            "Called '%s' on Laravel collection, but could have been retrieved as a query.",
+            $method_name
+        ))
+            ->identifier('larastan.noUnnecessaryCollectionCall')
+            ->build();
     }
 }

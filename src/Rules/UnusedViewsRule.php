@@ -73,6 +73,7 @@ final class UnusedViewsRule implements Rule
             $errors[] = RuleErrorBuilder::message('This view is not used in the project.')
                 ->file($file.'.blade.php')
                 ->line(0)
+                ->identifier('larastan.unusedViews')
                 ->build();
         }
 

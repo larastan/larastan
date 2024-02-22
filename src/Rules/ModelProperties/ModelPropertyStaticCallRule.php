@@ -12,6 +12,7 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleLevelHelper;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\Type;
@@ -49,7 +50,7 @@ class ModelPropertyStaticCallRule implements Rule
     /**
      * @param  Node\Expr\StaticCall  $node
      * @param  Scope  $scope
-     * @return string[]
+     * @return RuleError[]
      *
      * @throws \PHPStan\ShouldNotHappenException
      */

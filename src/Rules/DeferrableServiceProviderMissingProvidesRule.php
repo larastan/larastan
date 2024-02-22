@@ -50,6 +50,7 @@ class DeferrableServiceProviderMissingProvidesRule implements Rule
         return [
             RuleErrorBuilder::message('ServiceProviders that implement the "DeferrableProvider" interface should implement the "provides" method that returns an array of strings or class-strings')
                 ->line($node->getLine())
+                ->identifier('larastan.deferrableServiceProvider.missingProvides')
                 ->build(),
         ];
     }

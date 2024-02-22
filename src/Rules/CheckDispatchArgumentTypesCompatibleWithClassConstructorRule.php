@@ -96,7 +96,9 @@ class CheckDispatchArgumentTypesCompatibleWithClassConstructorRule implements Ru
                     RuleErrorBuilder::message(sprintf(
                         ucfirst($jobOrEvent).' class %s does not have a constructor and must be dispatched without any parameters.',
                         $jobClassReflection->getDisplayName()
-                    ))->build(),
+                    ))
+                        ->identifier(sprintf('larastan.%s.noConstructor', $jobOrEvent.'s'))
+                        ->build(),
                 ];
             }
 

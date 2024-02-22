@@ -28,7 +28,10 @@ class OctaneCompatibilityRule implements Rule
         return MethodCall::class;
     }
 
-    /** @param MethodCall $node */
+    /**
+     * @param MethodCall $node
+     * @return RuleError[]
+     */
     public function processNode(Node $node, Scope $scope): array
     {
         if (! $node->name instanceof Node\Identifier) {
@@ -154,7 +157,7 @@ class OctaneCompatibilityRule implements Rule
     private function dependencyInjectionError(Node $node): RuleError
     {
         return RuleErrorBuilder::message('Consider using bind method instead or pass a closure.')
-            ->identifier('rules.octane')
+            ->identifier('larastan.octaneCompatibility')
             ->tip('See: https://laravel.com/docs/octane#dependency-injection-and-octane')
             ->line($node->getAttribute('startLine'))
             ->build();
