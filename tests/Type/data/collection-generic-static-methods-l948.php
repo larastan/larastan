@@ -1,5 +1,6 @@
 <?php
 
+use App\Group;
 use App\Transaction;
 use App\TransactionCollection;
 use App\User;
@@ -58,6 +59,9 @@ assertType('Illuminate\Support\Collection<(int|string), mixed>', $items->pluck('
 assertType('Illuminate\Support\Collection<int, int>', $customEloquentCollection->map(fn (Transaction $transaction): int => $transaction->id));
 assertType('Illuminate\Support\Collection<int, int>', $secondCustomEloquentCollection->map(fn (User $user): int => $user->id));
 assertType('Illuminate\Support\Collection<int, int>', $collection->map(fn (User $user): int => $user->id));
+assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->map(fn (User $user): User => $user));
+assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->map(fn (User $user) => $user));
+assertType('Illuminate\Database\Eloquent\Collection<int, App\Group>', $collection->map(fn (User $user): Group => $user->group));
 assertType('Illuminate\Support\Collection<string, int>', $items->map(fn (int $value, string $key): int => $value));
 
 assertType('Illuminate\Database\Eloquent\Collection<int, array<int, int>>', $collection->mapToDictionary(fn (User $u) => [$u->id => $u->id]));
@@ -68,6 +72,7 @@ assertType('Illuminate\Support\Collection<string, array<int, int>>', $items->map
 assertType('Illuminate\Support\Collection<int, string>', $customEloquentCollection->mapWithKeys(fn (Transaction $transaction): array => [$transaction->id => 'foo']));
 assertType('Illuminate\Support\Collection<int, string>', $secondCustomEloquentCollection->mapWithKeys(fn (User $user): array => [$user->id => 'foo']));
 assertType('Illuminate\Support\Collection<int, int>', $collection->mapWithKeys(fn (User $user): array => [$user->id => $user->id]));
+assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->mapWithKeys(fn (User $user): array => [$user->id => $user]));
 assertType('Illuminate\Support\Collection<string, int>', $items->mapWithKeys(fn (int $value, string $key): array => ['foo' => $value]));
 
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User|string>', $collection->mergeRecursive([2 => 'foo']));
