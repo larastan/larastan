@@ -62,6 +62,7 @@ class RelationExistenceRule implements Rule
             'orWhereHas',
             'whereDoesntHave',
             'orWhereDoesntHave',
+            'whereRelation'
         ],
             true)
         ) {

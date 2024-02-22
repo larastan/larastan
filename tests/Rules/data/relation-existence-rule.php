@@ -57,3 +57,8 @@ declare(strict_types=1);
 
 /** @var array{foo:string}|array{0: 'bar'} $a */
 \App\User::with($a);
+
+\App\User::query()->whereRelation('foo', 'id');
+\App\User::first()->group()->whereRelation('foo', 'id');
+\App\User::query()->whereRelation('accounts.foo', 'id');
+\App\Post::query()->whereRelation('users.transactions.foo', 'id');
