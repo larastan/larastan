@@ -36,11 +36,17 @@ class CustomCollectionMacro
     public function registerMacro()
     {
         \Illuminate\Support\Collection::macro('customCollectionMacro', [$this, 'customMacro']);
+        \Illuminate\Support\Collection::macro('customCollectionMacroString', [__CLASS__, 'customMacroString']);
     }
 
     public function customMacro(): string
     {
         return 'customMacro';
+    }
+
+    public function customMacroString(): string
+    {
+        return 'customMacroString';
     }
 }
 

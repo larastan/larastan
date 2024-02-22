@@ -139,7 +139,12 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
                                 throw new ShouldNotHappenException('Function '.$macroDefinition.' does not exist');
                             }
                         } elseif (is_array($macroDefinition)) {
-                            $macroClassName = get_class($macroDefinition[0]);
+                            if (is_string($macroDefinition[0])) {
+                                $macroClassName = $macroDefinition[0];
+                            } else {
+                                $macroClassName = get_class($macroDefinition[0]);
+                            }
+
                             if ($macroClassName === false || ! $this->reflectionProvider->hasClass($macroClassName) || ! $this->reflectionProvider->getClass($macroClassName)->hasNativeMethod($macroDefinition[1])) {
                                 throw new ShouldNotHappenException('Class '.$macroClassName.' does not exist');
                             }
