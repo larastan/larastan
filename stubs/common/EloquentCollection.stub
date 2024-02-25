@@ -25,25 +25,25 @@ class Collection extends BaseCollection implements QueueableCollection
     public function find($key, $default = null);
 
     /**
-         * Run a map over each of the items.
-         *
-         * @template TMapValue
-         *
-         * @param  callable(TModel, TKey): TMapValue  $callback
-         * @return (TMapValue is \Illuminate\Database\Eloquent\Model ? static<TKey, TMapValue> : \Illuminate\Support\Collection<TKey, TMapValue>)
-         */
-        public function map(callable $callback);
+     * Run a map over each of the items.
+     *
+     * @template TMapValue
+     *
+     * @param  callable(TModel, TKey): TMapValue  $callback
+     * @return (TMapValue is \Illuminate\Database\Eloquent\Model ? static<TKey, TMapValue> : \Illuminate\Support\Collection<TKey, TMapValue>)
+     */
+    public function map(callable $callback);
 
-        /**
-         * Run an associative map over each of the items.
-         *
-         * The callback should return an associative array with a single key / value pair.
-         *
-         * @template TMapWithKeysKey of array-key
-         * @template TMapWithKeysValue
-         *
-         * @param  callable(TModel, TKey): array<TMapWithKeysKey, TMapWithKeysValue>  $callback
-         * @return (TMapWithKeysValue is \Illuminate\Database\Eloquent\Model ? static<TMapWithKeysKey, TMapWithKeysValue> : \Illuminate\Support\Collection<TMapWithKeysKey, TMapWithKeysValue>)
-         */
-        public function mapWithKeys(callable $callback);
+    /**
+     * Run an associative map over each of the items.
+     *
+     * The callback should return an associative array with a single key / value pair.
+     *
+     * @template TMapWithKeysKey of array-key
+     * @template TMapWithKeysValue
+     *
+     * @param  callable(TModel, TKey): array<TMapWithKeysKey, TMapWithKeysValue>  $callback
+     * @return (TMapWithKeysValue is \Illuminate\Database\Eloquent\Model ? static<TMapWithKeysKey, TMapWithKeysValue> : \Illuminate\Support\Collection<TMapWithKeysKey, TMapWithKeysValue>)
+     */
+    public function mapWithKeys(callable $callback);
 }
