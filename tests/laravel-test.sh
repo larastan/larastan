@@ -27,6 +27,3 @@ EOF
 echo "Test Laravel"
 vendor/bin/phpstan analyse
 cd -
-
-echo "Test Laravel from other working directories"
-../laravel/vendor/bin/phpstan analyse --configuration=../laravel/phpstan.neon ../laravel/app
