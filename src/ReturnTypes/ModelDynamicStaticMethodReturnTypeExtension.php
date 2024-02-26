@@ -29,9 +29,7 @@ use function array_intersect;
 use function count;
 use function in_array;
 
-/**
- * @internal
- */
+/** @internal */
 final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
 {
     public function __construct(
@@ -41,17 +39,11 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getClass(): string
     {
         return Model::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isStaticMethodSupported(MethodReflection $methodReflection): bool
     {
         $name = $methodReflection->getName();
@@ -80,13 +72,10 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
         return count(array_intersect([EloquentBuilder::class, QueryBuilder::class, Collection::class], $returnType->getReferencedClasses())) > 0;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTypeFromStaticMethodCall(
         MethodReflection $methodReflection,
         StaticCall $methodCall,
-        Scope $scope
+        Scope $scope,
     ): Type {
         $method = $methodReflection->getDeclaringClass()
             ->getMethod($methodReflection->getName(), $scope);
@@ -97,7 +86,7 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
             if ($methodCall->class instanceof Name) {
                 $returnType = new GenericObjectType(
                     $this->builderHelper->determineBuilderName($scope->resolveName($methodCall->class)),
-                    [new ObjectType($scope->resolveName($methodCall->class))]
+                    [new ObjectType($scope->resolveName($methodCall->class))],
                 );
             } elseif ($methodCall->class instanceof Expr) {
                 $type = $scope->getType($methodCall->class);
@@ -110,10 +99,11 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
                     if (! $this->reflectionProvider->hasClass($className)) {
                         continue;
                     }
+
                     try {
                         $types[] = new GenericObjectType(
                             $this->builderHelper->determineBuilderName($className),
-                            [new ObjectType($className)]
+                            [new ObjectType($className)],
                         );
                     } catch (MissingMethodFromReflectionException) {
                     }

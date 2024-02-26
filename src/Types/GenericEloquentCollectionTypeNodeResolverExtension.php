@@ -34,23 +34,17 @@ use function count;
  */
 class GenericEloquentCollectionTypeNodeResolverExtension implements TypeNodeResolverExtension
 {
-    /**
-     * @var TypeNodeResolver
-     */
-    private $typeNodeResolver;
-
-    public function __construct(TypeNodeResolver $typeNodeResolver)
+    public function __construct(private TypeNodeResolver $typeNodeResolver)
     {
-        $this->typeNodeResolver = $typeNodeResolver;
     }
 
-    public function resolve(TypeNode $typeNode, NameScope $nameScope): ?Type
+    public function resolve(TypeNode $typeNode, NameScope $nameScope): Type|null
     {
         if (! $typeNode instanceof UnionTypeNode || count($typeNode->types) !== 2) {
             return null;
         }
 
-        $arrayTypeNode = null;
+        $arrayTypeNode      = null;
         $identifierTypeNode = null;
         foreach ($typeNode->types as $innerTypeNode) {
             if ($innerTypeNode instanceof ArrayTypeNode) {
@@ -58,9 +52,11 @@ class GenericEloquentCollectionTypeNodeResolverExtension implements TypeNodeReso
                 continue;
             }
 
-            if ($innerTypeNode instanceof IdentifierTypeNode) {
-                $identifierTypeNode = $innerTypeNode;
+            if (! ($innerTypeNode instanceof IdentifierTypeNode)) {
+                continue;
             }
+
+            $identifierTypeNode = $innerTypeNode;
         }
 
         if ($arrayTypeNode === null || $identifierTypeNode === null) {

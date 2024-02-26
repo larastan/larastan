@@ -15,39 +15,31 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
-/**
- * @internal
- */
+use function array_map;
+use function count;
+
+/** @internal */
 final class AuthExtension implements DynamicStaticMethodReturnTypeExtension
 {
     use Concerns\HasContainer;
     use Concerns\LoadsAuthModel;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getClass(): string
     {
         return Auth::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isStaticMethodSupported(MethodReflection $methodReflection): bool
     {
         return $methodReflection->getName() === 'user';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTypeFromStaticMethodCall(
         MethodReflection $methodReflection,
         StaticCall $methodCall,
-        Scope $scope
+        Scope $scope,
     ): Type {
-        $config = $this->getContainer()->get('config');
+        $config     = $this->getContainer()->get('config');
         $authModels = [];
 
         if ($config !== null) {
@@ -60,7 +52,7 @@ final class AuthExtension implements DynamicStaticMethodReturnTypeExtension
 
         return TypeCombinator::addNull(
             TypeCombinator::union(...array_map(
-                fn (string $authModel): Type => new ObjectType($authModel),
+                static fn (string $authModel): Type => new ObjectType($authModel),
                 $authModels,
             )),
         );

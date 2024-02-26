@@ -30,7 +30,7 @@ class AppEnvironmentReturnTypeExtension implements DynamicMethodReturnTypeExtens
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,
-        Scope $scope
+        Scope $scope,
     ): Type {
         if (count($methodCall->getArgs()) === 0) {
             return new StringType();

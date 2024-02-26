@@ -19,12 +19,12 @@ class NoUnnecessaryCollectionCallRuleTest extends RuleTestCase
 
     public function testNoFalsePositives(): void
     {
-        $this->analyse([__DIR__.'/data/CorrectCollectionCalls.php'], []);
+        $this->analyse([__DIR__ . '/data/CorrectCollectionCalls.php'], []);
     }
 
     public function testNoFalseNegativesEloquent(): void
     {
-        $this->analyse([__DIR__.'/data/UnnecessaryCollectionCallsEloquent.php'], [
+        $this->analyse([__DIR__ . '/data/UnnecessaryCollectionCallsEloquent.php'], [
             ['Called \'pluck\' on Laravel collection, but could have been retrieved as a query.', 18],
             ['Called \'count\' on Laravel collection, but could have been retrieved as a query.', 23],
             ['Called \'pluck\' on Laravel collection, but could have been retrieved as a query.', 29],
@@ -46,15 +46,16 @@ class NoUnnecessaryCollectionCallRuleTest extends RuleTestCase
 
     public function testNoFalseNegativesQuery(): void
     {
-        $this->analyse([__DIR__.'/data/UnnecessaryCollectionCallsQuery.php'], [
+        $this->analyse([__DIR__ . '/data/UnnecessaryCollectionCallsQuery.php'], [
             ['Called \'max\' on Laravel collection, but could have been retrieved as a query.', 15],
             ['Called \'isNotEmpty\' on Laravel collection, but could have been retrieved as a query.', 20],
             ['Called \'pluck\' on Laravel collection, but could have been retrieved as a query.', 26],
         ]);
     }
 
+    /** @return string[] */
     public static function getAdditionalConfigFiles(): array
     {
-        return [__DIR__.'/../phpstan-tests.neon'];
+        return [__DIR__ . '/../phpstan-tests.neon'];
     }
 }

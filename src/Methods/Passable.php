@@ -5,91 +5,38 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Methods;
 
 use Illuminate\Contracts\Pipeline\Pipeline;
-use LogicException;
 use Larastan\Larastan\Concerns;
 use Larastan\Larastan\Contracts\Methods\PassableContract;
 use Larastan\Larastan\Reflection\StaticMethodReflection;
+use LogicException;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
 use PHPStan\Reflection\ReflectionProvider;
 
-/**
- * @internal
- */
+/** @internal */
 final class Passable implements PassableContract
 {
     use Concerns\HasContainer;
 
-    /**
-     * @var \PHPStan\Reflection\Php\PhpMethodReflectionFactory
-     */
-    private $methodReflectionFactory;
+    private MethodReflection|null $methodReflection = null;
 
-    /**
-     * @var ReflectionProvider
-     */
-    private $reflectionProvider;
+    private bool $staticAllowed = false;
 
-    /**
-     * @var \Illuminate\Contracts\Pipeline\Pipeline
-     */
-    private $pipeline;
-
-    /**
-     * @var \PHPStan\Reflection\ClassReflection
-     */
-    private $classReflection;
-
-    /**
-     * @var string
-     */
-    private $methodName;
-
-    /**
-     * @var \PHPStan\Reflection\MethodReflection|null
-     */
-    private $methodReflection;
-
-    /**
-     * @var bool
-     */
-    private $staticAllowed = false;
-
-    /**
-     * Method constructor.
-     *
-     * @param  \PHPStan\Reflection\Php\PhpMethodReflectionFactory  $methodReflectionFactory
-     * @param  ReflectionProvider  $reflectionProvider
-     * @param  \Illuminate\Contracts\Pipeline\Pipeline  $pipeline
-     * @param  \PHPStan\Reflection\ClassReflection  $classReflection
-     * @param  string  $methodName
-     */
     public function __construct(
-        PhpMethodReflectionFactory $methodReflectionFactory,
-        ReflectionProvider $reflectionProvider,
-        Pipeline $pipeline,
-        ClassReflection $classReflection,
-        string $methodName
+        private PhpMethodReflectionFactory $methodReflectionFactory,
+        private ReflectionProvider $reflectionProvider,
+        private Pipeline $pipeline,
+        private ClassReflection $classReflection,
+        private string $methodName,
     ) {
-        $this->methodReflectionFactory = $methodReflectionFactory;
-        $this->reflectionProvider = $reflectionProvider;
-        $this->pipeline = $pipeline;
-        $this->classReflection = $classReflection;
-        $this->methodName = $methodName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getClassReflection(): ClassReflection
     {
         return $this->classReflection;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setClassReflection(ClassReflection $classReflection): PassableContract
     {
         $this->classReflection = $classReflection;
@@ -97,25 +44,16 @@ final class Passable implements PassableContract
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getMethodName(): string
     {
         return $this->methodName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function hasFound(): bool
     {
         return $this->methodReflection !== null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function searchOn(string $class): bool
     {
         $classReflection = $this->reflectionProvider->getClass($class);
@@ -129,9 +67,6 @@ final class Passable implements PassableContract
         return $found;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getMethodReflection(): MethodReflection
     {
         if ($this->methodReflection === null) {
@@ -141,34 +76,22 @@ final class Passable implements PassableContract
         return $this->methodReflection;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setMethodReflection(MethodReflection $methodReflection): void
     {
         $this->methodReflection = $methodReflection;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setStaticAllowed(bool $staticAllowed): void
     {
         $this->staticAllowed = $staticAllowed;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isStaticAllowed(): bool
     {
         return $this->staticAllowed;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function sendToPipeline(string $class, $staticAllowed = false): bool
+    public function sendToPipeline(string $class, bool $staticAllowed = false): bool
     {
         $classReflection = $this->reflectionProvider->getClass($class);
 
@@ -177,17 +100,19 @@ final class Passable implements PassableContract
         $originalClassReflection = $this->classReflection;
         $this->pipeline->send($this->setClassReflection($classReflection))
             ->then(
-                function (PassableContract $passable) use ($originalClassReflection) {
+                function (PassableContract $passable) use ($originalClassReflection): void {
                     if ($passable->hasFound()) {
                         $this->setMethodReflection($passable->getMethodReflection());
                         $this->setStaticAllowed($passable->isStaticAllowed());
                     }
 
                     $this->setClassReflection($originalClassReflection);
-                }
+                },
             );
 
-        if ($result = $this->hasFound()) {
+        $result = $this->hasFound();
+
+        if ($result) {
             $this->setMethodReflection(new StaticMethodReflection($this->getMethodReflection()));
         }
 
@@ -199,9 +124,6 @@ final class Passable implements PassableContract
         return $this->reflectionProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getMethodReflectionFactory(): PhpMethodReflectionFactory
     {
         return $this->methodReflectionFactory;

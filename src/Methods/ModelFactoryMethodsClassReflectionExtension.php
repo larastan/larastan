@@ -12,6 +12,7 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
+use PHPStan\Reflection\ParametersAcceptor;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\Generic\TemplateTypeMap;
@@ -49,20 +50,12 @@ class ModelFactoryMethodsClassReflectionExtension implements MethodsClassReflect
 
     public function getMethod(
         ClassReflection $classReflection,
-        string $methodName
+        string $methodName,
     ): MethodReflection {
-        return new class($classReflection, $methodName) implements MethodReflection
+        return new class ($classReflection, $methodName) implements MethodReflection
         {
-            /** @var ClassReflection */
-            private $classReflection;
-
-            /** @var string */
-            private $methodName;
-
-            public function __construct(ClassReflection $classReflection, string $methodName)
+            public function __construct(private ClassReflection $classReflection, private string $methodName)
             {
-                $this->classReflection = $classReflection;
-                $this->methodName = $methodName;
             }
 
             public function getDeclaringClass(): ClassReflection
@@ -85,7 +78,7 @@ class ModelFactoryMethodsClassReflectionExtension implements MethodsClassReflect
                 return true;
             }
 
-            public function getDocComment(): ?string
+            public function getDocComment(): string|null
             {
                 return null;
             }
@@ -100,9 +93,10 @@ class ModelFactoryMethodsClassReflectionExtension implements MethodsClassReflect
                 return $this;
             }
 
+            /** @return ParametersAcceptor[] */
             public function getVariants(): array
             {
-                $returnType = new ObjectType($this->classReflection->getName());
+                $returnType     = new ObjectType($this->classReflection->getName());
                 $stateParameter = ParametersAcceptorSelector::selectSingle($this->classReflection->getMethod('state', new OutOfClassScope())->getVariants())->getParameters()[0];
                 $countParameter = ParametersAcceptorSelector::selectSingle($this->classReflection->getMethod('count', new OutOfClassScope())->getVariants())->getParameters()[0];
 
@@ -126,7 +120,7 @@ class ModelFactoryMethodsClassReflectionExtension implements MethodsClassReflect
                 return TrinaryLogic::createNo();
             }
 
-            public function getDeprecatedDescription(): ?string
+            public function getDeprecatedDescription(): string|null
             {
                 return null;
             }
@@ -141,7 +135,7 @@ class ModelFactoryMethodsClassReflectionExtension implements MethodsClassReflect
                 return TrinaryLogic::createNo();
             }
 
-            public function getThrowType(): ?Type
+            public function getThrowType(): Type|null
             {
                 return null;
             }

@@ -11,24 +11,8 @@ use PHPStan\Type\Type;
 
 class ModelProperty implements PropertyReflection
 {
-    /** @var ClassReflection */
-    private $declaringClass;
-
-    /** @var Type */
-    private $readableType;
-
-    /** @var Type */
-    private $writableType;
-
-    /** @var bool */
-    private $writeable;
-
-    public function __construct(ClassReflection $declaringClass, Type $readableType, Type $writableType, bool $writeable = true)
+    public function __construct(private ClassReflection $declaringClass, private Type $readableType, private Type $writableType, private bool $writeable = true)
     {
-        $this->declaringClass = $declaringClass;
-        $this->readableType = $readableType;
-        $this->writableType = $writableType;
-        $this->writeable = $writeable;
     }
 
     public function getDeclaringClass(): ClassReflection
@@ -61,7 +45,7 @@ class ModelProperty implements PropertyReflection
         return $this->writeable;
     }
 
-    public function getDocComment(): ?string
+    public function getDocComment(): string|null
     {
         return null;
     }
@@ -86,7 +70,7 @@ class ModelProperty implements PropertyReflection
         return TrinaryLogic::createNo();
     }
 
-    public function getDeprecatedDescription(): ?string
+    public function getDeprecatedDescription(): string|null
     {
         return null;
     }

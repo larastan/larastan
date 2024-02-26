@@ -18,21 +18,15 @@ use function count;
 
 class TapExtension implements DynamicFunctionReturnTypeExtension
 {
-    /**
-     * {@inheritdoc}
-     */
     public function isFunctionSupported(FunctionReflection $functionReflection): bool
     {
         return $functionReflection->getName() === 'tap';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTypeFromFunctionCall(
         FunctionReflection $functionReflection,
         FuncCall $functionCall,
-        Scope $scope
+        Scope $scope,
     ): Type {
         if (count($functionCall->getArgs()) === 1) {
             $type = $scope->getType($functionCall->getArgs()[0]->value);

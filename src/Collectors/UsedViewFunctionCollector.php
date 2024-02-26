@@ -20,7 +20,7 @@ final class UsedViewFunctionCollector implements Collector
     }
 
     /** @param Node\Expr\FuncCall $node */
-    public function processNode(Node $node, Scope $scope): ?string
+    public function processNode(Node $node, Scope $scope): string|null
     {
         $funcName = $node->name;
 

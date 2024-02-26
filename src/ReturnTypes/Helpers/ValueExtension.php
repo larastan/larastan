@@ -15,26 +15,18 @@ use PHPStan\Type\Type;
 
 use function count;
 
-/**
- * @internal
- */
+/** @internal */
 final class ValueExtension implements DynamicFunctionReturnTypeExtension
 {
-    /**
-     * {@inheritdoc}
-     */
     public function isFunctionSupported(FunctionReflection $functionReflection): bool
     {
         return $functionReflection->getName() === 'value';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTypeFromFunctionCall(
         FunctionReflection $functionReflection,
         FuncCall $functionCall,
-        Scope $scope
+        Scope $scope,
     ): Type {
         if (count($functionCall->getArgs()) === 0) {
             return new NeverType();
@@ -43,13 +35,12 @@ final class ValueExtension implements DynamicFunctionReturnTypeExtension
         $arg = $functionCall->getArgs()[0]->value;
         if ($arg instanceof Closure) {
             $callbackType = $scope->getType($arg);
-            $callbackReturnType = ParametersAcceptorSelector::selectFromArgs(
+
+            return ParametersAcceptorSelector::selectFromArgs(
                 $scope,
                 $functionCall->getArgs(),
-                $callbackType->getCallableParametersAcceptors($scope)
+                $callbackType->getCallableParametersAcceptors($scope),
             )->getReturnType();
-
-            return $callbackReturnType;
         }
 
         return $scope->getType($arg);

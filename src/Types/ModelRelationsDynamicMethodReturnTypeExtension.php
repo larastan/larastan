@@ -28,12 +28,8 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
 {
     use HasContainer;
 
-    /** @var RelationParserHelper */
-    private $relationParserHelper;
-
-    public function __construct(RelationParserHelper $relationParserHelper)
+    public function __construct(private RelationParserHelper $relationParserHelper)
     {
-        $this->relationParserHelper = $relationParserHelper;
     }
 
     public function getClass(): string
@@ -65,12 +61,21 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
             return false;
         }
 
-        if (in_array($methodReflection->getName(), [
-            'hasOne', 'hasOneThrough', 'morphOne',
-            'belongsTo', 'morphTo',
-            'hasMany', 'hasManyThrough', 'morphMany',
-            'belongsToMany', 'morphToMany', 'morphedByMany',
-        ], true)) {
+        if (
+            in_array($methodReflection->getName(), [
+                'hasOne',
+                'hasOneThrough',
+                'morphOne',
+                'belongsTo',
+                'morphTo',
+                'hasMany',
+                'hasManyThrough',
+                'morphMany',
+                'belongsToMany',
+                'morphToMany',
+                'morphedByMany',
+            ], true)
+        ) {
             return false;
         }
 
@@ -82,9 +87,6 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
     }
 
     /**
-     * @param  MethodReflection  $methodReflection
-     * @param  MethodCall  $methodCall
-     * @param  Scope  $scope
      * @return Type
      *
      * @throws ShouldNotHappenException
@@ -92,9 +94,9 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,
-        Scope $scope
-    ): ?Type {
-        $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+        Scope $scope,
+    ): Type|null {
+        $returnType                 = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
         $returnTypeObjectClassNames = $returnType->getObjectClassNames();
 
         if ($returnTypeObjectClassNames === []) {
@@ -108,7 +110,7 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
 
         if ((new ObjectType(BelongsTo::class))->isSuperTypeOf($returnType)->yes()) {
             $classReflection = $methodReflection->getDeclaringClass();
-            $types = [];
+            $types           = [];
 
             foreach (TypeUtils::flattenTypes($returnType) as $flattenType) {
                 if ((new ObjectType(BelongsTo::class))->isSuperTypeOf($flattenType)->yes()) {
@@ -119,7 +121,7 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
             }
 
             if (count($types) >= 2) {
-                $childType = new UnionType(array_map(fn (Type $type) => new ObjectType($type->getObjectClassNames()[0]), $types));
+                $childType = new UnionType(array_map(static fn (Type $type) => new ObjectType($type->getObjectClassNames()[0]), $types));
             } else {
                 $childType = new ObjectType($classReflection->getName());
             }

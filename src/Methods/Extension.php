@@ -13,20 +13,15 @@ use PHPStan\Reflection\ReflectionProvider;
 
 use function array_key_exists;
 
-/**
- * @internal
- */
+/** @internal */
 final class Extension implements MethodsClassReflectionExtension
 {
-    /**
-     * @var Kernel
-     */
-    private $kernel;
+    private Kernel $kernel;
 
     /** @var MethodReflection[] */
-    private $methodReflections = [];
+    private array $methodReflections = [];
 
-    public function __construct(PhpMethodReflectionFactory $methodReflectionFactory, ReflectionProvider $reflectionProvider, Kernel $kernel = null)
+    public function __construct(PhpMethodReflectionFactory $methodReflectionFactory, ReflectionProvider $reflectionProvider, Kernel|null $kernel = null)
     {
         $this->kernel = $kernel ?? new Kernel($methodReflectionFactory, $reflectionProvider);
     }
@@ -37,7 +32,7 @@ final class Extension implements MethodsClassReflectionExtension
             return false;
         }
 
-        if (array_key_exists($methodName.'-'.$classReflection->getName(), $this->methodReflections)) {
+        if (array_key_exists($methodName . '-' . $classReflection->getName(), $this->methodReflections)) {
             return true;
         }
 
@@ -46,7 +41,7 @@ final class Extension implements MethodsClassReflectionExtension
         $found = $passable->hasFound();
 
         if ($found) {
-            $this->methodReflections[$methodName.'-'.$classReflection->getName()] = $passable->getMethodReflection();
+            $this->methodReflections[$methodName . '-' . $classReflection->getName()] = $passable->getMethodReflection();
         }
 
         return $found;
@@ -54,6 +49,6 @@ final class Extension implements MethodsClassReflectionExtension
 
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
-        return $this->methodReflections[$methodName.'-'.$classReflection->getName()];
+        return $this->methodReflections[$methodName . '-' . $classReflection->getName()];
     }
 }

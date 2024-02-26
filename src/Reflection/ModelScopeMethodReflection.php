@@ -15,26 +15,8 @@ use PHPStan\Type\Type;
 
 final class ModelScopeMethodReflection implements MethodReflection
 {
-    /**
-     * @var string
-     */
-    private $methodName;
-
-    /**
-     * @var ClassReflection
-     */
-    private $classReflection;
-
-    /**
-     * @var ClassReflection
-     */
-    private $relation;
-
-    public function __construct(string $methodName, ClassReflection $classReflection, ClassReflection $relation)
+    public function __construct(private string $methodName, private ClassReflection $classReflection, private ClassReflection $relation)
     {
-        $this->methodName = $methodName;
-        $this->classReflection = $classReflection;
-        $this->relation = $relation;
     }
 
     public function getDeclaringClass(): ClassReflection
@@ -68,7 +50,7 @@ final class ModelScopeMethodReflection implements MethodReflection
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getVariants(): array
     {
@@ -78,12 +60,12 @@ final class ModelScopeMethodReflection implements MethodReflection
                 null,
                 [],
                 false,
-                new ObjectType($this->relation->getName())
+                new ObjectType($this->relation->getName()),
             ),
         ];
     }
 
-    public function getDocComment(): ?string
+    public function getDocComment(): string|null
     {
         return null;
     }
@@ -93,7 +75,7 @@ final class ModelScopeMethodReflection implements MethodReflection
         return TrinaryLogic::createNo();
     }
 
-    public function getDeprecatedDescription(): ?string
+    public function getDeprecatedDescription(): string|null
     {
         return null;
     }
@@ -108,7 +90,7 @@ final class ModelScopeMethodReflection implements MethodReflection
         return TrinaryLogic::createNo();
     }
 
-    public function getThrowType(): ?Type
+    public function getThrowType(): Type|null
     {
         return null;
     }

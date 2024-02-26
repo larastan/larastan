@@ -17,45 +17,12 @@ use PHPStan\Type\Type;
 
 final class EloquentBuilderMethodReflection implements MethodReflection
 {
-    /**
-     * @var string
-     */
-    private $methodName;
+    private Type $returnType;
 
-    /**
-     * @var ClassReflection
-     */
-    private $classReflection;
-
-    /**
-     * @var ParameterReflection[]
-     */
-    private $parameters;
-
-    /**
-     * @var Type
-     */
-    private $returnType;
-
-    /**
-     * @var bool
-     */
-    private $isVariadic;
-
-    /**
-     * @param  string  $methodName
-     * @param  ClassReflection  $classReflection
-     * @param  ParameterReflection[]  $parameters
-     * @param  Type|null  $returnType
-     * @param  bool  $isVariadic
-     */
-    public function __construct(string $methodName, ClassReflection $classReflection, array $parameters, ?Type $returnType = null, bool $isVariadic = false)
+    /** @param  ParameterReflection[] $parameters */
+    public function __construct(private string $methodName, private ClassReflection $classReflection, private array $parameters, Type|null $returnType = null, private bool $isVariadic = false)
     {
-        $this->methodName = $methodName;
-        $this->classReflection = $classReflection;
-        $this->parameters = $parameters;
         $this->returnType = $returnType ?? new ObjectType(Builder::class);
-        $this->isVariadic = $isVariadic;
     }
 
     public function getDeclaringClass(): ClassReflection
@@ -89,7 +56,7 @@ final class EloquentBuilderMethodReflection implements MethodReflection
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getVariants(): array
     {
@@ -99,12 +66,12 @@ final class EloquentBuilderMethodReflection implements MethodReflection
                 null,
                 $this->parameters,
                 $this->isVariadic,
-                $this->returnType
+                $this->returnType,
             ),
         ];
     }
 
-    public function getDocComment(): ?string
+    public function getDocComment(): string|null
     {
         return null;
     }
@@ -114,7 +81,7 @@ final class EloquentBuilderMethodReflection implements MethodReflection
         return TrinaryLogic::createNo();
     }
 
-    public function getDeprecatedDescription(): ?string
+    public function getDeprecatedDescription(): string|null
     {
         return null;
     }
@@ -129,7 +96,7 @@ final class EloquentBuilderMethodReflection implements MethodReflection
         return TrinaryLogic::createNo();
     }
 
-    public function getThrowType(): ?Type
+    public function getThrowType(): Type|null
     {
         return null;
     }

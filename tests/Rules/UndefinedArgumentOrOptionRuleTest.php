@@ -20,9 +20,9 @@ class UndefinedArgumentOrOptionRuleTest extends RuleTestCase
     public function testRule(): void
     {
         $this->analyse([
-            __DIR__.'/../application/app/Console/Commands/FooCommand.php',
-            __DIR__.'/../application/app/Console/Commands/BarCommand.php',
-            __DIR__.'/../application/app/Console/Commands/BazCommand.php',
+            __DIR__ . '/../application/app/Console/Commands/FooCommand.php',
+            __DIR__ . '/../application/app/Console/Commands/BarCommand.php',
+            __DIR__ . '/../application/app/Console/Commands/BazCommand.php',
         ], [
             [
                 'Command "foo" does not have argument "foobar".',
@@ -35,10 +35,11 @@ class UndefinedArgumentOrOptionRuleTest extends RuleTestCase
         ]);
     }
 
+    /** @return string[] */
     public static function getAdditionalConfigFiles(): array
     {
         return [
-            __DIR__.'/phpstan-rules.neon',
+            __DIR__ . '/phpstan-rules.neon',
         ];
     }
 }

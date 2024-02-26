@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Reflection;
 
 use Illuminate\Http\RedirectResponse;
@@ -11,30 +13,23 @@ use PHPStan\Type\VerbosityLevel;
 
 class RedirectResponseMethodsClassReflectionExtensionTest extends PHPStanTestCase
 {
-    /**
-     * @var ReflectionProvider
-     */
-    private $reflectionProvider;
+    private ReflectionProvider $reflectionProvider;
 
-    /**
-     * @var RedirectResponseMethodsClassReflectionExtension
-     */
-    private $reflectionExtension;
+    private RedirectResponseMethodsClassReflectionExtension $reflectionExtension;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->reflectionProvider = $this->createReflectionProvider();
+        $this->reflectionProvider  = $this->createReflectionProvider();
         $this->reflectionExtension = new RedirectResponseMethodsClassReflectionExtension();
     }
 
     /**
      * @test
-     *
      * @dataProvider greenMethodProvider
      */
-    public function it_will_find_methods_starting_with_with(string $methodName)
+    public function it_will_find_methods_starting_with_with(string $methodName): void
     {
         $requestClass = $this->reflectionProvider->getClass(RedirectResponse::class);
 
@@ -43,10 +38,9 @@ class RedirectResponseMethodsClassReflectionExtensionTest extends PHPStanTestCas
 
     /**
      * @test
-     *
      * @dataProvider redMethodProvider
      */
-    public function it_will_not_find_methods(string $methodName)
+    public function it_will_not_find_methods(string $methodName): void
     {
         $requestClass = $this->reflectionProvider->getClass(RedirectResponse::class);
 
@@ -55,13 +49,12 @@ class RedirectResponseMethodsClassReflectionExtensionTest extends PHPStanTestCas
 
     /**
      * @test
-     *
      * @dataProvider greenMethodProvider
      */
-    public function it_will_have_correct_method_reflection(string $methodName)
+    public function it_will_have_correct_method_reflection(string $methodName): void
     {
-        $requestClass = $this->reflectionProvider->getClass(RedirectResponse::class);
-        $methodReflection = $this->reflectionExtension->getMethod($requestClass, $methodName);
+        $requestClass       = $this->reflectionProvider->getClass(RedirectResponse::class);
+        $methodReflection   = $this->reflectionExtension->getMethod($requestClass, $methodName);
         $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
 
         $this->assertSame($methodName, $methodReflection->getName());
@@ -89,8 +82,9 @@ class RedirectResponseMethodsClassReflectionExtensionTest extends PHPStanTestCas
         yield ['WithFoo'];
     }
 
+    /** @return string[] */
     public static function getAdditionalConfigFiles(): array
     {
-        return [__DIR__.'/../Rules/phpstan-rules.neon'];
+        return [__DIR__ . '/../Rules/phpstan-rules.neon'];
     }
 }

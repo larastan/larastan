@@ -19,25 +19,13 @@ use function method_exists;
 
 class RelationParserHelper
 {
-    /** @var Parser */
-    private $parser;
-
-    /** @var ScopeFactory */
-    private $scopeFactory;
-
-    /** @var ReflectionProvider */
-    private $reflectionProvider;
-
-    public function __construct(Parser $parser, ScopeFactory $scopeFactory, ReflectionProvider $reflectionProvider)
+    public function __construct(private Parser $parser, private ScopeFactory $scopeFactory, private ReflectionProvider $reflectionProvider)
     {
-        $this->parser = $parser;
-        $this->scopeFactory = $scopeFactory;
-        $this->reflectionProvider = $reflectionProvider;
     }
 
     public function findRelatedModelInRelationMethod(
-        MethodReflection $methodReflection
-    ): ?string {
+        MethodReflection $methodReflection,
+    ): string|null {
         if (method_exists($methodReflection, 'getDeclaringTrait') && $methodReflection->getDeclaringTrait() !== null) {
             $fileName = $methodReflection->getDeclaringTrait()->getFileName();
         } else {
@@ -84,7 +72,7 @@ class RelationParserHelper
             ->enterClass($methodReflection->getDeclaringClass())
             ->enterClassMethod($relationMethod, TemplateTypeMap::createEmpty(), [], null, null, null, false, false, false);
 
-        $argType = $methodScope->getType($methodCall->getArgs()[0]->value);
+        $argType     = $methodScope->getType($methodCall->getArgs()[0]->value);
         $returnClass = null;
 
         $constantStrings = $argType->getConstantStrings();
@@ -112,24 +100,19 @@ class RelationParserHelper
         return $this->reflectionProvider->hasClass($returnClass) ? $returnClass : null;
     }
 
-    /**
-     * @param  string  $method
-     * @param  mixed  $statements
-     * @return Node|null
-     */
-    private function findMethod(string $method, $statements): ?Node
+    private function findMethod(string $method, mixed $statements): Node|null
     {
-        return (new NodeFinder)->findFirst($statements, static function (Node $node) use ($method) {
+        return (new NodeFinder())->findFirst($statements, static function (Node $node) use ($method) {
             return $node instanceof Node\Stmt\ClassMethod
                 && $node->name->toString() === $method;
         });
     }
 
-    private function findReturn(Node\Stmt\ClassMethod $relationMethod): ?Node
+    private function findReturn(Node\Stmt\ClassMethod $relationMethod): Node|null
     {
         /** @var Node[] $statements */
         $statements = $relationMethod->stmts;
 
-        return (new NodeFinder)->findFirstInstanceOf($statements, Node\Stmt\Return_::class);
+        return (new NodeFinder())->findFirstInstanceOf($statements, Node\Stmt\Return_::class);
     }
 }

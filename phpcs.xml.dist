@@ -14,6 +14,8 @@
     <file>tests</file>
 
     <exclude-pattern>tests/*/data</exclude-pattern>
+    <exclude-pattern>tests/enum-definition.php</exclude-pattern>
+    <exclude-pattern>tests/bootstrap.php</exclude-pattern>
     <exclude-pattern>tests/application</exclude-pattern>
 
     <!-- Include full Doctrine Coding Standard -->

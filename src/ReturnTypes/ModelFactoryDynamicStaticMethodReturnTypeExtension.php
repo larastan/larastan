@@ -25,6 +25,7 @@ use PHPStan\Type\UnionType;
 use function basename;
 use function class_exists;
 use function count;
+use function ltrim;
 use function str_replace;
 
 final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
@@ -42,7 +43,7 @@ final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements Dynami
     public function getTypeFromStaticMethodCall(
         MethodReflection $methodReflection,
         StaticCall $methodCall,
-        Scope $scope
+        Scope $scope,
     ): Type {
         $class = $methodCall->class;
 
@@ -75,10 +76,10 @@ final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements Dynami
 
         $modelName = basename(str_replace('\\', '/', $class->toCodeString()));
 
-        if (! class_exists('Database\\Factories\\'.$modelName.'Factory')) {
+        if (! class_exists('Database\\Factories\\' . $modelName . 'Factory')) {
             return new ErrorType();
         }
 
-        return new ModelFactoryType('Database\\Factories\\'.$modelName.'Factory', null, null, $isSingleModel);
+        return new ModelFactoryType('Database\\Factories\\' . $modelName . 'Factory', null, null, $isSingleModel);
     }
 }
