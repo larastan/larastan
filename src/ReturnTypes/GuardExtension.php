@@ -42,18 +42,23 @@ final class GuardExtension implements DynamicMethodReturnTypeExtension
         Scope $scope
     ): ?Type {
         $config = $this->getContainer()->get('config');
-        $authModel = null;
+        $authModels = [];
 
         if ($config !== null) {
             $guard = $this->getGuardFromMethodCall($scope, $methodCall);
-            $authModel = $this->getAuthModel($config, $guard);
+            $authModels = $this->getAuthModels($config, $guard);
         }
 
-        if ($authModel === null) {
+        if (count($authModels) === 0) {
             return null;
         }
 
-        return TypeCombinator::addNull(new ObjectType($authModel));
+        return TypeCombinator::addNull(
+            TypeCombinator::union(...array_map(
+                fn (string $authModel): Type => new ObjectType($authModel),
+                $authModels,
+            )),
+        );
     }
 
     private function getGuardFromMethodCall(Scope $scope, MethodCall $methodCall): ?string
