@@ -23,35 +23,23 @@ use function array_key_exists;
 
 final class RelationForwardsCallsExtension implements MethodsClassReflectionExtension
 {
-    /** @var BuilderHelper */
-    private $builderHelper;
-
     /** @var array<string, MethodReflection> */
-    private $cache = [];
+    private array $cache = [];
 
-    /** @var ReflectionProvider */
-    private $reflectionProvider;
-
-    /** @var EloquentBuilderForwardsCallsExtension */
-    private $eloquentBuilderForwardsCallsExtension;
-
-    public function __construct(BuilderHelper $builderHelper, ReflectionProvider $reflectionProvider, EloquentBuilderForwardsCallsExtension $eloquentBuilderForwardsCallsExtension)
+    public function __construct(private BuilderHelper $builderHelper, private ReflectionProvider $reflectionProvider, private EloquentBuilderForwardsCallsExtension $eloquentBuilderForwardsCallsExtension)
     {
-        $this->builderHelper = $builderHelper;
-        $this->reflectionProvider = $reflectionProvider;
-        $this->eloquentBuilderForwardsCallsExtension = $eloquentBuilderForwardsCallsExtension;
     }
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        if (array_key_exists($classReflection->getCacheKey().'-'.$methodName, $this->cache)) {
+        if (array_key_exists($classReflection->getCacheKey() . '-' . $methodName, $this->cache)) {
             return true;
         }
 
         $methodReflection = $this->findMethod($classReflection, $methodName);
 
         if ($methodReflection !== null) {
-            $this->cache[$classReflection->getCacheKey().'-'.$methodName] = $methodReflection;
+            $this->cache[$classReflection->getCacheKey() . '-' . $methodName] = $methodReflection;
 
             return true;
         }
@@ -61,16 +49,16 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
 
     public function getMethod(
         ClassReflection $classReflection,
-        string $methodName
+        string $methodName,
     ): MethodReflection {
-        return $this->cache[$classReflection->getCacheKey().'-'.$methodName];
+        return $this->cache[$classReflection->getCacheKey() . '-' . $methodName];
     }
 
     /**
      * @throws MissingMethodFromReflectionException
      * @throws ShouldNotHappenException
      */
-    private function findMethod(ClassReflection $classReflection, string $methodName): ?MethodReflection
+    private function findMethod(ClassReflection $classReflection, string $methodName): MethodReflection|null
     {
         if (! $classReflection->isSubclassOf(Relation::class)) {
             return null;
@@ -101,7 +89,7 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
         }
 
         $parametersAcceptor = ParametersAcceptorSelector::selectSingle($reflection->getVariants());
-        $returnType = $parametersAcceptor->getReturnType();
+        $returnType         = $parametersAcceptor->getReturnType();
 
         $types = [$relatedModel];
 
@@ -116,18 +104,20 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
 
         if ((new ObjectType(Builder::class))->isSuperTypeOf($returnType)->yes()) {
             return new EloquentBuilderMethodReflection(
-                $methodName, $classReflection,
+                $methodName,
+                $classReflection,
                 $parametersAcceptor->getParameters(),
                 new GenericObjectType($classReflection->getName(), $types),
-                $parametersAcceptor->isVariadic()
+                $parametersAcceptor->isVariadic(),
             );
         }
 
         return new EloquentBuilderMethodReflection(
-            $methodName, $classReflection,
+            $methodName,
+            $classReflection,
             $parametersAcceptor->getParameters(),
             $returnType,
-            $parametersAcceptor->isVariadic()
+            $parametersAcceptor->isVariadic(),
         );
     }
 }

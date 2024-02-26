@@ -8,6 +8,7 @@ use PHPStan\TrinaryLogic;
 use PHPStan\Type\CompoundType;
 use PHPStan\Type\Generic\TemplateType;
 use PHPStan\Type\Generic\TemplateTypeMap;
+use PHPStan\Type\Generic\TemplateTypeReference;
 use PHPStan\Type\Generic\TemplateTypeVariance;
 use PHPStan\Type\IntersectionType;
 use PHPStan\Type\ObjectType;
@@ -20,16 +21,12 @@ use function count;
 
 class GenericModelPropertyType extends ModelPropertyType
 {
-    /** @var Type */
-    private $type;
-
-    public function __construct(Type $type)
+    public function __construct(private Type $type)
     {
         parent::__construct();
-
-        $this->type = $type;
     }
 
+    /** @return string[] */
     public function getReferencedClasses(): array
     {
         return $this->getGenericType()->getReferencedClasses();
@@ -105,6 +102,7 @@ class GenericModelPropertyType extends ModelPropertyType
         return TemplateTypeMap::createEmpty();
     }
 
+    /** @return TemplateTypeReference[] */
     public function getReferencedTemplateTypes(TemplateTypeVariance $positionVariance): array
     {
         $variance = $positionVariance->compose(TemplateTypeVariance::createCovariant());
@@ -112,10 +110,7 @@ class GenericModelPropertyType extends ModelPropertyType
         return $this->getGenericType()->getReferencedTemplateTypes($variance);
     }
 
-    /**
-     * @param  mixed[]  $properties
-     * @return Type
-     */
+    /** @param  mixed[] $properties */
     public static function __set_state(array $properties): Type
     {
         return new self($properties['type']);

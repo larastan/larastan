@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Reflection;
 
 use Generator;
@@ -13,30 +15,23 @@ use PHPStan\Type\ObjectType;
 
 class MacroMethodsClassReflectionExtensionTest extends PHPStanTestCase
 {
-    /**
-     * @var ReflectionProvider
-     */
-    private $reflectionProvider;
+    private ReflectionProvider $reflectionProvider;
 
-    /**
-     * @var MacroMethodsClassReflectionExtension
-     */
-    private $reflectionExtension;
+    private MacroMethodsClassReflectionExtension $reflectionExtension;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->reflectionProvider = $this->createReflectionProvider();
+        $this->reflectionProvider  = $this->createReflectionProvider();
         $this->reflectionExtension = new MacroMethodsClassReflectionExtension($this->reflectionProvider, self::getContainer()->getByType(ClosureTypeFactory::class));
     }
 
     /**
      * @test
-     *
      * @dataProvider methodAndClassProvider
      */
-    public function it_can_find_macros_on_a_class(string $class, string $methodName)
+    public function it_can_find_macros_on_a_class(string $class, string $methodName): void
     {
         $requestClass = $this->reflectionProvider->getClass($class);
 
@@ -45,10 +40,9 @@ class MacroMethodsClassReflectionExtensionTest extends PHPStanTestCase
 
     /**
      * @test
-     *
      * @dataProvider methodAndThrowTypeProvider
      */
-    public function it_can_set_throw_type_for_macros(string $class, string $methodName, string $exceptionClass)
+    public function it_can_set_throw_type_for_macros(string $class, string $methodName, string $exceptionClass): void
     {
         $requestClass = $this->reflectionProvider->getClass($class);
 
@@ -75,8 +69,9 @@ class MacroMethodsClassReflectionExtensionTest extends PHPStanTestCase
         yield [Request::class, 'validateWithBag', ValidationException::class];
     }
 
+    /** @return string[] */
     public static function getAdditionalConfigFiles(): array
     {
-        return [__DIR__.'/../../extension.neon'];
+        return [__DIR__ . '/../../extension.neon'];
     }
 }

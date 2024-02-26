@@ -33,23 +33,11 @@ use function in_array;
 
 final class ModelForwardsCallsExtension implements MethodsClassReflectionExtension
 {
-    /** @var BuilderHelper */
-    private $builderHelper;
-
-    /** @var ReflectionProvider */
-    private $reflectionProvider;
-
-    /** @var EloquentBuilderForwardsCallsExtension */
-    private $eloquentBuilderForwardsCallsExtension;
-
     /** @var array<string, MethodReflection> */
-    private $cache = [];
+    private array $cache = [];
 
-    public function __construct(BuilderHelper $builderHelper, ReflectionProvider $reflectionProvider, EloquentBuilderForwardsCallsExtension $eloquentBuilderForwardsCallsExtension)
+    public function __construct(private BuilderHelper $builderHelper, private ReflectionProvider $reflectionProvider, private EloquentBuilderForwardsCallsExtension $eloquentBuilderForwardsCallsExtension)
     {
-        $this->builderHelper = $builderHelper;
-        $this->reflectionProvider = $reflectionProvider;
-        $this->eloquentBuilderForwardsCallsExtension = $eloquentBuilderForwardsCallsExtension;
     }
 
     /**
@@ -58,14 +46,14 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
      */
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        if (array_key_exists($classReflection->getCacheKey().'-'.$methodName, $this->cache)) {
+        if (array_key_exists($classReflection->getCacheKey() . '-' . $methodName, $this->cache)) {
             return true;
         }
 
         $methodReflection = $this->findMethod($classReflection, $methodName);
 
         if ($methodReflection !== null) {
-            $this->cache[$classReflection->getCacheKey().'-'.$methodName] = $methodReflection;
+            $this->cache[$classReflection->getCacheKey() . '-' . $methodName] = $methodReflection;
 
             return true;
         }
@@ -73,21 +61,16 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
         return false;
     }
 
-    /**
-     * @param  ClassReflection  $classReflection
-     * @param  string  $methodName
-     * @return MethodReflection
-     */
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
-        return $this->cache[$classReflection->getCacheKey().'-'.$methodName];
+        return $this->cache[$classReflection->getCacheKey() . '-' . $methodName];
     }
 
     /**
      * @throws ShouldNotHappenException
      * @throws MissingMethodFromReflectionException
      */
-    private function findMethod(ClassReflection $classReflection, string $methodName): ?MethodReflection
+    private function findMethod(ClassReflection $classReflection, string $methodName): MethodReflection|null
     {
         if ($classReflection->getName() !== Model::class && ! $classReflection->isSubclassOf(Model::class)) {
             return null;
@@ -98,21 +81,18 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
         if (in_array($methodName, ['increment', 'decrement'], true)) {
             $methodReflection = $classReflection->getNativeMethod($methodName);
 
-            return new class($classReflection, $methodName, $methodReflection) implements MethodReflection
+            return new class ($classReflection, $methodName, $methodReflection) implements MethodReflection
             {
-                /** @var ClassReflection */
-                private $classReflection;
+                private ClassReflection $classReflection;
 
-                /** @var string */
-                private $methodName;
+                private string $methodName;
 
-                /** @var MethodReflection */
-                private $methodReflection;
+                private MethodReflection $methodReflection;
 
                 public function __construct(ClassReflection $classReflection, string $methodName, MethodReflection $methodReflection)
                 {
-                    $this->classReflection = $classReflection;
-                    $this->methodName = $methodName;
+                    $this->classReflection  = $classReflection;
+                    $this->methodName       = $methodName;
                     $this->methodReflection = $methodReflection;
                 }
 
@@ -136,7 +116,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
                     return true;
                 }
 
-                public function getDocComment(): ?string
+                public function getDocComment(): string|null
                 {
                     return null;
                 }
@@ -151,6 +131,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
                     return $this;
                 }
 
+                /** @return ParametersAcceptor[] */
                 public function getVariants(): array
                 {
                     return $this->methodReflection->getVariants();
@@ -161,7 +142,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
                     return TrinaryLogic::createNo();
                 }
 
-                public function getDeprecatedDescription(): ?string
+                public function getDeprecatedDescription(): string|null
                 {
                     return null;
                 }
@@ -176,7 +157,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
                     return TrinaryLogic::createNo();
                 }
 
-                public function getThrowType(): ?Type
+                public function getThrowType(): Type|null
                 {
                     return null;
                 }
@@ -188,7 +169,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
             };
         }
 
-        $builderReflection = $this->reflectionProvider->getClass($builderName)->withTypes([new ObjectType($classReflection->getName())]);
+        $builderReflection          = $this->reflectionProvider->getClass($builderName)->withTypes([new ObjectType($classReflection->getName())]);
         $genericBuilderAndModelType = new GenericObjectType($builderName, [new ObjectType($classReflection->getName())]);
 
         if ($builderReflection->hasNativeMethod($methodName)) {
@@ -205,10 +186,11 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
             });
 
             return new EloquentBuilderMethodReflection(
-                $methodName, $builderReflection,
+                $methodName,
+                $builderReflection,
                 $parametersAcceptor->getParameters(),
                 $returnType,
-                $parametersAcceptor->isVariadic()
+                $parametersAcceptor->isVariadic(),
             );
         }
 
@@ -219,21 +201,20 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
         return null;
     }
 
-    /**
-     * @return ParametersAcceptor[]
-     */
+    /** @return ParametersAcceptor[] */
     private function transformStaticParameters(MethodReflection $method, GenericObjectType $builder): array
     {
         return array_map(function (ParametersAcceptor $acceptor) use ($builder): ParametersAcceptor {
             return new FunctionVariant($acceptor->getTemplateTypeMap(), $acceptor->getResolvedTemplateTypeMap(), array_map(function (
-                ParameterReflection $parameter) use ($builder): ParameterReflection {
+                ParameterReflection $parameter,
+            ) use ($builder): ParameterReflection {
                 return new DummyParameter(
                     $parameter->getName(),
                     $this->transformStaticType($parameter->getType(), $builder),
                     $parameter->isOptional(),
                     $parameter->passedByReference(),
                     $parameter->isVariadic(),
-                    $parameter->getDefaultValue()
+                    $parameter->getDefaultValue(),
                 );
             }, $acceptor->getParameters()), $acceptor->isVariadic(), $this->transformStaticType($acceptor->getReturnType(), $builder));
         }, $method->getVariants());
@@ -241,7 +222,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
 
     private function transformStaticType(Type $type, GenericObjectType $builder): Type
     {
-        return TypeTraverser::map($type, function (Type $type, callable $traverse) use ($builder): Type {
+        return TypeTraverser::map($type, static function (Type $type, callable $traverse) use ($builder): Type {
             if ($type instanceof StaticType) {
                 return $builder;
             }

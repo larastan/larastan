@@ -7,6 +7,7 @@ namespace Larastan\Larastan\Methods;
 use Illuminate\Database\Eloquent\Collection;
 use Larastan\Larastan\Support\HigherOrderCollectionProxyHelper;
 use PHPStan\Analyser\OutOfClassScope;
+use PHPStan\Reflection\ClassMemberReflection;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\MethodReflection;
@@ -30,7 +31,7 @@ final class HigherOrderCollectionProxyExtension implements MethodsClassReflectio
 
     public function getMethod(
         ClassReflection $classReflection,
-        string $methodName
+        string $methodName,
     ): MethodReflection {
         $activeTemplateTypeMap = $classReflection->getActiveTemplateTypeMap();
 
@@ -53,29 +54,13 @@ final class HigherOrderCollectionProxyExtension implements MethodsClassReflectio
 
         $returnType = $this->higherOrderCollectionProxyHelper->determineReturnType($methodType->getValue(), $valueType, $modelMethodReturnType, $collectionClassName);
 
-        return new class($classReflection, $methodName, $modelMethodReflection, $returnType) implements MethodReflection
+        return new class ($classReflection, $methodName, $modelMethodReflection, $returnType) implements MethodReflection
         {
-            /** @var ClassReflection */
-            private $classReflection;
-
-            /** @var string */
-            private $methodName;
-
-            /** @var MethodReflection */
-            private $modelMethodReflection;
-
-            /** @var Type\Type */
-            private $returnType;
-
-            public function __construct(ClassReflection $classReflection, string $methodName, MethodReflection $modelMethodReflection, Type\Type $returnType)
+            public function __construct(private ClassReflection $classReflection, private string $methodName, private MethodReflection $modelMethodReflection, private Type\Type $returnType)
             {
-                $this->classReflection = $classReflection;
-                $this->methodName = $methodName;
-                $this->modelMethodReflection = $modelMethodReflection;
-                $this->returnType = $returnType;
             }
 
-            public function getDeclaringClass(): \PHPStan\Reflection\ClassReflection
+            public function getDeclaringClass(): ClassReflection
             {
                 return $this->classReflection;
             }
@@ -95,7 +80,7 @@ final class HigherOrderCollectionProxyExtension implements MethodsClassReflectio
                 return true;
             }
 
-            public function getDocComment(): ?string
+            public function getDocComment(): string|null
             {
                 return null;
             }
@@ -105,11 +90,12 @@ final class HigherOrderCollectionProxyExtension implements MethodsClassReflectio
                 return $this->methodName;
             }
 
-            public function getPrototype(): \PHPStan\Reflection\ClassMemberReflection
+            public function getPrototype(): ClassMemberReflection
             {
                 return $this;
             }
 
+            /** @return FunctionVariant[] */
             public function getVariants(): array
             {
                 return [
@@ -118,7 +104,7 @@ final class HigherOrderCollectionProxyExtension implements MethodsClassReflectio
                         ParametersAcceptorSelector::selectSingle($this->modelMethodReflection->getVariants())->getResolvedTemplateTypeMap(),
                         ParametersAcceptorSelector::selectSingle($this->modelMethodReflection->getVariants())->getParameters(),
                         ParametersAcceptorSelector::selectSingle($this->modelMethodReflection->getVariants())->isVariadic(),
-                        $this->returnType
+                        $this->returnType,
                     ),
                 ];
             }
@@ -128,7 +114,7 @@ final class HigherOrderCollectionProxyExtension implements MethodsClassReflectio
                 return TrinaryLogic::createNo();
             }
 
-            public function getDeprecatedDescription(): ?string
+            public function getDeprecatedDescription(): string|null
             {
                 return null;
             }
@@ -143,7 +129,7 @@ final class HigherOrderCollectionProxyExtension implements MethodsClassReflectio
                 return TrinaryLogic::createNo();
             }
 
-            public function getThrowType(): ?\PHPStan\Type\Type
+            public function getThrowType(): \PHPStan\Type\Type|null
             {
                 return null;
             }

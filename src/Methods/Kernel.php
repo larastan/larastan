@@ -11,40 +11,17 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\Php\PhpMethodReflectionFactory;
 use PHPStan\Reflection\ReflectionProvider;
 
-/**
- * @internal
- */
+/** @internal */
 final class Kernel
 {
     use Concerns\HasContainer;
 
-    /**
-     * @var PhpMethodReflectionFactory
-     */
-    private $methodReflectionFactory;
-    /**
-     * @var ReflectionProvider
-     */
-    private $reflectionProvider;
-
-    /**
-     * Kernel constructor.
-     *
-     * @param  PhpMethodReflectionFactory  $methodReflectionFactory
-     */
     public function __construct(
-        PhpMethodReflectionFactory $methodReflectionFactory,
-        ReflectionProvider $reflectionProvider
+        private PhpMethodReflectionFactory $methodReflectionFactory,
+        private ReflectionProvider $reflectionProvider,
     ) {
-        $this->methodReflectionFactory = $methodReflectionFactory;
-        $this->reflectionProvider = $reflectionProvider;
     }
 
-    /**
-     * @param  ClassReflection  $classReflection
-     * @param  string  $methodName
-     * @return PassableContract
-     */
     public function handle(ClassReflection $classReflection, string $methodName): PassableContract
     {
         $pipeline = new Pipeline($this->getContainer());
@@ -59,11 +36,11 @@ final class Kernel
                     Pipes\Facades::class,
                     Pipes\Managers::class,
                     Pipes\Auths::class,
-                ]
+                ],
             )
             ->then(
-                function ($method) {
-                }
+                static function ($method): void {
+                },
             );
 
         return $passable;

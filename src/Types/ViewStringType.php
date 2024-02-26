@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Types;
 
+use Illuminate\View\Factory;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\CompoundType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
+use PHPStan\Type\VerbosityLevel;
 
 use function count;
+use function view;
 
 /**
  * The custom 'view-string' type class. It's a subset of the string type. Every string that passes the
@@ -17,7 +20,7 @@ use function count;
  */
 class ViewStringType extends StringType
 {
-    public function describe(\PHPStan\Type\VerbosityLevel $level): string
+    public function describe(VerbosityLevel $level): string
     {
         return 'view-string';
     }
@@ -31,7 +34,7 @@ class ViewStringType extends StringType
         $constantStrings = $type->getConstantStrings();
 
         if (count($constantStrings) === 1) {
-            /** @var \Illuminate\View\Factory $view */
+            /** @var Factory $view */
             $view = view();
 
             return TrinaryLogic::createFromBoolean($view->exists($constantStrings[0]->getValue()));
@@ -53,7 +56,7 @@ class ViewStringType extends StringType
         $constantStrings = $type->getConstantStrings();
 
         if (count($constantStrings) === 1) {
-            /** @var \Illuminate\View\Factory $view */
+            /** @var Factory $view */
             $view = view();
 
             return TrinaryLogic::createFromBoolean($view->exists($constantStrings[0]->getValue()));
@@ -74,10 +77,7 @@ class ViewStringType extends StringType
         return TrinaryLogic::createNo();
     }
 
-    /**
-     * @param  mixed[]  $properties
-     * @return Type
-     */
+    /** @param  mixed[] $properties */
     public static function __set_state(array $properties): Type
     {
         return new self();

@@ -9,13 +9,13 @@ use Illuminate\Support\ServiceProvider;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\InClassNode;
+use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\ShouldNotHappenException;
 
-/**
- * @implements Rule<InClassNode>
- */
+/** @implements Rule<InClassNode> */
 class DeferrableServiceProviderMissingProvidesRule implements Rule
 {
     public function getNodeType(): string
@@ -24,8 +24,10 @@ class DeferrableServiceProviderMissingProvidesRule implements Rule
     }
 
     /**
-     * @throws \PHPStan\ShouldNotHappenException
-     * @throws \PHPStan\Reflection\MissingMethodFromReflectionException
+     * @return RuleError[]
+     *
+     * @throws ShouldNotHappenException
+     * @throws MissingMethodFromReflectionException
      */
     public function processNode(Node $node, Scope $scope): array
     {

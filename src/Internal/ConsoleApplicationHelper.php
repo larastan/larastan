@@ -28,14 +28,14 @@ final class ConsoleApplicationHelper
     {
     }
 
-    public function getArguments(ClassReflection $classReflection, Scope $scope): ?Type
+    public function getArguments(ClassReflection $classReflection, Scope $scope): Type|null
     {
         $argTypes = [];
 
         foreach ($this->consoleApplicationResolver->findCommands($classReflection) as $command) {
             try {
                 $arguments = $command->getDefinition()->getArguments();
-                $builder = ConstantArrayTypeBuilder::createEmpty();
+                $builder   = ConstantArrayTypeBuilder::createEmpty();
 
                 foreach ($arguments as $name => $argument) {
                     $argumentType = $this->getArgumentType($scope, $argument);
@@ -70,7 +70,7 @@ final class ConsoleApplicationHelper
         return $argType;
     }
 
-    public function getOptions(ClassReflection $classReflection, Scope $scope): ?Type
+    public function getOptions(ClassReflection $classReflection, Scope $scope): Type|null
     {
         $optTypes = [];
 

@@ -8,20 +8,11 @@ use Illuminate\Container\Container;
 use Illuminate\Contracts\Container\Container as ContainerContract;
 use Throwable;
 
-/**
- * @internal
- */
+/** @internal */
 trait HasContainer
 {
-    /**
-     * @var ?\Illuminate\Contracts\Container\Container
-     */
-    protected $container;
+    protected \Illuminate\Contracts\Container\Container|null $container = null;
 
-    /**
-     * @param  \Illuminate\Contracts\Container\Container  $container
-     * @return void
-     */
     public function setContainer(ContainerContract $container): void
     {
         $this->container = $container;
@@ -29,8 +20,6 @@ trait HasContainer
 
     /**
      * Returns the current broker.
-     *
-     * @return \Illuminate\Contracts\Container\Container
      */
     public function getContainer(): ContainerContract
     {
@@ -39,11 +28,8 @@ trait HasContainer
 
     /**
      * Resolve the given type from the container.
-     *
-     * @param  string  $abstract
-     * @return mixed
      */
-    public function resolve(string $abstract)
+    public function resolve(string $abstract): mixed
     {
         try {
             $concrete = $this->getContainer()->make($abstract);

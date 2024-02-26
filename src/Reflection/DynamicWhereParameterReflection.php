@@ -36,7 +36,7 @@ class DynamicWhereParameterReflection implements ParameterReflection
         return false;
     }
 
-    public function getDefaultValue(): ?Type
+    public function getDefaultValue(): Type|null
     {
         return null;
     }

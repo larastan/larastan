@@ -24,21 +24,24 @@ class GenericEloquentBuilderTypeNodeResolverExtension implements TypeNodeResolve
     {
     }
 
-    public function resolve(TypeNode $typeNode, NameScope $nameScope): ?Type
+    public function resolve(TypeNode $typeNode, NameScope $nameScope): Type|null
     {
         if (! $typeNode instanceof UnionTypeNode || count($typeNode->types) !== 2) {
             return null;
         }
 
-        $modelTypeNode = null;
+        $modelTypeNode   = null;
         $builderTypeNode = null;
         foreach ($typeNode->types as $innerTypeNode) {
-            if ($innerTypeNode instanceof IdentifierTypeNode
-                && $this->provider->hasClass($nameScope->resolveStringName($innerTypeNode->name))
-                && (new ObjectType(Model::class))->isSuperTypeOf(new ObjectType($nameScope->resolveStringName($innerTypeNode->name)))->yes()
+            if (
+                ! ($innerTypeNode instanceof IdentifierTypeNode)
+                || ! $this->provider->hasClass($nameScope->resolveStringName($innerTypeNode->name))
+                || ! (new ObjectType(Model::class))->isSuperTypeOf(new ObjectType($nameScope->resolveStringName($innerTypeNode->name)))->yes()
             ) {
-                $modelTypeNode = $innerTypeNode;
+                continue;
             }
+
+            $modelTypeNode = $innerTypeNode;
         }
 
         if ($modelTypeNode === null) {
@@ -46,12 +49,15 @@ class GenericEloquentBuilderTypeNodeResolverExtension implements TypeNodeResolve
         }
 
         foreach ($typeNode->types as $innerTypeNode) {
-            if ($innerTypeNode instanceof IdentifierTypeNode
-                && $this->provider->hasClass($nameScope->resolveStringName($innerTypeNode->name))
-                && ($nameScope->resolveStringName($innerTypeNode->name) === Builder::class || (new ObjectType(Builder::class))->isSuperTypeOf(new ObjectType($nameScope->resolveStringName($innerTypeNode->name)))->yes())
+            if (
+                ! ($innerTypeNode instanceof IdentifierTypeNode)
+                || ! $this->provider->hasClass($nameScope->resolveStringName($innerTypeNode->name))
+                || ($nameScope->resolveStringName($innerTypeNode->name) !== Builder::class && ! (new ObjectType(Builder::class))->isSuperTypeOf(new ObjectType($nameScope->resolveStringName($innerTypeNode->name)))->yes())
             ) {
-                $builderTypeNode = $innerTypeNode;
+                continue;
             }
+
+            $builderTypeNode = $innerTypeNode;
         }
 
         if ($builderTypeNode === null) {
@@ -59,7 +65,7 @@ class GenericEloquentBuilderTypeNodeResolverExtension implements TypeNodeResolve
         }
 
         $builderTypeName = $nameScope->resolveStringName($builderTypeNode->name);
-        $modelTypeName = $nameScope->resolveStringName($modelTypeNode->name);
+        $modelTypeName   = $nameScope->resolveStringName($modelTypeNode->name);
 
         return new GenericObjectType($builderTypeName, [
             new ObjectType($modelTypeName),

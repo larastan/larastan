@@ -18,9 +18,10 @@ use function count;
 
 final class ModelRuleHelper
 {
-    public function findModelReflectionFromType(Type $type): ?ClassReflection
+    public function findModelReflectionFromType(Type $type): ClassReflection|null
     {
-        if (! (new ObjectType(Builder::class))->isSuperTypeOf($type)->yes() &&
+        if (
+            ! (new ObjectType(Builder::class))->isSuperTypeOf($type)->yes() &&
             ! (new ObjectType(EloquentBuilder::class))->isSuperTypeOf($type)->yes() &&
             ! (new ObjectType(Relation::class))->isSuperTypeOf($type)->yes() &&
             ! (new ObjectType(Model::class))->isSuperTypeOf($type)->yes()

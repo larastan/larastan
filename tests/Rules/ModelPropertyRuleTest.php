@@ -11,21 +11,23 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleLevelHelper;
 use PHPStan\Testing\RuleTestCase;
 
+use function version_compare;
+
 /** @extends RuleTestCase<ModelPropertyRule> */
 class ModelPropertyRuleTest extends RuleTestCase
 {
     protected function getRule(): Rule
     {
         return new ModelPropertyRule(
-            new ModelPropertiesRuleHelper,
+            new ModelPropertiesRuleHelper(),
             $this->getContainer()->getByType(RuleLevelHelper::class),
-            new ModelRuleHelper
+            new ModelRuleHelper(),
         );
     }
 
     public function testModelPropertyRuleOnBuilder(): void
     {
-        $this->analyse([__DIR__.'/data/model-property-builder.php'], [
+        $this->analyse([__DIR__ . '/data/model-property-builder.php'], [
             [
                 'Property \'foo\' does not exist in App\\User model.',
                 4,
@@ -74,7 +76,7 @@ class ModelPropertyRuleTest extends RuleTestCase
 
     public function testModelPropertyRuleOnRelation(): void
     {
-        $this->analyse([__DIR__.'/data/model-property-relation.php'], [
+        $this->analyse([__DIR__ . '/data/model-property-relation.php'], [
             [
                 'Property \'foo\' does not exist in App\\Account model.',
                 4,
@@ -101,19 +103,21 @@ class ModelPropertyRuleTest extends RuleTestCase
             ],
         ]);
 
-        if (version_compare(LARAVEL_VERSION, '10.20.0', '>=')) {
-            $this->analyse([__DIR__.'/data/model-property-relation-l10-20.php'], [
-                [
-                    'Property \'foo\' does not exist in App\\Account model.',
-                    4,
-                ]
-            ]);
+        if (! version_compare(LARAVEL_VERSION, '10.20.0', '>=')) {
+            return;
         }
+
+        $this->analyse([__DIR__ . '/data/model-property-relation-l10-20.php'], [
+            [
+                'Property \'foo\' does not exist in App\\Account model.',
+                4,
+            ],
+        ]);
     }
 
     public function testModelPropertyRuleOnModel(): void
     {
-        $this->analyse([__DIR__.'/data/model-property-model.php'], [
+        $this->analyse([__DIR__ . '/data/model-property-model.php'], [
             [
                 'Property \'foo\' does not exist in ModelPropertyModel\ModelPropertyOnModel model.',
                 9,
@@ -131,7 +135,7 @@ class ModelPropertyRuleTest extends RuleTestCase
 
     public function testModelPropertyRuleOnModelFactory(): void
     {
-        $this->analyse([__DIR__.'/data/model-property-model-factory.php'], [
+        $this->analyse([__DIR__ . '/data/model-property-model-factory.php'], [
             [
                 'Property \'foo\' does not exist in App\\User model.',
                 7,
@@ -139,10 +143,11 @@ class ModelPropertyRuleTest extends RuleTestCase
         ]);
     }
 
+    /** @return string[] */
     public static function getAdditionalConfigFiles(): array
     {
         return [
-            __DIR__.'/data/modelPropertyConfig.neon',
+            __DIR__ . '/data/modelPropertyConfig.neon',
         ];
     }
 }

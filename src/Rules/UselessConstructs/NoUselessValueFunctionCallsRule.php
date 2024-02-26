@@ -8,6 +8,7 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\ClosureType;
 use PHPStan\Type\MixedType;
@@ -15,9 +16,7 @@ use PHPStan\Type\MixedType;
 use function count;
 use function strtolower;
 
-/**
- * @implements Rule<FuncCall>
- */
+/** @implements Rule<FuncCall> */
 class NoUselessValueFunctionCallsRule implements Rule
 {
     public function getNodeType(): string
@@ -25,6 +24,7 @@ class NoUselessValueFunctionCallsRule implements Rule
         return FuncCall::class;
     }
 
+    /** @return RuleError[] */
     public function processNode(Node $node, Scope $scope): array
     {
         if (! $node->name instanceof Node\Name) {

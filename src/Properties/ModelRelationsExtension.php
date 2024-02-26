@@ -37,9 +37,7 @@ use PHPStan\Type\UnionType;
 
 use function str_ends_with;
 
-/**
- * @internal
- */
+/** @internal */
 final class ModelRelationsExtension implements PropertiesClassReflectionExtension
 {
     use Concerns\HasContainer;
@@ -102,8 +100,8 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
                 $relatedModelClassNames = $relatedModel->getObjectClassNames();
             }
         } else {
-            $modelName = $this->relationParserHelper->findRelatedModelInRelationMethod($method) ?? Model::class;
-            $relatedModel = new ObjectType($modelName);
+            $modelName              = $this->relationParserHelper->findRelatedModelInRelationMethod($method) ?? Model::class;
+            $relatedModel           = new ObjectType($modelName);
             $relatedModelClassNames = [$modelName];
         }
 
@@ -117,7 +115,7 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
             }
 
             if ($type instanceof GenericObjectType) {
-                $relatedModel = $type->getTypes()[0];
+                $relatedModel           = $type->getTypes()[0];
                 $relatedModelClassNames = $relatedModel->getObjectClassNames();
             }
 

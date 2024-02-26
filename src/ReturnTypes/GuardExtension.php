@@ -16,6 +16,7 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
+use function array_map;
 use function count;
 
 final class GuardExtension implements DynamicMethodReturnTypeExtension
@@ -23,9 +24,6 @@ final class GuardExtension implements DynamicMethodReturnTypeExtension
     use Concerns\HasContainer;
     use Concerns\LoadsAuthModel;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getClass(): string
     {
         return Guard::class;
@@ -39,13 +37,13 @@ final class GuardExtension implements DynamicMethodReturnTypeExtension
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,
-        Scope $scope
-    ): ?Type {
-        $config = $this->getContainer()->get('config');
+        Scope $scope,
+    ): Type|null {
+        $config     = $this->getContainer()->get('config');
         $authModels = [];
 
         if ($config !== null) {
-            $guard = $this->getGuardFromMethodCall($scope, $methodCall);
+            $guard      = $this->getGuardFromMethodCall($scope, $methodCall);
             $authModels = $this->getAuthModels($config, $guard);
         }
 
@@ -55,13 +53,13 @@ final class GuardExtension implements DynamicMethodReturnTypeExtension
 
         return TypeCombinator::addNull(
             TypeCombinator::union(...array_map(
-                fn (string $authModel): Type => new ObjectType($authModel),
+                static fn (string $authModel): Type => new ObjectType($authModel),
                 $authModels,
             )),
         );
     }
 
-    private function getGuardFromMethodCall(Scope $scope, MethodCall $methodCall): ?string
+    private function getGuardFromMethodCall(Scope $scope, MethodCall $methodCall): string|null
     {
         if (
             ! ($methodCall->var instanceof StaticCall) &&
@@ -75,7 +73,7 @@ final class GuardExtension implements DynamicMethodReturnTypeExtension
             return null;
         }
 
-        $guardType = $scope->getType($methodCall->var->getArgs()[0]->value);
+        $guardType       = $scope->getType($methodCall->var->getArgs()[0]->value);
         $constantStrings = $guardType->getConstantStrings();
 
         if (count($constantStrings) !== 1) {

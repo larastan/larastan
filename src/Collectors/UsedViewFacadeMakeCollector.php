@@ -22,7 +22,7 @@ final class UsedViewFacadeMakeCollector implements Collector
     }
 
     /** @param Node\Expr\StaticCall $node */
-    public function processNode(Node $node, Scope $scope): ?string
+    public function processNode(Node $node, Scope $scope): string|null
     {
         $name = $node->name;
 

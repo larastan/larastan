@@ -8,9 +8,7 @@ use Larastan\Larastan\Rules\OctaneCompatibilityRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
-/**
- * @extends RuleTestCase<OctaneCompatibilityRule>
- */
+/** @extends RuleTestCase<OctaneCompatibilityRule> */
 class OctaneCompatibilityRuleTest extends RuleTestCase
 {
     protected function getRule(): Rule
@@ -20,7 +18,7 @@ class OctaneCompatibilityRuleTest extends RuleTestCase
 
     public function testNoContainerInjection(): void
     {
-        $this->analyse([__DIR__.'/data/ContainerInjection.php'], [
+        $this->analyse([__DIR__ . '/data/ContainerInjection.php'], [
             ['Consider using bind method instead or pass a closure.', 12, 'See: https://laravel.com/docs/octane#dependency-injection-and-octane'],
             ['Consider using bind method instead or pass a closure.', 16, 'See: https://laravel.com/docs/octane#dependency-injection-and-octane'],
             ['Consider using bind method instead or pass a closure.', 25, 'See: https://laravel.com/docs/octane#dependency-injection-and-octane'],
@@ -31,8 +29,9 @@ class OctaneCompatibilityRuleTest extends RuleTestCase
         ]);
     }
 
+    /** @return string[] */
     public static function getAdditionalConfigFiles(): array
     {
-        return [__DIR__.'/../phpstan-tests.neon'];
+        return [__DIR__ . '/../phpstan-tests.neon'];
     }
 }

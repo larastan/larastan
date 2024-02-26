@@ -1,0 +1,60 @@
+name: "Coding Standards"
+
+on:
+  push:
+    paths-ignore:
+      - "**.md"
+      - 'docs/**'
+    # Prevent duplicating jobs on PR-s from local branches
+    branches:
+      - "2.x"
+  pull_request:
+    paths-ignore:
+      - "**.md"
+      - 'docs/**'
+
+concurrency:
+  group: coding-standard-${{ github.head_ref || github.run_id }} # will be canceled on subsequent pushes in pull requests but not branches
+  cancel-in-progress: true
+
+jobs:
+  coding-standards:
+    name: "Coding Standards"
+
+    runs-on: "ubuntu-latest"
+
+    strategy:
+      matrix:
+        php: [8.0]
+
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v4"
+
+      - name: "Setup PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "${{ matrix.php }}"
+          extensions: "dom, curl, libxml, mbstring, zip, fileinfo"
+          tools: "composer:v2"
+          coverage: "none"
+
+      - name: "Check Composer configuration"
+        run: "composer validate --strict"
+
+      - name: "Determine composer cache directory"
+        id: "determine-composer-cache-directory"
+        run: "echo \"COMPOSER_CACHE_DIR=$(composer config cache-dir)\" >> $GITHUB_ENV"
+
+      - name: "Cache dependencies installed with composer"
+        uses: "actions/cache@v4"
+        with:
+          path: "${{ env.COMPOSER_CACHE_DIR }}"
+          key: "php-${{ matrix.php }}-composer-${{ matrix.dependencies }}-${{ hashFiles('composer.lock') }}"
+          restore-keys: "php-${{ matrix.php }}-composer-${{ matrix.dependencies }}-"
+
+      - name: "Install dependencies from composer.json"
+        run: "composer update --no-interaction --no-progress"
+
+      - name: "Run phpcs"
+        run: "composer test:cs"

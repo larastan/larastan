@@ -14,26 +14,18 @@ use PHPStan\Type\Type;
 use function get_class;
 use function now;
 
-/**
- * @internal
- */
+/** @internal */
 final class NowAndTodayExtension implements DynamicFunctionReturnTypeExtension
 {
-    /**
-     * {@inheritdoc}
-     */
     public function isFunctionSupported(FunctionReflection $functionReflection): bool
     {
         return $functionReflection->getName() === 'now' || $functionReflection->getName() === 'today';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTypeFromFunctionCall(
         FunctionReflection $functionReflection,
         FuncCall $functionCall,
-        Scope $scope
+        Scope $scope,
     ): Type {
         return new ObjectType(get_class(now()));
     }

@@ -31,7 +31,7 @@ final class HigherOrderTapProxyExtension implements MethodsClassReflectionExtens
 
     public function getMethod(
         ClassReflection $classReflection,
-        string $methodName
+        string $methodName,
     ): MethodReflection {
         $templateType = $classReflection->getActiveTemplateTypeMap()->getType('TClass');
 

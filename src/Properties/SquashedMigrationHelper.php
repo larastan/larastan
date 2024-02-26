@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Larastan\Larastan\Properties;
 
 use Larastan\Larastan\Properties\Schema\PhpMyAdminDataTypeToPhpTypeConverter;
@@ -16,6 +18,7 @@ use SplFileInfo;
 
 use function array_filter;
 use function array_key_exists;
+use function database_path;
 use function file_get_contents;
 use function is_array;
 use function is_dir;
@@ -24,9 +27,7 @@ use function ksort;
 
 final class SquashedMigrationHelper
 {
-    /**
-     * @param  string[]  $schemaPaths
-     */
+    /** @param  string[] $schemaPaths */
     public function __construct(
         private array $schemaPaths,
         private FileHelper $fileHelper,
@@ -66,7 +67,7 @@ final class SquashedMigrationHelper
 
             try {
                 $parser = new Parser($fileContents);
-            } catch (ParserException $exception) {
+            } catch (ParserException) {
                 // TODO: re-throw the exception with a clear message?
                 continue;
             }
@@ -100,9 +101,7 @@ final class SquashedMigrationHelper
         return $tables;
     }
 
-    /**
-     * @return SplFileInfo[]
-     */
+    /** @return SplFileInfo[] */
     private function getSchemaFiles(): array
     {
         /** @var SplFileInfo[] $schemaFiles */
@@ -111,14 +110,16 @@ final class SquashedMigrationHelper
         foreach ($this->schemaPaths as $additionalPath) {
             $absolutePath = $this->fileHelper->absolutizePath($additionalPath);
 
-            if (is_dir($absolutePath)) {
-                $schemaFiles += iterator_to_array(
-                    new RegexIterator(
-                        new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
-                        '/\.dump|\.sql/i'
-                    )
-                );
+            if (! is_dir($absolutePath)) {
+                continue;
             }
+
+            $schemaFiles += iterator_to_array(
+                new RegexIterator(
+                    new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
+                    '/\.dump|\.sql/i',
+                ),
+            );
         }
 
         return $schemaFiles;
@@ -126,10 +127,6 @@ final class SquashedMigrationHelper
 
     private function isNullable(CreateDefinition $definition): bool
     {
-        if ($definition->options?->has('NOT NULL')) {
-            return false;
-        }
-
-        return true;
+        return ! $definition->options?->has('NOT NULL');
     }
 }

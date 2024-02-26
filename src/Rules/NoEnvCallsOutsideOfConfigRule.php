@@ -13,6 +13,9 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 
+use function config_path;
+use function str_starts_with;
+
 /**
  * Catches `env()` calls outside of the config directory.
  *

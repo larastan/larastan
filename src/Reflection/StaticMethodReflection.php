@@ -7,17 +7,14 @@ namespace Larastan\Larastan\Reflection;
 use PHPStan\Reflection\ClassMemberReflection;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Reflection\ParametersAcceptor;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\Type;
 
 class StaticMethodReflection implements MethodReflection
 {
-    /** @var MethodReflection */
-    private $methodReflection;
-
-    public function __construct(MethodReflection $methodReflection)
+    public function __construct(private MethodReflection $methodReflection)
     {
-        $this->methodReflection = $methodReflection;
     }
 
     public function getDeclaringClass(): ClassReflection
@@ -40,7 +37,7 @@ class StaticMethodReflection implements MethodReflection
         return $this->methodReflection->isPublic();
     }
 
-    public function getDocComment(): ?string
+    public function getDocComment(): string|null
     {
         return $this->methodReflection->getDocComment();
     }
@@ -55,6 +52,7 @@ class StaticMethodReflection implements MethodReflection
         return $this->methodReflection->getPrototype();
     }
 
+    /** @return ParametersAcceptor[] */
     public function getVariants(): array
     {
         return $this->methodReflection->getVariants();
@@ -65,7 +63,7 @@ class StaticMethodReflection implements MethodReflection
         return $this->methodReflection->isDeprecated();
     }
 
-    public function getDeprecatedDescription(): ?string
+    public function getDeprecatedDescription(): string|null
     {
         return $this->methodReflection->getDeprecatedDescription();
     }
@@ -80,7 +78,7 @@ class StaticMethodReflection implements MethodReflection
         return $this->methodReflection->isInternal();
     }
 
-    public function getThrowType(): ?Type
+    public function getThrowType(): Type|null
     {
         return $this->methodReflection->getThrowType();
     }

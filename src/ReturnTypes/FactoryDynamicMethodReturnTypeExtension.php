@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Larastan\Larastan\ReturnTypes;
 
 use Illuminate\Database\Eloquent\Collection;
@@ -36,9 +38,9 @@ class FactoryDynamicMethodReturnTypeExtension implements DynamicMethodReturnType
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,
-        Scope $scope
-    ): ?Type {
-        $calledOnType = $scope->getType($methodCall->var);
+        Scope $scope,
+    ): Type|null {
+        $calledOnType       = $scope->getType($methodCall->var);
         $originalReturnType = ParametersAcceptorSelector::selectFromArgs($scope, $methodCall->getArgs(), $methodReflection->getVariants())->getReturnType();
 
         if (! $calledOnType instanceof ModelFactoryType) {
@@ -66,7 +68,9 @@ class FactoryDynamicMethodReturnTypeExtension implements DynamicMethodReturnType
         if (in_array($methodReflection->getName(), ['create', 'createQuietly', 'make'], true)) {
             if ($calledOnType->isSingleModel()->yes()) {
                 return TypeCombinator::remove($originalReturnType, new ObjectType(Collection::class));
-            } elseif ($calledOnType->isSingleModel()->no()) {
+            }
+
+            if ($calledOnType->isSingleModel()->no()) {
                 return TypeCombinator::remove($originalReturnType, new ObjectType(Model::class));
             }
         }

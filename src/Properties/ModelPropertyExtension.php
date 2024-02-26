@@ -17,6 +17,7 @@ use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\TypeCombinator;
+use ReflectionException;
 
 use function array_key_exists;
 use function count;
@@ -25,9 +26,7 @@ use function in_array;
 use function method_exists;
 use function sprintf;
 
-/**
- * @internal
- */
+/** @internal */
 final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 {
     /** @var array<string, SchemaTable> */
@@ -66,7 +65,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
         try {
             /** @var Model $modelInstance */
             $modelInstance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
-        } catch (\ReflectionException $e) {
+        } catch (ReflectionException) {
             return false;
         }
 
@@ -124,12 +123,12 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 
     public function getProperty(
         ClassReflection $classReflection,
-        string $propertyName
+        string $propertyName,
     ): PropertyReflection {
         try {
             /** @var Model $modelInstance */
             $modelInstance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
-        } catch (\ReflectionException $e) {
+        } catch (ReflectionException) {
             throw new ShouldNotHappenException();
         }
 
@@ -167,7 +166,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
                 if ($column->options === null || count($column->options) < 1) {
                     $readableType = $writableType = new StringType();
                 } else {
-                    $readableType = $writableType = $this->stringResolver->resolve('\''.implode('\'|\'', $column->options).'\'');
+                    $readableType = $writableType = $this->stringResolver->resolve('\'' . implode('\'|\'', $column->options) . '\'');
                 }
             } else {
                 $readableType = $this->stringResolver->resolve($column->readableType);

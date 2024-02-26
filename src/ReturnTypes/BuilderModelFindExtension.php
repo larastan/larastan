@@ -25,26 +25,18 @@ use PHPStan\Type\TypeCombinator;
 use function count;
 use function in_array;
 
-/**
- * @internal
- */
+/** @internal */
 final class BuilderModelFindExtension implements DynamicMethodReturnTypeExtension
 {
     public function __construct(private ReflectionProvider $reflectionProvider, private CollectionHelper $collectionHelper)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getClass(): string
     {
         return Builder::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
         $methodName = $methodReflection->getName();
@@ -59,22 +51,15 @@ final class BuilderModelFindExtension implements DynamicMethodReturnTypeExtensio
             return false;
         }
 
-        if (! $this->reflectionProvider->getClass(Builder::class)->hasNativeMethod($methodName) &&
-            ! $this->reflectionProvider->getClass(QueryBuilder::class)->hasNativeMethod($methodName)) {
-            return false;
-        }
-
-        return true;
+        return $this->reflectionProvider->getClass(Builder::class)->hasNativeMethod($methodName) ||
+            $this->reflectionProvider->getClass(QueryBuilder::class)->hasNativeMethod($methodName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,
-        Scope $scope
-    ): ?Type {
+        Scope $scope,
+    ): Type|null {
         if (count($methodCall->getArgs()) < 1) {
             return null;
         }
@@ -87,7 +72,7 @@ final class BuilderModelFindExtension implements DynamicMethodReturnTypeExtensio
         }
 
         $returnType = $methodReflection->getVariants()[0]->getReturnType();
-        $argType = $scope->getType($methodCall->getArgs()[0]->value);
+        $argType    = $scope->getType($methodCall->getArgs()[0]->value);
 
         if ($argType instanceof MixedType) {
             return $returnType;
@@ -111,9 +96,9 @@ final class BuilderModelFindExtension implements DynamicMethodReturnTypeExtensio
                 $models[] = TypeCombinator::remove(
                     TypeCombinator::remove(
                         $returnType,
-                        new ArrayType(new MixedType(), $modelClassType)
+                        new ArrayType(new MixedType(), $modelClassType),
                     ),
-                    new ObjectType(Collection::class)
+                    new ObjectType(Collection::class),
                 );
             }
         }

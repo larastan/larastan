@@ -16,18 +16,20 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\CollectedDataNode;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 
 use function array_diff;
 use function array_filter;
 use function collect;
 use function iterator_to_array;
+use function view;
 
 /** @implements Rule<CollectedDataNode> */
 final class UnusedViewsRule implements Rule
 {
     /** @var list<string>|null */
-    private ?array $viewsUsedInOtherViews = null;
+    private array|null $viewsUsedInOtherViews = null;
 
     public function __construct(private UsedViewInAnotherViewCollector $usedViewInAnotherViewCollector, private ViewFileHelper $viewFileHelper)
     {
@@ -38,6 +40,7 @@ final class UnusedViewsRule implements Rule
         return CollectedDataNode::class;
     }
 
+    /** @return RuleError[] */
     public function processNode(Node $node, Scope $scope): array
     {
         if ($this->viewsUsedInOtherViews === null) {
@@ -61,9 +64,11 @@ final class UnusedViewsRule implements Rule
         $view = view();
 
         foreach ($usedViews as $viewName) {
-            if ($view->exists($viewName)) {
-                $existingViews[] = $viewName;
+            if (! $view->exists($viewName)) {
+                continue;
             }
+
+            $existingViews[] = $viewName;
         }
 
         $unusedViews = array_diff($allViews, array_filter($existingViews));

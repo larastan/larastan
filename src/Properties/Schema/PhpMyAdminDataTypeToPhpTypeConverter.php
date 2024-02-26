@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Larastan\Larastan\Properties\Schema;
 
 use PhpMyAdmin\SqlParser\Components\DataType;

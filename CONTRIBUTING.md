@@ -25,6 +25,10 @@ Clone your fork, then install all dependencies:
 
 ## Tests
 
+Run code style checks:
+
+    composer test:cs
+
 Run all tests:
 
     composer test

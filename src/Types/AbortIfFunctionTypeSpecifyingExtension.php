@@ -14,28 +14,23 @@ use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\FunctionTypeSpecifyingExtension;
 
 use function count;
+use function str_starts_with;
 
 final class AbortIfFunctionTypeSpecifyingExtension implements FunctionTypeSpecifyingExtension, TypeSpecifierAwareExtension
 {
-    /** @var TypeSpecifier */
-    private $typeSpecifier;
+    private TypeSpecifier $typeSpecifier;
 
-    /** @var bool */
-    protected $negate;
+    protected string $methodName;
 
-    /** @var string */
-    protected $methodName;
-
-    public function __construct(bool $negate, string $methodName)
+    public function __construct(protected bool $negate, string $methodName)
     {
-        $this->negate = $negate;
-        $this->methodName = $methodName.'_'.($negate === false ? 'if' : 'unless');
+        $this->methodName = $methodName . '_' . ($negate === false ? 'if' : 'unless');
     }
 
     public function isFunctionSupported(
         FunctionReflection $functionReflection,
         FuncCall $node,
-        TypeSpecifierContext $context
+        TypeSpecifierContext $context,
     ): bool {
         return $functionReflection->getName() === $this->methodName && $context->null();
     }
@@ -44,7 +39,7 @@ final class AbortIfFunctionTypeSpecifyingExtension implements FunctionTypeSpecif
         FunctionReflection $functionReflection,
         FuncCall $node,
         Scope $scope,
-        TypeSpecifierContext $context
+        TypeSpecifierContext $context,
     ): SpecifiedTypes {
         if (! str_starts_with($this->methodName, 'throw') && count($node->args) < 2) {
             return new SpecifiedTypes();

@@ -24,11 +24,8 @@ use function in_array;
 
 class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
-    private ReflectionProvider $provider;
-
-    public function __construct(ReflectionProvider $provider)
+    public function __construct(private ReflectionProvider $provider)
     {
-        $this->provider = $provider;
     }
 
     public function getClass(): string
@@ -39,24 +36,29 @@ class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTyp
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
         return in_array($methodReflection->getName(), [
-            'hasOne', 'hasOneThrough', 'morphOne',
-            'belongsTo', 'morphTo',
-            'hasMany', 'hasManyThrough', 'morphMany',
-            'belongsToMany', 'morphToMany', 'morphedByMany',
+            'hasOne',
+            'hasOneThrough',
+            'morphOne',
+            'belongsTo',
+            'morphTo',
+            'hasMany',
+            'hasManyThrough',
+            'morphMany',
+            'belongsToMany',
+            'morphToMany',
+            'morphedByMany',
         ], true);
     }
 
-    /**
-     * @throws ShouldNotHappenException
-     */
+    /** @throws ShouldNotHappenException */
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,
-        Scope $scope
+        Scope $scope,
     ): Type {
         /** @var FunctionVariant $functionVariant */
         $functionVariant = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
-        $returnType = $functionVariant->getReturnType();
+        $returnType      = $functionVariant->getReturnType();
 
         $classNames = $returnType->getObjectClassNames();
 
@@ -79,7 +81,7 @@ class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTyp
             return $returnType;
         }
 
-        $argType = $scope->getType($methodCall->getArgs()[0]->value);
+        $argType    = $scope->getType($methodCall->getArgs()[0]->value);
         $argStrings = $argType->getConstantStrings();
 
         if (count($argStrings) !== 1) {
