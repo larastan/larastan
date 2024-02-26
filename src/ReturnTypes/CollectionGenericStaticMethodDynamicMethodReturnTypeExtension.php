@@ -10,8 +10,10 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Type\ClosureType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\Generic\TemplateTypeVariance;
 use PHPStan\Type\IntersectionType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
@@ -33,7 +35,7 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
         if ($methodReflection->getDeclaringClass()->getName() === EloquentCollection::class) {
-            return $methodReflection->getName() === 'find';
+            return in_array($methodReflection->getName(), ['find', 'map', 'mapWithKeys'], true);
         }
 
         $methods = [
@@ -85,9 +87,9 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
 
         // If it's a UnionType, traverse the types and try to find a collection object type
         if ($returnType instanceof UnionType) {
-            return $returnType->traverse(function (Type $type) use ($classReflection) {
+            return $returnType->traverse(function (Type $type) use ($methodReflection, $classReflection) {
                 if ($type instanceof GenericObjectType && ($innerReflection = $type->getClassReflection()) !== null) { // @phpstan-ignore-line
-                    return $this->handleGenericObjectType($classReflection, $innerReflection);
+                    return $this->handleGenericObjectType($classReflection, $innerReflection, $methodReflection);
                 }
 
                 return $type;
@@ -98,19 +100,35 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
             return $returnType;
         }
 
-        return $this->handleGenericObjectType($classReflection, $returnType->getObjectClassReflections()[0]);
+        return $this->handleGenericObjectType($classReflection, $returnType->getObjectClassReflections()[0], $methodReflection);
     }
 
-    private function handleGenericObjectType(ClassReflection $classReflection, ClassReflection $returnTypeClassReflection): ObjectType
+    private function handleGenericObjectType(ClassReflection $classReflection, ClassReflection $returnTypeClassReflection, MethodReflection $methodReflection): ObjectType
     {
-        if ($classReflection->getActiveTemplateTypeMap()->count() !== $returnTypeClassReflection->getActiveTemplateTypeMap()->count()) {
-            return new ObjectType($classReflection->getName());
-        }
-
         $genericTypes = $returnTypeClassReflection->typeMapToList($returnTypeClassReflection->getActiveTemplateTypeMap());
 
         if ($genericTypes === []) {
             return new ObjectType($classReflection->getName());
+        }
+
+        if ($classReflection->getActiveTemplateTypeMap()->count() !== $returnTypeClassReflection->getActiveTemplateTypeMap()->count()) {
+            if (in_array($methodReflection->getName(), ['map', 'mapWithKeys'], true)) {
+                if (! (new ObjectType(Model::class))->isSuperTypeOf($genericTypes[1])->no()) {
+                    return new ObjectType($classReflection->getName());
+                } else {
+                    return new GenericObjectType(Collection::class, $genericTypes);
+                }
+            }
+
+            return new ObjectType($classReflection->getName());
+        }
+
+        if (($classReflection->is(EloquentCollection::class) || $classReflection->isSubclassOf(EloquentCollection::class)) && in_array($methodReflection->getName(), ['map', 'mapWithKeys'], true)) {
+            if (! (new ObjectType(Model::class))->isSuperTypeOf($genericTypes[1])->no()) {
+                return new GenericObjectType($classReflection->getName(), $genericTypes);
+            }
+
+            return new GenericObjectType(Collection::class, $genericTypes);
         }
 
         // If the key type is gonna be a model, we change it to string
