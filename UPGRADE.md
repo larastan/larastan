@@ -1,5 +1,7 @@
 # Upgrade Guide
 
+- The UnusedViewsRule has been changed to specify the absolute path of the unused view, rather than the view name. This may mean that baselines will need regenerating to account for this change.
+
 ## Upgrading to `2.7.0` from `2.6.5`
 
 ### Organization Change
@@ -89,7 +91,7 @@ Fix the docblock.
 
 ### Property App\\Http\\Middleware\\TrustProxies::\$headers \(string\) does not accept default value of type int
 
-Fix the docblock. 
+Fix the docblock.
 
 ```diff
 -    * @var string
