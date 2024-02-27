@@ -4,17 +4,17 @@ on:
   push:
     paths-ignore:
       - "**.md"
-      - 'docs/**'
+      - "docs/**"
     # Prevent duplicating jobs on PR-s from local branches
     branches:
       - "2.x"
   pull_request:
     paths-ignore:
       - "**.md"
-      - 'docs/**'
+      - "docs/**"
 
 concurrency:
-  group: coding-standard-${{ github.head_ref || github.run_id }} # will be canceled on subsequent pushes in pull requests but not branches
+  group: "coding-standard-${{ github.head_ref || github.run_id }}" # will be canceled on subsequent pushes in pull requests but not branches
   cancel-in-progress: true
 
 jobs:
@@ -25,7 +25,7 @@ jobs:
 
     strategy:
       matrix:
-        php: [8.0]
+        php: ["8.0"]
 
     steps:
       - name: "Checkout"
