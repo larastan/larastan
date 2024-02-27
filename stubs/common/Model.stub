@@ -20,6 +20,11 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
     /**
      * @var list<string>
      */
+    protected $fillable = [];
+
+    /**
+     * @var list<string>
+     */
     protected $visible = [];
 
     /**
