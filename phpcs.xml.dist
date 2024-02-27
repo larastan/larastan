@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <ruleset>
     <arg name="basepath" value="."/>
-    <arg name="extensions" value="php"/>
+    <arg name="extensions" value="php,stub"/>
     <arg name="parallel" value="80"/>
     <arg name="cache" value=".phpcs-cache"/>
     <arg name="colors"/>
@@ -12,6 +12,7 @@
     <!-- Directories to be checked -->
     <file>src</file>
     <file>tests</file>
+    <file>stubs</file>
 
     <exclude-pattern>tests/*/data</exclude-pattern>
     <exclude-pattern>tests/enum-definition.php</exclude-pattern>
@@ -20,11 +21,11 @@
 
     <!-- Include full Doctrine Coding Standard -->
     <rule ref="Doctrine">
-      <exclude name="SlevomatCodingStandard.PHP.RequireExplicitAssertion"/>
+        <exclude name="SlevomatCodingStandard.PHP.RequireExplicitAssertion"/>
     </rule>
 
     <rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
-      <exclude-pattern>tests/*</exclude-pattern>
+        <exclude-pattern>tests/*</exclude-pattern>
     </rule>
 
     <rule ref="Generic.PHP.ForbiddenFunctions">
