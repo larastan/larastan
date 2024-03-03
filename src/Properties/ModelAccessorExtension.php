@@ -14,9 +14,7 @@ use PHPStan\Reflection\PropertyReflection;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\MixedType;
 
-/**
- * @internal
- */
+/** @internal */
 final class ModelAccessorExtension implements PropertiesClassReflectionExtension
 {
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
@@ -40,19 +38,15 @@ final class ModelAccessorExtension implements PropertiesClassReflectionExtension
                 return false;
             }
 
-            if (! (new GenericObjectType(Attribute::class, [new MixedType(), new MixedType()]))->isSuperTypeOf($returnType)->yes()) {
-                return false;
-            }
-
-            return true;
+            return (new GenericObjectType(Attribute::class, [new MixedType(), new MixedType()]))->isSuperTypeOf($returnType)->yes();
         }
 
-        return $classReflection->hasNativeMethod('get'.Str::studly($propertyName).'Attribute');
+        return $classReflection->hasNativeMethod('get' . Str::studly($propertyName) . 'Attribute');
     }
 
     public function getProperty(
         ClassReflection $classReflection,
-        string $propertyName
+        string $propertyName,
     ): PropertyReflection {
         $studlyName = Str::studly($propertyName);
 
@@ -65,16 +59,16 @@ final class ModelAccessorExtension implements PropertiesClassReflectionExtension
             return new ModelProperty(
                 $classReflection,
                 $returnType->getTypes()[0],
-                $returnType->getTypes()[1]
+                $returnType->getTypes()[1],
             );
         }
 
-        $method = $classReflection->getNativeMethod('get'.Str::studly($propertyName).'Attribute');
+        $method = $classReflection->getNativeMethod('get' . Str::studly($propertyName) . 'Attribute');
 
         return new ModelProperty(
             $classReflection,
             $method->getVariants()[0]->getReturnType(),
-            $method->getVariants()[0]->getReturnType()
+            $method->getVariants()[0]->getReturnType(),
         );
     }
 }

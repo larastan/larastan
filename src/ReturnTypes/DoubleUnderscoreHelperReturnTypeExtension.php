@@ -17,26 +17,18 @@ use PHPStan\Type\Type;
 
 use function count;
 
-/**
- * @internal
- */
+/** @internal */
 final class DoubleUnderscoreHelperReturnTypeExtension implements DynamicFunctionReturnTypeExtension
 {
-    /**
-     * {@inheritdoc}
-     */
     public function isFunctionSupported(FunctionReflection $functionReflection): bool
     {
         return $functionReflection->getName() === '__';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTypeFromFunctionCall(
         FunctionReflection $functionReflection,
         FuncCall $functionCall,
-        Scope $scope
+        Scope $scope,
     ): Type {
         if (count($functionCall->args) === 0) {
             return new NullType();

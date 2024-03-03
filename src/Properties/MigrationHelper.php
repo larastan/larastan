@@ -17,43 +17,23 @@ use function count;
 use function database_path;
 use function is_dir;
 use function iterator_to_array;
+use function uasort;
 
 class MigrationHelper
 {
-    /** @var Parser */
-    private $parser;
-
-    /** @var string[] */
-    private $databaseMigrationPath;
-
-    /** @var bool */
-    private $disableMigrationScan;
-
-    /** @var FileHelper */
-    private $fileHelper;
-
-    /** @var ReflectionProvider */
-    private $reflectionProvider;
-
-    /**
-     * @param  string[]  $databaseMigrationPath
-     */
+    /** @param  string[] $databaseMigrationPath */
     public function __construct(
-        Parser $parser,
-        array $databaseMigrationPath,
-        FileHelper $fileHelper,
-        bool $disableMigrationScan,
-        ReflectionProvider $reflectionProvider
+        private Parser $parser,
+        private array $databaseMigrationPath,
+        private FileHelper $fileHelper,
+        private bool $disableMigrationScan,
+        private ReflectionProvider $reflectionProvider,
     ) {
-        $this->parser = $parser;
-        $this->databaseMigrationPath = $databaseMigrationPath;
-        $this->fileHelper = $fileHelper;
-        $this->disableMigrationScan = $disableMigrationScan;
-        $this->reflectionProvider = $reflectionProvider;
     }
 
     /**
-     * @param  array<string, SchemaTable>  $tables
+     * @param  array<string, SchemaTable> $tables
+     *
      * @return array<string, SchemaTable>
      */
     public function initializeTables(array $tables = []): array
@@ -67,20 +47,20 @@ class MigrationHelper
         }
 
         $schemaAggregator = new SchemaAggregator($this->reflectionProvider, $tables);
-        $filesArray = $this->getMigrationFiles();
+        $filesArray       = $this->getMigrationFiles();
 
         if (empty($filesArray)) {
             return $tables;
         }
 
-        uasort($filesArray, function (SplFileInfo $a, SplFileInfo $b) {
+        uasort($filesArray, static function (SplFileInfo $a, SplFileInfo $b) {
             return $a->getFilename() <=> $b->getFilename();
         });
 
         foreach ($filesArray as $file) {
             try {
                 $schemaAggregator->addStatements($this->parser->parseFile($file->getPathname()));
-            } catch (ParserErrorsException $e) {
+            } catch (ParserErrorsException) {
                 continue;
             }
         }
@@ -88,9 +68,7 @@ class MigrationHelper
         return $schemaAggregator->tables;
     }
 
-    /**
-     * @return SplFileInfo[]
-     */
+    /** @return SplFileInfo[] */
     private function getMigrationFiles(): array
     {
         /** @var SplFileInfo[] $migrationFiles */
@@ -99,14 +77,16 @@ class MigrationHelper
         foreach ($this->databaseMigrationPath as $additionalPath) {
             $absolutePath = $this->fileHelper->absolutizePath($additionalPath);
 
-            if (is_dir($absolutePath)) {
-                $migrationFiles += iterator_to_array(
-                    new RegexIterator(
-                        new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
-                        '/\.php$/i'
-                    )
-                );
+            if (! is_dir($absolutePath)) {
+                continue;
             }
+
+            $migrationFiles += iterator_to_array(
+                new RegexIterator(
+                    new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
+                    '/\.php$/i',
+                ),
+            );
         }
 
         return $migrationFiles;

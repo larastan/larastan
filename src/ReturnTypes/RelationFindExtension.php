@@ -23,26 +23,18 @@ use PHPStan\Type\TypeCombinator;
 
 use function in_array;
 
-/**
- * @internal
- */
+/** @internal */
 final class RelationFindExtension implements DynamicMethodReturnTypeExtension
 {
     public function __construct(private ReflectionProvider $reflectionProvider, private CollectionHelper $collectionHelper)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getClass(): string
     {
         return Relation::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
         if (! Str::startsWith($methodReflection->getName(), 'find')) {
@@ -67,8 +59,8 @@ final class RelationFindExtension implements DynamicMethodReturnTypeExtension
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,
-        Scope $scope
-    ): ?Type {
+        Scope $scope,
+    ): Type|null {
         $modelType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TRelatedModel');
         if ($modelType === null) {
             return null;

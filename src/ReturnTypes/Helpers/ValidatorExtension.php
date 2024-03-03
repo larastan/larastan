@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\ReturnTypes\Helpers;
 
+use Illuminate\Contracts\Validation\Factory;
+use Illuminate\Validation\Validator;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\FunctionReflection;
@@ -14,9 +16,7 @@ use PHPStan\Type\Type;
 
 use function count;
 
-/**
- * @internal
- */
+/** @internal */
 final class ValidatorExtension implements DynamicFunctionReturnTypeExtension
 {
     public function isFunctionSupported(FunctionReflection $functionReflection): bool
@@ -27,14 +27,14 @@ final class ValidatorExtension implements DynamicFunctionReturnTypeExtension
     public function getTypeFromFunctionCall(
         FunctionReflection $functionReflection,
         FuncCall $functionCall,
-        Scope $scope
+        Scope $scope,
     ): Type {
         if (count($functionCall->getArgs()) === 0) {
-            return new ObjectType(\Illuminate\Contracts\Validation\Factory::class);
+            return new ObjectType(Factory::class);
         }
 
         return new IntersectionType([
-            new ObjectType(\Illuminate\Validation\Validator::class),
+            new ObjectType(Validator::class),
             new ObjectType(\Illuminate\Contracts\Validation\Validator::class),
         ]);
     }

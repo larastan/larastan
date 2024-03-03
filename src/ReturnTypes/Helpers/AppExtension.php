@@ -18,7 +18,7 @@ use function count;
 class AppExtension implements DynamicFunctionReturnTypeExtension
 {
     public function __construct(
-        private AppMakeHelper $appMakeHelper
+        private AppMakeHelper $appMakeHelper,
     ) {
     }
 
@@ -30,7 +30,7 @@ class AppExtension implements DynamicFunctionReturnTypeExtension
     public function getTypeFromFunctionCall(
         FunctionReflection $functionReflection,
         FuncCall $functionCall,
-        Scope $scope
+        Scope $scope,
     ): Type {
         if (count($functionCall->getArgs()) === 0) {
             return new ObjectType(Application::class);

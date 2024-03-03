@@ -9,31 +9,21 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleLevelHelper;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\Type;
 
 use function count;
 
-/**
- * @implements \PHPStan\Rules\Rule<\PhpParser\Node\Expr\MethodCall>
- */
+/** @implements Rule<MethodCall> */
 class ModelPropertyRule implements Rule
 {
-    /** @var ModelPropertiesRuleHelper */
-    private $modelPropertiesRuleHelper;
+    private ModelPropertiesRuleHelper $modelPropertiesRuleHelper;
 
-    /** @var RuleLevelHelper */
-    private $ruleLevelHelper;
-
-    /** @var ModelRuleHelper */
-    private $modelRuleHelper;
-
-    public function __construct(ModelPropertiesRuleHelper $ruleHelper, RuleLevelHelper $ruleLevelHelper, ModelRuleHelper $modelRuleHelper)
+    public function __construct(ModelPropertiesRuleHelper $ruleHelper, private RuleLevelHelper $ruleLevelHelper, private ModelRuleHelper $modelRuleHelper)
     {
         $this->modelPropertiesRuleHelper = $ruleHelper;
-        $this->ruleLevelHelper = $ruleLevelHelper;
-        $this->modelRuleHelper = $modelRuleHelper;
     }
 
     public function getNodeType(): string
@@ -42,9 +32,9 @@ class ModelPropertyRule implements Rule
     }
 
     /**
-     * @param  MethodCall  $node
-     * @param  Scope  $scope
-     * @return string[]
+     * @param  MethodCall $node
+     *
+     * @return RuleError[]
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -56,14 +46,14 @@ class ModelPropertyRule implements Rule
             return [];
         }
 
-        $name = $node->name->name;
+        $name       = $node->name->name;
         $typeResult = $this->ruleLevelHelper->findTypeToCheck(
             $scope,
             $node->var,
             '',
             static function (Type $type) use ($name): bool {
                 return $type->canCallMethods()->yes() && $type->hasMethod($name)->yes();
-            }
+            },
         );
 
         $type = $typeResult->getType();

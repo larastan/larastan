@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Larastan\Larastan\Properties;
 
 use Illuminate\Contracts\Database\Eloquent\Castable;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Contracts\Database\Eloquent\CastsInboundAttributes;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 use PHPStan\Reflection\ParameterReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
@@ -69,7 +73,7 @@ class ModelCastHelper
 
         if ($classReflection->isSubclassOf(Castable::class)) {
             $methodReflection = $classReflection->getNativeMethod('castUsing');
-            $castUsingReturn = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+            $castUsingReturn  = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
 
             if ($castUsingReturn->getObjectClassReflections() !== []) {
                 $classReflection = $castUsingReturn->getObjectClassReflections()[0];
@@ -126,7 +130,7 @@ class ModelCastHelper
 
         if ($classReflection->isSubclassOf(Castable::class)) {
             $methodReflection = $classReflection->getNativeMethod('castUsing');
-            $castUsingReturn = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+            $castUsingReturn  = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
 
             if ($castUsingReturn->getObjectClassReflections() !== []) {
                 $classReflection = $castUsingReturn->getObjectClassReflections()[0];
@@ -138,9 +142,9 @@ class ModelCastHelper
             || $classReflection->isSubclassOf(CastsInboundAttributes::class)
         ) {
             $methodReflection = $classReflection->getNativeMethod('set');
-            $parameters = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getParameters();
+            $parameters       = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getParameters();
 
-            $valueParameter = Arr::first($parameters, fn (ParameterReflection $parameterReflection) => $parameterReflection->getName() === 'value');
+            $valueParameter = Arr::first($parameters, static fn (ParameterReflection $parameterReflection) => $parameterReflection->getName() === 'value');
 
             return $valueParameter->getType();
         }
@@ -150,21 +154,17 @@ class ModelCastHelper
 
     public function getDateType(): Type
     {
-        $dateClass = class_exists(\Illuminate\Support\Facades\Date::class)
-            ? \Illuminate\Support\Facades\Date::now()::class
-            : \Illuminate\Support\Carbon::class;
+        $dateClass = class_exists(Date::class)
+            ? Date::now()::class
+            : Carbon::class;
 
-        if ($dateClass === \Illuminate\Support\Carbon::class) {
+        if ($dateClass === Carbon::class) {
             return TypeCombinator::union(new ObjectType($dateClass), new ObjectType(\Carbon\Carbon::class));
         }
 
         return new ObjectType($dateClass);
     }
 
-    /**
-     * @param  string  $cast
-     * @return string
-     */
     private function parseCast(string $cast): string
     {
         foreach (explode(':', $cast) as $part) {

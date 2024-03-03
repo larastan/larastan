@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Larastan\Larastan\Reflection;
 
 use PHPStan\Reflection;
 use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\ParameterReflection;
+use PHPStan\Reflection\PassedByReference;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\Generic\TemplateTypeMap;
 use PHPStan\Type\MixedType;
@@ -13,14 +16,8 @@ use PHPStan\Type\Type;
 
 final class DynamicWhereMethodReflection implements Reflection\MethodReflection
 {
-    private Reflection\ClassReflection $classReflection;
-
-    private string $methodName;
-
-    public function __construct(Reflection\ClassReflection $classReflection, string $methodName)
+    public function __construct(private Reflection\ClassReflection $classReflection, private string $methodName)
     {
-        $this->classReflection = $classReflection;
-        $this->methodName = $methodName;
     }
 
     public function getDeclaringClass(): Reflection\ClassReflection
@@ -43,7 +40,7 @@ final class DynamicWhereMethodReflection implements Reflection\MethodReflection
         return true;
     }
 
-    public function getDocComment(): ?string
+    public function getDocComment(): string|null
     {
         return null;
     }
@@ -58,6 +55,7 @@ final class DynamicWhereMethodReflection implements Reflection\MethodReflection
         return $this;
     }
 
+    /** @return FunctionVariant[] */
     public function getVariants(): array
     {
         return [
@@ -77,12 +75,12 @@ final class DynamicWhereMethodReflection implements Reflection\MethodReflection
                             return false;
                         }
 
-                        public function getType(): \PHPStan\Type\Type
+                        public function getType(): Type
                         {
                             return new MixedType();
                         }
 
-                        public function passedByReference(): \PHPStan\Reflection\PassedByReference
+                        public function passedByReference(): PassedByReference
                         {
                             return Reflection\PassedByReference::createNo();
                         }
@@ -92,14 +90,14 @@ final class DynamicWhereMethodReflection implements Reflection\MethodReflection
                             return false;
                         }
 
-                        public function getDefaultValue(): ?\PHPStan\Type\Type
+                        public function getDefaultValue(): Type|null
                         {
                             return null;
                         }
                     },
                 ],
                 false,
-                new ObjectType($this->classReflection->getName())
+                new ObjectType($this->classReflection->getName()),
             ),
         ];
     }
@@ -109,7 +107,7 @@ final class DynamicWhereMethodReflection implements Reflection\MethodReflection
         return TrinaryLogic::createNo();
     }
 
-    public function getDeprecatedDescription(): ?string
+    public function getDeprecatedDescription(): string|null
     {
         return null;
     }
@@ -124,7 +122,7 @@ final class DynamicWhereMethodReflection implements Reflection\MethodReflection
         return TrinaryLogic::createNo();
     }
 
-    public function getThrowType(): ?Type
+    public function getThrowType(): Type|null
     {
         return null;
     }

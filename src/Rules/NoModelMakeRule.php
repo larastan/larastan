@@ -7,7 +7,6 @@ namespace Larastan\Larastan\Rules;
 use Illuminate\Database\Eloquent\Model;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name\FullyQualified;
@@ -27,40 +26,24 @@ use PHPStan\Type\ObjectType;
  * It is functionally equivalent to simply use the constructor:
  * new User()
  *
- * @implements Rule<MethodCall>
+ * @implements Rule<StaticCall>
  */
 class NoModelMakeRule implements Rule
 {
-    /**
-     * @var \PHPStan\Reflection\ReflectionProvider
-     */
-    protected $reflectionProvider;
-
-    /**
-     * @param  ReflectionProvider  $reflectionProvider
-     */
-    public function __construct(ReflectionProvider $reflectionProvider)
+    public function __construct(protected ReflectionProvider $reflectionProvider)
     {
-        $this->reflectionProvider = $reflectionProvider;
     }
 
-    /**
-     * @return string
-     */
     public function getNodeType(): string
     {
         return StaticCall::class;
     }
 
-    /**
-     * @param  Node  $node
-     * @param  Scope  $scope
-     * @return array<int, RuleError>
-     */
+    /** @return array<int, RuleError> */
     public function processNode(Node $node, Scope $scope): array
     {
-        /** @var StaticCall $node due to @see getNodeType() */
         $name = $node->name;
+
         if (! $name instanceof Identifier) {
             return [];
         }
@@ -75,7 +58,7 @@ class NoModelMakeRule implements Rule
 
         return [
             RuleErrorBuilder::message("Called 'Model::make()' which performs unnecessary work, use 'new Model()'.")
-                ->identifier('rules.noModelMake')
+                ->identifier('larastan.noModelMake')
                 ->line($node->getLine())
                 ->file($scope->getFile())
                 ->build(),
@@ -84,10 +67,6 @@ class NoModelMakeRule implements Rule
 
     /**
      * Was the expression called on a Model instance?
-     *
-     * @param  StaticCall  $call
-     * @param  Scope  $scope
-     * @return bool
      */
     protected function isCalledOnModel(StaticCall $call, Scope $scope): bool
     {

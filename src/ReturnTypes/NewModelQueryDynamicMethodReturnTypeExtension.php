@@ -31,16 +31,20 @@ class NewModelQueryDynamicMethodReturnTypeExtension implements DynamicMethodRetu
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
         return in_array($methodReflection->getName(), [
-            'newQuery', 'newModelQuery', 'newQueryWithoutRelationships',
-            'newQueryWithoutScopes', 'newQueryWithoutScope', 'newQueryForRestoration',
+            'newQuery',
+            'newModelQuery',
+            'newQueryWithoutRelationships',
+            'newQueryWithoutScopes',
+            'newQueryWithoutScope',
+            'newQueryForRestoration',
         ], true);
     }
 
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,
-        Scope $scope
-    ): ?Type {
+        Scope $scope,
+    ): Type|null {
         $calledOnType = $scope->getType($methodCall->var);
 
         $classReflections = $calledOnType->getObjectClassReflections();

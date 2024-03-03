@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Larastan\Larastan\ReturnTypes\ConsoleCommand;
 
 use Larastan\Larastan\Internal\ConsoleApplicationResolver;
@@ -32,8 +34,8 @@ class HasOptionDynamicReturnTypeExtension implements DynamicMethodReturnTypeExte
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,
-        Scope $scope
-    ): ?Type {
+        Scope $scope,
+    ): Type|null {
         $classReflection = $scope->getClassReflection();
 
         if ($classReflection === null) {

@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Unit;
 
 use Larastan\Larastan\Properties\Schema\PhpMyAdminDataTypeToPhpTypeConverter;
 use Larastan\Larastan\Properties\SquashedMigrationHelper;
 use PHPStan\File\FileHelper;
 use PHPStan\Testing\PHPStanTestCase;
+
+use function array_keys;
 
 /** @covers \Larastan\Larastan\Properties\SquashedMigrationHelper */
 class SquashedMigrationHelperTest extends PHPStanTestCase
@@ -14,10 +18,10 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
     public function it_can_parse_schema_dump_for_a_basic_schema(): void
     {
         $schemaParser = new SquashedMigrationHelper(
-            [__DIR__.'/data/schema/basic_schema'],
+            [__DIR__ . '/data/schema/basic_schema'],
             self::getContainer()->getByType(FileHelper::class),
             new PhpMyAdminDataTypeToPhpTypeConverter(),
-            false
+            false,
         );
 
         $tables = $schemaParser->initializeTables();
@@ -38,7 +42,7 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
     public function it_will_ignore_if_table_already_exists_in_parsed_tables_array(): void
     {
         $schemaParser = new SquashedMigrationHelper(
-            [__DIR__.'/data/schema/multiple_schemas_for_same_table'],
+            [__DIR__ . '/data/schema/multiple_schemas_for_same_table'],
             self::getContainer()->getByType(FileHelper::class),
             new PhpMyAdminDataTypeToPhpTypeConverter(),
             false,
@@ -62,10 +66,10 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
     public function it_can_find_schemas_with_sql_suffix(): void
     {
         $schemaParser = new SquashedMigrationHelper(
-            [__DIR__.'/data/schema/basic_schema_with_sql_extension'],
+            [__DIR__ . '/data/schema/basic_schema_with_sql_extension'],
             self::getContainer()->getByType(FileHelper::class),
             new PhpMyAdminDataTypeToPhpTypeConverter(),
-            false
+            false,
         );
 
         $tables = $schemaParser->initializeTables();
@@ -86,10 +90,10 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
     public function it_can_find_schemas_with_different_extensions(): void
     {
         $schemaParser = new SquashedMigrationHelper(
-            [__DIR__.'/data/schema/multiple_schemas_with_different_extensions'],
+            [__DIR__ . '/data/schema/multiple_schemas_with_different_extensions'],
             self::getContainer()->getByType(FileHelper::class),
             new PhpMyAdminDataTypeToPhpTypeConverter(),
-            false
+            false,
         );
 
         $tables = $schemaParser->initializeTables();
@@ -119,10 +123,10 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
     public function it_can_disable_schema_scanning(): void
     {
         $schemaParser = new SquashedMigrationHelper(
-            [__DIR__.'/data/schema/multiple_schemas_with_different_extensions'],
+            [__DIR__ . '/data/schema/multiple_schemas_with_different_extensions'],
             self::getContainer()->getByType(FileHelper::class),
             new PhpMyAdminDataTypeToPhpTypeConverter(),
-            true
+            true,
         );
 
         $tables = $schemaParser->initializeTables();

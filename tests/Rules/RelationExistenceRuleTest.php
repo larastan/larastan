@@ -19,7 +19,7 @@ class RelationExistenceRuleTest extends RuleTestCase
 
     public function testRule(): void
     {
-        $this->analyse([__DIR__.'/data/relation-existence-rule.php'], [
+        $this->analyse([__DIR__ . '/data/relation-existence-rule.php'], [
             [
                 'Relation \'foo\' is not found in App\User model.',
                 5,
@@ -53,8 +53,8 @@ class RelationExistenceRuleTest extends RuleTestCase
                 12,
             ],
             [
-                'Relation \'foo\' is not found in App\Group model.',
-                14,
+                'Relation \'foo\' is not found in App\User model.',
+                13,
             ],
             [
                 'Relation \'foo\' is not found in App\Group model.',
@@ -85,12 +85,12 @@ class RelationExistenceRuleTest extends RuleTestCase
                 21,
             ],
             [
-                'Relation \'foo\' is not found in App\Account model.',
-                23,
+                'Relation \'foo\' is not found in App\Group model.',
+                22,
             ],
             [
-                'Relation \'foo\' is not found in App\Account model.',
-                24,
+                'Relation \'foo\' is not found in App\Group model.',
+                23,
             ],
             [
                 'Relation \'foo\' is not found in App\Account model.',
@@ -117,16 +117,16 @@ class RelationExistenceRuleTest extends RuleTestCase
                 30,
             ],
             [
-                'Relation \'foo\' is not found in App\Transaction model.',
+                'Relation \'foo\' is not found in App\Account model.',
+                31,
+            ],
+            [
+                'Relation \'foo\' is not found in App\Account model.',
                 32,
             ],
             [
-                'Relation \'foo\' is not found in App\Transaction model.',
+                'Relation \'foo\' is not found in App\Account model.',
                 33,
-            ],
-            [
-                'Relation \'foo\' is not found in App\Transaction model.',
-                34,
             ],
             [
                 'Relation \'foo\' is not found in App\Transaction model.',
@@ -149,23 +149,23 @@ class RelationExistenceRuleTest extends RuleTestCase
                 39,
             ],
             [
-                'Relation \'foo\' is not found in App\User model.',
+                'Relation \'foo\' is not found in App\Transaction model.',
+                40,
+            ],
+            [
+                'Relation \'foo\' is not found in App\Transaction model.',
                 41,
             ],
             [
-                'Relation \'foo\' is not found in App\User model.',
+                'Relation \'foo\' is not found in App\Transaction model.',
                 42,
             ],
             [
-                'Relation \'foo\' is not found in App\User model.',
+                'Relation \'foo\' is not found in App\Transaction model.',
                 43,
             ],
             [
                 'Relation \'foo\' is not found in App\User model.',
-                44,
-            ],
-            [
-                'Relation \'foo\' is not found in App\Account model.',
                 45,
             ],
             [
@@ -174,6 +174,14 @@ class RelationExistenceRuleTest extends RuleTestCase
             ],
             [
                 'Relation \'foo\' is not found in App\User model.',
+                47,
+            ],
+            [
+                'Relation \'foo\' is not found in App\User model.',
+                48,
+            ],
+            [
+                'Relation \'foo\' is not found in App\Account model.',
                 49,
             ],
             [
@@ -182,27 +190,52 @@ class RelationExistenceRuleTest extends RuleTestCase
             ],
             [
                 'Relation \'foo\' is not found in App\User model.',
-                51,
+                53,
             ],
             [
                 'Relation \'foo\' is not found in App\User model.',
-                52,
+                54,
             ],
             [
                 'Relation \'foo\' is not found in App\User model.',
                 55,
+            ],
+            [
+                'Relation \'foo\' is not found in App\User model.',
+                56,
+            ],
+            [
+                'Relation \'foo\' is not found in App\User model.',
+                59,
             ],
             [
                 'Relation \'bar\' is not found in App\User model.',
-                55,
+                59,
+            ],
+            [
+                'Relation \'foo\' is not found in App\User model.',
+                61,
+            ],
+            [
+                'Relation \'foo\' is not found in App\Group model.',
+                62,
+            ],
+            [
+                'Relation \'foo\' is not found in App\Account model.',
+                63,
+            ],
+            [
+                'Relation \'foo\' is not found in App\Transaction model.',
+                64,
             ],
         ]);
     }
 
+    /** @return string[] */
     public static function getAdditionalConfigFiles(): array
     {
         return [
-            __DIR__.'/phpstan-rules.neon',
+            __DIR__ . '/phpstan-rules.neon',
         ];
     }
 }

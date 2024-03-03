@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Unit;
 
+use Generator;
 use Larastan\Larastan\ReturnTypes\ModelFactoryDynamicStaticMethodReturnTypeExtension;
 use Larastan\Larastan\Types\Factory\ModelFactoryType;
 use PhpParser\Node\Arg;
@@ -28,18 +31,16 @@ use PHPStan\Type\UnionType;
 
 class ModelFactoryDynamicStaticMethodReturnTypeExtensionTest extends PHPStanTestCase
 {
-    /**
-     * @test
-     */
+    /** @test */
     public function it_sets_the_is_single_model_flag_to_true_if_no_args_given(): void
     {
-        $scope = $this->createMock(Scope::class);
-        $extension = new ModelFactoryDynamicStaticMethodReturnTypeExtension;
+        $scope     = $this->createMock(Scope::class);
+        $extension = new ModelFactoryDynamicStaticMethodReturnTypeExtension();
 
         $type = $extension->getTypeFromStaticMethodCall(
             new DummyMethodReflection('factory'), // @phpstan-ignore-line
             new StaticCall(new Name('App\\User'), 'factory', []),
-            $scope
+            $scope,
         );
 
         $this->assertInstanceOf(ModelFactoryType::class, $type);
@@ -48,32 +49,32 @@ class ModelFactoryDynamicStaticMethodReturnTypeExtensionTest extends PHPStanTest
 
     /**
      * @test
-     *
      * @dataProvider argumentProvider
      */
     public function it_sets_the_is_single_model_flag_correctly(Type $phpstanType, TrinaryLogic $expected): void
     {
-        $scope = $this->createMock(Scope::class);
-        $extension = new ModelFactoryDynamicStaticMethodReturnTypeExtension;
+        $scope     = $this->createMock(Scope::class);
+        $extension = new ModelFactoryDynamicStaticMethodReturnTypeExtension();
 
         $scope->method('getType')->willReturn($phpstanType);
 
         $type = $extension->getTypeFromStaticMethodCall(
             new DummyMethodReflection('factory'), // @phpstan-ignore-line
             new StaticCall(new Name('App\\User'), 'factory', [new Arg(new LNumber(1))]), // args doesn't matter
-            $scope
+            $scope,
         );
 
         $this->assertInstanceOf(ModelFactoryType::class, $type);
         $this->assertSame($expected->describe(), $type->isSingleModel()->describe());
     }
 
+    /** @return string[] */
     public static function getAdditionalConfigFiles(): array
     {
-        return [__DIR__.'/../phpstan-tests.neon'];
+        return [__DIR__ . '/../phpstan-tests.neon'];
     }
 
-    public static function argumentProvider(): \Generator
+    public static function argumentProvider(): Generator
     {
         yield [new ConstantIntegerType(1), TrinaryLogic::createNo()];
         yield [new ConstantIntegerType(0), TrinaryLogic::createNo()];
@@ -82,10 +83,14 @@ class ModelFactoryDynamicStaticMethodReturnTypeExtensionTest extends PHPStanTest
         yield [new ConstantFloatType(1.2), TrinaryLogic::createNo()];
         yield [new IntegerType(), TrinaryLogic::createNo()];
         yield [new FloatType(), TrinaryLogic::createNo()];
-        yield [new IntersectionType([
-            new ConstantStringType('1'),
-            new AccessoryNumericStringType(),
-        ]), TrinaryLogic::createNo()];
+        yield [
+            new IntersectionType([
+                new ConstantStringType('1'),
+                new AccessoryNumericStringType(),
+            ]),
+            TrinaryLogic::createNo(),
+        ];
+
         yield [new UnionType([new FloatType(), new ConstantIntegerType(1)]), TrinaryLogic::createNo()];
 
         yield [new NullType(), TrinaryLogic::createYes()];

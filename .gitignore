@@ -3,4 +3,5 @@
 /tests/laravel/
 /composer.lock
 /coverage.xml
+/.phpcs-cache
 /.phpunit.result.cache

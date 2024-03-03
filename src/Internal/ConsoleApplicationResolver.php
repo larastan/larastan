@@ -11,16 +11,14 @@ use Illuminate\Contracts\Events\Dispatcher;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
 
-use function get_class;
+use function app;
 
 /** @internal */
 final class ConsoleApplicationResolver
 {
-    private ?Application $application = null;
+    private Application|null $application = null;
 
-    /**
-     * @return Command[]
-     */
+    /** @return Command[] */
     public function findCommands(ClassReflection $classReflection): array
     {
         $consoleApplication = $this->getApplication();
@@ -34,7 +32,7 @@ final class ConsoleApplicationResolver
         $commands = [];
 
         foreach ($consoleApplication->all() as $name => $command) {
-            if (! $classType->isSuperTypeOf(new ObjectType(get_class($command)))->yes()) {
+            if (! $classType->isSuperTypeOf(new ObjectType($command::class))->yes()) {
                 continue;
             }
 

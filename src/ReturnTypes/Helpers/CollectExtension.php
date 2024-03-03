@@ -21,14 +21,8 @@ use function count;
 
 final class CollectExtension implements DynamicFunctionReturnTypeExtension
 {
-    /**
-     * @var CollectionHelper
-     */
-    private $collectionHelper;
-
-    public function __construct(CollectionHelper $collectionHelper)
+    public function __construct(private CollectionHelper $collectionHelper)
     {
-        $this->collectionHelper = $collectionHelper;
     }
 
     public function isFunctionSupported(FunctionReflection $functionReflection): bool
@@ -39,8 +33,8 @@ final class CollectExtension implements DynamicFunctionReturnTypeExtension
     public function getTypeFromFunctionCall(
         FunctionReflection $functionReflection,
         FuncCall $functionCall,
-        Scope $scope
-    ): ?Type {
+        Scope $scope,
+    ): Type|null {
         if (count($functionCall->getArgs()) < 1) {
             return new GenericObjectType(Collection::class, [new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()]);
         }

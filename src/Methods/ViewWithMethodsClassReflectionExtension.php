@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Larastan\Larastan\Methods;
 
 use Larastan\Larastan\Reflection\DynamicWhereMethodReflection;
@@ -18,6 +20,7 @@ class ViewWithMethodsClassReflectionExtension implements MethodsClassReflectionE
             return false;
         }
 
+        // @phpcs:ignore
         if (! str_starts_with($methodName, 'with')) {
             return false;
         }
@@ -27,7 +30,7 @@ class ViewWithMethodsClassReflectionExtension implements MethodsClassReflectionE
 
     public function getMethod(
         ClassReflection $classReflection,
-        string $methodName
+        string $methodName,
     ): MethodReflection {
         return new DynamicWhereMethodReflection($classReflection, $methodName);
     }

@@ -8,8 +8,10 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\ObjectType;
@@ -21,6 +23,7 @@ use function count;
 use function explode;
 use function in_array;
 use function sprintf;
+use function str_contains;
 
 /** @implements Rule<Node\Expr\CallLike> */
 class RelationExistenceRule implements Rule
@@ -29,17 +32,12 @@ class RelationExistenceRule implements Rule
     {
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getNodeType(): string
     {
         return Node\Expr\CallLike::class;
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @return RuleError[] */
     public function processNode(Node $node, Scope $scope): array
     {
         if (! $node instanceof MethodCall && ! $node instanceof Node\Expr\StaticCall) {
@@ -50,18 +48,24 @@ class RelationExistenceRule implements Rule
             return [];
         }
 
-        if (! in_array($node->name->name, [
-            'has',
-            'with',
-            'orHas',
-            'doesntHave',
-            'orDoesntHave',
-            'whereHas',
-            'orWhereHas',
-            'whereDoesntHave',
-            'orWhereDoesntHave',
-        ],
-            true)
+        if (
+            ! in_array(
+                $node->name->name,
+                [
+                    'has',
+                    'with',
+                    'orHas',
+                    'doesntHave',
+                    'orDoesntHave',
+                    'whereHas',
+                    'withWhereHas',
+                    'orWhereHas',
+                    'whereDoesntHave',
+                    'orWhereDoesntHave',
+                    'whereRelation',
+                ],
+                true,
+            )
         ) {
             return [];
         }
@@ -83,10 +87,10 @@ class RelationExistenceRule implements Rule
             foreach ($arrays as $array) {
                 $relations = array_merge(
                     $relations,
-                    ...array_map(function (Type $type) {
+                    ...array_map(static function (Type $type) {
                         return $type->getConstantStrings();
                     }, $array->getKeyTypes()),
-                    ...array_map(function (Type $type) {
+                    ...array_map(static function (Type $type) {
                         return $type->getConstantStrings();
                     }, $array->getValueTypes()),
                 );
@@ -171,12 +175,15 @@ class RelationExistenceRule implements Rule
 
     private function getRuleError(
         string $relationName,
-        \PHPStan\Reflection\ClassReflection $modelReflection,
-        Node $node
-    ): \PHPStan\Rules\RuleError {
-        return RuleErrorBuilder::message(sprintf("Relation '%s' is not found in %s model.", $relationName,
-            $modelReflection->getName()))
-            ->identifier('rules.relationExistence')
+        ClassReflection $modelReflection,
+        Node $node,
+    ): RuleError {
+        return RuleErrorBuilder::message(sprintf(
+            "Relation '%s' is not found in %s model.",
+            $relationName,
+            $modelReflection->getName(),
+        ))
+            ->identifier('larastan.relationExistence')
             ->line($node->getAttribute('startLine'))
             ->build();
     }

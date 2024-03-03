@@ -8,21 +8,18 @@ use Closure;
 use Larastan\Larastan\Contracts\Methods\PassableContract;
 use Larastan\Larastan\Contracts\Methods\Pipes\PipeContract;
 
-/**
- * @internal
- */
+/** @internal */
 final class SelfClass implements PipeContract
 {
-    /**
-     * {@inheritdoc}
-     */
     public function handle(PassableContract $passable, Closure $next): void
     {
         $className = $passable->getClassReflection()
             ->getName();
 
-        if (! $passable->searchOn($className)) {
-            $next($passable);
+        if ($passable->searchOn($className)) {
+            return;
         }
+
+        $next($passable);
     }
 }

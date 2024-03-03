@@ -40,6 +40,9 @@ assertType('int', Auth::requestGuardMacro());
 assertType('string', collect([])->customCollectionMacro());
 assertType('string', Collection::customCollectionMacro());
 
+assertType('string', collect([])->customCollectionMacroString());
+assertType('string', Collection::customCollectionMacroString());
+
 assertType('string', Str::trimMacro(''));
 assertType('string', Str::asciiAliasMacro(''));
 

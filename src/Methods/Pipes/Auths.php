@@ -5,35 +5,31 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Methods\Pipes;
 
 use Closure;
+use Illuminate\Auth\AuthManager;
 use Illuminate\Contracts\Auth\Access\Authorizable;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
+use Illuminate\Contracts\Auth\Factory;
+use Illuminate\Contracts\Auth\Guard;
 use Larastan\Larastan\Concerns;
 use Larastan\Larastan\Contracts\Methods\PassableContract;
 use Larastan\Larastan\Contracts\Methods\Pipes\PipeContract;
 
 use function in_array;
 
-/**
- * @internal
- */
+/** @internal */
 final class Auths implements PipeContract
 {
     use Concerns\HasContainer;
     use Concerns\LoadsAuthModel;
 
-    /**
-     * @var string[]
-     */
-    private $classes = [
+    /** @var string[] */
+    private array $classes = [
         Authenticatable::class,
         CanResetPassword::class,
         Authorizable::class,
     ];
 
-    /**
-     * {@inheritdoc}
-     */
     public function handle(PassableContract $passable, Closure $next): void
     {
         $classReflectionName = $passable->getClassReflection()
@@ -44,19 +40,25 @@ final class Auths implements PipeContract
         $config = $this->resolve('config');
 
         if ($config !== null && in_array($classReflectionName, $this->classes, true)) {
-            $authModel = $this->getAuthModel($config);
+            $authModels = $this->getAuthModels($config);
 
-            if ($authModel !== null) {
-                $found = $passable->sendToPipeline($authModel);
+            foreach ($authModels as $authModel) {
+                if ($passable->sendToPipeline($authModel)) {
+                    $found = true;
+
+                    break;
+                }
             }
-        } elseif ($classReflectionName === \Illuminate\Contracts\Auth\Factory::class || $classReflectionName === \Illuminate\Auth\AuthManager::class) {
+        } elseif ($classReflectionName === Factory::class || $classReflectionName === AuthManager::class) {
             $found = $passable->sendToPipeline(
-                \Illuminate\Contracts\Auth\Guard::class
+                Guard::class,
             );
         }
 
-        if (! $found) {
-            $next($passable);
+        if ($found) {
+            return;
         }
+
+        $next($passable);
     }
 }

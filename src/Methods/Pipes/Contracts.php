@@ -11,44 +11,38 @@ use Larastan\Larastan\Contracts\Methods\PassableContract;
 use Larastan\Larastan\Contracts\Methods\Pipes\PipeContract;
 use PHPStan\Reflection\ClassReflection;
 
-use function get_class;
-
-/**
- * @internal
- */
+/** @internal */
 final class Contracts implements PipeContract
 {
     use Concerns\HasContainer;
 
-    /**
-     * {@inheritdoc}
-     */
     public function handle(PassableContract $passable, Closure $next): void
     {
         $found = false;
 
         foreach ($this->concretes($passable->getClassReflection()) as $concrete) {
-            if ($found = $passable->sendToPipeline($concrete)) {
+            if ($passable->sendToPipeline($concrete)) {
+                $found = true;
+
                 break;
             }
         }
 
-        if (! $found) {
-            $next($passable);
+        if ($found) {
+            return;
         }
+
+        $next($passable);
     }
 
-    /**
-     * @param  \PHPStan\Reflection\ClassReflection  $classReflection
-     * @return class-string[]
-     */
+    /** @return class-string[] */
     private function concretes(ClassReflection $classReflection): array
     {
         if ($classReflection->isInterface() && Str::startsWith($classReflection->getName(), 'Illuminate\Contracts')) {
             $concrete = $this->resolve($classReflection->getName());
 
             if ($concrete !== null) {
-                $class = get_class($concrete);
+                $class = $concrete::class;
 
                 if ($class) {
                     return [$class];

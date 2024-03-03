@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Rules;
 
 use Larastan\Larastan\Collectors\UsedEmailViewCollector;
@@ -10,6 +12,8 @@ use Larastan\Larastan\Collectors\UsedViewInAnotherViewCollector;
 use Larastan\Larastan\Collectors\UsedViewMakeCollector;
 use Larastan\Larastan\Rules\UnusedViewsRule;
 use Larastan\Larastan\Support\ViewFileHelper;
+use PhpParser\Node;
+use PHPStan\Collectors\Collector;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
@@ -18,7 +22,7 @@ class UnusedViewsRuleTest extends RuleTestCase
 {
     protected function getRule(): Rule
     {
-        $viewFileHelper = new ViewFileHelper([__DIR__.'/../application/resources/views'], $this->getFileHelper());
+        $viewFileHelper = new ViewFileHelper([__DIR__ . '/../application/resources/views'], $this->getFileHelper());
 
         return new UnusedViewsRule(new UsedViewInAnotherViewCollector(
             $this->getContainer()->getService('currentPhpVersionSimpleDirectParser'),
@@ -26,14 +30,15 @@ class UnusedViewsRuleTest extends RuleTestCase
         ), $viewFileHelper);
     }
 
+    /** @return array<Collector<Node, mixed>> */
     protected function getCollectors(): array
     {
         return [
-            new UsedViewFunctionCollector,
-            new UsedEmailViewCollector,
-            new UsedViewMakeCollector,
-            new UsedViewFacadeMakeCollector,
-            new UsedRouteFacadeViewCollector,
+            new UsedViewFunctionCollector(),
+            new UsedEmailViewCollector(),
+            new UsedViewMakeCollector(),
+            new UsedViewFacadeMakeCollector(),
+            new UsedRouteFacadeViewCollector(),
         ];
     }
 
@@ -42,12 +47,12 @@ class UnusedViewsRuleTest extends RuleTestCase
         parent::setUp();
 
         // This is a workaround for a weird PHPStan container cache issue.
-        require __DIR__.'/../../bootstrap.php';
+        require __DIR__ . '/../../bootstrap.php';
     }
 
     public function testRule(): void
     {
-        $this->analyse([__DIR__.'/data/FooController.php'], [
+        $this->analyse([__DIR__ . '/data/FooController.php'], [
             [
                 'This view is not used in the project.',
                 00,
@@ -55,10 +60,11 @@ class UnusedViewsRuleTest extends RuleTestCase
         ]);
     }
 
+    /** @return string[] */
     public static function getAdditionalConfigFiles(): array
     {
         return [
-            __DIR__.'/../../extension.neon',
+            __DIR__ . '/../../extension.neon',
         ];
     }
 }

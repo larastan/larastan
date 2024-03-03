@@ -13,6 +13,8 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Rules\RuleError;
+use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\GeneralizePrecision;
 use PHPStan\Type\ObjectType;
@@ -29,15 +31,13 @@ use function sprintf;
 class ModelPropertiesRuleHelper
 {
     /**
-     * @param  MethodReflection  $methodReflection
-     * @param  Scope  $scope
-     * @param  Node\Arg[]  $args
-     * @param  ClassReflection|null  $modelReflection
-     * @return string[]
+     * @param  Node\Arg[] $args
+     *
+     * @return RuleError[]
      *
      * @throws ShouldNotHappenException
      */
-    public function check(MethodReflection $methodReflection, Scope $scope, array $args, ?ClassReflection $modelReflection = null): array
+    public function check(MethodReflection $methodReflection, Scope $scope, array $args, ClassReflection|null $modelReflection = null): array
     {
         $modelPropertyParameter = $this->hasModelPropertyParameter($methodReflection, $scope, $args, $modelReflection);
 
@@ -93,15 +93,19 @@ class ModelPropertiesRuleHelper
                         continue;
                     }
 
-                    if (! $modelType->hasProperty($string->getValue())->yes()) {
-                        $error = sprintf('Property \'%s\' does not exist in %s model.', $string->getValue(), $modelType->describe(VerbosityLevel::typeOnly()));
-
-                        if ($methodReflection->getDeclaringClass()->getName() === BelongsToMany::class) {
-                            $error .= sprintf(" If '%s' exists as a column on the pivot table, consider using 'wherePivot' or prefix the column with table name instead.", $string->getValue());
-                        }
-
-                        $errors[] = $error;
+                    if ($modelType->hasProperty($string->getValue())->yes()) {
+                        continue;
                     }
+
+                    $error = sprintf('Property \'%s\' does not exist in %s model.', $string->getValue(), $modelType->describe(VerbosityLevel::typeOnly()));
+
+                    if ($methodReflection->getDeclaringClass()->getName() === BelongsToMany::class) {
+                        $error .= sprintf(" If '%s' exists as a column on the pivot table, consider using 'wherePivot' or prefix the column with table name instead.", $string->getValue());
+                    }
+
+                    $errors[] = RuleErrorBuilder::message($error)
+                        ->identifier('larastan.modelProperty.notFound')
+                        ->build();
                 }
             }
 
@@ -120,32 +124,36 @@ class ModelPropertiesRuleHelper
                 return [];
             }
 
-            if (! $modelType->hasProperty($argString->getValue())->yes()) {
-                $error = sprintf('Property \'%s\' does not exist in %s model.', $argString->getValue(), $modelType->describe(VerbosityLevel::typeOnly()));
-
-                if ((new ObjectType(BelongsToMany::class))->isSuperTypeOf(ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType())->yes()) {
-                    $error .= sprintf(" If '%s' exists as a column on the pivot table, consider using 'wherePivot' or prefix the column with table name instead.", $argString->getValue());
-                }
-
-                return [$error];
+            if ($modelType->hasProperty($argString->getValue())->yes()) {
+                continue;
             }
+
+            $error = sprintf('Property \'%s\' does not exist in %s model.', $argString->getValue(), $modelType->describe(VerbosityLevel::typeOnly()));
+
+            if ((new ObjectType(BelongsToMany::class))->isSuperTypeOf(ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType())->yes()) {
+                $error .= sprintf(" If '%s' exists as a column on the pivot table, consider using 'wherePivot' or prefix the column with table name instead.", $argString->getValue());
+            }
+
+            return [
+                RuleErrorBuilder::message($error)
+                ->identifier('larastan.modelProperty.notFound')
+                ->build(),
+            ];
         }
 
         return [];
     }
 
     /**
-     * @param  MethodReflection  $methodReflection
-     * @param  Scope  $scope
-     * @param  Node\Arg[]  $args
-     * @param  ClassReflection|null  $modelReflection
+     * @param  Node\Arg[] $args
+     *
      * @return array<int, int|Type>
      */
     public function hasModelPropertyParameter(
         MethodReflection $methodReflection,
         Scope $scope,
         array $args,
-        ?ClassReflection $modelReflection = null
+        ClassReflection|null $modelReflection = null,
     ): array {
         $parameters = ParametersAcceptorSelector::selectFromArgs($scope, $args, $methodReflection->getVariants())->getParameters();
 
@@ -163,7 +171,7 @@ class ModelPropertiesRuleHelper
                     }
                 }
             } elseif ($type->isArray()->yes()) {
-                $keyType = $type->getIterableKeyType();
+                $keyType  = $type->getIterableKeyType();
                 $itemType = $type->getIterableValueType();
 
                 if ($keyType instanceof GenericModelPropertyType) {

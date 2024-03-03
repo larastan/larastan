@@ -19,26 +19,18 @@ use PHPStan\Type\Type;
 use function count;
 use function in_array;
 
-/**
- * @internal
- */
+/** @internal */
 final class RelationCollectionExtension implements DynamicMethodReturnTypeExtension
 {
     public function __construct(private CollectionHelper $collectionHelper)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getClass(): string
     {
         return Relation::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
         if (Str::startsWith($methodReflection->getName(), 'find')) {
@@ -64,13 +56,10 @@ final class RelationCollectionExtension implements DynamicMethodReturnTypeExtens
         return $methodReflection->getDeclaringClass()->hasNativeMethod($methodReflection->getName());
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,
-        Scope $scope
+        Scope $scope,
     ): Type {
         /** @var ObjectType $modelType */
         $modelType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TRelatedModel');

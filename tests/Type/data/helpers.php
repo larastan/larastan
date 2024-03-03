@@ -24,7 +24,7 @@ function authHelper()
     assertType('Illuminate\Auth\AuthManager', auth());
     assertType('Illuminate\Contracts\Auth\Guard', auth()->guard('web'));
     assertType('Illuminate\Contracts\Auth\StatefulGuard', auth('web'));
-    assertType('App\User|null', auth()->user());
+    assertType('App\Admin|App\User|null', auth()->user());
     assertType('bool', auth()->check());
     assertType('App\User|null', auth()->guard('web')->user());
     assertType('App\User|null', auth('web')->user());

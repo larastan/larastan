@@ -21,17 +21,15 @@ final class Macro implements MethodReflection
 {
     /**
      * The is static.
-     *
-     * @var bool
      */
-    private $isStatic = false;
+    private bool $isStatic = false;
 
     /**
      * Map of macro methods and thrown exception classes.
      *
      * @var string[]
      */
-    private $methodThrowTypeMap = [
+    private array $methodThrowTypeMap = [
         'validate' => ValidationException::class,
         'validateWithBag' => ValidationException::class,
     ];
@@ -72,26 +70,17 @@ final class Macro implements MethodReflection
 
     /**
      * Set the is static value.
-     *
-     * @param  bool  $isStatic
-     * @return void
      */
     public function setIsStatic(bool $isStatic): void
     {
         $this->isStatic = $isStatic;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getDocComment(): ?string
+    public function getDocComment(): string|null
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName(): string
     {
         return $this->methodName;
@@ -107,9 +96,7 @@ final class Macro implements MethodReflection
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function getVariants(): array
     {
         return [
@@ -117,12 +104,12 @@ final class Macro implements MethodReflection
         ];
     }
 
-    public function getDeprecatedDescription(): ?string
+    public function getDeprecatedDescription(): string|null
     {
         return null;
     }
 
-    public function getThrowType(): ?Type
+    public function getThrowType(): Type|null
     {
         if (array_key_exists($this->methodName, $this->methodThrowTypeMap)) {
             return new ObjectType($this->methodThrowTypeMap[$this->methodName]);

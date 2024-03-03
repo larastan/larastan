@@ -13,6 +13,9 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 
+use function config_path;
+use function str_starts_with;
+
 /**
  * Catches `env()` calls outside of the config directory.
  *
@@ -46,7 +49,7 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
 
         return [
             RuleErrorBuilder::message("Called 'env' outside of the config directory which returns null when the config is cached, use 'config'.")
-                ->identifier('rules.noEnvCallsOutsideOfConfig')
+                ->identifier('larastan.noEnvCallsOutsideOfConfig')
                 ->line($node->getLine())
                 ->file($scope->getFile())
                 ->build(),

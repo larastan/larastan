@@ -10,32 +10,8 @@ use PHPStan\Type\Type;
 
 final class AnnotationScopeMethodParameterReflection implements ParameterReflection
 {
-    /** @var string */
-    private $name;
-
-    /** @var Type */
-    private $type;
-
-    /** @var PassedByReference */
-    private $passedByReference;
-
-    /** @var bool */
-    private $isOptional;
-
-    /** @var bool */
-    private $isVariadic;
-
-    /** @var Type|null */
-    private $defaultValue;
-
-    public function __construct(string $name, Type $type, PassedByReference $passedByReference, bool $isOptional, bool $isVariadic, ?Type $defaultValue)
+    public function __construct(private string $name, private Type $type, private PassedByReference $passedByReference, private bool $isOptional, private bool $isVariadic, private Type|null $defaultValue = null)
     {
-        $this->name = $name;
-        $this->type = $type;
-        $this->passedByReference = $passedByReference;
-        $this->isOptional = $isOptional;
-        $this->isVariadic = $isVariadic;
-        $this->defaultValue = $defaultValue;
     }
 
     public function getName(): string
@@ -63,7 +39,7 @@ final class AnnotationScopeMethodParameterReflection implements ParameterReflect
         return $this->isVariadic;
     }
 
-    public function getDefaultValue(): ?Type
+    public function getDefaultValue(): Type|null
     {
         return $this->defaultValue;
     }

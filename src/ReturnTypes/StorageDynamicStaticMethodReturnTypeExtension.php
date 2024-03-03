@@ -31,7 +31,7 @@ class StorageDynamicStaticMethodReturnTypeExtension implements DynamicStaticMeth
     public function getTypeFromStaticMethodCall(
         MethodReflection $methodReflection,
         StaticCall $methodCall,
-        Scope $scope
+        Scope $scope,
     ): Type {
         return new ObjectType(FilesystemAdapter::class);
     }

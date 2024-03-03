@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Larastan\Larastan\ReturnTypes;
 
 use Larastan\Larastan\Concerns\HasContainer;
@@ -15,7 +17,6 @@ use PHPStan\Type\TypeCombinator;
 use Throwable;
 
 use function count;
-use function get_class;
 
 final class AppMakeHelper
 {
@@ -43,8 +44,8 @@ final class AppMakeHelper
                         return new ErrorType();
                     }
 
-                    $types[] = new ObjectType(get_class($resolved));
-                } catch (Throwable $exception) {
+                    $types[] = new ObjectType($resolved::class);
+                } catch (Throwable) {
                     return new ErrorType();
                 }
             }

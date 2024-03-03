@@ -17,9 +17,7 @@ use PHPStan\Type\TypeCombinator;
 use function count;
 use function in_array;
 
-/**
- * @internal
- */
+/** @internal */
 final class TestCaseExtension implements DynamicMethodReturnTypeExtension
 {
     public function getClass(): string
@@ -39,7 +37,7 @@ final class TestCaseExtension implements DynamicMethodReturnTypeExtension
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,
-        Scope $scope
+        Scope $scope,
     ): Type {
         $defaultReturnType = new ObjectType('Mockery\\MockInterface');
 
@@ -47,7 +45,7 @@ final class TestCaseExtension implements DynamicMethodReturnTypeExtension
             return new ErrorType();
         }
 
-        $classType = $scope->getType($methodCall->getArgs()[0]->value);
+        $classType       = $scope->getType($methodCall->getArgs()[0]->value);
         $constantStrings = $classType->getConstantStrings();
 
         if ($constantStrings === []) {

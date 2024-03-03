@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\ReturnTypes;
 
+use Illuminate\Auth\RequestGuard;
+use Illuminate\Auth\TokenGuard;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Support\Facades\Auth;
@@ -36,7 +38,7 @@ class GuardDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethod
     public function getTypeFromStaticMethodCall(
         MethodReflection $methodReflection,
         StaticCall $methodCall,
-        Scope $scope
+        Scope $scope,
     ): Type {
         $defaultReturnType = TypeCombinator::intersect(new ObjectType(Guard::class), new ObjectType(StatefulGuard::class));
 
@@ -59,7 +61,7 @@ class GuardDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethod
             return $this->findTypeFromGuardDriver($guards[$defaultGuard]['driver']) ?? $defaultReturnType;
         }
 
-        $argType = $scope->getType($methodCall->getArgs()[0]->value);
+        $argType    = $scope->getType($methodCall->getArgs()[0]->value);
         $argStrings = $argType->getConstantStrings();
 
         if (count($argStrings) !== 1) {
@@ -69,12 +71,12 @@ class GuardDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethod
         return $this->findTypeFromGuardDriver($argStrings[0]->getValue()) ?? $defaultReturnType;
     }
 
-    private function findTypeFromGuardDriver(string $driver): ?Type
+    private function findTypeFromGuardDriver(string $driver): Type|null
     {
         return match ($driver) {
             'session' => new ObjectType('Illuminate\Auth\SessionGuard'),
-            'token' => new ObjectType(\Illuminate\Auth\TokenGuard::class),
-            'passport' => new ObjectType(\Illuminate\Auth\RequestGuard::class),
+            'token' => new ObjectType(TokenGuard::class),
+            'passport' => new ObjectType(RequestGuard::class),
             default => null,
         };
     }

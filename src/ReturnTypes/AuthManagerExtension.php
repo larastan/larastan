@@ -15,14 +15,14 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
+use function array_map;
+use function count;
+
 final class AuthManagerExtension implements DynamicMethodReturnTypeExtension
 {
     use Concerns\HasContainer;
     use Concerns\LoadsAuthModel;
 
-    /**
-     * {@inheritdoc}
-     */
     public function getClass(): string
     {
         return AuthManager::class;
@@ -36,19 +36,24 @@ final class AuthManagerExtension implements DynamicMethodReturnTypeExtension
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,
-        Scope $scope
+        Scope $scope,
     ): Type {
-        $config = $this->getContainer()->get('config');
-        $authModel = null;
+        $config     = $this->getContainer()->get('config');
+        $authModels = [];
 
         if ($config !== null) {
-            $authModel = $this->getAuthModel($config);
+            $authModels = $this->getAuthModels($config);
         }
 
-        if ($authModel === null) {
+        if (count($authModels) === 0) {
             return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
         }
 
-        return TypeCombinator::addNull(new ObjectType($authModel));
+        return TypeCombinator::addNull(
+            TypeCombinator::union(...array_map(
+                static fn (string $authModel): Type => new ObjectType($authModel),
+                $authModels,
+            )),
+        );
     }
 }

@@ -33,7 +33,7 @@ final class CollectionHelper
     {
     }
 
-    public function determineGenericCollectionTypeFromType(Type $type): ?GenericObjectType
+    public function determineGenericCollectionTypeFromType(Type $type): GenericObjectType|null
     {
         $classReflections = $type->getObjectClassReflections();
 
@@ -66,7 +66,7 @@ final class CollectionHelper
     {
         try {
             $newCollectionMethod = $this->reflectionProvider->getClass($modelClassName)->getNativeMethod('newCollection');
-            $returnType = ParametersAcceptorSelector::selectSingle($newCollectionMethod->getVariants())->getReturnType();
+            $returnType          = ParametersAcceptorSelector::selectSingle($newCollectionMethod->getVariants())->getReturnType();
 
             $classNames = $returnType->getObjectClassNames();
 
@@ -75,14 +75,14 @@ final class CollectionHelper
             }
 
             return $returnType->describe(VerbosityLevel::value());
-        } catch (MissingMethodFromReflectionException|ShouldNotHappenException) {
+        } catch (MissingMethodFromReflectionException | ShouldNotHappenException) {
             return EloquentCollection::class;
         }
     }
 
     public function determineCollectionClass(string $modelClassName): Type
     {
-        $collectionClassName = $this->determineCollectionClassName($modelClassName);
+        $collectionClassName  = $this->determineCollectionClassName($modelClassName);
         $collectionReflection = $this->reflectionProvider->getClass($collectionClassName);
 
         if ($collectionReflection->isGeneric()) {
@@ -103,7 +103,7 @@ final class CollectionHelper
         return new ObjectType($collectionClassName);
     }
 
-    private function getTypeFromEloquentCollection(ClassReflection $classReflection): ?GenericObjectType
+    private function getTypeFromEloquentCollection(ClassReflection $classReflection): GenericObjectType|null
     {
         $keyType = new BenevolentUnionType([new IntegerType(), new StringType()]);
 

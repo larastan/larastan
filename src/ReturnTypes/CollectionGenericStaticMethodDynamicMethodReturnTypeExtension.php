@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Larastan\Larastan\ReturnTypes;
 
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
@@ -33,19 +35,39 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
         if ($methodReflection->getDeclaringClass()->getName() === EloquentCollection::class) {
-            return $methodReflection->getName() === 'find';
+            return in_array($methodReflection->getName(), ['find', 'map', 'mapWithKeys'], true);
         }
 
         $methods = [
-            'chunk', 'chunkWhile', 'collapse', 'combine',
-            'crossJoin', 'flatMap', 'flip',
-            'groupBy', 'keyBy', 'keys',
-            'make', 'map', 'mapInto',
-            'mapToDictionary', 'mapToGroups',
-            'mapWithKeys', 'mergeRecursive',
-            'pad', 'partition', 'pluck',
-            'pop', 'random', 'shift', 'sliding', 'split',
-            'splitIn', 'values', 'wrap', 'zip',
+            'chunk',
+            'chunkWhile',
+            'collapse',
+            'combine',
+            'crossJoin',
+            'flatMap',
+            'flip',
+            'groupBy',
+            'keyBy',
+            'keys',
+            'make',
+            'map',
+            'mapInto',
+            'mapToDictionary',
+            'mapToGroups',
+            'mapWithKeys',
+            'mergeRecursive',
+            'pad',
+            'partition',
+            'pluck',
+            'pop',
+            'random',
+            'shift',
+            'sliding',
+            'split',
+            'splitIn',
+            'values',
+            'wrap',
+            'zip',
         ];
 
         if (version_compare(LARAVEL_VERSION, '9.48.0', '<')) {
@@ -58,12 +80,12 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,
-        Scope $scope
+        Scope $scope,
     ): Type {
         $returnType = ParametersAcceptorSelector::selectFromArgs(
             $scope,
             $methodCall->getArgs(),
-            $methodReflection->getVariants()
+            $methodReflection->getVariants(),
         )->getReturnType();
 
         if ((! $returnType instanceof UnionType) && $returnType->isObject()->no()) {
@@ -85,9 +107,10 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
 
         // If it's a UnionType, traverse the types and try to find a collection object type
         if ($returnType instanceof UnionType) {
-            return $returnType->traverse(function (Type $type) use ($classReflection) {
+            return $returnType->traverse(function (Type $type) use ($methodReflection, $classReflection) {
+                // @phpcs:ignore
                 if ($type instanceof GenericObjectType && ($innerReflection = $type->getClassReflection()) !== null) { // @phpstan-ignore-line
-                    return $this->handleGenericObjectType($classReflection, $innerReflection);
+                    return $this->handleGenericObjectType($classReflection, $innerReflection, $methodReflection);
                 }
 
                 return $type;
@@ -98,16 +121,36 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
             return $returnType;
         }
 
-        return $this->handleGenericObjectType($classReflection, $returnType->getObjectClassReflections()[0]);
+        return $this->handleGenericObjectType($classReflection, $returnType->getObjectClassReflections()[0], $methodReflection);
     }
 
-    private function handleGenericObjectType(ClassReflection $classReflection, ClassReflection $returnTypeClassReflection): ObjectType
+    private function handleGenericObjectType(ClassReflection $classReflection, ClassReflection $returnTypeClassReflection, MethodReflection $methodReflection): ObjectType
     {
-        if ($classReflection->getActiveTemplateTypeMap()->count() !== $returnTypeClassReflection->getActiveTemplateTypeMap()->count()) {
+        $genericTypes = $returnTypeClassReflection->typeMapToList($returnTypeClassReflection->getActiveTemplateTypeMap());
+
+        if ($genericTypes === []) {
             return new ObjectType($classReflection->getName());
         }
 
-        $genericTypes = $returnTypeClassReflection->typeMapToList($returnTypeClassReflection->getActiveTemplateTypeMap());
+        if ($classReflection->getActiveTemplateTypeMap()->count() !== $returnTypeClassReflection->getActiveTemplateTypeMap()->count()) {
+            if (in_array($methodReflection->getName(), ['map', 'mapWithKeys'], true)) {
+                if (! (new ObjectType(Model::class))->isSuperTypeOf($genericTypes[1])->no()) {
+                    return new ObjectType($classReflection->getName());
+                }
+
+                return new GenericObjectType(Collection::class, $genericTypes);
+            }
+
+            return new ObjectType($classReflection->getName());
+        }
+
+        if (($classReflection->is(EloquentCollection::class) || $classReflection->isSubclassOf(EloquentCollection::class)) && in_array($methodReflection->getName(), ['map', 'mapWithKeys'], true)) {
+            if (! (new ObjectType(Model::class))->isSuperTypeOf($genericTypes[1])->no()) {
+                return new GenericObjectType($classReflection->getName(), $genericTypes);
+            }
+
+            return new GenericObjectType(Collection::class, $genericTypes);
+        }
 
         // If the key type is gonna be a model, we change it to string
         if ((new ObjectType(Model::class))->isSuperTypeOf($genericTypes[0])->yes()) {
@@ -120,6 +163,7 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
                     return $traverse($type);
                 }
 
+                // @phpcs:ignore
                 if ($type instanceof GenericObjectType && (($innerTypeReflection = $type->getClassReflection()) !== null)) {
                     $genericTypes = $innerTypeReflection->typeMapToList($innerTypeReflection->getActiveTemplateTypeMap());
 

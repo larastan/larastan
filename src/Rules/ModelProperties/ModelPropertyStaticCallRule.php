@@ -9,10 +9,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder;
 use PhpParser\Node;
+use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
+use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleLevelHelper;
+use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\Type;
 
@@ -20,25 +23,14 @@ use function count;
 use function in_array;
 use function strtolower;
 
-/**
- * @implements \PHPStan\Rules\Rule<\PhpParser\Node\Expr\StaticCall>
- */
+/** @implements Rule<StaticCall> */
 class ModelPropertyStaticCallRule implements Rule
 {
-    /** @var ReflectionProvider */
-    private $reflectionProvider;
+    private ModelPropertiesRuleHelper $modelPropertiesRuleHelper;
 
-    /** @var ModelPropertiesRuleHelper */
-    private $modelPropertiesRuleHelper;
-
-    /** @var RuleLevelHelper */
-    private $ruleLevelHelper;
-
-    public function __construct(ReflectionProvider $reflectionProvider, ModelPropertiesRuleHelper $ruleHelper, RuleLevelHelper $ruleLevelHelper)
+    public function __construct(private ReflectionProvider $reflectionProvider, ModelPropertiesRuleHelper $ruleHelper, private RuleLevelHelper $ruleLevelHelper)
     {
-        $this->reflectionProvider = $reflectionProvider;
         $this->modelPropertiesRuleHelper = $ruleHelper;
-        $this->ruleLevelHelper = $ruleLevelHelper;
     }
 
     public function getNodeType(): string
@@ -47,11 +39,11 @@ class ModelPropertyStaticCallRule implements Rule
     }
 
     /**
-     * @param  Node\Expr\StaticCall  $node
-     * @param  Scope  $scope
-     * @return string[]
+     * @param  Node\Expr\StaticCall $node
      *
-     * @throws \PHPStan\ShouldNotHappenException
+     * @return RuleError[]
+     *
+     * @throws ShouldNotHappenException
      */
     public function processNode(Node $node, Scope $scope): array
     {
@@ -68,7 +60,7 @@ class ModelPropertyStaticCallRule implements Rule
         $class = $node->class;
 
         if ($class instanceof Node\Name) {
-            $className = (string) $class;
+            $className           = (string) $class;
             $lowercasedClassName = strtolower($className);
 
             if (in_array($lowercasedClassName, ['self', 'static'], true)) {
@@ -91,7 +83,7 @@ class ModelPropertyStaticCallRule implements Rule
                 }
 
                 if ($scope->getFunctionName() === null) {
-                    throw new \PHPStan\ShouldNotHappenException();
+                    throw new ShouldNotHappenException();
                 }
 
                 $modelReflection = $parentClass;
@@ -109,7 +101,7 @@ class ModelPropertyStaticCallRule implements Rule
                 '',
                 static function (Type $type) use ($methodName): bool {
                     return $type->canCallMethods()->yes() && $type->hasMethod($methodName)->yes();
-                }
+                },
             );
 
             $classType = $classTypeResult->getType();
@@ -118,7 +110,7 @@ class ModelPropertyStaticCallRule implements Rule
                 return [];
             }
 
-            $strings = $classType->getConstantStrings();
+            $strings    = $classType->getConstantStrings();
             $classNames = $classType->getObjectClassNames();
 
             if (count($strings) === 1) {
@@ -144,7 +136,8 @@ class ModelPropertyStaticCallRule implements Rule
 
         $className = $methodReflection->getDeclaringClass()->getName();
 
-        if ($className !== Builder::class &&
+        if (
+            $className !== Builder::class &&
             $className !== EloquentBuilder::class &&
             $className !== Relation::class &&
             $className !== Model::class

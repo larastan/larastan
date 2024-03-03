@@ -24,19 +24,11 @@ use function count;
  */
 final class ModelPropertyTypeNodeResolverExtension implements TypeNodeResolverExtension
 {
-    /** @var bool */
-    protected $active;
-
-    /** @var TypeNodeResolver */
-    protected $baseResolver;
-
-    public function __construct(TypeNodeResolver $baseResolver, bool $active)
+    public function __construct(protected TypeNodeResolver $baseResolver, protected bool $active)
     {
-        $this->baseResolver = $baseResolver;
-        $this->active = $active;
     }
 
-    public function resolve(TypeNode $typeNode, NameScope $nameScope): ?Type
+    public function resolve(TypeNode $typeNode, NameScope $nameScope): Type|null
     {
         if ($typeNode instanceof IdentifierTypeNode && $typeNode->name === 'model-property') {
             return $this->active ? new ModelPropertyType() : new StringType();

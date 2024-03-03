@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Larastan\Larastan\ReturnTypes;
 
 use Illuminate\Database\Eloquent\Model;
-use PHPStan\Type\NullType;
-use PHPStan\Type\StringType;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
@@ -15,8 +13,11 @@ use PHPStan\Type\Constant\ConstantArrayTypeBuilder;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\MixedType;
+use PHPStan\Type\NullType;
+use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 
+use function array_push;
 use function array_reduce;
 use function count;
 
@@ -35,7 +36,7 @@ final class ModelOnlyDynamicMethodReturnTypeExtension implements DynamicMethodRe
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,
-        Scope $scope
+        Scope $scope,
     ): Type {
         $args = $methodCall->getArgs();
 
@@ -48,7 +49,7 @@ final class ModelOnlyDynamicMethodReturnTypeExtension implements DynamicMethodRe
         foreach ($args as $arg) {
             $type = $scope->getType($arg->value);
 
-            $stringsArray = [];
+            $stringsArray   = [];
             $stringsArray[] = $type->getConstantStrings();
 
             foreach ($type->getArrays() as $array) {
@@ -68,7 +69,7 @@ final class ModelOnlyDynamicMethodReturnTypeExtension implements DynamicMethodRe
 
         $model = $scope->getType($methodCall->var);
 
-        $array = array_reduce($keys, function ($array, $key) use ($model, $scope) {
+        $array = array_reduce($keys, static function ($array, $key) use ($model, $scope) {
             $name = $key->getValue();
 
             $valueType = $model->hasProperty($name)->yes()

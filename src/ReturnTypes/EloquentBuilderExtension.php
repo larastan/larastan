@@ -37,13 +37,15 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
         $builderReflection = $this->reflectionProvider->getClass(EloquentBuilder::class);
 
         // Don't handle dynamic wheres
-        if (Str::startsWith($methodReflection->getName(), 'where') &&
+        if (
+            Str::startsWith($methodReflection->getName(), 'where') &&
             ! $builderReflection->hasNativeMethod($methodReflection->getName())
         ) {
             return false;
         }
 
-        if (Str::startsWith($methodReflection->getName(), 'find') &&
+        if (
+            Str::startsWith($methodReflection->getName(), 'find') &&
             $builderReflection->hasNativeMethod($methodReflection->getName())
         ) {
             return false;
@@ -65,9 +67,9 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,
-        Scope $scope
-    ): ?Type {
-        $returnType = ParametersAcceptorSelector::selectFromArgs($scope, $methodCall->getArgs(), $methodReflection->getVariants())->getReturnType();
+        Scope $scope,
+    ): Type|null {
+        $returnType      = ParametersAcceptorSelector::selectFromArgs($scope, $methodCall->getArgs(), $methodReflection->getVariants())->getReturnType();
         $templateTypeMap = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap();
 
         $modelType = $templateTypeMap->getType('TModelClass');
@@ -82,21 +84,21 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
 
             $collectionReflection = $this->reflectionProvider->getClass($collectionClassName);
 
-            if ($collectionReflection->isGeneric()) {
-                $typeMap = $collectionReflection->getActiveTemplateTypeMap();
-
-                // Specifies key and value
-                if ($typeMap->count() === 2) {
-                    return new GenericObjectType($collectionClassName, [new IntegerType(), $modelType]);
-                }
-
-                // Specifies only value
-                if (($typeMap->count() === 1) && $typeMap->hasType('TModel')) {
-                    return new GenericObjectType($collectionClassName, [$modelType]);
-                }
-            } else {
+            if (! $collectionReflection->isGeneric()) {
                 // Not generic. So return the type as is
                 return new ObjectType($collectionClassName);
+            }
+
+            $typeMap = $collectionReflection->getActiveTemplateTypeMap();
+
+            // Specifies key and value
+            if ($typeMap->count() === 2) {
+                return new GenericObjectType($collectionClassName, [new IntegerType(), $modelType]);
+            }
+
+            // Specifies only value
+            if (($typeMap->count() === 1) && $typeMap->hasType('TModel')) {
+                return new GenericObjectType($collectionClassName, [$modelType]);
             }
         }
 

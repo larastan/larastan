@@ -16,7 +16,7 @@ use function in_array;
 final class ApplicationMakeDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
     public function __construct(
-        private AppMakeHelper $appMakeHelper
+        private AppMakeHelper $appMakeHelper,
     ) {
     }
 

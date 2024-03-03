@@ -17,9 +17,7 @@ use function count;
 use function in_array;
 use function sprintf;
 
-/**
- * @implements Rule<MethodCall>
- */
+/** @implements Rule<MethodCall> */
 final class UndefinedArgumentOrOptionRule implements Rule
 {
     public function __construct(private ConsoleApplicationResolver $consoleApplicationResolver)
@@ -31,9 +29,7 @@ final class UndefinedArgumentOrOptionRule implements Rule
         return MethodCall::class;
     }
 
-    /**
-     * @return RuleError[] errors
-     */
+    /** @return RuleError[] errors */
     public function processNode(Node $node, Scope $scope): array
     {
         if (! $node->name instanceof Node\Identifier || ! in_array($node->name->name, ['argument', 'option'], true)) {
@@ -79,13 +75,13 @@ final class UndefinedArgumentOrOptionRule implements Rule
                 if (! $command->getDefinition()->hasArgument($argName)) {
                     $errors[] = RuleErrorBuilder::message(sprintf('Command "%s" does not have argument "%s".', $name, $argName))
                         ->line($node->getLine())
-                        ->identifier('larastan.undefinedArgument')
+                        ->identifier('larastan.console.undefinedArgument')
                         ->build();
                 }
             } elseif (! $command->getDefinition()->hasOption($argName) && ! $command->getDefinition()->hasShortcut($argName)) {
                 $errors[] = RuleErrorBuilder::message(sprintf('Command "%s" does not have option "%s".', $name, $argName))
                     ->line($node->getLine())
-                    ->identifier('larastan.undefinedOption')
+                    ->identifier('larastan.console.undefinedOption')
                     ->build();
             }
         }

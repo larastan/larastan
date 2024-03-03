@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Larastan\Larastan\ReturnTypes\ConsoleCommand;
 
 use InvalidArgumentException;
@@ -35,8 +37,8 @@ class OptionDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtensi
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,
-        Scope $scope
-    ): ?Type {
+        Scope $scope,
+    ): Type|null {
         $classReflection = $scope->getClassReflection();
 
         if ($classReflection === null) {

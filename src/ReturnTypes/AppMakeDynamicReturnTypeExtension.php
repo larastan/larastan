@@ -14,7 +14,7 @@ use PHPStan\Type\Type;
 final class AppMakeDynamicReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
 {
     public function __construct(
-        private AppMakeHelper $appMakeHelper
+        private AppMakeHelper $appMakeHelper,
     ) {
     }
 

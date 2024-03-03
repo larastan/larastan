@@ -15,9 +15,9 @@ class DeferrableServiceProviderMissingProvidesRuleTest extends RuleTestCase
     {
         $this->analyse(
             [
-                __DIR__.'/data/CorrectDeferrableProvider.php',
+                __DIR__ . '/data/CorrectDeferrableProvider.php',
             ],
-            []
+            [],
         );
     }
 
@@ -25,9 +25,9 @@ class DeferrableServiceProviderMissingProvidesRuleTest extends RuleTestCase
     {
         $this->analyse(
             [
-                __DIR__.'/data/CorrectDeferrableProviderIndirect.php',
+                __DIR__ . '/data/CorrectDeferrableProviderIndirect.php',
             ],
-            []
+            [],
         );
     }
 
@@ -35,11 +35,11 @@ class DeferrableServiceProviderMissingProvidesRuleTest extends RuleTestCase
     {
         $this->analyse(
             [
-                __DIR__.'/data/IncorrectDeferrableProvider.php',
+                __DIR__ . '/data/IncorrectDeferrableProvider.php',
             ],
             [
                 ['ServiceProviders that implement the "DeferrableProvider" interface should implement the "provides" method that returns an array of strings or class-strings', 10],
-            ]
+            ],
         );
     }
 

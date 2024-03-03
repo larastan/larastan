@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Larastan\Larastan\ReturnTypes;
 
 use Illuminate\Support\Collection;
@@ -36,19 +38,22 @@ class CollectionGenericStaticMethodDynamicStaticMethodReturnTypeExtension implem
     public function isStaticMethodSupported(MethodReflection $methodReflection): bool
     {
         return in_array($methodReflection->getName(), [
-            'make', 'wrap', 'times', 'range',
+            'make',
+            'wrap',
+            'times',
+            'range',
         ], true);
     }
 
     public function getTypeFromStaticMethodCall(
         MethodReflection $methodReflection,
         StaticCall $methodCall,
-        Scope $scope
-    ): \PHPStan\Type\Type {
+        Scope $scope,
+    ): Type {
         $returnType = ParametersAcceptorSelector::selectFromArgs(
             $scope,
             $methodCall->getArgs(),
-            $methodReflection->getVariants()
+            $methodReflection->getVariants(),
         )->getReturnType();
 
         if (! $returnType instanceof UnionType && $returnType->isObject()->no()) {
@@ -75,6 +80,7 @@ class CollectionGenericStaticMethodDynamicStaticMethodReturnTypeExtension implem
         // If it's a UnionType, traverse the types and try to find a collection object type
         if ($returnType instanceof UnionType) {
             return $returnType->traverse(function (Type $type) use ($classReflection) {
+                // @phpcs:ignore
                 if ($type instanceof GenericObjectType && ($innerReflection = $type->getClassReflection()) !== null) { // @phpstan-ignore-line
                     return $this->handleGenericObjectType($classReflection, $innerReflection);
                 }
@@ -106,6 +112,7 @@ class CollectionGenericStaticMethodDynamicStaticMethodReturnTypeExtension implem
                     return $traverse($type);
                 }
 
+                // @phpcs:ignore
                 if ($type instanceof GenericObjectType && (($innerTypeReflection = $type->getClassReflection()) !== null)) {
                     return new GenericObjectType($classReflection->getName(), $innerTypeReflection->typeMapToList($innerTypeReflection->getActiveTemplateTypeMap()));
                 }

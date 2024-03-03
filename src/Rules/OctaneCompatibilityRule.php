@@ -18,9 +18,7 @@ use function array_map;
 use function count;
 use function in_array;
 
-/**
- * @implements Rule<MethodCall>
- */
+/** @implements Rule<MethodCall> */
 class OctaneCompatibilityRule implements Rule
 {
     public function getNodeType(): string
@@ -28,7 +26,11 @@ class OctaneCompatibilityRule implements Rule
         return MethodCall::class;
     }
 
-    /** @param MethodCall $node */
+    /**
+     * @param MethodCall $node
+     *
+     * @return RuleError[]
+     */
     public function processNode(Node $node, Scope $scope): array
     {
         if (! $node->name instanceof Node\Identifier) {
@@ -53,7 +55,8 @@ class OctaneCompatibilityRule implements Rule
             return [];
         }
 
-        if ($classNames[0] !== Application::class &&
+        if (
+            $classNames[0] !== Application::class &&
             ! (new ObjectType(Application::class))->isSuperTypeOf($calledOnType)->yes()
         ) {
             return [];
@@ -87,7 +90,7 @@ class OctaneCompatibilityRule implements Rule
 
         $containerParameterName = $closureParams[0]->var->name;
 
-        $nodes = (new NodeFinder)->find($closure->getStmts(), function (Node $node) use ($containerParameterName): bool {
+        $nodes = (new NodeFinder())->find($closure->getStmts(), static function (Node $node) use ($containerParameterName): bool {
             if (! $node instanceof Node\Expr\New_) {
                 return false;
             }
@@ -119,11 +122,7 @@ class OctaneCompatibilityRule implements Rule
                 return in_array($node->getArgs()[0]->value->dim->value, ['request', 'config'], true);
             }
 
-            if ($node->getArgs()[0]->value->name !== $containerParameterName) {
-                return false;
-            }
-
-            return true;
+            return $node->getArgs()[0]->value->name === $containerParameterName;
         });
 
         if (count($nodes) > 0) {
@@ -133,10 +132,10 @@ class OctaneCompatibilityRule implements Rule
         return [];
     }
 
-    /** @return \PHPStan\Rules\RuleError[] */
+    /** @return RuleError[] */
     private function checkForThisAppUsage(Scope $scope, Node\Expr\Closure $closure): array
     {
-        $nodes = (new NodeFinder)->find($closure->getStmts(), function (Node $node): bool {
+        $nodes = (new NodeFinder())->find($closure->getStmts(), static function (Node $node): bool {
             return $node instanceof Node\Expr\PropertyFetch &&
                 $node->var instanceof Node\Expr\Variable &&
                 $node->var->name === 'this' &&
@@ -154,7 +153,7 @@ class OctaneCompatibilityRule implements Rule
     private function dependencyInjectionError(Node $node): RuleError
     {
         return RuleErrorBuilder::message('Consider using bind method instead or pass a closure.')
-            ->identifier('rules.octane')
+            ->identifier('larastan.octaneCompatibility')
             ->tip('See: https://laravel.com/docs/octane#dependency-injection-and-octane')
             ->line($node->getAttribute('startLine'))
             ->build();

@@ -15,34 +15,23 @@ use PHPStan\Type\MixedType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 
-/**
- * @internal
- */
+/** @internal */
 final class TranslatorGetReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getClass(): string
     {
         return Translator::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
         return $methodReflection->getName() === 'get';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,
-        Scope $scope
+        Scope $scope,
     ): Type {
         return new BenevolentUnionType([
             new ArrayType(new MixedType(), new MixedType()),

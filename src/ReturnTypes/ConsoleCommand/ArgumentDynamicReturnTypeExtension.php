@@ -37,8 +37,8 @@ class ArgumentDynamicReturnTypeExtension implements DynamicMethodReturnTypeExten
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,
-        Scope $scope
-    ): ?Type {
+        Scope $scope,
+    ): Type|null {
         $classReflection = $scope->getClassReflection();
 
         if ($classReflection === null) {

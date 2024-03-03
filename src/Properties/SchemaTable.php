@@ -4,20 +4,14 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Properties;
 
-/**
- * @see https://github.com/psalm/laravel-psalm-plugin/blob/master/src/SchemaTable.php
- */
+/** @see https://github.com/psalm/laravel-psalm-plugin/blob/master/src/SchemaTable.php */
 final class SchemaTable
 {
-    /** @var string */
-    public $name;
-
     /** @var array<string, SchemaColumn> */
-    public $columns = [];
+    public array $columns = [];
 
-    public function __construct(string $name)
+    public function __construct(public string $name)
     {
-        $this->name = $name;
     }
 
     public function setColumn(SchemaColumn $column): void

@@ -15,43 +15,12 @@ use PHPStan\Type\Type;
 
 final class AnnotationScopeMethodReflection implements MethodReflection
 {
-    /** @var string */
-    private $name;
-
-    /** @var ClassReflection */
-    private $declaringClass;
-
-    /** @var Type */
-    private $returnType;
-
-    /** @var bool */
-    private $isStatic;
-
-    /** @var AnnotationScopeMethodParameterReflection[] */
-    private $parameters;
-
-    /** @var bool */
-    private $isVariadic;
-
     /** @var FunctionVariant[]|null */
-    private $variants = null;
+    private array|null $variants = null;
 
-    /**
-     * @param  string  $name
-     * @param  ClassReflection  $declaringClass
-     * @param  Type  $returnType
-     * @param  AnnotationScopeMethodParameterReflection[]  $parameters
-     * @param  bool  $isStatic
-     * @param  bool  $isVariadic
-     */
-    public function __construct(string $name, ClassReflection $declaringClass, Type $returnType, array $parameters, bool $isStatic, bool $isVariadic)
+    /** @param  AnnotationScopeMethodParameterReflection[] $parameters */
+    public function __construct(private string $name, private ClassReflection $declaringClass, private Type $returnType, private array $parameters, private bool $isStatic, private bool $isVariadic)
     {
-        $this->name = $name;
-        $this->declaringClass = $declaringClass;
-        $this->returnType = $returnType;
-        $this->parameters = $parameters;
-        $this->isStatic = $isStatic;
-        $this->isVariadic = $isVariadic;
     }
 
     public function getDeclaringClass(): ClassReflection
@@ -84,9 +53,7 @@ final class AnnotationScopeMethodReflection implements MethodReflection
         return $this->name;
     }
 
-    /**
-     * @return ParametersAcceptor[]
-     */
+    /** @return ParametersAcceptor[] */
     public function getVariants(): array
     {
         if ($this->variants === null) {
@@ -101,7 +68,7 @@ final class AnnotationScopeMethodReflection implements MethodReflection
         return TrinaryLogic::createNo();
     }
 
-    public function getDeprecatedDescription(): ?string
+    public function getDeprecatedDescription(): string|null
     {
         return null;
     }
@@ -116,7 +83,7 @@ final class AnnotationScopeMethodReflection implements MethodReflection
         return TrinaryLogic::createNo();
     }
 
-    public function getThrowType(): ?Type
+    public function getThrowType(): Type|null
     {
         return null;
     }
@@ -126,7 +93,7 @@ final class AnnotationScopeMethodReflection implements MethodReflection
         return TrinaryLogic::createMaybe();
     }
 
-    public function getDocComment(): ?string
+    public function getDocComment(): string|null
     {
         return null;
     }

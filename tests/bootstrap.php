@@ -3,48 +3,60 @@
 declare(strict_types=1);
 
 use Carbon\Carbon;
+use Illuminate\Auth\RequestGuard;
+use Illuminate\Auth\SessionGuard;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 
 Carbon::macro('foo', static function (): string {
     return 'foo';
 });
 
-\Illuminate\Database\Eloquent\Builder::macro('globalCustomMacro', function (string $arg = 'foobar', int $b = 5): string {
+Builder::macro('globalCustomMacro', static function (string $arg = 'foobar', int $b = 5): string {
     return $arg;
 });
 
-\Illuminate\Database\Query\Builder::macro('globalCustomDatabaseQueryMacro', function (string $arg = 'foobar', int $b = 5): string {
+\Illuminate\Database\Query\Builder::macro('globalCustomDatabaseQueryMacro', static function (string $arg = 'foobar', int $b = 5): string {
     return $arg;
 });
 
-\Illuminate\Support\Facades\Route::macro('facadeMacro', function (): int {
+Route::macro('facadeMacro', static function (): int {
     return 5;
 });
 
-\Illuminate\Auth\SessionGuard::macro('sessionGuardMacro', function (): int {
+SessionGuard::macro('sessionGuardMacro', static function (): int {
     return 5;
 });
 
-\Illuminate\Auth\RequestGuard::macro('requestGuardMacro', function (): int {
+RequestGuard::macro('requestGuardMacro', static function (): int {
     return 5;
 });
 
-\Illuminate\Support\Str::macro('trimMacro', 'trim');
-\Illuminate\Support\Str::macro('asciiAliasMacro', \Illuminate\Support\Str::class.'::ascii');
+Str::macro('trimMacro', 'trim');
+Str::macro('asciiAliasMacro', Str::class . '::ascii');
 
 class CustomCollectionMacro
 {
-    public function registerMacro()
+    public function registerMacro(): void
     {
-        \Illuminate\Support\Collection::macro('customCollectionMacro', [$this, 'customMacro']);
+        Collection::macro('customCollectionMacro', [$this, 'customMacro']);
+        Collection::macro('customCollectionMacroString', [self::class, 'customMacroString']);
     }
 
     public function customMacro(): string
     {
         return 'customMacro';
     }
+
+    public function customMacroString(): string
+    {
+        return 'customMacroString';
+    }
 }
 
-(new CustomCollectionMacro)->registerMacro();
+(new CustomCollectionMacro())->registerMacro();
 
 if (version_compare(PHP_VERSION, '8.1.0', '>=') && version_compare(PHP_VERSION, '8.2.0', '<')) {
     include_once 'enum-definition.php';
