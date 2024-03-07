@@ -1,41 +1,326 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Left side of && is always true\\.$#"
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Account\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
 			count: 1
-			path: ../../e2e/app/Console/Commands/SetupDummyAccount.php
+			path: ../../e2e/app/Models/Account.php
 
 		-
-			message: "#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$id\\.$#"
-			count: 2
-			path: ../../e2e/app/Domains/Contact/ManageContact/Web/ViewHelpers/ContactShowViewHelper.php
-
-		-
-			message: "#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$name\\.$#"
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Address\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
 			count: 1
-			path: ../../e2e/app/Domains/Contact/ManageContact/Web/ViewHelpers/ContactShowViewHelper.php
+			path: ../../e2e/app/Models/Address.php
 
 		-
-			message: "#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$slug\\.$#"
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\AddressBookSubscription\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
 			count: 1
-			path: ../../e2e/app/Domains/Contact/ManageContact/Web/ViewHelpers/ContactShowViewHelper.php
+			path: ../../e2e/app/Models/AddressBookSubscription.php
 
 		-
-			message: "#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$type\\.$#"
-			count: 2
-			path: ../../e2e/app/Domains/Contact/ManageContact/Web/ViewHelpers/ContactShowViewHelper.php
-
-		-
-			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:modules\\(\\)\\.$#"
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Call\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
 			count: 1
-			path: ../../e2e/app/Domains/Contact/ManageContact/Web/ViewHelpers/ContactShowViewHelper.php
+			path: ../../e2e/app/Models/Call.php
 
 		-
-			message: "#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$id\\.$#"
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\CallReason\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
 			count: 1
-			path: ../../e2e/app/Domains/Contact/ManageRelationships/Web/ViewHelpers/ModuleFamilySummaryViewHelper.php
+			path: ../../e2e/app/Models/CallReason.php
 
 		-
-			message: "#^Function trans_ignore\\(\\) never returns null so it can be removed from the return type\\.$#"
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\CallReasonType\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
 			count: 1
-			path: ../../e2e/app/Helpers/helpers.php
+			path: ../../e2e/app/Models/CallReasonType.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Contact\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/Contact.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\ContactFeedItem\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/ContactFeedItem.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\ContactImportantDate\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/ContactImportantDate.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\ContactImportantDateType\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/ContactImportantDateType.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\ContactInformation\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/ContactInformation.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\ContactInformationType\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/ContactInformationType.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\ContactReminder\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/ContactReminder.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\ContactTask\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/ContactTask.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Currency\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/Currency.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Emotion\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/Emotion.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\File\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/File.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Gender\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/Gender.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\GiftOccasion\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/GiftOccasion.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\GiftState\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/GiftState.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Goal\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/Goal.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Group\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/Group.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\GroupType\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/GroupType.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\GroupTypeRole\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/GroupTypeRole.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Instance\\\\Cron\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/Instance/Cron.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Journal\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/Journal.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\JournalMetric\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/JournalMetric.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Label\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/Label.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\LifeEvent\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/LifeEvent.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\LifeEventCategory\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/LifeEventCategory.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\LifeEventType\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/LifeEventType.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\LifeMetric\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/LifeMetric.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Loan\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/Loan.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Log\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/Log.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Module\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/Module.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\ModuleRow\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/ModuleRow.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\ModuleRowField\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/ModuleRowField.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\MoodTrackingEvent\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/MoodTrackingEvent.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\MoodTrackingParameter\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/MoodTrackingParameter.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Note\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/Note.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Pet\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/Pet.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\PetCategory\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/PetCategory.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Post\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/Post.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\PostMetric\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/PostMetric.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\PostSection\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/PostSection.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\PostTemplate\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/PostTemplate.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\PostTemplateSection\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/PostTemplateSection.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Pronoun\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/Pronoun.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\QuickFact\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/QuickFact.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\RelationshipGroupType\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/RelationshipGroupType.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\RelationshipType\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/RelationshipType.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Religion\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/Religion.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\SliceOfLife\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/SliceOfLife.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Streak\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/Streak.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\SyncToken\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/SyncToken.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Tag\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/Tag.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Template\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/Template.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\TemplatePage\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/TemplatePage.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\TimelineEvent\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/TimelineEvent.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\User\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/User.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\UserNotificationChannel\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/UserNotificationChannel.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\UserNotificationSent\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/UserNotificationSent.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\UserToken\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/UserToken.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\Vault\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/Vault.php
+
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\VaultQuickFactsTemplate\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/VaultQuickFactsTemplate.php
