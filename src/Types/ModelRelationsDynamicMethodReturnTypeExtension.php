@@ -109,8 +109,7 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
             ->findRelatedModelInRelationMethod($methodReflection);
 
         if ((new ObjectType(BelongsTo::class))->isSuperTypeOf($returnType)->yes()) {
-            $classReflection = $methodReflection->getDeclaringClass();
-            $types           = [];
+            $types = [];
 
             foreach (TypeUtils::flattenTypes($returnType) as $flattenType) {
                 if ((new ObjectType(BelongsTo::class))->isSuperTypeOf($flattenType)->yes()) {
@@ -123,7 +122,7 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
             if (count($types) >= 2) {
                 $childType = new UnionType(array_map(static fn (Type $type) => new ObjectType($type->getObjectClassNames()[0]), $types));
             } else {
-                $childType = new ObjectType($classReflection->getName());
+                $childType = $scope->getType($methodCall->var);
             }
 
             return new GenericObjectType($returnTypeObjectClassNames[0], [

@@ -13,12 +13,14 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 use function PHPStan\Testing\assertType;
 
-function foo(Foo $foo, Bar $bar, Account $account): void
+function foo(Foo $foo, Bar $bar, Account $account, ChildBaz $childBaz): void
 {
     assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelations\Bar>', $foo->hasManyRelation);
     assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelations\Bar>', $foo->hasManyThroughRelation);
     assertType('ModelPropertiesRelations\Baz|null', $foo->hasOneThroughRelation);
     assertType('ModelPropertiesRelations\Foo', $bar->belongsToRelation);
+    assertType('ModelPropertiesRelations\Foo|null', $childBaz->foo);
+    assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<ModelPropertiesRelations\Foo, ModelPropertiesRelations\ChildBaz>', $childBaz->foo());
     assertType('mixed', $bar->morphToRelation);
     assertType('App\Account|App\User', $bar->morphToUnionRelation);
     assertType('ModelPropertiesRelations\Bar|null', $foo->hasManyRelation->first());
@@ -93,6 +95,15 @@ class Bar extends Model
 }
 
 class Baz extends Model
+{
+    /** @return BelongsTo<Foo, $this> */
+    public function foo(): BelongsTo
+    {
+        return $this->belongsTo(Foo::class);
+    }
+}
+
+class ChildBaz extends Baz
 {
 }
 
