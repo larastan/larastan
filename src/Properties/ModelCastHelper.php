@@ -4,12 +4,22 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Properties;
 
+use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Database\Eloquent\Castable;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Contracts\Database\Eloquent\CastsInboundAttributes;
+use Illuminate\Database\Eloquent\Casts\ArrayObject;
+use Illuminate\Database\Eloquent\Casts\AsArrayObject;
+use Illuminate\Database\Eloquent\Casts\AsCollection;
+use Illuminate\Database\Eloquent\Casts\AsEncryptedArrayObject;
+use Illuminate\Database\Eloquent\Casts\AsEncryptedCollection;
+use Illuminate\Database\Eloquent\Casts\AsStringable;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Carbon as IlluminateCarbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Stringable as IlluminateStringable;
 use PHPStan\Reflection\ParameterReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
@@ -26,6 +36,8 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use stdClass;
+use Stringable;
 
 use function class_exists;
 use function explode;
@@ -46,14 +58,14 @@ class ModelCastHelper
             'decimal' => TypeCombinator::intersect(new StringType(), new AccessoryNumericStringType()),
             'string' => new StringType(),
             'bool', 'boolean' => new BooleanType(),
-            'object' => new ObjectType('stdClass'),
+            'object' => new ObjectType(stdClass::class),
             'array', 'json' => new ArrayType(new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()),
-            'collection' => new ObjectType('Illuminate\Support\Collection'),
+            'collection' => new ObjectType(Collection::class),
             'date', 'datetime' => $this->getDateType(),
-            'immutable_date', 'immutable_datetime' => new ObjectType('Carbon\CarbonImmutable'),
-            'Illuminate\Database\Eloquent\Casts\AsArrayObject', 'Illuminate\Database\Eloquent\Casts\AsEncryptedArrayObject' => new ObjectType('Illuminate\Database\Eloquent\Casts\ArrayObject'),
-            'Illuminate\Database\Eloquent\Casts\AsCollection', 'Illuminate\Database\Eloquent\Casts\AsEncryptedCollection' => new GenericObjectType('Illuminate\Support\Collection', [new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()]),
-            'Illuminate\Database\Eloquent\Casts\AsStringable' => new ObjectType('Illuminate\Support\Stringable'),
+            'immutable_date', 'immutable_datetime' => new ObjectType(CarbonImmutable::class),
+            AsArrayObject::class, AsEncryptedArrayObject::class => new ObjectType(ArrayObject::class),
+            AsCollection::class, AsEncryptedCollection::class => new GenericObjectType(Collection::class, [new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()]),
+            AsStringable::class => new ObjectType(IlluminateStringable::class),
             default => null,
         };
 
@@ -103,14 +115,14 @@ class ModelCastHelper
             'decimal' => TypeCombinator::intersect(new StringType(), new AccessoryNumericStringType(), new FloatType()),
             'string' => new StringType(),
             'bool', 'boolean' => TypeCombinator::union(new BooleanType(), new ConstantIntegerType(0), new ConstantIntegerType(1)),
-            'object' => new ObjectType('stdClass'),
+            'object' => new ObjectType(stdClass::class),
             'array', 'json' => new ArrayType(new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()),
-            'collection' => new ObjectType('Illuminate\Support\Collection'),
+            'collection' => new ObjectType(Collection::class),
             'date', 'datetime' => $this->getDateType(),
-            'immutable_date', 'immutable_datetime' => new ObjectType('Carbon\CarbonImmutable'),
-            'Illuminate\Database\Eloquent\Casts\AsArrayObject', 'Illuminate\Database\Eloquent\Casts\AsCollection',
-            'Illuminate\Database\Eloquent\Casts\AsEncryptedArrayObject', 'Illuminate\Database\Eloquent\Casts\AsEncryptedCollection' => new MixedType(),
-            'Illuminate\Database\Eloquent\Casts\AsStringable' => TypeCombinator::union(new StringType(), new ObjectType('Stringable')),
+            'immutable_date', 'immutable_datetime' => new ObjectType(CarbonImmutable::class),
+            AsArrayObject::class, AsCollection::class,
+            AsEncryptedArrayObject::class, AsEncryptedCollection::class => new MixedType(),
+            AsStringable::class => TypeCombinator::union(new StringType(), new ObjectType(Stringable::class)),
             default => null,
         };
 
@@ -156,10 +168,10 @@ class ModelCastHelper
     {
         $dateClass = class_exists(Date::class)
             ? Date::now()::class
-            : Carbon::class;
+            : IlluminateCarbon::class;
 
-        if ($dateClass === Carbon::class) {
-            return TypeCombinator::union(new ObjectType($dateClass), new ObjectType(\Carbon\Carbon::class));
+        if ($dateClass === IlluminateCarbon::class) {
+            return TypeCombinator::union(new ObjectType($dateClass), new ObjectType(Carbon::class));
         }
 
         return new ObjectType($dateClass);
