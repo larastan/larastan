@@ -52,9 +52,14 @@ function test(User $user, \App\Address $address, Account $account, ExtendsModelW
     assertType('App\Account|null', $user->accounts()->firstWhere('name', 'bar'));
     assertType('App\Group|null', $user->group()->firstWhere('name', 'bar'));
     assertType('App\Account|null', $user->accounts->first());
+    assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\User>', $user->group());
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\User>', $user->group()->withTrashed());
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\User>', $user->group()->onlyTrashed());
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\User>', $user->group()->withoutTrashed());
+    assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\Account>', $account->group());
+    assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\Account>', $account->group()->withTrashed());
+    assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\Account>', $account->group()->onlyTrashed());
+    assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\Account>', $account->group()->withoutTrashed());
     assertType('Illuminate\Database\Eloquent\Relations\MorphToMany<ModelRelations\Address>', $tag->addresses());
     assertType('Illuminate\Database\Eloquent\Relations\MorphToMany<ModelRelations\Address>', $tag->addresses());
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::with([

@@ -75,7 +75,7 @@ class Foo extends Model
  */
 class Bar extends Model
 {
-    /** @return BelongsTo<Foo, Bar> */
+    /** @return BelongsTo<Foo, $this> */
     public function belongsToRelation(): BelongsTo
     {
         return $this->belongsTo(Foo::class);

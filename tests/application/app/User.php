@@ -115,7 +115,7 @@ class User extends Authenticatable
         return $query->where('active', 1);
     }
 
-    /** @phpstan-return BelongsTo<Group, User> */
+    /** @return BelongsTo<Group, $this> */
     public function group(): BelongsTo
     {
         return $this->belongsTo(Group::class)->withTrashed();
@@ -176,6 +176,7 @@ class User extends Authenticatable
         return $this->hasMany(self::class, 'parent_id');
     }
 
+    /** @return BelongsTo<User, $this> */
     public function parent(): BelongsTo
     {
         return $this->belongsTo(get_class($this));
