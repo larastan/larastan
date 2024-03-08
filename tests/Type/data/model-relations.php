@@ -7,6 +7,7 @@ use App\Group;
 use App\Post;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -176,4 +177,14 @@ class Tag extends Model
 
 class Address extends Model
 {
+    /** @return BelongsTo<User, $this> */
+    public function user(): BelongsTo
+    {
+        // need to test relation return AND relation forwarding
+        $belongsTo = $this->belongsTo(User::class)->orderBy('name');
+
+        assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\User, $this(ModelRelations\Address)>', $belongsTo);
+
+        return $belongsTo;
+    }
 }
