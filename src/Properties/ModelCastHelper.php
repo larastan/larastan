@@ -100,7 +100,7 @@ class ModelCastHelper
         $attributeType = match ($cast) {
             'int', 'integer', 'timestamp' => new IntegerType(),
             'real', 'float', 'double' => new FloatType(),
-            'decimal' => TypeCombinator::intersect(new StringType(), new AccessoryNumericStringType()),
+            'decimal' => TypeCombinator::intersect(new StringType(), new AccessoryNumericStringType(), new FloatType()),
             'string' => new StringType(),
             'bool', 'boolean' => TypeCombinator::union(new BooleanType(), new ConstantIntegerType(0), new ConstantIntegerType(1)),
             'object' => new ObjectType('stdClass'),
