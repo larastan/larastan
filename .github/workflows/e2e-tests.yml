@@ -53,7 +53,7 @@ jobs:
 
           -
             repository: filamentphp/filament
-            ref: c3501678694b43b416143fe68fb305acdb575a4d
+            ref: 60af69e66b0289c0a9cffd7c5930028ef6b715c5
             php-version: "8.2"
             config: filamentphp-filament.neon
             baseline: filamentphp-filament.baseline.neon
