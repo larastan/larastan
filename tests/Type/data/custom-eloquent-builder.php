@@ -7,17 +7,20 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use function PHPStan\Testing\assertType;
 
 function doFoo(FooModel $foo, NonGenericBuilder $nonGenericBuilder): void
 {
     assertType('CustomEloquentBuilder\ModelWithCustomBuilder|null', ModelWithCustomBuilder::where('email', 'bar')->first());
     assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::where('email', 'bar'));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::foo('foo'));
     assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::foo('foo')->foo('bar'));
     assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::type('foo'));
     assertType('Illuminate\Database\Eloquent\Relations\HasMany<CustomEloquentBuilder\ModelWithCustomBuilder>', $foo->customModels()->category('foo'));
     assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::whereEmail(['bar'])->type('foo')->whereEmail(['bar']));
     assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::whereEmail(['bar'])->categories(['foo'])->whereType(['bar']));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::withTrashed());
     assertType('CustomEloquentBuilder\ModelWithCustomBuilder|null', ModelWithCustomBuilder::whereEmail(['bar'])->type('foo')->first());
     assertType('CustomEloquentBuilder\ModelWithCustomBuilder|null', ModelWithCustomBuilder::whereEmail(['bar'])->type('foo')->first());
     assertType('int', $foo->customModels()->count());
@@ -49,6 +52,7 @@ function doFoo(FooModel $foo, NonGenericBuilder $nonGenericBuilder): void
     assertType('Illuminate\Database\Eloquent\Collection<int, CustomEloquentBuilder\ModelWithCustomBuilderAndDocBlocks>', ModelWithCustomBuilderAndDocBlocks::all());
     assertType('CustomEloquentBuilder\CustomBuilder2<CustomEloquentBuilder\ModelWithCustomBuilderAndDocBlocks>', ModelWithCustomBuilderAndDocBlocks::query());
     assertType('CustomEloquentBuilder\NonGenericBuilder', $nonGenericBuilder->skip(5));
+    assertType('CustomEloquentBuilder\NonGenericBuilder', $nonGenericBuilder->category('foo'));
 }
 
 /**
@@ -58,6 +62,8 @@ function doFoo(FooModel $foo, NonGenericBuilder $nonGenericBuilder): void
  */
 class ModelWithCustomBuilder extends Model
 {
+    use SoftDeletes;
+
     // Dummy relation
     /** @return HasMany<User> */
     public function users(): HasMany
@@ -98,32 +104,45 @@ class ModelWithCustomBuilder extends Model
  */
 class CustomEloquentBuilder extends Builder
 {
-    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
-    public function category(string $category): CustomEloquentBuilder
+    /** @return $this */
+    public function category(string $category): static
     {
-        assertType('static(CustomEloquentBuilder\CustomEloquentBuilder<TModelClass of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->where('category', $category));
-
         return $this->where('category', $category);
     }
 
-    /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
-    public function type(string $type): CustomEloquentBuilder
+    /** @return $this */
+    public function type(string $type): static
     {
-        assertType('static(CustomEloquentBuilder\CustomEloquentBuilder<TModelClass of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->where(['type' => $type]));
-
         return $this->where(['type' => $type]);
     }
 
     /**
      * @param  string[]  $categories
      *
-     * @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder>
+     * @return $this
      */
-    public function categories(array $categories): CustomEloquentBuilder
+    public function categories(array $categories): static
     {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', $this->whereIn('category', $categories));
-
         return $this->whereIn('category', $categories);
+    }
+
+    private function test(): void
+    {
+        $thisType = '$this(CustomEloquentBuilder\CustomEloquentBuilder<TModelClass of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)';
+        assertType($thisType, $this->where('email', 'bar'));
+        assertType($thisType, $this->where(['email' => 'bar']));
+        assertType($thisType, $this->whereNull('finished_at'));
+        assertType($thisType, $this->whereNotNull('finished_at'));
+        assertType($thisType, $this->orderBy('name'));
+        assertType($thisType, $this->orderByDesc('name'));
+        assertType($thisType, $this->whereRaw('lower(email) = foo'));
+        assertType($thisType, $this->whereRelation('user', 'id', 1));
+        assertType($thisType, $this->join('user', 'user.id', '=', 'id'));
+        assertType($thisType, $this->leftJoin('user', 'user.id', '=', 'id'));
+        assertType($thisType, $this->rightJoin('user', 'user.id', '=', 'id'));
+        assertType($thisType, $this->select('*'));
+        assertType($thisType, $this->selectRaw('count(*) as count'));
+        assertType($thisType, $this->withTrashed());
     }
 }
 
@@ -162,8 +181,10 @@ class CustomBuilder2 extends Builder
 {
 }
 
-class ModelWithNonGenericBuilder extends Model
+class ModelWithNonGenericBuilder extends ModelWithCustomBuilder
 {
+    use SoftDeletes;
+
     /**
      * @param  \Illuminate\Database\Query\Builder  $query
      * @return NonGenericBuilder
@@ -174,9 +195,23 @@ class ModelWithNonGenericBuilder extends Model
     }
 }
 
-/**
- * @extends Builder<ModelWithNonGenericBuilder>
- */
-class NonGenericBuilder extends Builder
+/** @extends Builder<ModelWithNonGenericBuilder> */
+class NonGenericBuilder extends CustomEloquentBuilder
 {
+    private function test(): void
+    {
+        $thisType = '$this(CustomEloquentBuilder\NonGenericBuilder)';
+        assertType($thisType, $this->whereNull('finished_at'));
+        assertType($thisType, $this->whereNotNull('finished_at'));
+        assertType($thisType, $this->orderBy('name'));
+        assertType($thisType, $this->orderByDesc('name'));
+        assertType($thisType, $this->whereRaw('lower(email) = foo'));
+        assertType($thisType, $this->whereRelation('user', 'id', 1));
+        assertType($thisType, $this->join('user', 'user.id', '=', 'id'));
+        assertType($thisType, $this->leftJoin('user', 'user.id', '=', 'id'));
+        assertType($thisType, $this->rightJoin('user', 'user.id', '=', 'id'));
+        assertType($thisType, $this->select('*'));
+        assertType($thisType, $this->selectRaw('count(*) as count'));
+        assertType($thisType, $this->withTrashed());
+    }
 }

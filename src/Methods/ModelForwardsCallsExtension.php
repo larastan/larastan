@@ -23,6 +23,7 @@ use PHPStan\TrinaryLogic;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StaticType;
+use PHPStan\Type\ThisType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeTraverser;
 use PHPStan\Type\TypeWithClassName;
@@ -109,11 +110,30 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
             );
         }
 
-        if ($this->eloquentBuilderForwardsCallsExtension->hasMethod($builderReflection, $methodName)) {
-            return $this->eloquentBuilderForwardsCallsExtension->getMethod($builderReflection, $methodName);
+        if (! $this->eloquentBuilderForwardsCallsExtension->hasMethod($builderReflection, $methodName)) {
+            return null;
         }
 
-        return null;
+        $reflection = $this->eloquentBuilderForwardsCallsExtension->getMethod($builderReflection, $methodName);
+
+        if (! $reflection instanceof EloquentBuilderMethodReflection) {
+            return $reflection;
+        }
+
+        $parametersAcceptor = ParametersAcceptorSelector::selectSingle($reflection->getVariants());
+        $returnType         = $parametersAcceptor->getReturnType();
+
+        if (! $returnType instanceof ThisType) {
+            return $reflection;
+        }
+
+        return new EloquentBuilderMethodReflection(
+            $reflection->getName(),
+            $reflection->getDeclaringClass(),
+            $reflection->getVariants()[0]->getParameters(),
+            $returnType->getStaticObjectType(),
+            $reflection->getVariants()[0]->isVariadic(),
+        );
     }
 
     /** @return ParametersAcceptor[] */

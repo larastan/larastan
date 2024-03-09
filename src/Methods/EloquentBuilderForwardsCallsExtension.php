@@ -16,10 +16,9 @@ use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
-use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Generic\TemplateObjectType;
 use PHPStan\Type\IntegerType;
-use PHPStan\Type\ObjectType;
+use PHPStan\Type\ThisType;
 
 use function array_key_exists;
 use function in_array;
@@ -113,7 +112,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             } elseif ($methodName === 'restoreOrCreate' || $methodName === 'createOrRestore') {
                 $returnType = $modelType;
             } else {
-                $returnType = new GenericObjectType($classReflection->getName(), [$modelType]);
+                $returnType = new ThisType($classReflection);
             }
 
             return new EloquentBuilderMethodReflection(
@@ -134,10 +133,8 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
 
         if (in_array($methodName, $this->builderHelper->passthru, true)) {
             $returnType = $parametersAcceptor->getReturnType();
-        } elseif ($classReflection->isGeneric()) {
-            $returnType = new GenericObjectType($classReflection->getName(), [$modelType]);
         } else {
-            $returnType = new ObjectType($classReflection->getName());
+            $returnType = new ThisType($classReflection);
         }
 
         return new EloquentBuilderMethodReflection(

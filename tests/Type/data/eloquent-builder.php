@@ -432,7 +432,7 @@ function testJoinSubAllowsEloquentBuilder()
  */
 function testQueryBuilderOnEloquentBuilderWithBaseModel(EloquentBuilder $query): void
 {
-    assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query->select());
+    assertType('Illuminate\Database\Eloquent\Builder<TModelClass of Illuminate\Database\Eloquent\Model (function EloquentBuilder\testQueryBuilderOnEloquentBuilderWithBaseModel(), argument)>', $query->select());
 }
 
 function testPaginate()
