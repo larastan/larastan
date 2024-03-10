@@ -7,8 +7,7 @@ use App\User;
 
 use function PHPStan\Testing\assertType;
 
-function doFoo(): void
-{
+function dummy(?int $foo): void {
     assertType('Database\Factories\UserFactory', User::factory());
     assertType('Database\Factories\UserFactory', User::factory()->new());
     assertType('App\User', User::factory()->createOne());
@@ -50,27 +49,7 @@ function doFoo(): void
     assertType('App\User', User::factory()->hasPosts(3, ['active' => 0])->createOne());
     assertType('Database\Factories\UserFactory', User::factory()->forParent());
     assertType('Database\Factories\UserFactory', User::factory()->forParent(['meta' => ['foo']]));
-}
 
-function foo(?int $foo): void
-{
-    assertType('App\User|Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory()->count($foo)->create());
-    assertType('App\User|Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory()->count($foo)->createQuietly());
-    assertType('App\User|Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory()->count($foo)->make());
-
-    assertType('App\User|Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory($foo)->create());
-    assertType('App\User|Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory($foo)->createQuietly());
-    assertType('App\User|Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory($foo)->make());
-}
-
-function doBar()
-{
-    assertType('Database\Factories\UserFactory', User::factory());
-    assertType('Database\Factories\UserFactory', User::factory()->new());
-    assertType('App\User', User::factory()->createOne());
-    assertType('App\User', User::factory()->createOneQuietly());
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory()->createMany([]));
-    assertType('App\User', User::factory()->makeOne());
     assertType('Database\Factories\UserFactory', User::factory()->unverified());
     assertType('Database\Factories\UserFactory', User::factory()->afterMaking(fn (User $user) => $user));
     assertType('Database\Factories\UserFactory', User::factory()->afterCreating(fn (User $user) => $user));
@@ -84,4 +63,15 @@ function doBar()
     assertType('App\Post', Post::factory()->makeOne());
     assertType('Database\Factories\PostFactory', Post::factory()->afterMaking(fn (Post $post) => $post));
     assertType('Database\Factories\PostFactory', Post::factory()->afterCreating(fn (Post $post) => $post));
+
+    assertType('App\User|Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory()->count($foo)->create());
+    assertType('App\User|Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory()->count($foo)->createQuietly());
+    assertType('App\User|Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory()->count($foo)->make());
+
+    assertType('App\User|Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory($foo)->create());
+    assertType('App\User|Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory($foo)->createQuietly());
+    assertType('App\User|Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory($foo)->make());
+
+    assertType('Database\Factories\UserFactory', User::factory()->trashed());
+    assertType('*ERROR*', Post::factory()->trashed());
 }
