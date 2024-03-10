@@ -71,3 +71,6 @@ assertType('App\User|Illuminate\Database\Eloquent\Collection<int, App\User>', Us
 assertType('App\User|Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory($foo)->create());
 assertType('App\User|Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory($foo)->createQuietly());
 assertType('App\User|Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory($foo)->make());
+
+assertType('Database\Factories\UserFactory', User::factory()->trashed());
+assertType('*ERROR*', Post::factory()->trashed());
