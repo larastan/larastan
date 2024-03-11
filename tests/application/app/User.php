@@ -214,6 +214,13 @@ class User extends Authenticatable
         $this->active = 1;
     }
 
+    protected function casts(): array
+    {
+        return [
+            'l11_cast' => 'array',
+        ];
+    }
+
     protected function newStyleAttribute(): Attribute
     {
         return Attribute::make(

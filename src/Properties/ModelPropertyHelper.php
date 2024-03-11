@@ -18,12 +18,14 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\TypeCombinator;
 use ReflectionException;
+use ReflectionMethod;
 
 use function array_key_exists;
 use function count;
 use function implode;
 use function in_array;
 use function method_exists;
+use function version_compare;
 
 class ModelPropertyHelper
 {
@@ -86,6 +88,12 @@ class ModelPropertyHelper
             $modelInstance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
         } catch (ReflectionException) {
             throw new ShouldNotHappenException();
+        }
+
+        if (version_compare(LARAVEL_VERSION, '11.0.0', '>=')) {
+            // Needed to merge the model casts method into the property
+            $reflection = new ReflectionMethod($modelInstance, 'initializeHasAttributes');
+            $reflection->invoke($modelInstance);
         }
 
         $tableName = $modelInstance->getTable();
