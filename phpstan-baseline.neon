@@ -1,11 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Constant LARAVEL_VERSION not found\\.$#"
-			count: 1
-			path: src/LarastanStubFilesExtension.php
-
-		-
 			message: "#^PHPDoc tag @var assumes the expression with type PHPStan\\\\Type\\\\Type\\|null is always PHPStan\\\\Type\\\\Constant\\\\ConstantStringType but it's error\\-prone and dangerous\\.$#"
 			count: 1
 			path: src/Methods/HigherOrderCollectionProxyExtension.php
