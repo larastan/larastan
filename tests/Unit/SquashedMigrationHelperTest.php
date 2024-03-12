@@ -18,7 +18,7 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
     public function it_can_parse_basic_schema_in_different_formats(): void
     {
         $this->getSquashedMigrationHelper([__DIR__ . '/data/schema/basic_schema'])
-            ->initializeTables($this->modelDatabaseHelper);
+            ->parseSchemaDumps($this->modelDatabaseHelper);
 
         $this->assertCount(2, $this->modelDatabaseHelper->connections);
         $this->assertArrayHasKey('default', $this->modelDatabaseHelper->connections);
@@ -42,7 +42,7 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
     public function it_will_ignore_if_table_already_exists_in_parsed_tables_array(): void
     {
         $this->getSquashedMigrationHelper([__DIR__ . '/data/schema/schema_with_create_statements_for_same_table'])
-            ->initializeTables($this->modelDatabaseHelper);
+            ->parseSchemaDumps($this->modelDatabaseHelper);
 
         $this->assertCount(1, $this->modelDatabaseHelper->connections);
         $this->assertArrayHasKey('mysql', $this->modelDatabaseHelper->connections);
@@ -63,7 +63,7 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
     public function it_can_find_schemas_with_different_extensions(): void
     {
         $this->getSquashedMigrationHelper([__DIR__ . '/data/schema/schema_with_nonstandard_name'])
-            ->initializeTables($this->modelDatabaseHelper);
+            ->parseSchemaDumps($this->modelDatabaseHelper);
 
         $this->assertCount(1, $this->modelDatabaseHelper->connections);
         $this->assertArrayHasKey('pgsql', $this->modelDatabaseHelper->connections);
@@ -93,7 +93,7 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
     public function it_can_disable_schema_scanning(): void
     {
         $this->getSquashedMigrationHelper([__DIR__ . '/data/schema/basic_schema'], true)
-            ->initializeTables($this->modelDatabaseHelper);
+            ->parseSchemaDumps($this->modelDatabaseHelper);
 
         $this->assertSame([], $this->modelDatabaseHelper->connections);
     }

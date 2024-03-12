@@ -37,7 +37,7 @@ final class SquashedMigrationHelper
     ) {
     }
 
-    public function initializeTables(ModelDatabaseHelper &$modelDatabaseHelper): void
+    public function parseSchemaDumps(ModelDatabaseHelper &$modelDatabaseHelper): void
     {
         if ($this->disableSchemaScan) {
             return;

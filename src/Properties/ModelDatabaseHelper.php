@@ -34,6 +34,12 @@ final class ModelDatabaseHelper
         return $model->getConnectionName() ?? $this->getDefaultConnection();
     }
 
+    public function getModelTable(Model $model): SchemaTable
+    {
+        return $this->connections[$this->getModelConnectionName($model)]
+            ->tables[$model->getTable()];
+    }
+
     public function hasConnection(string $connection): bool
     {
         $this->ensureInitialized();
@@ -76,12 +82,6 @@ final class ModelDatabaseHelper
         return $connection;
     }
 
-    public function getModelTable(Model $model): SchemaTable
-    {
-        return $this->connections[$this->getModelConnectionName($model)]
-            ->tables[$model->getTable()];
-    }
-
     public function getModelColumn(Model $model, string $column): SchemaColumn
     {
         return $this->getModelTable($model)->columns[$column];
@@ -113,38 +113,24 @@ final class ModelDatabaseHelper
         return $modelInstance;
     }
 
-    public function loadMigrations(): void
-    {
-        // First try to create tables from squashed migrations, if there are any
-        // Then scan the normal migration files for further changes to tables.
-        $this->squashedMigrationHelper->initializeTables($this);
-        $this->migrationHelper->initializeTables($this);
-    }
-
     public function ensureInitialized(): void
     {
         if (count($this->connections) !== 0) {
             return;
         }
 
-        $this->loadMigrations();
+        // First try to create tables from any squashed migrations.
+        // Then scan the normal migration files for further changes to tables.
+        $this->squashedMigrationHelper->parseSchemaDumps($this);
+        $this->migrationHelper->parseMigrations($this);
     }
 
     public function getDefaultConnection(): string
     {
         if (! isset($this->defaultConnection)) {
-            $this->defaultConnection = $this->resolve('config')['database.default']
-                ?? 'default';
+            $this->defaultConnection = $this->resolve('config')['database.default'] ?? 'default';
         }
 
         return $this->defaultConnection;
-    }
-
-    /** @return $this */
-    public function clearConnections(): static
-    {
-        $this->connections = [];
-
-        return $this;
     }
 }

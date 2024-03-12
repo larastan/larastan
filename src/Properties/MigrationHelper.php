@@ -29,7 +29,7 @@ class MigrationHelper
     ) {
     }
 
-    public function initializeTables(ModelDatabaseHelper &$modelDatabaseHelper): void
+    public function parseMigrations(ModelDatabaseHelper &$modelDatabaseHelper): void
     {
         if ($this->disableMigrationScan) {
             return;

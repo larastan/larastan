@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Properties;
 
-/** @see https://github.com/psalm/laravel-psalm-plugin/blob/master/src/SchemaTable.php */
 final class SchemaConnection
 {
     /** @var array<string, SchemaTable> */

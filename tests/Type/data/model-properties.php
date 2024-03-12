@@ -6,6 +6,7 @@ use App\Account;
 use App\Address;
 use App\Casts\BackedEnumeration;
 use App\Casts\BasicEnumeration;
+use App\FooThread;
 use App\FooUser;
 use App\Group;
 use App\GuardedModel;
@@ -96,10 +97,11 @@ assertType('int', $roleUser->user_id);
 // Foo Connection
 
 /** @var FooUser $fooUser */
+/** @var FooThread $fooThread */
 assertType('int', $fooUser->id);
 assertType('string', $fooUser->password);
 assertType('*ERROR*', $fooUser->notaproperty);
 assertType('*ERROR*', $fooUser->floatButRoundedDecimalString);
 
-assertType('int', $thread->id);
-assertType('bool', $thread->active);
+assertType('int', $fooThread->id);
+assertType('bool', $fooThread->active);

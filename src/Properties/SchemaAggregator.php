@@ -68,17 +68,6 @@ final class SchemaAggregator
 
         $this->connectionStack[] = $this->modelDatabaseHelper->getOrCreateConnection($connectionName);
 
-        // /** @var  PhpParser\Node\Stmt\ClassMethod[] $methods */
-        // $methods = $nodeFinder->findInstanceOf($stmts, PhpParser\Node\Stmt\ClassMethod::class);
-
-        // foreach ($stmts as $stmt) {
-        //     if ($method->name->name !== 'up' || ! $method->stmts) {
-        //         continue;
-        //     }
-
-        //     $this->addUpMethodStatements($method->stmts);
-        // }
-
         foreach ($stmts as $stmt) {
             if (
                 ! ($stmt instanceof PhpParser\Node\Stmt\ClassMethod)
