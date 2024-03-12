@@ -13,6 +13,11 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Thread extends Model
 {
+    protected $connection = 'foo';
+
+    // This is testing Postgres schemas (sub-databases)
+    protected $table = 'private.threads';
+
     public function scopeValid(Builder $query): Builder
     {
         return $query->where('name', true);

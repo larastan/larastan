@@ -6,6 +6,7 @@ use App\Account;
 use App\Address;
 use App\Casts\BackedEnumeration;
 use App\Casts\BasicEnumeration;
+use App\FooUser;
 use App\Group;
 use App\GuardedModel;
 use App\Role;
@@ -30,6 +31,7 @@ function test(
     Thread $thread,
     Address $address,
     RoleUser $roleUser,
+    FooUser $fooUser,
 ): void {
     assertType('*ERROR*', $user->newStyleAttribute); // Doesn't have generic type, so we treat as it doesnt exist
     assertType('int', $user->stringButInt);
@@ -86,11 +88,21 @@ function test(
     assertType('int', $address->user_id);
     assertType('int', $address->custom_foreign_id_for_name);
     assertType('string', $address->address_id);
-    assertType('string', $address->nullable_address_id); // overridden by a @property
+    assertType('string', $address->nullable_address_id); // overriden by a @property
     assertType('int', $address->foreign_id_constrained);
     assertType('int|null', $address->nullable_foreign_id_constrained);
     assertType('App\ValueObjects\Favorites', $user->favorites);
     assertType('string', $address->uuid);
     assertType('string', $roleUser->role_id);
     assertType('int', $roleUser->user_id);
+
+    // Foo Connection
+
+    assertType('int', $fooUser->id);
+    assertType('string', $fooUser->password);
+    assertType('*ERROR*', $fooUser->notaproperty);
+    assertType('*ERROR*', $fooUser->floatButRoundedDecimalString);
+
+    assertType('int', $thread->id);
+    assertType('bool', $thread->active);
 }
