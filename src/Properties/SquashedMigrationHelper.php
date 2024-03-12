@@ -19,6 +19,7 @@ use SplFileInfo;
 use function array_filter;
 use function array_key_exists;
 use function database_path;
+use function explode;
 use function file_get_contents;
 use function is_array;
 use function is_dir;
@@ -36,11 +37,10 @@ final class SquashedMigrationHelper
     ) {
     }
 
-    /** @return SchemaTable[] */
-    public function initializeTables(): array
+    public function initializeTables(ModelDatabaseHelper &$modelDatabaseHelper): void
     {
         if ($this->disableSchemaScan) {
-            return [];
+            return;
         }
 
         if (empty($this->schemaPaths)) {
@@ -50,15 +50,19 @@ final class SquashedMigrationHelper
         $filesArray = $this->getSchemaFiles();
 
         if (empty($filesArray)) {
-            return [];
+            return;
         }
 
         ksort($filesArray);
 
-        /** @var array<string, SchemaTable> $tables */
-        $tables = [];
-
         foreach ($filesArray as $file) {
+            // Laravel generates schema files with the format `connectionName-schema.{sql,dump}`
+            // If the file name does not match the expected format, then we just use the
+            // file name as the connection name.
+            $baseName       = explode('.', $file->getBasename())[0];
+            $connectionName = explode('-schema', $baseName)[0];
+            $connection     = new SchemaConnection($connectionName);
+
             $fileContents = file_get_contents($file->getPathname());
 
             if ($fileContents === false) {
@@ -76,7 +80,7 @@ final class SquashedMigrationHelper
             $createStatements = array_filter($parser->statements, static fn (Statement $statement) => $statement instanceof CreateStatement && $statement->name !== null);
 
             foreach ($createStatements as $createStatement) {
-                if ($createStatement->name?->table === null || array_key_exists($createStatement->name->table, $tables)) {
+                if ($createStatement->name?->table === null || array_key_exists($createStatement->name->table, $connection->tables)) {
                     continue;
                 }
 
@@ -94,11 +98,11 @@ final class SquashedMigrationHelper
                     $table->setColumn(new SchemaColumn($field->name, $this->converter->convert($field->type), $this->isNullable($field)));
                 }
 
-                $tables[$createStatement->name->table] = $table;
+                $connection->setTable($table);
             }
-        }
 
-        return $tables;
+            $modelDatabaseHelper->setConnection($connection);
+        }
     }
 
     /** @return SplFileInfo[] */
