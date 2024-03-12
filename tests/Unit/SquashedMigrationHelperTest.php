@@ -4,76 +4,49 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use Larastan\Larastan\Properties\Schema\PhpMyAdminDataTypeToPhpTypeConverter;
-use Larastan\Larastan\Properties\SquashedMigrationHelper;
-use PHPStan\File\FileHelper;
 use PHPStan\Testing\PHPStanTestCase;
+use Tests\Unit\Concerns\HasDatabaseHelper;
 
 use function array_keys;
 
 /** @covers \Larastan\Larastan\Properties\SquashedMigrationHelper */
 class SquashedMigrationHelperTest extends PHPStanTestCase
 {
+    use HasDatabaseHelper;
+
     /** @test */
-    public function it_can_parse_schema_dump_for_a_basic_schema(): void
+    public function it_can_parse_basic_schema_in_different_formats(): void
     {
-        $schemaParser = new SquashedMigrationHelper(
-            [__DIR__ . '/data/schema/basic_schema'],
-            self::getContainer()->getByType(FileHelper::class),
-            new PhpMyAdminDataTypeToPhpTypeConverter(),
-            false,
-        );
+        $this->getSquashedMigrationHelper([__DIR__ . '/data/schema/basic_schema'])
+            ->initializeTables($this->modelDatabaseHelper);
 
-        $tables = $schemaParser->initializeTables();
+        $this->assertCount(2, $this->modelDatabaseHelper->connections);
+        $this->assertArrayHasKey('default', $this->modelDatabaseHelper->connections);
+        $this->assertArrayHasKey('nondefault', $this->modelDatabaseHelper->connections);
 
-        $this->assertCount(1, $tables);
-        $this->assertArrayHasKey('accounts', $tables);
-        $this->assertCount(6, $tables['accounts']->columns);
-        $this->assertSame(['id', 'name', 'active', 'description', 'created_at', 'updated_at'], array_keys($tables['accounts']->columns));
-        $this->assertSame('int', $tables['accounts']->columns['id']->readableType);
-        $this->assertSame('string', $tables['accounts']->columns['name']->readableType);
-        $this->assertSame('string', $tables['accounts']->columns['active']->readableType);
-        $this->assertSame('string', $tables['accounts']->columns['description']->readableType);
-        $this->assertSame('string', $tables['accounts']->columns['created_at']->readableType);
-        $this->assertSame('string', $tables['accounts']->columns['updated_at']->readableType);
+        foreach ($this->modelDatabaseHelper->connections as $connection) {
+            $tables = $connection->tables;
+
+            $this->assertCount(6, $tables['accounts']->columns);
+            $this->assertSame(['id', 'name', 'active', 'description', 'created_at', 'updated_at'], array_keys($tables['accounts']->columns));
+            $this->assertSame('int', $tables['accounts']->columns['id']->readableType);
+            $this->assertSame('string', $tables['accounts']->columns['name']->readableType);
+            $this->assertSame('string', $tables['accounts']->columns['active']->readableType);
+            $this->assertSame('string', $tables['accounts']->columns['description']->readableType);
+            $this->assertSame('string', $tables['accounts']->columns['created_at']->readableType);
+            $this->assertSame('string', $tables['accounts']->columns['updated_at']->readableType);
+        }
     }
 
     /** @test */
     public function it_will_ignore_if_table_already_exists_in_parsed_tables_array(): void
     {
-        $schemaParser = new SquashedMigrationHelper(
-            [__DIR__ . '/data/schema/multiple_schemas_for_same_table'],
-            self::getContainer()->getByType(FileHelper::class),
-            new PhpMyAdminDataTypeToPhpTypeConverter(),
-            false,
-        );
+        $this->getSquashedMigrationHelper([__DIR__ . '/data/schema/schema_with_create_statements_for_same_table'])
+            ->initializeTables($this->modelDatabaseHelper);
 
-        $tables = $schemaParser->initializeTables();
-
-        $this->assertCount(1, $tables);
-        $this->assertArrayHasKey('accounts', $tables);
-        $this->assertCount(6, $tables['accounts']->columns);
-        $this->assertSame(['id', 'name', 'active', 'description', 'created_at', 'updated_at'], array_keys($tables['accounts']->columns));
-        $this->assertSame('int', $tables['accounts']->columns['id']->readableType);
-        $this->assertSame('string', $tables['accounts']->columns['name']->readableType);
-        $this->assertSame('string', $tables['accounts']->columns['active']->readableType);
-        $this->assertSame('string', $tables['accounts']->columns['description']->readableType);
-        $this->assertSame('string', $tables['accounts']->columns['created_at']->readableType);
-        $this->assertSame('string', $tables['accounts']->columns['updated_at']->readableType);
-    }
-
-    /** @test */
-    public function it_can_find_schemas_with_sql_suffix(): void
-    {
-        $schemaParser = new SquashedMigrationHelper(
-            [__DIR__ . '/data/schema/basic_schema_with_sql_extension'],
-            self::getContainer()->getByType(FileHelper::class),
-            new PhpMyAdminDataTypeToPhpTypeConverter(),
-            false,
-        );
-
-        $tables = $schemaParser->initializeTables();
-
+        $this->assertCount(1, $this->modelDatabaseHelper->connections);
+        $this->assertArrayHasKey('mysql', $this->modelDatabaseHelper->connections);
+        $tables = $this->modelDatabaseHelper->connections['mysql']->tables;
         $this->assertCount(1, $tables);
         $this->assertArrayHasKey('accounts', $tables);
         $this->assertCount(6, $tables['accounts']->columns);
@@ -89,15 +62,12 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
     /** @test */
     public function it_can_find_schemas_with_different_extensions(): void
     {
-        $schemaParser = new SquashedMigrationHelper(
-            [__DIR__ . '/data/schema/multiple_schemas_with_different_extensions'],
-            self::getContainer()->getByType(FileHelper::class),
-            new PhpMyAdminDataTypeToPhpTypeConverter(),
-            false,
-        );
+        $this->getSquashedMigrationHelper([__DIR__ . '/data/schema/schema_with_nonstandard_name'])
+            ->initializeTables($this->modelDatabaseHelper);
 
-        $tables = $schemaParser->initializeTables();
-
+        $this->assertCount(1, $this->modelDatabaseHelper->connections);
+        $this->assertArrayHasKey('pgsql', $this->modelDatabaseHelper->connections);
+        $tables = $this->modelDatabaseHelper->connections['pgsql']->tables;
         $this->assertCount(2, $tables);
         $this->assertArrayHasKey('accounts', $tables);
         $this->assertCount(6, $tables['accounts']->columns);
@@ -122,15 +92,9 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
     /** @test */
     public function it_can_disable_schema_scanning(): void
     {
-        $schemaParser = new SquashedMigrationHelper(
-            [__DIR__ . '/data/schema/multiple_schemas_with_different_extensions'],
-            self::getContainer()->getByType(FileHelper::class),
-            new PhpMyAdminDataTypeToPhpTypeConverter(),
-            true,
-        );
+        $this->getSquashedMigrationHelper([__DIR__ . '/data/schema/basic_schema'], true)
+            ->initializeTables($this->modelDatabaseHelper);
 
-        $tables = $schemaParser->initializeTables();
-
-        $this->assertSame([], $tables);
+        $this->assertSame([], $this->modelDatabaseHelper->connections);
     }
 }

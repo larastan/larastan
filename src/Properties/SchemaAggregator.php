@@ -16,6 +16,7 @@ use function array_pop;
 use function class_basename;
 use function count;
 use function end;
+use function in_array;
 use function is_string;
 use function property_exists;
 use function strtolower;
