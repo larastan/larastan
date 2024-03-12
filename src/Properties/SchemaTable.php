@@ -10,8 +10,9 @@ final class SchemaTable
     /** @var array<string, SchemaColumn> */
     public array $columns = [];
 
-    public function __construct(public string $name)
-    {
+    public function __construct(
+        public string $name,
+    ) {
     }
 
     public function setColumn(SchemaColumn $column): void
