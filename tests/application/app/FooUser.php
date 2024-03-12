@@ -7,7 +7,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class FooUser extends Authenticatable
 {
-    protected $connection = 'foo';
+    // test overriding methods
+    public function getConnectionName()
+    {
+        return 'foo';
+    }
 
     public function getTable()
     {

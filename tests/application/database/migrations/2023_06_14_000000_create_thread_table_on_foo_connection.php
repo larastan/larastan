@@ -16,6 +16,7 @@ return new class() extends Migration
 
     public function up(): void
     {
+        // This is testing Postgres schemas (sub-databases)
         Schema::create('private.threads', static function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');

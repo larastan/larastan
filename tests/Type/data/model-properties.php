@@ -6,6 +6,7 @@ use App\Account;
 use App\Address;
 use App\Casts\BackedEnumeration;
 use App\Casts\BasicEnumeration;
+use App\FooThread;
 use App\FooUser;
 use App\Group;
 use App\GuardedModel;
@@ -32,6 +33,7 @@ function test(
     Address $address,
     RoleUser $roleUser,
     FooUser $fooUser,
+    FooThread $fooThread,
 ): void {
     assertType('*ERROR*', $user->newStyleAttribute); // Doesn't have generic type, so we treat as it doesnt exist
     assertType('int', $user->stringButInt);
@@ -103,6 +105,6 @@ function test(
     assertType('*ERROR*', $fooUser->notaproperty);
     assertType('*ERROR*', $fooUser->floatButRoundedDecimalString);
 
-    assertType('int', $thread->id);
-    assertType('bool', $thread->active);
+    assertType('int', $fooThread->id);
+    assertType('bool', $fooThread->active);
 }

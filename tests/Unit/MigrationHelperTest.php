@@ -18,7 +18,7 @@ class MigrationHelperTest extends PHPStanTestCase
     public function it_will_return_empty_array_if_migrations_path_is_not_a_directory(): void
     {
         $this->getMigrationHelper(['foobar'])
-            ->initializeTables($this->modelDatabaseHelper);
+            ->parseMigrations($this->modelDatabaseHelper);
 
         self::assertSame([], $this->modelDatabaseHelper->connections);
     }
@@ -27,7 +27,7 @@ class MigrationHelperTest extends PHPStanTestCase
     public function it_can_read_basic_migrations_and_create_table_structure(): void
     {
         $this->getMigrationHelper([__DIR__ . '/data/basic_migration'])
-            ->initializeTables($this->modelDatabaseHelper);
+            ->parseMigrations($this->modelDatabaseHelper);
 
         self::assertCount(1, $this->modelDatabaseHelper->connections);
         self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);
@@ -41,7 +41,7 @@ class MigrationHelperTest extends PHPStanTestCase
     public function it_can_read_schema_definitions_from_any_method_in_class(): void
     {
         $this->getMigrationHelper([__DIR__ . '/data/migrations_with_different_methods'])
-            ->initializeTables($this->modelDatabaseHelper);
+            ->parseMigrations($this->modelDatabaseHelper);
 
         self::assertCount(1, $this->modelDatabaseHelper->connections);
         self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);
@@ -55,7 +55,7 @@ class MigrationHelperTest extends PHPStanTestCase
     public function it_can_read_schema_definitions_with_multiple_create_and_drop_methods_for_one_table(): void
     {
         $this->getMigrationHelper([__DIR__ . '/data/complex_migrations'])
-            ->initializeTables($this->modelDatabaseHelper);
+            ->parseMigrations($this->modelDatabaseHelper);
 
         self::assertCount(1, $this->modelDatabaseHelper->connections);
         self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);
@@ -84,7 +84,7 @@ class MigrationHelperTest extends PHPStanTestCase
         $this->getMigrationHelper([
             __DIR__ . '/data/basic_migration',
             __DIR__ . '/data/additional_migrations',
-        ])->initializeTables($this->modelDatabaseHelper);
+        ])->parseMigrations($this->modelDatabaseHelper);
 
         self::assertCount(1, $this->modelDatabaseHelper->connections);
         self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);
@@ -100,7 +100,7 @@ class MigrationHelperTest extends PHPStanTestCase
     public function it_can_handle_use_of_after_method_in_migration(): void
     {
         $this->getMigrationHelper([__DIR__ . '/data/migrations_using_after_method'])
-            ->initializeTables($this->modelDatabaseHelper);
+            ->parseMigrations($this->modelDatabaseHelper);
 
         self::assertCount(1, $this->modelDatabaseHelper->connections);
         self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);
@@ -122,7 +122,7 @@ class MigrationHelperTest extends PHPStanTestCase
     public function it_can_handle_alter_table_and_column_rename(): void
     {
         $this->getMigrationHelper([__DIR__ . '/data/rename_migrations'])
-            ->initializeTables($this->modelDatabaseHelper);
+            ->parseMigrations($this->modelDatabaseHelper);
 
         self::assertCount(1, $this->modelDatabaseHelper->connections);
         self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);
@@ -142,7 +142,7 @@ class MigrationHelperTest extends PHPStanTestCase
     public function it_can_handle_migrations_with_soft_deletes(): void
     {
         $this->getMigrationHelper([__DIR__ . '/data/migrations_using_soft_deletes'])
-            ->initializeTables($this->modelDatabaseHelper);
+            ->parseMigrations($this->modelDatabaseHelper);
 
         self::assertCount(1, $this->modelDatabaseHelper->connections);
         self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);
@@ -159,7 +159,7 @@ class MigrationHelperTest extends PHPStanTestCase
     public function it_can_handle_migrations_with_soft_deletes_tz(): void
     {
         $this->getMigrationHelper([__DIR__ . '/data/migrations_using_soft_deletes_tz'])
-            ->initializeTables($this->modelDatabaseHelper);
+            ->parseMigrations($this->modelDatabaseHelper);
 
         self::assertCount(1, $this->modelDatabaseHelper->connections);
         self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);
@@ -203,7 +203,7 @@ class MigrationHelperTest extends PHPStanTestCase
     public function it_can_handle_different_schema_connections(): void
     {
         $this->getMigrationHelper([__DIR__ . '/data/migration_with_schema_connection'])
-            ->initializeTables($this->modelDatabaseHelper);
+            ->parseMigrations($this->modelDatabaseHelper);
 
         self::assertCount(3, $this->modelDatabaseHelper->connections);
         self::assertArrayHasKey('foo', $this->modelDatabaseHelper->connections);
@@ -253,7 +253,7 @@ class MigrationHelperTest extends PHPStanTestCase
     public function it_can_handle_nullable_in_migrations(): void
     {
         $this->getMigrationHelper([__DIR__ . '/data/migrations_using_nullable'])
-            ->initializeTables($this->modelDatabaseHelper);
+            ->parseMigrations($this->modelDatabaseHelper);
 
         self::assertCount(1, $this->modelDatabaseHelper->connections);
         self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);
@@ -269,7 +269,7 @@ class MigrationHelperTest extends PHPStanTestCase
     public function it_can_handle_migrations_with_array_passed_to_drop_column(): void
     {
         $this->getMigrationHelper([__DIR__ . '/data/migrations_using_drop_column'])
-            ->initializeTables($this->modelDatabaseHelper);
+            ->parseMigrations($this->modelDatabaseHelper);
 
         self::assertCount(1, $this->modelDatabaseHelper->connections);
         self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);
@@ -286,7 +286,7 @@ class MigrationHelperTest extends PHPStanTestCase
     public function it_can_handle_migrations_with_if_statements(): void
     {
         $this->getMigrationHelper([__DIR__ . '/data/conditional_migrations'])
-            ->initializeTables($this->modelDatabaseHelper);
+            ->parseMigrations($this->modelDatabaseHelper);
 
         self::assertCount(1, $this->modelDatabaseHelper->connections);
         self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);
@@ -304,7 +304,7 @@ class MigrationHelperTest extends PHPStanTestCase
     public function it_can_disable_migration_scanning(): void
     {
         $this->getMigrationHelper([__DIR__ . '/data/basic_migration'], true)
-            ->initializeTables($this->modelDatabaseHelper);
+            ->parseMigrations($this->modelDatabaseHelper);
 
         self::assertSame([], $this->modelDatabaseHelper->connections);
     }
