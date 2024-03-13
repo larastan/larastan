@@ -240,4 +240,12 @@ class User extends Authenticatable
             fn (string $value) => strtolower($value)
         );
     }
+
+    /** @return Attribute<int, never> */
+    protected function computed(): Attribute
+    {
+        return Attribute::get(
+            fn ($value) => 5,
+        );
+    }
 }
