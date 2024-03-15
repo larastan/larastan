@@ -83,6 +83,28 @@ final class SchemaAggregator
                 && ($stmt->expr->class->toCodeString() === '\Schema' || (new ObjectType('Illuminate\Support\Facades\Schema'))->isSuperTypeOf(new ObjectType($stmt->expr->class->toCodeString()))->yes())
             ) {
                 $statement = $stmt->expr;
+            } elseif (
+                $stmt instanceof PhpParser\Node\Stmt\Expression
+                && $stmt->expr instanceof PhpParser\Node\Expr\Assign
+                && $stmt->expr->var instanceof PhpParser\Node\Expr\Variable
+                && is_string($stmt->expr->var->name)
+                && $stmt->expr->expr instanceof PhpParser\Node\Expr\StaticCall
+                && $stmt->expr->expr->class instanceof PhpParser\Node\Name
+                && $stmt->expr->expr->name instanceof PhpParser\Node\Identifier
+                && ($stmt->expr->expr->name->toString() === 'connection' || $stmt->expr->expr->name->toString() === 'setConnection')
+                && ($stmt->expr->expr->class->toCodeString() === '\Schema' || (new ObjectType('Illuminate\Support\Facades\Schema'))->isSuperTypeOf(new ObjectType($stmt->expr->expr->class->toCodeString()))->yes())
+            ) {
+                $variable = $stmt->expr->var->name;
+
+                continue;
+            } elseif (
+                isset($variable)
+                && $stmt instanceof PhpParser\Node\Stmt\Expression
+                && $stmt->expr instanceof PhpParser\Node\Expr\MethodCall
+                && $stmt->expr->var instanceof PhpParser\Node\Expr\Variable
+                && $stmt->expr->var->name === $variable
+            ) {
+                $statement = $stmt->expr;
             } else {
                 continue;
             }
