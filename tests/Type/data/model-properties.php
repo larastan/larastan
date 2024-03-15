@@ -49,8 +49,11 @@ function foo(User $user, Account $account, Role $role, Group $group, Team $team,
     assertType(CarbonImmutable::class, $user->immutable_datetime);
     assertType('int', $user->timestamp);
     assertType('\'active\'|\'inactive\'', $user->enum_status);
-    assertType(BasicEnumeration::class, $user->basic_enum);
-    assertType(BackedEnumeration::class, $user->backed_enum);
+
+    if (version_compare(PHP_VERSION, '8.1', '>=')) {
+        assertType(BasicEnumeration::class, $user->basic_enum);
+        assertType(BackedEnumeration::class, $user->backed_enum);
+    }
 
     // Castable
     assertType(Stringable::class, $user->castable_with_argument);

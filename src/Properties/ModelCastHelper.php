@@ -29,6 +29,9 @@ use PHPStan\Type\TypeCombinator;
 
 use function class_exists;
 use function explode;
+use function version_compare;
+
+use const PHP_VERSION;
 
 class ModelCastHelper
 {
@@ -67,7 +70,7 @@ class ModelCastHelper
 
         $classReflection = $this->reflectionProvider->getClass($cast);
 
-        if ($classReflection->isEnum()) {
+        if (version_compare(PHP_VERSION, '8.1', '>=') && $classReflection->isEnum()) {
             return new ObjectType($cast);
         }
 
@@ -124,7 +127,7 @@ class ModelCastHelper
 
         $classReflection = $this->reflectionProvider->getClass($cast);
 
-        if ($classReflection->isEnum()) {
+        if (version_compare(PHP_VERSION, '8.1', '>=') && $classReflection->isEnum()) {
             return new ObjectType($cast);
         }
 
