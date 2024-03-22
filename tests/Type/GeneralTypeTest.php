@@ -8,6 +8,8 @@ use PHPStan\Testing\TypeInferenceTestCase;
 
 use function version_compare;
 
+use const PHP_VERSION;
+
 class GeneralTypeTest extends TypeInferenceTestCase
 {
     /** @return iterable<mixed> */
@@ -60,6 +62,10 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/view-exists.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/view.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/where-relation.php');
+
+        if (version_compare(PHP_VERSION, '8.1.0', '>=')) {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/model-properties-php8-1.php');
+        }
 
         if (version_compare(LARAVEL_VERSION, '10.15.0', '>=')) {
             yield from self::gatherAssertTypes(__DIR__ . '/data/model-l10-15.php');
