@@ -50,7 +50,7 @@ function foo(User $user, Account $account, Role $role, Group $group, Team $team,
     assertType('int', $user->timestamp);
     assertType('\'active\'|\'inactive\'', $user->enum_status);
 
-    if (version_compare(PHP_VERSION, '8.1', '>=')) {
+    if (version_compare(PHP_VERSION, '8.1.0', '>=')) {
         assertType(BasicEnumeration::class, $user->basic_enum);
         assertType(BackedEnumeration::class, $user->backed_enum);
     }

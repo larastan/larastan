@@ -70,7 +70,7 @@ class ModelCastHelper
 
         $classReflection = $this->reflectionProvider->getClass($cast);
 
-        if (version_compare(PHP_VERSION, '8.1', '>=') && $classReflection->isEnum()) {
+        if (version_compare(PHP_VERSION, '8.1.0', '>=') && $classReflection->isEnum()) {
             return new ObjectType($cast);
         }
 
@@ -127,7 +127,7 @@ class ModelCastHelper
 
         $classReflection = $this->reflectionProvider->getClass($cast);
 
-        if (version_compare(PHP_VERSION, '8.1', '>=') && $classReflection->isEnum()) {
+        if (version_compare(PHP_VERSION, '8.1.0', '>=') && $classReflection->isEnum()) {
             return new ObjectType($cast);
         }
 
