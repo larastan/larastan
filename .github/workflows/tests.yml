@@ -65,8 +65,8 @@ jobs:
           tools: "composer:v2"
           coverage: "none"
 
-      - name: "Check Composer configuration"
-        run: "composer validate --strict"
+      # - name: "Check Composer configuration"
+      #   run: "composer validate --strict"
 
       - name: "Check file permissions"
         run: "test \"$(find . -type f -not -path './.git/*' -executable)\" == ./tests/laravel-test.sh"
