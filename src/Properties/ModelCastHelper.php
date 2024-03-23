@@ -146,7 +146,9 @@ class ModelCastHelper
 
             $valueParameter = Arr::first($parameters, static fn (ParameterReflection $parameterReflection) => $parameterReflection->getName() === 'value');
 
-            return $valueParameter->getType();
+            if ($valueParameter) {
+                return $valueParameter->getType();
+            }
         }
 
         return new MixedType();
