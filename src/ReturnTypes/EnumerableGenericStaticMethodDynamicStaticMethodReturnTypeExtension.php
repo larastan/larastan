@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Larastan\Larastan\ReturnTypes;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Enumerable;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
@@ -24,7 +25,7 @@ use PHPStan\Type\UnionType;
 use function array_map;
 use function in_array;
 
-class CollectionGenericStaticMethodDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
+class EnumerableGenericStaticMethodDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
 {
     public function __construct(private ReflectionProvider $reflectionProvider)
     {
@@ -32,7 +33,7 @@ class CollectionGenericStaticMethodDynamicStaticMethodReturnTypeExtension implem
 
     public function getClass(): string
     {
-        return Collection::class;
+        return Enumerable::class;
     }
 
     public function isStaticMethodSupported(MethodReflection $methodReflection): bool
