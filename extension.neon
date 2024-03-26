@@ -400,6 +400,11 @@ services:
         class: Larastan\Larastan\Rules\ModelProperties\ModelPropertyRule
 
     -
+        class: Larastan\Larastan\Rules\ModelAppendsRule
+        tags:
+            - phpstan.rules.rule
+
+    -
         class: Larastan\Larastan\Rules\ModelProperties\ModelPropertyStaticCallRule
 
     -
@@ -429,7 +434,6 @@ services:
             databaseMigrationPath: %databaseMigrationsPath%
             disableMigrationScan: %disableMigrationScan%
             parser: @currentPhpVersionSimpleDirectParser
-            reflectionProvider: @reflectionProvider
 
     -
         class: Larastan\Larastan\Properties\SquashedMigrationHelper
@@ -439,6 +443,12 @@ services:
 
     -
         class: Larastan\Larastan\Properties\ModelCastHelper
+
+    -
+        class: Larastan\Larastan\Properties\ModelDatabaseHelper
+
+    -
+        class: Larastan\Larastan\Properties\ModelPropertyHelper
 
     -
         class: Larastan\Larastan\Rules\ModelProperties\ModelPropertiesRuleHelper
