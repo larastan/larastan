@@ -33,7 +33,7 @@ parameters:
 		-
 			message: "#^PHPDoc tag @var assumes the expression with type PHPStan\\\\Type\\\\Type is always PHPStan\\\\Type\\\\Generic\\\\GenericObjectType but it's error\\-prone and dangerous\\.$#"
 			count: 1
-			path: src/Properties/ModelAccessorExtension.php
+			path: src/Properties/ModelPropertyHelper.php
 
 		-
 			message: "#^Constant LARAVEL_VERSION not found\\.$#"
