@@ -6,6 +6,8 @@ namespace Larastan\Larastan\Types;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Return_;
 use PhpParser\NodeFinder;
 use PHPStan\Analyser\ScopeContext;
 use PHPStan\Analyser\ScopeFactory;
@@ -19,44 +21,34 @@ use function method_exists;
 
 class RelationParserHelper
 {
-    public function __construct(private Parser $parser, private ScopeFactory $scopeFactory, private ReflectionProvider $reflectionProvider)
-    {
+    public function __construct(
+        private Parser $parser,
+        private ScopeFactory $scopeFactory,
+        private ReflectionProvider $reflectionProvider,
+    ) {
     }
 
-    public function findRelatedModelInRelationMethod(
-        MethodReflection $methodReflection,
-    ): string|null {
-        if (method_exists($methodReflection, 'getDeclaringTrait') && $methodReflection->getDeclaringTrait() !== null) {
-            $fileName = $methodReflection->getDeclaringTrait()->getFileName();
-        } else {
-            $fileName = $methodReflection
-                ->getDeclaringClass()
-                ->getNativeReflection()
-                ->getMethod($methodReflection->getName())
-                ->getFileName();
-        }
+    public function findRelatedModelInRelationMethod(MethodReflection $methodReflection): string|null
+    {
+        $fileName = $this->getFileNameContainingMethod($methodReflection);
 
-        if ($fileName === false || $fileName === null) {
+        if ($fileName === null) {
             return null;
         }
 
-        $fileStmts = $this->parser->parseFile($fileName);
-
-        /** @var Node\Stmt\ClassMethod|null $relationMethod */
-        $relationMethod = $this->findMethod($methodReflection->getName(), $fileStmts);
+        $relationMethod = $this->findRelationMethod($methodReflection, $fileName);
 
         if ($relationMethod === null) {
             return null;
         }
 
-        /** @var Node\Stmt\Return_|null $returnStmt */
-        $returnStmt = $this->findReturn($relationMethod);
+        $returnStatement = $this->findReturn($relationMethod);
 
-        if ($returnStmt === null || ! $returnStmt->expr instanceof MethodCall) {
+        if ($returnStatement === null || ! $returnStatement->expr instanceof MethodCall) {
             return null;
         }
 
-        $methodCall = $returnStmt->expr;
+        $methodCall = $returnStatement->expr;
 
         while ($methodCall->var instanceof MethodCall) {
             $methodCall = $methodCall->var;
@@ -100,19 +92,91 @@ class RelationParserHelper
         return $this->reflectionProvider->hasClass($returnClass) ? $returnClass : null;
     }
 
-    private function findMethod(string $method, mixed $statements): Node|null
+    public function isRelationWithDefault(MethodReflection $methodReflection): bool
     {
-        return (new NodeFinder())->findFirst($statements, static function (Node $node) use ($method) {
-            return $node instanceof Node\Stmt\ClassMethod
-                && $node->name->toString() === $method;
-        });
+        $fileName = $this->getFileNameContainingMethod($methodReflection);
+
+        if ($fileName === null) {
+            return false;
+        }
+
+        $relationMethod = $this->findRelationMethod($methodReflection, $fileName);
+
+        if ($relationMethod === null) {
+            return false;
+        }
+
+        $returnStatement = $this->findReturn($relationMethod);
+
+        if ($returnStatement === null || ! $returnStatement->expr instanceof MethodCall) {
+            return false;
+        }
+
+        $methodCall = $returnStatement->expr;
+
+        while ($methodCall instanceof MethodCall) {
+            if (
+                $methodCall->name instanceof Node\Identifier
+                && $methodCall->name->toString() === 'withDefault'
+            ) {
+                return true;
+            }
+
+            $methodCall = $methodCall->var;
+        }
+
+        return false;
     }
 
-    private function findReturn(Node\Stmt\ClassMethod $relationMethod): Node|null
+    /** @param  array<int, Node> $statements */
+    private function findMethod(string $method, array $statements): ClassMethod|null
+    {
+        /** @var ClassMethod|null $node */
+        $node = (new NodeFinder())->findFirst($statements, static function (Node $node) use ($method) {
+            return $node instanceof ClassMethod
+                && $node->name->toString() === $method;
+        });
+
+        return $node;
+    }
+
+    private function findReturn(ClassMethod $relationMethod): Return_|null
     {
         /** @var Node[] $statements */
         $statements = $relationMethod->stmts;
 
-        return (new NodeFinder())->findFirstInstanceOf($statements, Node\Stmt\Return_::class);
+        /** @var Return_|null $node */
+        $node = (new NodeFinder())->findFirstInstanceOf($statements, Return_::class);
+
+        return $node;
+    }
+
+    private function getFileNameContainingMethod(MethodReflection $methodReflection): string|null
+    {
+        if (method_exists($methodReflection, 'getDeclaringTrait') && $methodReflection->getDeclaringTrait() !== null) {
+            $fileName = $methodReflection->getDeclaringTrait()->getFileName();
+        } else {
+            $fileName = $methodReflection
+                ->getDeclaringClass()
+                ->getNativeReflection()
+                ->getMethod($methodReflection->getName())
+                ->getFileName();
+        }
+
+        if ($fileName === false || $fileName === null) {
+            return null;
+        }
+
+        return $fileName;
+    }
+
+    private function findRelationMethod(
+        MethodReflection $methodReflection,
+        string $fileName,
+    ): ClassMethod|null {
+        return $this->findMethod(
+            $methodReflection->getName(),
+            $this->parser->parseFile($fileName),
+        );
     }
 }

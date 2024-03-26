@@ -42,8 +42,10 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
 {
     use Concerns\HasContainer;
 
-    public function __construct(private RelationParserHelper $relationParserHelper, private CollectionHelper $collectionHelper)
-    {
+    public function __construct(
+        private RelationParserHelper $relationParserHelper,
+        private CollectionHelper $collectionHelper,
+    ) {
     }
 
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
@@ -105,7 +107,7 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
             $relatedModelClassNames = [$modelName];
         }
 
-        $relationType = TypeTraverser::map($returnType, function (Type $type, callable $traverse) use ($relatedModelClassNames, $relatedModel) {
+        $relationType = TypeTraverser::map($returnType, function (Type $type, callable $traverse) use ($relatedModelClassNames, $relatedModel, $method) {
             if ($type instanceof UnionType || $type instanceof IntersectionType) {
                 return $traverse($type);
             }
@@ -163,10 +165,11 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
                 }
             }
 
-            return new UnionType([
-                $relatedModel,
-                new NullType(),
-            ]);
+            if ($this->relationParserHelper->isRelationWithDefault($method)) {
+                return $relatedModel;
+            }
+
+            return new UnionType([$relatedModel, new NullType()]);
         });
 
         return new ModelProperty($classReflection, $relationType, new NeverType(), false);
