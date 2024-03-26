@@ -16,10 +16,9 @@ use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
-use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Generic\TemplateObjectType;
 use PHPStan\Type\IntegerType;
-use PHPStan\Type\ObjectType;
+use PHPStan\Type\ThisType;
 
 use function array_key_exists;
 use function in_array;
@@ -28,6 +27,9 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
 {
     /** @var array<string, MethodReflection> */
     private array $cache = [];
+
+    /** @var string[] */
+    private array $softDeletesMethods = ['withTrashed', 'onlyTrashed', 'withoutTrashed', 'restore', 'createOrRestore', 'restoreOrCreate'];
 
     public function __construct(private BuilderHelper $builderHelper, private ReflectionProvider $reflectionProvider)
     {
@@ -95,56 +97,30 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
         $ref = $this->builderHelper->searchOnEloquentBuilder($classReflection, $methodName, $modelReflection);
 
         if ($ref === null) {
-            // Special case for `SoftDeletes` trait
             if (
-                in_array($methodName, ['withTrashed', 'onlyTrashed', 'withoutTrashed', 'restore', 'createOrRestore', 'restoreOrCreate'], true) &&
-                array_key_exists(SoftDeletes::class, $modelReflection->getTraits(true))
+                ! in_array($methodName, $this->softDeletesMethods, true) ||
+                ! array_key_exists(SoftDeletes::class, $modelReflection->getTraits(true))
             ) {
-                $ref = $this->reflectionProvider->getClass(SoftDeletes::class)->getMethod($methodName, new OutOfClassScope());
-
-                if ($methodName === 'restore') {
-                    return new EloquentBuilderMethodReflection(
-                        $methodName,
-                        $classReflection,
-                        ParametersAcceptorSelector::selectSingle($ref->getVariants())->getParameters(),
-                        new IntegerType(),
-                        ParametersAcceptorSelector::selectSingle($ref->getVariants())->isVariadic(),
-                    );
-                }
-
-                if ($methodName === 'restoreOrCreate' || $methodName === 'createOrRestore') {
-                    return new EloquentBuilderMethodReflection(
-                        $methodName,
-                        $classReflection,
-                        ParametersAcceptorSelector::selectSingle($ref->getVariants())->getParameters(),
-                        $modelType,
-                        ParametersAcceptorSelector::selectSingle($ref->getVariants())->isVariadic(),
-                    );
-                }
-
-                return new EloquentBuilderMethodReflection(
-                    $methodName,
-                    $classReflection,
-                    ParametersAcceptorSelector::selectSingle($ref->getVariants())->getParameters(),
-                    new GenericObjectType($classReflection->getName(), [$modelType]),
-                    ParametersAcceptorSelector::selectSingle($ref->getVariants())->isVariadic(),
-                );
+                return null;
             }
 
-            return null;
-        }
+            // Special case for `SoftDeletes` trait
+            $ref = $this->reflectionProvider->getClass(SoftDeletes::class)->getMethod($methodName, new OutOfClassScope());
 
-        $parametersAcceptor = ParametersAcceptorSelector::selectSingle($ref->getVariants());
-
-        if (in_array($methodName, $this->builderHelper->passthru, true)) {
-            $returnType = $parametersAcceptor->getReturnType();
+            if ($methodName === 'restore') {
+                $returnType = new IntegerType();
+            } elseif ($methodName === 'restoreOrCreate' || $methodName === 'createOrRestore') {
+                $returnType = $modelType;
+            } else {
+                $returnType = new ThisType($classReflection);
+            }
 
             return new EloquentBuilderMethodReflection(
                 $methodName,
                 $classReflection,
-                $parametersAcceptor->getParameters(),
+                ParametersAcceptorSelector::selectSingle($ref->getVariants())->getParameters(),
                 $returnType,
-                $parametersAcceptor->isVariadic(),
+                ParametersAcceptorSelector::selectSingle($ref->getVariants())->isVariadic(),
             );
         }
 
@@ -153,14 +129,14 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             return $ref;
         }
 
-        if ($classReflection->isGeneric()) {
-            $returnType = new GenericObjectType($classReflection->getName(), [$modelType]);
+        $parametersAcceptor = ParametersAcceptorSelector::selectSingle($ref->getVariants());
+
+        if (in_array($methodName, $this->builderHelper->passthru, true)) {
+            $returnType = $parametersAcceptor->getReturnType();
         } else {
-            $returnType = new ObjectType($classReflection->getName());
+            $returnType = new ThisType($classReflection);
         }
 
-        // Returning custom reflection
-        // to ensure return type is always `EloquentBuilder<Model>`
         return new EloquentBuilderMethodReflection(
             $methodName,
             $classReflection,

@@ -16,23 +16,6 @@ class Builder
      */
     public function make(array $attributes = []);
 
-    /**
-     * Register a new global scope.
-     *
-     * @param  string  $identifier
-     * @param  \Illuminate\Database\Eloquent\Scope|\Closure  $scope
-     * @return static
-     */
-    public function withGlobalScope($identifier, $scope);
-
-    /**
-     * Remove a registered global scope.
-     *
-     * @param  \Illuminate\Database\Eloquent\Scope|string  $scope
-     * @return static
-     */
-    public function withoutGlobalScope($scope);
-
     /** @phpstan-return TModelClass */
     public function getModel();
 
@@ -190,7 +173,7 @@ class Builder
      * @param  int  $count
      * @param  string  $boolean
      * @param  \Closure|null  $callback
-     * @return static
+     * @return $this
      *
      * @throws \RuntimeException
      */
@@ -202,7 +185,7 @@ class Builder
      * @param  string  $relation
      * @param  string  $operator
      * @param  int  $count
-     * @return static
+     * @return $this
      */
     public function orHas($relation, $operator = '>=', $count = 1);
 
@@ -212,7 +195,7 @@ class Builder
      * @param  string  $relation
      * @param  string  $boolean
      * @param  \Closure|null  $callback
-     * @return static
+     * @return $this
      */
     public function doesntHave($relation, $boolean = 'and', \Closure $callback = null);
 
@@ -220,7 +203,7 @@ class Builder
      * Add a relationship count / exists condition to the query with an "or".
      *
      * @param  string  $relation
-     * @return static
+     * @return $this
      */
     public function orDoesntHave($relation);
 
@@ -231,7 +214,7 @@ class Builder
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
-     * @return static
+     * @return $this
      */
     public function where($column, $operator = null, $value = null, $boolean = 'and');
 
@@ -252,7 +235,7 @@ class Builder
      * @param  \Closure|null  $callback
      * @param  string  $operator
      * @param  int  $count
-     * @return static
+     * @return $this
      */
     public function whereHas($relation, \Closure $callback = null, $operator = '>=', $count = 1);
 
@@ -265,7 +248,7 @@ class Builder
      * @param  \Closure|null  $callback
      * @param  string  $operator
      * @param  int  $count
-     * @return static
+     * @return $this
      */
     public function withWhereHas($relation, \Closure $callback = null, $operator = '>=', $count = 1);
 
@@ -276,7 +259,7 @@ class Builder
      * @param  \Closure|null  $callback
      * @param  string  $operator
      * @param  int  $count
-     * @return static
+     * @return $this
      */
     public function orWhereHas($relation, \Closure $callback = null, $operator = '>=', $count = 1);
 
@@ -287,7 +270,7 @@ class Builder
      * @param  \Closure|string|array<int, string>|\Illuminate\Contracts\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
-     * @return static
+     * @return $this
      */
     public function orWhereRelation($relation, $column, $operator = null, $value = null);
 
@@ -302,7 +285,7 @@ class Builder
      * @param  int  $count
      * @param  string  $boolean
      * @param  \Closure|null  $callback
-     * @return static
+     * @return $this
      */
     public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', \Closure $callback = null);
 
@@ -315,7 +298,7 @@ class Builder
      * @param  string|array<string>  $types
      * @param  string  $operator
      * @param  int  $count
-     * @return static
+     * @return $this
      */
     public function orHasMorph($relation, $types, $operator = '>=', $count = 1);
 
@@ -328,7 +311,7 @@ class Builder
      * @param  string|array<string>  $types
      * @param  string  $boolean
      * @param  \Closure|null  $callback
-     * @return static
+     * @return $this
      */
     public function doesntHaveMorph($relation, $types, $boolean = 'and', \Closure $callback = null);
 
@@ -339,7 +322,7 @@ class Builder
      * @template TChildModel of Model
      * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
      * @param  string|array<string>  $types
-     * @return static
+     * @return $this
      */
     public function orDoesntHaveMorph($relation, $types);
 
@@ -353,7 +336,7 @@ class Builder
      * @param  \Closure|null  $callback
      * @param  string  $operator
      * @param  int  $count
-     * @return static
+     * @return $this
      */
     public function whereHasMorph($relation, $types, \Closure $callback = null, $operator = '>=', $count = 1);
 
@@ -367,7 +350,7 @@ class Builder
      * @param  \Closure|null  $callback
      * @param  string  $operator
      * @param  int  $count
-     * @return static
+     * @return $this
      */
     public function orWhereHasMorph($relation, $types, \Closure $callback = null, $operator = '>=', $count = 1);
 
@@ -379,7 +362,7 @@ class Builder
      * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
      * @param  string|array<string>  $types
      * @param  \Closure|null  $callback
-     * @return static
+     * @return $this
      */
     public function whereDoesntHaveMorph($relation, $types, \Closure $callback = null);
 
@@ -391,7 +374,7 @@ class Builder
      * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
      * @param  string|array<string>  $types
      * @param  \Closure|null  $callback
-     * @return static
+     * @return $this
      */
     public function orWhereDoesntHaveMorph($relation, $types, \Closure $callback = null);
 
@@ -399,7 +382,7 @@ class Builder
      * Merge the where constraints from another query to the current query.
      *
      * @param  \Illuminate\Database\Eloquent\Builder<TModelClass>  $from
-     * @return static
+     * @return $this
      */
     public function mergeConstraintsFrom(\Illuminate\Database\Eloquent\Builder $from);
 
@@ -408,7 +391,7 @@ class Builder
      *
      * @param  string  $relation
      * @param  \Closure|null  $callback
-     * @return static
+     * @return $this
      */
     public function orWhereDoesntHave($relation, \Closure $callback = null);
 
@@ -417,7 +400,7 @@ class Builder
      *
      * @param  string  $relation
      * @param  \Closure|null  $callback
-     * @return static
+     * @return $this
      */
     public function whereDoesntHave($relation, \Closure $callback = null);
 
@@ -539,7 +522,7 @@ class Builder
      * @param  \Closure|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
-     * @return static
+     * @return $this
      */
     public function whereRelation($relation, $column, $operator = null, $value = null);
 
