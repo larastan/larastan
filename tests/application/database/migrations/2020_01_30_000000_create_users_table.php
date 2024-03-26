@@ -56,6 +56,7 @@ class CreateUsersTable extends Migration
             $table->date('immutable_date');
             $table->dateTime('immutable_datetime');
             $table->timestamp('timestamp');
+            $table->text('l11_cast');
 
             $table->timestamps();
             $table->softDeletes();

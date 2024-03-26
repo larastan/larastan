@@ -6,3 +6,5 @@ parameters:
     phpVersion: 80200
     paths:
         - src
+    ignoreErrors:
+        - "#^Constant LARAVEL_VERSION not found\\.$#"
