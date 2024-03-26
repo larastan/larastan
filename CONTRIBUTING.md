@@ -40,3 +40,7 @@ Code analysis:
 Unit tests:
 
     composer test:unit
+
+Run Larastan on a sample Laravel application:
+
+    composer test:application

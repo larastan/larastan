@@ -1,6 +1,7 @@
 /.idea/
-composer.lock
 /vendor/
-coverage.xml
-.phpunit.result.cache
-.phpcs-cache
+/tests/laravel/
+/composer.lock
+/coverage.xml
+/.phpcs-cache
+/.phpunit.result.cache
