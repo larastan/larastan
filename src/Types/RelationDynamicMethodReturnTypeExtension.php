@@ -16,7 +16,6 @@ use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
-use PHPStan\Type\StaticType;
 use PHPStan\Type\Type;
 
 use function count;
@@ -67,10 +66,6 @@ class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTyp
         }
 
         $calledOnType = $scope->getType($methodCall->var);
-
-        if ($calledOnType instanceof StaticType) {
-            $calledOnType = new ObjectType($calledOnType->getClassName());
-        }
 
         if (count($methodCall->getArgs()) === 0) {
             // Special case for MorphTo. `morphTo` can be called without arguments.

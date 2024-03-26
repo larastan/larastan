@@ -6,7 +6,6 @@ namespace Larastan\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Larastan\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Reflection\ClassReflection;
@@ -16,8 +15,8 @@ use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
-use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\ThisType;
 
 use function array_key_exists;
 
@@ -26,8 +25,11 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
     /** @var array<string, MethodReflection> */
     private array $cache = [];
 
-    public function __construct(private BuilderHelper $builderHelper, private ReflectionProvider $reflectionProvider, private EloquentBuilderForwardsCallsExtension $eloquentBuilderForwardsCallsExtension)
-    {
+    public function __construct(
+        private BuilderHelper $builderHelper,
+        private ReflectionProvider $reflectionProvider,
+        private EloquentBuilderForwardsCallsExtension $eloquentBuilderForwardsCallsExtension,
+    ) {
     }
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
@@ -91,25 +93,8 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
         $parametersAcceptor = ParametersAcceptorSelector::selectSingle($reflection->getVariants());
         $returnType         = $parametersAcceptor->getReturnType();
 
-        $types = [$relatedModel];
-
-        // BelongsTo relation needs second generic type
-        if ((new ObjectType(BelongsTo::class))->isSuperTypeOf(new ObjectType($classReflection->getName()))->yes()) {
-            $childType = $classReflection->getActiveTemplateTypeMap()->getType('TChildModel');
-
-            if ($childType !== null) {
-                $types[] = $childType;
-            }
-        }
-
         if ((new ObjectType(Builder::class))->isSuperTypeOf($returnType)->yes()) {
-            return new EloquentBuilderMethodReflection(
-                $methodName,
-                $classReflection,
-                $parametersAcceptor->getParameters(),
-                new GenericObjectType($classReflection->getName(), $types),
-                $parametersAcceptor->isVariadic(),
-            );
+            $returnType = new ThisType($classReflection);
         }
 
         return new EloquentBuilderMethodReflection(

@@ -7,6 +7,7 @@ use App\Group;
 use App\Post;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
@@ -52,9 +53,14 @@ function test(User $user, \App\Address $address, Account $account, ExtendsModelW
     assertType('App\Account|null', $user->accounts()->firstWhere('name', 'bar'));
     assertType('App\Group|null', $user->group()->firstWhere('name', 'bar'));
     assertType('App\Account|null', $user->accounts->first());
+    assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\User>', $user->group());
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\User>', $user->group()->withTrashed());
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\User>', $user->group()->onlyTrashed());
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\User>', $user->group()->withoutTrashed());
+    assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\Account>', $account->group());
+    assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\Account>', $account->group()->withTrashed());
+    assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\Account>', $account->group()->onlyTrashed());
+    assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\Account>', $account->group()->withoutTrashed());
     assertType('Illuminate\Database\Eloquent\Relations\MorphToMany<ModelRelations\Address>', $tag->addresses());
     assertType('Illuminate\Database\Eloquent\Relations\MorphToMany<ModelRelations\Address>', $tag->addresses());
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::with([
@@ -171,4 +177,14 @@ class Tag extends Model
 
 class Address extends Model
 {
+    /** @return BelongsTo<User, $this> */
+    public function user(): BelongsTo
+    {
+        // need to test relation return AND relation forwarding
+        $belongsTo = $this->belongsTo(User::class)->orderBy('name');
+
+        assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\User, $this(ModelRelations\Address)>', $belongsTo);
+
+        return $belongsTo;
+    }
 }
