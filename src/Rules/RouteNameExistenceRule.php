@@ -63,7 +63,6 @@ class RouteNameExistenceRule implements Rule
             $router = $this->resolve('router');
             self::$namedRoutes = array_flip(array_keys($router->getRoutes()->getRoutesByName()));
         }
-
         $routeName = $constantStrings[0]->getValue();
 
         if (array_key_exists($routeName, self::$namedRoutes)) {
