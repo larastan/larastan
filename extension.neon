@@ -468,6 +468,7 @@ services:
             dispatchableClass: Illuminate\Foundation\Events\Dispatchable
         tags:
             - phpstan.rules.rule
+
     - Larastan\Larastan\Properties\Schema\PhpMyAdminDataTypeToPhpTypeConverter
 
     -
@@ -559,3 +560,5 @@ rules:
     - Larastan\Larastan\Rules\UselessConstructs\NoUselessValueFunctionCallsRule
     - Larastan\Larastan\Rules\DeferrableServiceProviderMissingProvidesRule
     - Larastan\Larastan\Rules\ConsoleCommand\UndefinedArgumentOrOptionRule
+    - Larastan\Larastan\Rules\RouteNameExistenceRule
+    
