@@ -4,6 +4,7 @@ use App\Group;
 use App\Transaction;
 use App\TransactionCollection;
 use App\User;
+use App\ValueObjects\Favorites;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection as SupportCollection;
 
@@ -13,6 +14,7 @@ use function PHPStan\Testing\assertType;
 /** @var SupportCollection<string, int> $items */
 /** @var App\TransactionCollection<int, Transaction> $customEloquentCollection */
 /** @var App\UserCollection $secondCustomEloquentCollection */
+/** @var App\FavoritesCollection $customCollection */
 /** @var User $user */
 assertType('Illuminate\Database\Eloquent\Collection<int, int>', EloquentCollection::range(1, 10));
 
@@ -198,3 +200,7 @@ assertType('Illuminate\Support\Collection<(int|string), Illuminate\Support\Colle
         'type' => 'B',
     ],
 ])->groupBy('type'));
+
+// Regression test for mapping custom simple Collections
+assertType('App\FavoritesCollection', $customCollection->map(fn (Favorites $favorites) => $favorites));
+assertType('App\FavoritesCollection', $customCollection->mapWithKeys(fn (Favorites $favorites, int|string $key) => [$key => $favorites]));
