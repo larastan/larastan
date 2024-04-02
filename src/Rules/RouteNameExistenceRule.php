@@ -70,7 +70,7 @@ class RouteNameExistenceRule implements Rule
         }
 
         return [
-            RuleErrorBuilder::message("Route name: \"{$routeName}\" does not exist'")
+            RuleErrorBuilder::message("Route name: '{$routeName}' does not exist")
                 ->identifier('larastan.routeNameDoesNotExists')
                 ->build(),
         ];

@@ -23,11 +23,13 @@ class RouteNameExistenceRuleTest extends RuleTestCase
     }
 
     /** @test */
-    public function itDoesNotFailForExistingRoutes(): void
+    public function itDoesFailForNonExistingRoutes(): void
     {
+        app('router')->get('/foo123', fn() => 'foo')->name('foo');
+        app('router')->getRoutes()->refreshNameLookups();
         $this->analyse([__DIR__ . '/data/route-calls.php'], [
-            ['06: Route name: "bar" does not exist', 6],
-            ['05: Route name: "foo" does not exist', 5],
+            ["Route name: 'bar' does not exist", 9],
+            ["Route name: 'bar' does not exist", 10],
         ]);
     }
 }
