@@ -24,15 +24,15 @@
         "illuminate/http": "^9.52.16 || ^10.28.0 || ^11.0",
         "illuminate/pipeline": "^9.52.16 || ^10.28.0 || ^11.0",
         "illuminate/support": "^9.52.16 || ^10.28.0 || ^11.0",
-        "phpmyadmin/sql-parser": "^5.8.2",
-        "phpstan/phpstan": "^1.10.65"
+        "phpmyadmin/sql-parser": "^5.9.0",
+        "phpstan/phpstan": "^1.10.66"
     },
     "require-dev": {
         "doctrine/coding-standard": "^12.0",
-        "nikic/php-parser": "^4.17.1",
-        "orchestra/canvas": "^7.11.1 || ^8.11.0 || ^9.0.0",
-        "orchestra/testbench": "^7.33.0 || ^8.13.0 || ^9.0.0",
-        "phpunit/phpunit": "^9.6.13 || ^10.5"
+        "nikic/php-parser": "^4.19.1",
+        "orchestra/canvas": "^7.11.1 || ^8.11.0 || ^9.0.2",
+        "orchestra/testbench": "^7.33.0 || ^8.13.0 || ^9.0.3",
+        "phpunit/phpunit": "^9.6.13 || ^10.5.16"
     },
     "suggest": {
         "orchestra/testbench": "Using Larastan for analysing a package needs Testbench"
