@@ -12,7 +12,7 @@ parameters:
         - '#testDiskGetDriver\(\) has invalid type League\\Flysystem\\FilesystemInterface.#'
 
         # This file is meant to test the correct recognition of magic methods within models.
-        # Even though Model::make() is not optimal, it does coincedentally work and thus should
+        # Even though Model::make() is not optimal, it does coincidentally work and thus should
         # be recognized by the extension. We test the NoModelMake rule separately.
         -
             message: "#Called 'Model::make\\(\\)' which performs unnecessary work, use 'new Model\\(\\)'\\.#"
