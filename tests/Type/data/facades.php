@@ -40,7 +40,7 @@ function foo()
     assertType('bool', Storage::disk()->deleteDirectory('foo'));
     assertType('bool', Storage::drive()->deleteDirectory('foo'));
     assertType('string|false', Storage::putFile('foo', 'foo/bar'));
-    assertType('string|false', Redis::get('foo'));
+    assertType('mixed', Redis::get('foo'));
 
     assertType('string', DummyFacade::foo());
     assertType('int', DummyFacade::bar());
