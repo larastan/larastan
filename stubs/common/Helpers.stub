@@ -87,17 +87,6 @@ function url($path = null, $parameters = [], $secure = null) {}
 
 /**
  * @template TValue
- * @template TDefault
- *
- * @param callable(): TValue $callback
- * @param TDefault|(callable(\Throwable): TDefault) $rescue
- * @param bool|callable $report
- * @return TValue|TDefault
- */
-function rescue(callable $callback, $rescue = null, $report = true) {}
-
-/**
- * @template TValue
  * @param int|array<int, int> $times
  * @param callable(int): TValue $callback
  * @param int|callable(int, \Exception): int $sleepMilliseconds
