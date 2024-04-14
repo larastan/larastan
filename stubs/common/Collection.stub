@@ -55,6 +55,18 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      * @return ($count is 1 ? TValue|null : static<int, TValue>)
      */
     public function shift($count = 1);
+
+    /**
+     * Push all of the given items onto the collection.
+     *
+     * @template TConcatKey of array-key
+     * @template TConcatValue
+     *
+     * @param  iterable<TConcatKey, TConcatValue>  $source
+     * @return static<TKey|TConcatKey, TValue|TConcatValue>
+     * TODO: this is for 9.x compatibility. Remove it when we drop 9.x support.
+     */
+    public function concat($source);
 }
 
 /**
