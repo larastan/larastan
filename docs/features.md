@@ -1,7 +1,6 @@
 # Features
 
-All features that are specific to Laravel applications 
-are listed here.
+All features that are specific to Laravel applications are listed here.
 
 ## Laravel 9 Attributes
 
@@ -36,3 +35,25 @@ protected function isTrue(): Attribute
 }
 ```
 
+## Model Relationships
+
+In order for Larastan to recognize Model relationships:
+- the return type must be defined
+- the method must be `public`
+- the relationship method argument must be a literal string (not a variable)
+
+If the above conditions are not met, then adding the `@return` docblock can help
+
+```php
+/** @return BelongsTo<User, $this> */
+public function user(): BelongsTo
+{
+    return $this->belongsTo(User::class);
+}
+
+/** @return HasMany<Post> */
+public function posts(): HasMany
+{
+    return $this->hasMany(Post::class);
+}
+```
