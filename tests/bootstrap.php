@@ -2,17 +2,12 @@
 
 declare(strict_types=1);
 
-use Carbon\Carbon;
 use Illuminate\Auth\RequestGuard;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
-
-Carbon::macro('foo', static function (): string {
-    return 'foo';
-});
 
 Builder::macro('globalCustomMacro', static function (string $arg = 'foobar', int $b = 5): string {
     return $arg;

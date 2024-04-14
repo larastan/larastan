@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Methods;
 
-use Carbon\Carbon;
-use Carbon\Traits\Macro as CarbonMacro;
 use Closure;
 use Illuminate\Auth\RequestGuard;
 use Illuminate\Database\Eloquent\Builder;
@@ -103,18 +101,6 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
                     }
                 }
             }
-        }
-
-        if ($this->hasIndirectTraitUse($classReflection, CarbonMacro::class) && Carbon::hasMacro($methodName)) {
-            $methodReflection = new Macro(
-                $classReflection,
-                $methodName,
-                $this->closureTypeFactory->fromClosureObject(Closure::fromCallable(Carbon::getMacro($methodName))), // @phpstan-ignore-line hasMacro guarantees no null return
-            );
-
-            $this->methods[$classReflection->getName() . '-' . $methodName] = $methodReflection;
-
-            return true;
         }
 
         if ($classNames !== [] && $macroTraitProperty) {
