@@ -40,8 +40,9 @@ protected function isTrue(): Attribute
 In order for Larastan to recognize Model relationships:
 - the return type must be defined
 - the method must be `public`
-- the class argument must be a literal string (not a variable)
-- if the above conditions are not met, then adding the `@return` docblock can help
+- the relationship method argument must be a literal string (not a variable)
+
+If the above conditions are not met, then adding the `@return` docblock can help
 
 ```php
 /** @return BelongsTo<User, $this> */
