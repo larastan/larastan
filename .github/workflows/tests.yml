@@ -86,4 +86,6 @@ jobs:
         run: "composer run-script test:unit"
 
       - name: "Run Larastan on a sample Laravel application"
-        run: "version=${{ matrix.laravel }}; tests/laravel-test.sh ${version%%.*}.0"
+        run: |
+          version="${{ matrix.laravel }}"
+          tests/laravel-test.sh "${version%%.*}.0"
