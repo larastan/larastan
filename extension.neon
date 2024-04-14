@@ -295,7 +295,7 @@ services:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
-        class: Larastan\Larastan\ReturnTypes\CollectionGenericStaticMethodDynamicMethodReturnTypeExtension
+        class: Larastan\Larastan\ReturnTypes\EnumerableGenericStaticMethodDynamicMethodReturnTypeExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
@@ -310,7 +310,7 @@ services:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
-        class: Larastan\Larastan\ReturnTypes\CollectionGenericStaticMethodDynamicStaticMethodReturnTypeExtension
+        class: Larastan\Larastan\ReturnTypes\EnumerableGenericStaticMethodDynamicStaticMethodReturnTypeExtension
         tags:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
 

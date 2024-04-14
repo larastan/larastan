@@ -7,6 +7,7 @@ namespace Larastan\Larastan\ReturnTypes;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Enumerable;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
@@ -22,14 +23,14 @@ use PHPStan\Type\TypeTraverser;
 use PHPStan\Type\UnionType;
 
 use function array_map;
+use function array_merge;
 use function in_array;
-use function version_compare;
 
-class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
+class EnumerableGenericStaticMethodDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
     public function getClass(): string
     {
-        return Collection::class;
+        return Enumerable::class;
     }
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
@@ -49,7 +50,6 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
             'groupBy',
             'keyBy',
             'keys',
-            'make',
             'map',
             'mapInto',
             'mapToDictionary',
@@ -59,9 +59,7 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
             'pad',
             'partition',
             'pluck',
-            'pop',
             'random',
-            'shift',
             'sliding',
             'split',
             'splitIn',
@@ -70,8 +68,8 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
             'zip',
         ];
 
-        if (version_compare(LARAVEL_VERSION, '9.48.0', '<')) {
-            $methods[] = 'countBy';
+        if ($methodReflection->getDeclaringClass()->getName() === Collection::class) {
+            $methods = array_merge($methods, ['pop', 'shift']);
         }
 
         return in_array($methodReflection->getName(), $methods, true);
@@ -101,7 +99,7 @@ class CollectionGenericStaticMethodDynamicMethodReturnTypeExtension implements D
         $classReflection = $calledOnType->getObjectClassReflections()[0];
 
         // Special cases for methods returning single models
-        if (($classReflection->getName() === EloquentCollection::class || $classReflection->getName() === Collection::class) && (new ObjectType(Model::class))->isSuperTypeOf($returnType)->yes()) {
+        if ((new ObjectType(Model::class))->isSuperTypeOf($returnType)->yes()) {
             return $returnType;
         }
 

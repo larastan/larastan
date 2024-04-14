@@ -36,11 +36,6 @@ parameters:
 			path: src/Properties/ModelPropertyHelper.php
 
 		-
-			message: "#^Constant LARAVEL_VERSION not found\\.$#"
-			count: 1
-			path: src/ReturnTypes/CollectionGenericStaticMethodDynamicMethodReturnTypeExtension.php
-
-		-
 			message: "#^PHPDoc tag @var assumes the expression with type PHPStan\\\\Type\\\\Type\\|null is always PHPStan\\\\Type\\\\ObjectType but it's error\\-prone and dangerous\\.$#"
 			count: 1
 			path: src/ReturnTypes/RelationCollectionExtension.php
