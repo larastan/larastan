@@ -32,8 +32,9 @@ use function explode;
 
 class ModelCastHelper
 {
-    public function __construct(protected ReflectionProvider $reflectionProvider)
-    {
+    public function __construct(
+        protected ReflectionProvider $reflectionProvider,
+    ) {
     }
 
     public function getReadableType(string $cast, Type $originalType): Type
