@@ -44,6 +44,7 @@ class EnumerableGenericStaticMethodDynamicMethodReturnTypeExtension implements D
             'chunkWhile',
             'collapse',
             'combine',
+            'concat',
             'crossJoin',
             'flatMap',
             'flip',
