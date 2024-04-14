@@ -33,6 +33,24 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
     protected $appends = [];
 
     /**
+     * @var list<string>
+     */
+    protected $with = [];
+
+    /**
+     * @var list<string>
+     */
+    protected $withCount = [];
+
+    /**
+     * Update the model in the database.
+     *
+     * @param  array<array-key, mixed>  $options
+     * @return bool
+     */
+    public function save(array $options = []);
+
+    /**
      * Update the model in the database.
      *
      * @param  array<model-property<static>, mixed>  $attributes

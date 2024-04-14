@@ -324,3 +324,7 @@ parameters:
 			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\VaultQuickFactsTemplate\\:\\:\\$fillable is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$fillable\\.$#"
 			count: 1
 			path: ../../e2e/app/Models/VaultQuickFactsTemplate.php
+		-
+			message: "#^PHPDoc type array\\<string\\> of property App\\\\Models\\\\AddressBookSubscription\\:\\:\\$with is not covariant with PHPDoc type array\\<int, string\\> of overridden property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$with\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/AddressBookSubscription.php
