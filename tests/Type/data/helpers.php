@@ -150,6 +150,7 @@ function tapHelper()
 
     assertType('Illuminate\Support\HigherOrderTapProxy<App\User>', tap(new User()));
     assertType('App\User', tap(new User())->update(['name' => 'Taylor Otwell']));
+    assertType('Illuminate\Contracts\Validation\Validator&Illuminate\Validation\Validator', tap(validator([], []))->addReplacers());
 }
 
 function urlHelper()
