@@ -71,7 +71,8 @@ final class ModelDatabaseHelper
     {
         $connectionName ??= $this->getDefaultConnection();
 
-        if ($this->hasConnection($connectionName)) {
+        // cannot use hasConnection here because it would trigger recursive loop
+        if (isset($this->connections[$connectionName])) {
             return $this->connections[$connectionName];
         }
 
