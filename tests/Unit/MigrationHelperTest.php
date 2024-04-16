@@ -112,7 +112,7 @@ class MigrationHelperTest extends PHPStanTestCase
     }
 
     /** @test */
-    public function it_can_handle_alter_table_rename(): void
+    public function it_can_handle_alter_table_and_column_rename(): void
     {
         $migrationHelper = new MigrationHelper($this->parser, [
             __DIR__ . '/data/rename_migrations',
@@ -123,6 +123,10 @@ class MigrationHelperTest extends PHPStanTestCase
         self::assertCount(1, $tables);
         self::assertArrayNotHasKey('users', $tables);
         self::assertArrayHasKey('accounts', $tables);
+        $columns = $tables['accounts']->columns;
+        self::assertArrayNotHasKey('name', $columns);
+        self::assertArrayHasKey('full_name', $columns);
+        self::assertSame('string', $columns['full_name']->readableType);
     }
 
     /** @test */
