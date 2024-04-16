@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\ClassMemberReflection;
@@ -14,17 +16,48 @@ use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\ParametersAcceptor;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\Generic\TemplateTypeMap;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
+use function array_key_exists;
+
 class ModelFactoryMethodsClassReflectionExtension implements MethodsClassReflectionExtension
 {
+    public function __construct(
+        private ReflectionProvider $reflectionProvider,
+    ) {
+    }
+
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
         if (! $classReflection->isSubclassOf(Factory::class)) {
             return false;
+        }
+
+        $modelType = $classReflection->getActiveTemplateTypeMap()->getType('TModel');
+
+        // Generic type is not specified
+        if ($modelType === null) {
+            if (! $classReflection->isGeneric() && $classReflection->getParentClass()?->isGeneric()) {
+                $modelType = $classReflection->getParentClass()->getActiveTemplateTypeMap()->getType('TModel');
+            }
+        }
+
+        if ($modelType === null) {
+            return false;
+        }
+
+        if ($modelType->getObjectClassReflections() !== []) {
+            $modelReflection = $modelType->getObjectClassReflections()[0];
+        } else {
+            $modelReflection = $this->reflectionProvider->getClass(Model::class);
+        }
+
+        if ($methodName === 'trashed' && array_key_exists(SoftDeletes::class, $modelReflection->getTraits(true))) {
+            return true;
         }
 
         if (! Str::startsWith($methodName, ['for', 'has'])) {
@@ -32,18 +65,6 @@ class ModelFactoryMethodsClassReflectionExtension implements MethodsClassReflect
         }
 
         $relationship = Str::camel(Str::substr($methodName, 3));
-
-        $parent = $classReflection->getParentClass();
-
-        if ($parent === null) {
-            return false;
-        }
-
-        $modelType = $parent->getActiveTemplateTypeMap()->getType('TModel');
-
-        if ($modelType === null) {
-            return false;
-        }
 
         return $modelType->hasMethod($relationship)->yes();
     }
