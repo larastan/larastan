@@ -25,6 +25,7 @@ parameters:
     checkModelProperties: false
     checkPhpDocMissingReturn: false
     checkUnusedViews: false
+    checkModelAppends: false
 
 parametersSchema:
     checkOctaneCompatibility: bool()
@@ -40,6 +41,7 @@ parametersSchema:
     disableSchemaScan: bool()
     checkModelProperties: bool()
     checkUnusedViews: bool()
+    checkModelAppends: bool()
 
 conditionalTags:
     Larastan\Larastan\Rules\NoEnvCallsOutsideOfConfigRule:
@@ -56,6 +58,8 @@ conditionalTags:
         phpstan.rules.rule: %checkModelProperties%
     Larastan\Larastan\Rules\UnusedViewsRule:
         phpstan.rules.rule: %checkUnusedViews%
+    Larastan\Larastan\Rules\ModelAppendsRule:
+        phpstan.rules.rule: %checkModelAppends%
 
 services:
     -
@@ -401,8 +405,6 @@ services:
 
     -
         class: Larastan\Larastan\Rules\ModelAppendsRule
-        tags:
-            - phpstan.rules.rule
 
     -
         class: Larastan\Larastan\Rules\ModelProperties\ModelPropertyStaticCallRule
