@@ -32,4 +32,15 @@ abstract class Relation
      * @phpstan-return TRelatedModel
      */
     public function make(array $attributes = []);
+
+    /**
+     * Execute the query and get the first result if it's the sole matching record.
+     *
+     * @param  array<model-property<TRelatedModel>>|string  $columns
+     * @return TRelatedModel
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<\Illuminate\Database\Eloquent\Model>
+     * @throws \Illuminate\Database\MultipleRecordsFoundException
+     */
+    public function sole($columns = ['*']);
 }

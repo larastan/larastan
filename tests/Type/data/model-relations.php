@@ -87,6 +87,10 @@ function test(User $user, \App\Address $address, Account $account, ExtendsModelW
     assertType('App\User', $users->make());
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\Account|App\User>', $union->group());
     assertType('Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Post>', $union->posts());
+
+    assertType('App\Account', $user->accounts()->sole());
+    assertType('App\Group', $user->group()->sole());
+    assertType('App\Post', $user->posts()->sole());
 }
 
 /**

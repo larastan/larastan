@@ -68,4 +68,7 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
     public static function with($relations);
 }
 
+/**
+ * @template TModel of Model
+ */
 class ModelNotFoundException extends \RuntimeException {}
