@@ -385,3 +385,33 @@ parameters:
 ```
 
 to your `phpstan.neon` file.
+
+## ModelAppendsRule
+
+Checks model's `$appends` property for computed properties. The properties added to `$appends` array should both exist in the model and be computed properties.
+
+#### Examples
+
+```php
+class User extends \Illuminate\Database\Eloquent\Model
+{
+    protected $casts = ['email'];
+}
+```
+
+Now if you were to call `toArray` or `toJson` methods on an instance of User class, you'd expect to see the `email` there. But in reality it'd be `null` This rule prevents you from that mistake. So you'd get the following error:
+
+```
+Property 'email' is not a computed property, remove from $appends.
+```
+
+#### Configuration
+
+This rule is disabled by default. To enable, add:
+
+```neon
+parameters:
+    checkModelAppends: true
+```
+
+to your `phpstan.neon` file.

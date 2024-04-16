@@ -76,3 +76,15 @@ To enable you can set it to `true`:
 parameters:
     checkModelProperties: true
 ```
+
+## `checkModelAppends`
+**default**: `false`
+
+This config parameter enables the checks the model's $appends property for computed properties. You can read the details [here](rules.md#modelappendsrule).
+
+To enable you can set it to `true`:
+
+```neon
+parameters:
+    checkModelAppends: true
+```
