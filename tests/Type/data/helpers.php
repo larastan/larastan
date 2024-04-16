@@ -10,17 +10,14 @@ use Throwable;
 
 use function PHPStan\Testing\assertType;
 
-function appHelper()
+function test(?int $value = 0): void
 {
     assertType('Illuminate\Foundation\Application', app());
     assertType('Larastan\Larastan\ApplicationResolver', app(ApplicationResolver::class));
     assertType('Illuminate\Auth\AuthManager', app('auth'));
     assertType('Larastan\Larastan\ApplicationResolver', resolve(ApplicationResolver::class));
     assertType('Illuminate\Auth\AuthManager', resolve('auth'));
-}
 
-function authHelper()
-{
     assertType('Illuminate\Auth\AuthManager', auth());
     assertType('Illuminate\Contracts\Auth\Guard', auth()->guard('web'));
     assertType('Illuminate\Contracts\Auth\StatefulGuard', auth('web'));
@@ -35,29 +32,17 @@ function authHelper()
     assertType('int|string|null', auth('admin')->id());
     assertType('Illuminate\Contracts\Auth\Authenticatable|false', auth()->loginUsingId(1));
     assertType('null', auth()->login(new User()));
-}
 
-function nowAndToday()
-{
     assertType('Illuminate\Support\Carbon', now());
     assertType('Illuminate\Support\Carbon', today());
-}
 
-function redirectHelper()
-{
     assertType('Illuminate\Http\RedirectResponse', redirect('/'));
     assertType('Illuminate\Routing\Redirector', redirect());
-}
 
-function requestHelper()
-{
     assertType('Illuminate\Http\Request', request());
     assertType('mixed', request('foo'));
     assertType('array<string>', request(['foo', 'bar']));
-}
 
-function rescueHelper()
-{
     assertType('string|null', rescue(function () {
         if (mt_rand(0, 1)) {
             throw new Exception();
@@ -101,16 +86,10 @@ function rescueHelper()
 
         return 'ok';
     }, 'failed', false));
-}
 
-function responseHelper()
-{
     assertType('Illuminate\Http\Response', response('foo'));
     assertType('Illuminate\Contracts\Routing\ResponseFactory', response());
-}
 
-function retryHelper()
-{
     assertType('null', retry(3, function () {
     }));
 
@@ -129,20 +108,14 @@ function retryHelper()
     }, 0, function (Exception $e): bool {
         return true;
     }));
-}
 
-function strHelper()
-{
     assertType('Illuminate\Support\Stringable', str('foo'));
     assertType('mixed', str());
 
     assertType('string', Str::replace('foo', 'bar', 'Laravel'));
     assertType('array{string, string}', Str::replace('foo', 'bar', ['Laravel', 'Framework']));
     assertType('array<int|string, string>', Str::replace('foo', 'bar', collect(['Laravel', 'Framework'])));
-}
 
-function tapHelper()
-{
     assertType('App\User', tap(new User(), function (User $user): void {
         $user->name = 'Can Vural';
         $user->save();
@@ -151,32 +124,20 @@ function tapHelper()
     assertType('Illuminate\Support\HigherOrderTapProxy<App\User>', tap(new User()));
     assertType('App\User', tap(new User())->update(['name' => 'Taylor Otwell']));
     assertType('Illuminate\Contracts\Validation\Validator&Illuminate\Validation\Validator', tap(validator([], []))->addReplacers());
-}
 
-function urlHelper()
-{
     assertType('string', url('/path'));
     assertType('Illuminate\Contracts\Routing\UrlGenerator', url());
-}
 
-function validatorHelper()
-{
     assertType('Illuminate\Contracts\Validation\Factory', validator());
     assertType('Illuminate\Contracts\Validation\Validator&Illuminate\Validation\Validator', validator(['foo' => 'bar'], ['foo' => 'required']));
     assertType('array', validator(['foo' => 'bar'], ['foo' => 'required'])->valid());
-}
 
-function valueHelper()
-{
     assertType('App\User|null', value(function (): ?User {
         return User::first();
     }));
 
     assertType('5', value(5));
-}
 
-function transformHelper()
-{
     assertType('array|null', transform(User::first(), fn (User $user) => $user->toArray()));
     assertType('array', transform(User::sole(), fn (User $user) => $user->toArray()));
 
@@ -194,24 +155,12 @@ function transformHelper()
     assertType('null', transform(null, fn () => 1));
     assertType('null', transform('', fn () => 1));
     assertType('null', transform([], fn () => 1));
-}
-
-function filledHelperNullInference()
-{
-    /** @var ?int $value */
-    $value = 0;
 
     if (filled($value)) {
         assertType('int', $value);
     } else {
         assertType('int|null', $value);
     }
-}
-
-function blankHelperNullInference()
-{
-    /** @var ?int $value */
-    $value = 0;
 
     if (blank($value)) {
         assertType('int|null', $value);

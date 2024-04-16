@@ -6,14 +6,10 @@ use Illuminate\Database\Eloquent\Builder;
 
 use function PHPStan\Testing\assertType;
 
-/**
- * @template TModel of \Illuminate\Database\Eloquent\Model
- */
+/** @template TModel of \Illuminate\Database\Eloquent\Model */
 class DailyQuery
 {
-    /**
-     * @var Builder<TModel>
-     */
+    /** @var Builder<TModel> */
     private Builder $query;
 
     public function daily()

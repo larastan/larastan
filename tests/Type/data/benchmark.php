@@ -6,7 +6,7 @@ use Illuminate\Support\Benchmark;
 
 use function PHPStan\Testing\assertType;
 
-function doFoo()
+function test(): void
 {
     assertType('float', Benchmark::measure(fn () => 'Hello World'));
     assertType('array<int, float>', Benchmark::measure([fn () => 'Hello World', fn () => 'Hello World']));

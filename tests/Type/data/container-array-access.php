@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace ContainerArrayAccess;
 
+use Illuminate\Container\Container;
+
 use function PHPStan\Testing\assertType;
 
-/** @var \Illuminate\Container\Container $app */
-assertType('Illuminate\Auth\AuthManager', $app['auth']);
-assertType('Illuminate\Translation\Translator', $app['translator']);
-
-/** @var 'auth'|'translator' $args */
-assertType('Illuminate\Auth\AuthManager|Illuminate\Translation\Translator', $app[$args]);
+/** @param 'auth'|'translator' $arg */
+function test(Container $app, string $arg): void
+{
+    assertType('Illuminate\Auth\AuthManager', $app['auth']);
+    assertType('Illuminate\Translation\Translator', $app['translator']);
+    assertType('Illuminate\Auth\AuthManager|Illuminate\Translation\Translator', $app[$arg]);
+}

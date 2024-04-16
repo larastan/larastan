@@ -6,7 +6,7 @@ use App\User;
 
 use function PHPStan\Testing\assertType;
 
-function testCreateOrFirst()
+function test(): void
 {
     assertType('App\User', User::createOrFirst([]));
 }

@@ -7,9 +7,7 @@ use Illuminate\Support\Manager;
 
 use function PHPStan\Testing\assertType;
 
-abstract class AbstractManager extends Manager
-{
-}
+abstract class AbstractManager extends Manager { }
 
 class RealManager extends AbstractManager
 {
@@ -19,4 +17,7 @@ class RealManager extends AbstractManager
     }
 }
 
-assertType('AbstractManager\RealManager', new RealManager(new Container()));
+function test(): void
+{
+    assertType('AbstractManager\RealManager', new RealManager(new Container()));
+}

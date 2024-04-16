@@ -11,13 +11,16 @@ class TappableClass
     use Tappable;
 }
 
-assertType(
-    'Tappable\TappableClass',
-    (new TappableClass())->tap(function (TappableClass $tappable) {
-    }),
-);
+function test(): void
+{
+    assertType(
+        'Tappable\TappableClass',
+        (new TappableClass())->tap(function (TappableClass $tappable) {
+        }),
+    );
 
-assertType(
-    'Illuminate\Support\HigherOrderTapProxy<Tappable\TappableClass>',
-    (new TappableClass())->tap(),
-);
+    assertType(
+        'Illuminate\Support\HigherOrderTapProxy<Tappable\TappableClass>',
+        (new TappableClass())->tap(),
+    );
+}

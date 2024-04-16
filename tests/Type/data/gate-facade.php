@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Gate;
 
 use function PHPStan\Testing\assertType;
 
-function foo(): void
+function test(): void
 {
     assertType('Illuminate\Auth\Access\Gate', Gate::forUser(new User()));
     assertType('Illuminate\Auth\Access\Response', Gate::inspect('foo'));

@@ -20,8 +20,17 @@ use Illuminate\Support\Stringable;
 
 use function PHPStan\Testing\assertType;
 
-function foo(User $user, Account $account, Role $role, Group $group, Team $team, GuardedModel $guardedModel, Thread $thread, Address $address, RoleUser $roleUser)
-{
+function test(
+    User $user,
+    Account $account,
+    Role $role,
+    Group $group,
+    Team $team,
+    GuardedModel $guardedModel,
+    Thread $thread,
+    Address $address,
+    RoleUser $roleUser,
+): void {
     assertType('*ERROR*', $user->newStyleAttribute); // Doesn't have generic type, so we treat as it doesnt exist
     assertType('int', $user->stringButInt);
     assertType('string', $user->email);

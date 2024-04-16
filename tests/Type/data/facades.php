@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Storage;
 
 use function PHPStan\Testing\assertType;
 
-function foo()
+function test(): void
 {
     assertType('Illuminate\Http\Request', Request::instance());
 

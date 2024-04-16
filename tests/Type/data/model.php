@@ -13,297 +13,121 @@ use Illuminate\Foundation\Http\FormRequest;
 
 use function PHPStan\Testing\assertType;
 
-function testFind()
+class Foo
 {
-    assertType('App\User|null', User::find(1));
-    assertType('Model\Bar|null', Bar::findByHashId(1));
+    public function __construct(private User $user)
+    {
+        assertType('Illuminate\Database\Eloquent\Builder<App\User>', $this->user::query());
+    }
 }
 
-function testFindOnGenericModel(Model $model)
+class Bar extends Model
 {
-    assertType('Illuminate\Database\Eloquent\Model|null', $model::find(1));
+    use HasBar;
+}
+
+trait HasBar
+{
+    public static function decodeHashId(string $hash_id): array
+    {
+        return [];
+    }
+
+    public static function findByHashId(string $id): ?self
+    {
+        return self::find(static::decodeHashId($id))->first();
+    }
 }
 
 /**
  * @param  class-string<Model>  $modelClass
+ * @param  class-string<User>|class-string<Post>  $userOrPostClass
+ * @param  class-string<User>|class-string<Account>  $userOrAccountClass
  */
-function testFindOnModelClassString(string $modelClass)
-{
-    assertType('Illuminate\Database\Eloquent\Model|null', $modelClass::find(1));
-}
-
-/**
- * @param  class-string<User>|class-string<Post>  $modelClass
- * @param  class-string<User>|class-string<Account>  $customCollectionModelClass
- */
-function testUnionOfClassStrings(string $modelClass, string $customCollectionModelClass)
-{
-    assertType('App\Post|App\User|null', $modelClass::find(1));
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\Post>|Illuminate\Database\Eloquent\Collection<int, App\User>', $modelClass::find([1, 2, 3]));
-    assertType('App\AccountCollection<int, App\Account>|Illuminate\Database\Eloquent\Collection<int, App\User>', $customCollectionModelClass::find([1, 2, 3]));
-    assertType('App\AccountCollection<int, App\Account>|Illuminate\Database\Eloquent\Collection<int, App\User>', $customCollectionModelClass::all());
-}
-
-function testFindCanReturnCollection()
-{
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::find([1, 2, 3]));
-}
-
-function testFindMany()
-{
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::findMany([1, 2, 3]));
-}
-
-function testFindOrFail()
-{
-    assertType('App\User', User::findOrFail(1));
-}
-
-function testFindOrFailCanReturnCollection()
-{
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::findOrFail([1, 2, 3]));
-}
-
-function testChainingCollectionMethodsOnModel()
-{
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::findOrFail([1, 2, 3])->makeHidden('foo'));
-}
-
-function testCollectionMethodWillReturnUser()
-{
-    assertType('App\User|null', User::findOrFail([1, 2, 3])->makeHidden('foo')->first());
-}
-
-function testFindWithCastingToArray(FormRequest $request)
-{
+function test(
+    Model $model,
+    string $modelClass,
+    string $userOrPostClass,
+    string $userOrAccountClass,
+    FormRequest $request,
+    User $user,
+): void {
     /** @var array<string, string> $requestData */
     $requestData = $request->validated();
 
+    assertType('App\User|null', User::find(1));
+    assertType('Model\Bar|null', Bar::findByHashId(1));
+    assertType('Illuminate\Database\Eloquent\Model|null', $model::find(1));
+    assertType('Illuminate\Database\Eloquent\Model|null', $modelClass::find(1));
+    assertType('App\Post|App\User|null', $userOrPostClass::find(1));
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\Post>|Illuminate\Database\Eloquent\Collection<int, App\User>', $userOrPostClass::find([1, 2, 3]));
+    assertType('App\AccountCollection<int, App\Account>|Illuminate\Database\Eloquent\Collection<int, App\User>', $userOrAccountClass::find([1, 2, 3]));
+    assertType('App\AccountCollection<int, App\Account>|Illuminate\Database\Eloquent\Collection<int, App\User>', $userOrAccountClass::all());
+
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::find([1, 2, 3]));
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::findMany([1, 2, 3]));
+    assertType('App\User', User::findOrFail(1));
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::findOrFail([1, 2, 3]));
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::findOrFail([1, 2, 3])->makeHidden('foo'));
+    assertType('App\User|null', User::findOrFail([1, 2, 3])->makeHidden('foo')->first());
+
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::find((array) $requestData['user_ids']));
-}
-
-function testFindWithCastingToInt()
-{
     assertType('App\User|null', User::find((int) '1'));
-}
-
-function testMakeOnInstance(User $user)
-{
     assertType('App\User', $user->make([]));
-}
-
-function testGetQueryReturnsQueryBuilder()
-{
     assertType('Illuminate\Database\Query\Builder', User::getQuery());
-}
-
-function testToBaseReturnsQueryBuilder()
-{
     assertType('Illuminate\Database\Query\Builder', User::toBase());
-}
-
-function testAll()
-{
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::all());
-}
-
-function testJoin()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::join('tickets.tickets', 'tickets.tickets.id', '=', 'tickets.sale_ticket.ticket_id'));
-}
 
-function testWhere()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\Thread>', (new Thread)->where(['name' => 'bar']));
-}
-
-function testStaticWhere()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\Thread>', Thread::where(['name' => 'bar']));
-}
-
-function testDynamicWhere()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\Thread>', (new Thread)->whereName(['bar']));
-}
-
-function testStaticDynamicWhere()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\Thread>', Thread::whereName(['bar']));
-}
-
-function testWhereIn()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\Thread>', (new Thread)->whereIn('id', [1, 2, 3]));
-}
-
-function testWithWhereHas()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', (new User)->withWhereHas('accounts', function ($query) {
         return $query->where('active', true);
     }));
-}
 
-function testIncrement(User $user)
-{
     assertType('int', $user->increment('counter'));
-}
-
-function testDecrement(User $user)
-{
     assertType('int', $user->decrement('counter'));
-}
 
-function testFirst()
-{
     assertType('App\User|null', User::first());
-}
-
-function testMake()
-{
     assertType('App\User', User::make([]));
-}
-
-function testCreate()
-{
     assertType('App\User', User::create([]));
-}
-
-function testForceCreate()
-{
     assertType('App\User', User::forceCreate([]));
-}
 
-function testFindOrNew()
-{
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::findOrNew([]));
-}
-
-function testFirstOrNew()
-{
     assertType('App\User', User::firstOrNew([]));
-}
-
-function testUpdateOrCreate()
-{
     assertType('App\User', User::updateOrCreate([]));
-}
-
-function testFirstOrCreate()
-{
     assertType('App\User', User::firstOrCreate([]));
-}
 
-function testScope()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\Thread>', Thread::valid());
-}
-
-function testScopeWithOrWhereHigherOrderBuilderProxyProperty()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\Thread>', Thread::valid()->orWhere->valid());
-}
-
-function testWithAcceptsArrayOfClosures()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::with(['accounts' => function ($relation) {
         return $relation->where('active', true);
     }]));
-}
-
-function testWithGlobalScope()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', (new User)->withGlobalScope('test', function () {
     }));
-}
-
-function testWithoutGlobalScope()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', (new User)->withoutGlobalScope('test'));
-}
-
-function testSoftDeletesOnlyTrashed()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::onlyTrashed());
-}
-
-function testSoftDeletesWithTrashed()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::withTrashed());
-}
-
-function testSoftDeletesWithTrashedWithArgument()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::withTrashed(false));
-}
-
-function testFindOrFailWithSoftDeletesTrait()
-{
     assertType('App\User', User::onlyTrashed()->findOrFail(5));
-}
-
-function testRestore(User $user)
-{
     assertType('bool', $user->restore());
-}
-
-function testFirstWhere()
-{
+    assertType('App\User', User::restoreOrCreate(['id' => 1]));
     assertType('App\User|null', User::firstWhere(['email' => 'foo@bar.com']));
-}
-
-function testWithOnModelVariable(User $user)
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->with('accounts'));
-}
-
-function testMultipleWithOnModelVariable(User $user)
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->with('accounts')->with('group'));
-}
-
-function testLockForUpdate()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::lockForUpdate());
-}
-
-function testSharedLock()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::sharedLock());
-}
-
-function testNewQuery()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::query());
-}
 
-function testMethodReturningCollectionOfAnotherModel()
-{
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', Thread::methodReturningCollectionOfAnotherModel());
-}
-
-function testMethodReturningUnionWithCollection()
-{
     assertType('App\Thread|Illuminate\Database\Eloquent\Collection<int, App\Thread>', Thread::methodReturningUnionWithCollection());
-}
-
-function testMethodReturningUnionWithCollectionOfAnotherModel()
-{
     assertType('App\User|Illuminate\Database\Eloquent\Collection<int, App\User>', Thread::methodReturningUnionWithCollectionOfAnotherModel());
-}
-
-function testMin(User $user)
-{
     assertType('mixed', $user->min('id'));
-}
-
-function testSole()
-{
     assertType('App\User', User::sole());
-}
 
-function testRelationMethods(): void
-{
     User::has('accounts', '=', 1, 'and', function (Builder $query) {
         assertType('Illuminate\Database\Eloquent\Builder', $query);
         //assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
@@ -457,39 +281,4 @@ function testRelationMethods(): void
     Post::firstWhere(function (PostBuilder $query) {
         assertType('App\PostBuilder<App\Post>', $query);
     });
-}
-
-class Foo
-{
-    public function __construct(private User $user)
-    {
-    }
-
-    public function doFoo(): void
-    {
-        assertType('Illuminate\Database\Eloquent\Builder<App\User>', $this->user::query());
-    }
-}
-
-class Bar extends Model
-{
-    use HasBar;
-}
-
-trait HasBar
-{
-    public static function decodeHashId(string $hash_id): array
-    {
-        return [];
-    }
-
-    public static function findByHashId(string $id): ?self
-    {
-        return self::find(static::decodeHashId($id))->first();
-    }
-}
-
-function testRestoreOrCreate(): void
-{
-    assertType('App\User', User::restoreOrCreate(['id' => 1]));
 }
