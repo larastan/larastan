@@ -23,6 +23,7 @@ class RenameUsersTable extends Migration
         });
 
         Schema::table('users', function (Blueprint $table) {
+            $table->renameColumn('name', 'full_name');
             $table->rename('accounts');
         });
     }
