@@ -1,11 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Constant LARAVEL_VERSION not found\\.$#"
-			count: 1
-			path: src/LarastanStubFilesExtension.php
-
-		-
 			message: "#^PHPDoc tag @var assumes the expression with type PHPStan\\\\Type\\\\Type\\|null is always PHPStan\\\\Type\\\\Constant\\\\ConstantStringType but it's error\\-prone and dangerous\\.$#"
 			count: 1
 			path: src/Methods/HigherOrderCollectionProxyExtension.php
@@ -44,14 +39,4 @@ parameters:
 			message: "#^Doing instanceof PHPStan\\\\Type\\\\Generic\\\\GenericObjectType is error\\-prone and deprecated\\.$#"
 			count: 2
 			path: src/Rules/ModelRuleHelper.php
-
-		-
-			message: "#^Call to PHPStan\\\\Type\\\\Type\\:\\:getTemplateType\\(\\) references unknown template type TChildModel on class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsTo\\.$#"
-			count: 1
-			path: src/Types/ModelRelationsDynamicMethodReturnTypeExtension.php
-
-		-
-			message: "#^Call to PHPStan\\\\Type\\\\Type\\:\\:getTemplateType\\(\\) references unknown template type TRelatedModel on class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\Relation\\.$#"
-			count: 1
-			path: src/Types/ModelRelationsDynamicMethodReturnTypeExtension.php
 
