@@ -1,0 +1,17 @@
+<?php
+
+namespace Illuminate\Database\Eloquent;
+
+/**
+ * @template TModelClass of Model
+ */
+class Scope {
+    /**
+     * Apply the scope to a given Eloquent query builder.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder<TModelClass>  $builder
+     * @param  TModelClass  $model
+     * @return void
+     */
+    public function apply(Builder $builder, Model $model);
+}
