@@ -553,8 +553,6 @@ class Builder
     public function chunk($count, $callback);
 }
 
-class Scope {}
-
 /**
  * @method static \Illuminate\Database\Eloquent\Builder<static> withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static> onlyTrashed()
