@@ -2,7 +2,9 @@
 
 namespace App;
 
+use Database\Factories\Post\PostFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -30,5 +32,11 @@ class Post extends Model
     public function newEloquentBuilder($query): PostBuilder
     {
         return new PostBuilder($query);
+    }
+
+    /** @return PostFactory */
+    protected static function newFactory(): Factory
+    {
+        return PostFactory::new();
     }
 }
