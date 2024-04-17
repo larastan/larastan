@@ -20,7 +20,7 @@ class Builder
      * Register a new global scope.
      *
      * @param  string  $identifier
-     * @param  \Illuminate\Database\Eloquent\Scope|\Closure  $scope
+     * @param  \Illuminate\Database\Eloquent\Scope<static, TModelClass>|\Closure  $scope
      * @return static
      */
     public function withGlobalScope($identifier, $scope);
