@@ -7,7 +7,6 @@ use App\RoleCollection;
 use App\User;
 use App\Role;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection as SupportCollection;
 
 use function PHPStan\Testing\assertType;
@@ -118,4 +117,4 @@ assertType('App\User|null', $collectionOfUsers->shift());
 assertType('Illuminate\Support\Collection<int, App\User>', $collectionOfUsers->shift(5));
 
 assertType('App\BaseCollection<int, int>', $baseCollection->map(fn ($v) => (int) $v));
-assertType('App\RoleCollection<int, User>', $roleCollection->map(fn ($role): Model => null));
+assertType('App\RoleCollection<int, App\User>', $roleCollection->map(fn ($role) => new User()));

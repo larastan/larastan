@@ -1,5 +1,6 @@
 <?php
 
+use App\Role;
 use App\Transaction;
 use App\TransactionCollection;
 use App\User;
@@ -21,7 +22,7 @@ assertType('Illuminate\Support\LazyCollection<int, int>', LazyCollection::range(
 assertType('Illuminate\Support\Collection<int, mixed>', $collection->collapse());
 assertType('Illuminate\Support\Collection<int, mixed>', $items->collapse());
 
-assertType('Illuminate\Database\Eloquent\Collection<int, array<int, App\User|int>>', $collection->crossJoin([1]));
+assertType('Illuminate\Support\Collection<int, array<int, App\User|int>>', $collection->crossJoin([1]));
 
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->find($items));
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->find([1]));
@@ -44,10 +45,10 @@ assertType('App\User|bool', $secondCustomEloquentCollection->find(1, false));
 assertType('Illuminate\Support\Collection<int, mixed>', $collection->flatten());
 assertType('Illuminate\Support\Collection<int, mixed>', $items->flatten());
 
-assertType('Illuminate\Support\Collection<App\User, int>', $collection->flip());
+assertType('Illuminate\Support\Collection<string, int>', $collection->flip());
 assertType('Illuminate\Support\Collection<int, string>', $items->flip());
 
-assertType('Illuminate\Database\Eloquent\Collection<(int|string), Illuminate\Database\Eloquent\Collection<(int|string), App\User>>', $collection->groupBy('id'));
+assertType('Illuminate\Support\Collection<(int|string), Illuminate\Database\Eloquent\Collection<(int|string), App\User>>', $collection->groupBy('id'));
 assertType('Illuminate\Support\Collection<(int|string), Illuminate\Support\Collection<(int|string), int>>', $items->groupBy('id'));
 
 assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', $collection->keyBy(fn (User $user, int $key): string => $user->email));
@@ -63,9 +64,9 @@ assertType('Illuminate\Support\Collection<int, int>', $secondCustomEloquentColle
 assertType('Illuminate\Support\Collection<int, int>', $collection->map(fn (User $user): int => $user->id));
 assertType('Illuminate\Support\Collection<string, int>', $items->map(fn (int $value, string $key): int => $value));
 
-assertType('Illuminate\Database\Eloquent\Collection<int, array<int, int>>', $collection->mapToDictionary(fn (User $u) => [$u->id => $u->id]));
-assertType('App\TransactionCollection<string, array<int, int>>', $customEloquentCollection->mapToDictionary(fn (Transaction $t) => ['foo'=> $t->id]));
-assertType('App\UserCollection', $secondCustomEloquentCollection->mapToDictionary(fn (User $t) => ['foo'=> $t->id]));
+assertType('Illuminate\Support\Collection<int, array<int, int>>', $collection->mapToDictionary(fn (User $u) => [$u->id => $u->id]));
+assertType('Illuminate\Support\Collection<string, array<int, int>>', $customEloquentCollection->mapToDictionary(fn (Transaction $t) => ['foo'=> $t->id]));
+assertType('Illuminate\Support\Collection<string, array<int, int>>', $secondCustomEloquentCollection->mapToDictionary(fn (User $t) => ['foo'=> $t->id]));
 assertType('Illuminate\Support\Collection<string, array<int, int>>', $items->mapToDictionary(fn (int $v) => ['foo' => $v]));
 
 assertType('Illuminate\Support\Collection<int, string>', $customEloquentCollection->mapWithKeys(fn (Transaction $transaction): array => [$transaction->id => 'foo']));
@@ -73,14 +74,14 @@ assertType('Illuminate\Support\Collection<int, string>', $secondCustomEloquentCo
 assertType('Illuminate\Support\Collection<int, int>', $collection->mapWithKeys(fn (User $user): array => [$user->id => $user->id]));
 assertType('Illuminate\Support\Collection<string, int>', $items->mapWithKeys(fn (int $value, string $key): array => ['foo' => $value]));
 
-assertType('Illuminate\Database\Eloquent\Collection<int, App\User|string>', $collection->mergeRecursive([2 => 'foo']));
+assertType('Illuminate\Support\Collection<int, App\User|string>', $collection->mergeRecursive([2 => 'foo']));
 assertType('App\TransactionCollection<int, App\Transaction>', $customEloquentCollection->mergeRecursive([1 => new Transaction()]));
 assertType('App\UserCollection', $secondCustomEloquentCollection->mergeRecursive([1 => new User()]));
 assertType('Illuminate\Support\Collection<string, int>', $items->mergeRecursive(['foo' => 2]));
 
-assertType('Illuminate\Database\Eloquent\Collection<(int|string), int>', $collection->combine([1]));
-assertType('App\TransactionCollection<(int|string), int>', $customEloquentCollection->combine([1]));
-assertType('App\UserCollection', $secondCustomEloquentCollection->combine([1]));
+assertType('Illuminate\Support\Collection<(int|string), int>', $collection->combine([1]));
+assertType('Illuminate\Support\Collection<(int|string), int>', $customEloquentCollection->combine([1]));
+assertType('Illuminate\Support\Collection<(int|string), int>', $secondCustomEloquentCollection->combine([1]));
 assertType('Illuminate\Support\Collection<(int|string), string>', $items->combine(['foo']));
 
 assertType('App\User|null', $collection->pop(1));
@@ -100,29 +101,29 @@ assertType('App\TransactionCollection<int, App\Transaction>', $customEloquentCol
 assertType('App\UserCollection', $secondCustomEloquentCollection->shift(2));
 assertType('Illuminate\Support\Collection<int, int>', $items->shift(3));
 
-assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $collection->sliding(1));
-assertType('App\TransactionCollection<int, App\TransactionCollection<int, App\Transaction>>', $customEloquentCollection->sliding(2));
-assertType('App\UserCollection', $secondCustomEloquentCollection->sliding(2));
+assertType('Illuminate\Support\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $collection->sliding(1));
+assertType('Illuminate\Support\Collection<int, App\TransactionCollection<int, App\Transaction>>', $customEloquentCollection->sliding(2));
+assertType('Illuminate\Support\Collection<int, App\UserCollection>', $secondCustomEloquentCollection->sliding(2));
 assertType('Illuminate\Support\Collection<int, Illuminate\Support\Collection<string, int>>', $items->sliding(3));
 
-assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $collection->split(1));
-assertType('App\TransactionCollection<int, App\TransactionCollection<int, App\Transaction>>', $customEloquentCollection->split(2));
-assertType('App\UserCollection', $secondCustomEloquentCollection->split(2));
+assertType('Illuminate\Support\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $collection->split(1));
+assertType('Illuminate\Support\Collection<int, App\TransactionCollection<int, App\Transaction>>', $customEloquentCollection->split(2));
+assertType('Illuminate\Support\Collection<int, App\UserCollection>', $secondCustomEloquentCollection->split(2));
 assertType('Illuminate\Support\Collection<int, Illuminate\Support\Collection<string, int>>', $items->split(3));
 
-assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $collection->splitIn(1));
-assertType('App\TransactionCollection<int, App\TransactionCollection<int, App\Transaction>>', $customEloquentCollection->splitIn(2));
-assertType('App\UserCollection', $secondCustomEloquentCollection->splitIn(2));
+assertType('Illuminate\Support\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $collection->splitIn(1));
+assertType('Illuminate\Support\Collection<int, App\TransactionCollection<int, App\Transaction>>', $customEloquentCollection->splitIn(2));
+assertType('Illuminate\Support\Collection<int, App\UserCollection>', $secondCustomEloquentCollection->splitIn(2));
 assertType('Illuminate\Support\Collection<int, Illuminate\Support\Collection<string, int>>', $items->splitIn(3));
 
-assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $collection->chunk(1));
-assertType('App\TransactionCollection<int, App\TransactionCollection<int, App\Transaction>>', $customEloquentCollection->chunk(2));
-assertType('App\UserCollection', $secondCustomEloquentCollection->chunk(2));
+assertType('Illuminate\Support\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $collection->chunk(1));
+assertType('Illuminate\Support\Collection<int, App\TransactionCollection<int, App\Transaction>>', $customEloquentCollection->chunk(2));
+assertType('Illuminate\Support\Collection<int, App\UserCollection>', $secondCustomEloquentCollection->chunk(2));
 assertType('Illuminate\Support\Collection<int, Illuminate\Support\Collection<string, int>>', $items->chunk(3));
 
-assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $collection->chunkWhile(fn (User $u) => $u->id > 5));
-assertType('App\TransactionCollection<int, App\TransactionCollection<int, App\Transaction>>', $customEloquentCollection->chunkWhile(fn (Transaction $t) => $t->id > 5));
-assertType('App\UserCollection', $secondCustomEloquentCollection->chunkWhile(fn (User $t) => $t->id > 5));
+assertType('Illuminate\Support\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $collection->chunkWhile(fn (User $u) => $u->id > 5));
+assertType('Illuminate\Support\Collection<int, App\TransactionCollection<int, App\Transaction>>', $customEloquentCollection->chunkWhile(fn (Transaction $t) => $t->id > 5));
+assertType('Illuminate\Support\Collection<int, App\UserCollection>', $secondCustomEloquentCollection->chunkWhile(fn (User $t) => $t->id > 5));
 assertType('Illuminate\Support\Collection<int, Illuminate\Support\Collection<int, int>>', $items->chunkWhile(fn ($v) => $v > 5));
 
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->values());
@@ -135,9 +136,9 @@ assertType('Illuminate\Support\Collection<int, Illuminate\Support\Collection<int
 assertType('Illuminate\Support\Collection<int, Illuminate\Support\Collection<int, App\User|string>>', $secondCustomEloquentCollection->zip(['foo']));
 assertType('Illuminate\Support\Collection<int, Illuminate\Support\Collection<int, int|string>>', $items->zip(['foo', 'bar']));
 
-assertType('Illuminate\Database\Eloquent\Collection<int<0, 1>, Illuminate\Database\Eloquent\Collection<int, App\User>>', $collection->partition('foo'));
-assertType('App\TransactionCollection<int<0, 1>, App\TransactionCollection<int, App\Transaction>>', $customEloquentCollection->partition('foo'));
-assertType('App\UserCollection', $secondCustomEloquentCollection->partition('foo'));
+assertType('Illuminate\Support\Collection<int<0, 1>, Illuminate\Database\Eloquent\Collection<int, App\User>>', $collection->partition('foo'));
+assertType('Illuminate\Support\Collection<int<0, 1>, App\TransactionCollection<int, App\Transaction>>', $customEloquentCollection->partition('foo'));
+assertType('Illuminate\Support\Collection<int<0, 1>, App\UserCollection>', $secondCustomEloquentCollection->partition('foo'));
 assertType('Illuminate\Support\Collection<int<0, 1>, Illuminate\Support\Collection<string, int>>', $items->partition('foo'));
 
 assertType('Illuminate\Support\Collection<int, App\User|int>', $collection->pad(10, 10));
@@ -154,6 +155,16 @@ assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection
 assertType('App\TransactionCollection<int, App\Transaction|App\User>', $customEloquentCollection->concat([new User()]));
 assertType('App\UserCollection', $secondCustomEloquentCollection->concat([new User()]));
 assertType('Illuminate\Support\Collection<string, App\User|int>', $items->concat([new User()]));
+
+assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->unique());
+assertType('App\TransactionCollection<int, App\Transaction>', $customEloquentCollection->unique());
+assertType('App\UserCollection', $secondCustomEloquentCollection->unique());
+assertType('Illuminate\Support\Collection<string, int>', $items->unique());
+
+assertType('Illuminate\Database\Eloquent\Collection<int, App\Role>', $collection->map(fn ($v) => new Role()));
+assertType('App\TransactionCollection<int, App\Role>', $customEloquentCollection->map(fn ($v) => new Role()));
+assertType('Illuminate\Database\Eloquent\Collection<int, App\Role>', $secondCustomEloquentCollection->map(fn ($v) => new Role()));
+assertType('Illuminate\Support\Collection<string, App\Role>', $items->map(fn ($v) => new Role()));
 
 ////////////////////////////
 // EnumeratesValues Trait //
@@ -173,14 +184,14 @@ assertType('Illuminate\Support\Collection<int, int>', SupportCollection::times(1
 assertType('Illuminate\Support\LazyCollection<int, int>', LazyCollection::times(10, fn ($int) => 5));
 
 // In runtime it returns `Illuminate\Support\Collection<string, Illuminate\Database\Eloquent\Collection<int, int>>`
-// Might be fixed in Laravel or needs a separate extension
+// Needs to be fixed in Laravel to match
 assertType(
-    'Illuminate\Database\Eloquent\Collection<string, Illuminate\Database\Eloquent\Collection<int, int>>',
+    'Illuminate\Support\Collection<string, Illuminate\Support\Collection<int, int>>',
     $collection->mapToGroups(fn (User $user, int $key): array => ['foo' => $user->id])
 );
 
 assertType(
-    'Illuminate\Database\Eloquent\Collection<int, int>',
+    'Illuminate\Support\Collection<int, int>',
     $collection->flatMap(function (User $user, int $id) {
         return [$user->id];
     })

@@ -15,6 +15,7 @@ use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\Generic\TemplateObjectType;
 use PHPStan\Type\IntersectionType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
@@ -35,15 +36,6 @@ class EnumerableGenericDynamicMethodReturnTypeExtension implements DynamicMethod
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-        if ($methodReflection->getDeclaringClass()->getName() === EloquentCollection::class) {
-            return in_array($methodReflection->getName(), [
-                'except',
-                'find',
-                'only',
-                'unique',
-            ], true);
-        }
-
         $methods = [
             'chunk',
             'chunkWhile',
@@ -51,6 +43,7 @@ class EnumerableGenericDynamicMethodReturnTypeExtension implements DynamicMethod
             'combine',
             'concat',
             'crossJoin',
+            'except',
             'flatMap',
             'flip',
             'groupBy',
@@ -62,6 +55,7 @@ class EnumerableGenericDynamicMethodReturnTypeExtension implements DynamicMethod
             'mapToGroups',
             'mapWithKeys',
             'mergeRecursive',
+            'only',
             'pad',
             'partition',
             'pluck',
@@ -69,6 +63,7 @@ class EnumerableGenericDynamicMethodReturnTypeExtension implements DynamicMethod
             'sliding',
             'split',
             'splitIn',
+            'unique',
             'values',
             'wrap',
             'zip',
@@ -76,6 +71,10 @@ class EnumerableGenericDynamicMethodReturnTypeExtension implements DynamicMethod
 
         if ($methodReflection->getDeclaringClass()->getName() === Collection::class) {
             $methods = array_merge($methods, ['pop', 'shift']);
+        }
+
+        if ($methodReflection->getDeclaringClass()->getName() === EloquentCollection::class) {
+            $methods = array_merge($methods, ['find']);
         }
 
         return in_array($methodReflection->getName(), $methods, true);
@@ -96,18 +95,19 @@ class EnumerableGenericDynamicMethodReturnTypeExtension implements DynamicMethod
             return $returnType;
         }
 
+        // Special cases for methods returning single models
+        if ((new ObjectType(Model::class))->isSuperTypeOf($returnType)->yes()) {
+            return $returnType;
+        }
+
         $calledOnType = $scope->getType($methodCall->var);
 
+        // should never happen
         if ($calledOnType->getObjectClassReflections() === []) {
             return $returnType;
         }
 
         $classReflection = $calledOnType->getObjectClassReflections()[0];
-
-        // Special cases for methods returning single models
-        if ((new ObjectType(Model::class))->isSuperTypeOf($returnType)->yes()) {
-            return $returnType;
-        }
 
         // If it's a UnionType, traverse the types and try to find a collection object type
         if ($returnType instanceof UnionType) {
@@ -128,16 +128,18 @@ class EnumerableGenericDynamicMethodReturnTypeExtension implements DynamicMethod
         return $this->handleGenericObjectType($classReflection, $returnType->getObjectClassReflections()[0]);
     }
 
-    private function handleGenericObjectType(ClassReflection $classReflection, ClassReflection $returnTypeClassReflection): ObjectType
-    {
-        if ($classReflection->getActiveTemplateTypeMap()->count() !== $returnTypeClassReflection->getActiveTemplateTypeMap()->count()) {
-            return new ObjectType($classReflection->getName());
-        }
-
+    private function handleGenericObjectType(
+        ClassReflection $classReflection,
+        ClassReflection $returnTypeClassReflection,
+    ): ObjectType {
         $genericTypes = $returnTypeClassReflection->typeMapToList($returnTypeClassReflection->getActiveTemplateTypeMap());
 
         if ($genericTypes === []) {
-            return new ObjectType($classReflection->getName());
+            if ($classReflection->isSubclassOf($returnTypeClassReflection->getName())) {
+                return new ObjectType($classReflection->getName());
+            }
+
+            return new ObjectType($returnTypeClassReflection->getName());
         }
 
         // If the key type is gonna be a model, we change it to string
@@ -145,8 +147,8 @@ class EnumerableGenericDynamicMethodReturnTypeExtension implements DynamicMethod
             $genericTypes[0] = new StringType();
         }
 
-        $genericTypes = array_map(static function (Type $type) use ($classReflection) {
-            return TypeTraverser::map($type, static function (Type $type, callable $traverse) use ($classReflection): Type {
+        $genericTypes = array_map(function (Type $type) use ($classReflection) {
+            return TypeTraverser::map($type, function (Type $type, callable $traverse) use ($classReflection): Type {
                 if ($type instanceof UnionType || $type instanceof IntersectionType) {
                     return $traverse($type);
                 }
@@ -156,7 +158,7 @@ class EnumerableGenericDynamicMethodReturnTypeExtension implements DynamicMethod
                     $genericTypes = $innerTypeReflection->typeMapToList($innerTypeReflection->getActiveTemplateTypeMap());
 
                     if ($classReflection->isSubclassOf($type->getClassName())) {
-                        return new GenericObjectType($classReflection->getName(), $genericTypes);
+                        return $this->getCollectionType($classReflection, $innerTypeReflection, $genericTypes);
                     }
                 }
 
@@ -164,6 +166,55 @@ class EnumerableGenericDynamicMethodReturnTypeExtension implements DynamicMethod
             });
         }, $genericTypes);
 
-        return new GenericObjectType($classReflection->getName(), $genericTypes);
+        // need to account for other generic classes
+        if (
+            $returnTypeClassReflection->isClass()
+            && ! $classReflection->isSubclassOf($returnTypeClassReflection->getName())
+        ) {
+            return new GenericObjectType($returnTypeClassReflection->getName(), $genericTypes);
+        }
+
+        return $this->getCollectionType($classReflection, $returnTypeClassReflection, $genericTypes);
+    }
+
+    /** @param array<int, Type> $genericTypes */
+    private function getCollectionType(
+        ClassReflection $classReflection,
+        ClassReflection $returnTypeClassReflection,
+        array $genericTypes,
+    ): ObjectType {
+        $isGeneric       = true;
+        $collectionClass = $classReflection->getName();
+
+        if ($classReflection->getActiveTemplateTypeMap()->count() === 0) {
+            $isGeneric = false;
+        }
+
+        if (
+            ($classReflection->getName() === EloquentCollection::class
+            || $classReflection->isSubclassOf(EloquentCollection::class))
+        ) {
+            $modelType  = new ObjectType(Model::class);
+            $tModelType = $classReflection->getTemplateTypeMap()->getType('TModel')
+                ?? $classReflection->getParentClass()?->getActiveTemplateTypeMap()->getType('TModel');
+
+            if ($tModelType instanceof TemplateObjectType) {
+                $tModelType = $tModelType->getBound();
+            }
+
+            // An Eloquent Collection can only contain models.
+            if (! $modelType->isSuperTypeOf($genericTypes[1])->yes()) {
+                $collectionClass = Collection::class;
+                $isGeneric       = true;
+            // An Eloquent Collection cannot contain a model that is wider than its template type.
+            } elseif ($tModelType !== null && ! $tModelType->isSuperTypeOf($genericTypes[1])->yes()) {
+                $collectionClass = EloquentCollection::class;
+                $isGeneric       = true;
+            }
+        }
+
+        return $isGeneric
+            ? new GenericObjectType($collectionClass, $genericTypes)
+            : new ObjectType($collectionClass);
     }
 }
