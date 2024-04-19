@@ -36,7 +36,12 @@ class EnumerableGenericStaticMethodDynamicMethodReturnTypeExtension implements D
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
         if ($methodReflection->getDeclaringClass()->getName() === EloquentCollection::class) {
-            return $methodReflection->getName() === 'find';
+            return in_array($methodReflection->getName(), [
+                'except',
+                'find',
+                'only',
+                'unique',
+            ], true);
         }
 
         $methods = [

@@ -8,6 +8,7 @@ use App\ModelWithNonGenericCollection;
 use App\ModelWithOnlyValueGenericCollection;
 use App\Role;
 use App\User;
+use Illuminate\Database\Eloquent\Model;
 
 use function PHPStan\Testing\assertType;
 
@@ -132,4 +133,10 @@ function foo()
     assertType('App\AccountCollection<int, App\Account>', (new User)->accounts->where('active', true));
     assertType('App\AccountCollection<int, App\Account>', (new User)->accounts->filterByActive());
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', (new User)->children->where('active', true));
+
+    assertType('App\RoleCollection<int, App\Role>', Role::query()->get());
+    assertType('App\RoleCollection<int, App\Role>', Role::query()->get()->unique());
+    assertType('App\RoleCollection<int, App\Role>', Role::query()->get()->only());
+    assertType('App\RoleCollection<int, App\Role>', Role::query()->get()->except());
+    assertType('App\RoleCollection<int, App\User>', Role::query()->get()->map(fn ($role): Model => new User()));
 }
