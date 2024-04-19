@@ -25,7 +25,7 @@ use PHPStan\Type\UnionType;
 use function array_map;
 use function in_array;
 
-class EnumerableGenericStaticMethodDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
+class EnumerableGenericDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
 {
     public function __construct(private ReflectionProvider $reflectionProvider)
     {

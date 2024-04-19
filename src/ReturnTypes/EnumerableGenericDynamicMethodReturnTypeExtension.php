@@ -26,7 +26,7 @@ use function array_map;
 use function array_merge;
 use function in_array;
 
-class EnumerableGenericStaticMethodDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
+class EnumerableGenericDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
     public function getClass(): string
     {
