@@ -15,14 +15,19 @@ use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Casts\AsEncryptedArrayObject;
 use Illuminate\Database\Eloquent\Casts\AsEncryptedCollection;
 use Illuminate\Database\Eloquent\Casts\AsStringable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon as IlluminateCarbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Stringable as IlluminateStringable;
+use PHPStan\Analyser\OutOfClassScope;
+use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ParameterReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
+use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Accessory\AccessoryNumericStringType;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\BenevolentUnionType;
@@ -36,14 +41,24 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use ReflectionException;
 use stdClass;
 use Stringable;
 
+use function array_combine;
+use function array_key_exists;
+use function array_map;
+use function array_merge;
 use function class_exists;
 use function explode;
+use function str_replace;
+use function version_compare;
 
 class ModelCastHelper
 {
+    /** @var array<string, array<string, string>> */
+    private array $modelCasts = [];
+
     public function __construct(
         protected ReflectionProvider $reflectionProvider,
     ) {
@@ -192,5 +207,64 @@ class ModelCastHelper
         }
 
         return $cast;
+    }
+
+    public function hasCastForProperty(ClassReflection $modelClassReflection, string $propertyName): bool
+    {
+        if (! array_key_exists($modelClassReflection->getName(), $this->modelCasts)) {
+            $modelCasts = $this->getModelCasts($modelClassReflection);
+        } else {
+            $modelCasts = $this->modelCasts[$modelClassReflection->getName()];
+        }
+
+        return array_key_exists($propertyName, $modelCasts);
+    }
+
+    public function getCastForProperty(ClassReflection $modelClassReflection, string $propertyName): string|null
+    {
+        if (! array_key_exists($modelClassReflection->getName(), $this->modelCasts)) {
+            $modelCasts = $this->getModelCasts($modelClassReflection);
+        } else {
+            $modelCasts = $this->modelCasts[$modelClassReflection->getName()];
+        }
+
+        return $modelCasts[$propertyName] ?? null;
+    }
+
+    /**
+     * @return array<string, string>
+     *
+     * @throws ShouldNotHappenException
+     * @throws MissingMethodFromReflectionException
+     */
+    private function getModelCasts(ClassReflection $modelClassReflection): array
+    {
+        try {
+            /** @var Model $modelInstance */
+            $modelInstance = $modelClassReflection->getNativeReflection()->newInstanceWithoutConstructor();
+        } catch (ReflectionException) {
+            throw new ShouldNotHappenException();
+        }
+
+        $modelCasts = $modelInstance->getCasts();
+
+        if (version_compare(LARAVEL_VERSION, '11.0.0', '>=')) { // @phpstan-ignore-line
+            $castsMethodReturnType = ParametersAcceptorSelector::selectSingle($modelClassReflection->getMethod(
+                'casts',
+                new OutOfClassScope(),
+            )->getVariants())->getReturnType();
+
+            if ($castsMethodReturnType->isConstantArray()->yes()) {
+                $modelCasts = array_merge(
+                    $modelCasts,
+                    array_combine(
+                        array_map(static fn ($key) => $key->getValue(), $castsMethodReturnType->getKeyTypes()), // @phpstan-ignore-line
+                        array_map(static fn ($value) => str_replace('\\\\', '\\', $value->getValue()), $castsMethodReturnType->getValueTypes()), // @phpstan-ignore-line
+                    ),
+                );
+            }
+        }
+
+        return $modelCasts;
     }
 }

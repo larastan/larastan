@@ -106,19 +106,19 @@ class ModelPropertyHelper
         if ($this->hasDate($modelInstance, $propertyName)) {
             $readableType = $this->modelCastHelper->getDateType();
             $writableType = TypeCombinator::union($this->modelCastHelper->getDateType(), new StringType());
-        } elseif ($modelInstance->hasCast($propertyName)) {
-            $cast = $modelInstance->getCasts()[$propertyName];
-
-            $readableType = $this->modelCastHelper->getReadableType(
-                $cast,
-                $this->stringResolver->resolve($column->readableType),
-            );
-            $writableType = $this->modelCastHelper->getWriteableType(
-                $cast,
-                $this->stringResolver->resolve($column->writeableType),
-            );
         } else {
-            if (in_array($column->readableType, ['enum', 'set'], true)) {
+            $cast = $this->modelCastHelper->getCastForProperty($classReflection, $propertyName);
+
+            if ($cast !== null) {
+                $readableType = $this->modelCastHelper->getReadableType(
+                    $cast,
+                    $this->stringResolver->resolve($column->readableType),
+                );
+                $writableType = $this->modelCastHelper->getWriteableType(
+                    $cast,
+                    $this->stringResolver->resolve($column->writeableType),
+                );
+            } elseif (in_array($column->readableType, ['enum', 'set'], true)) {
                 if ($column->options === null || count($column->options) < 1) {
                     $readableType = $writableType = new StringType();
                 } else {
@@ -227,6 +227,6 @@ class ModelPropertyHelper
             $dates[] = $modelInstance->getDeletedAtColumn();
         }
 
-        return in_array($propertyName, $dates);
+        return in_array($propertyName, $dates, true);
     }
 }
