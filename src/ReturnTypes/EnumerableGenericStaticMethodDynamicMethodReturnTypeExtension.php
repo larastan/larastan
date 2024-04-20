@@ -36,7 +36,7 @@ class EnumerableGenericStaticMethodDynamicMethodReturnTypeExtension implements D
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
         if ($methodReflection->getDeclaringClass()->getName() === EloquentCollection::class) {
-            return $methodReflection->getName() === 'find';
+            return in_array($methodReflection->getName(), ['find', 'map', 'mapWithKeys'], true);
         }
 
         $methods = [
@@ -88,6 +88,17 @@ class EnumerableGenericStaticMethodDynamicMethodReturnTypeExtension implements D
         )->getReturnType();
 
         if ((! $returnType instanceof UnionType) && $returnType->isObject()->no()) {
+            return $returnType;
+        }
+
+        // map and mapWithKeys returns base collection,
+        // if items does not include Eloquent model.
+        // This logic is in stub files, so here we check if the return type is base collection
+        if (
+            $methodReflection->getDeclaringClass()->getName() === EloquentCollection::class &&
+            in_array($methodReflection->getName(), ['map', 'mapWithKeys'], true) &&
+            $returnType->getObjectClassNames()[0] === Collection::class
+        ) {
             return $returnType;
         }
 
