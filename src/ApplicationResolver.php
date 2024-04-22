@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace NunoMaduro\Larastan;
 
-use Composer\Autoload\ClassMapGenerator;
+use Composer\ClassMapGenerator\ClassMapGenerator;
 use const DIRECTORY_SEPARATOR;
 use Illuminate\Contracts\Foundation\Application;
 use function in_array;
@@ -31,12 +31,12 @@ final class ApplicationResolver
     {
         $app = (new self)->createApplication();
 
-        $composerFile = getcwd().DIRECTORY_SEPARATOR.'composer.json';
+        $composerFile = getcwd() . DIRECTORY_SEPARATOR . 'composer.json';
 
         if (file_exists($composerFile)) {
             self::$composer = json_decode((string) file_get_contents($composerFile), true);
             $namespace = (string) key(self::$composer['autoload']['psr-4']);
-            $vendorDir = self::$composer['config']['vendor-dir'] ?? dirname($composerFile).DIRECTORY_SEPARATOR.'vendor';
+            $vendorDir = self::$composer['config']['vendor-dir'] ?? dirname($composerFile) . DIRECTORY_SEPARATOR . 'vendor';
             $serviceProviders = array_values(array_filter(self::getProjectClasses($namespace, $vendorDir), static function ($class) use (
                 $namespace
             ) {
@@ -74,12 +74,12 @@ final class ApplicationResolver
     {
         $classParents = class_parents($class);
 
-        if (! $classParents) {
+        if (!$classParents) {
             return false;
         }
 
         return in_array(\Illuminate\Support\ServiceProvider::class, $classParents, true)
-            && ! (new \ReflectionClass($class))->isAbstract();
+            && !(new \ReflectionClass($class))->isAbstract();
     }
 
     /**
@@ -117,7 +117,7 @@ final class ApplicationResolver
          * @var string $file
          */
         foreach ($maps as $class => $file) {
-            if (! in_array($class, $devClasses, true)) {
+            if (!in_array($class, $devClasses, true)) {
                 class_exists($class, true);
             }
         }
@@ -134,9 +134,9 @@ final class ApplicationResolver
      */
     private static function getProjectSearchDirs(string $namespace, string $vendorDir): array
     {
-        $composerDir = $vendorDir.DIRECTORY_SEPARATOR.'composer';
+        $composerDir = $vendorDir . DIRECTORY_SEPARATOR . 'composer';
 
-        $file = $composerDir.DIRECTORY_SEPARATOR.'autoload_psr4.php';
+        $file = $composerDir . DIRECTORY_SEPARATOR . 'autoload_psr4.php';
         $raw = include $file;
 
         return $raw[$namespace];
