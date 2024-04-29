@@ -1,0 +1,14 @@
+<?php
+
+namespace Illuminate\Database\Eloquent\Concerns;
+
+trait HasTimestamps
+{
+    /**
+     * Indicates if the model should be timestamped,
+     * or includes the timestamp fields which should be used
+     *
+     * @var bool|array<string>
+     */
+    public $timestamps;
+}
