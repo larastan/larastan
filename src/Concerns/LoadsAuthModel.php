@@ -32,6 +32,10 @@ trait LoadsAuthModel
                     return $carry;
                 }
 
+                if ($provider instanceof \BackedEnum) {
+                    $provider = $provider->value;
+                }
+
                 $authModel = $providers[$provider]['model'] ?? null;
 
                 if (! $authModel || in_array($authModel, $carry, strict: true)) {
