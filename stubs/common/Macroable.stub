@@ -1,0 +1,16 @@
+<?php
+
+namespace Illuminate\Support\Traits;
+
+trait Macroable
+{
+    /**
+     * Register a custom macro.
+     *
+     * @param  string  $name
+     * @param  object|callable  $macro
+     * @param-closure-this $this $macro
+     * @return void
+     */
+    public static function macro($name, $macro);
+}
