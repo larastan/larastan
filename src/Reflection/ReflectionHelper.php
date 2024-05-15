@@ -12,6 +12,8 @@ use function array_key_exists;
 
 final class ReflectionHelper
 {
+    private static MixinPropertiesClassReflectionExtension|null $mixinPropertiesClassReflectionExtension = null;
+
     /**
      * Does the given class or any of its ancestors have an `@property*` annotation with the given name?
      */
@@ -27,10 +29,17 @@ final class ReflectionHelper
             }
         }
 
+        if (self::$mixinPropertiesClassReflectionExtension === null) {
+            /** @phpstan-ignore-next-line */
+            self::$mixinPropertiesClassReflectionExtension = (new MixinPropertiesClassReflectionExtension([]));
+        }
+
         /** @phpstan-ignore-next-line */
-        return (new MixinPropertiesClassReflectionExtension([$classReflection->getName()]))
+        return self::$mixinPropertiesClassReflectionExtension
             ->hasProperty($classReflection, $propertyName);
     }
+
+    private static MixinMethodsClassReflectionExtension|null $mixinMethodsClassReflectionExtension = null;
 
     /**
      * Does the given class or any of its ancestors have an `@method*` annotation with the given name?
@@ -47,8 +56,13 @@ final class ReflectionHelper
             }
         }
 
+        if (self::$mixinMethodsClassReflectionExtension === null) {
+            /** @phpstan-ignore-next-line */
+            self::$mixinMethodsClassReflectionExtension = new MixinMethodsClassReflectionExtension([]);
+        }
+
         /** @phpstan-ignore-next-line */
-        return (new MixinMethodsClassReflectionExtension([$classReflection->getName()]))
+        return self::$mixinMethodsClassReflectionExtension
             ->hasMethod($classReflection, $methodName);
     }
 }
