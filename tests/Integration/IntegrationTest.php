@@ -9,6 +9,7 @@ use PHPStan\Analyser\Error;
 use PHPStan\File\FileHelper;
 use PHPStan\Testing\PHPStanTestCase;
 
+use function count;
 use function version_compare;
 
 class IntegrationTest extends PHPStanTestCase
@@ -22,6 +23,7 @@ class IntegrationTest extends PHPStanTestCase
         yield [__DIR__ . '/data/model-properties.php'];
         yield [__DIR__ . '/data/blade-view.php'];
         yield [__DIR__ . '/data/helpers.php'];
+        yield [__DIR__ . '/data/bug-1883.php', ['Call to an undefined static method RedisFacade::noSuchMethod().']];
 
         if (! version_compare(LARAVEL_VERSION, '10.0.0', '>=')) {
             return;
@@ -37,8 +39,20 @@ class IntegrationTest extends PHPStanTestCase
 
         if ($expectedErrors === null) {
             $this->assertNoErrors($errors);
-        } else { // @phpcs:ignore
-            // TODO: compare errors
+        } else {
+            $this->assertSameErrorMessages($expectedErrors, $errors);
+        }
+    }
+
+    /**
+     *  @param string[] $expectedErrors
+     *  @param Error[]  $errors
+     */
+    private function assertSameErrorMessages(array $expectedErrors, array $errors): void
+    {
+        $this->assertCount(count($expectedErrors), $errors);
+        foreach ($errors as $index => $error) {
+            $this->assertSame($expectedErrors[$index], $error->getMessage());
         }
     }
 

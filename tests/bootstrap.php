@@ -61,3 +61,9 @@ class CustomCollectionMacro
 if (version_compare(PHP_VERSION, '8.1.0', '>=') && version_compare(PHP_VERSION, '8.2.0', '<')) {
     include_once 'enum-definition.php';
 }
+
+class RedisFacade
+{
+}
+
+class_alias(RedisFacade::class, RedisAlias::class);
