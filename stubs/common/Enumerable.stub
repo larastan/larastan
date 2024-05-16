@@ -3,13 +3,22 @@
 namespace Illuminate\Support;
 
 /**
- * @template TKey of array-key
+ * @template TKey of int|string
  * @template TValue
  *
  * @extends \IteratorAggregate<TKey, TValue>
  */
 interface Enumerable extends \Countable, \IteratorAggregate, \JsonSerializable
 {
+    /**
+     * Search the collection for a given value and return the corresponding key if successful.
+     *
+     * @param  TValue|callable(TValue,TKey): bool  $value
+     * @param  bool  $strict
+     * @return TKey|bool
+     */
+    public function search($value, $strict = false);
+
     /**
     * Get one or a specified number of items randomly from the collection.
     *
@@ -29,4 +38,15 @@ interface Enumerable extends \Countable, \IteratorAggregate, \JsonSerializable
     * @return static<array-key, TCombineValue>
     */
    public function combine($values);
+
+   /**
+    * Push all of the given items onto the collection.
+    *
+    * @template TConcatKey of int|string
+    * @template TConcatValue
+    *
+    * @param  iterable<TConcatKey, TConcatValue>  $source
+    * @return static<TKey|TConcatKey, TValue|TConcatValue>
+    */
+   public function concat($source);
 }
