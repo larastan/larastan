@@ -1,0 +1,6 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Anonymous function should return Illuminate\\\\Support\\\\Collection\\<int\\|string, mixed\\> but returns Illuminate\\\\Support\\\\Collection\\<string, string\\>\\.$#"
+			count: 1
+			path: ../../e2e/packages/support/src/Commands/CheckTranslationsCommand.php
