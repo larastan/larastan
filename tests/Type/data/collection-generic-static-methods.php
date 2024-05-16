@@ -1,8 +1,11 @@
 <?php
 
+namespace CollectionGenericStaticMethods;
+
 use App\Transaction;
 use App\TransactionCollection;
 use App\User;
+use App\UserCollection;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\LazyCollection;
@@ -11,8 +14,8 @@ use function PHPStan\Testing\assertType;
 
 /** @var EloquentCollection<int, User> $collection */
 /** @var SupportCollection<string, int> $items */
-/** @var App\TransactionCollection<int, Transaction> $customEloquentCollection */
-/** @var App\UserCollection $secondCustomEloquentCollection */
+/** @var TransactionCollection<int, Transaction> $customEloquentCollection */
+/** @var UserCollection $secondCustomEloquentCollection */
 /** @var LazyCollection<int, User> $lazyCollection */
 /** @var User $user */
 assertType('Illuminate\Database\Eloquent\Collection<int, int>', EloquentCollection::range(1, 10));
@@ -161,7 +164,7 @@ assertType('Illuminate\Support\Collection<(int|string), int>', $items->countBy('
 assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->concat([new User()]));
 assertType('App\TransactionCollection<int, App\Transaction|App\User>', $customEloquentCollection->concat([new User()]));
 assertType('App\UserCollection', $secondCustomEloquentCollection->concat([new User()]));
-assertType('Illuminate\Support\Collection<string, App\User|int>', $items->concat([new User()]));
+assertType('Illuminate\Support\Collection<int|string, App\User|int>', $items->concat([new User()]));
 
 ////////////////////////////
 // EnumeratesValues Trait //
@@ -223,3 +226,7 @@ assertType('Illuminate\Support\Collection<(int|string), Illuminate\Support\Colle
         'type' => 'B',
     ],
 ])->groupBy('type'));
+
+/** @var \Illuminate\Support\Enumerable<int, \App\User> $enumerableUsers */
+
+assertType('bool|int', $enumerableUsers->search(fn(User $user) => $user->id === 1));
