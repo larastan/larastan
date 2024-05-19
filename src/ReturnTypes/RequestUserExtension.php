@@ -40,6 +40,10 @@ final class RequestUserExtension implements DynamicMethodReturnTypeExtension
         MethodCall $methodCall,
         Scope $scope,
     ): Type {
+        if ($methodReflection->getDeclaringClass()->getName() !== Request::class) {
+            return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+        }
+
         $config     = $this->getContainer()->get('config');
         $authModels = [];
 
