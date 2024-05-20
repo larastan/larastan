@@ -49,6 +49,10 @@ function doFoo(FooModel $foo, NonGenericBuilder $nonGenericBuilder): void
     assertType('Illuminate\Database\Eloquent\Collection<int, CustomEloquentBuilder\ModelWithCustomBuilderAndDocBlocks>', ModelWithCustomBuilderAndDocBlocks::all());
     assertType('CustomEloquentBuilder\CustomBuilder2<CustomEloquentBuilder\ModelWithCustomBuilderAndDocBlocks>', ModelWithCustomBuilderAndDocBlocks::query());
     assertType('CustomEloquentBuilder\NonGenericBuilder', $nonGenericBuilder->skip(5));
+
+    assertType('CustomEloquentBuilder\ModelWithNonGenericBuilder|null', ModelWithNonGenericBuilder::where('email', 'bar')->first());
+    assertType('CustomEloquentBuilder\ChildNonGenericBuilder', ModelWithNonGenericBuilder::where('email', 'bar')->orderBy('email'));
+    assertType('Illuminate\Database\Eloquent\Collection<int, CustomEloquentBuilder\ModelWithNonGenericBuilder>', ModelWithNonGenericBuilder::get());
 }
 
 /**
@@ -166,11 +170,11 @@ class ModelWithNonGenericBuilder extends Model
 {
     /**
      * @param  \Illuminate\Database\Query\Builder  $query
-     * @return NonGenericBuilder
+     * @return ChildNonGenericBuilder
      */
-    public function newEloquentBuilder($query): NonGenericBuilder
+    public function newEloquentBuilder($query): ChildNonGenericBuilder
     {
-        return new NonGenericBuilder($query);
+        return new ChildNonGenericBuilder($query);
     }
 }
 
@@ -178,5 +182,9 @@ class ModelWithNonGenericBuilder extends Model
  * @extends Builder<ModelWithNonGenericBuilder>
  */
 class NonGenericBuilder extends Builder
+{
+}
+
+class ChildNonGenericBuilder extends NonGenericBuilder
 {
 }
