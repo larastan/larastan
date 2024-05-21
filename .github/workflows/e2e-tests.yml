@@ -12,6 +12,8 @@ on:
     paths-ignore:
       - "**.md"
       - 'docs/**'
+  schedule:
+    - cron: "0 0 * * *"
 
 jobs:
   integration-tests:
