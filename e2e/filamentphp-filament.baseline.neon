@@ -1,1 +1,31 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: ../../e2e/packages/actions/src/Commands/MakeExporterCommand.php
 
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: ../../e2e/packages/actions/src/Commands/MakeImporterCommand.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: ../../e2e/packages/forms/src/Commands/MakeFormCommand.php
+
+		-
+			message: "#^Parameter \\#2 \\$callback of method Illuminate\\\\Support\\\\Collection\\<string,float\\|string\\|true\\>\\:\\:when\\(\\) expects \\(callable\\(Illuminate\\\\Support\\\\Collection\\<string, float\\|string\\|true\\>, bool\\)\\: Illuminate\\\\Support\\\\Collection\\<string, bool\\|float\\|string\\>\\)\\|null, Closure\\(Illuminate\\\\Support\\\\Collection\\)\\: Illuminate\\\\Support\\\\Collection\\<string, float\\|string\\|true\\> given\\.$#"
+			count: 1
+			path: ../../e2e/packages/forms/src/Components/FileUpload.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: ../../e2e/packages/panels/src/Commands/MakeResourceCommand.php
+
+		-
+			message: "#^Unable to resolve the template type TMapValue in call to method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),string\\>\\:\\:map\\(\\)$#"
+			count: 1
+			path: ../../e2e/packages/spatie-laravel-tags-plugin/src/Forms/Components/SpatieTagsInput.php

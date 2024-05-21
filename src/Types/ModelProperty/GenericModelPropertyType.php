@@ -4,26 +4,39 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Types\ModelProperty;
 
+use Larastan\Larastan\Properties\ModelPropertyHelper;
 use PHPStan\TrinaryLogic;
+use PHPStan\Type\AcceptsResult;
 use PHPStan\Type\CompoundType;
 use PHPStan\Type\Generic\TemplateType;
 use PHPStan\Type\Generic\TemplateTypeMap;
 use PHPStan\Type\Generic\TemplateTypeReference;
 use PHPStan\Type\Generic\TemplateTypeVariance;
 use PHPStan\Type\IntersectionType;
+use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\ObjectWithoutClassType;
+use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\UnionType;
+use PHPStan\Type\VerbosityLevel;
 
 use function count;
+use function explode;
+use function sprintf;
+use function str_contains;
 
-class GenericModelPropertyType extends ModelPropertyType
+class GenericModelPropertyType extends StringType
 {
-    public function __construct(private Type $type)
+    public function __construct(private Type $type, private ModelPropertyHelper $modelPropertyHelper)
     {
         parent::__construct();
+    }
+
+    public function describe(VerbosityLevel $level): string
+    {
+        return 'model property of ' . $this->type->describe($level);
     }
 
     /** @return string[] */
@@ -37,20 +50,76 @@ class GenericModelPropertyType extends ModelPropertyType
         return $this->type;
     }
 
+    public function acceptsWithReason(Type $type, bool $strictTypes): AcceptsResult
+    {
+        if ($type instanceof CompoundType) {
+            return $type->isAcceptedWithReasonBy($this, $strictTypes);
+        }
+
+        if (count($type->getConstantStrings()) === 1) {
+            $givenString = $type->getConstantStrings()[0]->getValue();
+            $genericType = $this->getGenericType();
+
+            if ($genericType instanceof MixedType) {
+                return AcceptsResult::createYes();
+            }
+
+            if (count($genericType->getObjectClassNames()) < 1) {
+                return AcceptsResult::createNo();
+            }
+
+            if (str_contains($givenString, '.')) {
+                $parts = explode('.', $givenString);
+
+                if (count($parts) !== 2) {
+                    return AcceptsResult::createYes();
+                }
+
+                [$tableName, $propertyName] = $parts;
+
+                if (! $this->modelPropertyHelper->hasDatabaseProperty($tableName, $propertyName)) {
+                    return AcceptsResult::createNo([sprintf('Database table "%s" does not have column "%s"', $tableName, $propertyName)]);
+                }
+
+                return AcceptsResult::createYes();
+            }
+
+            $reasons = [];
+
+            if (! $genericType->hasProperty($givenString)->yes()) {
+                $reasons[] = sprintf('The given string should be a property of %s, %s given.', $this->type->describe(VerbosityLevel::value()), $givenString);
+            }
+
+            return new AcceptsResult($genericType->hasProperty($givenString), $reasons);
+        }
+
+        if ($type instanceof self) {
+            return new AcceptsResult($this->getGenericType()->accepts($type->getGenericType(), $strictTypes), [sprintf('The given string should be a property of %s', $this->type->describe(VerbosityLevel::value()))]);
+        }
+
+        if ($type->isString()->yes()) {
+            // It is an arbitrary string, so we cannot check if it is a property of the model.
+            // We return yes to not cause issues on levels 7+
+            return AcceptsResult::createYes();
+        }
+
+        return AcceptsResult::createNo();
+    }
+
     public function isSuperTypeOf(Type $type): TrinaryLogic
     {
         $constantStrings = $type->getConstantStrings();
 
         if (count($constantStrings) === 1) {
-            return $this->getGenericType()->hasProperty($constantStrings[0]->getValue());
-        }
+            if (! $this->getGenericType()->hasProperty($constantStrings[0]->getValue())->yes()) {
+                return TrinaryLogic::createNo();
+            }
 
-        if ($type instanceof self) {
             return TrinaryLogic::createYes();
         }
 
-        if ($type instanceof parent) {
-            return TrinaryLogic::createMaybe();
+        if ($type instanceof self) {
+            return $this->getGenericType()->isSuperTypeOf($type->getGenericType());
         }
 
         if ($type instanceof CompoundType) {
@@ -68,7 +137,7 @@ class GenericModelPropertyType extends ModelPropertyType
             return $this;
         }
 
-        return new self($newType);
+        return new self($newType, $this->modelPropertyHelper);
     }
 
     public function inferTemplateTypes(Type $receivedType): TemplateTypeMap
@@ -113,6 +182,6 @@ class GenericModelPropertyType extends ModelPropertyType
     /** @param  mixed[] $properties */
     public static function __set_state(array $properties): Type
     {
-        return new self($properties['type']);
+        return new self($properties['type'], $properties['modelPropertyHelper']);
     }
 }

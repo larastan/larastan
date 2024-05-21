@@ -22,7 +22,7 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
             return false;
         }
 
-        return $this->modelPropertyHelper->hasDatebaseProperty($classReflection, $propertyName);
+        return $this->modelPropertyHelper->hasDatabaseProperty($classReflection, $propertyName);
     }
 
     public function getProperty(ClassReflection $classReflection, string $propertyName): PropertyReflection

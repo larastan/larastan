@@ -23,6 +23,7 @@ use function array_key_exists;
 use function count;
 use function implode;
 use function in_array;
+use function is_string;
 use function method_exists;
 
 class ModelPropertyHelper
@@ -41,27 +42,35 @@ class ModelPropertyHelper
     /**
      * Determine if the model has a database property.
      */
-    public function hasDatebaseProperty(ClassReflection $classReflection, string $propertyName): bool
+    public function hasDatabaseProperty(ClassReflection|string $classReflectionOrTable, string $propertyName): bool
     {
-        if (! $classReflection->isSubclassOf(Model::class)) {
-            return false;
-        }
-
-        if ($classReflection->isAbstract()) {
-            return false;
-        }
-
-        if (ReflectionHelper::hasPropertyTag($classReflection, $propertyName)) {
-            return false;
-        }
-
         if (! $this->migrationsLoaded()) {
             $this->loadMigrations();
         }
 
+        if (is_string($classReflectionOrTable)) {
+            if (! array_key_exists($classReflectionOrTable, $this->tables)) {
+                return false;
+            }
+
+            return array_key_exists($propertyName, $this->tables[$classReflectionOrTable]->columns);
+        }
+
+        if (! $classReflectionOrTable->isSubclassOf(Model::class)) {
+            return false;
+        }
+
+        if ($classReflectionOrTable->isAbstract()) {
+            return false;
+        }
+
+        if (ReflectionHelper::hasPropertyTag($classReflectionOrTable, $propertyName)) {
+            return false;
+        }
+
         try {
             /** @var Model $modelInstance */
-            $modelInstance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
+            $modelInstance = $classReflectionOrTable->getNativeReflection()->newInstanceWithoutConstructor();
         } catch (ReflectionException) {
             return false;
         }

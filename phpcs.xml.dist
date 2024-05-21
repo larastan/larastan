@@ -27,6 +27,10 @@
       <exclude-pattern>tests/*</exclude-pattern>
     </rule>
 
+    <rule ref="Squiz.Arrays.ArrayDeclaration.ValueNoNewline">
+      <exclude-pattern>tests/Type/GenericModelPropertyTypeTest.php</exclude-pattern>
+    </rule>
+
     <rule ref="Generic.PHP.ForbiddenFunctions">
         <properties>
             <property name="forbiddenFunctions" type="array">

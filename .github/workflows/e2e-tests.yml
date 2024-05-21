@@ -53,10 +53,11 @@ jobs:
 
           -
             repository: filamentphp/filament
-            ref: deae250efc64efc2fff7710d23c4de1b1c3cf801
+            ref: 6799de116ceac33778566a8aee533c0c3f97cd74
             php-version: "8.2"
             config: filamentphp-filament.neon
             baseline: filamentphp-filament.baseline.neon
+            force-phpstan-version: true
 
     steps:
       - name: "Checkout"
@@ -83,7 +84,11 @@ jobs:
           composer install --no-scripts --no-interaction
           composer config repositories.0 '{ "type": "path", "url": "../larastan" }'
           composer config minimum-stability dev
-          composer require --dev --update-with-all-dependencies "larastan/larastan:*"
+          if [ "${{ matrix.force-phpstan-version }}" = "true" ]; then
+            composer require --dev --update-with-all-dependencies "larastan/larastan:*" "phpstan/phpstan:*"
+          else
+            composer require --dev --update-with-all-dependencies "larastan/larastan:*"
+          fi
 
       - name: "Perform static analysis"
         working-directory: e2e
