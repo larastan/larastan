@@ -23,6 +23,11 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+
+        'enum' => [
+            'driver' => 'session',
+            'provider' => App\ProviderEnum::Users,
+        ],
     ],
 
     'providers' => [

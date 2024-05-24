@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Concerns;
 
+use BackedEnum;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 
 use function array_keys;
@@ -30,6 +31,10 @@ trait LoadsAuthModel
 
                 if (! $provider) {
                     return $carry;
+                }
+
+                if ($provider instanceof BackedEnum) {
+                    $provider = $provider->value;
                 }
 
                 $authModel = $providers[$provider]['model'] ?? null;

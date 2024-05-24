@@ -36,6 +36,11 @@ class AuthExtension
         assertType(StatefulGuard::class, Auth::guard('web'));
     }
 
+    public function testGuardEnum(): void
+    {
+        assertType(StatefulGuard::class, Auth::guard('enum'));
+    }
+
     public function testGuardUser(): void
     {
         assertType('App\User|null', Auth::guard('web')->user());
