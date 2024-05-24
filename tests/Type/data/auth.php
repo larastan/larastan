@@ -9,50 +9,15 @@ use Illuminate\Support\Facades\Auth;
 
 use function PHPStan\Testing\assertType;
 
-class AuthExtension
+function test(User $user): void
 {
-    public function testUser(): void
-    {
-        assertType('App\Admin|App\User|null', Auth::user());
-    }
-
-    public function testCheck(): void
-    {
-        assertType('bool', Auth::check());
-    }
-
-    public function testId(): void
-    {
-        assertType('int|string|null', Auth::id());
-    }
-
-    public function testLogout(): void
-    {
-        assertType('null', Auth::guard()->logout());
-    }
-
-    public function testGuard(): void
-    {
-        assertType(StatefulGuard::class, Auth::guard('web'));
-    }
-
-    public function testGuardUser(): void
-    {
-        assertType('App\User|null', Auth::guard('web')->user());
-    }
-
-    public function testGuardAdminUser(): void
-    {
-        assertType('App\Admin|null', Auth::guard('admin')->user());
-    }
-
-    public function testSessionGuard(): void
-    {
-        assertType(SessionGuard::class, Auth::guard('session'));
-    }
-
-    public function testLogin(User $user): void
-    {
-        assertType('null', Auth::guard()->login($user));
-    }
+    assertType('App\Admin|App\User|null', Auth::user());
+    assertType('bool', Auth::check());
+    assertType('int|string|null', Auth::id());
+    assertType('null', Auth::guard()->logout());
+    assertType(StatefulGuard::class, Auth::guard('web'));
+    assertType('App\User|null', Auth::guard('web')->user());
+    assertType('App\Admin|null', Auth::guard('admin')->user());
+    assertType(SessionGuard::class, Auth::guard('session'));
+    assertType('null', Auth::guard()->login($user));
 }

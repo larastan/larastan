@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 use function PHPStan\Testing\assertType;
 
-function doFoo(FooModel $foo, NonGenericBuilder $nonGenericBuilder): void
+function test(FooModel $foo, NonGenericBuilder $nonGenericBuilder): void
 {
     assertType('CustomEloquentBuilder\ModelWithCustomBuilder|null', ModelWithCustomBuilder::where('email', 'bar')->first());
     assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::where('email', 'bar'));

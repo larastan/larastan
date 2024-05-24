@@ -7,15 +7,8 @@ use Larastan\Larastan\ApplicationResolver;
 
 use function PHPStan\Testing\assertType;
 
-class AppMakeDynamicReturnTypeExtension
+function test(): void
 {
-    public function testResolvesAppMakeStaticCall(): void
-    {
-        assertType(ApplicationResolver::class, App::make(ApplicationResolver::class));
-    }
-
-    public function testResolvesAppMakeWithStaticCall(): void
-    {
-        assertType(ApplicationResolver::class, App::makeWith(ApplicationResolver::class));
-    }
+    assertType(ApplicationResolver::class, App::make(ApplicationResolver::class));
+    assertType(ApplicationResolver::class, App::makeWith(ApplicationResolver::class));
 }

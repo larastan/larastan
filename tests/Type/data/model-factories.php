@@ -7,7 +7,7 @@ use App\User;
 
 use function PHPStan\Testing\assertType;
 
-function dummy(?int $foo): void {
+function test(?int $foo): void {
     assertType('Database\Factories\UserFactory', User::factory());
     assertType('Database\Factories\UserFactory', User::factory()->new());
     assertType('App\User', User::factory()->createOne());

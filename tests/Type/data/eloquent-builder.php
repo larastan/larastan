@@ -15,11 +15,23 @@ use Illuminate\Database\Eloquent\Model;
 use function PHPStan\Testing\assertType;
 
 interface OnlyUsers
-{
-}
+{ }
 
-function foo(): void
-{
+/**
+ * @template TModelClass of \Illuminate\Database\Eloquent\Model
+ *
+ * @param Builder<User> $userBuilder
+ * @param Builder<User|Team> $userOrTeamBuilder
+ * @param Builder<TModelClass> $templateBuilder
+ */
+function test(
+    User $user,
+    Post $post,
+    Builder $userBuilder,
+    OnlyUsers&User $userAndAuth,
+    Builder $userOrTeamBuilder,
+    Builder $templateBuilder,
+): void {
     User::query()->has('accounts', '=', 1, 'and', function (Builder $query) {
         assertType('Illuminate\Database\Eloquent\Builder', $query);
         //assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
@@ -191,19 +203,9 @@ function foo(): void
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::with(['accounts'])->findOrNew([1, 2, 3]));
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::hydrate([]));
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::fromQuery('SELECT * FROM users'));
-}
 
-/**
- * @param  Builder<User>  $builder
- */
-function testCallingQueryBuilderMethodOnEloquentBuilderReturnsEloquentBuilder(Builder $builder): void
-{
-    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $builder->whereNotNull('test'));
-}
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $userBuilder->whereNotNull('test'));
 
-/** @param OnlyUsers&User $userAndAuth */
-function doFoo(User $user, Post $post, $userAndAuth): void
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->newQuery());
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->newModelQuery());
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->newQueryWithoutRelationships());
@@ -233,236 +235,105 @@ function doFoo(User $user, Post $post, $userAndAuth): void
     assertType('Illuminate\Support\LazyCollection<int, App\Post>', $post->newQuery()->lazy());
     assertType('Illuminate\Support\LazyCollection<int, App\Post>', $post->newQuery()->lazyById());
     assertType('Illuminate\Support\LazyCollection<int, App\Post>', $post->newQuery()->lazyByIdDesc());
-};
 
-function testGroupBy()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::query()->groupBy('foo', 'bar'));
-}
-
-function testDynamicWhereAsString()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::query()->whereEmail('bar'));
-}
-
-function testDynamicWhereMultiple()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::query()->whereIdAndEmail(1, 'foo@example.com'));
-}
-
-function testDynamicWhereAsInt()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::query()->whereEmail(1));
-}
-
-function testToBaseReturnsQueryBuilderAfterChain()
-{
     assertType('Illuminate\Database\Query\Builder', User::query()
         ->whereNull('name')
         ->orderBy('email')
         ->toBase()
     );
-}
-
-function testQueryBuilderChainStartedWithGetQueryReturnsObject()
-{
     assertType('object|null', User::getQuery()
         ->select('some_model.created')
         ->where('some_model.some_column', '=', true)
         ->orderBy('some_model.created', 'desc')
         ->first()
     );
-}
-
-function testWhereNotBetweenInt()
-{
     assertType('Illuminate\Database\Query\Builder', User::query()
         ->whereNotBetween('a', [1, 5])
         ->orWhereNotBetween('a', [1, 5])
         ->toBase()
     );
-}
-
-function testWithTrashedOnBuilderWithModel()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::query()->withTrashed());
-}
-
-function testOrderByToBaseWithQueryExpression()
-{
     assertType('Illuminate\Database\Query\Builder', User::query()
         ->whereNull('name')
         ->orderBy(\Illuminate\Support\Facades\DB::raw('name'))
         ->toBase()
     );
-}
-
-function testOrderByToBaseWithEloquentExpression()
-{
     assertType('Illuminate\Database\Query\Builder', User::query()
         ->whereNull('name')
         ->orderBy(User::whereNotNull('name'))
         ->toBase()
     );
-}
-
-function testLatestToBaseWithQueryExpression()
-{
     assertType('Illuminate\Database\Query\Builder', User::query()
         ->whereNull('name')
         ->latest(\Illuminate\Support\Facades\DB::raw('created_at'))
         ->toBase()
     );
-}
-
-function testOldestToBaseWithQueryExpression()
-{
     assertType('Illuminate\Database\Query\Builder', User::query()
         ->whereNull('name')
         ->oldest(\Illuminate\Support\Facades\DB::raw('created_at'))
         ->toBase()
     );
-}
-
-function testPluckToBaseWithQueryExpression()
-{
     assertType('Illuminate\Support\Collection<(int|string), mixed>', User::query()
         ->whereNull('name')
         ->pluck(\Illuminate\Support\Facades\DB::raw('created_at'))
         ->toBase()
     );
-}
-
-function testIncrementWithQueryExpression()
-{
     assertType('int', User::query()->increment(\Illuminate\Support\Facades\DB::raw('counter')));
-}
-
-function testDecrementWithQueryExpression()
-{
     assertType('int', User::query()->decrement(\Illuminate\Support\Facades\DB::raw('counter')));
-}
-
-/** @param EloquentBuilder<User> $query */
-function testMacro(EloquentBuilder $query): void
-{
-    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query->macro('customMacro', function () {
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $userBuilder->macro('customMacro', function () {
     }));
-}
-
-/** @param EloquentBuilder<User> $query */
-function testGlobalMacro(\Illuminate\Database\Eloquent\Builder $query)
-{
-    assertType('string', $query->globalCustomMacro('foo'));
-}
-
-function testFirstOrFailWithChain()
-{
+    assertType('string', $userBuilder->globalCustomMacro('foo'));
     assertType('App\User', User::with('accounts')
         ->where('email', 'bar')
         ->orWhere('name', 'baz')
         ->firstOrFail()
     );
-}
-
-function testFirstWithChain()
-{
     assertType('App\User|null', User::with('accounts')
         ->where('email', 'bar')
         ->orWhere('name', 'baz')
         ->first()
     );
-}
-
-function testFirstWhere()
-{
     assertType('App\User|null', User::query()->firstWhere(['email' => 'foo@bar.com']));
-}
-
-function testOrWhereWithQueryExpression()
-{
     assertType('App\User|null', User::with('accounts')
         ->orWhere(\Illuminate\Support\Facades\DB::raw('name'), 'like', '%john%')
         ->first()
     );
-}
-
-function testWhereWithQueryExpression()
-{
     assertType('App\User|null', User::with('accounts')
         ->where(\Illuminate\Support\Facades\DB::raw('name'), 'like', '%john%')
         ->first()
     );
-}
-
-function testFirstWhereWithQueryExpression()
-{
     assertType('App\User|null', User::with('accounts')
         ->firstWhere(\Illuminate\Support\Facades\DB::raw('name'), 'like', '%john%')
     );
-}
-
-/** @phpstan-return mixed */
-function testValueWithQueryExpression()
-{
     assertType('mixed', User::with('accounts')
         ->value(\Illuminate\Support\Facades\DB::raw('name'))
     );
-}
-
-function testRestore()
-{
     assertType('int', User::query()->restore());
-}
-
-function testJoinSubAllowsEloquentBuilder()
-{
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::query()->joinSub(
         Post::query()->whereIn('id', [1, 2, 3]),
         'users',
         'users.id',
         'posts.id'
     ));
-}
 
-/**
- * @template TModelClass of \Illuminate\Database\Eloquent\Model
- *
- * @param  EloquentBuilder<TModelClass>  $query
- */
-function testQueryBuilderOnEloquentBuilderWithBaseModel(EloquentBuilder $query): void
-{
-    assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query->select());
-}
-
-function testPaginate()
-{
     assertType('Illuminate\Pagination\LengthAwarePaginator<App\User>', User::query()->paginate());
-}
-
-/**
- * @phpstan-return array<User>
- */
-function testPaginateItems()
-{
     assertType('array<App\User>', User::query()->paginate()->items());
-}
 
-function testChunkOnEloquentBuilder()
-{
     User::chunk(1000, fn ($collection) => assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection));
-}
 
-/** @param Builder<User|Team> $builder */
-function testUnionBuilder(Builder $builder)
-{
-    assertType('App\Team|App\User', $builder->findOrFail(4));
-    assertType('Illuminate\Database\Eloquent\Builder<App\Team|App\User>', $builder->where('id', 5));
+    assertType('App\Team|App\User', $userOrTeamBuilder->findOrFail(4));
+    assertType('Illuminate\Database\Eloquent\Builder<App\Team|App\User>', $userOrTeamBuilder->where('id', 5));
+
+    assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $templateBuilder->select());
 }
 
 class Foo extends Model
 {
-    /** @phpstan-use FooTrait<Foo> */
+    /** @use FooTrait<Foo> */
     use FooTrait;
 }
 
@@ -476,23 +347,13 @@ trait FooTrait
     }
 }
 
-/**
- * @property string $email
- */
+/** @property string $email */
 class TestModel extends Model
 {
-    public function testCallingGetInsideModel()
+    public function test(): void
     {
         assertType('Illuminate\Database\Eloquent\Collection<int, EloquentBuilder\TestModel>', $this->where('email', 1)->get());
-    }
-
-    public function testStaticQuery()
-    {
         assertType('Illuminate\Database\Eloquent\Builder<EloquentBuilder\TestModel>', static::query()->where('email', 'bar'));
-    }
-
-    public function testQuery(): Builder
-    {
         assertType('Illuminate\Database\Eloquent\Builder<EloquentBuilder\TestModel>', $this->where('email', 'bar'));
     }
 }
@@ -502,14 +363,10 @@ class CustomBuilder extends Builder
 {
 }
 
-/**
- * @template TModel of User|Team
- */
+/** @template TModel of User|Team */
 abstract class UnionClass
 {
-    /**
-     * @return TModel
-     */
+    /** @return TModel */
     public function test(int $id): Model
     {
         assertType('TModel of App\Team|App\User (class EloquentBuilder\UnionClass, argument)', $this->getQuery()->findOrFail($id));
@@ -517,15 +374,11 @@ abstract class UnionClass
         return $this->getQuery()->findOrFail($id);
     }
 
-    /**
-     * @return Builder<TModel>
-     */
+    /** @return Builder<TModel> */
     abstract public function getQuery(): Builder;
 }
 
-/**
- * @extends UnionClass<Team>
- */
+/** @extends UnionClass<Team> */
 class TeamClass extends UnionClass
 {
     public function foo()
@@ -533,9 +386,7 @@ class TeamClass extends UnionClass
         assertType('App\Team', $this->test(5));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    /** @inheritDoc */
     public function getQuery(): Builder
     {
         return Team::query();

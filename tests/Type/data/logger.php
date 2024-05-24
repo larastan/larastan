@@ -2,9 +2,11 @@
 
 namespace Logger;
 
+use Illuminate\Log\Logger;
+
 use function PHPStan\Testing\assertType;
 
-function doFoo(\Illuminate\Log\Logger $logger)
+function test(Logger $logger): void
 {
     assertType('array<int, Monolog\Handler\HandlerInterface>', $logger->getHandlers());
 }

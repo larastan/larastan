@@ -7,12 +7,8 @@ use Illuminate\Contracts\Session\Session;
 
 use function PHPStan\Testing\assertType;
 
-function testApplicationIsLocal(Application $app)
+function test(Application $app, Session $session): void
 {
     assertType('bool', $app->isLocal());
-}
-
-function testSessionAgeFlashData(Session $session)
-{
     assertType('null', $session->ageFlashData());
 }

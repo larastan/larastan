@@ -9,20 +9,27 @@ use App\OnlyValueGenericCollection;
 use App\Transaction;
 use App\TransactionCollection;
 use App\User;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection as SupportCollection;
 
 use function PHPStan\Testing\assertType;
 
 /**
- * @param  Collection<int, User>  $users
+ * @param  EloquentCollection<int, User>  $users
  * @param  SupportCollection<int, Importer>  $collection
  * @param  SupportCollection<int, User>  $supportCollectionWithModels
  * @param  OnlyValueGenericCollection<ModelWithOnlyValueGenericCollection>  $onlyValueGenericCollection
  * @param  TransactionCollection<int, Transaction>  $transactionCollection
  */
-function doFoo(Collection $users, User $user, SupportCollection $collection, SupportCollection $supportCollectionWithModels, NonGenericCollection $nonGenericCollection, OnlyValueGenericCollection $onlyValueGenericCollection, TransactionCollection $transactionCollection)
-{
+function test(
+    EloquentCollection $users,
+    User $user,
+    SupportCollection $collection,
+    SupportCollection $supportCollectionWithModels,
+    NonGenericCollection $nonGenericCollection,
+    OnlyValueGenericCollection $onlyValueGenericCollection,
+    TransactionCollection $transactionCollection,
+): void {
     assertType('float', $users->avg->id() + $users->average->id());
     assertType('bool', $users->contains->isActive());
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->each->delete());

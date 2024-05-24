@@ -4,12 +4,8 @@ namespace Carbon;
 
 use function PHPStan\Testing\assertType;
 
-function testCarbonMacroCalledStatically()
+function test(): void
 {
     assertType('string', Carbon::foo());
-}
-
-function testCarbonMacroCalledDynamically()
-{
     assertType('string', Carbon::now()->foo());
 }

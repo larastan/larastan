@@ -11,7 +11,7 @@ use App\User;
 
 use function PHPStan\Testing\assertType;
 
-function foo()
+function test(): void
 {
     assertType('App\AccountCollection<int, App\Account>', Account::query()->fromQuery('select * from accounts'));
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::query()->fromQuery('select * from accounts'));
