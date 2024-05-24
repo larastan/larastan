@@ -11,6 +11,15 @@ namespace Illuminate\Support;
 interface Enumerable extends \Countable, \IteratorAggregate, \JsonSerializable
 {
     /**
+     * Search the collection for a given value and return the corresponding key if successful.
+     *
+     * @param  TValue|callable(TValue,TKey): bool  $value
+     * @param  bool  $strict
+     * @return (TKey is int ? int|bool : string|bool)
+     */
+    public function search($value, $strict = false);
+
+    /**
     * Get one or a specified number of items randomly from the collection.
     *
     * @param  (callable(TValue): int)|int|null  $number

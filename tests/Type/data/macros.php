@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Macroable;
 use Illuminate\Validation\ValidationException;
 use PHPStan\TrinaryLogic;
 
@@ -19,6 +20,12 @@ use function PHPStan\Testing\assertVariableCertainty;
 
 function test(): void
 {
+    try {
+        Request::validate([]);
+    } catch (ValidationException $e) {
+        $foo = 'foo';
+    }
+
     assertType('string', Builder::globalCustomMacro(b: 99));
     assertType('string', Post::globalCustomMacro(b: 99));
     assertType('string', PostBuilder::globalCustomMacro(b: 99));
@@ -42,11 +49,18 @@ function test(): void
     assertType('string', Str::trimMacro(''));
     assertType('string', Str::asciiAliasMacro(''));
 
-    try {
-        Request::validate([]);
-    } catch (ValidationException $e) {
-        $foo = 'foo';
-    }
-
     assertVariableCertainty(TrinaryLogic::createMaybe(), $foo);
+
+    Request::macro('foo', function() {
+        assertType(Request::class, $this);
+    });
+
+    Foo::macro('foo', function() {
+        assertType(Foo::class, $this);
+    });
+}
+
+class Foo
+{
+    use Macroable;
 }

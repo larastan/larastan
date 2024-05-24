@@ -1,27 +1,33 @@
 <?php
 
+namespace CollectionGenericStaticMethods;
+
 use App\Transaction;
 use App\TransactionCollection;
 use App\User;
+use App\UserCollection;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection as SupportCollection;
+use Illuminate\Support\Enumerable;
 use Illuminate\Support\LazyCollection;
 
 use function PHPStan\Testing\assertType;
 
 /**
- * @param EloquentCollection<int, User> $collection
- * @param SupportCollection<string, int> $items
- * @param App\TransactionCollection<int, Transaction> $customEloquentCollection
- * @param LazyCollection<int, User> $lazyCollection
+ * @param EloquentCollection<int, User>           $collection
+ * @param SupportCollection<string, int>          $items
+ * @param TransactionCollection<int, Transaction> $customEloquentCollection
+ * @param UserCollection                          $secondCustomEloquentCollection
+ * @param LazyCollection<int, User>               $lazyCollection
+ * @param User                                    $user
+ * @param Enumerable<int, User>                   $enumerableIntUsers
+ * @param Enumerable<string, User>                $enumerableStringUsers
  */
 function test(
-    EloquentCollection $collection,
-    SupportCollection $items,
-    App\TransactionCollection $customEloquentCollection,
-    App\UserCollection $secondCustomEloquentCollection,
-    LazyCollection $lazyCollection,
-    User $user,
+    EloquentCollection $collection, SupportCollection $items,
+    TransactionCollection $customEloquentCollection, UserCollection $secondCustomEloquentCollection,
+    LazyCollection $lazyCollection, User $user,
+    Enumerable $enumerableIntUsers, Enumerable $enumerableStringUsers
 ): void {
     assertType('Illuminate\Database\Eloquent\Collection<int, int>', EloquentCollection::range(1, 10));
     assertType('Illuminate\Support\LazyCollection<int, int>', LazyCollection::range(1, 10));
@@ -71,6 +77,10 @@ function test(
     assertType('Illuminate\Support\Collection<int, int>', $collection->map(fn (User $user): int => $user->id));
     assertType('Illuminate\Support\Collection<string, int>', $items->map(fn (int $value, string $key): int => $value));
 
+    assertType('App\TransactionCollection<int, App\Transaction>', $customEloquentCollection->map(fn (Transaction $transaction): Transaction => $transaction));
+    assertType('App\UserCollection', $secondCustomEloquentCollection->map(fn (User $user): User => $user));
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->map(fn (User $user): User => $user));
+
     assertType('Illuminate\Database\Eloquent\Collection<int, array<int, int>>', $collection->mapToDictionary(fn (User $u) => [$u->id => $u->id]));
     assertType('App\TransactionCollection<string, array<int, int>>', $customEloquentCollection->mapToDictionary(fn (Transaction $t) => ['foo'=> $t->id]));
     assertType('App\UserCollection', $secondCustomEloquentCollection->mapToDictionary(fn (User $t) => ['foo'=> $t->id]));
@@ -80,6 +90,10 @@ function test(
     assertType('Illuminate\Support\Collection<int, string>', $secondCustomEloquentCollection->mapWithKeys(fn (User $user): array => [$user->id => 'foo']));
     assertType('Illuminate\Support\Collection<int, int>', $collection->mapWithKeys(fn (User $user): array => [$user->id => $user->id]));
     assertType('Illuminate\Support\Collection<string, int>', $items->mapWithKeys(fn (int $value, string $key): array => ['foo' => $value]));
+
+    assertType('App\TransactionCollection<int, App\Transaction>', $customEloquentCollection->mapWithKeys(fn (Transaction $transaction): array => [$transaction->id => $transaction]));
+    assertType('App\UserCollection', $secondCustomEloquentCollection->mapWithKeys(fn (User $user): array => [$user->email => $user]));
+    assertType('Illuminate\Database\Eloquent\Collection<string, App\User>', $collection->mapWithKeys(fn (User $user): array => [$user->name => $user]));
 
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User|string>', $collection->mergeRecursive([2 => 'foo']));
     assertType('App\TransactionCollection<int, App\Transaction>', $customEloquentCollection->mergeRecursive([1 => new Transaction()]));
@@ -223,4 +237,7 @@ function test(
             'type' => 'B',
         ],
     ])->groupBy('type'));
+
+    assertType('bool|int', $enumerableIntUsers->search(fn(User $user) => $user->id === 1));
+    assertType('bool|string', $enumerableStringUsers->search(fn(User $user) => $user->id === 1));
 }

@@ -1,5 +1,24 @@
 # Upgrade Guide
 
+## Upgrading to `2.9.6` from `2.9.5`
+
+This release adds support for Laravel 11 `casts` method. If you are using the `casts` method in your models, you will need to update the return type of the `casts` method to `array` in your model classes. Also, you'd need to provide the correct array shape for the return type. So that Larastan will recognize the model casts. Here is an example:
+
+```php
+/**
+ * @return array{is_admin: 'bool', meta: 'array'}
+ */
+public function casts(): array
+{
+    return [
+        'is_admin' => 'boolean',
+        'meta' => 'array',
+    ];
+}
+```
+
+## Upgrading to `2.9.2` from `2.9.0`
+
 - The UnusedViewsRule has been changed to specify the absolute path of the unused view, rather than the view name. This may mean that baselines will need regenerating to account for this change.
 
 ## Upgrading to `2.7.0` from `2.6.5`
