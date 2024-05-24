@@ -7,7 +7,7 @@ use Illuminate\Contracts\Support\CanBeEscapedWhenCastToString;
 use Illuminate\Support\Traits\EnumeratesValues;
 
 /**
- * @template TKey of int|string
+ * @template TKey of array-key
  * @template TValue
  *
  * @implements \ArrayAccess<TKey, TValue>
@@ -59,7 +59,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
     /**
      * Push all of the given items onto the collection.
      *
-     * @template TConcatKey of int|string
+     * @template TConcatKey of array-key
      * @template TConcatValue
      *
      * @param  iterable<TConcatKey, TConcatValue>  $source
@@ -70,7 +70,7 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
 }
 
 /**
- * @template TKey of int|string
+ * @template TKey of array-key
  * @template TValue
  *
  * @implements \Illuminate\Support\Enumerable<TKey, TValue>

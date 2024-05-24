@@ -6,7 +6,7 @@ use Illuminate\Contracts\Queue\QueueableCollection;
 use Illuminate\Support\Collection as BaseCollection;
 
 /**
- * @template TKey of int|string
+ * @template TKey of array-key
  * @template TModel of \Illuminate\Database\Eloquent\Model
  *
  * @extends \Illuminate\Support\Collection<TKey, TModel>
