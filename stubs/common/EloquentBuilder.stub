@@ -5,6 +5,7 @@ namespace Illuminate\Database\Eloquent;
 /**
  * @template TModelClass of Model
  * @property-read static $orWhere
+ * @property-read static $orWhereNot
  * @property-read static $whereNot
  */
 class Builder
