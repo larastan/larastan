@@ -103,6 +103,8 @@ function test(
 
     assertType('Illuminate\Database\Eloquent\Builder<App\Thread>', Thread::valid());
     assertType('Illuminate\Database\Eloquent\Builder<App\Thread>', Thread::valid()->orWhere->valid());
+    assertType('Illuminate\Database\Eloquent\Builder<App\Thread>', Thread::valid()->orWhereNot->valid());
+    assertType('Illuminate\Database\Eloquent\Builder<App\Thread>', Thread::valid()->whereNot->valid());
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::with(['accounts' => function ($relation) {
         return $relation->where('active', true);
     }]));
