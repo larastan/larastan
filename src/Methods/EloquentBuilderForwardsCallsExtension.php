@@ -69,14 +69,17 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             return null;
         }
 
-        $modelType = $classReflection->getActiveTemplateTypeMap()->getType('TModelClass');
+        $loopReflection = $classReflection;
 
-        // Generic type is not specified
-        if ($modelType === null) {
-            if (! $classReflection->isGeneric() && $classReflection->getParentClass()?->isGeneric()) {
-                $modelType = $classReflection->getParentClass()->getActiveTemplateTypeMap()->getType('TModelClass');
+        do {
+            $modelType = $loopReflection->getActiveTemplateTypeMap()->getType('TModelClass');
+
+            if ($modelType !== null) {
+                break;
             }
-        }
+
+            $loopReflection = $loopReflection->getParentClass();
+        } while ($loopReflection !== null);
 
         if ($modelType === null) {
             return null;
@@ -134,26 +137,16 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             return null;
         }
 
-        $parametersAcceptor = ParametersAcceptorSelector::selectSingle($ref->getVariants());
-
-        if (in_array($methodName, $this->builderHelper->passthru, true)) {
-            $returnType = $parametersAcceptor->getReturnType();
-
-            return new EloquentBuilderMethodReflection(
-                $methodName,
-                $classReflection,
-                $parametersAcceptor->getParameters(),
-                $returnType,
-                $parametersAcceptor->isVariadic(),
-            );
-        }
-
         // Macros have their own reflection. And return type, parameters, etc. are already set with the closure.
         if ($ref instanceof Macro) {
             return $ref;
         }
 
-        if ($classReflection->isGeneric()) {
+        $parametersAcceptor = ParametersAcceptorSelector::selectSingle($ref->getVariants());
+
+        if (in_array($methodName, $this->builderHelper->passthru, true)) {
+            $returnType = $parametersAcceptor->getReturnType();
+        } elseif ($classReflection->isGeneric()) {
             $returnType = new GenericObjectType($classReflection->getName(), [$modelType]);
         } else {
             $returnType = new ObjectType($classReflection->getName());
