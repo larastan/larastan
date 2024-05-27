@@ -242,7 +242,7 @@ class Builder
      * Add a relationship count / exists condition to the query with where clauses.
      *
      * @param  string  $relation
-     * @param  \Closure|null  $callback
+     * @param  (\Closure)|null  $callback
      * @param  string  $operator
      * @param  int  $count
      * @return static

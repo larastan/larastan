@@ -553,6 +553,16 @@ services:
     -
         class: Larastan\Larastan\Support\HigherOrderCollectionProxyHelper
 
+    -
+        class: Larastan\Larastan\ParameterClosureType\BuilderRelationsMethodParameterClosureTypeExtension
+        tags:
+            - phpstan.methodParameterClosureTypeExtension
+
+    -
+        class: Larastan\Larastan\ParameterClosureType\ModelRelationsStaticMethodParameterClosureTypeExtension
+        tags:
+            - phpstan.staticMethodParameterClosureTypeExtension
+
 rules:
     - Larastan\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule
     - Larastan\Larastan\Rules\UselessConstructs\NoUselessValueFunctionCallsRule

@@ -12,6 +12,9 @@ class Post extends Model
 {
     use HasFactory;
 
+    /**
+     * @return BelongsToMany<User>
+     */
     public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class);

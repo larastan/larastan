@@ -186,6 +186,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Post::class);
     }
 
+    public function teams(): BelongsToMany
+    {
+        return $this->belongsToMany(Team::class);
+    }
+
     public function hasManySyncable($related, $foreignKey = null, $localKey = null): HasManySyncable
     {
         $instance = $this->newRelatedInstance($related);

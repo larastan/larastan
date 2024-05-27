@@ -100,8 +100,12 @@ class GeneralTypeTest extends TypeInferenceTestCase
             yield from self::gatherAssertTypes(__DIR__ . '/data/model-relations-l11-15.php');
             yield from self::gatherAssertTypes(__DIR__ . '/data/model-properties-relations-l11-15.php');
             yield from self::gatherAssertTypes(__DIR__ . '/data/bug-2111.php');
+            yield from self::gatherAssertTypes(__DIR__ . '/data/model-relations-method-parameter-closure-type-extension-l11-15.php');
+            yield from self::gatherAssertTypes(__DIR__ . '/data/builder-relations-method-parameter-closure-type-extension-l11-15.php');
         } else {
             yield from self::gatherAssertTypes(__DIR__ . '/data/model-properties-relations.php');
+            yield from self::gatherAssertTypes(__DIR__ . '/data/model-relations-method-parameter-closure-type-extension.php');
+            yield from self::gatherAssertTypes(__DIR__ . '/data/builder-relations-method-parameter-closure-type-extension.php');
         }
 
         if (version_compare(LARAVEL_VERSION, '11.31.0', '>=')) {
