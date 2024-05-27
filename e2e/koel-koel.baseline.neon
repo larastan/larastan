@@ -51,7 +51,7 @@ parameters:
 			path: ../../e2e/app/Repositories/SongRepository.php
 
 		-
-			message: "#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:reduce\\(\\) expects callable\\(Illuminate\\\\Support\\\\Collection, Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: Illuminate\\\\Support\\\\Collection, Closure\\(Illuminate\\\\Support\\\\Collection, App\\\\Models\\\\Album\\)\\: Illuminate\\\\Support\\\\Collection given\\.$#"
+			message: "#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:reduce\\(\\) expects callable\\(Illuminate\\\\Database\\\\Eloquent\\\\Collection\\|\\(Illuminate\\\\Support\\\\Collection&TReduceInitial\\)\\|\\(Illuminate\\\\Support\\\\Collection&TReduceReturnType\\), Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: \\(\\(Illuminate\\\\Support\\\\Collection&TReduceInitial\\)\\|\\(Illuminate\\\\Support\\\\Collection&TReduceReturnType\\)\\), Closure\\(Illuminate\\\\Support\\\\Collection, App\\\\Models\\\\Album\\)\\: \\(Illuminate\\\\Database\\\\Eloquent\\\\Collection\\|\\(Illuminate\\\\Support\\\\Collection&TReduceInitial\\)\\|\\(Illuminate\\\\Support\\\\Collection&TReduceReturnType\\)\\) given\\.$#"
 			count: 1
 			path: ../../e2e/app/Services/DownloadService.php
 
