@@ -26,13 +26,13 @@ jobs:
         include:
           -
             repository: monicahq/monica
-            ref: 12a6f08c8ce65eb022f91195a0b1317aed78955d
+            ref: f769c18d4617c3ef8997a69026708a17a626acff
             php-version: "8.2"
             config: monicahq-monica.neon
             baseline: monicahq-monica.baseline.neon
           -
             repository: koel/koel
-            ref: e2838f3c9e1cf7826227aac450d38bd7fc8843f9
+            ref: 44345753fa3b32fbb49586f127e6c621773b7d75
             php-version: "8.1"
             config: koel-koel.neon
             baseline: koel-koel.baseline.neon
@@ -53,7 +53,7 @@ jobs:
 
           -
             repository: filamentphp/filament
-            ref: fa626b4b82e2439fcfc3d4941e1310a64b2c009f
+            ref: deae250efc64efc2fff7710d23c4de1b1c3cf801
             php-version: "8.2"
             config: filamentphp-filament.neon
             baseline: filamentphp-filament.baseline.neon
