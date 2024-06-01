@@ -1,10 +1,20 @@
 <?php
 
-declare(strict_types=1);
+namespace ModelPropertyStaticCall;
 
-namespace Tests\Rules\Data;
-
+use App\User;
 use Illuminate\Database\Eloquent\Model;
+
+function foo(User $foo): User
+{
+    User::create([
+        'foo' => 'bar',
+    ]);
+
+    return $foo::create([
+        'foo' => 'bar',
+    ]);
+}
 
 /**
  * @property string $name

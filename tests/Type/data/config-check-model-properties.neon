@@ -1,5 +1,4 @@
 includes:
-    - ../../../extension.neon
-
+    - ../../phpstan-tests.neon
 parameters:
     checkModelProperties: true

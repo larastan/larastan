@@ -68,7 +68,7 @@ class ModelAppendsRule implements Rule
 
             $name = $appended->value->value;
 
-            $hasDatebaseProperty = $this->modelPropertyHelper->hasDatebaseProperty($classReflection, $name);
+            $hasDatebaseProperty = $this->modelPropertyHelper->hasDatabaseProperty($classReflection, $name);
             $hasAccessor         = $this->modelPropertyHelper->hasAccessor($classReflection, $name, strictGenerics: false);
 
             if ($hasDatebaseProperty) {
