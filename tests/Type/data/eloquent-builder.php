@@ -324,6 +324,10 @@ function test(
     assertType('array<App\User>', User::query()->paginate()->items());
 
     User::chunk(1000, fn ($collection) => assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection));
+    User::chunkById(1000, fn ($collection) => assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection));
+    User::chunkMap(fn ($item) => assertType('App\User', $item));
+    User::each(fn ($item) => assertType('App\User', $item));
+    User::eachById(fn ($item) => assertType('App\User', $item));
 
     assertType('App\Team|App\User', $userOrTeamBuilder->findOrFail(4));
     assertType('Illuminate\Database\Eloquent\Builder<App\Team|App\User>', $userOrTeamBuilder->where('id', 5));
