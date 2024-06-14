@@ -179,7 +179,7 @@ class Builder
      * Execute a query for a single record by ID.
      *
      * @param  int|string  $id
-     * @param  array<string>  $columns
+     * @param  array<string|\Illuminate\Contracts\Database\Query\Expression>  $columns
      * @return mixed|static
      */
     public function find($id, $columns = ['*']);
@@ -197,7 +197,7 @@ class Builder
      * Execute an aggregate function on the database.
      *
      * @param  string  $function
-     * @param  array<string>  $columns
+     * @param  array<string|\Illuminate\Contracts\Database\Query\Expression>  $columns
      * @return mixed
      */
     public function aggregate($function, $columns = ['*']);
@@ -206,7 +206,7 @@ class Builder
      * Execute a numeric aggregate function on the database.
      *
      * @param  string  $function
-     * @param  array<string>  $columns
+     * @param  array<string|\Illuminate\Contracts\Database\Query\Expression>  $columns
      * @return float|int
      */
     public function numericAggregate($function, $columns = ['*']);
@@ -215,7 +215,7 @@ class Builder
      * Set the aggregate property without running the query.
      *
      * @param  string  $function
-     * @param  array<string>  $columns
+     * @param  array<string|\Illuminate\Contracts\Database\Query\Expression>  $columns
      * @return $this
      */
     protected function setAggregate($function, $columns);
