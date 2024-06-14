@@ -194,6 +194,30 @@ class Builder
     public function pluck($column, $key = null);
 
     /**
+     * Retrieve the sum of the values of a given column.
+     *
+     * @param  \Illuminate\Contracts\Database\Query\Expression|string  $column
+     * @return numeric-string|float|int
+     */
+    public function sum($column);
+
+    /**
+     * Retrieve the average of the values of a given column.
+     *
+     * @param  \Illuminate\Contracts\Database\Query\Expression|string  $column
+     * @return numeric-string|float|int|null
+     */
+    public function avg($column);
+
+    /**
+     * Alias for the "avg" method.
+     *
+     * @param  \Illuminate\Contracts\Database\Query\Expression|string  $column
+     * @return numeric-string|float|int|null
+     */
+    public function average($column);
+
+    /**
      * Execute an aggregate function on the database.
      *
      * @param  string  $function
