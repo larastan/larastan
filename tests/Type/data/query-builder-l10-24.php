@@ -38,4 +38,9 @@ function test(): void
         ->whereNotNull(DB::raw('email_verified_at'));
 
     assertType('Illuminate\Database\Query\Builder', $builder);
+
+    $builder = DB::table('users')
+        ->whereBetween('id', new \ArrayObject([1, 2]));
+
+    assertType('Illuminate\Database\Query\Builder', $builder);
 }

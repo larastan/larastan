@@ -149,12 +149,12 @@ class Builder
      * Add a "having between " clause to the query.
      *
      * @param  string  $column
-     * @param  array<string, mixed>  $values
+     * @param  iterable<mixed>  $values
      * @param  string  $boolean
      * @param  bool  $not
      * @return $this
      */
-    public function havingBetween($column, array $values, $boolean = 'and', $not = false);
+    public function havingBetween($column, iterable $values, $boolean = 'and', $not = false);
 
     /**
      * Add a union statement to the query.
