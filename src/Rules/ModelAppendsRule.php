@@ -68,10 +68,10 @@ class ModelAppendsRule implements Rule
 
             $name = $appended->value->value;
 
-            $hasDatebaseProperty = $this->modelPropertyHelper->hasDatabaseProperty($classReflection, $name);
+            $hasDatabaseProperty = $this->modelPropertyHelper->hasDatabaseProperty($classReflection, $name);
             $hasAccessor         = $this->modelPropertyHelper->hasAccessor($classReflection, $name, strictGenerics: false);
 
-            if ($hasDatebaseProperty) {
+            if ($hasDatabaseProperty) {
                 $errors[] = RuleErrorBuilder::message(sprintf("Property '%s' is not a computed property, remove from \$appends.", $name))
                     ->identifier('rules.modelAppends')
                     ->line($appended->getLine())
@@ -79,7 +79,7 @@ class ModelAppendsRule implements Rule
                     ->build();
             }
 
-            if (! $hasDatebaseProperty && ! $hasAccessor) {
+            if (! $hasDatabaseProperty && ! $hasAccessor) {
                 $errors[] = RuleErrorBuilder::message(sprintf("Property '%s' does not exist in model.", $name))
                     ->identifier('rules.modelAppends')
                     ->line($appended->getLine())
