@@ -149,12 +149,12 @@ class Builder
      * Add a "having between " clause to the query.
      *
      * @param  string  $column
-     * @param  array<string, mixed>  $values
+     * @param  iterable<mixed>  $values
      * @param  string  $boolean
      * @param  bool  $not
      * @return $this
      */
-    public function havingBetween($column, array $values, $boolean = 'and', $not = false);
+    public function havingBetween($column, iterable $values, $boolean = 'and', $not = false);
 
     /**
      * Add a union statement to the query.
@@ -179,7 +179,7 @@ class Builder
      * Execute a query for a single record by ID.
      *
      * @param  int|string  $id
-     * @param  array<string>  $columns
+     * @param  array<string|\Illuminate\Contracts\Database\Query\Expression>  $columns
      * @return mixed|static
      */
     public function find($id, $columns = ['*']);
@@ -194,10 +194,34 @@ class Builder
     public function pluck($column, $key = null);
 
     /**
+     * Retrieve the sum of the values of a given column.
+     *
+     * @param  \Illuminate\Contracts\Database\Query\Expression|string  $column
+     * @return numeric-string|float|int
+     */
+    public function sum($column);
+
+    /**
+     * Retrieve the average of the values of a given column.
+     *
+     * @param  \Illuminate\Contracts\Database\Query\Expression|string  $column
+     * @return numeric-string|float|int|null
+     */
+    public function avg($column);
+
+    /**
+     * Alias for the "avg" method.
+     *
+     * @param  \Illuminate\Contracts\Database\Query\Expression|string  $column
+     * @return numeric-string|float|int|null
+     */
+    public function average($column);
+
+    /**
      * Execute an aggregate function on the database.
      *
      * @param  string  $function
-     * @param  array<string>  $columns
+     * @param  array<string|\Illuminate\Contracts\Database\Query\Expression>  $columns
      * @return mixed
      */
     public function aggregate($function, $columns = ['*']);
@@ -206,7 +230,7 @@ class Builder
      * Execute a numeric aggregate function on the database.
      *
      * @param  string  $function
-     * @param  array<string>  $columns
+     * @param  array<string|\Illuminate\Contracts\Database\Query\Expression>  $columns
      * @return float|int
      */
     public function numericAggregate($function, $columns = ['*']);
@@ -215,7 +239,7 @@ class Builder
      * Set the aggregate property without running the query.
      *
      * @param  string  $function
-     * @param  array<string>  $columns
+     * @param  array<string|\Illuminate\Contracts\Database\Query\Expression>  $columns
      * @return $this
      */
     protected function setAggregate($function, $columns);
