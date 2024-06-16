@@ -156,6 +156,29 @@ class MigrationHelperTest extends PHPStanTestCase
     }
 
     /** @test */
+    public function it_can_handle_migrations_with_default_arguments(): void
+    {
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migration_with_default_arguments'], $this->fileHelper, false, $this->reflectionProvider);
+
+        $tables = $migrationHelper->initializeTables();
+
+        self::assertCount(1, $tables);
+        self::assertArrayHasKey('users', $tables);
+        self::assertCount(11, $tables['users']->columns);
+        self::assertSame('int', $tables['users']->columns['id']->readableType);
+        self::assertSame('string', $tables['users']->columns['ip_address']->readableType);
+        self::assertSame('string', $tables['users']->columns['custom_ip_address']->readableType);
+        self::assertSame('string', $tables['users']->columns['mac_address']->readableType);
+        self::assertSame('string', $tables['users']->columns['custom_mac_address']->readableType);
+        self::assertSame('string', $tables['users']->columns['uuid']->readableType);
+        self::assertSame('string', $tables['users']->columns['custom_uuid']->readableType);
+        self::assertSame('string', $tables['users']->columns['ulid']->readableType);
+        self::assertSame('string', $tables['users']->columns['custom_ulid']->readableType);
+        self::assertSame('string', $tables['users']->columns['deleted_at']->readableType);
+        self::assertSame('string', $tables['users']->columns['custom_soft_deletes']->readableType);
+    }
+
+    /** @test */
     public function it_can_handle_connection_before_schema_create(): void
     {
         $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migration_with_schema_connection'], $this->fileHelper, false, $this->reflectionProvider);
