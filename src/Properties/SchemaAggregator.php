@@ -273,9 +273,14 @@ final class SchemaAggregator
                 $defaultsMap = [
                     'softDeletes' => 'deleted_at',
                     'softDeletesTz' => 'deleted_at',
+                    'softDeletesDatetime' => 'deleted_at',
                     'dropSoftDeletes' => 'deleted_at',
                     'dropSoftDeletesTz' => 'deleted_at',
                     'uuid' => 'uuid',
+                    'id' => 'id',
+                    'ulid' => 'ulid',
+                    'ipAddress' => 'ip_address',
+                    'macAddress' => 'mac_address',
                 ];
                 if (! array_key_exists($firstMethodCall->name->name, $defaultsMap)) {
                     continue;
@@ -487,6 +492,7 @@ final class SchemaAggregator
 
             case 'biginteger':
             case 'increments':
+            case 'id':
             case 'integer':
             case 'integerincrements':
             case 'mediumincrements':
@@ -522,6 +528,7 @@ final class SchemaAggregator
             case 'text':
             case 'time':
             case 'timestamp':
+            case 'ulid':
             case 'uuid':
             case 'binary':
                 $table->setColumn(new SchemaColumn($columnName, 'string', $nullable));
