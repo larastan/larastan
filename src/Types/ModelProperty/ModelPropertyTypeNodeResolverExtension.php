@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Types\ModelProperty;
 
 use Illuminate\Database\Eloquent\Model;
-use Larastan\Larastan\Properties\ModelPropertyHelper;
+use Larastan\Larastan\Properties\ModelDatabaseHelper;
 use PHPStan\Analyser\NameScope;
 use PHPStan\PhpDoc\TypeNodeResolver;
 use PHPStan\PhpDoc\TypeNodeResolverExtension;
@@ -27,7 +27,7 @@ final class ModelPropertyTypeNodeResolverExtension implements TypeNodeResolverEx
     public function __construct(
         protected TypeNodeResolver $baseResolver,
         protected bool $active,
-        private ModelPropertyHelper $modelPropertyHelper,
+        private ModelDatabaseHelper $modelDatabaseHelper,
     ) {
     }
 
@@ -59,6 +59,6 @@ final class ModelPropertyTypeNodeResolverExtension implements TypeNodeResolverEx
             return new ErrorType();
         }
 
-        return new GenericModelPropertyType($genericType, $this->modelPropertyHelper);
+        return new GenericModelPropertyType($genericType, $this->modelDatabaseHelper);
     }
 }

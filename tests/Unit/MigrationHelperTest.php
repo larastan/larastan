@@ -176,7 +176,7 @@ class MigrationHelperTest extends PHPStanTestCase
     public function it_can_handle_migrations_with_default_arguments(): void
     {
         $this->getMigrationHelper([__DIR__ . '/data/migration_with_default_arguments'])
-            ->initializeTables($this->modelDatabaseHelper);
+            ->parseMigrations($this->modelDatabaseHelper);
 
         self::assertCount(1, $this->modelDatabaseHelper->connections);
         self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);

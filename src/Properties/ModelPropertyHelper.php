@@ -20,9 +20,7 @@ use PHPStan\Type\TypeCombinator;
 
 use function array_map;
 use function count;
-use function explode;
 use function in_array;
-use function is_string;
 use function method_exists;
 
 class ModelPropertyHelper
@@ -37,21 +35,8 @@ class ModelPropertyHelper
     /**
      * Determine if the model has a database property.
      */
-    public function hasDatabaseProperty(ClassReflection|string $classReflectionOrTable, string $propertyName): bool
+    public function hasDatabaseProperty(ClassReflection $classReflection, string $propertyName): bool
     {
-        if (is_string($classReflectionOrTable)) {
-            if (Str::contains($classReflectionOrTable, '.')) {
-                [$connection, $table] = explode('.', $classReflectionOrTable, limit: 2);
-            } else {
-                $table      = $classReflectionOrTable;
-                $connection = $this->modelDatabaseHelper->getDefaultConnection();
-            }
-
-            return isset($this->modelDatabaseHelper->connections[$connection]->tables[$table]);
-        }
-
-        $classReflection = $classReflectionOrTable;
-
         if (! $classReflection->isSubclassOf(Model::class)) {
             return false;
         }
