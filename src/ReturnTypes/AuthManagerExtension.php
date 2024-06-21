@@ -16,6 +16,7 @@ use PHPStan\Type\TypeCombinator;
 
 use function array_map;
 use function count;
+use function in_array;
 
 final class AuthManagerExtension implements DynamicMethodReturnTypeExtension
 {
@@ -29,7 +30,7 @@ final class AuthManagerExtension implements DynamicMethodReturnTypeExtension
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-        return $methodReflection->getName() === 'user';
+        return in_array($methodReflection->getName(), ['user', 'authenticate']);
     }
 
     public function getTypeFromMethodCall(
@@ -48,11 +49,14 @@ final class AuthManagerExtension implements DynamicMethodReturnTypeExtension
             return null;
         }
 
-        return TypeCombinator::addNull(
-            TypeCombinator::union(...array_map(
-                static fn (string $authModel): Type => new ObjectType($authModel),
-                $authModels,
-            )),
-        );
+        $type = TypeCombinator::union(...array_map(
+            static fn (string $authModel): Type => new ObjectType($authModel),
+            $authModels,
+        ));
+        if ($methodReflection->getName() === 'user') {
+            $type = TypeCombinator::addNull($type);
+        }
+
+        return $type;
     }
 }
