@@ -20,4 +20,5 @@ function test(User $user): void
     assertType('App\Admin|null', Auth::guard('admin')->user());
     assertType(SessionGuard::class, Auth::guard('session'));
     assertType('null', Auth::guard()->login($user));
+    assertType('App\Admin|App\User', Auth::authenticate());
 }

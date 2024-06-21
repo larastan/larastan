@@ -17,6 +17,7 @@ use PHPStan\Type\TypeCombinator;
 
 use function array_map;
 use function count;
+use function in_array;
 
 /** @internal */
 final class AuthExtension implements DynamicStaticMethodReturnTypeExtension
@@ -31,7 +32,7 @@ final class AuthExtension implements DynamicStaticMethodReturnTypeExtension
 
     public function isStaticMethodSupported(MethodReflection $methodReflection): bool
     {
-        return $methodReflection->getName() === 'user';
+        return in_array($methodReflection->getName(), ['user', 'authenticate']);
     }
 
     public function getTypeFromStaticMethodCall(
@@ -50,11 +51,14 @@ final class AuthExtension implements DynamicStaticMethodReturnTypeExtension
             return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
         }
 
-        return TypeCombinator::addNull(
-            TypeCombinator::union(...array_map(
-                static fn (string $authModel): Type => new ObjectType($authModel),
-                $authModels,
-            )),
-        );
+        $type = TypeCombinator::union(...array_map(
+            static fn (string $authModel): Type => new ObjectType($authModel),
+            $authModels,
+        ));
+        if ($methodReflection->getName() === 'user') {
+            $type = TypeCombinator::addNull($type);
+        }
+
+        return $type;
     }
 }
