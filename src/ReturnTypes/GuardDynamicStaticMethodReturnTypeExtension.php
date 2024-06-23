@@ -64,11 +64,11 @@ class GuardDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethod
         $argType    = $scope->getType($methodCall->getArgs()[0]->value);
         $argStrings = $argType->getConstantStrings();
 
-        if (count($argStrings) !== 1) {
+        if (count($argStrings) !== 1 || !is_string($driver = $config->get('auth.guards.' .  $argStrings[0]->getValue() . '.driver', null))) {
             return $defaultReturnType;
         }
 
-        return $this->findTypeFromGuardDriver($argStrings[0]->getValue()) ?? $defaultReturnType;
+        return $this->findTypeFromGuardDriver($driver) ?? $defaultReturnType;
     }
 
     private function findTypeFromGuardDriver(string $driver): Type|null
