@@ -32,7 +32,7 @@ final class GuardExtension implements DynamicMethodReturnTypeExtension
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-        return in_array($methodReflection->getName(), ['user', 'authenticate']);
+        return in_array($methodReflection->getName(), ['user', 'authenticate'], true);
     }
 
     public function getTypeFromMethodCall(

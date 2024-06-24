@@ -39,7 +39,7 @@ final class AuthManagerExtension implements DynamicMethodReturnTypeExtension
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-        return in_array($methodReflection->getName(), ['user', 'authenticate', 'guard']);
+        return in_array($methodReflection->getName(), ['user', 'authenticate', 'guard'], true);
     }
 
     public function getTypeFromMethodCall(

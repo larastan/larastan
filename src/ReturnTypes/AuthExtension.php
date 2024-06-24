@@ -40,7 +40,7 @@ final class AuthExtension implements DynamicStaticMethodReturnTypeExtension
 
     public function isStaticMethodSupported(MethodReflection $methodReflection): bool
     {
-        return in_array($methodReflection->getName(), ['user', 'authenticate', 'guard']);
+        return in_array($methodReflection->getName(), ['user', 'authenticate', 'guard'], true);
     }
 
     public function getTypeFromStaticMethodCall(
