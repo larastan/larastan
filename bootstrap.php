@@ -12,7 +12,11 @@ if (! defined('LARAVEL_START')) {
     define('LARAVEL_START', microtime(true));
 }
 
-if (file_exists($applicationPath = getcwd().'/bootstrap/app.php')) { // Applications and Local Dev
+if (false !== $applicationPath = $_ENV['LARAVEL_BOOTSTRAP_FILE_PATH'] ?? $_SERVER['LARAVEL_BOOTSTRAP_FILE_PATH'] ?? false) { // Custom path in environment
+    if (file_exists($applicationPath)) {
+        $app = require $applicationPath;
+    }
+} elseif (file_exists($applicationPath = getcwd().'/bootstrap/app.php')) { // Applications and Local Dev
     $app = require $applicationPath;
 } elseif (file_exists($applicationPath = dirname(__DIR__, 3).'/bootstrap/app.php')) { // Relative path from default vendor dir
     $app = require $applicationPath;
