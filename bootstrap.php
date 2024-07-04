@@ -12,7 +12,7 @@ if (! defined('LARAVEL_START')) {
     define('LARAVEL_START', microtime(true));
 }
 
-if (false !== $applicationPath = $_ENV['LARAVEL_BOOTSTRAP_FILE_PATH'] ?? $_SERVER['LARAVEL_BOOTSTRAP_FILE_PATH'] ?? false) { // Custom path in environment
+if (false !== $applicationPath = getenv('LARAVEL_BOOTSTRAP_FILE_PATH')) { // Custom path in environment
     if (file_exists($applicationPath)) {
         $app = require $applicationPath;
     }
