@@ -12,6 +12,7 @@ use PHPStan\PhpDoc\TypeStringResolver;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\ShouldNotHappenException;
+use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
@@ -20,8 +21,8 @@ use PHPStan\Type\TypeCombinator;
 use ReflectionException;
 
 use function array_key_exists;
+use function array_map;
 use function count;
-use function implode;
 use function in_array;
 use function is_string;
 use function method_exists;
@@ -131,7 +132,10 @@ class ModelPropertyHelper
                 if ($column->options === null || count($column->options) < 1) {
                     $readableType = $writableType = new StringType();
                 } else {
-                    $readableType = $writableType = $this->stringResolver->resolve('\'' . implode('\'|\'', $column->options) . '\'');
+                    $readableType = $writableType = TypeCombinator::union(...array_map(
+                        static fn ($option) => new ConstantStringType($option),
+                        $column->options,
+                    ));
                 }
             } else {
                 $readableType = $this->stringResolver->resolve($column->readableType);
