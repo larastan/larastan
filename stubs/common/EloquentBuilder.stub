@@ -288,8 +288,8 @@ class Builder
      * Add a polymorphic relationship count / exists condition to the query.
      *
      * @template TRelatedModel of Model
-     * @template TChildModel of Model
-     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
+     * @template TDeclaringModel of Model
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TDeclaringModel>|string  $relation
      * @param  string|array<string>  $types
      * @param  string  $operator
      * @param  int  $count
@@ -303,8 +303,8 @@ class Builder
      * Add a polymorphic relationship count / exists condition to the query with an "or".
      *
      * @template TRelatedModel of Model
-     * @template TChildModel of Model
-     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
+     * @template TDeclaringModel of Model
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TDeclaringModel>|string  $relation
      * @param  string|array<string>  $types
      * @param  string  $operator
      * @param  int  $count
@@ -316,8 +316,8 @@ class Builder
      * Add a polymorphic relationship count / exists condition to the query.
      *
      * @template TRelatedModel of Model
-     * @template TChildModel of Model
-     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
+     * @template TDeclaringModel of Model
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TDeclaringModel>|string  $relation
      * @param  string|array<string>  $types
      * @param  string  $boolean
      * @param  \Closure|null  $callback
@@ -329,8 +329,8 @@ class Builder
      * Add a polymorphic relationship count / exists condition to the query with an "or".
      *
      * @template TRelatedModel of Model
-     * @template TChildModel of Model
-     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
+     * @template TDeclaringModel of Model
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TDeclaringModel>|string  $relation
      * @param  string|array<string>  $types
      * @return static
      */
@@ -340,8 +340,8 @@ class Builder
      * Add a polymorphic relationship count / exists condition to the query with where clauses.
      *
      * @template TRelatedModel of Model
-     * @template TChildModel of Model
-     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
+     * @template TDeclaringModel of Model
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TDeclaringModel>|string  $relation
      * @param  string|array<string>  $types
      * @param  \Closure|null  $callback
      * @param  string  $operator
@@ -354,8 +354,8 @@ class Builder
      * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
      *
      * @template TRelatedModel of Model
-     * @template TChildModel of Model
-     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
+     * @template TDeclaringModel of Model
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TDeclaringModel>|string  $relation
      * @param  string|array<string>  $types
      * @param  \Closure|null  $callback
      * @param  string  $operator
@@ -368,8 +368,8 @@ class Builder
      * Add a polymorphic relationship count / exists condition to the query with where clauses.
      *
      * @template TRelatedModel of Model
-     * @template TChildModel of Model
-     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
+     * @template TDeclaringModel of Model
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TDeclaringModel>|string  $relation
      * @param  string|array<string>  $types
      * @param  \Closure|null  $callback
      * @return static
@@ -380,8 +380,8 @@ class Builder
      * Add a polymorphic relationship count / exists condition to the query with where clauses and an "or".
      *
      * @template TRelatedModel of Model
-     * @template TChildModel of Model
-     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TChildModel>|string  $relation
+     * @template TDeclaringModel of Model
+     * @param  \Illuminate\Database\Eloquent\Relations\MorphTo<TRelatedModel, TDeclaringModel>|string  $relation
      * @param  string|array<string>  $types
      * @param  \Closure|null  $callback
      * @return static

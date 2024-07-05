@@ -113,7 +113,7 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
 
             foreach (TypeUtils::flattenTypes($returnType) as $flattenType) {
                 if ((new ObjectType(BelongsTo::class))->isSuperTypeOf($flattenType)->yes()) {
-                    $types[] = $flattenType->getTemplateType(BelongsTo::class, 'TChildModel');
+                    $types[] = $flattenType->getTemplateType(BelongsTo::class, 'TDeclaringModel');
                 } else {
                     $types[] = $flattenType->getTemplateType(Relation::class, 'TRelatedModel');
                 }
