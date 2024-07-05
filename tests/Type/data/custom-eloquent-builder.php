@@ -96,7 +96,7 @@ class ModelWithCustomBuilder extends Model
 }
 
 /**
- * @template TModelClass of ModelWithCustomBuilder
+ * @template TModel of ModelWithCustomBuilder
  *
  * @extends Builder<ModelWithCustomBuilder>
  */
@@ -105,7 +105,7 @@ class CustomEloquentBuilder extends Builder
     /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
     public function category(string $category): CustomEloquentBuilder
     {
-        assertType('static(CustomEloquentBuilder\CustomEloquentBuilder<TModelClass of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->where('category', $category));
+        assertType('static(CustomEloquentBuilder\CustomEloquentBuilder<TModel of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->where('category', $category));
 
         return $this->where('category', $category);
     }
@@ -113,7 +113,7 @@ class CustomEloquentBuilder extends Builder
     /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
     public function type(string $type): CustomEloquentBuilder
     {
-        assertType('static(CustomEloquentBuilder\CustomEloquentBuilder<TModelClass of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->where(['type' => $type]));
+        assertType('static(CustomEloquentBuilder\CustomEloquentBuilder<TModel of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->where(['type' => $type]));
 
         return $this->where(['type' => $type]);
     }
@@ -158,9 +158,9 @@ class ModelWithCustomBuilderAndDocBlocks extends Model
 }
 
 /**
- * @template TModelClass of ModelWithCustomBuilderAndDocBlocks
+ * @template TModel of ModelWithCustomBuilderAndDocBlocks
  *
- * @extends Builder<TModelClass>
+ * @extends Builder<TModel>
  */
 class CustomBuilder2 extends Builder
 {

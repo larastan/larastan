@@ -18,11 +18,11 @@ interface OnlyUsers
 { }
 
 /**
- * @template TModelClass of \Illuminate\Database\Eloquent\Model
+ * @template TModel of \Illuminate\Database\Eloquent\Model
  *
  * @param Builder<User> $userBuilder
  * @param Builder<User|Team> $userOrTeamBuilder
- * @param Builder<TModelClass> $templateBuilder
+ * @param Builder<TModel> $templateBuilder
  */
 function test(
     User $user,
@@ -337,10 +337,10 @@ class Foo extends Model
     use FooTrait;
 }
 
-/** @template TModelClass of Model */
+/** @template TModel of Model */
 trait FooTrait
 {
-    /** @return Builder<TModelClass> */
+    /** @return Builder<TModel> */
     public function doFoo(): Builder
     {
         return $this->newQuery();

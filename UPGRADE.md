@@ -192,8 +192,8 @@ class UserResource extends JsonResource
 If you are taking advantage of custom Eloquent Builders for your models, you have to mark your custom builder class as generic like so:
 ```php
 /**
- * @template TModelClass of \Illuminate\Database\Eloquent\Model
- * @extends Builder<TModelClass>
+ * @template TModel of \Illuminate\Database\Eloquent\Model
+ * @extends Builder<TModel>
  */
 class CustomBuilder extends Builder
 {

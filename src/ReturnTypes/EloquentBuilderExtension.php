@@ -53,11 +53,11 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
 
         $templateTypeMap = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap();
 
-        if (! $templateTypeMap->hasType('TModelClass')) {
+        if (! $templateTypeMap->hasType('TModel')) {
             return false;
         }
 
-        if ($templateTypeMap->getType('TModelClass')?->getObjectClassNames() === []) {
+        if ($templateTypeMap->getType('TModel')?->getObjectClassNames() === []) {
             return false;
         }
 
@@ -72,7 +72,7 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
         $returnType      = ParametersAcceptorSelector::selectFromArgs($scope, $methodCall->getArgs(), $methodReflection->getVariants())->getReturnType();
         $templateTypeMap = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap();
 
-        $modelType = $templateTypeMap->getType('TModelClass');
+        $modelType = $templateTypeMap->getType('TModel');
         if ($modelType === null) {
             return null;
         }

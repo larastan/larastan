@@ -159,8 +159,8 @@ class Builder
     /**
      * Add a union statement to the query.
      *
-     * @template TModelClass of \Illuminate\Database\Eloquent\Model
-     * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<TModelClass>|\Closure  $query
+     * @template TModel of \Illuminate\Database\Eloquent\Model
+     * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<TModel>|\Closure  $query
      * @param  bool  $all
      * @return $this
      */
@@ -169,8 +169,8 @@ class Builder
     /**
      * Add a union all statement to the query.
      *
-     * @template TModelClass of \Illuminate\Database\Eloquent\Model
-     * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<TModelClass>|\Closure  $query
+     * @template TModel of \Illuminate\Database\Eloquent\Model
+     * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<TModel>|\Closure  $query
      * @return $this
      */
     public function unionAll($query);
@@ -250,9 +250,9 @@ class Builder
     /**
      * Insert new records into the table using a subquery.
      *
-     * @template TModelClass of \Illuminate\Database\Eloquent\Model
+     * @template TModel of \Illuminate\Database\Eloquent\Model
      * @param  array<string>  $columns
-     * @param  \Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<TModelClass>|string  $query
+     * @param  \Closure|\Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<TModel>|string  $query
      * @return int
      */
     public function insertUsing(array $columns, $query);

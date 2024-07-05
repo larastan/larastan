@@ -45,7 +45,7 @@ final class BuilderModelFindExtension implements DynamicMethodReturnTypeExtensio
             return false;
         }
 
-        $model = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TModelClass');
+        $model = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TModel');
 
         if ($model === null || $model->getObjectClassNames() === []) {
             return false;
@@ -65,7 +65,7 @@ final class BuilderModelFindExtension implements DynamicMethodReturnTypeExtensio
         }
 
         /** @var Type $modelClassType */
-        $modelClassType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TModelClass');
+        $modelClassType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TModel');
 
         if ((new ObjectType(Model::class))->isSuperTypeOf($modelClassType)->no()) {
             return null;

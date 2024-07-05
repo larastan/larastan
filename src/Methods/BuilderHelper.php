@@ -84,7 +84,7 @@ class BuilderHelper
         if (count($returnObject->getObjectClassReflections()) > 0 && $this->checkProperties) {
             $returnClassReflection = $returnObject->getObjectClassReflections()[0];
 
-            $modelType = $returnClassReflection->getActiveTemplateTypeMap()->getType('TModelClass')
+            $modelType = $returnClassReflection->getActiveTemplateTypeMap()->getType('TModel')
                 ?? $returnClassReflection->getActiveTemplateTypeMap()->getType('TRelatedModel');
 
             if ($modelType !== null) {
