@@ -57,7 +57,7 @@ function test(
     assertType(CarbonImmutable::class, $user->immutable_date);
     assertType(CarbonImmutable::class, $user->immutable_datetime);
     assertType('int', $user->timestamp);
-    assertType('\'active\'|\'inactive\'', $user->enum_status);
+    assertType("'active'|'don\'t know'|'inactive'", $user->enum_status);
     assertType(BasicEnumeration::class, $user->basic_enum);
     assertType(BackedEnumeration::class, $user->backed_enum);
 
