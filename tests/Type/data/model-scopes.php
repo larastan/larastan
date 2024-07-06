@@ -8,6 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 
 use function PHPStan\Testing\assertType;
 
+/** @param Builder<Model&ForTimeline> $intersection */
+function test(Builder $intersection): void
+{
+    assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model&ModelScope\ForTimeline>', $intersection->where('foo', 'bar'));
+    assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model&ModelScope\ForTimeline>', $intersection->forTimeline());
+    assertType('Illuminate\Database\Eloquent\Model&ModelScope\ForTimeline', $intersection->forTimeline()->firstOrFail());
+}
+
 class Scopes extends Model
 {
     private User $user;
@@ -35,4 +43,13 @@ class Scopes extends Model
         assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->where('foo')->someScope());
         assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $user->where('foo')->someScope()->get());
     }
+}
+
+interface ForTimeline
+{
+    /**
+     * @param Builder<Model> $query
+     * @return Builder<Model>
+     */
+    public function scopeForTimeline(Builder $query): Builder;
 }

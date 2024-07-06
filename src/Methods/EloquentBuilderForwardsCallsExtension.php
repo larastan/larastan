@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Larastan\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Analyser\OutOfClassScope;
@@ -22,6 +21,8 @@ use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 
 use function array_key_exists;
+use function array_map;
+use function array_merge;
 use function in_array;
 
 final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflectionExtension
@@ -89,19 +90,13 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             $modelType = $modelType->getBound();
         }
 
-        if ($modelType->getObjectClassReflections() !== []) {
-            $modelReflection = $modelType->getObjectClassReflections()[0];
-        } else {
-            $modelReflection = $this->reflectionProvider->getClass(Model::class);
-        }
-
-        $ref = $this->builderHelper->searchOnEloquentBuilder($classReflection, $methodName, $modelReflection);
+        $ref = $this->builderHelper->searchOnEloquentBuilder($classReflection, $methodName, $modelType);
 
         if ($ref === null) {
             // Special case for `SoftDeletes` trait
             if (
                 in_array($methodName, ['withTrashed', 'onlyTrashed', 'withoutTrashed', 'restore', 'createOrRestore', 'restoreOrCreate'], true) &&
-                array_key_exists(SoftDeletes::class, $modelReflection->getTraits(true))
+                array_key_exists(SoftDeletes::class, array_merge(...array_map(static fn ($r) => $r->getTraits(true), $modelType->getObjectClassReflections())))
             ) {
                 $ref = $this->reflectionProvider->getClass(SoftDeletes::class)->getMethod($methodName, new OutOfClassScope());
 
