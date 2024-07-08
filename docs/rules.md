@@ -32,6 +32,33 @@ parameters:
 
 to your `phpstan.neon` file.
 
+## NoUndefinedFilesystems
+
+Ensures access to a defined filesystem or 'disk' configured in `config/filesystems.php` when using Laravel Storage abstraction API.
+
+#### Examples
+
+```php
+Storage::disk('this-is-not-defined');
+```
+
+Will result in the following error:
+
+```
+Called 'Storage::disk()' with an undefined filesystem disk.
+```
+
+#### Configuration
+
+This rule is enabled by default. To disable it completely, add:
+
+```neon
+parameters:
+    noUndefinedFilesystems: false
+```
+
+to your `phpstan.neon` file.
+
 ## NoUnnecessaryCollectionCall
 
 Checks for method calls on instances of `Illuminate\Support\Collection` and their 
