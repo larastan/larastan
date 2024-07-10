@@ -16,12 +16,11 @@ use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
-use PHPStan\Type\TypeUtils;
-use PHPStan\Type\UnionType;
 
 use function array_map;
 use function count;
 use function in_array;
+use function version_compare;
 
 class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
@@ -78,11 +77,11 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
             return false;
         }
 
-        $relatedModel = $this
+        $models = $this
             ->relationParserHelper
-            ->findRelatedModelInRelationMethod($methodReflection);
+            ->findModelsInRelationMethod($methodReflection);
 
-        return $relatedModel !== null;
+        return count($models) !== 0;
     }
 
     /**
@@ -102,35 +101,19 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
             return null;
         }
 
-        /** @var string $relatedModelClassName */
-        $relatedModelClassName = $this
-            ->relationParserHelper
-            ->findRelatedModelInRelationMethod($methodReflection);
+        $models = $this->relationParserHelper->findModelsInRelationMethod($methodReflection);
 
-        if ((new ObjectType(BelongsTo::class))->isSuperTypeOf($returnType)->yes()) {
-            $classReflection = $methodReflection->getDeclaringClass();
-            $types           = [];
+        $types   = array_map(static fn ($model) => new ObjectType((string) $model), $models);
+        $types[] = $scope->getType($methodCall->var);
 
-            foreach (TypeUtils::flattenTypes($returnType) as $flattenType) {
-                if ((new ObjectType(BelongsTo::class))->isSuperTypeOf($flattenType)->yes()) {
-                    $types[] = $flattenType->getTemplateType(BelongsTo::class, 'TDeclaringModel');
-                } else {
-                    $types[] = $flattenType->getTemplateType(Relation::class, 'TRelatedModel');
-                }
-            }
-
-            if (count($types) >= 2) {
-                $childType = new UnionType(array_map(static fn (Type $type) => new ObjectType($type->getObjectClassNames()[0]), $types));
-            } else {
-                $childType = new ObjectType($classReflection->getName());
-            }
-
-            return new GenericObjectType($returnTypeObjectClassNames[0], [
-                new ObjectType($relatedModelClassName),
-                $childType,
-            ]);
+        if (
+            // @phpstan-ignore-next-line
+            version_compare(LARAVEL_VERSION, '11.0.0', '<')
+            && ! (new ObjectType(BelongsTo::class))->isSuperTypeOf($returnType)->yes()
+        ) {
+            $types = [$types[0]];
         }
 
-        return new GenericObjectType($returnTypeObjectClassNames[0], [new ObjectType($relatedModelClassName)]);
+        return new GenericObjectType($returnTypeObjectClassNames[0], $types);
     }
 }

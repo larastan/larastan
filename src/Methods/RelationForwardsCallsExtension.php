@@ -6,7 +6,6 @@ namespace Larastan\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Larastan\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Reflection\ClassReflection;
@@ -19,6 +18,7 @@ use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 
 use function array_key_exists;
+use function array_values;
 
 final class RelationForwardsCallsExtension implements MethodsClassReflectionExtension
 {
@@ -94,24 +94,10 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
         $parametersAcceptor = $reflection->getVariants()[0];
         $returnType         = $parametersAcceptor->getReturnType();
 
-        $types = [$relatedModel];
-
-        // BelongsTo relation needs second generic type
-        if ((new ObjectType(BelongsTo::class))->isSuperTypeOf(new ObjectType($classReflection->getName()))->yes()) {
-            $childType = $classReflection->getActiveTemplateTypeMap()->getType('TDeclaringModel');
-
-            if ($childType !== null) {
-                $types[] = $childType;
-            }
-        }
-
         if ((new ObjectType(Builder::class))->isSuperTypeOf($returnType)->yes()) {
-            return new EloquentBuilderMethodReflection(
-                $methodName,
-                $classReflection,
-                $parametersAcceptor->getParameters(),
-                new GenericObjectType($classReflection->getName(), $types),
-                $parametersAcceptor->isVariadic(),
+            $returnType = new GenericObjectType(
+                $classReflection->getName(),
+                array_values($classReflection->getActiveTemplateTypeMap()->getTypes()),
             );
         }
 

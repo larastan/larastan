@@ -7,26 +7,25 @@ namespace Larastan\Larastan\Types;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use PhpParser\Node\Expr\MethodCall;
+use PhpParser\Node\Identifier;
 use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
-use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
+use function array_map;
+use function array_slice;
+use function array_values;
 use function count;
 use function in_array;
+use function version_compare;
 
 class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
-    public function __construct(private ReflectionProvider $provider)
-    {
-    }
-
     public function getClass(): string
     {
         return Model::class;
@@ -55,9 +54,8 @@ class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTyp
         MethodCall $methodCall,
         Scope $scope,
     ): Type|null {
-        /** @var FunctionVariant $functionVariant */
-        $functionVariant = ParametersAcceptorSelector::selectFromArgs($scope, $methodCall->getArgs(), $methodReflection->getVariants());
-        $returnType      = $functionVariant->getReturnType();
+        $returnType = ParametersAcceptorSelector::selectFromArgs($scope, $methodCall->getArgs(), $methodReflection->getVariants())
+            ->getReturnType();
 
         $classNames = $returnType->getObjectClassNames();
 
@@ -65,35 +63,50 @@ class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTyp
             return null;
         }
 
-        $calledOnType = $scope->getType($methodCall->var);
+        $isThroughRelation = false;
 
-        if (count($methodCall->getArgs()) === 0) {
-            // Special case for MorphTo. `morphTo` can be called without arguments.
-            if ($methodReflection->getName() === 'morphTo') {
-                return new GenericObjectType($classNames[0], [new ObjectType(Model::class), $calledOnType]);
+        if ($methodCall->name instanceof Identifier) {
+            $isThroughRelation = in_array($methodCall->name->toString(), ['hasManyThrough', 'hasOneThrough'], strict: true);
+        }
+
+        $args = array_slice($methodCall->getArgs(), 0, $isThroughRelation ? 2 : 1);
+
+        $models = array_map(static function ($arg) use ($scope): string {
+            $argType     = $scope->getType($arg->value);
+            $returnClass = Model::class;
+
+            if ($argType->isClassStringType()->yes()) {
+                $classNames = $argType->getClassStringObjectType()->getObjectClassNames();
+
+                if (count($classNames) === 1) {
+                    $returnClass = $classNames[0];
+                }
             }
 
-            return null;
+            return $returnClass;
+        }, array_values($args));
+
+        if (count($models) === 0) {
+            // `morphTo` can be called without arguments.
+            if ($methodReflection->getName() !== 'morphTo') {
+                return null;
+            }
+
+            $models = [Model::class];
         }
 
-        $argType    = $scope->getType($methodCall->getArgs()[0]->value);
-        $argStrings = $argType->getConstantStrings();
+        $types   = array_map(static fn ($model) => new ObjectType((string) $model), $models);
+        $types[] = $scope->getType($methodCall->var);
 
-        if (count($argStrings) !== 1) {
-            return null;
+        if (
+            // @phpstan-ignore-next-line
+            version_compare(LARAVEL_VERSION, '11.0.0', '<')
+            && ! (new ObjectType(BelongsTo::class))->isSuperTypeOf($returnType)->yes()
+        ) {
+            // Only BelongsTo has more than one type
+            $types = [$types[0]];
         }
 
-        $argClassName = $argStrings[0]->getValue();
-
-        if (! $this->provider->hasClass($argClassName)) {
-            $argClassName = Model::class;
-        }
-
-        // Special case for BelongsTo. We need to add the child model as a generic type also.
-        if ((new ObjectType(BelongsTo::class))->isSuperTypeOf($returnType)->yes()) {
-            return new GenericObjectType($classNames[0], [new ObjectType($argClassName), $calledOnType]);
-        }
-
-        return new GenericObjectType($classNames[0], [new ObjectType($argClassName)]);
+        return new GenericObjectType($classNames[0], $types);
     }
 }
