@@ -99,7 +99,7 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
                 $relatedModelClassNames = $relatedModel->getObjectClassNames();
             }
         } else {
-            $modelName              = $this->relationParserHelper->findRelatedModelInRelationMethod($method) ?? Model::class;
+            $modelName              = $this->relationParserHelper->findModelsInRelationMethod($method)[0] ?? Model::class;
             $relatedModel           = new ObjectType($modelName);
             $relatedModelClassNames = [$modelName];
         }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Types;
 
+use Illuminate\Database\Eloquent\Model;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\NodeFinder;
@@ -11,21 +12,25 @@ use PHPStan\Analyser\ScopeContext;
 use PHPStan\Analyser\ScopeFactory;
 use PHPStan\Parser\Parser;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\Generic\TemplateTypeMap;
 
+use function array_map;
+use function array_slice;
+use function array_values;
 use function count;
+use function in_array;
 use function method_exists;
 
 class RelationParserHelper
 {
-    public function __construct(private Parser $parser, private ScopeFactory $scopeFactory, private ReflectionProvider $reflectionProvider)
+    public function __construct(private Parser $parser, private ScopeFactory $scopeFactory)
     {
     }
 
-    public function findRelatedModelInRelationMethod(
+    /** @return list<string> */
+    public function findModelsInRelationMethod(
         MethodReflection $methodReflection,
-    ): string|null {
+    ): array {
         if (method_exists($methodReflection, 'getDeclaringTrait') && $methodReflection->getDeclaringTrait() !== null) {
             $fileName = $methodReflection->getDeclaringTrait()->getFileName();
         } else {
@@ -37,7 +42,7 @@ class RelationParserHelper
         }
 
         if ($fileName === false || $fileName === null) {
-            return null;
+            return [];
         }
 
         $fileStmts = $this->parser->parseFile($fileName);
@@ -46,14 +51,14 @@ class RelationParserHelper
         $relationMethod = $this->findMethod($methodReflection->getName(), $fileStmts);
 
         if ($relationMethod === null) {
-            return null;
+            return [];
         }
 
         /** @var Node\Stmt\Return_|null $returnStmt */
         $returnStmt = $this->findReturn($relationMethod);
 
         if ($returnStmt === null || ! $returnStmt->expr instanceof MethodCall) {
-            return null;
+            return [];
         }
 
         $methodCall = $returnStmt->expr;
@@ -63,7 +68,7 @@ class RelationParserHelper
         }
 
         if (count($methodCall->getArgs()) < 1) {
-            return null;
+            return [];
         }
 
         $scope = $this->scopeFactory->create(ScopeContext::create($fileName));
@@ -72,32 +77,28 @@ class RelationParserHelper
             ->enterClass($methodReflection->getDeclaringClass())
             ->enterClassMethod($relationMethod, TemplateTypeMap::createEmpty(), [], null, null, null, false, false, false);
 
-        $argType     = $methodScope->getType($methodCall->getArgs()[0]->value);
-        $returnClass = null;
+        $isThroughRelation = false;
 
-        $constantStrings = $argType->getConstantStrings();
-
-        if (count($constantStrings) === 1) {
-            $returnClass = $constantStrings[0]->getValue();
+        if ($methodCall->name instanceof Node\Identifier) {
+            $isThroughRelation = in_array($methodCall->name->toString(), ['hasManyThrough', 'hasOneThrough'], strict: true);
         }
 
-        if ($argType->isClassStringType()->yes()) {
-            $modelType = $argType->getClassStringObjectType();
+        $args = array_slice($methodCall->getArgs(), 0, $isThroughRelation ? 2 : 1);
 
-            $classNames = $modelType->getObjectClassNames();
+        return array_map(static function ($arg) use ($methodScope): string {
+            $argType     = $methodScope->getType($arg->value);
+            $returnClass = Model::class;
 
-            if (count($classNames) !== 1) {
-                return null;
+            if ($argType->isClassStringType()->yes()) {
+                $classNames = $argType->getClassStringObjectType()->getObjectClassNames();
+
+                if (count($classNames) === 1) {
+                    $returnClass = $classNames[0];
+                }
             }
 
-            $returnClass = $classNames[0];
-        }
-
-        if ($returnClass === null) {
-            return null;
-        }
-
-        return $this->reflectionProvider->hasClass($returnClass) ? $returnClass : null;
+            return $returnClass;
+        }, array_values($args));
     }
 
     private function findMethod(string $method, mixed $statements): Node|null
