@@ -180,7 +180,7 @@ class Builder
      *
      * @param  int|string  $id
      * @param  array<string|\Illuminate\Contracts\Database\Query\Expression>  $columns
-     * @return mixed|static
+     * @return object|null
      */
     public function find($id, $columns = ['*']);
 
