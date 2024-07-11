@@ -1,0 +1,312 @@
+<?php
+
+namespace Illuminate\Database\Eloquent;
+
+/**
+ * @template TModel of Model
+ * @property-read $this $orWhere
+ * @property-read $this $whereNot
+ * @property-read $this $orWhereNot
+ */
+class Builder
+{
+    /**
+     * Create and return an un-saved model instance.
+     *
+     * @param array<model-property<TModel>, mixed> $attributes
+     * @return TModel
+     */
+    public function make(array $attributes = []);
+
+    /**
+     * @param array<model-property<TModel>, mixed> $attributes
+     * @return TModel
+     */
+    public function create(array $attributes = []);
+
+    /**
+     * Create a collection of models from plain arrays.
+     *
+     * @param  array<mixed>  $items
+     * @phpstan-return \Illuminate\Database\Eloquent\Collection<int, TModel>
+     */
+    public function hydrate(array $items);
+
+    /**
+     * Create a collection of models from a raw query.
+     *
+     * @param  string  $query
+     * @param  array<mixed>  $bindings
+     * @return \Illuminate\Database\Eloquent\Collection<int, TModel>
+     */
+    public function fromQuery($query, $bindings = []);
+
+    /**
+     * Find a model by its primary key.
+     *
+     * @param  mixed  $id
+     * @param  array<int, (model-property<TModel>|'*')>|model-property<TModel>|'*'  $columns
+     * @return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TModel> : TModel|null)
+     */
+    public function find($id, $columns = ['*']);
+
+    /**
+     * Find multiple models by their primary keys.
+     *
+     * @param  \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>  $ids
+     * @param  array<int, (model-property<TModel>|'*')>|model-property<TModel>|'*'  $columns
+     * @return \Illuminate\Database\Eloquent\Collection<int, TModel>
+     */
+    public function findMany($ids, $columns = ['*']);
+
+    /**
+     * Find a model by its primary key or throw an exception.
+     *
+     * @param  mixed  $id
+     * @param  array<int, (model-property<TModel>|'*')>|model-property<TModel>|'*'  $columns
+     * @return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TModel> : TModel)
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TModel>
+     */
+    public function findOrFail($id, $columns = ['*']);
+
+    /**
+     * Find a model by its primary key or return fresh model instance.
+     *
+     * @param  mixed  $id
+     * @param  array<int, (model-property<TModel>|'*')>|model-property<TModel>|'*'  $columns
+     * @phpstan-return ($id is array ? \Illuminate\Database\Eloquent\Collection<int, TModel> : TModel)
+     */
+    public function findOrNew($id, $columns = ['*']);
+
+    /**
+     * Execute the query and get the first result.
+     *
+     * @param  array<int, (model-property<TModel>|'*')>|model-property<TModel>|'*'  $columns
+     * @return TModel|null
+     */
+    public function first($columns = ['*']);
+
+    /**
+     * Get the first record matching the attributes or instantiate it.
+     *
+     * @param  array<model-property<TModel>, mixed>  $attributes
+     * @param  array<model-property<TModel>, mixed>  $values
+     * @return TModel
+     */
+    public function firstOrNew(array $attributes = [], array $values = []);
+
+    /**
+     * Get the first record matching the attributes or create it.
+     *
+     * @param  array<model-property<TModel>, mixed>  $attributes
+     * @param  array<model-property<TModel>, mixed>  $values
+     * @return TModel
+     */
+    public function firstOrCreate(array $attributes = [], array $values = []);
+
+    /**
+     * Execute the query and get the first result or throw an exception.
+     *
+     * @param  array<int, (model-property<TModel>|'*')>|model-property<TModel>|'*'  $columns
+     * @phpstan-return TModel
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TModel>
+     */
+    public function firstOrFail($columns = ['*']);
+
+    /**
+     * Execute the query and get the first result or call a callback.
+     *
+     * @template TValue
+     *
+     * @param  (\Closure(): TValue)|list<model-property<TModel>|'*'>  $columns
+     * @param  (\Closure(): TValue)|null  $callback
+     * @return TModel|TValue
+     */
+    public function firstOr($columns = ['*'], \Closure $callback = null);
+
+    /**
+     * Attempt to create the record. If a unique constraint violation occurs, attempt to find the matching record.
+     *
+     * @param  array<model-property<TModel>, mixed>  $attributes
+     * @param  array<model-property<TModel>, mixed>  $values
+     * @return TModel
+     */
+    public function createOrFirst(array $attributes = [], array $values = []);
+
+    /**
+     * Create or update a record matching the attributes, and fill it with values.
+     *
+     * @param  array<model-property<TModel>, mixed>  $attributes
+     * @param  array<model-property<TModel>, mixed>  $values
+     * @return TModel
+     */
+    public function updateOrCreate(array $attributes = [], array $values = []);
+
+    /**
+     * @param  array<model-property<TModel>, mixed>  $attributes
+     * @return TModel
+     */
+    public function forceCreate(array $attributes);
+
+    /**
+     * @param  array<model-property<TModel>, mixed>  $values
+     * @return int
+     */
+    public function update(array $values);
+
+    /**
+     * Execute the query and get the first result if it's the sole matching record.
+     *
+     * @param  array<int, (model-property<TModel>|'*')>|model-property<TModel>|'*'  $columns
+     * @return TModel
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TModel>
+     * @throws \Illuminate\Database\MultipleRecordsFoundException
+     */
+    public function sole($columns = ['*']);
+
+    /**
+     * Add a basic where clause to the query.
+     *
+     * @param  (\Closure(static): mixed)|model-property<TModel>|array<model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @param  string  $boolean
+     * @return $this
+     */
+    public function where($column, $operator = null, $value = null, $boolean = 'and');
+
+    /**
+     * Add an "or where" clause to the query.
+     *
+     * @param  (\Closure(static): mixed)|model-property<TModel>|array<model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return $this
+     */
+    public function orWhere($column, $operator = null, $value = null);
+
+    /**
+     * Add a basic where clause to the query, and return the first result.
+     *
+     * @param  (\Closure(static): mixed)|model-property<TModel>|array<model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @param  string  $boolean
+     * @return TModel|null
+     */
+    public function firstWhere($column, $operator = null, $value = null, $boolean = 'and');
+
+    /**
+     * Execute the query as a "select" statement.
+     *
+     * @param  array<int, (model-property<TModel>|'*')>|model-property<TModel>|'*'  $columns
+     * @return \Illuminate\Database\Eloquent\Collection<int, TModel>
+     */
+    public function get($columns = ['*']);
+
+    /**
+     * Get the hydrated models without eager loading.
+     *
+     * @param  array<int, (model-property<TModel>|'*')>|model-property<TModel>|'*'  $columns
+     * @return list<TModel>
+     */
+    public function getModels($columns = ['*']);
+
+    /**
+     * Get a single column's value from the first result of a query.
+     *
+     * @param  model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @return mixed
+     */
+    public function value($column);
+
+    /**
+     * Paginate the given query.
+     *
+     * @param  int|null  $perPage
+     * @param  array<int, (model-property<TModel>|'*')>  $columns
+     * @param  string  $pageName
+     * @param  int|null  $page
+     * @return \Illuminate\Pagination\LengthAwarePaginator<TModel>
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null);
+
+    /**
+     * Paginate the given query into a simple paginator.
+     *
+     * @param  int|null  $perPage
+     * @param  array<int, (model-property<TModel>|'*')>  $columns
+     * @param  string  $pageName
+     * @param  int|null  $page
+     * @return \Illuminate\Pagination\Paginator<TModel>
+     */
+    public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null);
+
+    /**
+     * Paginate the given query into a cursor paginator.
+     *
+     * @param  int|null  $perPage
+     * @param  array<int, (model-property<TModel>|'*')>  $columns
+     * @param  string  $cursorName
+     * @param  \Illuminate\Pagination\Cursor|string|null  $cursor
+     * @return \Illuminate\Pagination\CursorPaginator<TModel>
+     */
+     public function cursorPaginate($perPage = null, $columns = ['*'], $cursorName = 'cursor', $cursor = null);
+
+    /**
+     * Get a lazy collection for the given query.
+     *
+     * @return \Illuminate\Support\LazyCollection<int, TModel>
+     */
+    public function cursor();
+
+     /**
+      * Query lazily, by chunks of the given size.
+      *
+      * @param  int  $chunkSize
+      * @return \Illuminate\Support\LazyCollection<int, TModel>
+      *
+      * @throws \InvalidArgumentException
+      */
+     public function lazy($chunkSize = 1000);
+
+     /**
+      * Query lazily, by chunking the results of a query by comparing IDs.
+      *
+      * @param  int  $chunkSize
+      * @param  string|null  $column
+      * @param  string|null  $alias
+      * @return \Illuminate\Support\LazyCollection<int, TModel>
+      *
+      * @throws \InvalidArgumentException
+      */
+     public function lazyById($chunkSize = 1000, $column = null, $alias = null);
+
+     /**
+      * Query lazily, by chunking the results of a query by comparing IDs in descending order.
+      *
+      * @param  int  $chunkSize
+      * @param  string|null  $column
+      * @param  string|null  $alias
+      * @return \Illuminate\Support\LazyCollection<int, TModel>
+      *
+      * @throws \InvalidArgumentException
+      */
+     public function lazyByIdDesc($chunkSize = 1000, $column = null, $alias = null);
+
+    /**
+     * Gets the result of a query in chunks.
+     *
+     * @param  int  $count
+     * @param  callable(\Illuminate\Database\Eloquent\Collection<int, TModel>, int): mixed $callback
+     * @return bool
+     */
+    public function chunk($count, $callback);
+}
+
+class Scope {}

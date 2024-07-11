@@ -111,6 +111,7 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
             version_compare(LARAVEL_VERSION, '11.0.0', '<')
             && ! (new ObjectType(BelongsTo::class))->isSuperTypeOf($returnType)->yes()
         ) {
+            // Only BelongsTo has more than one type
             $types = [$types[0]];
         }
 

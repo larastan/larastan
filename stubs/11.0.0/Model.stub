@@ -1,0 +1,64 @@
+<?php
+
+namespace Illuminate\Database\Eloquent;
+
+/**
+ * @implements \ArrayAccess<string, mixed>
+ */
+abstract class Model implements \JsonSerializable, \ArrayAccess
+{
+    /**
+     * @var array<string, string>
+     */
+    protected $casts = [];
+
+    /**
+     * @var list<string>
+     */
+    protected $hidden = [];
+
+    /**
+     * @var list<string>
+     */
+    protected $fillable = [];
+
+    /**
+     * @var list<string>
+     */
+    protected $visible = [];
+
+    /**
+     * @var list<string>
+     */
+    protected $appends = [];
+
+    /**
+     * @var list<string>
+     */
+    protected $with = [];
+
+    /**
+     * @var list<string>
+     */
+    protected $withCount = [];
+
+    /**
+     * Update the model in the database.
+     *
+     * @param  array<model-property<static>, mixed>  $options
+     * @return bool
+     */
+    public function save(array $options = []);
+
+    /**
+     * Update the model in the database.
+     *
+     * @param  array<model-property<static>, mixed>  $attributes
+     * @param  array<int|string, mixed>  $options
+     * @return bool
+     */
+    public function update(array $attributes = [], array $options = []);
+}
+
+/** @template TModel of Model */
+class ModelNotFoundException extends \RuntimeException {}

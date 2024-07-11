@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
  */
 abstract class Relation
 {
-    /**
+     /**
       * @phpstan-return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
       */
      public function getEager();
