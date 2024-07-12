@@ -70,7 +70,7 @@ class IntegrationTest extends PHPStanTestCase
             ],
         ];
 
-        if (version_compare(LARAVEL_VERSION, '11.15.0', '<')) {
+        if (version_compare(LARAVEL_VERSION, '11.0.0', '<')) {
             yield [
                 __DIR__ . '/data/model-property-relation.php',
                 [
@@ -103,7 +103,7 @@ class IntegrationTest extends PHPStanTestCase
 
         yield [__DIR__ . '/data/eloquent-builder-l10.php'];
 
-        if (version_compare(LARAVEL_VERSION, '11.15.0', '<')) {
+        if (version_compare(LARAVEL_VERSION, '11.0.0', '<')) {
             return;
         }
 
