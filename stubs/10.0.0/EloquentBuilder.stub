@@ -75,7 +75,7 @@ class Builder
      *
      * @param  \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>  $ids
      * @param  array<int, (model-property<TModel>|'*')>|model-property<TModel>|'*'  $columns
-     * @phpstan-return \Illuminate\Database\Eloquent\Collection<int, TModel>
+     * @return \Illuminate\Database\Eloquent\Collection<int, TModel>
      */
     public function findMany($ids, $columns = ['*']);
 
