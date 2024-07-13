@@ -29,7 +29,6 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/container-array-access.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/container-make.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/contracts.php');
-        yield from self::gatherAssertTypes(__DIR__ . '/data/custom-eloquent-builder.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/custom-eloquent-collection.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/database-transaction.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/date-extension.php');
@@ -44,7 +43,6 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/model-methods.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/model-properties-relations.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/model-properties.php');
-        yield from self::gatherAssertTypes(__DIR__ . '/data/model-relations.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/model-scopes.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/model.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/optional-helper.php');
@@ -62,6 +60,11 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/view.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/where-relation.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1997.php');
+
+        if (version_compare(LARAVEL_VERSION, '11.0.0', '<')) {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/custom-eloquent-builder.php');
+            yield from self::gatherAssertTypes(__DIR__ . '/data/model-relations.php');
+        }
 
         if (version_compare(LARAVEL_VERSION, '10.15.0', '>=')) {
             yield from self::gatherAssertTypes(__DIR__ . '/data/model-l10-15.php');
@@ -81,7 +84,9 @@ class GeneralTypeTest extends TypeInferenceTestCase
         }
 
         if (version_compare(LARAVEL_VERSION, '11.0.0', '>=')) {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/custom-eloquent-builder-l11-15.php');
             yield from self::gatherAssertTypes(__DIR__ . '/data/model-properties-l11.php');
+            yield from self::gatherAssertTypes(__DIR__ . '/data/model-relations-l11-15.php');
         }
 
         //##############################################################################################################
