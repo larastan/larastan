@@ -12,8 +12,15 @@ class DailyQuery
     /** @var Builder<TModel> */
     private Builder $query;
 
-    public function daily()
+    /** @return Builder<TModel> */
+    public function daily(): Builder
     {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $this->query->select());
+        $query = $this->query->select();
+        assertType('Illuminate\Database\Eloquent\Builder<TModel of Illuminate\Database\Eloquent\Model (class Bug1346\DailyQuery, argument)>', $query);
+
+        return $query;
     }
 }
+
+/** @var DailyQuery<\App\User> $query */
+assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query->daily());

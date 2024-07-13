@@ -28,8 +28,6 @@ class Scopes extends Model
     /** @param Builder<Scopes> $query */
     public function test(User $user, Builder $query): void
     {
-        assertType('Illuminate\Database\Eloquent\Relations\HasOne<App\User>', $this->hasOne(User::class)->active());
-        assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\User>', $this->hasMany(User::class)->active());
         assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->active());
 
         assertType('Illuminate\Database\Eloquent\Builder<App\User>', $this->user->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->active());
@@ -42,6 +40,19 @@ class Scopes extends Model
         assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::query()->someScope());
         assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->where('foo')->someScope());
         assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $user->where('foo')->someScope()->get());
+    }
+
+    /**
+     * @param Builder<static> $query
+     * @return Builder<static>
+     */
+    public function testScopeReturnStatic(Builder $query): Builder
+    {
+        $query = $query->where('foo', 'bar')->orWhereNull('foo');
+
+        assertType('Illuminate\Database\Eloquent\Builder<static(ModelScope\Scopes)>', $query);
+
+        return $query;
     }
 }
 

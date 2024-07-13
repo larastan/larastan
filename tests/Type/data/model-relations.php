@@ -13,8 +13,14 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 use function PHPStan\Testing\assertType;
 
-function test(User $user, \App\Address $address, Account $account, ExtendsModelWithPropertyAnnotations $model, Tag $tag, User|Account $union)
-{
+function test(
+    User $user,
+    \App\Address $address,
+    Account $account,
+    ExtendsModelWithPropertyAnnotations $model,
+    Tag $tag,
+    User|Account $union,
+): void {
     assertType('App\Account', $user->accounts()->firstOrCreate([]));
     assertType(Post::class, $user->posts()->create());
     assertType('App\Account', $user->accounts()->create());
@@ -55,8 +61,10 @@ function test(User $user, \App\Address $address, Account $account, ExtendsModelW
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\User>', $user->group()->withTrashed());
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\User>', $user->group()->onlyTrashed());
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\User>', $user->group()->withoutTrashed());
+    assertType('Illuminate\Database\Eloquent\Relations\HasManyThrough<App\Transaction>', $user->transactions());
     assertType('Illuminate\Database\Eloquent\Relations\MorphToMany<ModelRelations\Address>', $tag->addresses());
-    assertType('Illuminate\Database\Eloquent\Relations\MorphToMany<ModelRelations\Address>', $tag->addresses());
+    assertType('Illuminate\Database\Eloquent\Relations\MorphToMany<ModelRelations\Address>', $tag->addressesWithPivot());
+    assertType('Illuminate\Database\Eloquent\Relations\MorphToMany<ModelRelations\Address>', $tag->addressesWithTimestamps());
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::with([
         'accounts' => function (HasMany $query) {
             return $query->where('foo', 'bar');
@@ -156,17 +164,19 @@ class ExtendsModelWithPropertyAnnotations extends ModelWithPropertyAnnotations
 
 class Tag extends Model
 {
-    /**
-     * @phpstan-return MorphToMany<Address>
-     */
+    /** @return HasMany<Address> */
     public function addresses(): MorphToMany
+    {
+        return $this->morphToMany(Address::class, 'taggable');
+    }
+
+    /** @return MorphToMany<Address> */
+    public function addressesWithTimestamps(): MorphToMany
     {
         return $this->morphToMany(Address::class, 'taggable')->withTimestamps();
     }
 
-    /**
-     * @phpstan-return MorphToMany<Address>
-     */
+    /** @return MorphToMany<Address> */
     public function addressesWithPivot(): MorphToMany
     {
         return $this->morphToMany(Address::class, 'taggable')->withPivot('foo');
