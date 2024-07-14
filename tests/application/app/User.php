@@ -115,13 +115,13 @@ class User extends Authenticatable
         return $query->where('active', 1);
     }
 
-    /** @phpstan-return BelongsTo<Group, User> */
+    /** @return BelongsTo<Group, $this> */
     public function group(): BelongsTo
     {
         return $this->belongsTo(Group::class)->withTrashed();
     }
 
-    /** @phpstan-return HasMany<Account> */
+    /** @return HasMany<Account> */
     public function accounts(): HasMany
     {
         return $this->hasMany(Account::class);
@@ -137,13 +137,13 @@ class User extends Authenticatable
         return $this->hasMany(Account::class);
     }
 
-    /** @phpstan-return HasMany<ModelWithNonGenericCollection> */
+    /** @return HasMany<ModelWithNonGenericCollection> */
     public function modelsWithNonGenericCollection(): HasMany
     {
         return $this->hasMany(ModelWithNonGenericCollection::class);
     }
 
-    /** @phpstan-return HasMany<ModelWithOnlyValueGenericCollection> */
+    /** @return HasMany<ModelWithOnlyValueGenericCollection> */
     public function modelsWithOnlyValueGenericCollection(): HasMany
     {
         return $this->hasMany(ModelWithOnlyValueGenericCollection::class);
@@ -176,6 +176,7 @@ class User extends Authenticatable
         return $this->hasMany(self::class, 'parent_id');
     }
 
+    /** @return BelongsTo<User, $this> */
     public function parent(): BelongsTo
     {
         return $this->belongsTo(get_class($this));

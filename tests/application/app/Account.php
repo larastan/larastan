@@ -25,7 +25,7 @@ class Account extends Model
         return $this->hasMany(Transaction::class);
     }
 
-    /** @phpstan-return BelongsTo<Group, Account> */
+    /** @return BelongsTo<Group, $this> */
     public function group(): BelongsTo
     {
         return $this->belongsTo(Group::class);
