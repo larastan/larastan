@@ -14,9 +14,6 @@ use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
-use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\IntegerType;
-use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
 use function in_array;
@@ -64,37 +61,20 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
         MethodCall $methodCall,
         Scope $scope,
     ): Type|null {
-        $returnType      = ParametersAcceptorSelector::selectFromArgs($scope, $methodCall->getArgs(), $methodReflection->getVariants())->getReturnType();
-        $templateTypeMap = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap();
+        $returnType = ParametersAcceptorSelector::selectFromArgs(
+            $scope,
+            $methodCall->getArgs(),
+            $methodReflection->getVariants(),
+        )->getReturnType();
 
-        $modelType = $templateTypeMap->getType('TModel');
-        if ($modelType === null) {
-            return null;
-        }
+        if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
+            $modelType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TModel');
 
-        $classNames = $modelType->getObjectClassNames();
-
-        if ($classNames !== [] && $modelType->isObject()->yes() && in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
-            $collectionClassName = $this->collectionHelper->determineCollectionClassName($classNames[0]);
-
-            $collectionReflection = $this->reflectionProvider->getClass($collectionClassName);
-
-            if (! $collectionReflection->isGeneric()) {
-                // Not generic. So return the type as is
-                return new ObjectType($collectionClassName);
+            if ($modelType === null) {
+                return null;
             }
 
-            $typeMap = $collectionReflection->getActiveTemplateTypeMap();
-
-            // Specifies key and value
-            if ($typeMap->count() === 2) {
-                return new GenericObjectType($collectionClassName, [new IntegerType(), $modelType]);
-            }
-
-            // Specifies only value
-            if (($typeMap->count() === 1) && $typeMap->hasType('TModel')) {
-                return new GenericObjectType($collectionClassName, [$modelType]);
-            }
+            return $this->collectionHelper->determineCollectionClass($modelType->getObjectClassNames()[0]);
         }
 
         return null;
