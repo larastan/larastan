@@ -167,4 +167,9 @@ function test(?int $value = 0): void
     } else {
         assertType('int', $value);
     }
+
+    assertType('bool|string|null', env('foo'));
+    assertType('bool|string|null', env('foo', null));
+    assertType('bool|int|string', env('foo', 120));
+    assertType('bool|string', env('foo', ''));
 }

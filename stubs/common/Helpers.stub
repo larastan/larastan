@@ -189,3 +189,14 @@ function filled($value) {}
  * @return bool
  */
 function blank($value) {}
+
+/**
+ * Gets the value of an environment variable.
+ *
+ * @template TDefault
+ *
+ * @param  string  $key
+ * @param  TDefault  $default
+ * @return bool|string|TDefault
+ */
+function env($key, $default = null) {}
