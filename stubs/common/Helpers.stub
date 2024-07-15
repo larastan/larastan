@@ -197,6 +197,6 @@ function blank($value) {}
  *
  * @param  string  $key
  * @param  TDefault  $default
- * @return ($default is null ? mixed : TDefault)
+ * @return bool|string|TDefault
  */
 function env($key, $default = null) {}

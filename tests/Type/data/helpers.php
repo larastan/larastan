@@ -168,7 +168,8 @@ function test(?int $value = 0): void
         assertType('int', $value);
     }
 
-    assertType('int', env('SESSION_LIFETIME', 120));
-    assertType('string', env('APP_NAME', 'Laravel'));
-    assertType('mixed', env('APP_NAME'));
+    assertType('bool|string|null', env('foo'));
+    assertType('bool|string|null', env('foo', null));
+    assertType('bool|int|string', env('foo', 120));
+    assertType('bool|string', env('foo', ''));
 }
