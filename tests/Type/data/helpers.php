@@ -167,4 +167,8 @@ function test(?int $value = 0): void
     } else {
         assertType('int', $value);
     }
+
+    assertType('int', env('SESSION_LIFETIME', 120));
+    assertType('string', env('APP_NAME', 'Laravel'));
+    assertType('mixed', env('APP_NAME'));
 }
