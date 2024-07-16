@@ -6,6 +6,8 @@ use App\Account;
 use App\Group;
 use App\Post as AppPost;
 use App\User as AppUser;
+use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -17,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 use function PHPStan\Testing\assertType;
 
@@ -207,6 +210,10 @@ function test(
     assertType('Illuminate\Database\Eloquent\Collection<int, ModelRelationsL11\Part>', $user->parts);
     assertType('Illuminate\Database\Eloquent\Relations\HasOneThrough<ModelRelationsL11\Part, ModelRelationsL11\Mechanic, ModelRelationsL11\User>', $user->firstPart());
 
+    assertType('ModelRelationsL11\HasDateOfLatestPost', $user->dateOfLatestPost());
+    assertType('Carbon\CarbonImmutable', $user->dateOfLatestPost()->getResults());
+    assertType('Carbon\CarbonImmutable', $user->dateOfLatestPost);
+
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<ModelRelationsL11\User, ModelRelationsL11\Post>', $post->user());
     assertType('ModelRelationsL11\User|null', $post->user()->getResults());
     assertType('ModelRelationsL11\User|null', $post->user);
@@ -330,6 +337,11 @@ class User extends Model
         assertType('Illuminate\Database\Eloquent\Relations\HasOne<ModelRelationsL11\Post, $this(ModelRelationsL11\User)>', $post);
 
         return $post;
+    }
+
+    public function dateOfLatestPost(): HasDateOfLatestPost
+    {
+        return new HasDateOfLatestPost(Post::query(), $this);
     }
 
     /** @return BelongsToMany<Role, $this> */
@@ -508,4 +520,37 @@ class Part extends Model
 }
 class Image extends Model
 {
+}
+
+/** @extends Relation<Post, User, \Carbon\CarbonImmutable> */
+class HasDateOfLatestPost extends Relation
+{
+
+    /** @inheritDoc */
+    public function addConstraints(): void
+    {
+    }
+
+    /** @inheritDoc */
+    public function addEagerConstraints(array $models): void
+    {
+    }
+
+    /** @inheritDoc */
+    public function initRelation(array $models, $relation): array
+    {
+        return $models;
+    }
+
+    /** @inheritDoc */
+    public function match(array $models, Collection $results, $relation): array
+    {
+        return $models;
+    }
+
+    /** @inheritDoc */
+    public function getResults(): CarbonImmutable
+    {
+        return CarbonImmutable::now();
+    }
 }

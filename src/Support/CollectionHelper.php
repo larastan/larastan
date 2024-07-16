@@ -16,15 +16,21 @@ use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntegerType;
+use PHPStan\Type\IntersectionType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\TypeTraverser;
+use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
 use Traversable;
 
+use function array_map;
 use function array_values;
 use function count;
+use function in_array;
 
 final class CollectionHelper
 {
@@ -100,6 +106,31 @@ final class CollectionHelper
 
         // Not generic. So return the type as is
         return new ObjectType($collectionClassName);
+    }
+
+    public function replaceCollectionsInType(Type $type): Type
+    {
+        if (! in_array(EloquentCollection::class, $type->getReferencedClasses(), true)) {
+            return $type;
+        }
+
+        return TypeTraverser::map($type, function ($type, $traverse): Type {
+            if ($type instanceof UnionType || $type instanceof IntersectionType) {
+                return $traverse($type);
+            }
+
+            if (! (new ObjectType(EloquentCollection::class))->isSuperTypeOf($type)->yes()) {
+                return $traverse($type);
+            }
+
+            $models = $type->getTemplateType(EloquentCollection::class, 'TModel')->getObjectClassNames();
+
+            if (count($models) === 0) {
+                return $type;
+            }
+
+            return TypeCombinator::union(...array_map([$this, 'determineCollectionClass'], $models));
+        });
     }
 
     private function getTypeFromEloquentCollection(ClassReflection $classReflection): GenericObjectType|null

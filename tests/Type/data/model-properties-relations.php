@@ -39,7 +39,7 @@ class Foo extends Model
         return $this->name === 'foo' ? $this->hasMany(Bar::class) : $this->belongsTo(Baz::class);
     }
 
-    /** @return HasMany<Bar>|BelongsTo<Baz, Foo> */
+    /** @return HasMany<Bar>|BelongsTo<Baz, $this> */
     public function relationReturningUnion2(): HasMany|BelongsTo
     {
         return $this->name === 'foo' ? $this->hasMany(Bar::class) : $this->belongsTo(Baz::class);
@@ -57,19 +57,19 @@ class Foo extends Model
  */
 class Bar extends Model
 {
-    /** @return BelongsTo<Foo, Bar> */
+    /** @return BelongsTo<Foo, $this> */
     public function belongsToRelation(): BelongsTo
     {
         return $this->belongsTo(Foo::class);
     }
 
-    /** @return MorphTo<Model, Bar> */
+    /** @return MorphTo<Model, $this> */
     public function morphToRelation(): MorphTo
     {
         return $this->morphTo('foo');
     }
 
-    /** @return MorphTo<User|Account, Bar> */
+    /** @return MorphTo<User|Account, $this> */
     public function morphToUnionRelation(): MorphTo
     {
         return $this->morphTo('foo');
@@ -80,6 +80,10 @@ class Baz extends Model
 {
 }
 
+/**
+ * @template TRelatedModel of Model
+ * @extends HasMany<TRelatedModel>
+ */
 class Ancestors extends HasMany
 {
 }
@@ -90,8 +94,8 @@ function test(Foo $foo, Bar $bar, Account $account): void
     assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelations\Bar>', $foo->hasManyThroughRelation);
     assertType('ModelPropertiesRelations\Baz|null', $foo->hasOneThroughRelation);
     assertType('ModelPropertiesRelations\Foo', $bar->belongsToRelation);
-    assertType('mixed', $bar->morphToRelation);
-    assertType('App\Account|App\User', $bar->morphToUnionRelation);
+    assertType('Illuminate\Database\Eloquent\Model|null', $bar->morphToRelation);
+    assertType('App\Account|App\User|null', $bar->morphToUnionRelation);
     assertType('ModelPropertiesRelations\Bar|null', $foo->hasManyRelation->first());
     assertType('ModelPropertiesRelations\Bar|null', $foo->hasManyRelation()->find(1));
     assertType('App\User|null', $account->ownerRelation);
@@ -99,4 +103,3 @@ function test(Foo $foo, Bar $bar, Account $account): void
     assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelations\Bar>|ModelPropertiesRelations\Baz|null', $foo->relationReturningUnion2);
     assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelations\Foo>', $foo->ancestors);
 }
-
