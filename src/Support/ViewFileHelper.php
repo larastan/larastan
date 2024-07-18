@@ -22,14 +22,14 @@ use const DIRECTORY_SEPARATOR;
 
 final class ViewFileHelper
 {
-    /** @param  list<non-empty-string> $viewDirectories */
+    /** @param  list<string> $viewDirectories */
     public function __construct(private array $viewDirectories, private FileHelper $fileHelper)
     {
         if (count($viewDirectories) !== 0) {
             return;
         }
 
-        $this->viewDirectories = [resource_path('views')]; // @phpstan-ignore-line
+        $this->viewDirectories = [resource_path('views')];
     }
 
     public function getAllViewFilePaths(): Generator

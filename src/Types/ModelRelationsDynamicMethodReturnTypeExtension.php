@@ -107,7 +107,6 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
         $types[] = $scope->getType($methodCall->var);
 
         if (
-            // @phpstan-ignore-next-line
             version_compare(LARAVEL_VERSION, '11.0.0', '<')
             && ! (new ObjectType(BelongsTo::class))->isSuperTypeOf($returnType)->yes()
         ) {

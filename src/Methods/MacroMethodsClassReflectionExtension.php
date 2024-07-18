@@ -26,6 +26,7 @@ use ReflectionException;
 use Throwable;
 
 use function array_key_exists;
+use function assert;
 use function explode;
 use function get_class;
 use function is_array;
@@ -105,10 +106,13 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
         }
 
         if ($this->hasIndirectTraitUse($classReflection, CarbonMacro::class) && Carbon::hasMacro($methodName)) {
+            $macro = Carbon::getMacro($methodName);
+            assert($macro !== null);
+
             $methodReflection = new Macro(
                 $classReflection,
                 $methodName,
-                $this->closureTypeFactory->fromClosureObject(Closure::fromCallable(Carbon::getMacro($methodName))), // @phpstan-ignore-line hasMacro guarantees no null return
+                $this->closureTypeFactory->fromClosureObject(Closure::fromCallable($macro)),
             );
 
             $this->methods[$classReflection->getName() . '-' . $methodName] = $methodReflection;

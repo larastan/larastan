@@ -8,4 +8,7 @@ parameters:
     phpVersion: 80200
     paths:
         - src
+    # Need to ignore errors that only exist in older Laravel versions
     reportUnmatchedIgnoredErrors: false
+    dynamicConstantNames:
+        - LARAVEL_VERSION

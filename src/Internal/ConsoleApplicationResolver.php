@@ -25,12 +25,13 @@ final class ConsoleApplicationResolver
 
         $classType = new ObjectType($classReflection->getName());
 
-        if (! (new ObjectType('Illuminate\Console\Command'))->isSuperTypeOf($classType)->yes()) {
+        if (! (new ObjectType(Command::class))->isSuperTypeOf($classType)->yes()) {
             return [];
         }
 
         $commands = [];
 
+        /** @var Command $command */
         foreach ($consoleApplication->all() as $name => $command) {
             if (! $classType->isSuperTypeOf(new ObjectType($command::class))->yes()) {
                 continue;
@@ -39,7 +40,7 @@ final class ConsoleApplicationResolver
             $commands[$name] = $command;
         }
 
-        return $commands; // @phpstan-ignore-line
+        return $commands;
     }
 
     private function getApplication(): Application

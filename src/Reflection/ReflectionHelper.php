@@ -27,7 +27,7 @@ final class ReflectionHelper
             }
         }
 
-        /** @phpstan-ignore-next-line */
+        /** @phpstan-ignore phpstanApi.method, phpstanApi.constructor (not covered by BC promise) */
         return (new MixinPropertiesClassReflectionExtension([$classReflection->getName()]))
             ->hasProperty($classReflection, $propertyName);
     }
@@ -47,7 +47,7 @@ final class ReflectionHelper
             }
         }
 
-        /** @phpstan-ignore-next-line */
+        /** @phpstan-ignore phpstanApi.method, phpstanApi.constructor (not covered by BC promise) */
         return (new MixinMethodsClassReflectionExtension([$classReflection->getName()]))
             ->hasMethod($classReflection, $methodName);
     }

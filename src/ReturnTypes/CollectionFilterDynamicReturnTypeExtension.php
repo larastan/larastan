@@ -10,6 +10,7 @@ use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Return_;
+use PHPStan\Analyser\MutatingScope;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\ShouldNotHappenException;
@@ -18,6 +19,7 @@ use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
+use function assert;
 use function count;
 use function is_string;
 
@@ -80,9 +82,11 @@ class CollectionFilterDynamicReturnTypeExtension implements DynamicMethodReturnT
 
             $itemVariableName = $var->name;
 
-            $node = new Variable($itemVariableName);
-            // @phpstan-ignore-next-line
-            $scope     = $scope->assignExpression($node, $valueType);
+            /** @phpstan-ignore phpstanApi.class (not covered by BC promise) */
+            assert($scope instanceof MutatingScope);
+
+            /** @phpstan-ignore phpstanApi.method (not covered by BC promise) */
+            $scope     = $scope->assignExpression(new Variable($itemVariableName), $valueType);
             $scope     = $scope->filterByTruthyValue($expr);
             $valueType = $scope->getVariableType($itemVariableName);
         }

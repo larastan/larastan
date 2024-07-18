@@ -146,7 +146,8 @@ class GenericModelPropertyType extends StringType
 
     public function inferTemplateTypes(Type $receivedType): TemplateTypeMap
     {
-        if ($receivedType instanceof UnionType || $receivedType instanceof IntersectionType) { // @phpstan-ignore-line
+        /** @phpstan-ignore phpstanApi.instanceofType (checking IntersectionType is deprecated) */
+        if ($receivedType instanceof UnionType || $receivedType instanceof IntersectionType) {
             return $receivedType->inferTemplateTypesOn($this);
         }
 

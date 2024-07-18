@@ -118,8 +118,10 @@ class EnumerableGenericStaticMethodDynamicMethodReturnTypeExtension implements D
         // If it's a UnionType, traverse the types and try to find a collection object type
         if ($returnType instanceof UnionType) {
             return $returnType->traverse(function (Type $type) use ($classReflection) {
-                // @phpcs:ignore
-                if ($type instanceof GenericObjectType && ($innerReflection = $type->getClassReflection()) !== null) { // @phpstan-ignore-line
+                $innerReflection = $type->getObjectClassReflections()[0] ?? null;
+
+                /** @phpstan-ignore phpstanApi.instanceofType (deprecated) */
+                if ($type instanceof GenericObjectType && $innerReflection !== null) {
                     return $this->handleGenericObjectType($classReflection, $innerReflection);
                 }
 

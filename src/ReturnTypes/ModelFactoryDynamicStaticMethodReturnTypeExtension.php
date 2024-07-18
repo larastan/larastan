@@ -68,7 +68,9 @@ final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements Dynami
             $isSingleModel = (new UnionType($numericTypes))->isSuperTypeOf($argType)->negate();
         }
 
-        $factoryName = Factory::resolveFactoryName(ltrim($class->toCodeString(), '\\')); // @phpstan-ignore-line
+        /** @var class-string<Model> $className */
+        $className   = ltrim($class->toCodeString(), '\\');
+        $factoryName = Factory::resolveFactoryName($className);
 
         if (class_exists($factoryName)) {
             return new ModelFactoryType($factoryName, null, null, $isSingleModel);

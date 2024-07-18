@@ -48,6 +48,7 @@ use function array_combine;
 use function array_key_exists;
 use function array_map;
 use function array_merge;
+use function assert;
 use function class_exists;
 use function explode;
 use function str_replace;
@@ -247,21 +248,30 @@ class ModelCastHelper
 
         $modelCasts = $modelInstance->getCasts();
 
-        if (version_compare(LARAVEL_VERSION, '11.0.0', '>=')) { // @phpstan-ignore-line
+        if (version_compare(LARAVEL_VERSION, '11.0.0', '>=')) {
             $castsMethodReturnType = $modelClassReflection->getMethod(
                 'casts',
                 new OutOfClassScope(),
             )->getVariants()[0]->getReturnType();
 
-            if ($castsMethodReturnType->isConstantArray()->yes()) {
-                $modelCasts = array_merge(
-                    $modelCasts,
-                    array_combine(
-                        array_map(static fn ($key) => $key->getValue(), $castsMethodReturnType->getKeyTypes()), // @phpstan-ignore-line
-                        array_map(static fn ($value) => str_replace('\\\\', '\\', $value->getValue()), $castsMethodReturnType->getValueTypes()), // @phpstan-ignore-line
-                    ),
-                );
+            $castsArray = $castsMethodReturnType->getConstantArrays()[0] ?? null;
+
+            if ($castsArray === null) {
+                return $modelCasts;
             }
+
+            $modelCasts = array_merge(
+                $modelCasts,
+                array_combine(
+                    array_map(static fn ($key) => $key->getValue(), $castsArray->getKeyTypes()),
+                    array_map(static function ($value) {
+                        $cast = $value->getConstantStrings()[0] ?? null;
+                        assert($cast !== null);
+
+                        return str_replace('\\\\', '\\', $cast->getValue());
+                    }, $castsArray->getValueTypes()),
+                ),
+            );
         }
 
         return $modelCasts;

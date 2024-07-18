@@ -151,13 +151,12 @@ class IntegrationTest extends PHPStanTestCase
     {
         $file = $this->getFileHelper()->normalizePath($file);
 
-        /** @var Analyser $analyser */
-        $analyser = self::getContainer()->getByType(Analyser::class); // @phpstan-ignore-line
-
-        /** @var FileHelper $fileHelper */
+        /** @phpstan-ignore phpstanApi.classConstant (not covered by BC promise) */
+        $analyser   = self::getContainer()->getByType(Analyser::class);
         $fileHelper = self::getContainer()->getByType(FileHelper::class);
 
-        $errors = $analyser->analyse([$file], null, null, true, $allAnalysedFiles)->getErrors(); // @phpstan-ignore-line
+        /** @phpstan-ignore phpstanApi.method, phpstanApi.method (not covered by BC promise) */
+        $errors = $analyser->analyse([$file], null, null, true, $allAnalysedFiles)->getErrors();
 
         foreach ($errors as $error) {
             $this->assertSame($fileHelper->normalizePath($file), $error->getFilePath());
