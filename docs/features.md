@@ -45,15 +45,39 @@ In order for Larastan to recognize Model relationships:
 If the above conditions are not met, then adding the `@return` docblock can help
 
 ```php
-/** @return BelongsTo<User, $this> */
-public function user(): BelongsTo
+/** @return HasOne<Address, $this> */
+public function address(): HasOne
 {
-    return $this->belongsTo(User::class);
+    return $this->hasOne(Address::class);
 }
 
-/** @return HasMany<Post> */
+/** @return HasMany<Post, $this> */
 public function posts(): HasMany
 {
     return $this->hasMany(Post::class);
+}
+
+/** @return BelongsToMany<Role, $this> */
+public function roles(): BelongsToMany
+{
+    return $this->belongsToMany(Role::class);
+}
+
+/** @return HasOne<Mechanic, $this> */
+public function mechanic(): HasOne
+{
+    return $this->hasOne(Mechanic::class);
+}
+
+/** @return HasOneThrough<Car, Mechanic, $this> */
+public function car(): HasOneThrough
+{
+    return $this->hasOneThrough(Car::class, Mechanic::class);
+}
+
+/** @return HasManyThrough<Part, Mechanic, $this> */
+public function parts(): HasManyThrough
+{
+    return $this->hasManyThrough(Part::class, Mechanic::class);
 }
 ```
