@@ -6,7 +6,7 @@ This release adds support for Laravel 11 `casts` method. If you are using the `c
 
 ```php
 /**
- * @return array{is_admin: 'bool', meta: 'array'}
+ * @return array{is_admin: 'boolean', meta: 'array'}
  */
 public function casts(): array
 {
