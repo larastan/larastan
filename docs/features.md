@@ -45,7 +45,7 @@ In order for Larastan to recognize Model relationships:
 If the above conditions are not met, then adding the `@return` docblock can help
 
 ```php
-/** @return BelongsTo<User, $this> */
+/** @return BelongsTo<User, self> */
 public function user(): BelongsTo
 {
     return $this->belongsTo(User::class);
