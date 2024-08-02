@@ -137,6 +137,10 @@ function test(?int $value = 0): void
     }));
 
     assertType('5', value(5));
+    assertType('6', value(fn () => 6));
+    assertType('7', value(function () {
+        return 7;
+    }));
 
     assertType('array|null', transform(User::first(), fn (User $user) => $user->toArray()));
     assertType('array', transform(User::sole(), fn (User $user) => $user->toArray()));

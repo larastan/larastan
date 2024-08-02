@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\ReturnTypes\Helpers;
 
+use PhpParser\Node\Expr\ArrowFunction;
 use PhpParser\Node\Expr\Closure;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
@@ -33,7 +34,7 @@ final class ValueExtension implements DynamicFunctionReturnTypeExtension
         }
 
         $arg = $functionCall->getArgs()[0]->value;
-        if ($arg instanceof Closure) {
+        if ($arg instanceof Closure || $arg instanceof ArrowFunction) {
             $callbackType = $scope->getType($arg);
 
             return ParametersAcceptorSelector::selectFromArgs(
