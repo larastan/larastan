@@ -141,6 +141,8 @@ function test(?int $value = 0): void
     assertType('7', value(function () {
         return 7;
     }));
+    assertType('int', value(intval(...), 8));
+    assertType('int', value(\Closure::fromCallable('intval'), 9));
 
     assertType('array|null', transform(User::first(), fn (User $user) => $user->toArray()));
     assertType('array', transform(User::sole(), fn (User $user) => $user->toArray()));
