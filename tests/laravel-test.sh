@@ -24,7 +24,7 @@ parameters:
         - app/
     ignoreErrors:
         -
-            message: "#^Parameter \\#1 \\$name of function route expects route-name-string, string given\\.\\$#"
+            message: '#^Parameter \#1 \$name of function route expects route-name-string, string given\.$#'
             count: 1
             path: app/Http/Middleware/Authenticate.php
 EOF
