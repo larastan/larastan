@@ -382,6 +382,11 @@ services:
             - phpstan.phpDoc.typeNodeResolverExtension
 
     -
+        class: Larastan\Larastan\Types\RouteNameStringTypeNodeResolverExtension
+        tags:
+            - phpstan.phpDoc.typeNodeResolverExtension
+
+    -
         class: Larastan\Larastan\Rules\OctaneCompatibilityRule
 
     -

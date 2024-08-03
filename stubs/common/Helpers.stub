@@ -200,3 +200,26 @@ function blank($value) {}
  * @return bool|string|TDefault
  */
 function env($key, $default = null) {}
+
+/**
+ * Generate the URL to a named route.
+ *
+ * @param  route-name-string  $name
+ * @param  mixed  $parameters
+ * @param  bool  $absolute
+ * @return string
+ */
+function route($name, $parameters = [], $absolute = true) {}
+
+/**
+ * Create a new redirect response to a named route.
+ *
+ * @param  route-name-string  $route
+ * @param  mixed  $parameters
+ * @param  int  $status
+ * @param  array<string, mixed>  $headers
+ * @return \Illuminate\Http\RedirectResponse
+ */
+function to_route($route, $parameters = [], $status = 302, $headers = [])
+{
+}

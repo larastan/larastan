@@ -23,6 +23,7 @@
         "illuminate/database": "^9.52.16 || ^10.28.0 || ^11.0",
         "illuminate/http": "^9.52.16 || ^10.28.0 || ^11.0",
         "illuminate/pipeline": "^9.52.16 || ^10.28.0 || ^11.0",
+        "illuminate/routing": "^9.52.16 || ^10.28.0 || ^11.0.0",
         "illuminate/support": "^9.52.16 || ^10.28.0 || ^11.0",
         "phpmyadmin/sql-parser": "^5.9.0",
         "phpstan/phpstan": "^1.11.2"
