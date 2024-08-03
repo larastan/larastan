@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Larastan\Larastan\Types;
 
 use PHPStan\TrinaryLogic;
@@ -32,7 +34,7 @@ class RouteNameStringType extends StringType
 
     public function acceptsWithReason(
         Type $type,
-        bool $strictTypes
+        bool $strictTypes,
     ): AcceptsResult {
         if ($type instanceof self) {
             return AcceptsResult::createYes();
@@ -45,13 +47,12 @@ class RouteNameStringType extends StringType
         $constantStrings = $type->getConstantStrings();
         if (count($constantStrings) === 1) {
             $existingRouteNames = $this->resolveExistingRouteNames();
-            $routeName = $constantStrings[0]->getValue();
+            $routeName          = $constantStrings[0]->getValue();
 
             if (in_array($routeName, $existingRouteNames)) {
                 return AcceptsResult::createYes();
             }
 
-            // @phpstan-ignore-next-line Phpstan tells me, that this function is not covered by their BC promise, even though the class clearly has the @api tag in its doc-comment.
             return new AcceptsResult(
                 TrinaryLogic::createNo(),
                 [$this->describeWhyNotAccepted($routeName, $existingRouteNames)],
@@ -69,7 +70,7 @@ class RouteNameStringType extends StringType
     {
         $constantStrings = $type->getConstantStrings();
         if (count($constantStrings) === 1) {
-            $routeName = $constantStrings[0]->getValue();
+            $routeName          = $constantStrings[0]->getValue();
             $existingRouteNames = $this->resolveExistingRouteNames();
 
             return TrinaryLogic::createFromBoolean(
@@ -92,52 +93,46 @@ class RouteNameStringType extends StringType
         return TrinaryLogic::createNo();
     }
 
-    /**
-     * @param  mixed[]  $properties
-     * @return Type
-     */
+    /** @param  mixed[] $properties */
     public static function __set_state(array $properties): Type
     {
         return new self();
     }
 
-    /**
-     * @return list<string>
-     */
+    /** @return list<string> */
     private function resolveExistingRouteNames(): array
     {
         $names = [];
 
         foreach (app('router')->getRoutes()->getRoutes() as $route) {
             $name = $route->getName();
-            if ($name !== null) {
-                $names[] = $name;
+            if ($name === null) {
+                continue;
             }
+
+            $names[] = $name;
         }
 
         return $names;
     }
 
-    /**
-     * @param list<string> $existingRouteNames
-     */
+    /** @param list<string> $existingRouteNames */
     private function describeWhyNotAccepted(
         string $routeName,
         array $existingRouteNames,
-    ): string
-    {
-        $message = "Route '$routeName' does not exist.";
+    ): string {
+        $message = "Route '" . $routeName . "' does not exist.";
 
         $alternatives = $this->closestRouteNamesTo($routeName, $existingRouteNames);
         if (count($alternatives) > 0) {
-            $quoted = array_map(fn (string $name) => "'$name'", $alternatives);
+            $quoted = array_map(static fn (string $name) => "'" . $name . "'", $alternatives);
 
             if (count($alternatives) === 1) {
-                $message .= ' Did you mean '.$quoted[0].'?';
+                $message .= ' Did you mean ' . $quoted[0] . '?';
             } else {
-                $list = implode(', ', array_slice($quoted, 0, -1));
-                $last = $quoted[count($quoted) - 1];
-                $message .= " Did you mean $list or $last?";
+                $list     = implode(', ', array_slice($quoted, 0, -1));
+                $last     = $quoted[count($quoted) - 1];
+                $message .= ' Did you mean ' . $list . ' or ' . $last . '?';
             }
         }
 
@@ -148,10 +143,11 @@ class RouteNameStringType extends StringType
      * Tries to find similarly named routes to the given one using
      * the {@link levenshtein()}-distance.
      *
-     * @param  string  $query  A route name that probably does not exist, but we search a similarly named route for
-     * @param  list<string>  $existingRouteNames  All known route names
-     * @param  int  $threshold  Max. acceptable edit distance. Inversely proportional to the number of returned results.
-     * @param  int  $maxResults  Max. number of returned results
+     * @param  string       $query              A route name that probably does not exist, but we search a similarly named route for
+     * @param  list<string> $existingRouteNames All known route names
+     * @param  int          $threshold          Max. acceptable edit distance. Inversely proportional to the number of returned results.
+     * @param  int          $maxResults         Max. number of returned results
+     *
      * @return list<string>
      */
     private function closestRouteNamesTo(
@@ -160,7 +156,7 @@ class RouteNameStringType extends StringType
         int $threshold = 3,
         int $maxResults = 3,
     ): array {
-        $withDistance = array_map(function (string $existingRoute) use ($query) {
+        $withDistance = array_map(static function (string $existingRoute) use ($query) {
             return [$existingRoute, levenshtein($query, $existingRoute)];
         }, $existingRouteNames);
 
@@ -172,7 +168,7 @@ class RouteNameStringType extends StringType
              * @param  array{0: string, 1: int}  $a
              * @param  array{0: string, 1: int}  $b
              */
-            fn (array $a, array $b): int => $a[1] - $b[1]
+            static fn (array $a, array $b): int => $a[1] - $b[1],
         );
 
         $results = [];
@@ -180,6 +176,7 @@ class RouteNameStringType extends StringType
             if (count($results) === $maxResults) {
                 break;
             }
+
             if ($distance > $threshold) {
                 break;
             }

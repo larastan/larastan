@@ -15,7 +15,7 @@ use PHPStan\Type\Type;
  */
 class RouteNameStringTypeNodeResolverExtension implements TypeNodeResolverExtension
 {
-    public function resolve(TypeNode $typeNode, NameScope $nameScope): ?Type
+    public function resolve(TypeNode $typeNode, NameScope $nameScope): Type|null
     {
         if ($typeNode instanceof IdentifierTypeNode && $typeNode->__toString() === 'route-name-string') {
             return new RouteNameStringType();

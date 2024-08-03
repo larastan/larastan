@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Type;
 
 use Illuminate\Foundation\Application;
@@ -34,15 +36,16 @@ class RouteNameStringTypeTest extends RuleTestCase
         $router->getRoutes()->refreshNameLookups();
 
         $this->analyse([
-            __DIR__.'/data/route-access.php',
+            __DIR__ . '/data/route-access.php',
         ], [
             ['Parameter #1 $name of function route expects route-name-string, string given.', 4, "Route 'existingg' does not exist. Did you mean 'existing'?"],
             ['Parameter #1 $name of function route expects route-name-string, string given.', 5, "Route 'abcdefghjkl' does not exist."],
         ]);
     }
 
+    /** @return string[] */
     public static function getAdditionalConfigFiles(): array
     {
-        return [__DIR__.'/../phpstan-tests.neon'];
+        return [__DIR__ . '/../phpstan-tests.neon'];
     }
 }
