@@ -177,6 +177,7 @@ function test(?int $value = 0): void
     assertType('Illuminate\Config\Repository', config());
     assertType('null', config(['auth.defaults' => 'bar']));
     assertType('array{guard: string, passwords: string}|null', config('auth.defaults'));
+    assertType('string|null', config('auth.defaults.guard'));
     assertType("'bar'|array{guard: string, passwords: string}", config('auth.defaults', 'bar'));
     $var = 'auth.defaults';
     assertType('array{guard: string, passwords: string}|null', config($var));

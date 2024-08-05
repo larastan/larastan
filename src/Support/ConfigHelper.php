@@ -129,7 +129,7 @@ final class ConfigHelper
         return TypeCombinator::union($configType, $defaultType);
     }
 
-    private function getTypeFromValue(mixed $value, bool $constant = true): Type
+    private function getTypeFromValue(mixed $value, bool $constant = false): Type
     {
         // Not using `$scope->getTypeFromValue()` as we don't
         // want array values to be constant types given
@@ -149,8 +149,8 @@ final class ConfigHelper
 
                 foreach ($value as $k => $v) {
                     $arrayBuilder->setOffsetValueType(
-                        $this->getTypeFromValue($k),
-                        $this->getTypeFromValue($v, constant: false),
+                        $this->getTypeFromValue($k, constant: true),
+                        $this->getTypeFromValue($v),
                     );
                 }
 
