@@ -14,6 +14,8 @@ use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
+use function in_array;
+
 class StorageDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
 {
     use HasContainer;
@@ -25,7 +27,7 @@ class StorageDynamicStaticMethodReturnTypeExtension implements DynamicStaticMeth
 
     public function isStaticMethodSupported(MethodReflection $methodReflection): bool
     {
-        return $methodReflection->getName() === 'disk' || $methodReflection->getName() === 'drive';
+        return in_array($methodReflection->getName(), ['disk', 'drive', 'cloud'], strict: true);
     }
 
     public function getTypeFromStaticMethodCall(

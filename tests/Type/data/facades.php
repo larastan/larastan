@@ -37,8 +37,10 @@ function test(): void
 
     assertType('Illuminate\Filesystem\FilesystemAdapter', Storage::disk());
     assertType('Illuminate\Filesystem\FilesystemAdapter', Storage::drive());
+    assertType('Illuminate\Filesystem\FilesystemAdapter', Storage::cloud());
     assertType('bool', Storage::disk()->deleteDirectory('foo'));
     assertType('bool', Storage::drive()->deleteDirectory('foo'));
+    assertType('bool', Storage::cloud()->deleteDirectory('foo'));
     assertType('string|false', Storage::putFile('foo', 'foo/bar'));
     assertType('mixed', Redis::get('foo'));
 
