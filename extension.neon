@@ -5,8 +5,6 @@ parameters:
     earlyTerminatingFunctionCalls:
         - abort
         - dd
-    excludePaths:
-        - *.blade.php
     mixinExcludeClasses:
         - Eloquent
     bootstrapFiles:
