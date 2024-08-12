@@ -188,4 +188,5 @@ function test(?int $value = 0): void
     assertType('array{driver: string, provider: string}|array{guard: string, passwords: string}|null', Config::get($var));
     assertType('array{driver: string, provider: string}|array{guard: string, passwords: string}|null', config($var));
     assertType('mixed', config('nonexistent'));
+    assertType('mixed', config('auth.null'));
 }

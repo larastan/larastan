@@ -138,7 +138,6 @@ final class ConfigHelper
             is_int($value) => $constant ? new ConstantIntegerType($value) : new IntegerType(),
             is_float($value) => $constant ? new ConstantFloatType($value) : new FloatType(),
             is_bool($value) => $constant ? new ConstantBooleanType($value) : new BooleanType(),
-            $value === null => new NullType(),
             is_string($value) => $constant ? new ConstantStringType($value) : new StringType(),
             is_array($value) => (function () use ($value) {
                 $arrayBuilder = ConstantArrayTypeBuilder::createEmpty();
