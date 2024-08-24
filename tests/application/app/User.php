@@ -248,4 +248,9 @@ class User extends Authenticatable
             fn ($value) => 5,
         );
     }
+
+    public function unionTypeRelation(): BelongsTo|Post
+    {
+        return $this->belongsTo(Post::class);
+    }
 }

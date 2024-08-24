@@ -62,3 +62,23 @@ declare(strict_types=1);
 \App\User::first()->group()->whereRelation('foo', 'id');
 \App\User::query()->whereRelation('accounts.foo', 'id');
 \App\Post::query()->whereRelation('users.transactions.foo', 'id');
+
+\App\User::query()->has('unionTypeRelation');
+\App\User::query()->orHas('unionTypeRelation');
+\App\User::query()->doesntHave('unionTypeRelation');
+\App\User::query()->orDoesntHave('unionTypeRelation');
+\App\User::query()->whereHas('unionTypeRelation');
+\App\User::query()->withWhereHas('unionTypeRelation');
+\App\User::query()->orWhereHas('unionTypeRelation');
+\App\User::query()->whereDoesntHave('unionTypeRelation');
+\App\User::query()->orWhereDoesntHave('unionTypeRelation');
+
+\App\User::first()->group()->has('unionTypeRelation');
+\App\User::first()->group()->orHas('unionTypeRelation');
+\App\User::first()->group()->doesntHave('unionTypeRelation');
+\App\User::first()->group()->orDoesntHave('unionTypeRelation');
+\App\User::first()->group()->whereHas('unionTypeRelation');
+\App\User::first()->group()->withWhereHas('unionTypeRelation');
+\App\User::first()->group()->orWhereHas('unionTypeRelation');
+\App\User::first()->group()->whereDoesntHave('unionTypeRelation');
+\App\User::first()->group()->orWhereDoesntHave('unionTypeRelation');

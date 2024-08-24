@@ -16,6 +16,7 @@ use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\UnionType;
 
 use function array_map;
 use function array_merge;
@@ -133,7 +134,20 @@ class RelationExistenceRule implements Rule
 
                 $relationMethod = $modelReflection->getMethod($relationName, $scope);
 
-                if (! (new ObjectType(Relation::class))->isSuperTypeOf(ParametersAcceptorSelector::selectSingle($relationMethod->getVariants())->getReturnType())->yes()) {
+                $relationMethodReturnType = ParametersAcceptorSelector::selectSingle($relationMethod->getVariants())->getReturnType();
+
+                $isTypeExtendedByRelation = $this->isTypeExtendedOfRelation($relationMethodReturnType);
+
+                if (! $isTypeExtendedByRelation && $relationMethodReturnType instanceof UnionType) {
+                    foreach ($relationMethodReturnType->getTypes() as $oneOfType) {
+                        if ($this->isTypeExtendedOfRelation($oneOfType)) {
+                            $isTypeExtendedByRelation = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (! $isTypeExtendedByRelation) {
                     return [
                         $this->getRuleError($relationName, $modelReflection, $node),
                     ];
@@ -186,5 +200,10 @@ class RelationExistenceRule implements Rule
             ->identifier('larastan.relationExistence')
             ->line($node->getAttribute('startLine'))
             ->build();
+    }
+
+    private function isTypeExtendedOfRelation(Type $checkType): bool
+    {
+        return (new ObjectType(Relation::class))->isSuperTypeOf($checkType)->yes();
     }
 }
