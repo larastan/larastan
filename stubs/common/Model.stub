@@ -66,6 +66,13 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
      * @return \Illuminate\Database\Eloquent\Builder<static>
      */
     public static function with($relations);
+
+    /**
+     * Begin querying the model.
+     *
+     * @return \Illuminate\Database\Eloquent\Builder<static>
+     */
+    public static function query();
 }
 
 /**
