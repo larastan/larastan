@@ -130,6 +130,16 @@ function test(
     assertType('mixed', $user->min('id'));
     assertType('App\User', User::sole());
 
+    /** @var class-string<User> $className */
+    $className = User::class;
+
+    assertType('App\User', new $className());
+    assertType('App\User', $className::create());
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', (new $className())->query());
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $className::query());
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $className::query()->active());
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $className::query()->active()->get());
+
     User::has('accounts', '=', 1, 'and', function (Builder $query) {
         assertType('Illuminate\Database\Eloquent\Builder', $query);
         //assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
