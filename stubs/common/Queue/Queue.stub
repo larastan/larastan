@@ -1,0 +1,10 @@
+<?php
+
+namespace Illuminate\Queue;
+
+abstract class Queue {}
+
+/**
+ * @mixin \Illuminate\Contracts\Queue\Queue
+ */
+class QueueManager implements \Illuminate\Contracts\Queue\Factory, \Illuminate\Contracts\Queue\Monitor {}
