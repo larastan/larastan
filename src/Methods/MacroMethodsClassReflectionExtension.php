@@ -128,7 +128,7 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
                 $refProperty = $macroClassReflection->getNativeReflection()->getProperty($macroTraitProperty);
                 $refProperty->setAccessible(true);
 
-                $found = array_key_exists($methodName, $refProperty->getValue());
+                $found = array_key_exists($methodName, (array) $refProperty->getValue());
 
                 if (! $found) {
                     continue;
