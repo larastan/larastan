@@ -565,6 +565,9 @@ services:
         class: Larastan\Larastan\Internal\ConsoleApplicationHelper
 
     -
+        class: Larastan\Larastan\Internal\FileHelper
+
+    -
         class: Larastan\Larastan\Support\HigherOrderCollectionProxyHelper
 
 rules:
