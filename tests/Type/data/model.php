@@ -24,6 +24,15 @@ class Foo
 class Bar extends Model
 {
     use HasBar;
+
+    public function test(): void
+    {
+        assertType('Illuminate\Database\Eloquent\Builder<static(Model\Bar)>', self::query());
+        assertType('Illuminate\Database\Eloquent\Builder<static(Model\Bar)>', static::query());
+
+        assertType('static(Model\Bar)|null', self::query()->first());
+        assertType('static(Model\Bar)|null', static::query()->first());
+    }
 }
 
 trait HasBar

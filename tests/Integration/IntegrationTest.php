@@ -22,6 +22,7 @@ class IntegrationTest extends PHPStanTestCase
         self::getContainer();
 
         yield [__DIR__ . '/data/test-case-extension.php'];
+        yield [__DIR__ . '/data/model-builder.php'];
         yield [__DIR__ . '/data/model-properties.php'];
         yield [__DIR__ . '/data/blade-view.php'];
         yield [__DIR__ . '/data/helpers.php'];
