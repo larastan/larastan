@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
+use Larastan\Larastan\Internal\FileHelper;
 use Larastan\Larastan\Properties\MigrationHelper;
 use Larastan\Larastan\Properties\SchemaTable;
-use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Testing\PHPStanTestCase;
 use PHPUnit\Framework\Attributes\Test;
 
@@ -19,10 +20,12 @@ class MigrationHelperTest extends PHPStanTestCase
 
     private FileHelper $fileHelper;
 
+    private ReflectionProvider $reflectionProvider;
+
     public function setUp(): void
     {
         $this->parser             = self::getContainer()->getService('currentPhpVersionSimpleDirectParser');
-        $this->fileHelper         = self::getContainer()->getByType(FileHelper::class);
+        $this->fileHelper         = new FileHelper($this->getFileHelper());
         $this->reflectionProvider = $this->createReflectionProvider();
     }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Rules;
 
 use Illuminate\Foundation\Application;
+use Larastan\Larastan\Internal\FileHelper;
 use Larastan\Larastan\Rules\NoEnvCallsOutsideOfConfigRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
@@ -23,7 +24,7 @@ class NoEnvCallsOutsideOfConfigRuleTest extends RuleTestCase
         return new NoEnvCallsOutsideOfConfigRule([
             __DIR__ . '/data/config',
             __DIR__ . '/data/module/*/config',
-        ], $this->getFileHelper());
+        ], new FileHelper($this->getFileHelper()));
     }
 
     #[Test]

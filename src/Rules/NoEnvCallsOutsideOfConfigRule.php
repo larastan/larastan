@@ -5,19 +5,17 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Rules;
 
 use Larastan\Larastan\Concerns\HasContainer;
+use Larastan\Larastan\Internal\FileHelper;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
-use PHPStan\File\FileHelper;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 
 use function config_path;
 use function count;
-use function glob;
-use function is_dir;
 use function str_starts_with;
 
 /**
@@ -79,17 +77,12 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
 
     protected function isCalledOutsideOfConfig(FuncCall $call, Scope $scope): bool
     {
-        foreach ($this->configDirectories as $configDirectoryGlob) {
-            foreach ((glob($configDirectoryGlob) ?: []) as $configDirectory) {
-                $absolutePath = $this->fileHelper->absolutizePath($configDirectory);
+        $directories = $this->fileHelper->getDirectories($this->configDirectories);
+        $file        = $scope->getFile();
 
-                if (! is_dir($absolutePath)) {
-                    continue;
-                }
-
-                if (str_starts_with($scope->getFile(), $absolutePath)) {
-                    return false;
-                }
+        foreach ($directories as $directory) {
+            if (str_starts_with($file, $directory)) {
+                return false;
             }
         }
 

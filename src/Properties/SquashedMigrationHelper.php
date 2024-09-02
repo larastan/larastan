@@ -6,21 +6,14 @@ namespace Larastan\Larastan\Properties;
 
 use iamcal\SQLParser;
 use iamcal\SQLParserSyntaxException;
+use Larastan\Larastan\Internal\FileHelper;
 use Larastan\Larastan\Properties\Schema\MySqlDataTypeToPhpTypeConverter;
-use PHPStan\File\FileHelper;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
-use RegexIterator;
-use SplFileInfo;
 
 use function array_key_exists;
 use function database_path;
 use function file_get_contents;
-use function glob;
 use function is_array;
 use function is_bool;
-use function is_dir;
-use function iterator_to_array;
 use function ksort;
 
 final class SquashedMigrationHelper
@@ -45,7 +38,7 @@ final class SquashedMigrationHelper
             $this->schemaPaths = [database_path('schema')];
         }
 
-        $filesArray = $this->getSchemaFiles();
+        $filesArray = $this->fileHelper->getFiles($this->schemaPaths, '/\.dump|\.sql/i');
 
         if (empty($filesArray)) {
             return [];
@@ -99,32 +92,6 @@ final class SquashedMigrationHelper
         }
 
         return $tables;
-    }
-
-    /** @return SplFileInfo[] */
-    private function getSchemaFiles(): array
-    {
-        /** @var SplFileInfo[] $schemaFiles */
-        $schemaFiles = [];
-
-        foreach ($this->schemaPaths as $additionalPathGlob) {
-            foreach ((glob($additionalPathGlob) ?: []) as $additionalPath) {
-                $absolutePath = $this->fileHelper->absolutizePath($additionalPath);
-
-                if (! is_dir($absolutePath)) {
-                    continue;
-                }
-
-                $schemaFiles += iterator_to_array(
-                    new RegexIterator(
-                        new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
-                        '/\.dump|\.sql/i',
-                    ),
-                );
-            }
-        }
-
-        return $schemaFiles;
     }
 
     /** @param  array<string, string|bool|null> $definition */

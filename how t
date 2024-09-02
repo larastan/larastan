@@ -1,0 +1,57 @@
+[1m[38;5;2m@[0m  [1m[38;5;13mmr[38;5;8mmmxsll[39m [38;5;3mcdwhite3@pm.me[39m [38;5;14m2025-07-15 08:51:38[39m [38;5;12m908[38;5;8m825ce[39m[0m
+│  [1m[38;5;3m(no description set)[39m[0m
+[1m[38;5;1m×[0m  [1m[38;5;5mq[0m[38;5;8mroqstvp[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-14 22:31:26[39m [38;5;5mwildcards*[39m [38;5;2mgit_head()[39m [1m[38;5;4ma[0m[38;5;8md14a00c[39m [38;5;1mconflict[39m
+│  perf: don't reglob dirs in NoEnvCallsOutsideOfConfigRule
+[1m[38;5;1m×[0m  [1m[38;5;5mt[0m[38;5;8mktxtsvm[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-14 22:31:26[39m [1m[38;5;4m03[0m[38;5;8m06bb41[39m [38;5;1mconflict[39m
+│  refactor: create FileHelper to clean up repeated logic
+│ ○  [1m[38;5;5mrkt[0m[38;5;8mlxlqr[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-15 08:50:28[39m [1m[38;5;4m3[0m[38;5;8m6d7fec9[39m
+├─╯  fix: update NoUnnecessaryEnumerableToArrayCallsRule to handle nullable collections
+│ ○  [1m[38;5;5mrw[0m[38;5;8muqtkqz[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-14 22:31:26[39m [38;5;5mcollection_intersection*[39m [1m[38;5;4m8[0m[38;5;8me9679a0[39m
+│ │  tests: update filamentphp baseline
+│ ○  [1m[38;5;5mwy[0m[38;5;8mwuytvz[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-14 22:31:26[39m [1m[38;5;4m16[0m[38;5;8ma66c3e[39m
+│ │  fix: existing tests
+│ ○  [1m[38;5;5myn[0m[38;5;8mkwpqwl[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-14 22:31:26[39m [1m[38;5;4m20[0m[38;5;8m4c66c6[39m
+│ │  fix: handle collection intersection types
+│ ○  [1m[38;5;5mmn[0m[38;5;8mkqqrzx[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-14 22:31:26[39m [1m[38;5;4m5[0m[38;5;8mb485f00[39m
+├─╯  refactor: rename helper method to mention Type instead of Class
+│ ○  [1m[38;5;5ms[0m[38;5;8mtrpomto[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-14 22:31:26[39m [38;5;5mdefault_date_casts*[39m [1m[38;5;4m95[0m[38;5;8m26492e[39m
+├─╯  fix: default date casting
+│ ○  [1m[38;5;5ml[0m[38;5;8mwltmrsp[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-14 22:31:26[39m [38;5;5mfix/ulid-or-uuid-primary-key*[39m [1m[38;5;4m40[0m[38;5;8m7faa8b[39m
+├─╯  fix: property type for uuid and ulid primary keys
+│ ○  [1m[38;5;5mo[0m[38;5;8mtstlrup[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-14 22:31:26[39m [38;5;5mfix_builder_stubs*[39m [1m[38;5;4m995[0m[38;5;8mf3f44[39m
+│ │  fix: model static forwarding
+│ ○  [1m[38;5;5mpp[0m[38;5;8mrlzytn[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-14 22:31:26[39m [1m[38;5;4mf[0m[38;5;8m7bd9628[39m
+├─╯  fix: builder stubs and builder/model forwarding
+│ ○  [1m[38;5;5myk[0m[38;5;8msomkyt[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-14 22:31:26[39m [38;5;5mstatic_factory*[39m [1m[38;5;4m99a[0m[38;5;8m34b0a[39m
+├─╯  fix: factory {has,for}* methods should return static
+│ ○  [1m[38;5;5mut[0m[38;5;8mpmtuxp[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-14 22:31:26[39m [38;5;5mfix_collection_templates*[39m [1m[38;5;4m4a[0m[38;5;8m6a3fb9[39m
+│ │  fix: existing tests
+│ ○  [1m[38;5;5mvqz[0m[38;5;8mlnnkp[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-14 22:31:26[39m [1m[38;5;4m2e[0m[38;5;8m76d9c0[39m
+│ │  chore: cleanup EloquentBuilderExtension to reduce duplication
+│ ○  [1m[38;5;5mrkl[0m[38;5;8mqvtzp[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-14 22:31:26[39m [1m[38;5;4m1f[0m[38;5;8m9740b4[39m
+├─╯  fix: collection template types being overwritten
+│ [1m[38;5;1m×[0m  [1m[38;5;5mvql[0m[38;5;8muxmuz[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-14 22:31:26[39m [38;5;5mconfig*[39m [1m[38;5;4mc2[0m[38;5;8med3489[39m [38;5;1mconflict[39m
+├─╯  feat: add support for config array shapes
+│ [1m[38;5;1m×[0m  [1m[38;5;5mwp[0m[38;5;8mqspyku[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-14 22:31:26[39m [38;5;5mmultiple_connections*[39m [1m[38;5;4m23[0m[38;5;8mc0726b[39m [38;5;1mconflict[39m
+│ │  fix: typo
+│ [1m[38;5;1m×[0m  [1m[38;5;5mnn[0m[38;5;8myststn[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-14 22:31:26[39m [1m[38;5;4mde[0m[38;5;8m81a82b[39m [38;5;1mconflict[39m
+│ │  fix: update generic model property type to use ModelDatabaseHelper
+│ [1m[38;5;1m×[0m  [1m[38;5;5mk[0m[38;5;8mywztrzw[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-14 22:31:26[39m [1m[38;5;4m0e[0m[38;5;8me2f768[39m [38;5;1mconflict[39m
+│ │  fix: recursive loop
+│ [1m[38;5;1m×[0m  [1m[38;5;5mxw[0m[38;5;8mqwpkyq[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-14 22:31:26[39m [1m[38;5;4mc0[0m[38;5;8m533ce7[39m [38;5;1mconflict[39m
+│ │  chore: minor cleanup
+│ [1m[38;5;1m×[0m  [1m[38;5;5mzx[0m[38;5;8mosxvsy[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-14 22:31:26[39m [1m[38;5;4mdc[0m[38;5;8mf84de9[39m [38;5;1mconflict[39m
+│ │  tests: add models on foo connection
+│ [1m[38;5;1m×[0m  [1m[38;5;5mzw[0m[38;5;8mxvtkrr[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-14 22:31:26[39m [1m[38;5;4mc5[0m[38;5;8m44d15b[39m [38;5;1mconflict[39m
+│ │  feat: update migration and schema parsing tests
+│ [1m[38;5;1m×[0m  [1m[38;5;5mxr[0m[38;5;8mvwlwtk[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-14 22:31:26[39m [1m[38;5;4m42[0m[38;5;8m9eca64[39m [38;5;1mconflict[39m
+├─╯  feat: support multiple connections
+[1m[38;5;14m◆[0m  [1m[38;5;5mux[0m[38;5;8mtpynlr[39m [38;5;3mcan9119@gmail.com[39m [38;5;6m2025-07-11 01:52:52[39m [38;5;5m3.x@upstream[39m [1m[38;5;4m6[0m[38;5;8m431d010[39m
+│  fix PHPUnit deprecations
+~
+
+○  [1m[38;5;5mno[0m[38;5;8mvposrn[39m [38;5;3mcdwhite3@pm.me[39m [38;5;6m2025-07-15 00:11:31[39m [1m[38;5;4me[0m[38;5;8m9a61915[39m
+│  feat: add support for pluck
+[1m[38;5;14m◆[0m  [1m[38;5;5mpm[0m[38;5;8mvwknry[39m [38;5;3mandreglaser@fastmail.com[39m [38;5;6m2025-07-14 16:23:08[39m [38;5;5m3.x[39m [38;5;5mv3.6.0[39m [1m[38;5;4m904[0m[38;5;8me7c12[39m
+│  feat: introduce noModelForwardingToBuilder and noModelStaticForwardingToBuilder rules
+~

@@ -12,6 +12,8 @@ By default, the default Laravel database migration path (`database/migrations`) 
 
 You can give absolute paths, or paths relative to the PHPStan config file.
 
+Paths with wildcards are also supported (passed to `glob` function).
+
 ### Example
 ```neon
 parameters:
@@ -37,6 +39,8 @@ parameters:
 ## `squashedMigrationsPath`
 
 By default, Larastan will check `database/schema` directory to find schema dumps. If you have them in other locations or if you have multiple folders, you can use this config option to add them.
+
+Paths with wildcards are also supported (passed to `glob` function).
 
 ### Example
 ```neon
