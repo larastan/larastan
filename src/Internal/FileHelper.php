@@ -40,7 +40,13 @@ final class FileHelper
                 $absolutePath = $this->fileHelper->absolutizePath($path);
 
                 if ($this->isGlobPattern($absolutePath)) {
-                    $directories = (array) glob($absolutePath, GLOB_ONLYDIR);
+                    $glob = glob($absolutePath, GLOB_ONLYDIR);
+
+                    if ($glob === false) {
+                        return $carry;
+                    }
+
+                    $directories = $glob;
                 } else {
                     if (! is_dir($absolutePath)) {
                         return $carry;
