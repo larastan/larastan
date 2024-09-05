@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Builder;
  * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
  * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
  * @template TResult
+ *
+ * @mixin \Illuminate\Database\Eloquent\Builder<TRelatedModel>
  */
 abstract class Relation
 {
