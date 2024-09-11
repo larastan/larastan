@@ -56,6 +56,10 @@ final class Passable implements PassableContract
 
     public function searchOn(string $class): bool
     {
+        if (! $this->reflectionProvider->hasClass($class)) {
+            return false;
+        }
+
         $classReflection = $this->reflectionProvider->getClass($class);
 
         $found = $classReflection->hasNativeMethod($this->methodName);
@@ -93,6 +97,10 @@ final class Passable implements PassableContract
 
     public function sendToPipeline(string $class, bool $staticAllowed = false): bool
     {
+        if (! $this->reflectionProvider->hasClass($class)) {
+            return false;
+        }
+
         $classReflection = $this->reflectionProvider->getClass($class);
 
         $this->setStaticAllowed($this->staticAllowed ?: $staticAllowed);
