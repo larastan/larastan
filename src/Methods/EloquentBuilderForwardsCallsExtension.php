@@ -66,7 +66,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
      */
     private function findMethod(ClassReflection $classReflection, string $methodName): MethodReflection|null
     {
-        if ($classReflection->getName() !== EloquentBuilder::class && ! $classReflection->isSubclassOf(EloquentBuilder::class)) {
+        if (! $classReflection->is(EloquentBuilder::class)) {
             return null;
         }
 
