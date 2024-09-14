@@ -9,6 +9,7 @@ use App\Thread;
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Foundation\Http\FormRequest;
 
 use function PHPStan\Testing\assertType;
@@ -120,6 +121,9 @@ function test(
     assertType('App\User|null', User::firstWhere(['email' => 'foo@bar.com']));
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->with('accounts'));
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->with('accounts')->with('group'));
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->with(['accounts' => function (Relation $relation) {
+        assertType('Illuminate\Database\Eloquent\Relations\Relation<Illuminate\Database\Eloquent\Model>', $relation->orderBy('id'));
+    }]));
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::lockForUpdate());
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::sharedLock());
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::query());

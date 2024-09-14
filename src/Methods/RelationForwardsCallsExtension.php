@@ -60,7 +60,7 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
      */
     private function findMethod(ClassReflection $classReflection, string $methodName): MethodReflection|null
     {
-        if (! $classReflection->isSubclassOf(Relation::class)) {
+        if (! $classReflection->is(Relation::class)) {
             return null;
         }
 
