@@ -99,8 +99,10 @@ final class CollectionHelper
         }
     }
 
-    public function determineCollectionClass(string $modelClassName): Type
+    public function determineCollectionClass(string $modelClassName, Type|null $modelType = null): Type
     {
+        $modelType ??= new ObjectType($modelClassName);
+
         $collectionClassName  = $this->determineCollectionClassName($modelClassName);
         $collectionReflection = $this->reflectionProvider->getClass($collectionClassName);
 
@@ -109,12 +111,12 @@ final class CollectionHelper
 
             // Specifies key and value
             if ($typeMap->count() === 2) {
-                return new GenericObjectType($collectionClassName, [new IntegerType(), new ObjectType($modelClassName)]);
+                return new GenericObjectType($collectionClassName, [new IntegerType(), $modelType]);
             }
 
             // Specifies only value
             if (($typeMap->count() === 1) && $typeMap->hasType('TModel')) {
-                return new GenericObjectType($collectionClassName, [new ObjectType($modelClassName)]);
+                return new GenericObjectType($collectionClassName, [$modelType]);
             }
         }
 
@@ -137,13 +139,14 @@ final class CollectionHelper
                 return $traverse($type);
             }
 
-            $models = $type->getTemplateType(EloquentCollection::class, 'TModel')->getObjectClassNames();
+            $templateType = $type->getTemplateType(EloquentCollection::class, 'TModel');
+            $models       = $templateType->getObjectClassNames();
 
-            if (count($models) === 0) {
-                return $type;
-            }
-
-            return TypeCombinator::union(...array_map([$this, 'determineCollectionClass'], $models));
+            return match (count($models)) {
+                0 => $type,
+                1 => $this->determineCollectionClass($models[0], $templateType),
+                default => TypeCombinator::union(...array_map(fn ($m) => $this->determineCollectionClass($m), $models)),
+            };
         });
     }
 
