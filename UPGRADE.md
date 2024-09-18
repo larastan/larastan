@@ -1,8 +1,8 @@
 # Upgrade Guide
 
-## Upgrading to `2.9.8` from `2.9.9`
+## Upgrading to `2.9.9` from `2.9.8`
 
-Manager's `createXXXDriver()` return type is now taken into account when validating the accessibility of public methods of a Driver. This gives you the option to decide whether the `createXXXDriver()` method should have a contract or an implementation as a return type.
+Manager's `createXXXDriver()` return type is now taken into account when validating the accessibility of public methods of a Manager. This gives you the option to decide whether the `createXXXDriver()` method should have a contract or an implementation as a return type.
 
 If you have a Manager that have a `createXXXDriver()` that returns a contract, only the contract's public methods will now be considered accessible. Before this release, the public methods of the class returned by the `createXXXDriver()` method were considered accessible.
 
