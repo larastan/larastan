@@ -35,12 +35,8 @@ final class Managers implements PipeContract
             $createDefaultDriverMethod = 'create' . Str::studly($concrete->getDefaultDriver()) . 'Driver';
             if ($classReflection->hasNativeMethod($createDefaultDriverMethod)) {
                 $createDefaultDriverMethod = $classReflection->getNativeMethod($createDefaultDriverMethod);
-                try {
-                    $methodReturnType = ParametersAcceptorSelector::selectSingle($createDefaultDriverMethod->getVariants())->getReturnType();
-                    $class            = $methodReturnType->getObjectClassNames()[0] ?? null;
-                } catch (ShouldNotHappenException) {
-                    // ..
-                }
+                $methodReturnType = ParametersAcceptorSelector::selectSingle($createDefaultDriverMethod->getVariants())->getReturnType();
+                $class            = $methodReturnType->getObjectClassNames()[0] ?? null;
             }
 
             if (! $class) {
