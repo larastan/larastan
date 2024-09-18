@@ -31,6 +31,13 @@ class IntegrationTest extends PHPStanTestCase
         }
 
         yield [
+            __DIR__ . '/data/managers.php',
+            [
+                10 => ['Call to an undefined method App\DummyManagerReturnsContract::publicMethodNotInContract().'],
+            ],
+        ];
+
+        yield [
             __DIR__ . '/data/model-property-builder.php',
             [
                 15 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::firstWhere() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],

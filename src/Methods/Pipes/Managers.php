@@ -6,10 +6,13 @@ namespace Larastan\Larastan\Methods\Pipes;
 
 use Closure;
 use Illuminate\Support\Manager;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use Larastan\Larastan\Concerns;
 use Larastan\Larastan\Contracts\Methods\PassableContract;
 use Larastan\Larastan\Contracts\Methods\Pipes\PipeContract;
+use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\ShouldNotHappenException;
 
 /** @internal */
 final class Managers implements PipeContract
@@ -23,24 +26,37 @@ final class Managers implements PipeContract
         $found = false;
 
         if ($classReflection->isSubclassOf(Manager::class) && ! $classReflection->isAbstract()) {
-            $driver = null;
-
             $concrete = $this->resolve(
                 $classReflection->getName(),
             );
 
-            try {
-                $driver = $concrete->driver();
-            } catch (InvalidArgumentException) {
-                // ..
+            $class = null;
+
+            $createDefaultDriverMethod = 'create' . Str::studly($concrete->getDefaultDriver()) . 'Driver';
+            if ($classReflection->hasNativeMethod($createDefaultDriverMethod)) {
+                $createDefaultDriverMethod = $classReflection->getNativeMethod($createDefaultDriverMethod);
+                try {
+                    $methodReturnType = ParametersAcceptorSelector::selectSingle($createDefaultDriverMethod->getVariants())->getReturnType();
+                    $class            = $methodReturnType->getObjectClassNames()[0] ?? null;
+                } catch (ShouldNotHappenException) {
+                    // ..
+                }
             }
 
-            if ($driver !== null) {
-                $class = $driver::class;
+            if (! $class) {
+                try {
+                    $driver = $concrete->driver();
 
-                if ($class) {
-                    $found = $passable->sendToPipeline($class);
+                    if ($driver !== null) {
+                        $class = $driver::class;
+                    }
+                } catch (InvalidArgumentException) {
+                    // ..
                 }
+            }
+
+            if ($class) {
+                $found = $passable->sendToPipeline($class);
             }
         }
 
