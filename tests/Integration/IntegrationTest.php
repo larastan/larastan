@@ -33,7 +33,7 @@ class IntegrationTest extends PHPStanTestCase
         yield [
             __DIR__ . '/data/managers.php',
             [
-                10 => ['Call to an undefined method App\DummyManagerReturnsContract::publicMethodNotInContract().'],
+                10 => ['Call to an undefined method Managers\DummyManagerReturnsContract::publicMethodNotInContract().'],
             ],
         ];
 
