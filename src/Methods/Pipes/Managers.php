@@ -12,7 +12,6 @@ use Larastan\Larastan\Concerns;
 use Larastan\Larastan\Contracts\Methods\PassableContract;
 use Larastan\Larastan\Contracts\Methods\Pipes\PipeContract;
 use PHPStan\Reflection\ParametersAcceptorSelector;
-use PHPStan\ShouldNotHappenException;
 
 /** @internal */
 final class Managers implements PipeContract
@@ -35,8 +34,8 @@ final class Managers implements PipeContract
             $createDefaultDriverMethod = 'create' . Str::studly($concrete->getDefaultDriver()) . 'Driver';
             if ($classReflection->hasNativeMethod($createDefaultDriverMethod)) {
                 $createDefaultDriverMethod = $classReflection->getNativeMethod($createDefaultDriverMethod);
-                $methodReturnType = ParametersAcceptorSelector::selectSingle($createDefaultDriverMethod->getVariants())->getReturnType();
-                $class            = $methodReturnType->getObjectClassNames()[0] ?? null;
+                $methodReturnType          = ParametersAcceptorSelector::selectSingle($createDefaultDriverMethod->getVariants())->getReturnType();
+                $class                     = $methodReturnType->getObjectClassNames()[0] ?? null;
             }
 
             if (! $class) {
