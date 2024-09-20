@@ -56,7 +56,9 @@ class UserBuilder extends Builder
     /** @return $this */
     public function active(): static
     {
-        return $this->where('active', true);
+        $this->where('active', true);
+
+        return $this;
     }
 }
 
