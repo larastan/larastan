@@ -1,7 +1,7 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Parameter \\#2 \\$callback of method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<App\\\\Models\\\\AddressBookSubscription\\>\\:\\:chunkById\\(\\) expects callable\\(Illuminate\\\\Support\\\\Collection\\<int, Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, int\\)\\: mixed, Closure\\(Illuminate\\\\Database\\\\Eloquent\\\\Collection\\)\\: void given\\.$#"
+			message: "#^Parameter \\#2 \\$callback of method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<App\\\\Models\\\\AddressBookSubscription\\>\\:\\:chunkById\\(\\) expects callable\\(Illuminate\\\\Support\\\\Collection\\<int, App\\\\Models\\\\AddressBookSubscription\\>, int\\)\\: mixed, Closure\\(Illuminate\\\\Database\\\\Eloquent\\\\Collection\\)\\: void given\\.$#"
 			count: 1
 			path: ../../e2e/app/Domains/Contact/DavClient/Jobs/UpdateAddressBooks.php
 
