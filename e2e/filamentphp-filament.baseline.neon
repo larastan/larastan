@@ -11,6 +11,46 @@ parameters:
 			path: ../../e2e/packages/actions/src/Commands/MakeImporterCommand.php
 
 		-
+			message: "#^Parameter \\#1 \\$related of method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:belongsTo\\(\\) expects class\\-string\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, string given\\.$#"
+			count: 1
+			path: ../../e2e/packages/actions/src/Exports/Models/Export.php
+
+		-
+			message: "#^Unable to resolve the template type TRelatedModel in call to method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:belongsTo\\(\\)$#"
+			count: 2
+			path: ../../e2e/packages/actions/src/Exports/Models/Export.php
+
+		-
+			message: "#^Parameter \\#1 \\$related of method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:belongsTo\\(\\) expects class\\-string\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, string given\\.$#"
+			count: 1
+			path: ../../e2e/packages/actions/src/Imports/Models/Import.php
+
+		-
+			message: "#^Unable to resolve the template type TRelatedModel in call to method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:belongsTo\\(\\)$#"
+			count: 2
+			path: ../../e2e/packages/actions/src/Imports/Models/Import.php
+
+		-
+			message: "#^Access to an undefined property Filament\\\\Actions\\\\Contracts\\\\HasActions\\:\\:\\$mountedActions\\.$#"
+			count: 2
+			path: ../../e2e/packages/actions/src/Testing/TestsActions.php
+
+		-
+			message: "#^Access to an undefined property Filament\\\\Actions\\\\Contracts\\\\HasActions\\:\\:\\$mountedActionsData\\.$#"
+			count: 6
+			path: ../../e2e/packages/actions/src/Testing/TestsActions.php
+
+		-
+			message: "#^Call to an undefined method Filament\\\\Actions\\\\Contracts\\\\HasActions\\:\\:getId\\(\\)\\.$#"
+			count: 2
+			path: ../../e2e/packages/actions/src/Testing/TestsActions.php
+
+		-
+			message: "#^Call to an undefined method Filament\\\\Actions\\\\Contracts\\\\HasActions\\:\\:getMountedAction\\(\\)\\.$#"
+			count: 2
+			path: ../../e2e/packages/actions/src/Testing/TestsActions.php
+
+		-
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: ../../e2e/packages/forms/src/Commands/MakeFormCommand.php
@@ -21,6 +61,51 @@ parameters:
 			path: ../../e2e/packages/forms/src/Components/FileUpload.php
 
 		-
+			message: "#^Access to an undefined property Filament\\\\Forms\\\\Contracts\\\\HasForms\\:\\:\\$mountedFormComponentActions\\.$#"
+			count: 2
+			path: ../../e2e/packages/forms/src/Testing/TestsComponentActions.php
+
+		-
+			message: "#^Access to an undefined property Filament\\\\Forms\\\\Contracts\\\\HasForms\\:\\:\\$mountedFormComponentActionsData\\.$#"
+			count: 6
+			path: ../../e2e/packages/forms/src/Testing/TestsComponentActions.php
+
+		-
+			message: "#^Call to an undefined method Filament\\\\Forms\\\\Contracts\\\\HasForms\\:\\:getCachedForms\\(\\)\\.$#"
+			count: 1
+			path: ../../e2e/packages/forms/src/Testing/TestsComponentActions.php
+
+		-
+			message: "#^Call to an undefined method Filament\\\\Forms\\\\Contracts\\\\HasForms\\:\\:getId\\(\\)\\.$#"
+			count: 2
+			path: ../../e2e/packages/forms/src/Testing/TestsComponentActions.php
+
+		-
+			message: "#^Call to an undefined method Filament\\\\Forms\\\\Contracts\\\\HasForms\\:\\:getMountedFormComponentAction\\(\\)\\.$#"
+			count: 2
+			path: ../../e2e/packages/forms/src/Testing/TestsComponentActions.php
+
+		-
+			message: "#^Access to an undefined property Filament\\\\Infolists\\\\Contracts\\\\HasInfolists\\:\\:\\$mountedInfolistActions\\.$#"
+			count: 2
+			path: ../../e2e/packages/infolists/src/Testing/TestsActions.php
+
+		-
+			message: "#^Access to an undefined property Filament\\\\Infolists\\\\Contracts\\\\HasInfolists\\:\\:\\$mountedInfolistActionsData\\.$#"
+			count: 6
+			path: ../../e2e/packages/infolists/src/Testing/TestsActions.php
+
+		-
+			message: "#^Call to an undefined method Filament\\\\Infolists\\\\Contracts\\\\HasInfolists\\:\\:getId\\(\\)\\.$#"
+			count: 2
+			path: ../../e2e/packages/infolists/src/Testing/TestsActions.php
+
+		-
+			message: "#^Call to an undefined method Filament\\\\Infolists\\\\Contracts\\\\HasInfolists\\:\\:getMountedInfolistAction\\(\\)\\.$#"
+			count: 2
+			path: ../../e2e/packages/infolists/src/Testing/TestsActions.php
+
+		-
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: ../../e2e/packages/panels/src/Commands/MakeResourceCommand.php
@@ -29,3 +114,38 @@ parameters:
 			message: "#^Unable to resolve the template type TMapValue in call to method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),string\\>\\:\\:map\\(\\)$#"
 			count: 1
 			path: ../../e2e/packages/spatie-laravel-tags-plugin/src/Forms/Components/SpatieTagsInput.php
+
+		-
+			message: "#^Access to an undefined property Filament\\\\Tables\\\\Contracts\\\\HasTable\\:\\:\\$mountedTableActions\\.$#"
+			count: 2
+			path: ../../e2e/packages/tables/src/Testing/TestsActions.php
+
+		-
+			message: "#^Access to an undefined property Filament\\\\Tables\\\\Contracts\\\\HasTable\\:\\:\\$mountedTableActionsData\\.$#"
+			count: 6
+			path: ../../e2e/packages/tables/src/Testing/TestsActions.php
+
+		-
+			message: "#^Call to an undefined method Filament\\\\Tables\\\\Contracts\\\\HasTable\\:\\:getId\\(\\)\\.$#"
+			count: 2
+			path: ../../e2e/packages/tables/src/Testing/TestsActions.php
+
+		-
+			message: "#^Access to an undefined property Filament\\\\Tables\\\\Contracts\\\\HasTable\\:\\:\\$mountedTableBulkAction\\.$#"
+			count: 1
+			path: ../../e2e/packages/tables/src/Testing/TestsBulkActions.php
+
+		-
+			message: "#^Call to an undefined method Filament\\\\Tables\\\\Contracts\\\\HasTable\\:\\:getId\\(\\)\\.$#"
+			count: 2
+			path: ../../e2e/packages/tables/src/Testing/TestsBulkActions.php
+
+		-
+			message: "#^Call to an undefined method Filament\\\\Tables\\\\Contracts\\\\HasTable\\:\\:getId\\(\\)\\.$#"
+			count: 2
+			path: ../../e2e/packages/tables/src/Testing/TestsColumns.php
+
+		-
+			message: "#^Call to an undefined method Filament\\\\Tables\\\\Contracts\\\\HasTable\\:\\:getId\\(\\)\\.$#"
+			count: 2
+			path: ../../e2e/packages/tables/src/Testing/TestsRecords.php

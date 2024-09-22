@@ -5,7 +5,7 @@ namespace Illuminate\Pagination;
 /**
  * @template TValue
  *
- * @mixin \Illuminate\Support\Collection<mixed, TValue>
+ * @mixin \Illuminate\Support\Collection<array-key, TValue>
  */
 abstract class AbstractPaginator implements \Illuminate\Contracts\Support\Htmlable
 {
@@ -68,7 +68,7 @@ class LengthAwarePaginator extends AbstractPaginator implements \Illuminate\Cont
 /**
  * @template TValue
  *
- * @mixin \Illuminate\Support\Collection<mixed, TValue>
+ * @mixin \Illuminate\Support\Collection<array-key, TValue>
  */
 abstract class AbstractCursorPaginator implements \Illuminate\Contracts\Support\Htmlable
 {

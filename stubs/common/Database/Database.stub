@@ -1,0 +1,15 @@
+<?php
+
+namespace Illuminate\Database;
+
+class Connection implements ConnectionInterface {}
+
+interface ConnectionInterface {}
+
+interface ConnectionResolverInterface {}
+
+/**
+ * @mixin \Illuminate\Database\Connection
+ */
+class DatabaseManager implements ConnectionResolverInterface {}
+

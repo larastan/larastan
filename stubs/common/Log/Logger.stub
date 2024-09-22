@@ -4,8 +4,12 @@ namespace Psr\Log {
     interface LoggerInterface {}
 }
 
-namespace Illuminate\Log {
+namespace Monolog {
+    interface ResettableInterface {}
+    class Logger implements \Psr\Log\LoggerInterface, \Monolog\ResettableInterface {}
+}
 
+namespace Illuminate\Log {
     /**
      * @mixin \Illuminate\Log\LogManager
      * @mixin \Monolog\Logger

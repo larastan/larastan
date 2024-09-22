@@ -1,9 +1,13 @@
 <?php
 
-namespace Illuminate\Redis\Connections;
+namespace Illuminate\Redis {
+    class RedisManager implements \Illuminate\Contracts\Redis\Factory {}
+}
 
-/**
- * @mixin \Redis
- */
-abstract class Connection
-{}
+namespace Illuminate\Redis\Connections {
+    /**
+     * @mixin \Redis
+     */
+    abstract class Connection {}
+}
+
