@@ -551,6 +551,19 @@ services:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
 
     -
+        class: Larastan\Larastan\Parameters\EloquentBuilderRelationParameterExtension
+        tags:
+            - phpstan.methodParameterClosureTypeExtension
+
+    -
+        class: Larastan\Larastan\Parameters\ModelRelationParameterExtension
+        tags:
+            - phpstan.staticMethodParameterClosureTypeExtension
+
+    -
+        class: Larastan\Larastan\Parameters\RelationClosureHelper
+
+    -
         class: Larastan\Larastan\ReturnTypes\AppMakeHelper
 
     -

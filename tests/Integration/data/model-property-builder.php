@@ -39,12 +39,9 @@ function test(Builder $builder, User $user, string $union): void
     User::query()->join('roles', 'users.role_id', '=', 'roles.id')->where('roles.foo', 'admin');
 }
 
-//// Currently, there is no way to change the type of `$query` inside the callback.
-//// So until we have a way to do that, we will ignore errors for `Builder<Model>`
-//// @see https://github.com/phpstan/phpstan/discussions/6850
-//\App\User::query()->whereHas('accounts', function (\Illuminate\Database\Eloquent\Builder $query) {
-//    $query->where('foo', 'bar');
-//});
+User::query()->whereHas('accounts', function (Builder $query) {
+   $query->where('foo', 'bar');
+});
 
 function getKey(): string
 {
