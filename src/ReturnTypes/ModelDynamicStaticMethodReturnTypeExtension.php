@@ -16,7 +16,6 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
@@ -84,10 +83,11 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
 
         if (count(array_intersect([EloquentBuilder::class], $returnType->getReferencedClasses())) > 0) {
             if ($methodCall->class instanceof Name) {
-                $returnType = new GenericObjectType(
-                    $this->builderHelper->determineBuilderName($scope->resolveName($methodCall->class)),
-                    [new ObjectType($scope->resolveName($methodCall->class))],
-                );
+                $builderName = $this->builderHelper->determineBuilderName($scope->resolveName($methodCall->class));
+
+                if ($builderName !== null) {
+                    $returnType = new GenericObjectType($builderName, [new ObjectType($scope->resolveName($methodCall->class))]);
+                }
             } elseif ($methodCall->class instanceof Expr) {
                 $type = $scope->getType($methodCall->class);
 
@@ -96,17 +96,13 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
                 $types = [];
 
                 foreach ($classNames as $className) {
-                    if (! $this->reflectionProvider->hasClass($className)) {
+                    $builderName = $this->builderHelper->determineBuilderName($className);
+
+                    if ($builderName === null) {
                         continue;
                     }
 
-                    try {
-                        $types[] = new GenericObjectType(
-                            $this->builderHelper->determineBuilderName($className),
-                            [new ObjectType($className)],
-                        );
-                    } catch (MissingMethodFromReflectionException) {
-                    }
+                    $types[] = new GenericObjectType($builderName, [new ObjectType($className)]);
                 }
 
                 if ($types !== []) {

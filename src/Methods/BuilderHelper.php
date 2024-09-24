@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use Larastan\Larastan\Reflection\AnnotationScopeMethodParameterReflection;
@@ -25,6 +26,7 @@ use function array_key_exists;
 use function array_shift;
 use function count;
 use function in_array;
+use function is_string;
 use function preg_split;
 use function substr;
 use function ucfirst;
@@ -215,10 +217,21 @@ class BuilderHelper
      * @throws MissingMethodFromReflectionException
      * @throws ShouldNotHappenException
      */
-    public function determineBuilderName(string $modelClassName): string
+    public function determineBuilderName(ClassReflection|string $modelReflection): string|null
     {
-        $method = $this->reflectionProvider->getClass($modelClassName)->getNativeMethod('newEloquentBuilder');
+        if (is_string($modelReflection)) {
+            if (! $this->reflectionProvider->hasClass($modelReflection)) {
+                return null;
+            }
 
+            $modelReflection = $this->reflectionProvider->getClass($modelReflection);
+        }
+
+        if (! $modelReflection->is(Model::class) || ! $modelReflection->hasNativeMethod('newEloquentBuilder')) {
+            return null;
+        }
+
+        $method     = $modelReflection->getNativeMethod('newEloquentBuilder');
         $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
 
         if (in_array(EloquentBuilder::class, $returnType->getReferencedClasses(), true)) {

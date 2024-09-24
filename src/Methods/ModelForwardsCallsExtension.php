@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Larastan\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Reflection\ClassMemberReflection;
 use PHPStan\Reflection\ClassReflection;
@@ -72,11 +71,11 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
      */
     private function findMethod(ClassReflection $classReflection, string $methodName): MethodReflection|null
     {
-        if ($classReflection->getName() !== Model::class && ! $classReflection->isSubclassOf(Model::class)) {
+        $builderName = $this->builderHelper->determineBuilderName($classReflection);
+
+        if ($builderName === null) {
             return null;
         }
-
-        $builderName = $this->builderHelper->determineBuilderName($classReflection->getName());
 
         if (in_array($methodName, ['increment', 'decrement'], true)) {
             $methodReflection = $classReflection->getNativeMethod($methodName);

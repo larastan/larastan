@@ -56,11 +56,11 @@ class NewModelQueryDynamicMethodReturnTypeExtension implements DynamicMethodRetu
         $types = [];
 
         foreach ($classReflections as $classReflection) {
-            if (! $classReflection->isSubclassOf(Model::class)) {
+            $builderName = $this->builderHelper->determineBuilderName($classReflection);
+
+            if ($builderName === null) {
                 continue;
             }
-
-            $builderName = $this->builderHelper->determineBuilderName($classReflection->getName());
 
             $types[] = new GenericObjectType($builderName, [new ObjectType($classReflection->getName())]);
         }

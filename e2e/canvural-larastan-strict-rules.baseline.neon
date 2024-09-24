@@ -1,0 +1,6 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Parameter \\#1 \\$className of method PHPStan\\\\Reflection\\\\ReflectionProvider\\:\\:getClass\\(\\) expects string, string\\|null given\\.$#"
+			count: 1
+			path: ../../e2e/src/Rules/NoDynamicWhereRule.php

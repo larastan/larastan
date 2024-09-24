@@ -111,6 +111,16 @@ parameters:
 			path: ../../e2e/packages/panels/src/Commands/MakeResourceCommand.php
 
 		-
+			message: "#^Unable to resolve the template type TGroupKey in call to method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Filament\\\\Navigation\\\\NavigationItem\\>\\:\\:groupBy\\(\\)$#"
+			count: 1
+			path: ../../e2e/packages/panels/src/Navigation/NavigationManager.php
+
+		-
+			message: "#^Unable to resolve the template type TGroupKey in call to method Illuminate\\\\Support\\\\Collection\\<int,Filament\\\\Navigation\\\\NavigationItem\\>\\:\\:groupBy\\(\\)$#"
+			count: 1
+			path: ../../e2e/packages/panels/src/Navigation/NavigationManager.php
+
+		-
 			message: "#^Unable to resolve the template type TMapValue in call to method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),string\\>\\:\\:map\\(\\)$#"
 			count: 1
 			path: ../../e2e/packages/spatie-laravel-tags-plugin/src/Forms/Components/SpatieTagsInput.php
