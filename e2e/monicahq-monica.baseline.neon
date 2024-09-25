@@ -6,6 +6,11 @@ parameters:
 			path: ../../e2e/app/Domains/Contact/DavClient/Jobs/UpdateAddressBooks.php
 
 		-
+			message: "#^Parameter \\#1 \\$entry of method App\\\\Domains\\\\Contact\\\\DavClient\\\\Services\\\\Utils\\\\Dav\\\\ServiceUrlQuery\\:\\:getUri\\(\\) expects array, Illuminate\\\\Support\\\\Enumerable\\<int, mixed\\> given\\.$#"
+			count: 1
+			path: ../../e2e/app/Domains/Contact/DavClient/Services/Utils/Dav/ServiceUrlQuery.php
+
+		-
 			message: "#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$addressType\\.$#"
 			count: 1
 			path: ../../e2e/app/Domains/Contact/ManageContactFeed/Web/ViewHelpers/Actions/ActionFeedAddress.php
