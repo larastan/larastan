@@ -43,10 +43,10 @@ function test(?int $foo): void {
     assertType('App\User', User::factory(2)->count(null)->createOneQuietly());
     assertType('App\User', User::factory(2)->count(null)->make());
 
-    assertType('App\User', User::factory(2)->times(3)->create());
-    assertType('App\User', User::factory(2)->times(3)->createQuietly());
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory(2)->times(3)->create());
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory(2)->times(3)->createQuietly());
     assertType('App\User', User::factory(2)->times(3)->createOneQuietly());
-    assertType('App\User', User::factory(2)->times(3)->make());
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory(2)->times(3)->make());
 
     assertType('App\User', User::factory(2)->state(['foo'])->count(null)->create());
     assertType('App\User', User::factory(2)->state(['foo'])->count(null)->createQuietly());
