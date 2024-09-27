@@ -25,7 +25,7 @@ jobs:
       fail-fast: false
       matrix:
         php: ["8.0", "8.1", "8.2", "8.3"]
-        laravel: ["^9.52.16", "^10.28.0", "^11.0"]
+        laravel: ["^9.52.16", "^10.28.0", ">=11 <11.15.0"]
         dependencies:
             - "lowest"
             - "highest"
@@ -37,16 +37,16 @@ jobs:
             laravel: "^10.28.0"
             dependencies: "highest"
           - php: "8.0"
-            laravel: "^11.0"
+            laravel: ">=11 <11.15.0"
             dependencies: "highest"
           - php: "8.0"
-            laravel: "^11.0"
+            laravel: ">=11 <11.15.0"
             dependencies: "lowest"
           - php: "8.1"
-            laravel: "^11.0"
+            laravel: ">=11 <11.15.0"
             dependencies: "highest"
           - php: "8.1"
-            laravel: "^11.0"
+            laravel: ">=11 <11.15.0"
             dependencies: "lowest"
 
     name: "PHP${{ matrix.php }} - Laravel${{ matrix.laravel }} ${{ matrix.dependencies == 'highest' && '↑' || '↓' }}"
