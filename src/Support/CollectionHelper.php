@@ -109,7 +109,7 @@ final class CollectionHelper
 
         $innerValueType = $classReflection->getActiveTemplateTypeMap()->getType('TModel');
 
-        if ($classReflection->getName() === EloquentCollection::class || $classReflection->isSubclassOf(EloquentCollection::class)) {
+        if ($classReflection->is(EloquentCollection::class)) {
             $keyType = new IntegerType();
         }
 

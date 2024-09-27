@@ -72,7 +72,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
      */
     private function findMethod(ClassReflection $classReflection, string $methodName): MethodReflection|null
     {
-        if ($classReflection->getName() !== Model::class && ! $classReflection->isSubclassOf(Model::class)) {
+        if (! $classReflection->is(Model::class)) {
             return null;
         }
 
