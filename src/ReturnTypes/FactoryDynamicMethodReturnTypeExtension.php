@@ -47,7 +47,7 @@ class FactoryDynamicMethodReturnTypeExtension implements DynamicMethodReturnType
             return null;
         }
 
-        if ($methodReflection->getName() === 'count') {
+        if (in_array($methodReflection->getName(), ['count', 'times'], true)) {
             if ($methodCall->getArgs() === []) {
                 return new ErrorType();
             }
