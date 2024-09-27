@@ -105,3 +105,8 @@ function acceptsUserOrAccountProperty(string $accountModelProperty): void
 
 acceptsUserOrAccountProperty('id'); // id exists in both models
 acceptsUserOrAccountProperty('email'); // email exists only in User
+
+function testModelPropertyAlias(): void
+{
+    \App\User::find(1, ['id as user_id', 'users.name as user_name']);
+}
