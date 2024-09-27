@@ -76,6 +76,10 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
             $modelReflection = $this->reflectionProvider->getClass(Model::class);
         }
 
+        if ($modelReflection->getName() !== Model::class && ! $modelReflection->isSubclassOf(Model::class)) {
+            return null;
+        }
+
         $builderName = $this->builderHelper->determineBuilderName($modelReflection->getName());
 
         $builderReflection = $this->reflectionProvider->getClass($builderName)->withTypes([$relatedModel]);

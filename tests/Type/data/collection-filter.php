@@ -24,7 +24,7 @@ function dummyFilter($value)
 /** @param EloquentCollection<int, User> $users */
 function test(User $user, SupportCollection $users): void
 {
-    assertType("Illuminate\Support\Collection<(int|string), mixed~0|0.0|''|'0'|array{}|false|null>", collect()->filter());
+    assertType("Illuminate\Support\Collection<(int|string), mixed~(0|0.0|''|'0'|array{}|false|null)>", collect()->filter());
 
     assertType('Illuminate\Support\Collection<int, non-falsy-string>', collect(['foo', null, '', 'bar', null])->filter());
 
