@@ -4,6 +4,10 @@ namespace Helpers;
 
 use App\User;
 use Exception;
+use Illuminate\Auth\SessionGuard;
+use Illuminate\Auth\TokenGuard;
+use Illuminate\Contracts\Auth\StatefulGuard;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Larastan\Larastan\ApplicationResolver;
 use Throwable;
@@ -19,19 +23,12 @@ function test(?int $value = 0): void
     assertType('Illuminate\Auth\AuthManager', resolve('auth'));
 
     assertType('Illuminate\Auth\AuthManager', auth());
-    assertType('Illuminate\Contracts\Auth\Guard', auth()->guard('web'));
-    assertType('Illuminate\Contracts\Auth\StatefulGuard', auth('web'));
-    assertType('App\Admin|App\User|null', auth()->user());
-    assertType('bool', auth()->check());
-    assertType('App\User|null', auth()->guard('web')->user());
-    assertType('App\User|null', auth('web')->user());
-    assertType('App\Admin|null', auth()->guard('admin')->user());
-    assertType('App\Admin|null', auth('admin')->user());
-    assertType('int|string|null', auth()->id());
-    assertType('int|string|null', auth('web')->id());
-    assertType('int|string|null', auth('admin')->id());
+    assertType(SessionGuard::class, auth('web'));
+    assertType(SessionGuard::class, auth('admin'));;
+    assertType(TokenGuard::class, auth('api'));
+    assertType(StatefulGuard::class, auth('unknown'));
     assertType('Illuminate\Contracts\Auth\Authenticatable|false', auth()->loginUsingId(1));
-    assertType('null', auth()->login(new User()));
+
 
     assertType('Illuminate\Support\Carbon', now());
     assertType('Illuminate\Support\Carbon', today());

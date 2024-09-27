@@ -193,11 +193,6 @@ services:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
 
     -
-        class: Larastan\Larastan\ReturnTypes\GuardDynamicStaticMethodReturnTypeExtension
-        tags:
-            - phpstan.broker.dynamicStaticMethodReturnTypeExtension
-
-    -
         class: Larastan\Larastan\ReturnTypes\AuthManagerExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
