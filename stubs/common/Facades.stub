@@ -54,3 +54,8 @@ class Cookie extends Facade {
      */
     public static function get($key = null, $default = null);
 }
+
+/**
+ * @mixin \Illuminate\Http\Client\Factory
+ */
+class Http extends Facade {}
