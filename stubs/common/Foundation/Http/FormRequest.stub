@@ -21,4 +21,14 @@ class FormRequest
      * @return ($key is null ? array<string, mixed> : mixed)
      */
     public function validated($key = null, $default = null);
+
+    /**
+     * Handle a failed validation attempt.
+     *
+     * @param  \Illuminate\Validation\Validator  $validator
+     * @return void
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    protected function failedValidation(Validator $validator);
 }
