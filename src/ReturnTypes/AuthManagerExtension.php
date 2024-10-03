@@ -9,7 +9,6 @@ use Larastan\Larastan\Concerns;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
@@ -37,7 +36,7 @@ final class AuthManagerExtension implements DynamicMethodReturnTypeExtension
         MethodReflection $methodReflection,
         MethodCall $methodCall,
         Scope $scope,
-    ): Type {
+    ): Type|null {
         $config     = $this->getContainer()->get('config');
         $authModels = [];
 
@@ -46,7 +45,7 @@ final class AuthManagerExtension implements DynamicMethodReturnTypeExtension
         }
 
         if (count($authModels) === 0) {
-            return ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+            return null;
         }
 
         return TypeCombinator::addNull(
