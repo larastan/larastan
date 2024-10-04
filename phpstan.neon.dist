@@ -1,5 +1,6 @@
 includes:
     - vendor/phpstan/phpstan/conf/bleedingEdge.neon
+    - vendor/phpstan/phpstan-deprecation-rules/rules.neon
     - extension.neon
     - phpstan-baseline.neon
 parameters:

@@ -57,7 +57,7 @@ class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTyp
         Scope $scope,
     ): Type|null {
         /** @var FunctionVariant $functionVariant */
-        $functionVariant = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
+        $functionVariant = ParametersAcceptorSelector::selectFromArgs($scope, $methodCall->getArgs(), $methodReflection->getVariants());
         $returnType      = $functionVariant->getReturnType();
 
         $classNames = $returnType->getObjectClassNames();

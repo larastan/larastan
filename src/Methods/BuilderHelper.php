@@ -13,7 +13,6 @@ use Larastan\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
-use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\TrinaryLogic;
@@ -174,7 +173,7 @@ class BuilderHelper
 
             if ($reflection->hasNativeMethod($scopeName)) {
                 $methodReflection   = $reflection->getNativeMethod($scopeName);
-                $parametersAcceptor = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
+                $parametersAcceptor = $methodReflection->getVariants()[0];
 
                 $parameters = $parametersAcceptor->getParameters();
                 // We shift the parameters,
@@ -219,7 +218,7 @@ class BuilderHelper
     {
         $method = $this->reflectionProvider->getClass($modelClassName)->getNativeMethod('newEloquentBuilder');
 
-        $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
+        $returnType = $method->getVariants()[0]->getReturnType();
 
         if (in_array(EloquentBuilder::class, $returnType->getReferencedClasses(), true)) {
             return EloquentBuilder::class;

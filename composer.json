@@ -32,6 +32,7 @@
         "nikic/php-parser": "^4.19.1",
         "orchestra/canvas": "^7.11.1 || ^8.11.0 || ^9.0.2",
         "orchestra/testbench": "^7.33.0 || ^8.13.0 || ^9.0.3",
+        "phpstan/phpstan-deprecation-rules": "^1.2",
         "phpunit/phpunit": "^9.6.13 || ^10.5.16"
     },
     "suggest": {

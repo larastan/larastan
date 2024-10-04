@@ -15,7 +15,6 @@ use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\ParametersAcceptor;
-use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\Generic\TemplateTypeMap;
@@ -118,8 +117,8 @@ class ModelFactoryMethodsClassReflectionExtension implements MethodsClassReflect
             public function getVariants(): array
             {
                 $returnType     = new ObjectType($this->classReflection->getName());
-                $stateParameter = ParametersAcceptorSelector::selectSingle($this->classReflection->getMethod('state', new OutOfClassScope())->getVariants())->getParameters()[0];
-                $countParameter = ParametersAcceptorSelector::selectSingle($this->classReflection->getMethod('count', new OutOfClassScope())->getVariants())->getParameters()[0];
+                $stateParameter = $this->classReflection->getMethod('state', new OutOfClassScope())->getVariants()[0]->getParameters()[0];
+                $countParameter = $this->classReflection->getMethod('count', new OutOfClassScope())->getVariants()[0]->getParameters()[0];
 
                 $variants = [
                     new FunctionVariant(TemplateTypeMap::createEmpty(), null, [], false, $returnType),

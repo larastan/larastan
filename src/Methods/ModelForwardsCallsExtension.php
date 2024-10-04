@@ -15,7 +15,6 @@ use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ParameterReflection;
 use PHPStan\Reflection\ParametersAcceptor;
-use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\Php\DummyParameter;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
@@ -175,7 +174,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
         if ($builderReflection->hasNativeMethod($methodName)) {
             $reflection = $builderReflection->getNativeMethod($methodName);
 
-            $parametersAcceptor = ParametersAcceptorSelector::selectSingle($this->transformStaticParameters($reflection, $genericBuilderAndModelType));
+            $parametersAcceptor = $this->transformStaticParameters($reflection, $genericBuilderAndModelType);
 
             $returnType = TypeTraverser::map($parametersAcceptor->getReturnType(), static function (Type $type, callable $traverse) use ($genericBuilderAndModelType) {
                 if ($type instanceof TypeWithClassName && $type->getClassName() === Builder::class) {
@@ -201,23 +200,22 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
         return null;
     }
 
-    /** @return ParametersAcceptor[] */
-    private function transformStaticParameters(MethodReflection $method, GenericObjectType $builder): array
+    private function transformStaticParameters(MethodReflection $method, GenericObjectType $builder): ParametersAcceptor
     {
-        return array_map(function (ParametersAcceptor $acceptor) use ($builder): ParametersAcceptor {
-            return new FunctionVariant($acceptor->getTemplateTypeMap(), $acceptor->getResolvedTemplateTypeMap(), array_map(function (
-                ParameterReflection $parameter,
-            ) use ($builder): ParameterReflection {
-                return new DummyParameter(
-                    $parameter->getName(),
-                    $this->transformStaticType($parameter->getType(), $builder),
-                    $parameter->isOptional(),
-                    $parameter->passedByReference(),
-                    $parameter->isVariadic(),
-                    $parameter->getDefaultValue(),
-                );
-            }, $acceptor->getParameters()), $acceptor->isVariadic(), $this->transformStaticType($acceptor->getReturnType(), $builder));
-        }, $method->getVariants());
+        $acceptor = $method->getVariants()[0];
+
+        return new FunctionVariant($acceptor->getTemplateTypeMap(), $acceptor->getResolvedTemplateTypeMap(), array_map(function (
+            ParameterReflection $parameter,
+        ) use ($builder): ParameterReflection {
+            return new DummyParameter(
+                $parameter->getName(),
+                $this->transformStaticType($parameter->getType(), $builder),
+                $parameter->isOptional(),
+                $parameter->passedByReference(),
+                $parameter->isVariadic(),
+                $parameter->getDefaultValue(),
+            );
+        }, $acceptor->getParameters()), $acceptor->isVariadic(), $this->transformStaticType($acceptor->getReturnType(), $builder));
     }
 
     private function transformStaticType(Type $type, GenericObjectType $builder): Type

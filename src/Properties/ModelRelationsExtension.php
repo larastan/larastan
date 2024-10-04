@@ -20,7 +20,6 @@ use Larastan\Larastan\Support\CollectionHelper;
 use Larastan\Larastan\Types\RelationParserHelper;
 use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\Type\Generic\GenericObjectType;
@@ -71,7 +70,7 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
                 continue;
             }
 
-            $returnType = ParametersAcceptorSelector::selectSingle($classReflection->getNativeMethod($methodName)->getVariants())->getReturnType();
+            $returnType = $classReflection->getNativeMethod($methodName)->getVariants()[0]->getReturnType();
 
             if ((new ObjectType(Relation::class))->isSuperTypeOf($returnType)->yes()) {
                 return true;
@@ -89,7 +88,7 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
 
         $method = $classReflection->getMethod($propertyName, new OutOfClassScope());
 
-        $returnType = ParametersAcceptorSelector::selectSingle($method->getVariants())->getReturnType();
+        $returnType = $method->getVariants()[0]->getReturnType();
 
         if ($returnType instanceof GenericObjectType) { // @phpstan-ignore-line This is a special shortcut we take
             $relatedModel = $returnType->getTypes()[0];

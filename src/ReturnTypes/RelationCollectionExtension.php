@@ -13,7 +13,6 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
-use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
 use function count;
@@ -47,12 +46,6 @@ final class RelationCollectionExtension implements DynamicMethodReturnTypeExtens
             return false;
         }
 
-        $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
-
-        if (! in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
-            return false;
-        }
-
         return $methodReflection->getDeclaringClass()->hasNativeMethod($methodReflection->getName());
     }
 
@@ -60,14 +53,21 @@ final class RelationCollectionExtension implements DynamicMethodReturnTypeExtens
         MethodReflection $methodReflection,
         MethodCall $methodCall,
         Scope $scope,
-    ): Type {
-        /** @var ObjectType $modelType */
+    ): Type|null {
         $modelType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TRelatedModel');
 
-        $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+        if ($modelType === null) {
+            return null;
+        }
+
+        $returnType = ParametersAcceptorSelector::selectFromArgs($scope, $methodCall->getArgs(), $methodReflection->getVariants())->getReturnType();
+
+        if (! in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
+            return null;
+        }
 
         if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
-            return $this->collectionHelper->determineCollectionClass($modelType->getClassname());
+            return $this->collectionHelper->determineCollectionClass($modelType->getObjectClassNames()[0]);
         }
 
         return $returnType;

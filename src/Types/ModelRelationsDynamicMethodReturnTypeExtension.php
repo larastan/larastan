@@ -11,7 +11,6 @@ use Larastan\Larastan\Concerns\HasContainer;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
@@ -39,9 +38,9 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-        $variants = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants());
+        $variant = $methodReflection->getVariants()[0];
 
-        $returnType = $variants->getReturnType();
+        $returnType = $variant->getReturnType();
 
         $classNames = $returnType->getObjectClassNames();
 
@@ -57,7 +56,7 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
             return false;
         }
 
-        if (count($variants->getParameters()) !== 0) {
+        if (count($variant->getParameters()) !== 0) {
             return false;
         }
 
@@ -96,7 +95,7 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
         MethodCall $methodCall,
         Scope $scope,
     ): Type|null {
-        $returnType                 = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+        $returnType                 = $methodReflection->getVariants()[0]->getReturnType();
         $returnTypeObjectClassNames = $returnType->getObjectClassNames();
 
         if ($returnTypeObjectClassNames === []) {

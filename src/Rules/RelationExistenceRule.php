@@ -118,7 +118,7 @@ class RelationExistenceRule implements Rule
                 $calledOnType = $scope->getType($calledOnNode);
             }
 
-            $closure = function (Type $calledOnType, string $relationName, Node $node) use ($scope): array {
+            $closure = function (Type $calledOnType, string $relationName, Node\Expr\CallLike $node) use ($scope): array {
                 $modelReflection = $this->modelRuleHelper->findModelReflectionFromType($calledOnType);
 
                 if ($modelReflection === null) {
@@ -133,7 +133,7 @@ class RelationExistenceRule implements Rule
 
                 $relationMethod = $modelReflection->getMethod($relationName, $scope);
 
-                if (! (new ObjectType(Relation::class))->isSuperTypeOf(ParametersAcceptorSelector::selectSingle($relationMethod->getVariants())->getReturnType())->yes()) {
+                if (! (new ObjectType(Relation::class))->isSuperTypeOf(ParametersAcceptorSelector::selectFromArgs($scope, $node->getArgs(), $relationMethod->getVariants())->getReturnType())->yes()) {
                     return [
                         $this->getRuleError($relationName, $modelReflection, $node),
                     ];

@@ -13,7 +13,6 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
-use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
@@ -92,7 +91,7 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
             return null;
         }
 
-        $parametersAcceptor = ParametersAcceptorSelector::selectSingle($reflection->getVariants());
+        $parametersAcceptor = $reflection->getVariants()[0];
         $returnType         = $parametersAcceptor->getReturnType();
 
         $types = [$relatedModel];

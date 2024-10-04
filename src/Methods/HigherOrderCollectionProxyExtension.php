@@ -12,7 +12,6 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\FunctionVariant;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
-use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type;
 
@@ -50,7 +49,7 @@ final class HigherOrderCollectionProxyExtension implements MethodsClassReflectio
 
         $modelMethodReflection = $valueType->getMethod($methodName, new OutOfClassScope());
 
-        $modelMethodReturnType = ParametersAcceptorSelector::selectSingle($modelMethodReflection->getVariants())->getReturnType();
+        $modelMethodReturnType = $modelMethodReflection->getVariants()[0]->getReturnType();
 
         $returnType = $this->higherOrderCollectionProxyHelper->determineReturnType($methodType->getValue(), $valueType, $modelMethodReturnType, $collectionClassName);
 
@@ -100,10 +99,10 @@ final class HigherOrderCollectionProxyExtension implements MethodsClassReflectio
             {
                 return [
                     new FunctionVariant(
-                        ParametersAcceptorSelector::selectSingle($this->modelMethodReflection->getVariants())->getTemplateTypeMap(),
-                        ParametersAcceptorSelector::selectSingle($this->modelMethodReflection->getVariants())->getResolvedTemplateTypeMap(),
-                        ParametersAcceptorSelector::selectSingle($this->modelMethodReflection->getVariants())->getParameters(),
-                        ParametersAcceptorSelector::selectSingle($this->modelMethodReflection->getVariants())->isVariadic(),
+                        $this->modelMethodReflection->getVariants()[0]->getTemplateTypeMap(),
+                        $this->modelMethodReflection->getVariants()[0]->getResolvedTemplateTypeMap(),
+                        $this->modelMethodReflection->getVariants()[0]->getParameters(),
+                        $this->modelMethodReflection->getVariants()[0]->isVariadic(),
                         $this->returnType,
                     ),
                 ];

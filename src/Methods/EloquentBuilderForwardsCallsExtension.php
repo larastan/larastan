@@ -12,7 +12,6 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
-use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
@@ -104,9 +103,9 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
                     return new EloquentBuilderMethodReflection(
                         $methodName,
                         $classReflection,
-                        ParametersAcceptorSelector::selectSingle($ref->getVariants())->getParameters(),
+                        $ref->getVariants()[0]->getParameters(),
                         new IntegerType(),
-                        ParametersAcceptorSelector::selectSingle($ref->getVariants())->isVariadic(),
+                        $ref->getVariants()[0]->isVariadic(),
                     );
                 }
 
@@ -114,18 +113,18 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
                     return new EloquentBuilderMethodReflection(
                         $methodName,
                         $classReflection,
-                        ParametersAcceptorSelector::selectSingle($ref->getVariants())->getParameters(),
+                        $ref->getVariants()[0]->getParameters(),
                         $modelType,
-                        ParametersAcceptorSelector::selectSingle($ref->getVariants())->isVariadic(),
+                        $ref->getVariants()[0]->isVariadic(),
                     );
                 }
 
                 return new EloquentBuilderMethodReflection(
                     $methodName,
                     $classReflection,
-                    ParametersAcceptorSelector::selectSingle($ref->getVariants())->getParameters(),
+                    $ref->getVariants()[0]->getParameters(),
                     new GenericObjectType($classReflection->getName(), [$modelType]),
-                    ParametersAcceptorSelector::selectSingle($ref->getVariants())->isVariadic(),
+                    $ref->getVariants()[0]->isVariadic(),
                 );
             }
 
@@ -137,7 +136,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             return $ref;
         }
 
-        $parametersAcceptor = ParametersAcceptorSelector::selectSingle($ref->getVariants());
+        $parametersAcceptor = $ref->getVariants()[0];
 
         if (in_array($methodName, $this->builderHelper->passthru, true)) {
             $returnType = $parametersAcceptor->getReturnType();
