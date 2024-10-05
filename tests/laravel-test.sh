@@ -11,12 +11,6 @@ cd ../laravel/
 echo "Add Larastan from source"
 composer config minimum-stability dev
 composer config repositories.0 '{ "type": "path", "url": "../larastan", "options": { "symlink": false } }'
-
-# For Laravel version ^11.0, do a composer update to install different versions of laravel/framework
-if [ "$LARAVEL_VERSION_CONSTRAINT" = "^11.0" ]; then
-    composer update --with='laravel/framework:>=11.0.0 <11.15.0' --no-interaction --no-progress
-fi
-
 # No version information with "type":"path"
 composer require --dev "larastan/larastan:*"
 composer du -o
