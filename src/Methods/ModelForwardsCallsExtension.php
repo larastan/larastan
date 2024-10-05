@@ -92,9 +92,9 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
         if ($builderReflection->hasNativeMethod($methodName)) {
             $reflection = $builderReflection->getNativeMethod($methodName);
 
-            $reflection->getVariants()[0] = $this->transformStaticParameters($reflection, $builderType);
+            $parametersAcceptor = $this->transformStaticParameters($reflection, $builderType);
 
-            $returnType = TypeTraverser::map($reflection->getVariants()[0]->getReturnType(), static function (Type $type, callable $traverse) use ($builderType) {
+            $returnType = TypeTraverser::map($parametersAcceptor->getReturnType(), static function (Type $type, callable $traverse) use ($builderType) {
                 if ($type instanceof TypeWithClassName && $type->getClassName() === Builder::class) {
                     return $builderType;
                 }
@@ -105,9 +105,9 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
             return new EloquentBuilderMethodReflection(
                 $methodName,
                 $builderReflection,
-                $reflection->getVariants()[0]->getParameters(),
+                $parametersAcceptor->getParameters(),
                 $returnType,
-                $reflection->getVariants()[0]->isVariadic(),
+                $parametersAcceptor->isVariadic(),
             );
         }
 
