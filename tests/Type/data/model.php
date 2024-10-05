@@ -131,7 +131,7 @@ function test(
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->with('accounts'));
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->with('accounts')->with('group'));
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->with(['accounts' => function (Relation $relation) {
-        assertType('Illuminate\Database\Eloquent\Relations\Relation<Illuminate\Database\Eloquent\Model>', $relation->orderBy('id'));
+        assertType('Illuminate\Database\Eloquent\Relations\Relation', $relation->orderBy('id'));
     }]));
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::lockForUpdate());
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::sharedLock());

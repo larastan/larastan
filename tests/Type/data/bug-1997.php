@@ -19,5 +19,5 @@ interface Team {}
 
 function test(User $user): void
 {
-    assertType('*ERROR*', $user->teams()->whereKey($user->getKey()));
+    assertType('Illuminate\Database\Eloquent\Builder<Bug1997\Team>', $user->teams()->whereKey($user->getKey()));
 }
