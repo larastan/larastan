@@ -24,6 +24,7 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
+use function array_filter;
 use function array_intersect;
 use function count;
 use function in_array;
@@ -126,6 +127,8 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
             foreach ($modelNames as $modelName) {
                 $types[] = $this->collectionHelper->determineCollectionType($modelName);
             }
+
+            $types = array_filter($types);
 
             if ($types !== []) {
                 return TypeCombinator::union(...$types);

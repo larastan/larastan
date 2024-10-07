@@ -24,8 +24,11 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1565.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1718.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1760.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1819.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1830.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1985.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1997.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/bug-2057.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/bug-2073.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/bug-2111.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/conditionable.php');
@@ -68,8 +71,6 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/view-exists.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/view.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/where-relation.php');
-        yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1997.php');
-        yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1819.php');
 
         if (laravel_version_compare('11.28.0', '>=')) {
             yield from self::gatherAssertTypes(__DIR__ . '/data/model-collections-l11-28.php');

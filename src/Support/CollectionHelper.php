@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Support;
 
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Enumerable;
 use Iterator;
@@ -12,9 +13,7 @@ use IteratorAggregate;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Name;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ReflectionProvider;
-use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntegerType;
@@ -26,9 +25,9 @@ use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\TypeTraverser;
 use PHPStan\Type\UnionType;
-use PHPStan\Type\VerbosityLevel;
 use Traversable;
 
+use function array_filter;
 use function array_map;
 use function array_values;
 use function count;
@@ -69,57 +68,76 @@ final class CollectionHelper
         return null;
     }
 
-    public function determineCollectionClassName(string $modelClassName): string
+    public function determineOriginalCollectionType(string $modelClassName): Type|null
     {
-        try {
-            $modelReflection = $this->reflectionProvider->getClass($modelClassName);
-
-            $attrs = $modelReflection->getNativeReflection()->getAttributes('Illuminate\Database\Eloquent\Attributes\CollectedBy'); //@phpstan-ignore argument.type (Attribute class might not exist)
-
-            if ($attrs !== []) {
-                $expr =  $attrs[0]->getArgumentsExpressions()[0];
-
-                if ($expr instanceof ClassConstFetch && $expr->class instanceof Name) {
-                    return $expr->class->toString();
-                }
-            }
-
-            $newCollectionMethod = $modelReflection->getNativeMethod('newCollection');
-            $returnType          = $newCollectionMethod->getVariants()[0]->getReturnType();
-
-            $classNames = $returnType->getObjectClassNames();
-
-            if (count($classNames) === 1) {
-                return $classNames[0];
-            }
-
-            return $returnType->describe(VerbosityLevel::value());
-        } catch (MissingMethodFromReflectionException | ShouldNotHappenException) {
-            return EloquentCollection::class;
+        if (! $this->reflectionProvider->hasClass($modelClassName)) {
+            return null;
         }
+
+        $modelReflection = $this->reflectionProvider->getClass($modelClassName);
+
+        if (! $modelReflection->is(Model::class)) {
+            return null;
+        }
+
+        /** @phpstan-ignore argument.type (Attribute class might not exist) */
+        $attrs = $modelReflection->getNativeReflection()->getAttributes('Illuminate\Database\Eloquent\Attributes\CollectedBy');
+
+        if ($attrs !== []) {
+            $expr =  $attrs[0]->getArgumentsExpressions()[0];
+
+            if ($expr instanceof ClassConstFetch && $expr->class instanceof Name) {
+                return new ObjectType($expr->class->toString());
+            }
+        }
+
+        return $modelReflection->getNativeMethod('newCollection')
+            ->getVariants()[0]
+            ->getReturnType();
     }
 
-    public function determineCollectionType(string $modelClassName, Type|null $modelType = null): Type
+    public function determineCollectionType(string $modelClassName, Type|null $modelType = null): Type|null
     {
-        $collectionClassName  = $this->determineCollectionClassName($modelClassName);
-        $collectionReflection = $this->reflectionProvider->getClass($collectionClassName);
+        $modelType    ??= new ObjectType($modelClassName);
+        $collectionType = $this->determineOriginalCollectionType($modelClassName);
 
-        if ($collectionReflection->isGeneric()) {
-            $typeMap = $collectionReflection->getActiveTemplateTypeMap();
+        if ($collectionType === null) {
+            return null;
+        }
+
+        return TypeTraverser::map($collectionType, static function (Type $type, callable $traverse) use ($modelType): Type {
+            if ($type instanceof UnionType || $type instanceof IntersectionType) {
+                return $traverse($type);
+            }
+
+            $classReflections = $type->getObjectClassReflections();
+
+            if (count($classReflections) !== 1) {
+                return $type;
+            }
+
+            $classReflection = $classReflections[0];
+
+            if (! $classReflection->is(EloquentCollection::class) || ! $classReflection->isGeneric()) {
+                return $type;
+            }
+
+            $keyType = new IntegerType();
+            $typeMap = $classReflection->getActiveTemplateTypeMap();
 
             // Specifies key and value
             if ($typeMap->count() === 2) {
-                return new GenericObjectType($collectionClassName, [new IntegerType(), new ObjectType($modelClassName)]);
+                return new GenericObjectType($classReflection->getName(), [$keyType, $modelType]);
             }
 
             // Specifies only value
             if (($typeMap->count() === 1) && $typeMap->hasType('TModel')) {
-                return new GenericObjectType($collectionClassName, [new ObjectType($modelClassName)]);
+                return new GenericObjectType($classReflection->getName(), [$modelType]);
             }
-        }
 
-        // Not generic. So return the type as is
-        return new ObjectType($collectionClassName);
+            // Specifies only key
+            return new GenericObjectType($classReflection->getName(), [$keyType]);
+        });
     }
 
     public function replaceCollectionsInType(Type $type): Type
@@ -137,13 +155,14 @@ final class CollectionHelper
                 return $traverse($type);
             }
 
-            $models = $type->getTemplateType(EloquentCollection::class, 'TModel')->getObjectClassNames();
+            $templateType = $type->getTemplateType(EloquentCollection::class, 'TModel');
+            $models       = $templateType->getObjectClassNames();
 
-            if (count($models) === 0) {
-                return $type;
-            }
-
-            return TypeCombinator::union(...array_map([$this, 'determineCollectionType'], $models));
+            return match (count($models)) {
+                0 => $type,
+                1 => $this->determineCollectionType($models[0], $templateType) ?? $type,
+                default => TypeCombinator::union(...array_filter(array_map(fn ($m) => $this->determineCollectionType($m), $models))),
+            };
         });
     }
 

@@ -14,11 +14,11 @@ use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
-use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\IntegerType;
-use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
 
+use function collect;
+use function count;
 use function in_array;
 
 final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
@@ -79,29 +79,19 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
 
         $classNames = $modelType->getObjectClassNames();
 
-        if ($classNames !== [] && $modelType->isObject()->yes() && in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
-            $collectionClassName = $this->collectionHelper->determineCollectionClassName($classNames[0]);
-
-            $collectionReflection = $this->reflectionProvider->getClass($collectionClassName);
-
-            if (! $collectionReflection->isGeneric()) {
-                // Not generic. So return the type as is
-                return new ObjectType($collectionClassName);
-            }
-
-            $typeMap = $collectionReflection->getActiveTemplateTypeMap();
-
-            // Specifies key and value
-            if ($typeMap->count() === 2) {
-                return new GenericObjectType($collectionClassName, [new IntegerType(), $modelType]);
-            }
-
-            // Specifies only value
-            if (($typeMap->count() === 1) && $typeMap->hasType('TModel')) {
-                return new GenericObjectType($collectionClassName, [$modelType]);
-            }
+        if (count($classNames) === 0) {
+            return null;
         }
 
-        return null;
+        if (! in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
+            return null;
+        }
+
+        return TypeCombinator::union(
+            ...collect($classNames)
+                ->map(fn ($className) => $this->collectionHelper->determineCollectionType($className))
+                ->filter()
+                ->all(),
+        );
     }
 }
