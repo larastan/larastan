@@ -24,6 +24,8 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1718.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1760.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1830.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1997.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/bug-2057.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/carbon.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/conditionable.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/container-array-access.php');
@@ -58,7 +60,6 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/view-exists.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/view.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/where-relation.php');
-        yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1997.php');
 
         if (version_compare(LARAVEL_VERSION, '11.0.0', '<')) {
             yield from self::gatherAssertTypes(__DIR__ . '/data/custom-eloquent-builder.php');
