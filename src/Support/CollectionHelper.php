@@ -99,7 +99,7 @@ final class CollectionHelper
         }
     }
 
-    public function determineCollectionClass(string $modelClassName): Type
+    public function determineCollectionType(string $modelClassName, Type|null $modelType = null): Type
     {
         $collectionClassName  = $this->determineCollectionClassName($modelClassName);
         $collectionReflection = $this->reflectionProvider->getClass($collectionClassName);
@@ -143,7 +143,7 @@ final class CollectionHelper
                 return $type;
             }
 
-            return TypeCombinator::union(...array_map([$this, 'determineCollectionClass'], $models));
+            return TypeCombinator::union(...array_map([$this, 'determineCollectionType'], $models));
         });
     }
 

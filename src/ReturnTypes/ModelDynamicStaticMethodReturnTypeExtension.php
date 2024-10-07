@@ -124,7 +124,7 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
             $types = [];
 
             foreach ($modelNames as $modelName) {
-                $types[] = $this->collectionHelper->determineCollectionClass($modelName);
+                $types[] = $this->collectionHelper->determineCollectionType($modelName);
             }
 
             if ($types !== []) {
