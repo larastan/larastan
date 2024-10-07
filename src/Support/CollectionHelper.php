@@ -85,7 +85,7 @@ final class CollectionHelper
         }
     }
 
-    public function determineCollectionClass(string $modelClassName, Type|null $modelType = null): Type
+    public function determineCollectionType(string $modelClassName, Type|null $modelType = null): Type
     {
         $modelType ??= new ObjectType($modelClassName);
 
@@ -130,8 +130,8 @@ final class CollectionHelper
 
             return match (count($models)) {
                 0 => $type,
-                1 => $this->determineCollectionClass($models[0], $templateType),
-                default => TypeCombinator::union(...array_map(fn ($m) => $this->determineCollectionClass($m), $models)),
+                1 => $this->determineCollectionType($models[0], $templateType),
+                default => TypeCombinator::union(...array_map(fn ($m) => $this->determineCollectionType($m), $models)),
             };
         });
     }

@@ -171,7 +171,7 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
                 $types = [];
 
                 foreach ($relatedModelClassNames as $relatedModelClassName) {
-                    $types[] = $this->collectionHelper->determineCollectionClass($relatedModelClassName);
+                    $types[] = $this->collectionHelper->determineCollectionType($relatedModelClassName);
                 }
 
                 if ($types !== []) {
