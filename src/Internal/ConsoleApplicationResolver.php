@@ -18,9 +18,8 @@ final class ConsoleApplicationResolver
 {
     private Application|null $application = null;
 
-    public function __construct(
-        private bool $useContainerCommandLoader
-    ) {
+    public function __construct(private bool $useContainerCommandLoader)
+    {
     }
 
     /** @return Command[] */
