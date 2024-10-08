@@ -26,7 +26,6 @@ parameters:
     checkPhpDocMissingReturn: false
     checkUnusedViews: false
     checkModelAppends: false
-    useContainerCommandLoader: false
 
 parametersSchema:
     checkOctaneCompatibility: bool()
@@ -43,7 +42,6 @@ parametersSchema:
     checkModelProperties: bool()
     checkUnusedViews: bool()
     checkModelAppends: bool()
-    useContainerCommandLoader: bool()
 
 conditionalTags:
     Larastan\Larastan\Rules\NoEnvCallsOutsideOfConfigRule:

@@ -18,10 +18,6 @@ final class ConsoleApplicationResolver
 {
     private Application|null $application = null;
 
-    public function __construct(private bool $useContainerCommandLoader)
-    {
-    }
-
     /** @return Command[] */
     public function findCommands(ClassReflection $classReflection): array
     {
@@ -34,10 +30,6 @@ final class ConsoleApplicationResolver
         }
 
         $commands = [];
-
-        if ($this->useContainerCommandLoader) {
-            $consoleApplication->setContainerCommandLoader();
-        }
 
         foreach ($consoleApplication->all() as $name => $command) {
             if (! $classType->isSuperTypeOf(new ObjectType($command::class))->yes()) {
@@ -54,6 +46,7 @@ final class ConsoleApplicationResolver
     {
         if ($this->application === null) {
             $this->application = new Application(app(Container::class), app(Dispatcher::class), app()->version());
+            $this->application->setContainerCommandLoader();
         }
 
         return $this->application;
