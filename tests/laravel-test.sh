@@ -20,6 +20,7 @@ includes:
     - ./vendor/larastan/larastan/extension.neon
 parameters:
     level: 5
+    useContainerCommandLoader: true
     paths:
         - app/
 EOF
