@@ -535,7 +535,6 @@ services:
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
-
     -
         class: Larastan\Larastan\ReturnTypes\ConsoleCommand\HasOptionDynamicReturnTypeExtension
         tags:
@@ -561,8 +560,6 @@ services:
 
     -
         class: Larastan\Larastan\Internal\ConsoleApplicationResolver
-        arguments:
-            useContainerCommandLoader: %useContainerCommandLoader%
 
     -
         class: Larastan\Larastan\Internal\ConsoleApplicationHelper
