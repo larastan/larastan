@@ -6,13 +6,10 @@ namespace Larastan\Larastan\Internal;
 
 use Illuminate\Console\Application;
 use Illuminate\Console\Command;
-use Illuminate\Console\ContainerCommandLoader;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ObjectType;
-
-use Symfony\Component\Console\Exception\CommandNotFoundException;
 
 use function app;
 
