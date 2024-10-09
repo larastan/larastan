@@ -6,6 +6,7 @@ namespace Larastan\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Larastan\Larastan\Internal\LaravelVersion;
 use Larastan\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\ClassReflection;
@@ -72,7 +73,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
         $loopReflection = $classReflection;
 
         do {
-            $modelType = $loopReflection->getActiveTemplateTypeMap()->getType('TModelClass');
+            $modelType = $loopReflection->getActiveTemplateTypeMap()->getType(LaravelVersion::getBuilderModelGenericName());
 
             if ($modelType !== null) {
                 break;

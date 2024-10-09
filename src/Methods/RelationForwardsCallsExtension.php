@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Larastan\Larastan\Internal\LaravelVersion;
 use Larastan\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
@@ -18,6 +19,7 @@ use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 
+use PHPStan\Type\ThisType;
 use function array_key_exists;
 
 final class RelationForwardsCallsExtension implements MethodsClassReflectionExtension
@@ -94,25 +96,8 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
         $parametersAcceptor = $reflection->getVariants()[0];
         $returnType         = $parametersAcceptor->getReturnType();
 
-        $types = [$relatedModel];
-
-        // BelongsTo relation needs second generic type
-        if ((new ObjectType(BelongsTo::class))->isSuperTypeOf(new ObjectType($classReflection->getName()))->yes()) {
-            $childType = $classReflection->getActiveTemplateTypeMap()->getType('TChildModel');
-
-            if ($childType !== null) {
-                $types[] = $childType;
-            }
-        }
-
         if ((new ObjectType(Builder::class))->isSuperTypeOf($returnType)->yes()) {
-            return new EloquentBuilderMethodReflection(
-                $methodName,
-                $classReflection,
-                $parametersAcceptor->getParameters(),
-                new GenericObjectType($classReflection->getName(), $types),
-                $parametersAcceptor->isVariadic(),
-            );
+            $returnType = new ThisType($classReflection);
         }
 
         return new EloquentBuilderMethodReflection(

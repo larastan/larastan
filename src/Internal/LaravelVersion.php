@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Larastan\Larastan\Internal;
+
+final class LaravelVersion
+{
+    public static function hasLaravel1115Generics(): bool
+    {
+        return version_compare(self::getLaravelVersion(), '11.15.0', '>=');
+    }
+
+    public static function getBuilderModelGenericName(): string
+    {
+        return self::hasLaravel1115Generics() ? 'TModel' : 'TModelClass';
+    }
+
+    private static function getLaravelVersion(): string
+    {
+        return LARAVEL_VERSION;
+    }
+}

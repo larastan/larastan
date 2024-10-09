@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Larastan\Larastan\Concerns\HasContainer;
+use Larastan\Larastan\Internal\LaravelVersion;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
@@ -15,6 +16,7 @@ use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\ThisType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeUtils;
 use PHPStan\Type\UnionType;
@@ -107,7 +109,7 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
             ->relationParserHelper
             ->findRelatedModelInRelationMethod($methodReflection);
 
-        if ((new ObjectType(BelongsTo::class))->isSuperTypeOf($returnType)->yes()) {
+        if (!LaravelVersion::hasLaravel1115Generics() && (new ObjectType(BelongsTo::class))->isSuperTypeOf($returnType)->yes()) {
             $classReflection = $methodReflection->getDeclaringClass();
             $types           = [];
 
@@ -128,6 +130,11 @@ class ModelRelationsDynamicMethodReturnTypeExtension implements DynamicMethodRet
             return new GenericObjectType($returnTypeObjectClassNames[0], [
                 new ObjectType($relatedModelClassName),
                 $childType,
+            ]);
+        } elseif (LaravelVersion::hasLaravel1115Generics()) {
+            return new GenericObjectType($returnTypeObjectClassNames[0], [
+                new ObjectType($relatedModelClassName),
+                new ObjectType($methodReflection->getDeclaringClass()->getName()),
             ]);
         }
 
