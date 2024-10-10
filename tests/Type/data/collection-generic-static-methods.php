@@ -61,10 +61,10 @@ function test(
     assertType('Illuminate\Support\Collection<App\User, int>', $collection->flip());
     assertType('Illuminate\Support\Collection<int, string>', $items->flip());
 
-    assertType('Illuminate\Database\Eloquent\Collection<(int|string), Illuminate\Database\Eloquent\Collection<(int|string), App\User>>', $collection->groupBy('id'));
-    assertType('Illuminate\Support\Collection<(int|string), Illuminate\Support\Collection<(int|string), int>>', $items->groupBy('id'));
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), Illuminate\Database\Eloquent\Collection<int, App\User>>', $collection->groupBy('id'));
+    assertType('Illuminate\Support\Collection<(int|string), Illuminate\Support\Collection<int, int>>', $items->groupBy('id'));
 
-    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', $collection->keyBy(fn (User $user, int $key): string => $user->email));
+    assertType('Illuminate\Database\Eloquent\Collection<string, App\User>', $collection->keyBy(fn (User $user, int $key): string => $user->email));
 
     assertType('Illuminate\Support\Collection<int, int>', $collection->keys());
     assertType('Illuminate\Support\Collection<int, string>', $items->keys());
@@ -227,7 +227,7 @@ function test(
         LazyCollection::times(10, fn ($int) => 5)->flatMap(fn (int $i) => [$i * 2]),
     );
 
-    assertType('Illuminate\Support\Collection<(int|string), Illuminate\Support\Collection<(int|string), array{id: int, type: string}>>', collect([
+    assertType('Illuminate\Support\Collection<(int|string), Illuminate\Support\Collection<int, array{id: int, type: string}>>', collect([
         [
             'id'   => 1,
             'type' => 'A',

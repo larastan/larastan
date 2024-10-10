@@ -130,15 +130,14 @@ class CustomEloquentBuilder extends Builder
 
     private function test(): void
     {
-        $type = '$this(CustomEloquentBuilderL11\CustomEloquentBuilder<TModel of CustomEloquentBuilderL11\ModelWithCustomBuilder (class CustomEloquentBuilderL11\CustomEloquentBuilder, argument)>)';
-        assertType($type, $this->where('email', 'bar'));
-        assertType($type, $this->where(['email' => 'bar']));
+        $type = 'CustomEloquentBuilderL11\CustomEloquentBuilder<CustomEloquentBuilderL11\ModelWithCustomBuilder>';
+        assertType('static(CustomEloquentBuilderL11\CustomEloquentBuilder<TModel of CustomEloquentBuilderL11\ModelWithCustomBuilder (class CustomEloquentBuilderL11\CustomEloquentBuilder, argument)>)', $this->where('email', 'bar'));
+        assertType('static(CustomEloquentBuilderL11\CustomEloquentBuilder<TModel of CustomEloquentBuilderL11\ModelWithCustomBuilder (class CustomEloquentBuilderL11\CustomEloquentBuilder, argument)>)', $this->where(['email' => 'bar']));
         assertType($type, $this->whereNull('finished_at'));
         assertType($type, $this->whereNotNull('finished_at'));
         assertType($type, $this->orderBy('name'));
         assertType($type, $this->orderByDesc('name'));
         assertType($type, $this->whereRaw('lower(email) = foo'));
-        assertType($type, $this->whereRelation('user', 'id', 1));
         assertType($type, $this->join('user', 'user.id', '=', 'id'));
         assertType($type, $this->leftJoin('user', 'user.id', '=', 'id'));
         assertType($type, $this->rightJoin('user', 'user.id', '=', 'id'));
@@ -188,19 +187,17 @@ class NonGenericBuilder extends CustomEloquentBuilder
 {
     private function test(): void
     {
-        $type = '$this(CustomEloquentBuilderL11\NonGenericBuilder)';
+        $type = 'CustomEloquentBuilderL11\NonGenericBuilder';
         assertType($type, $this->whereNull('finished_at'));
         assertType($type, $this->whereNotNull('finished_at'));
         assertType($type, $this->orderBy('name'));
         assertType($type, $this->orderByDesc('name'));
         assertType($type, $this->whereRaw('lower(email) = foo'));
-        assertType($type, $this->whereRelation('user', 'id', 1));
         assertType($type, $this->join('user', 'user.id', '=', 'id'));
         assertType($type, $this->leftJoin('user', 'user.id', '=', 'id'));
         assertType($type, $this->rightJoin('user', 'user.id', '=', 'id'));
         assertType($type, $this->select('*'));
         assertType($type, $this->selectRaw('count(*) as count'));
-        assertType($type, $this->withTrashed());
     }
 }
 

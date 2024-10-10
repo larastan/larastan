@@ -34,19 +34,19 @@ class IntegrationTest extends PHPStanTestCase
         yield [
             __DIR__ . '/data/model-property-builder.php',
             [
-                15 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::firstWhere() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
-                16 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::firstWhere() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'id\'|\'unionNotExisting\' given.'],
-                17 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::where() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
-                19 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::where() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
-                20 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::where() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
-                24 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::where() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, string given.'],
-                25 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::orWhere() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
-                26 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::orWhere() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
-                27 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::orWhere() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, array{foo: \'foo\'} given.'],
+                15 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::firstWhere() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): mixed)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
+                16 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::firstWhere() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): mixed)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'id\'|\'unionNotExisting\' given.'],
+                17 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::where() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): mixed)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
+                19 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::where() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): mixed)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
+                20 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::where() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): mixed)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
+                24 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::where() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): mixed)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, string given.'],
+                25 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::orWhere() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): mixed)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
+                26 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::orWhere() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): mixed)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
+                27 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::orWhere() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): mixed)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, array{foo: \'foo\'} given.'],
                 30 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::value() expects Illuminate\Contracts\Database\Query\Expression|model property of App\User, string given.'],
                 35 => ['Parameter #1 $columns of method Illuminate\Database\Eloquent\Builder<App\User>::first() expects array<int, model property of App\User>|model property of App\User, array<int, string> given.'],
                 36 => ['Parameter #1 $columns of method Illuminate\Database\Eloquent\Builder<App\User>::first() expects array<int, model property of App\User>|model property of App\User, string given.'],
-                39 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::where() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'roles.foo\' given.'],
+                39 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::where() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): mixed)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'roles.foo\' given.'],
             ],
         ];
 
@@ -70,17 +70,26 @@ class IntegrationTest extends PHPStanTestCase
             ],
         ];
 
-        yield [
-            __DIR__ . '/data/model-property-relation.php',
-            [
-                4 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Relations\HasMany<App\Account>::where() expects array<int|model property of App\Account, mixed>|(Closure(Illuminate\Database\Eloquent\Relations\HasMany<App\Account>): Illuminate\Database\Eloquent\Relations\HasMany<App\Account>)|(Closure(Illuminate\Database\Eloquent\Relations\HasMany<App\Account>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\Account, \'foo\' given.'],
-                5 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account>::create() expects array<model property of App\Account, mixed>, array<string, string> given.'],
-                6 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account>::firstOrNew() expects array<model property of App\Account, mixed>, array<string, string> given.'],
-                7 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account>::firstOrCreate() expects array<model property of App\Account, mixed>, array<string, string> given.'],
-                8 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account>::updateOrCreate() expects array<model property of App\Account, mixed>, array<string, string> given.'],
-                10 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Post>::where() expects array<int|model property of App\Post, mixed>|(Closure(Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Post>): Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Post>)|(Closure(Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Post>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\Post, \'foo\' given.'],
-            ],
-        ];
+        if (version_compare(LARAVEL_VERSION, '11.0.0', '<')) {
+            yield [
+                __DIR__ . '/data/model-property-relation.php',
+                [
+                    4 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Relations\HasMany<App\Account>::where() expects array<int|model property of App\Account, mixed>|(Closure(Illuminate\Database\Eloquent\Relations\HasMany<App\Account>): mixed)|Illuminate\Contracts\Database\Query\Expression|model property of App\Account, \'foo\' given.'],
+                    5 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account>::create() expects array<model property of App\Account, mixed>, array<string, string> given.'],
+                    6 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account>::firstOrNew() expects array<model property of App\Account, mixed>, array<string, string> given.'],
+                    7 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account>::firstOrCreate() expects array<model property of App\Account, mixed>, array<string, string> given.'],
+                    8 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account>::updateOrCreate() expects array<model property of App\Account, mixed>, array<string, string> given.'],
+                    10 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Post>::where() expects array<int|model property of App\Post, mixed>|(Closure(Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Post>): mixed)|Illuminate\Contracts\Database\Query\Expression|model property of App\Post, \'foo\' given.'],
+                ],
+            ];
+
+            yield [
+                __DIR__ . '/data/model-property-relation-l10-20.php',
+                [
+                    4 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account>::createOrFirst() expects array<model property of App\Account, mixed>, array<string, string> given.'],
+                ],
+            ];
+        }
 
         yield [
             __DIR__ . '/data/model-property-static-call.php',
@@ -94,20 +103,20 @@ class IntegrationTest extends PHPStanTestCase
 
         yield [__DIR__ . '/data/eloquent-builder-l10.php'];
 
-        if (version_compare(LARAVEL_VERSION, '11.0.0', '<')) {
+        if (version_compare(LARAVEL_VERSION, '11.15.0', '<')) {
             return;
         }
 
         yield [
             __DIR__ . '/data/model-property-relation-l11-15.php',
             [
-                4 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Relations\HasMany<App\Account,App\User>::where() expects array<model property of App\Account, mixed>|(Closure(Illuminate\Database\Eloquent\Relations\HasMany<App\Account, App\User>): mixed)|Illuminate\Contracts\Database\Query\Expression|model property of App\Account, \'foo\' given.'],
+                4 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Relations\HasMany<App\Account,App\User>::where() expects array<int|model property of App\Account, mixed>|(Closure(Illuminate\Database\Eloquent\Relations\HasMany<App\Account, App\User>): mixed)|Illuminate\Contracts\Database\Query\Expression|model property of App\Account, \'foo\' given.'],
                 5 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::create() expects array<model property of App\Account, mixed>, array<string, string> given.'],
                 6 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::firstOrNew() expects array<model property of App\Account, mixed>, array<string, string> given.'],
                 7 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::firstOrCreate() expects array<model property of App\Account, mixed>, array<string, string> given.'],
                 8 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::createOrFirst() expects array<model property of App\Account, mixed>, array<string, string> given.'],
                 9 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::updateOrCreate() expects array<model property of App\Account, mixed>, array<string, string> given.'],
-                11 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Post,App\User>::where() expects array<model property of App\Post, mixed>|(Closure(Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Post, App\User>): mixed)|Illuminate\Contracts\Database\Query\Expression|model property of App\Post, \'foo\' given.'],
+                11 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Post,App\User>::where() expects array<int|model property of App\Post, mixed>|(Closure(Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Post, App\User>): mixed)|Illuminate\Contracts\Database\Query\Expression|model property of App\Post, \'foo\' given.'],
             ],
         ];
     }
@@ -142,13 +151,12 @@ class IntegrationTest extends PHPStanTestCase
     {
         $file = $this->getFileHelper()->normalizePath($file);
 
-        /** @var Analyser $analyser */
-        $analyser = self::getContainer()->getByType(Analyser::class); // @phpstan-ignore-line
-
-        /** @var FileHelper $fileHelper */
+        /** @phpstan-ignore phpstanApi.classConstant (not covered by BC promise) */
+        $analyser   = self::getContainer()->getByType(Analyser::class);
         $fileHelper = self::getContainer()->getByType(FileHelper::class);
 
-        $errors = $analyser->analyse([$file], null, null, true, $allAnalysedFiles)->getErrors(); // @phpstan-ignore-line
+        /** @phpstan-ignore phpstanApi.method, phpstanApi.method (not covered by BC promise) */
+        $errors = $analyser->analyse([$file], null, null, true, $allAnalysedFiles)->getErrors();
 
         foreach ($errors as $error) {
             $this->assertSame($fileHelper->normalizePath($file), $error->getFilePath());

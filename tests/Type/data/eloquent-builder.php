@@ -328,7 +328,7 @@ function test(
     assertType('App\Team|App\User', $userOrTeamBuilder->findOrFail(4));
     assertType('Illuminate\Database\Eloquent\Builder<App\Team|App\User>', $userOrTeamBuilder->where('id', 5));
 
-    assertType('Illuminate\Database\Eloquent\Builder<TModel of Illuminate\Database\Eloquent\Model (function EloquentBuilder\test(), argument)>', $templateBuilder->select());
+    assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $templateBuilder->select());
 }
 
 class Foo extends Model

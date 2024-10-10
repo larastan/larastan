@@ -16,15 +16,21 @@ use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntegerType;
+use PHPStan\Type\IntersectionType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\TypeTraverser;
+use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
 use Traversable;
 
+use function array_map;
 use function array_values;
 use function count;
+use function in_array;
 
 final class CollectionHelper
 {
@@ -79,8 +85,10 @@ final class CollectionHelper
         }
     }
 
-    public function determineCollectionClass(string $modelClassName): Type
+    public function determineCollectionClass(string $modelClassName, Type|null $modelType = null): Type
     {
+        $modelType ??= new ObjectType($modelClassName);
+
         $collectionClassName  = $this->determineCollectionClassName($modelClassName);
         $collectionReflection = $this->reflectionProvider->getClass($collectionClassName);
 
@@ -89,17 +97,43 @@ final class CollectionHelper
 
             // Specifies key and value
             if ($typeMap->count() === 2) {
-                return new GenericObjectType($collectionClassName, [new IntegerType(), new ObjectType($modelClassName)]);
+                return new GenericObjectType($collectionClassName, [new IntegerType(), $modelType]);
             }
 
             // Specifies only value
             if (($typeMap->count() === 1) && $typeMap->hasType('TModel')) {
-                return new GenericObjectType($collectionClassName, [new ObjectType($modelClassName)]);
+                return new GenericObjectType($collectionClassName, [$modelType]);
             }
         }
 
         // Not generic. So return the type as is
         return new ObjectType($collectionClassName);
+    }
+
+    public function replaceCollectionsInType(Type $type): Type
+    {
+        if (! in_array(EloquentCollection::class, $type->getReferencedClasses(), true)) {
+            return $type;
+        }
+
+        return TypeTraverser::map($type, function ($type, $traverse): Type {
+            if ($type instanceof UnionType || $type instanceof IntersectionType) {
+                return $traverse($type);
+            }
+
+            if (! (new ObjectType(EloquentCollection::class))->isSuperTypeOf($type)->yes()) {
+                return $traverse($type);
+            }
+
+            $templateType = $type->getTemplateType(EloquentCollection::class, 'TModel');
+            $models       = $templateType->getObjectClassNames();
+
+            return match (count($models)) {
+                0 => $type,
+                1 => $this->determineCollectionClass($models[0], $templateType),
+                default => TypeCombinator::union(...array_map(fn ($m) => $this->determineCollectionClass($m), $models)),
+            };
+        });
     }
 
     private function getTypeFromEloquentCollection(ClassReflection $classReflection): GenericObjectType|null

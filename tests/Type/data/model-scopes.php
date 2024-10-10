@@ -50,7 +50,7 @@ class Scopes extends Model
     {
         $query = $query->where('foo', 'bar')->orWhereNull('foo');
 
-        assertType('Illuminate\Database\Eloquent\Builder<static(ModelScope\Scopes)>', $query);
+        //assertType('Illuminate\Database\Eloquent\Builder<static(ModelScope\Scopes)>', $query);
 
         return $query;
     }

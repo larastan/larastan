@@ -18,23 +18,6 @@ class Builder
      */
     public function make(array $attributes = []);
 
-    /**
-     * Register a new global scope.
-     *
-     * @param  string  $identifier
-     * @param  \Illuminate\Database\Eloquent\Scope|\Closure  $scope
-     * @return static
-     */
-    public function withGlobalScope($identifier, $scope);
-
-    /**
-     * Remove a registered global scope.
-     *
-     * @param  \Illuminate\Database\Eloquent\Scope|string  $scope
-     * @return static
-     */
-    public function withoutGlobalScope($scope);
-
     /** @phpstan-return TModelClass */
     public function getModel();
 
@@ -229,7 +212,7 @@ class Builder
     /**
      * Add a basic where clause to the query.
      *
-     * @param  (\Closure(static): void)|(\Closure(static): static)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @param  (\Closure(static): mixed)|model-property<TModelClass>|array<int|model-property<TModelClass>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
@@ -240,10 +223,10 @@ class Builder
     /**
      * Add an "or where" clause to the query.
      *
-     * @param  (\Closure(static): void)|(\Closure(static): static)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @param  (\Closure(static): mixed)|model-property<TModelClass>|array<int|model-property<TModelClass>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
-     * @return $this
+     * @return static
      */
     public function orWhere($column, $operator = null, $value = null);
 
@@ -426,7 +409,7 @@ class Builder
     /**
      * Add a basic where clause to the query, and return the first result.
      *
-     * @param  (\Closure(static): void)|(\Closure(static): static)|model-property<TModelClass>|array<model-property<TModelClass>|int, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @param  (\Closure(static): mixed)|model-property<TModelClass>|array<int|model-property<TModelClass>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean

@@ -7,6 +7,7 @@ namespace Larastan\Larastan\ReturnTypes;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
+use Larastan\Larastan\Internal\LaravelVersion;
 use Larastan\Larastan\Support\CollectionHelper;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
@@ -53,11 +54,11 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
 
         $templateTypeMap = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap();
 
-        if (! $templateTypeMap->hasType('TModelClass')) {
+        if (! $templateTypeMap->hasType(LaravelVersion::getBuilderModelGenericName())) {
             return false;
         }
 
-        if ($templateTypeMap->getType('TModelClass')?->getObjectClassNames() === []) {
+        if ($templateTypeMap->getType(LaravelVersion::getBuilderModelGenericName())?->getObjectClassNames() === []) {
             return false;
         }
 
@@ -72,7 +73,7 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
         $returnType      = ParametersAcceptorSelector::selectFromArgs($scope, $methodCall->getArgs(), $methodReflection->getVariants())->getReturnType();
         $templateTypeMap = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap();
 
-        $modelType = $templateTypeMap->getType('TModelClass');
+        $modelType = $templateTypeMap->getType(LaravelVersion::getBuilderModelGenericName());
         if ($modelType === null) {
             return null;
         }

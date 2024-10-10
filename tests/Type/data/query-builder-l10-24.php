@@ -44,7 +44,7 @@ function test(): void
 
     assertType('Illuminate\Database\Query\Builder', $builder);
 
-    assertType('mixed', DB::table('users')->find(1, [DB::raw('email_verified_at')]));
+    assertType('object|null', DB::table('users')->find(1, [DB::raw('email_verified_at')]));
     assertType('mixed', DB::table('users')->aggregate('sum', [DB::raw('id')]));
     assertType('float|int', DB::table('users')->numericAggregate('sum', [DB::raw('id')]));
     assertType('float|int|numeric-string', DB::table('users')->sum(DB::raw('id')));

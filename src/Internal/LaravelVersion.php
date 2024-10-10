@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Internal;
 
+use function version_compare;
+
 final class LaravelVersion
 {
     public static function hasLaravel1115Generics(): bool

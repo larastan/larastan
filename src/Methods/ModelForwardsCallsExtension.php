@@ -168,8 +168,13 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
             };
         }
 
-        $builderReflection          = $this->reflectionProvider->getClass($builderName)->withTypes([new ObjectType($classReflection->getName())]);
-        $genericBuilderAndModelType = new GenericObjectType($builderName, [new ObjectType($classReflection->getName())]);
+        $builderReflection = $this->reflectionProvider->getClass($builderName)->withTypes([new ObjectType($classReflection->getName())]);
+
+        if ($builderReflection->isGeneric()) {
+            $genericBuilderAndModelType = new GenericObjectType($builderName, [new ObjectType($classReflection->getName())]);
+        } else {
+            $genericBuilderAndModelType = new ObjectType($builderName);
+        }
 
         if ($builderReflection->hasNativeMethod($methodName)) {
             $reflection = $builderReflection->getNativeMethod($methodName);
@@ -200,7 +205,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
         return null;
     }
 
-    private function transformStaticParameters(MethodReflection $method, GenericObjectType $builder): ParametersAcceptor
+    private function transformStaticParameters(MethodReflection $method, ObjectType $builder): ParametersAcceptor
     {
         $acceptor = $method->getVariants()[0];
 
@@ -218,7 +223,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
         }, $acceptor->getParameters()), $acceptor->isVariadic(), $this->transformStaticType($acceptor->getReturnType(), $builder));
     }
 
-    private function transformStaticType(Type $type, GenericObjectType $builder): Type
+    private function transformStaticType(Type $type, ObjectType $builder): Type
     {
         return TypeTraverser::map($type, static function (Type $type, callable $traverse) use ($builder): Type {
             if ($type instanceof StaticType) {

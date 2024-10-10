@@ -1,6 +1,6 @@
 <?php
 
-namespace ModelPropertiesRelations;
+namespace ModelPropertiesRelationsL1115;
 
 use App\Account;
 use App\User;
@@ -16,36 +16,37 @@ use function PHPStan\Testing\assertType;
 /** @property string $name */
 class Foo extends Model
 {
-    /** @return HasMany<Bar> */
+    /** @return HasMany<Bar, $this> */
     public function hasManyRelation(): HasMany
     {
         return $this->hasMany(Bar::class);
     }
 
-    /** @return HasManyThrough<Bar> */
+    /** @return HasManyThrough<Bar, $this> */
     public function hasManyThroughRelation(): HasManyThrough
     {
         return $this->hasManyThrough(Bar::class, User::class);
     }
 
-    /** @return HasOneThrough<Baz> */
+    /** @return HasOneThrough<Baz, User, $this> */
     public function hasOneThroughRelation(): HasOneThrough
     {
         return $this->hasOneThrough(Baz::class, User::class);
     }
 
+    /** @return HasMany<Bar, $this>|BelongsTo<Bar, $this> */
     public function relationReturningUnion(): HasMany|BelongsTo
     {
         return $this->name === 'foo' ? $this->hasMany(Bar::class) : $this->belongsTo(Baz::class);
     }
 
-    /** @return HasMany<Bar>|BelongsTo<Baz, Foo> */
+    /** @return HasMany<Bar, $this>|BelongsTo<Baz, Foo> */
     public function relationReturningUnion2(): HasMany|BelongsTo
     {
         return $this->name === 'foo' ? $this->hasMany(Bar::class) : $this->belongsTo(Baz::class);
     }
 
-    /** @return Ancestors<Foo> */
+    /** @return Ancestors<Foo, $this> */
     public function ancestors(): Ancestors
     {
         //
@@ -80,23 +81,29 @@ class Baz extends Model
 {
 }
 
+/**
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ *
+ * @extends HasMany<TRelatedModel, TDeclaringModel>
+ */
 class Ancestors extends HasMany
 {
 }
 
 function test(Foo $foo, Bar $bar, Account $account): void
 {
-    assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelations\Bar>', $foo->hasManyRelation);
-    assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelations\Bar>', $foo->hasManyThroughRelation);
-    assertType('ModelPropertiesRelations\Baz|null', $foo->hasOneThroughRelation);
-    assertType('ModelPropertiesRelations\Foo', $bar->belongsToRelation);
+    assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelationsL1115\Bar>', $foo->hasManyRelation);
+    assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelationsL1115\Bar>', $foo->hasManyThroughRelation);
+    assertType('ModelPropertiesRelationsL1115\Baz|null', $foo->hasOneThroughRelation);
+    assertType('ModelPropertiesRelationsL1115\Foo', $bar->belongsToRelation);
     assertType('Illuminate\Database\Eloquent\Model|null', $bar->morphToRelation);
     assertType('App\Account|App\User|null', $bar->morphToUnionRelation);
-    assertType('ModelPropertiesRelations\Bar|null', $foo->hasManyRelation->first());
-    assertType('ModelPropertiesRelations\Bar|null', $foo->hasManyRelation()->find(1));
+    assertType('ModelPropertiesRelationsL1115\Bar|null', $foo->hasManyRelation->first());
+    assertType('ModelPropertiesRelationsL1115\Bar|null', $foo->hasManyRelation()->find(1));
     assertType('App\User|null', $account->ownerRelation);
-    assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Model>|Illuminate\Database\Eloquent\Model|null', $foo->relationReturningUnion);
-    assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelations\Bar>|ModelPropertiesRelations\Baz|null', $foo->relationReturningUnion2);
-    assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelations\Foo>', $foo->ancestors);
+    assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelationsL1115\Bar>|ModelPropertiesRelationsL1115\Bar|null', $foo->relationReturningUnion);
+    assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelationsL1115\Bar>|ModelPropertiesRelationsL1115\Baz|null', $foo->relationReturningUnion2);
+    assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelationsL1115\Foo>', $foo->ancestors);
 }
 

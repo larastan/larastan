@@ -5,6 +5,9 @@ includes:
     - phpstan-baseline.neon
 parameters:
     level: 8
+    dynamicConstantNames:
+        - LARAVEL_VERSION
     phpVersion: 80200
+    reportUnmatchedIgnoredErrors: false
     paths:
         - src

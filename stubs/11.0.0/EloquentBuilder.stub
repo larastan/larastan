@@ -170,28 +170,28 @@ class Builder
     /**
      * Add a basic where clause to the query.
      *
-     * @param  (\Closure(static): mixed)|model-property<TModel>|array<model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @param  (\Closure(static): mixed)|model-property<TModel>|array<int|model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
-     * @return $this
+     * @return static
      */
     public function where($column, $operator = null, $value = null, $boolean = 'and');
 
     /**
      * Add an "or where" clause to the query.
      *
-     * @param  (\Closure(static): mixed)|model-property<TModel>|array<model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @param  (\Closure(static): mixed)|model-property<TModel>|array<int|model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
-     * @return $this
+     * @return static
      */
     public function orWhere($column, $operator = null, $value = null);
 
     /**
      * Add a basic where clause to the query, and return the first result.
      *
-     * @param  (\Closure(static): mixed)|model-property<TModel>|array<model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @param  (\Closure(static): mixed)|model-property<TModel>|array<int|model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean

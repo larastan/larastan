@@ -247,7 +247,7 @@ class ModelCastHelper
 
         $modelCasts = $modelInstance->getCasts();
 
-        if (version_compare(LARAVEL_VERSION, '11.0.0', '>=')) { // @phpstan-ignore-line
+        if (version_compare(LARAVEL_VERSION, '11.0.0', '>=')) {
             $castsMethodReturnType = $modelClassReflection->getMethod(
                 'casts',
                 new OutOfClassScope(),

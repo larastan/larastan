@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
+use Larastan\Larastan\Internal\LaravelVersion;
 use Larastan\Larastan\Methods\ModelTypeHelper;
 use Larastan\Larastan\Support\CollectionHelper;
 use PhpParser\Node\Expr\MethodCall;
@@ -45,7 +46,7 @@ final class BuilderModelFindExtension implements DynamicMethodReturnTypeExtensio
             return false;
         }
 
-        $model = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TModelClass');
+        $model = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType(LaravelVersion::getBuilderModelGenericName());
 
         if ($model === null || $model->getObjectClassNames() === []) {
             return false;
@@ -65,7 +66,7 @@ final class BuilderModelFindExtension implements DynamicMethodReturnTypeExtensio
         }
 
         /** @var Type $modelClassType */
-        $modelClassType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TModelClass');
+        $modelClassType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType(LaravelVersion::getBuilderModelGenericName());
 
         if ((new ObjectType(Model::class))->isSuperTypeOf($modelClassType)->no()) {
             return null;

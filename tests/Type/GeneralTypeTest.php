@@ -41,7 +41,6 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/higher-order-collection-proxy-methods.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/model-factories.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/model-methods.php');
-        yield from self::gatherAssertTypes(__DIR__ . '/data/model-properties-relations.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/model-properties.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/model-scopes.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/model.php');
@@ -83,10 +82,13 @@ class GeneralTypeTest extends TypeInferenceTestCase
             yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1819.php');
         }
 
-        if (version_compare(LARAVEL_VERSION, '11.0.0', '>=')) {
+        if (version_compare(LARAVEL_VERSION, '11.15.0', '>=')) {
             yield from self::gatherAssertTypes(__DIR__ . '/data/custom-eloquent-builder-l11-15.php');
             yield from self::gatherAssertTypes(__DIR__ . '/data/model-properties-l11.php');
             yield from self::gatherAssertTypes(__DIR__ . '/data/model-relations-l11-15.php');
+            yield from self::gatherAssertTypes(__DIR__ . '/data/model-properties-relations-l11-15.php');
+        } else {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/model-properties-relations.php');
         }
 
         //##############################################################################################################
