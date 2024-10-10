@@ -4,6 +4,7 @@ namespace Tests\Rules\Data;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Mail\Mailable;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Route;
 use Illuminate\View\Factory;
 
@@ -30,7 +31,20 @@ class FooController
     }
 }
 
-class FooEmail extends Mailable
+class FooMailable extends Mailable
+{
+    public function build(): self
+    {
+        return $this->markdown('emails.markdown');
+    }
+
+    public function bar(): self
+    {
+        return $this->view('emails.view');
+    }
+}
+
+class FooMailMessage extends MailMessage
 {
     public function build(): self
     {
