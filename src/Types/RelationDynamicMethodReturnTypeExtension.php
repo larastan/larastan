@@ -6,15 +6,18 @@ namespace Larastan\Larastan\Types;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Larastan\Larastan\Internal\LaravelVersion;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\StaticType;
 use PHPStan\Type\Type;
 
 use function array_map;
@@ -22,10 +25,13 @@ use function array_slice;
 use function array_values;
 use function count;
 use function in_array;
-use function version_compare;
 
 class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
+    public function __construct(private ReflectionProvider $provider)
+    {
+    }
+
     public function getClass(): string
     {
         return Model::class;
@@ -58,6 +64,10 @@ class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTyp
             ->getReturnType();
 
         $classNames = $returnType->getObjectClassNames();
+
+        if (! LaravelVersion::hasLaravel1115Generics()) {
+            return $this->getTypeForLaravelLessThan1115($methodReflection, $methodCall, $scope, $returnType, $classNames);
+        }
 
         if (count($classNames) !== 1) {
             return null;
@@ -98,14 +108,58 @@ class RelationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTyp
         $types   = array_map(static fn ($model) => new ObjectType((string) $model), $models);
         $types[] = $scope->getType($methodCall->var);
 
-        if (
-            version_compare(LARAVEL_VERSION, '11.0.0', '<')
-            && ! (new ObjectType(BelongsTo::class))->isSuperTypeOf($returnType)->yes()
-        ) {
-            // Only BelongsTo has more than one type
-            $types = [$types[0]];
+        return new GenericObjectType($classNames[0], $types);
+    }
+
+    /**
+     * @param string[] $classNames
+     *
+     * @throws ShouldNotHappenException
+     */
+    private function getTypeForLaravelLessThan1115(
+        MethodReflection $methodReflection,
+        MethodCall $methodCall,
+        Scope $scope,
+        Type $returnType,
+        array $classNames,
+    ): Type|null {
+        if (count($classNames) !== 1) {
+            return null;
         }
 
-        return new GenericObjectType($classNames[0], $types);
+        $calledOnType = $scope->getType($methodCall->var);
+
+        if ($calledOnType instanceof StaticType) {
+            $calledOnType = new ObjectType($calledOnType->getClassName());
+        }
+
+        if (count($methodCall->getArgs()) === 0) {
+            // Special case for MorphTo. `morphTo` can be called without arguments.
+            if ($methodReflection->getName() === 'morphTo') {
+                return new GenericObjectType($classNames[0], [new ObjectType(Model::class), $calledOnType]);
+            }
+
+            return null;
+        }
+
+        $argType    = $scope->getType($methodCall->getArgs()[0]->value);
+        $argStrings = $argType->getConstantStrings();
+
+        if (count($argStrings) !== 1) {
+            return null;
+        }
+
+        $argClassName = $argStrings[0]->getValue();
+
+        if (! $this->provider->hasClass($argClassName)) {
+            $argClassName = Model::class;
+        }
+
+        // Special case for BelongsTo. We need to add the child model as a generic type also.
+        if ((new ObjectType(BelongsTo::class))->isSuperTypeOf($returnType)->yes()) {
+            return new GenericObjectType($classNames[0], [new ObjectType($argClassName), $calledOnType]);
+        }
+
+        return new GenericObjectType($classNames[0], [new ObjectType($argClassName)]);
     }
 }
