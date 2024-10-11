@@ -46,6 +46,7 @@ final class ConsoleApplicationResolver
     {
         if ($this->application === null) {
             $this->application = new Application(app(Container::class), app(Dispatcher::class), app()->version());
+            $this->application->setContainerCommandLoader();
         }
 
         return $this->application;
