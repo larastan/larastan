@@ -24,6 +24,7 @@ use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
 
 use function count;
+use function explode;
 use function sprintf;
 use function str_contains;
 
