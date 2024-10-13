@@ -544,6 +544,28 @@ class Builder
      * @return bool
      */
     public function chunk($count, $callback);
+
+    /**
+     * Chunk the results of a query by comparing IDs.
+     *
+     * @param  int  $count
+     * @param  callable(\Illuminate\Database\Eloquent\Collection<int, TModelClass>, int): mixed  $callback
+     * @param  string|null  $column
+     * @param  string|null  $alias
+     * @return bool
+     */
+    public function chunkById($count, callable $callback, $column = null, $alias = null);
+
+    /**
+     * Run a map over each item while chunking.
+     *
+     * @template TReturn
+     *
+     * @param  callable(TModelClass): TReturn  $callback
+     * @param  int  $count
+     * @return \Illuminate\Support\Collection<int, TReturn>
+     */
+    public function chunkMap(callable $callback, $count = 1000);
 }
 
 class Scope {}
