@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Collectors;
 
 use Illuminate\Mail\Mailable;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\View\ViewName;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
@@ -42,7 +43,11 @@ final class UsedEmailViewCollector implements Collector
 
         $class = $node->var;
 
-        if (! (new ObjectType(Mailable::class))->isSuperTypeOf($scope->getType($class))->yes()) {
+        $type = $scope->getType($class);
+        if (
+            ! (new ObjectType(Mailable::class))->isSuperTypeOf($type)->yes()
+            && ! (new ObjectType(MailMessage::class))->isSuperTypeOf($type)->yes()
+        ) {
             return null;
         }
 
