@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Unit;
 
+use App\User;
 use Generator;
 use Larastan\Larastan\ReturnTypes\ModelFactoryDynamicStaticMethodReturnTypeExtension;
 use Larastan\Larastan\Types\Factory\ModelFactoryType;
@@ -12,7 +13,7 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\LNumber;
 use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\Dummy\DummyMethodReflection;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Testing\PHPStanTestCase;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\Accessory\AccessoryNumericStringType;
@@ -31,15 +32,30 @@ use PHPStan\Type\UnionType;
 
 class ModelFactoryDynamicStaticMethodReturnTypeExtensionTest extends PHPStanTestCase
 {
+    private ReflectionProvider $reflectionProvider;
+
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->reflectionProvider = $this->createReflectionProvider();
+    }
+
     /** @test */
     public function it_sets_the_is_single_model_flag_to_true_if_no_args_given(): void
     {
-        $scope     = $this->createMock(Scope::class);
-        $extension = new ModelFactoryDynamicStaticMethodReturnTypeExtension();
+        $class = new Name(User::class);
+
+        $scope = $this->createMock(Scope::class);
+        $scope->method('resolveName')->with($class)->willReturn(User::class);
+
+        $extension = new ModelFactoryDynamicStaticMethodReturnTypeExtension(
+            $this->createReflectionProvider(),
+        );
 
         $type = $extension->getTypeFromStaticMethodCall(
-            new DummyMethodReflection('factory'), // @phpstan-ignore-line
-            new StaticCall(new Name('App\\User'), 'factory', []),
+            $this->reflectionProvider->getClass(User::class)->getNativeMethod('factory'),
+            new StaticCall($class, 'factory', []),
             $scope,
         );
 
@@ -53,14 +69,19 @@ class ModelFactoryDynamicStaticMethodReturnTypeExtensionTest extends PHPStanTest
      */
     public function it_sets_the_is_single_model_flag_correctly(Type $phpstanType, TrinaryLogic $expected): void
     {
-        $scope     = $this->createMock(Scope::class);
-        $extension = new ModelFactoryDynamicStaticMethodReturnTypeExtension();
+        $class = new Name(User::class);
 
+        $scope = $this->createMock(Scope::class);
+        $scope->method('resolveName')->with($class)->willReturn(User::class);
         $scope->method('getType')->willReturn($phpstanType);
 
+        $extension = new ModelFactoryDynamicStaticMethodReturnTypeExtension(
+            $this->createReflectionProvider(),
+        );
+
         $type = $extension->getTypeFromStaticMethodCall(
-            new DummyMethodReflection('factory'), // @phpstan-ignore-line
-            new StaticCall(new Name('App\\User'), 'factory', [new Arg(new LNumber(1))]), // args doesn't matter
+            $this->reflectionProvider->getClass(User::class)->getNativeMethod('factory'),
+            new StaticCall($class, 'factory', [new Arg(new LNumber(1))]), // args doesn't matter
             $scope,
         );
 

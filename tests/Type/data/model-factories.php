@@ -5,6 +5,9 @@ namespace ModelFactories;
 use App\Post;
 use App\User;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use function PHPStan\Testing\assertType;
 
 function test(?int $foo): void {
@@ -65,14 +68,14 @@ function test(?int $foo): void {
     assertType('Database\Factories\UserFactory', User::factory()->afterCreating(fn (User $user) => $user));
     assertType('Database\Factories\Domain\Foo\UserFactory', \App\Domain\Foo\User::factory());
 
-    assertType('Database\Factories\PostFactory', Post::factory());
-    assertType('Database\Factories\PostFactory', Post::factory()->new());
+    assertType('Database\Factories\Post\PostFactory', Post::factory());
+    assertType('Database\Factories\Post\PostFactory', Post::factory()->new());
     assertType('App\Post', Post::factory()->createOne());
     assertType('App\Post', Post::factory()->createOneQuietly());
     assertType('Illuminate\Database\Eloquent\Collection<int, App\Post>', Post::factory()->createMany([]));
     assertType('App\Post', Post::factory()->makeOne());
-    assertType('Database\Factories\PostFactory', Post::factory()->afterMaking(fn (Post $post) => $post));
-    assertType('Database\Factories\PostFactory', Post::factory()->afterCreating(fn (Post $post) => $post));
+    assertType('Database\Factories\Post\PostFactory', Post::factory()->afterMaking(fn (Post $post) => $post));
+    assertType('Database\Factories\Post\PostFactory', Post::factory()->afterCreating(fn (Post $post) => $post));
 
     assertType('App\User|Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory()->count($foo)->create());
     assertType('App\User|Illuminate\Database\Eloquent\Collection<int, App\User>', User::factory()->count($foo)->createQuietly());
@@ -84,4 +87,29 @@ function test(?int $foo): void {
 
     assertType('Database\Factories\UserFactory', User::factory()->trashed());
     assertType('*ERROR*', Post::factory()->trashed());
+}
+
+class Comment extends Model
+{
+    use HasFactory;
+
+    /** @return CommentFactory */
+    protected static function newFactory(): Factory
+    {
+        return CommentFactory::new();
+    }
+
+    private function test(): void
+    {
+        assertType('ModelFactories\CommentFactory', static::factory());
+    }
+}
+
+/** @extends Factory<Comment> */
+class CommentFactory extends Factory
+{
+    public function definition(): array
+    {
+        return [];
+    }
 }

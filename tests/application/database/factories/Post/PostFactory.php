@@ -2,13 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Database\Factories;
+namespace Database\Factories\Post;
 
 use App\Post;
 use App\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
+ * This is specifically testing a factory
+ * that is not in the expected namespace.
+ *
  * @extends Factory<Post>
  */
 class PostFactory extends Factory
