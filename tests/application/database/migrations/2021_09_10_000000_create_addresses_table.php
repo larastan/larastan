@@ -17,7 +17,9 @@ class CreateAddressesTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('addresses', static function (Blueprint $table) {
+        $schema = Schema::connection('configured_connection_name');
+
+        $schema->create('addresses', static function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->uuid();
             $table->foreignIdFor(User::class);
