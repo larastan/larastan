@@ -6,7 +6,7 @@ namespace Tests\Type;
 
 use App\Account;
 use App\User;
-use Larastan\Larastan\Properties\ModelPropertyHelper;
+use Larastan\Larastan\Properties\ModelDatabaseHelper;
 use Larastan\Larastan\Types\ModelProperty\GenericModelPropertyType;
 use PHPStan\Testing\PHPStanTestCase;
 use PHPStan\Type\Constant\ConstantStringType;
@@ -35,7 +35,7 @@ class GenericModelPropertyTypeTest extends PHPStanTestCase
         string $expectedTypeClass,
         string $expectedTypeDescription,
     ): void {
-        $types = $types(static::getContainer());
+        $types = $types();
 
         $actualType            = TypeCombinator::union(...$types);
         $actualTypeDescription = $actualType->describe(VerbosityLevel::precise());
@@ -62,7 +62,7 @@ class GenericModelPropertyTypeTest extends PHPStanTestCase
         string $expectedTypeClass,
         string $expectedTypeDescription,
     ): void {
-        $types                 = array_reverse($types(static::getContainer()));
+        $types                 = array_reverse($types());
         $actualType            = TypeCombinator::union(...$types);
         $actualTypeDescription = $actualType->describe(VerbosityLevel::precise());
 
@@ -81,17 +81,17 @@ class GenericModelPropertyTypeTest extends PHPStanTestCase
     public static function dataUnion(): iterable
     {
         yield [
-            static fn ($container) => [
-                new GenericModelPropertyType(new ObjectType(User::class), $container->getByType(ModelPropertyHelper::class)),
-                new GenericModelPropertyType(new ObjectType(Account::class), $container->getByType(ModelPropertyHelper::class)),
+            static fn () => [
+                static::genericPropertyType(User::class),
+                static::genericPropertyType(Account::class),
             ],
             UnionType::class,
             'model property of App\Account|model property of App\User',
         ];
 
         yield [
-            static fn ($container) => [
-                new GenericModelPropertyType(new ObjectType(User::class), $container->getByType(ModelPropertyHelper::class)),
+            static fn () => [
+                static::genericPropertyType(User::class),
                 new StringType(),
             ],
             StringType::class,
@@ -99,8 +99,8 @@ class GenericModelPropertyTypeTest extends PHPStanTestCase
         ];
 
         yield [
-            static fn ($container) => [
-                new GenericModelPropertyType(new ObjectType(User::class), $container->getByType(ModelPropertyHelper::class)),
+            static fn () => [
+                static::genericPropertyType(User::class),
                 new ConstantStringType('email'),
             ],
             GenericModelPropertyType::class,
@@ -118,7 +118,7 @@ class GenericModelPropertyTypeTest extends PHPStanTestCase
         string $expectedTypeClass,
         string $expectedTypeDescription,
     ): void {
-        $types = $types(static::getContainer());
+        $types = $types();
 
         $actualType            = TypeCombinator::intersect(...$types);
         $actualTypeDescription = $actualType->describe(VerbosityLevel::precise());
@@ -137,7 +137,7 @@ class GenericModelPropertyTypeTest extends PHPStanTestCase
         string $expectedTypeClass,
         string $expectedTypeDescription,
     ): void {
-        $actualType            = TypeCombinator::intersect(...array_reverse($types(static::getContainer())));
+        $actualType            = TypeCombinator::intersect(...array_reverse($types()));
         $actualTypeDescription = $actualType->describe(VerbosityLevel::precise());
 
         $this->assertSame($expectedTypeDescription, $actualTypeDescription);
@@ -148,17 +148,17 @@ class GenericModelPropertyTypeTest extends PHPStanTestCase
     public static function dataIntersect(): iterable
     {
         yield [
-            static fn ($container) => [
-                new GenericModelPropertyType(new ObjectType(User::class), $container->getByType(ModelPropertyHelper::class)),
-                new GenericModelPropertyType(new ObjectType(Account::class), $container->getByType(ModelPropertyHelper::class)),
+            static fn () => [
+                static::genericPropertyType(User::class),
+                static::genericPropertyType(Account::class),
             ],
             NeverType::class,
             '*NEVER*',
         ];
 
         yield [
-            static fn ($container) => [
-                new GenericModelPropertyType(new ObjectType(User::class), $container->getByType(ModelPropertyHelper::class)),
+            static fn () => [
+                static::genericPropertyType(User::class),
                 new StringType(),
             ],
             GenericModelPropertyType::class,
@@ -166,8 +166,8 @@ class GenericModelPropertyTypeTest extends PHPStanTestCase
         ];
 
         yield [
-            static fn ($container) => [
-                new GenericModelPropertyType(new ObjectType(User::class), $container->getByType(ModelPropertyHelper::class)),
+            static fn () => [
+                static::genericPropertyType(User::class),
                 new ConstantStringType('email'),
             ],
             ConstantStringType::class,
@@ -181,5 +181,13 @@ class GenericModelPropertyTypeTest extends PHPStanTestCase
         return [
             __DIR__ . '/../../extension.neon',
         ];
+    }
+
+    private static function genericPropertyType(string $class): GenericModelPropertyType
+    {
+        return new GenericModelPropertyType(
+            new ObjectType($class),
+            self::getContainer()->getByType(ModelDatabaseHelper::class),
+        );
     }
 }

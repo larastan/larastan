@@ -4,41 +4,35 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use Larastan\Larastan\Properties\MigrationHelper;
 use Larastan\Larastan\Properties\SchemaTable;
-use PHPStan\File\FileHelper;
-use PHPStan\Parser\Parser;
 use PHPStan\Testing\PHPStanTestCase;
+use Tests\Unit\Concerns\HasDatabaseHelper;
 
 use function array_keys;
 
 class MigrationHelperTest extends PHPStanTestCase
 {
-    private Parser $parser;
-
-    private FileHelper $fileHelper;
-
-    public function setUp(): void
-    {
-        $this->parser             = self::getContainer()->getService('currentPhpVersionSimpleDirectParser');
-        $this->fileHelper         = self::getContainer()->getByType(FileHelper::class);
-        $this->reflectionProvider = $this->createReflectionProvider();
-    }
+    use HasDatabaseHelper;
 
     /** @test */
     public function it_will_return_empty_array_if_migrations_path_is_not_a_directory(): void
     {
-        $migrationHelper = new MigrationHelper($this->parser, ['foobar'], $this->fileHelper, false, $this->reflectionProvider);
+        $this->getMigrationHelper(['foobar'])
+            ->parseMigrations($this->modelDatabaseHelper);
 
-        self::assertSame([], $migrationHelper->initializeTables());
+        self::assertSame([], $this->modelDatabaseHelper->connections);
     }
 
     /** @test */
     public function it_can_read_basic_migrations_and_create_table_structure(): void
     {
-        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/basic_migration'], $this->fileHelper, false, $this->reflectionProvider);
+        $this->getMigrationHelper([__DIR__ . '/data/basic_migration'])
+            ->parseMigrations($this->modelDatabaseHelper);
 
-        $tables = $migrationHelper->initializeTables();
+        self::assertCount(1, $this->modelDatabaseHelper->connections);
+        self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);
+
+        $tables = $this->modelDatabaseHelper->connections[$this->defaultConnection]->tables;
 
         $this->assertUsersTableSchema($tables);
     }
@@ -46,9 +40,13 @@ class MigrationHelperTest extends PHPStanTestCase
     /** @test */
     public function it_can_read_schema_definitions_from_any_method_in_class(): void
     {
-        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migrations_with_different_methods'], $this->fileHelper, false, $this->reflectionProvider);
+        $this->getMigrationHelper([__DIR__ . '/data/migrations_with_different_methods'])
+            ->parseMigrations($this->modelDatabaseHelper);
 
-        $tables = $migrationHelper->initializeTables();
+        self::assertCount(1, $this->modelDatabaseHelper->connections);
+        self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);
+
+        $tables = $this->modelDatabaseHelper->connections[$this->defaultConnection]->tables;
 
         $this->assertUsersTableSchema($tables);
     }
@@ -56,9 +54,13 @@ class MigrationHelperTest extends PHPStanTestCase
     /** @test */
     public function it_can_read_schema_definitions_with_multiple_create_and_drop_methods_for_one_table(): void
     {
-        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/complex_migrations'], $this->fileHelper, false, $this->reflectionProvider);
+        $this->getMigrationHelper([__DIR__ . '/data/complex_migrations'])
+            ->parseMigrations($this->modelDatabaseHelper);
 
-        $tables = $migrationHelper->initializeTables();
+        self::assertCount(1, $this->modelDatabaseHelper->connections);
+        self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);
+
+        $tables = $this->modelDatabaseHelper->connections[$this->defaultConnection]->tables;
 
         self::assertCount(1, $tables);
         self::assertArrayHasKey('users', $tables);
@@ -79,12 +81,15 @@ class MigrationHelperTest extends PHPStanTestCase
     /** @test */
     public function it_can_read_additional_directories(): void
     {
-        $migrationHelper = new MigrationHelper($this->parser, [
+        $this->getMigrationHelper([
             __DIR__ . '/data/basic_migration',
             __DIR__ . '/data/additional_migrations',
-        ], $this->fileHelper, false, $this->reflectionProvider);
+        ])->parseMigrations($this->modelDatabaseHelper);
 
-        $tables = $migrationHelper->initializeTables();
+        self::assertCount(1, $this->modelDatabaseHelper->connections);
+        self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);
+
+        $tables = $this->modelDatabaseHelper->connections[$this->defaultConnection]->tables;
 
         self::assertCount(2, $tables);
         self::assertArrayHasKey('users', $tables);
@@ -94,11 +99,13 @@ class MigrationHelperTest extends PHPStanTestCase
     /** @test */
     public function it_can_handle_use_of_after_method_in_migration(): void
     {
-        $migrationHelper = new MigrationHelper($this->parser, [
-            __DIR__ . '/data/migrations_using_after_method',
-        ], $this->fileHelper, false, $this->reflectionProvider);
+        $this->getMigrationHelper([__DIR__ . '/data/migrations_using_after_method'])
+            ->parseMigrations($this->modelDatabaseHelper);
 
-        $tables = $migrationHelper->initializeTables();
+        self::assertCount(1, $this->modelDatabaseHelper->connections);
+        self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);
+
+        $tables = $this->modelDatabaseHelper->connections[$this->defaultConnection]->tables;
 
         self::assertCount(1, $tables);
         self::assertArrayHasKey('users', $tables);
@@ -114,11 +121,13 @@ class MigrationHelperTest extends PHPStanTestCase
     /** @test */
     public function it_can_handle_alter_table_and_column_rename(): void
     {
-        $migrationHelper = new MigrationHelper($this->parser, [
-            __DIR__ . '/data/rename_migrations',
-        ], $this->fileHelper, false, $this->reflectionProvider);
+        $this->getMigrationHelper([__DIR__ . '/data/rename_migrations'])
+            ->parseMigrations($this->modelDatabaseHelper);
 
-        $tables = $migrationHelper->initializeTables();
+        self::assertCount(1, $this->modelDatabaseHelper->connections);
+        self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);
+
+        $tables = $this->modelDatabaseHelper->connections[$this->defaultConnection]->tables;
 
         self::assertCount(1, $tables);
         self::assertArrayNotHasKey('users', $tables);
@@ -132,9 +141,13 @@ class MigrationHelperTest extends PHPStanTestCase
     /** @test */
     public function it_can_handle_migrations_with_soft_deletes(): void
     {
-        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migrations_using_soft_deletes'], $this->fileHelper, false, $this->reflectionProvider);
+        $this->getMigrationHelper([__DIR__ . '/data/migrations_using_soft_deletes'])
+            ->parseMigrations($this->modelDatabaseHelper);
 
-        $tables = $migrationHelper->initializeTables();
+        self::assertCount(1, $this->modelDatabaseHelper->connections);
+        self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);
+
+        $tables = $this->modelDatabaseHelper->connections[$this->defaultConnection]->tables;
 
         self::assertCount(1, $tables);
         self::assertArrayHasKey('users', $tables);
@@ -145,9 +158,13 @@ class MigrationHelperTest extends PHPStanTestCase
     /** @test */
     public function it_can_handle_migrations_with_soft_deletes_tz(): void
     {
-        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migrations_using_soft_deletes_tz'], $this->fileHelper, false, $this->reflectionProvider);
+        $this->getMigrationHelper([__DIR__ . '/data/migrations_using_soft_deletes_tz'])
+            ->parseMigrations($this->modelDatabaseHelper);
 
-        $tables = $migrationHelper->initializeTables();
+        self::assertCount(1, $this->modelDatabaseHelper->connections);
+        self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);
+
+        $tables = $this->modelDatabaseHelper->connections[$this->defaultConnection]->tables;
 
         self::assertCount(1, $tables);
         self::assertArrayHasKey('users', $tables);
@@ -158,9 +175,13 @@ class MigrationHelperTest extends PHPStanTestCase
     /** @test */
     public function it_can_handle_migrations_with_default_arguments(): void
     {
-        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migration_with_default_arguments'], $this->fileHelper, false, $this->reflectionProvider);
+        $this->getMigrationHelper([__DIR__ . '/data/migration_with_default_arguments'])
+            ->parseMigrations($this->modelDatabaseHelper);
 
-        $tables = $migrationHelper->initializeTables();
+        self::assertCount(1, $this->modelDatabaseHelper->connections);
+        self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);
+
+        $tables = $this->modelDatabaseHelper->connections[$this->defaultConnection]->tables;
 
         self::assertCount(1, $tables);
         self::assertArrayHasKey('users', $tables);
@@ -179,38 +200,113 @@ class MigrationHelperTest extends PHPStanTestCase
     }
 
     /** @test */
-    public function it_can_handle_connection_before_schema_create(): void
+    public function it_can_handle_different_schema_connections(): void
     {
-        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migration_with_schema_connection'], $this->fileHelper, false, $this->reflectionProvider);
+        $this->getMigrationHelper([__DIR__ . '/data/migration_with_schema_connection'])
+            ->parseMigrations($this->modelDatabaseHelper);
 
-        $tables = $migrationHelper->initializeTables();
+        self::assertCount(3, $this->modelDatabaseHelper->connections);
+        self::assertArrayHasKey('foo', $this->modelDatabaseHelper->connections);
+        self::assertArrayHasKey('bar', $this->modelDatabaseHelper->connections);
+        self::assertArrayHasKey('baz', $this->modelDatabaseHelper->connections);
 
-        $this->assertUsersTableSchema($tables);
-    }
+        $foo = $this->modelDatabaseHelper->connections['foo']->tables;
+        $bar = $this->modelDatabaseHelper->connections['bar']->tables;
+        $baz = $this->modelDatabaseHelper->connections['baz']->tables;
 
-    /** @test */
-    public function it_can_disable_migration_scanning(): void
-    {
-        $migrationHelper = new MigrationHelper($this->parser, [
-            __DIR__ . '/data/basic_migration',
-            __DIR__ . '/data/additional_migrations',
-        ], $this->fileHelper, true, $this->reflectionProvider);
+        self::assertCount(2, $foo);
+        self::assertArrayHasKey('teams', $foo);
+        self::assertArrayHasKey('users', $foo);
 
-        $tables = $migrationHelper->initializeTables();
+        self::assertCount(5, $foo['teams']->columns);
+        self::assertSame(['id', 'team', 'owner_email', 'created_at', 'updated_at'], array_keys($foo['teams']->columns));
+        self::assertSame('int', $foo['teams']->columns['id']->readableType);
+        self::assertSame('string', $foo['teams']->columns['team']->readableType);
+        self::assertSame('string', $foo['teams']->columns['owner_email']->readableType);
+        self::assertSame('string', $foo['teams']->columns['created_at']->readableType);
+        self::assertSame('string', $foo['teams']->columns['updated_at']->readableType);
 
-        self::assertSame([], $tables);
+        self::assertCount(1, $foo['users']->columns);
+        self::assertSame(['id'], array_keys($foo['users']->columns));
+        self::assertSame('int', $foo['users']->columns['id']->readableType);
+
+        self::assertCount(2, $bar);
+        self::assertArrayHasKey('users', $bar);
+        self::assertArrayHasKey('teams', $bar);
+
+        self::assertCount(5, $bar['users']->columns);
+        self::assertSame(['id', 'name', 'email', 'created_at', 'updated_at'], array_keys($bar['users']->columns));
+        self::assertSame('int', $bar['users']->columns['id']->readableType);
+        self::assertSame('string', $bar['users']->columns['name']->readableType);
+        self::assertSame('string', $bar['users']->columns['email']->readableType);
+        self::assertSame('string', $bar['users']->columns['created_at']->readableType);
+        self::assertSame('string', $bar['users']->columns['updated_at']->readableType);
+
+        self::assertCount(1, $bar['teams']->columns);
+        self::assertSame(['id'], array_keys($bar['teams']->columns));
+        self::assertSame('int', $bar['teams']->columns['id']->readableType);
+
+        $this->assertUsersTableSchema($baz);
     }
 
     /** @test */
     public function it_can_handle_nullable_in_migrations(): void
     {
-        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migrations_using_nullable'], $this->fileHelper, false, $this->reflectionProvider);
+        $this->getMigrationHelper([__DIR__ . '/data/migrations_using_nullable'])
+            ->parseMigrations($this->modelDatabaseHelper);
 
-        $tables = $migrationHelper->initializeTables();
+        self::assertCount(1, $this->modelDatabaseHelper->connections);
+        self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);
+
+        $tables = $this->modelDatabaseHelper->connections[$this->defaultConnection]->tables;
 
         self::assertSame(false, $tables['users']->columns['name']->nullable);
         self::assertSame(true, $tables['users']->columns['email']->nullable);
         self::assertSame(true, $tables['users']->columns['address1']->nullable);
+    }
+
+    /** @test */
+    public function it_can_handle_migrations_with_array_passed_to_drop_column(): void
+    {
+        $this->getMigrationHelper([__DIR__ . '/data/migrations_using_drop_column'])
+            ->parseMigrations($this->modelDatabaseHelper);
+
+        self::assertCount(1, $this->modelDatabaseHelper->connections);
+        self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);
+
+        $tables = $this->modelDatabaseHelper->connections[$this->defaultConnection]->tables;
+
+        self::assertCount(1, $tables);
+        self::assertArrayHasKey('users', $tables);
+        self::assertCount(5, $tables['users']->columns);
+        self::assertSame(['id', 'name', 'email', 'created_at', 'updated_at'], array_keys($tables['users']->columns));
+    }
+
+    /** @test */
+    public function it_can_handle_migrations_with_if_statements(): void
+    {
+        $this->getMigrationHelper([__DIR__ . '/data/conditional_migrations'])
+            ->parseMigrations($this->modelDatabaseHelper);
+
+        self::assertCount(1, $this->modelDatabaseHelper->connections);
+        self::assertArrayHasKey($this->defaultConnection, $this->modelDatabaseHelper->connections);
+
+        $tables = $this->modelDatabaseHelper->connections[$this->defaultConnection]->tables;
+
+        self::assertArrayHasKey('id', $tables['users']->columns);
+        self::assertArrayHasKey('name', $tables['users']->columns);
+        self::assertArrayHasKey('email', $tables['users']->columns);
+        self::assertArrayHasKey('address1', $tables['users']->columns);
+        self::assertArrayHasKey('address2', $tables['users']->columns);
+    }
+
+    /** @test */
+    public function it_can_disable_migration_scanning(): void
+    {
+        $this->getMigrationHelper([__DIR__ . '/data/basic_migration'], true)
+            ->parseMigrations($this->modelDatabaseHelper);
+
+        self::assertSame([], $this->modelDatabaseHelper->connections);
     }
 
     /** @param  array<string, SchemaTable> $tables */
@@ -225,34 +321,5 @@ class MigrationHelperTest extends PHPStanTestCase
         self::assertSame('string', $tables['users']->columns['email']->readableType);
         self::assertSame('string', $tables['users']->columns['created_at']->readableType);
         self::assertSame('string', $tables['users']->columns['updated_at']->readableType);
-    }
-
-    /** @test */
-    public function it_can_handle_migrations_with_array_passed_to_drop_column(): void
-    {
-        $migrationHelper = new MigrationHelper($this->parser, [
-            __DIR__ . '/data/migrations_using_drop_column',
-        ], $this->fileHelper, false, $this->reflectionProvider);
-
-        $tables = $migrationHelper->initializeTables();
-
-        self::assertCount(1, $tables);
-        self::assertArrayHasKey('users', $tables);
-        self::assertCount(5, $tables['users']->columns);
-        self::assertSame(['id', 'name', 'email', 'created_at', 'updated_at'], array_keys($tables['users']->columns));
-    }
-
-    /** @test */
-    public function it_can_handle_migrations_with_if_statements(): void
-    {
-        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/conditional_migrations'], $this->fileHelper, false, $this->reflectionProvider);
-
-        $tables = $migrationHelper->initializeTables();
-
-        self::assertArrayHasKey('id', $tables['users']->columns);
-        self::assertArrayHasKey('name', $tables['users']->columns);
-        self::assertArrayHasKey('email', $tables['users']->columns);
-        self::assertArrayHasKey('address1', $tables['users']->columns);
-        self::assertArrayHasKey('address2', $tables['users']->columns);
     }
 }

@@ -6,6 +6,8 @@ use App\Account;
 use App\Address;
 use App\Casts\BackedEnumeration;
 use App\Casts\BasicEnumeration;
+use App\FooThread;
+use App\FooUser;
 use App\Group;
 use App\GuardedModel;
 use App\Role;
@@ -30,6 +32,8 @@ function test(
     Thread $thread,
     Address $address,
     RoleUser $roleUser,
+    FooUser $fooUser,
+    FooThread $fooThread,
 ): void {
     assertType('*ERROR*', $user->newStyleAttribute); // Doesn't have generic type, so we treat as it doesnt exist
     assertType('int', $user->stringButInt);
@@ -93,4 +97,14 @@ function test(
     assertType('string', $address->uuid);
     assertType('string', $roleUser->role_id);
     assertType('int', $roleUser->user_id);
+
+    // Foo Connection
+
+    assertType('int', $fooUser->id);
+    assertType('string', $fooUser->password);
+    assertType('*ERROR*', $fooUser->notaproperty);
+    assertType('*ERROR*', $fooUser->floatButRoundedDecimalString);
+
+    assertType('int', $fooThread->id);
+    assertType('bool', $fooThread->active);
 }

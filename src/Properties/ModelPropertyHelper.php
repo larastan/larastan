@@ -17,24 +17,17 @@ use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\TypeCombinator;
-use ReflectionException;
 
-use function array_key_exists;
 use function array_map;
 use function count;
 use function in_array;
-use function is_string;
 use function method_exists;
 
 class ModelPropertyHelper
 {
-    /** @var array<string, SchemaTable> */
-    private array $tables = [];
-
     public function __construct(
         private TypeStringResolver $stringResolver,
-        private MigrationHelper $migrationHelper,
-        private SquashedMigrationHelper $squashedMigrationHelper,
+        private ModelDatabaseHelper $modelDatabaseHelper,
         private ModelCastHelper $modelCastHelper,
     ) {
     }
@@ -42,36 +35,23 @@ class ModelPropertyHelper
     /**
      * Determine if the model has a database property.
      */
-    public function hasDatabaseProperty(ClassReflection|string $classReflectionOrTable, string $propertyName): bool
+    public function hasDatabaseProperty(ClassReflection $classReflection, string $propertyName): bool
     {
-        if (! $this->migrationsLoaded()) {
-            $this->loadMigrations();
-        }
-
-        if (is_string($classReflectionOrTable)) {
-            if (! array_key_exists($classReflectionOrTable, $this->tables)) {
-                return false;
-            }
-
-            return array_key_exists($propertyName, $this->tables[$classReflectionOrTable]->columns);
-        }
-
-        if (! $classReflectionOrTable->isSubclassOf(Model::class)) {
+        if (! $classReflection->isSubclassOf(Model::class)) {
             return false;
         }
 
-        if ($classReflectionOrTable->isAbstract()) {
+        if ($classReflection->isAbstract()) {
             return false;
         }
 
-        if (ReflectionHelper::hasPropertyTag($classReflectionOrTable, $propertyName)) {
+        if (ReflectionHelper::hasPropertyTag($classReflection, $propertyName)) {
             return false;
         }
 
-        try {
-            /** @var Model $modelInstance */
-            $modelInstance = $classReflectionOrTable->getNativeReflection()->newInstanceWithoutConstructor();
-        } catch (ReflectionException) {
+        $modelInstance = $this->modelDatabaseHelper->getModelInstance($classReflection);
+
+        if ($modelInstance === null) {
             return false;
         }
 
@@ -79,29 +59,20 @@ class ModelPropertyHelper
             return true;
         }
 
-        $tableName = $modelInstance->getTable();
-
-        if (! array_key_exists($tableName, $this->tables)) {
-            return false;
-        }
-
-        return array_key_exists($propertyName, $this->tables[$tableName]->columns);
+        return $this->modelDatabaseHelper->hasModelColumn($modelInstance, $propertyName);
     }
 
     public function getDatabaseProperty(ClassReflection $classReflection, string $propertyName): ModelProperty
     {
-        try {
-            /** @var Model $modelInstance */
-            $modelInstance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
-        } catch (ReflectionException) {
+        $modelInstance = $this->modelDatabaseHelper->getModelInstance($classReflection);
+
+        if ($modelInstance === null) {
             throw new ShouldNotHappenException();
         }
 
-        $tableName = $modelInstance->getTable();
-
         if (
             $propertyName === $modelInstance->getKeyName()
-            && (! array_key_exists($tableName, $this->tables) || ! array_key_exists($propertyName, $this->tables[$tableName]->columns))
+            && ! $this->modelDatabaseHelper->hasModelColumn($modelInstance, $propertyName)
         ) {
             return new ModelProperty(
                 $classReflection,
@@ -110,7 +81,7 @@ class ModelPropertyHelper
             );
         }
 
-        $column = $this->tables[$tableName]->columns[$propertyName];
+        $column = $this->modelDatabaseHelper->getModelColumn($modelInstance, $propertyName);
 
         if ($this->hasDate($modelInstance, $propertyName)) {
             $readableType = $this->modelCastHelper->getDateType();
@@ -213,20 +184,6 @@ class ModelPropertyHelper
             $method->getVariants()[0]->getReturnType(),
             $method->getVariants()[0]->getReturnType(),
         );
-    }
-
-    private function migrationsLoaded(): bool
-    {
-        return count($this->tables) > 0;
-    }
-
-    private function loadMigrations(): void
-    {
-        // First try to create tables from squashed migrations, if there are any
-        // Then scan the normal migration files for further changes to tables.
-        $tables = $this->squashedMigrationHelper->initializeTables();
-
-        $this->tables = $this->migrationHelper->initializeTables($tables);
     }
 
     private function hasDate(Model $modelInstance, string $propertyName): bool
