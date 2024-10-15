@@ -17,13 +17,18 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\TypeWithClassName;
 use PHPStan\Type\VerbosityLevel;
 
 use function array_key_exists;
 use function array_shift;
+use function collect;
 use function count;
 use function in_array;
+use function is_string;
 use function preg_split;
 use function substr;
 use function ucfirst;
@@ -231,5 +236,34 @@ class BuilderHelper
         }
 
         return $returnType->describe(VerbosityLevel::value());
+    }
+
+    /**
+     * @param array<int, string|TypeWithClassName>|string|TypeWithClassName $models
+     *
+     * @return ($models is array<int, string|TypeWithClassName> ? Type : ObjectType)
+     */
+    public function getBuilderTypeForModels(array|string|TypeWithClassName $models): Type
+    {
+        return collect()
+            ->wrap($models)
+            ->unique()
+            ->mapWithKeys(static function ($model) {
+                if (is_string($model)) {
+                    return [$model => new ObjectType($model)];
+                }
+
+                return [$model->getClassName() => $model];
+            })
+            ->mapToGroups(fn ($type, $class) => [$this->determineBuilderName($class) => $type])
+            ->map(function ($models, $builder) {
+                $builderReflection = $this->reflectionProvider->getClass($builder);
+
+                return $builderReflection->isGeneric()
+                    ? new GenericObjectType($builder, [TypeCombinator::union(...$models)])
+                    : new ObjectType($builder);
+            })
+            ->values()
+            ->pipe(static fn ($types) => TypeCombinator::union(...$types));
     }
 }

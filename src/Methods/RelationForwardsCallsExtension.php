@@ -78,9 +78,12 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
             return null;
         }
 
-        $builderName = $this->builderHelper->determineBuilderName($modelReflection->getName());
+        $builderReflection = $this->builderHelper->getBuilderTypeForModels($modelReflection->getName())
+            ->getClassReflection();
 
-        $builderReflection = $this->reflectionProvider->getClass($builderName)->withTypes([$relatedModel]);
+        if ($builderReflection === null) {
+            return null;
+        }
 
         if ($builderReflection->hasNativeMethod($methodName)) {
             $reflection = $builderReflection->getNativeMethod($methodName);

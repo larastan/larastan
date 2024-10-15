@@ -10,11 +10,9 @@ use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
-use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
-use PHPStan\Type\TypeCombinator;
 
+use function collect;
 use function in_array;
 
 class NewModelQueryDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
@@ -45,30 +43,22 @@ class NewModelQueryDynamicMethodReturnTypeExtension implements DynamicMethodRetu
         MethodCall $methodCall,
         Scope $scope,
     ): Type|null {
-        $calledOnType = $scope->getType($methodCall->var);
-
+        $calledOnType     = $scope->getType($methodCall->var);
         $classReflections = $calledOnType->getObjectClassReflections();
 
         if ($classReflections === []) {
             return null;
         }
 
-        $types = [];
+        return collect($classReflections)
+            ->filter(static fn ($r) => $r->is(Model::class))
+            ->map(static fn ($r) => $r->getName())
+            ->pipe(function ($models) {
+                if ($models->isEmpty()) {
+                    return null;
+                }
 
-        foreach ($classReflections as $classReflection) {
-            if (! $classReflection->isSubclassOf(Model::class)) {
-                continue;
-            }
-
-            $builderName = $this->builderHelper->determineBuilderName($classReflection->getName());
-
-            $types[] = new GenericObjectType($builderName, [new ObjectType($classReflection->getName())]);
-        }
-
-        if ($types === []) {
-            return null;
-        }
-
-        return TypeCombinator::union(...$types);
+                return $this->builderHelper->getBuilderTypeForModels($models->all());
+            });
     }
 }
