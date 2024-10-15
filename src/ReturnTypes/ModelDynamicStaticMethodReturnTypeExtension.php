@@ -11,7 +11,6 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use Larastan\Larastan\Methods\BuilderHelper;
 use Larastan\Larastan\Support\CollectionHelper;
-use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
@@ -22,8 +21,6 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
-use PHPStan\Type\StaticType;
-use PHPStan\Type\ThisType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
@@ -82,44 +79,38 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
 
         if (count(array_intersect([EloquentBuilder::class], $returnType->getReferencedClasses())) > 0) {
             if ($methodCall->class instanceof Name) {
-                $type = $scope->resolveTypeByName($methodCall->class);
-
-                if ($type instanceof ThisType) {
-                    $type = new StaticType($type->getClassReflection());
-                }
-
-                $returnType = new GenericObjectType(
-                    $this->builderHelper->determineBuilderName($type->getClassName()),
-                    [$type],
+                return new GenericObjectType(
+                    $this->builderHelper->determineBuilderName($scope->resolveName($methodCall->class)),
+                    [$scope->resolveTypeByName($methodCall->class)],
                 );
-            } elseif ($methodCall->class instanceof Expr) {
-                $type = $scope->getType($methodCall->class);
+            }
 
-                if ($type->isClassStringType()->yes()) {
-                    $type = $type->getClassStringObjectType();
+            $type = $scope->getType($methodCall->class);
+
+            if ($type->isClassStringType()->yes()) {
+                $type = $type->getClassStringObjectType();
+            }
+
+            $classNames = $type->getObjectClassNames();
+
+            $types = [];
+
+            foreach ($classNames as $className) {
+                if (! $this->reflectionProvider->hasClass($className)) {
+                    continue;
                 }
 
-                $classNames = $type->getObjectClassNames();
-
-                $types = [];
-
-                foreach ($classNames as $className) {
-                    if (! $this->reflectionProvider->hasClass($className)) {
-                        continue;
-                    }
-
-                    try {
-                        $types[] = new GenericObjectType(
-                            $this->builderHelper->determineBuilderName($className),
-                            [new ObjectType($className)],
-                        );
-                    } catch (MissingMethodFromReflectionException) {
-                    }
+                try {
+                    $types[] = new GenericObjectType(
+                        $this->builderHelper->determineBuilderName($className),
+                        [new ObjectType($className)],
+                    );
+                } catch (MissingMethodFromReflectionException) {
                 }
+            }
 
-                if ($types !== []) {
-                    $returnType = TypeCombinator::union(...$types);
-                }
+            if ($types !== []) {
+                return TypeCombinator::union(...$types);
             }
         }
 

@@ -23,6 +23,7 @@ use PHPStan\Type\ObjectType;
 use function array_key_exists;
 use function array_map;
 use function array_merge;
+use function array_values;
 use function in_array;
 
 final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflectionExtension
@@ -142,7 +143,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
         if (in_array($methodName, $this->builderHelper->passthru, true)) {
             $returnType = $parametersAcceptor->getReturnType();
         } elseif ($classReflection->isGeneric()) {
-            $returnType = new GenericObjectType($classReflection->getName(), [$modelType]);
+            $returnType = new GenericObjectType($classReflection->getName(), array_values($classReflection->getTemplateTypeMap()->getTypes()));
         } else {
             $returnType = new ObjectType($classReflection->getName());
         }

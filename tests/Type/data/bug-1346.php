@@ -16,7 +16,7 @@ class DailyQuery
     public function daily(): Builder
     {
         $query = $this->query->select();
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
+        assertType('Illuminate\Database\Eloquent\Builder<TModel of Illuminate\Database\Eloquent\Model (class Bug1346\DailyQuery, argument)>', $query);
 
         return $query;
     }

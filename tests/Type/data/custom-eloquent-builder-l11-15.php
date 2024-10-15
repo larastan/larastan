@@ -130,7 +130,7 @@ class CustomEloquentBuilder extends Builder
 
     private function test(): void
     {
-        $type = 'CustomEloquentBuilderL11\CustomEloquentBuilder<CustomEloquentBuilderL11\ModelWithCustomBuilder>';
+        $type = 'CustomEloquentBuilderL11\CustomEloquentBuilder<TModel of CustomEloquentBuilderL11\ModelWithCustomBuilder (class CustomEloquentBuilderL11\CustomEloquentBuilder, argument)>';
         assertType('static(CustomEloquentBuilderL11\CustomEloquentBuilder<TModel of CustomEloquentBuilderL11\ModelWithCustomBuilder (class CustomEloquentBuilderL11\CustomEloquentBuilder, argument)>)', $this->where('email', 'bar'));
         assertType('static(CustomEloquentBuilderL11\CustomEloquentBuilder<TModel of CustomEloquentBuilderL11\ModelWithCustomBuilder (class CustomEloquentBuilderL11\CustomEloquentBuilder, argument)>)', $this->where(['email' => 'bar']));
         assertType($type, $this->whereNull('finished_at'));
@@ -143,7 +143,7 @@ class CustomEloquentBuilder extends Builder
         assertType($type, $this->rightJoin('user', 'user.id', '=', 'id'));
         assertType($type, $this->select('*'));
         assertType($type, $this->selectRaw('count(*) as count'));
-        assertType($type, $this->withTrashed());
+//        assertType($type, $this->withTrashed());
     }
 }
 

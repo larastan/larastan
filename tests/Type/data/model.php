@@ -14,6 +14,17 @@ use Illuminate\Foundation\Http\FormRequest;
 
 use function PHPStan\Testing\assertType;
 
+class AbstractModel extends Model
+{
+    public static function new(): static
+    {
+        assertType('static(Model\AbstractModel)', static::query()->create());
+        return static::query()->create();
+    }
+}
+
+class Child extends AbstractModel {}
+
 class Foo
 {
     public function __construct(private User $user)
@@ -28,16 +39,19 @@ class Bar extends Model
 
     public function test(): void
     {
-        assertType('Illuminate\Database\Eloquent\Builder<static(Model\Bar)>', self::query());
+        assertType('Illuminate\Database\Eloquent\Builder<$this(Model\Bar)>', self::query());
         assertType('Illuminate\Database\Eloquent\Builder<static(Model\Bar)>', static::query());
 
-        assertType('static(Model\Bar)|null', self::query()->first());
+        assertType('$this(Model\Bar)|null', self::query()->first());
         assertType('static(Model\Bar)|null', static::query()->first());
+        assertType('Illuminate\Database\Eloquent\Builder<static(Model\Bar)>', static::query()->orWhere('foo', 'bar'));
+        assertType('Illuminate\Database\Eloquent\Builder<static(Model\Bar)>', static::query()->select('foo'));
     }
 }
 
 trait HasBar
 {
+    /** @return mixed[] */
     public static function decodeHashId(string $hash_id): array
     {
         return [];
@@ -65,8 +79,10 @@ function test(
     /** @var array<string, string> $requestData */
     $requestData = $request->validated();
 
+    assertType('Model\Child', Child::new());
+
     assertType('App\User|null', User::find(1));
-    assertType('Model\Bar|null', Bar::findByHashId(1));
+    assertType('Model\Bar|null', Bar::findByHashId('1'));
     assertType('Illuminate\Database\Eloquent\Model|null', $model::find(1));
     assertType('Illuminate\Database\Eloquent\Model|null', $modelClass::find(1));
     assertType('App\Post|App\User|null', $userOrPostClass::find(1));
