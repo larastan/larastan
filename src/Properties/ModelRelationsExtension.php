@@ -34,6 +34,7 @@ use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\TypeTraverser;
 use PHPStan\Type\UnionType;
 
+use function array_filter;
 use function str_ends_with;
 use function version_compare;
 
@@ -171,8 +172,10 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
                 $types = [];
 
                 foreach ($relatedModelClassNames as $relatedModelClassName) {
-                    $types[] = $this->collectionHelper->determineCollectionClass($relatedModelClassName);
+                    $types[] = $this->collectionHelper->determineCollectionType($relatedModelClassName);
                 }
+
+                $types = array_filter($types);
 
                 if ($types !== []) {
                     return TypeCombinator::union(...$types);
