@@ -25,10 +25,12 @@ function testBooleanAcceptsFalse(User $user): void
 
 function testWriteToProperty(User $user): void
 {
-    $user->created_at = 'test';
     $user->created_at = now();
     $user->created_at = null;
     $user->created_at = BaseCarbon::now();
+
+    $user->datetime = now();
+    $user->datetime = BaseCarbon::now();
 }
 
 /** @return mixed */
@@ -79,7 +81,6 @@ function testNullablePropertyWithCast(User $user): void
 
 function testWriteToSoftDeletesColumn(User $user): void
 {
-    $user->deleted_at = 'test';
     $user->deleted_at = now();
     $user->deleted_at = null;
     $user->deleted_at = BaseCarbon::now();
