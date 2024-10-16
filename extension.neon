@@ -188,6 +188,11 @@ services:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
 
     -
+        class: Larastan\Larastan\ReturnTypes\ConfigDynamicStaticMethodReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicStaticMethodReturnTypeExtension
+
+    -
         class: Larastan\Larastan\ReturnTypes\AuthExtension
         tags:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
@@ -262,6 +267,11 @@ services:
 
     -
         class: Larastan\Larastan\ReturnTypes\Helpers\CollectExtension
+        tags:
+            - phpstan.broker.dynamicFunctionReturnTypeExtension
+
+    -
+        class: Larastan\Larastan\ReturnTypes\Helpers\ConfigDynamicFunctionReturnTypeExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
 
@@ -561,6 +571,9 @@ services:
 
     -
         class: Larastan\Larastan\Support\HigherOrderCollectionProxyHelper
+
+    -
+        class: Larastan\Larastan\Support\ConfigHelper
 
 rules:
     - Larastan\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule

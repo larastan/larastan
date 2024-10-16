@@ -4,6 +4,7 @@ namespace Helpers;
 
 use App\User;
 use Exception;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use Larastan\Larastan\ApplicationResolver;
 use Throwable;
@@ -172,4 +173,20 @@ function test(?int $value = 0): void
     assertType('bool|string|null', env('foo', null));
     assertType('bool|int|string', env('foo', 120));
     assertType('bool|string', env('foo', ''));
+
+    assertType('Illuminate\Config\Repository', config());
+    assertType('null', config(['auth.defaults' => 'bar']));
+    assertType('array{guard: string, passwords: string}|null', config('auth.defaults'));
+    assertType('string|null', config('auth.defaults.guard'));
+    assertType("'bar'|array{guard: string, passwords: string}", config('auth.defaults', 'bar'));
+    $var = 'auth.defaults';
+    assertType('array{guard: string, passwords: string}|null', config($var));
+    assertType('array{guard: string, passwords: string}|null', Config::get('auth.defaults'));
+    assertType('array{auth.defaults: array{guard: string, passwords: string}, auth.guards.web: array{driver: string, provider: string}}', Config::get(['auth.defaults', 'auth.guards.web']));
+    assertType('array{auth.defaults: array{guard: string, passwords: string}, auth.guards.web: array{driver: string, provider: string}}', Config::getMany(['auth.defaults' => 'baz', 'auth.guards.web' => 'foo']));
+    /** @var 'auth.defaults'|'auth.guards.web' $var */
+    assertType('array{driver: string, provider: string}|array{guard: string, passwords: string}|null', Config::get($var));
+    assertType('array{driver: string, provider: string}|array{guard: string, passwords: string}|null', config($var));
+    assertType('mixed', config('nonexistent'));
+    assertType('mixed', config('auth.null'));
 }
