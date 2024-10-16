@@ -26,6 +26,7 @@ class IntegrationTest extends PHPStanTestCase
         yield [__DIR__ . '/data/model-properties.php'];
         yield [__DIR__ . '/data/blade-view.php'];
         yield [__DIR__ . '/data/helpers.php'];
+        yield [__DIR__ . '/data/facades.php'];
 
         if (! version_compare(LARAVEL_VERSION, '10.0.0', '>=')) {
             return;
