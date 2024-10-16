@@ -116,6 +116,9 @@ function test(): void
     assertType('App\TransactionCollection<int, App\Transaction>', (new User)->transactions()->find([1, 2]));
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', (new Role)->users()->find([1, 2]));
     assertType('App\Transaction|null', (new User)->transactions()->find(1));
+    assertType('App\Transaction|null', (new User)->transactions()->first());
+    assertType('App\Transaction', (new User)->transactions()->firstOrFail());
+    assertType('App\Transaction|string', (new User)->transactions()->firstOr(callback: fn () => ''));
     assertType('App\TransactionCollection<int, App\Transaction>', (new User)->transactions()->findOrFail([1, 2]));
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', (new Role)->users()->findOrFail([1, 2]));
     assertType('App\Transaction', (new User)->transactions()->findOrFail(1));

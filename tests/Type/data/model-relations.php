@@ -5,6 +5,7 @@ namespace ModelRelations;
 use App\Account;
 use App\Group;
 use App\Post;
+use App\Transaction;
 use App\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -50,6 +51,10 @@ function test(
     assertType('App\Account', $user->accounts()->create());
     assertType('App\Account|null', (new User())->accounts()->where('name', 'bar')->first());
     assertType('App\User', User::with('accounts')->whereHas('accounts')->firstOrFail());
+    assertType('Illuminate\Database\Eloquent\Relations\HasManyThrough<App\Transaction>', (new User())->transactions()->whereIn('id', [1, 2, 3]));
+    assertType('App\Transaction|null', (new User())->transactions()->first());
+    assertType('App\Transaction', (new User())->transactions()->firstOrFail());
+    assertType('App\Transaction|int', (new User())->transactions()->firstOr(fn () => -1));
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\User, App\Account>', $account->ownerRelation());
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Account, App\Account>', $account->parent());
     assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\User>', $user->children());

@@ -49,6 +49,34 @@ class HasManyThrough extends Relation
     public function cursorPaginate($perPage = null, $columns = ['*'], $cursorName = 'cursor', $cursor = null);
 
     /**
+     * Execute the query and get the first related model.
+     *
+     * @param  array<int, string>  $columns
+     * @return TRelatedModel|null
+     */
+    public function first($columns = ['*']);
+
+    /**
+     * Execute the query and get the first result or throw an exception.
+     *
+     * @param  array<int, string>  $columns
+     * @return TRelatedModel
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TRelatedModel>
+     */
+    public function firstOrFail($columns = ['*']);
+
+    /**
+     * Execute the query and get the first result or call a callback.
+     *
+     * @template TReturnClosure
+     * @param  (\Closure(): TReturnClosure)|array<int, string>  $columns
+     * @param  (\Closure(): TReturnClosure)|null  $callback
+     * @return TRelatedModel|TReturnClosure
+     */
+    public function firstOr($columns = ['*'], ?\Closure $callback = null);
+
+    /**
      * Find a related model by its primary key.
      *
      * @param  mixed  $id
@@ -81,4 +109,5 @@ class HasManyThrough extends Relation
      * @return HasOneThrough<TRelatedModel>
      */
     public function one();
+
 }
