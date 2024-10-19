@@ -18,16 +18,16 @@ if (file_exists($applicationPath = getcwd().'/bootstrap/app.php')) { // Applicat
     $app = require $applicationPath;
 } elseif (trait_exists(CreatesApplication::class)) { // Packages
     $app = ApplicationResolver::resolve();
-} else {
-    throw new Exception('Could not find Laravel bootstrap file nor Testbench is installed. Install orchestra/testbench if analyzing a package.');
 }
 
-if ($app instanceof Application) {
-    $app->make(Kernel::class)->bootstrap();
-} elseif ($app instanceof LumenApplication) {
-    $app->boot();
-}
+if (isset($app)) {
+    if ($app instanceof Application) {
+        $app->make(Kernel::class)->bootstrap();
+    } elseif ($app instanceof LumenApplication) {
+        $app->boot();
+    }
 
-if (! defined('LARAVEL_VERSION')) {
-    define('LARAVEL_VERSION', $app->version());
+    if (! defined('LARAVEL_VERSION')) {
+        define('LARAVEL_VERSION', $app->version());
+    }
 }
