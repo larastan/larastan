@@ -7,8 +7,9 @@ namespace Illuminate\Support;
  * @template TValue
  *
  * @extends \IteratorAggregate<TKey, TValue>
+ * @extends \Illuminate\Contracts\Support\Arrayable<TKey, TValue>
  */
-interface Enumerable extends \Countable, \IteratorAggregate, \JsonSerializable
+interface Enumerable extends \Countable, \IteratorAggregate, \JsonSerializable, \Illuminate\Contracts\Support\Arrayable
 {
     /**
      * Search the collection for a given value and return the corresponding key if successful.

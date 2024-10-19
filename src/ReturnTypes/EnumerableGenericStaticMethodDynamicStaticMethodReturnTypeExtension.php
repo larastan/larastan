@@ -16,13 +16,10 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\IntersectionType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
-use PHPStan\Type\TypeTraverser;
 use PHPStan\Type\UnionType;
 
-use function array_map;
 use function in_array;
 
 class EnumerableGenericStaticMethodDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
@@ -105,23 +102,9 @@ class EnumerableGenericStaticMethodDynamicStaticMethodReturnTypeExtension implem
             return new ObjectType($classReflection->getName());
         }
 
-        $genericTypes = $returnTypeClassReflection->typeMapToList($returnTypeClassReflection->getActiveTemplateTypeMap());
-
-        $genericTypes = array_map(static function (Type $type) use ($classReflection) {
-            return TypeTraverser::map($type, static function (Type $type, callable $traverse) use ($classReflection): Type {
-                if ($type instanceof UnionType || $type instanceof IntersectionType) {
-                    return $traverse($type);
-                }
-
-                // @phpcs:ignore
-                if ($type instanceof GenericObjectType && (($innerTypeReflection = $type->getClassReflection()) !== null)) {
-                    return new GenericObjectType($classReflection->getName(), $innerTypeReflection->typeMapToList($innerTypeReflection->getActiveTemplateTypeMap()));
-                }
-
-                return $traverse($type);
-            });
-        }, $genericTypes);
-
-        return new GenericObjectType($classReflection->getName(), $genericTypes);
+        return new GenericObjectType(
+            $classReflection->getName(),
+            $returnTypeClassReflection->typeMapToList($returnTypeClassReflection->getActiveTemplateTypeMap()),
+        );
     }
 }
