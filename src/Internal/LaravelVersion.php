@@ -18,6 +18,11 @@ final class LaravelVersion
         return self::hasLaravel1115Generics() ? 'TModel' : 'TModelClass';
     }
 
+    public static function hasCollectedByAttribute(): bool
+    {
+        return version_compare(self::getLaravelVersion(), '11.28.0', '>=');
+    }
+
     private static function getLaravelVersion(): string
     {
         return LARAVEL_VERSION;

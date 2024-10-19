@@ -125,7 +125,7 @@ class CustomEloquentBuilder extends Builder
      */
     public function categories(array $categories): CustomEloquentBuilder
     {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', $this->whereIn('category', $categories));
+        assertType('CustomEloquentBuilder\CustomEloquentBuilder<TModelClass of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>', $this->whereIn('category', $categories));
 
         return $this->whereIn('category', $categories);
     }
