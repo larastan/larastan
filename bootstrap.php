@@ -20,7 +20,7 @@ if (file_exists($applicationPath = getcwd().'/bootstrap/app.php')) { // Applicat
     $app = ApplicationResolver::resolve();
 }
 
-if(isset($app)) {
+if (isset($app)) {
     if ($app instanceof Application) {
         $app->make(Kernel::class)->bootstrap();
     } elseif ($app instanceof LumenApplication) {
