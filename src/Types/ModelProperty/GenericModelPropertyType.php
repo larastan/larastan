@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Types\ModelProperty;
 
-use Larastan\Larastan\Properties\ModelPropertyHelper;
+use Illuminate\Support\Str;
+use Larastan\Larastan\Properties\ModelDatabaseHelper;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\AcceptsResult;
 use PHPStan\Type\CompoundType;
@@ -29,7 +30,7 @@ use function str_contains;
 
 class GenericModelPropertyType extends StringType
 {
-    public function __construct(private Type $type, private ModelPropertyHelper $modelPropertyHelper)
+    public function __construct(private Type $type, private ModelDatabaseHelper $modelDatabaseHelper)
     {
         parent::__construct();
     }
@@ -73,15 +74,17 @@ class GenericModelPropertyType extends StringType
             }
 
             if (str_contains($givenString, '.')) {
-                $parts = explode('.', $givenString);
+                $tableName    = Str::beforeLast($givenString, '.');
+                $propertyName = Str::afterLast($givenString, '.');
 
-                if (count($parts) !== 2) {
-                    return AcceptsResult::createYes();
-                }
+                // Assume the connection is the same as the generic model's connection
+                // or fallback to the default connection
+                $connection = $this->modelDatabaseHelper
+                    ->getModelInstance($genericType->getObjectClassNames()[0])
+                    ?->getConnectionName()
+                    ?? $this->modelDatabaseHelper->getDefaultConnection();
 
-                [$tableName, $propertyName] = $parts;
-
-                if (! $this->modelPropertyHelper->hasDatabaseProperty($tableName, $propertyName)) {
+                if (! isset($this->modelDatabaseHelper->connections[$connection]->tables[$tableName]->columns[$propertyName])) {
                     return AcceptsResult::createNo([sprintf('Database table "%s" does not have column "%s"', $tableName, $propertyName)]);
                 }
 
@@ -141,7 +144,7 @@ class GenericModelPropertyType extends StringType
             return $this;
         }
 
-        return new self($newType, $this->modelPropertyHelper);
+        return new self($newType, $this->modelDatabaseHelper);
     }
 
     public function inferTemplateTypes(Type $receivedType): TemplateTypeMap
@@ -186,6 +189,6 @@ class GenericModelPropertyType extends StringType
     /** @param  mixed[] $properties */
     public static function __set_state(array $properties): Type
     {
-        return new self($properties['type'], $properties['modelPropertyHelper']);
+        return new self($properties['type'], $properties['modelDatabaseHelper']);
     }
 }

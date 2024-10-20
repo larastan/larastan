@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Properties;
 
 use Exception;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use PhpParser;
 use PhpParser\NodeFinder;
-use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ObjectType;
-use ReflectionException;
 
 use function array_key_exists;
 use function array_merge;
+use function array_pop;
 use function class_basename;
 use function count;
+use function end;
+use function in_array;
 use function is_string;
 use function property_exists;
 use function strtolower;
@@ -24,9 +24,12 @@ use function strtolower;
 /** @see https://github.com/psalm/laravel-psalm-plugin/blob/master/src/SchemaAggregator.php */
 final class SchemaAggregator
 {
-    /** @param array<string, SchemaTable> $tables */
-    public function __construct(private ReflectionProvider $reflectionProvider, public array $tables = [])
-    {
+    /** @var list<SchemaConnection> */
+    private array $connectionStack = [];
+
+    public function __construct(
+        private ModelDatabaseHelper $modelDatabaseHelper,
+    ) {
     }
 
     /** @param  array<int, PhpParser\Node\Stmt> $stmts */
@@ -45,6 +48,26 @@ final class SchemaAggregator
     /** @param  array<int, PhpParser\Node\Stmt> $stmts */
     private function addClassStatements(array $stmts): void
     {
+        $nodeFinder = new NodeFinder();
+
+        /** @var  PhpParser\Node\Stmt\Property[] $properties */
+        $properties     = $nodeFinder->findInstanceOf($stmts, PhpParser\Node\Stmt\Property::class);
+        $connectionName = null;
+
+        foreach ($properties as $method) {
+            if ($method->props[0]->name->name !== 'connection') {
+                continue;
+            }
+
+            if ($method->props[0]->default instanceof PhpParser\Node\Scalar\String_) {
+                $connectionName = $method->props[0]->default->value;
+
+                break;
+            }
+        }
+
+        $this->connectionStack[] = $this->modelDatabaseHelper->getOrCreateConnection($connectionName);
+
         foreach ($stmts as $stmt) {
             if (
                 ! ($stmt instanceof PhpParser\Node\Stmt\ClassMethod)
@@ -56,6 +79,8 @@ final class SchemaAggregator
 
             $this->addUpMethodStatements($stmt->stmts);
         }
+
+        array_pop($this->connectionStack);
     }
 
     /** @param  PhpParser\Node\Stmt[] $stmts */
@@ -65,16 +90,25 @@ final class SchemaAggregator
         $methods    = $nodeFinder->findInstanceOf($stmts, PhpParser\Node\Stmt\Expression::class);
 
         foreach ($methods as $stmt) {
+            $connection = null;
+
             if (
                 $stmt instanceof PhpParser\Node\Stmt\Expression
                 && $stmt->expr instanceof PhpParser\Node\Expr\MethodCall
                 && $stmt->expr->var instanceof PhpParser\Node\Expr\StaticCall
                 && $stmt->expr->var->class instanceof PhpParser\Node\Name
                 && $stmt->expr->var->name instanceof PhpParser\Node\Identifier
-                && ($stmt->expr->var->name->toString() === 'connection' || $stmt->expr->var->name->toString() === 'setConnection')
+                && in_array($stmt->expr->var->name->name, ['connection', 'setConnection'], strict: true)
                 && ($stmt->expr->var->class->toCodeString() === '\Schema' || (new ObjectType('Illuminate\Support\Facades\Schema'))->isSuperTypeOf(new ObjectType($stmt->expr->var->class->toCodeString()))->yes())
             ) {
                 $statement = $stmt->expr;
+                $args      = $stmt->expr->var->getArgs();
+                if (count($args) > 0) {
+                    $connectionArg = $args[0]->value;
+                    if ($connectionArg instanceof PhpParser\Node\Scalar\String_) {
+                        $connection = $connectionArg->value;
+                    }
+                }
             } elseif (
                 $stmt instanceof PhpParser\Node\Stmt\Expression
                 && $stmt->expr instanceof PhpParser\Node\Expr\StaticCall
@@ -91,23 +125,23 @@ final class SchemaAggregator
                 continue;
             }
 
-            switch ($statement->name->name) {
-                case 'create':
-                    $this->alterTable($statement, true);
-                    break;
-
-                case 'table':
-                    $this->alterTable($statement, false);
-                    break;
-
-                case 'drop':
-                case 'dropIfExists':
-                    $this->dropTable($statement);
-                    break;
-
-                case 'rename':
-                    $this->renameTableThroughStaticCall($statement);
+            if ($connection !== null) {
+                $this->connectionStack[] = $this->modelDatabaseHelper->getOrCreateConnection($connection);
             }
+
+            match ($statement->name->name) {
+                'create'               => $this->alterTable($statement, creating: true),
+                'table'                => $this->alterTable($statement, creating: false),
+                'drop', 'dropIfExists' => $this->dropTable($statement),
+                'rename'               => $this->renameTableThroughStaticCall($statement),
+                default                => null,
+            };
+
+            if ($connection === null) {
+                continue;
+            }
+
+            array_pop($this->connectionStack);
         }
     }
 
@@ -123,7 +157,7 @@ final class SchemaAggregator
         $tableName = $call->getArgs()[0]->value->value;
 
         if ($creating) {
-            $this->tables[$tableName] = new SchemaTable($tableName);
+            $this->getCurrentConnection()->setTable(new SchemaTable($tableName));
         }
 
         if (
@@ -158,11 +192,11 @@ final class SchemaAggregator
      */
     private function processColumnUpdates(string $tableName, string $argName, array $stmts): void
     {
-        if (! isset($this->tables[$tableName])) {
+        if (! isset($this->getCurrentConnection()->tables[$tableName])) {
             return;
         }
 
-        $table = $this->tables[$tableName];
+        $table = $this->getCurrentConnection()->tables[$tableName];
 
         foreach ($stmts as $stmt) {
             if (
@@ -220,8 +254,16 @@ final class SchemaAggregator
                     $columnName = $secondArg->value;
                 }
 
-                $type = $this->getModelReferenceType($modelClass);
-                $table->setColumn(new SchemaColumn($columnName, $type ?? 'int', $nullable));
+                $model = $this->modelDatabaseHelper->getModelInstance($modelClass);
+
+                if ($model === null) {
+                    throw new Exception('Model not found: ' . $modelClass);
+                }
+
+                $type = $this->modelDatabaseHelper->hasModelColumn($model, $model->getKeyName())
+                    ? $this->modelDatabaseHelper->getModelColumn($model, $model->getKeyName())->readableType
+                    : 'int';
+                $table->setColumn(new SchemaColumn($columnName, $type, $nullable));
 
                 continue;
             }
@@ -331,7 +373,7 @@ final class SchemaAggregator
 
         $tableName = $call->getArgs()[0]->value->value;
 
-        unset($this->tables[$tableName]);
+        $this->getCurrentConnection()->dropTable($tableName);
     }
 
     private function renameTableThroughStaticCall(PhpParser\Node\Expr\StaticCall|PhpParser\Node\Expr\MethodCall $call): void
@@ -347,7 +389,7 @@ final class SchemaAggregator
         $oldTableName = $call->getArgs()[0]->value->value;
         $newTableName = $call->getArgs()[1]->value->value;
 
-        $this->renameTable($oldTableName, $newTableName);
+        $this->getCurrentConnection()->renameTable($oldTableName, $newTableName);
     }
 
     private function renameTableThroughMethodCall(SchemaTable $oldTable, PhpParser\Node\Expr\MethodCall $call): void
@@ -365,48 +407,7 @@ final class SchemaAggregator
         $oldTableName = $oldTable->name;
         $newTableName = $methodCallArgument->value;
 
-        $this->renameTable($oldTableName, $newTableName);
-    }
-
-    private function renameTable(string $oldTableName, string $newTableName): void
-    {
-        if (! isset($this->tables[$oldTableName])) {
-            return;
-        }
-
-        $table = $this->tables[$oldTableName];
-
-        unset($this->tables[$oldTableName]);
-
-        $table->name = $newTableName;
-
-        $this->tables[$newTableName] = $table;
-    }
-
-    private function getModelReferenceType(string $modelClass): string|null
-    {
-        $classReflection = $this->reflectionProvider->getClass($modelClass);
-        try {
-            /** @var Model $modelInstance */
-            $modelInstance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
-        } catch (ReflectionException) {
-            return null;
-        }
-
-        $tableName = $modelInstance->getTable();
-
-        if (! array_key_exists($tableName, $this->tables)) {
-            return null;
-        }
-
-        $table  = $this->tables[$tableName];
-        $column = $modelInstance->getKeyName();
-
-        if (! array_key_exists($column, $table->columns)) {
-            return null;
-        }
-
-        return $table->columns[$column]->readableType;
+        $this->getCurrentConnection()->renameTable($oldTableName, $newTableName);
     }
 
     private function getNullableArgumentValue(PhpParser\Node\Expr\MethodCall $rootVar): bool
@@ -662,5 +663,16 @@ final class SchemaAggregator
                 // We know a property exists with a name, we just don't know its type.
                 $table->setColumn(new SchemaColumn($columnName, 'mixed', $nullable));
         }
+    }
+
+    private function getCurrentConnection(): SchemaConnection
+    {
+        $connection = end($this->connectionStack);
+
+        if ($connection === false) {
+            throw new Exception('Connection not found');
+        }
+
+        return $connection;
     }
 }

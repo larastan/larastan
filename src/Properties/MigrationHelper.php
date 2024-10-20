@@ -7,7 +7,6 @@ namespace Larastan\Larastan\Properties;
 use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
 use PHPStan\Parser\ParserErrorsException;
-use PHPStan\Reflection\ReflectionProvider;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
@@ -27,30 +26,24 @@ class MigrationHelper
         private array $databaseMigrationPath,
         private FileHelper $fileHelper,
         private bool $disableMigrationScan,
-        private ReflectionProvider $reflectionProvider,
     ) {
     }
 
-    /**
-     * @param  array<string, SchemaTable> $tables
-     *
-     * @return array<string, SchemaTable>
-     */
-    public function initializeTables(array $tables = []): array
+    public function parseMigrations(ModelDatabaseHelper &$modelDatabaseHelper): void
     {
         if ($this->disableMigrationScan) {
-            return $tables;
+            return;
         }
 
         if (count($this->databaseMigrationPath) === 0) {
             $this->databaseMigrationPath = [database_path('migrations')];
         }
 
-        $schemaAggregator = new SchemaAggregator($this->reflectionProvider, $tables);
+        $schemaAggregator = new SchemaAggregator($modelDatabaseHelper);
         $filesArray       = $this->getMigrationFiles();
 
         if (empty($filesArray)) {
-            return $tables;
+            return;
         }
 
         uasort($filesArray, static function (SplFileInfo $a, SplFileInfo $b) {
@@ -64,8 +57,6 @@ class MigrationHelper
                 continue;
             }
         }
-
-        return $schemaAggregator->tables;
     }
 
     /** @return SplFileInfo[] */

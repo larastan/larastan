@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
  * @param  Builder<User> $builder
  * @param 'unionNotExisting'|'id' $union
  */
-function test(Builder $builder, User $user, string $union): void
+function test(Builder $builder, User $user, string $union, ): void
 {
     User::query()->firstWhere('foo', 'bar');
     User::query()->firstWhere($union, 'bar');
@@ -37,6 +37,12 @@ function test(Builder $builder, User $user, string $union): void
 
     // Joins
     User::query()->join('roles', 'users.role_id', '=', 'roles.id')->where('roles.foo', 'admin');
+    User::query()->join('roles', 'users.role_id', '=', 'roles.id')->where('roles.id',  1);
+
+    // Handles table name
+    $user->where('users.id', 1);
+    \App\FooThread::query()->where('private.threads.id', 1);
+    \App\FooThread::query()->where('private.threads.bar', 'none');
 }
 
 //// Currently, there is no way to change the type of `$query` inside the callback.
