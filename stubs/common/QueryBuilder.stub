@@ -180,7 +180,7 @@ class Builder
      *
      * @param  int|string  $id
      * @param  array<string>  $columns
-     * @return object|null
+     * @return array<array-key, mixed>|object|null
      */
     public function find($id, $columns = ['*']);
 
