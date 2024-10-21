@@ -111,35 +111,31 @@ class ModelPropertyHelper
         }
 
         $column = $this->tables[$tableName]->columns[$propertyName];
+        $cast   = $this->modelCastHelper->getCastForProperty($classReflection, $propertyName);
 
-        if ($this->hasDate($modelInstance, $propertyName)) {
-            $readableType = $this->modelCastHelper->getDateType();
-            $writableType = TypeCombinator::union($this->modelCastHelper->getDateType(), new StringType());
-        } else {
-            $cast = $this->modelCastHelper->getCastForProperty($classReflection, $propertyName);
-
-            if ($cast !== null) {
-                $readableType = $this->modelCastHelper->getReadableType(
-                    $cast,
-                    $this->stringResolver->resolve($column->readableType),
-                );
-                $writableType = $this->modelCastHelper->getWriteableType(
-                    $cast,
-                    $this->stringResolver->resolve($column->writeableType),
-                );
-            } elseif (in_array($column->readableType, ['enum', 'set'], true)) {
-                if ($column->options === null || count($column->options) < 1) {
-                    $readableType = $writableType = new StringType();
-                } else {
-                    $readableType = $writableType = TypeCombinator::union(...array_map(
-                        static fn ($option) => new ConstantStringType($option),
-                        $column->options,
-                    ));
-                }
+        if ($cast !== null) {
+            $readableType = $this->modelCastHelper->getReadableType(
+                $cast,
+                $this->stringResolver->resolve($column->readableType),
+            );
+            $writableType = $this->modelCastHelper->getWriteableType(
+                $cast,
+                $this->stringResolver->resolve($column->writeableType),
+            );
+        } elseif ($this->hasDate($modelInstance, $propertyName)) {
+            $readableType = $writableType = $this->modelCastHelper->getDateType();
+        } elseif (in_array($column->readableType, ['enum', 'set'], true)) {
+            if ($column->options === null || count($column->options) < 1) {
+                $readableType = $writableType = new StringType();
             } else {
-                $readableType = $this->stringResolver->resolve($column->readableType);
-                $writableType = $this->stringResolver->resolve($column->writeableType);
+                $readableType = $writableType = TypeCombinator::union(...array_map(
+                    static fn ($option) => new ConstantStringType($option),
+                    $column->options,
+                ));
             }
+        } else {
+            $readableType = $this->stringResolver->resolve($column->readableType);
+            $writableType = $this->stringResolver->resolve($column->writeableType);
         }
 
         if ($column->nullable) {
