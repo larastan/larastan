@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
+use Larastan\Larastan\Internal\FileHelper;
 use Larastan\Larastan\Properties\Schema\PhpMyAdminDataTypeToPhpTypeConverter;
 use Larastan\Larastan\Properties\SquashedMigrationHelper;
-use PHPStan\File\FileHelper;
+use PHPStan\File\FileHelper as PHPStanFileHelper;
 use PHPStan\Testing\PHPStanTestCase;
 
 use function array_keys;
@@ -14,13 +15,25 @@ use function array_keys;
 /** @covers \Larastan\Larastan\Properties\SquashedMigrationHelper */
 class SquashedMigrationHelperTest extends PHPStanTestCase
 {
+    private FileHelper $fileHelper;
+
+    private PhpMyAdminDataTypeToPhpTypeConverter $converter;
+
+    public function setUp(): void
+    {
+        $this->fileHelper = new FileHelper(
+            self::getContainer()->getByType(PHPStanFileHelper::class),
+        );
+        $this->converter  = new PhpMyAdminDataTypeToPhpTypeConverter();
+    }
+
     /** @test */
     public function it_can_parse_schema_dump_for_a_basic_schema(): void
     {
         $schemaParser = new SquashedMigrationHelper(
             [__DIR__ . '/data/schema/basic_schema'],
-            self::getContainer()->getByType(FileHelper::class),
-            new PhpMyAdminDataTypeToPhpTypeConverter(),
+            $this->fileHelper,
+            $this->converter,
             false,
         );
 
@@ -43,8 +56,8 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
     {
         $schemaParser = new SquashedMigrationHelper(
             [__DIR__ . '/data/schema/multiple_schemas_for_same_table'],
-            self::getContainer()->getByType(FileHelper::class),
-            new PhpMyAdminDataTypeToPhpTypeConverter(),
+            $this->fileHelper,
+            $this->converter,
             false,
         );
 
@@ -67,8 +80,8 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
     {
         $schemaParser = new SquashedMigrationHelper(
             [__DIR__ . '/data/schema/basic_schema_with_sql_extension'],
-            self::getContainer()->getByType(FileHelper::class),
-            new PhpMyAdminDataTypeToPhpTypeConverter(),
+            $this->fileHelper,
+            $this->converter,
             false,
         );
 
@@ -91,8 +104,8 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
     {
         $schemaParser = new SquashedMigrationHelper(
             [__DIR__ . '/data/schema/multiple_schemas_with_different_extensions'],
-            self::getContainer()->getByType(FileHelper::class),
-            new PhpMyAdminDataTypeToPhpTypeConverter(),
+            $this->fileHelper,
+            $this->converter,
             false,
         );
 
@@ -124,8 +137,8 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
     {
         $schemaParser = new SquashedMigrationHelper(
             [__DIR__ . '/data/schema/multiple_schemas_with_different_extensions'],
-            self::getContainer()->getByType(FileHelper::class),
-            new PhpMyAdminDataTypeToPhpTypeConverter(),
+            $this->fileHelper,
+            $this->converter,
             true,
         );
 
