@@ -7,6 +7,14 @@ class Expression {}
 class Builder
 {
     /**
+     * Execute the query as a "select" statement.
+     *
+     * @param  list<string>|string  $columns
+     * @return \Illuminate\Support\Collection<int, object>
+     */
+    public function get($columns = ['*']);
+
+    /**
      * Add a basic where clause to the query.
      *
      * @param  \Closure|string|array<string|int, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
