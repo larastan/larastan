@@ -3,6 +3,11 @@
 namespace BuilderRelationsMethodParameterClosureTypeExtensionL1115;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use function PHPStan\Testing\assertType;
 
 function test(): void
@@ -118,42 +123,75 @@ function test(): void
     Post::query()->orWhereDoesntHave('users', function (Builder $query) {
         assertType('Illuminate\Database\Eloquent\Builder<BuilderRelationsMethodParameterClosureTypeExtensionL1115\User>', $query);
     });
+
+    Comment::query()->whereDoesntHaveMorph('commentable', Post::class, function (Builder $query, string $type) {
+        assertType('Illuminate\Database\Eloquent\Builder<BuilderRelationsMethodParameterClosureTypeExtensionL1115\Post>', $query);
+        assertType("'BuilderRelationsMethodParameterClosureTypeExtensionL1115\\\Post'", $type);
+    });
+
+    User::whereRelation('posts', function(Builder $query) {
+        assertType('Illuminate\Database\Eloquent\Builder<BuilderRelationsMethodParameterClosureTypeExtensionL1115\Post>', $query);
+    });
+
+    Comment::orWhereDoesntHaveMorph('commentable', [Post::class, User::class], function (Builder $query, string $type) {
+        assertType('Illuminate\Database\Eloquent\Builder<BuilderRelationsMethodParameterClosureTypeExtensionL1115\Post>|Illuminate\Database\Eloquent\Builder<BuilderRelationsMethodParameterClosureTypeExtensionL1115\User>', $query);
+        assertType("'BuilderRelationsMethodParameterClosureTypeExtensionL1115\\\Post'|'BuilderRelationsMethodParameterClosureTypeExtensionL1115\\\User'", $type);
+    });
+
+    Comment::orWhereDoesntHaveMorph('commentable', ['*'], function (Builder $query, string $type) {
+        assertType('Illuminate\Database\Eloquent\Builder<*>', $query);
+        assertType('string', $type);
+    });
 }
 
-class User extends \Illuminate\Database\Eloquent\Model
+class User extends Model
 {
-    public function accounts(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function accounts(): HasMany
     {
         return $this->hasMany(Account::class);
     }
 
-    public function teams(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function teams(): HasMany
     {
         return $this->hasMany(Team::class);
     }
+
+    public function posts(): BelongsToMany
+    {
+        return $this->belongsToMany(Post::class);
+    }
 }
 
-class Post extends \Illuminate\Database\Eloquent\Model
+class Post extends Model
 {
-    public function users(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function users(): HasMany
     {
         return $this->hasMany(User::class);
     }
 }
 
-class Account extends \Illuminate\Database\Eloquent\Model
+class Account extends Model
 {
-    public function group(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function group(): BelongsTo
     {
         return $this->belongsTo(Group::class);
     }
 }
 
-class Group extends \Illuminate\Database\Eloquent\Model
+class Group extends Model
 {
 }
 
-class Team extends \Illuminate\Database\Eloquent\Model
+class Team extends Model
 {
+}
+
+class Comment extends Model
+{
+    /** @return MorphTo<Model, $this> */
+    public function commentable(): MorphTo
+    {
+        return $this->morphTo();
+    }
 }
 
