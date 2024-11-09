@@ -559,6 +559,11 @@ services:
             - phpstan.methodParameterClosureTypeExtension
 
     -
+        class: Larastan\Larastan\ParameterClosureType\BuilderCollectionMethodParameterClosureTypeExtension
+        tags:
+            - phpstan.methodParameterClosureTypeExtension
+
+    -
         class: Larastan\Larastan\ParameterClosureType\ModelRelationsStaticMethodParameterClosureTypeExtension
         tags:
             - phpstan.staticMethodParameterClosureTypeExtension
