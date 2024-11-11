@@ -30,6 +30,7 @@
     "require-dev": {
         "doctrine/coding-standard": "^12.0",
         "laravel/framework": "^9.52.16 || ^10.28.0 || ^11.16",
+        "mockery/mockery": "^1.5.1",
         "nikic/php-parser": "^4.19.1",
         "orchestra/canvas": "^7.11.1 || ^8.11.0 || ^9.0.2",
         "orchestra/testbench-core": "^7.33.0 || ^8.13.0 || ^9.0.9",
