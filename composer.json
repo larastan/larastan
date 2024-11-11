@@ -25,7 +25,7 @@
         "illuminate/pipeline": "^11.15.0",
         "illuminate/support": "^11.15.0",
         "phpmyadmin/sql-parser": "^5.9.0",
-        "phpstan/phpstan": "2.0.x-dev as 1.12.5"
+        "phpstan/phpstan": "^2.0.0"
     },
     "require-dev": {
         "doctrine/coding-standard": "^12.0",
