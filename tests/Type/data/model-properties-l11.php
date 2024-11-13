@@ -20,7 +20,7 @@ class ModelWithCasts extends Model
     ];
 
     /**
-     * @return array{integer: 'bool', string: 'Illuminate\Database\Eloquent\Casts\AsStringable:argument'}
+     * @return array{integer: 'bool', string: 'Illuminate\\Database\\Eloquent\\Casts\\AsStringable:argument'}
      */
     public function casts(): array
     {
