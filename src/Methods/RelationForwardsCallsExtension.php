@@ -8,12 +8,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Larastan\Larastan\Reflection\EloquentBuilderMethodReflection;
+use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
+use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\ThisType;
 
@@ -24,7 +26,7 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
     /** @var array<string, MethodReflection> */
     private array $cache = [];
 
-    public function __construct(private BuilderHelper $builderHelper, private ReflectionProvider $reflectionProvider, private EloquentBuilderForwardsCallsExtension $eloquentBuilderForwardsCallsExtension)
+    public function __construct(private BuilderHelper $builderHelper, private ReflectionProvider $reflectionProvider)
     {
     }
 
@@ -80,15 +82,13 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
 
         $builderName = $this->builderHelper->determineBuilderName($modelReflection->getName());
 
-        $builderReflection = $this->reflectionProvider->getClass($builderName)->withTypes([$relatedModel]);
+        $builderReflection = (new GenericObjectType($builderName, [new ObjectType($modelReflection->getName())]));
 
-        if ($builderReflection->hasNativeMethod($methodName)) {
-            $reflection = $builderReflection->getNativeMethod($methodName);
-        } elseif ($this->eloquentBuilderForwardsCallsExtension->hasMethod($builderReflection, $methodName)) {
-            $reflection = $this->eloquentBuilderForwardsCallsExtension->getMethod($builderReflection, $methodName);
-        } else {
+        if (! $builderReflection->hasMethod($methodName)->yes()) {
             return null;
         }
+
+        $reflection = $builderReflection->getMethod($methodName, new OutOfClassScope());
 
         $parametersAcceptor = $reflection->getVariants()[0];
         $returnType         = $parametersAcceptor->getReturnType();
@@ -99,7 +99,7 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
 
         return new EloquentBuilderMethodReflection(
             $methodName,
-            $classReflection,
+            $reflection->getDeclaringClass(),
             $parametersAcceptor->getParameters(),
             $returnType,
             $parametersAcceptor->isVariadic(),

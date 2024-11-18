@@ -394,7 +394,7 @@ abstract class UnionClass
 /** @extends UnionClass<Team> */
 class TeamClass extends UnionClass
 {
-    public function foo()
+    public function foo(): void
     {
         assertType('App\Team', $this->test(5));
     }

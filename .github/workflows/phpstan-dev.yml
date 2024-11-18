@@ -1,16 +1,16 @@
 name: "PHPStan dev"
 
 on:
-  #schedule:
-  #  - cron: "1 0 * * *"
+  schedule:
+    - cron: "1 0 * * *"
   workflow_dispatch: null
 
 jobs:
   phpstan-dev:
     strategy:
       matrix:
-        php: ["8.2"]
-        laravel: ["^10.0"]
+        php: ["8.3"]
+        laravel: ["^11.0"]
       fail-fast: false
 
     name: "P${{ matrix.php }} - L${{ matrix.laravel }}"

@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://github.com/larastan/larastan/actions"><img src="https://github.com/larastan/larastan/actions/workflows/tests.yml/badge.svg" alt="Build Status"></a>
-  <a href="https://packagist.org/packages/nunomaduro/larastan/stats"><img src="https://poser.pugx.org/larastan/larastan/d/total.svg" alt="Total Downloads"></a>
+  <a href="https://packagist.org/packages/larastan/larastan/stats"><img src="https://poser.pugx.org/larastan/larastan/d/total.svg" alt="Total Downloads"></a>
   <a href="https://packagist.org/packages/larastan/larastan"><img src="https://poser.pugx.org/larastan/larastan/v/stable.svg" alt="Latest Version"></a>
   <a href="https://github.com/larastan/larastan/blob/master/LICENSE.md"><img src="https://poser.pugx.org/larastan/larastan/license.svg" alt="License"></a>
 </p>
@@ -17,7 +17,7 @@
 
 > If you are using a Laravel version older than 9.x, please refer to [Larastan v1.x](https://github.com/larastan/larastan/tree/1.x) with [PHPStan 1.8.x](https://github.com/larastan/larastan/pull/1431#issuecomment-1303332293).
 
-Larastan was created by [Can Vural](https://github.com/canvural) and [Nuno Maduro](https://github.com/nunomaduro), got artwork designed by [@Caneco](http://github.com/caneco), is maintained by [Can Vural](https://github.com/canvural), [Nuno Maduro](https://github.com/nunomaduro), and [Viktor Szépe](https://github.com/szepeviktor), and is a [PHPStan](https://phpstan.org/) wrapper for Laravel. Larastan focuses on **finding errors in your code**. It catches whole classes of bugs even **before you write tests** for the code.
+Larastan was created by [Can Vural](https://github.com/canvural) and [Nuno Maduro](https://github.com/nunomaduro), got artwork designed by [@Caneco](http://github.com/caneco), is maintained by [Can Vural](https://github.com/canvural) and [Viktor Szépe](https://github.com/szepeviktor), and is a [PHPStan](https://phpstan.org/) extension for Laravel. Larastan focuses on **finding errors in your code**. It catches whole classes of bugs even **before you write tests** for the code.
 
 - Adds static typing to Laravel to improve developer productivity and **code quality**
 - Supports most of [Laravel](https://laravel.com)'s **beautiful magic**
@@ -25,11 +25,18 @@ Larastan was created by [Can Vural](https://github.com/canvural) and [Nuno Madur
 
 > While by definition, "static analysis" doesn't load any of your application's code. Larastan boots your application's container, so it can resolve types that are only possible to compute at runtime. That's why we use the term "code analysis" instead of "static analysis".
 
+### Supported Laravel versions
+| Laravel Version  | Larastan Version |
+|------------------|------------------|
+| < 9              | 1.x              |
+| \> 9.0 && <11.15 | 2.x              |
+| 11.15+           | 3.0+             |
+
 ## ✨ Getting Started In 3 Steps
 
 > **Requires:**
 - **[PHP 8.0+](https://php.net/releases/)**
-- **[Laravel 9.0+](https://github.com/laravel/laravel)**
+- **[Laravel 9.52.16+](https://github.com/laravel/laravel)**
 
 **1**: First, you may use [Composer](https://getcomposer.org) to install Larastan as a development dependency into your Laravel project:
 

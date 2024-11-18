@@ -1,11 +1,16 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Parameter \\#2 \\$callback of method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<App\\\\Models\\\\AddressBookSubscription\\>\\:\\:chunkById\\(\\) expects callable\\(Illuminate\\\\Support\\\\Collection\\<int, Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, int\\)\\: mixed, Closure\\(Illuminate\\\\Database\\\\Eloquent\\\\Collection\\)\\: void given\\.$#"
+			message: "#^Parameter \\#1 \\$address of static method App\\\\Helpers\\\\MapHelper\\:\\:getMapLink\\(\\) expects App\\\\Models\\\\Address, Illuminate\\\\Database\\\\Eloquent\\\\Model given\\.$#"
 			count: 1
-			path: ../../e2e/app/Domains/Contact/DavClient/Jobs/UpdateAddressBooks.php
+			path: ../../e2e/app/Domains/Contact/ManageContactFeed/Web/ViewHelpers/Actions/ActionFeedAddress.php
 
 		-
-			message: "#^Parameter \\#1 \\$value of method Illuminate\\\\Support\\\\Collection\\<int,array\\<string, int\\|string\\>\\>\\:\\:prepend\\(\\) expects array\\{id\\: int, name\\: string\\}, array\\{id\\: null, name\\: ''\\} given\\.$#"
+			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany\\<App\\\\Models\\\\Contact, App\\\\Models\\\\Vault\\>\\:\\:unsearchable\\(\\)\\.$#"
 			count: 1
-			path: ../../e2e/app/Domains/Contact/ManageContactImportantDates/Web/ViewHelpers/ContactImportantDatesViewHelper.php
+			path: ../../e2e/app/Models/Vault.php
+
+		-
+			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany\\<App\\\\Models\\\\Note, App\\\\Models\\\\Contact\\>\\:\\:unsearchable\\(\\)\\.$#"
+			count: 1
+			path: ../../e2e/app/Models/Vault.php

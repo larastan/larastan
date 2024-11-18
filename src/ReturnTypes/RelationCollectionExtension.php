@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Larastan\Larastan\Internal\LaravelVersion;
 use Larastan\Larastan\Support\CollectionHelper;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
@@ -36,6 +37,10 @@ final class RelationCollectionExtension implements DynamicMethodReturnTypeExtens
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
         $modelType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType('TRelatedModel');
+
+        if ($modelType === null && $methodReflection->getDeclaringClass()->getName() === Builder::class) {
+            $modelType = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap()->getType(LaravelVersion::getBuilderModelGenericName());
+        }
 
         if ($modelType === null || $modelType->getObjectClassNames() === []) {
             return false;

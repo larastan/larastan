@@ -7,6 +7,7 @@ use App\Group;
 use App\Post as AppPost;
 use App\User as AppUser;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -245,6 +246,10 @@ function test(
     assertType('Illuminate\Database\Eloquent\Relations\MorphToMany<ModelRelationsL11\Tag, ModelRelationsL11\Post>', $post->tags());
     assertType('Illuminate\Database\Eloquent\Collection<int, ModelRelationsL11\Tag>', $post->tags()->getResults());
     assertType('Illuminate\Database\Eloquent\Collection<int, ModelRelationsL11\Tag>', $post->tags);
+
+    $user->roles()->where(function (Builder $query) {
+        assertType('Illuminate\Database\Eloquent\Builder<ModelRelationsL11\Role>', $query);
+    });
 }
 
 /**
@@ -373,20 +378,6 @@ class User extends Model
         assertType(
             'Illuminate\Database\Eloquent\Relations\HasManyThrough<Illuminate\Database\Eloquent\Model, Illuminate\Database\Eloquent\Model, $this(ModelRelationsL11\User)>|Illuminate\Database\Eloquent\Relations\HasOneThrough<Illuminate\Database\Eloquent\Model, Illuminate\Database\Eloquent\Model, $this(ModelRelationsL11\User)>',
             $through->has('car'),
-        );
-
-        $through = $this->through($this->mechanic());
-        assertType(
-            'Illuminate\Database\Eloquent\PendingHasThroughRelationship<ModelRelationsL11\Mechanic, $this(ModelRelationsL11\User)>',
-            $through,
-        );
-        assertType(
-            'Illuminate\Database\Eloquent\Relations\HasOneThrough<ModelRelationsL11\Car, ModelRelationsL11\Mechanic, $this(ModelRelationsL11\User)>',
-            $through->has(function ($mechanic) {
-                assertType('ModelRelationsL11\Mechanic', $mechanic);
-
-                return $mechanic->car();
-            }),
         );
 
         return $hasOneThrough;
