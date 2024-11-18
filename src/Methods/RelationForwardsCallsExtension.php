@@ -17,9 +17,9 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\ThisType;
 
 use function array_key_exists;
-use function array_values;
 
 final class RelationForwardsCallsExtension implements MethodsClassReflectionExtension
 {
@@ -76,28 +76,24 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
             $modelReflection = $this->reflectionProvider->getClass(Model::class);
         }
 
-        if ($modelReflection->getName() !== Model::class && ! $modelReflection->isSubclassOf(Model::class)) {
+        if (! $modelReflection->is(Model::class)) {
             return null;
         }
 
         $builderName = $this->builderHelper->determineBuilderName($modelReflection->getName());
+        $builderType = new GenericObjectType($builderName, [new ObjectType($modelReflection->getName())]);
 
-        $builderReflection = (new GenericObjectType($builderName, [new ObjectType($modelReflection->getName())]));
-
-        if (! $builderReflection->hasMethod($methodName)->yes()) {
+        if (! $builderType->hasMethod($methodName)->yes()) {
             return null;
         }
 
-        $reflection = $builderReflection->getMethod($methodName, new OutOfClassScope());
+        $reflection = $builderType->getMethod($methodName, new OutOfClassScope());
 
         $parametersAcceptor = $reflection->getVariants()[0];
         $returnType         = $parametersAcceptor->getReturnType();
 
         if ((new ObjectType(Builder::class))->isSuperTypeOf($returnType)->yes()) {
-            $returnType = new GenericObjectType(
-                $classReflection->getName(),
-                array_values($classReflection->getActiveTemplateTypeMap()->getTypes()),
-            );
+            $returnType = new ThisType($classReflection);
         }
 
         return new EloquentBuilderMethodReflection(
