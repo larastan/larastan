@@ -532,7 +532,7 @@ class Builder
      * Gets the result of a query in chunks.
      *
      * @param  int  $count
-     * @param  callable(\Illuminate\Database\Eloquent\Collection<int, TModelClass>, int): mixed $callback
+     * @param  callable  $callback  Specified in CollectionChunkClosureTypeExtension
      * @return bool
      */
     public function chunk($count, $callback);
@@ -541,7 +541,7 @@ class Builder
      * Chunk the results of a query by comparing IDs.
      *
      * @param  int  $count
-     * @param  callable(\Illuminate\Database\Eloquent\Collection<int, TModelClass>, int): mixed  $callback
+     * @param  callable  $callback  Specified in CollectionChunkClosureTypeExtension
      * @param  string|null  $column
      * @param  string|null  $alias
      * @return bool
@@ -552,7 +552,7 @@ class Builder
      * Chunk the results of a query by comparing IDs in descending order.
      *
      * @param  int  $count
-     * @param  callable(\Illuminate\Database\Eloquent\Collection<int, TModelClass>, int): mixed  $callback
+     * @param  callable  $callback  Specified in CollectionChunkClosureTypeExtension
      * @param  string|null  $column
      * @param  string|null  $alias
      * @return bool

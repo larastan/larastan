@@ -7,11 +7,13 @@ namespace Larastan\Larastan\Methods;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Larastan\Larastan\Internal\LaravelVersion;
+use Larastan\Larastan\Support\CollectionHelper;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\Native\NativeParameterReflection;
 use PHPStan\Reflection\ParameterReflection;
 use PHPStan\Reflection\PassedByReference;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ClosureType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntegerType;
@@ -23,6 +25,9 @@ use PhpParser\Node\Expr\MethodCall;
 
 final class CollectionChunkClosureTypeExtension implements MethodParameterClosureTypeExtension
 {
+    public function __construct(private CollectionHelper $collectionHelper)
+    {
+    }
 
     public function isMethodSupported(MethodReflection $methodReflection, ParameterReflection $parameter): bool
     {
@@ -50,12 +55,7 @@ final class CollectionChunkClosureTypeExtension implements MethodParameterClosur
         }
 
         $modelClassName = $modelClassType->getClassName();
-        $collectionClassName = get_class((new $modelClassName)->newCollection([]));
-
-        $usedCollectionType = new GenericObjectType($collectionClassName, [
-            new IntegerType(),
-            $modelClassType,
-        ]);
+        $collectionType = $this->collectionHelper->determineCollectionClass($modelClassName);
 
         $notByReference = PassedByReference::createNo();
         return new ClosureType(
@@ -63,7 +63,7 @@ final class CollectionChunkClosureTypeExtension implements MethodParameterClosur
                 new NativeParameterReflection(
                     'collection',
                     optional: false,
-                    type: $usedCollectionType,
+                    type: $collectionType,
                     passedByReference: $notByReference,
                     variadic: false,
                     defaultValue: null,
