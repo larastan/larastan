@@ -11,14 +11,14 @@ class Attribute
     /**
      * The attribute accessor.
      *
-     * @var callable(): TGet
+     * @var callable(mixed, array<string, mixed>): TGet
      */
     public $get;
 
     /**
      * The attribute mutator.
      *
-     * @var callable(TSet): mixed
+     * @var callable(TSet, array<string, mixed>): mixed
      */
     public $set;
 
@@ -27,8 +27,8 @@ class Attribute
      *
      * @template TMakeGet
      * @template TMakeSet
-     * @param  (callable(mixed, mixed): TMakeGet)|null  $get
-     * @param  (callable(TMakeSet, mixed=): mixed)|null  $set
+     * @param  (callable(mixed, array<string, mixed>): TMakeGet)|null  $get
+     * @param  (callable(TMakeSet, array<string, mixed>): mixed)|null  $set
      * @return Attribute<TMakeGet, TMakeSet>
      */
     public static function make(callable $get = null, callable $set = null);
@@ -37,7 +37,7 @@ class Attribute
      * Create a new attribute accessor.
      *
      * @template T
-     * @param  callable(mixed, mixed=): T  $get
+     * @param  callable(mixed, array<string, mixed>): T  $get
      * @return Attribute<T, never>
      */
     public static function get(callable $get);
@@ -46,7 +46,7 @@ class Attribute
      * Create a new attribute mutator.
      *
      * @template T
-     * @param  callable(T, mixed=): mixed $set
+     * @param  callable(T, array<string, mixed>): mixed $set
      * @return Attribute<never, T>
      */
     public static function set(callable $set);

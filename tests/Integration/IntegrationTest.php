@@ -89,6 +89,14 @@ class IntegrationTest extends PHPStanTestCase
                 34 => ['Parameter #1 $attributes of static method Illuminate\Database\Eloquent\Builder<ModelPropertyStaticCall\ModelPropertyStaticCallsInClass>::create() expects array<model property of ModelPropertyStaticCall\ModelPropertyStaticCallsInClass, mixed>, array<string, string> given.'],
             ],
         ];
+
+        yield [
+            __DIR__ . '/data/model-property-mutator-and-casting.php',
+            [
+                24 => ['Parameter #1 $lineOne of class ModelPropertyMutatorAndCasting\Address constructor expects string, mixed given.'],
+                25 => ['Parameter #2 $lineTwo of class ModelPropertyMutatorAndCasting\Address constructor expects string, mixed given.'],
+            ],
+        ];
     }
 
     /**
