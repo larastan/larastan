@@ -6,6 +6,7 @@ namespace Larastan\Larastan\ParameterClosureType;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Larastan\Larastan\Reflection\ClosureParameterReflection;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\StaticCall;
@@ -14,7 +15,6 @@ use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParameterReflection;
-use PHPStan\Reflection\PassedByReference;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\ClosureType;
 use PHPStan\Type\Constant\ConstantStringType;
@@ -152,58 +152,16 @@ class ModelRelationsStaticMethodParameterClosureTypeExtension implements StaticM
             }
 
             if ($builders !== [] && $modelStrings !== []) {
-                $closureParameters[] = $this->getParameterReflection(TypeCombinator::union(...$builders), 'query');
-                $closureParameters[] = $this->getParameterReflection(TypeCombinator::union(...$modelStrings), 'type');
+                $closureParameters[] = new ClosureParameterReflection(TypeCombinator::union(...$builders), 'query');
+                $closureParameters[] = new ClosureParameterReflection(TypeCombinator::union(...$modelStrings), 'type');
             } else {
-                $closureParameters[] = $this->getParameterReflection($scope->getType(new StaticCall(new Name($modelName), new Identifier('query'))), 'query');
-                $closureParameters[] = $this->getParameterReflection(new ConstantStringType($modelName), 'type');
+                $closureParameters[] = new ClosureParameterReflection($scope->getType(new StaticCall(new Name($modelName), new Identifier('query'))), 'query');
+                $closureParameters[] = new ClosureParameterReflection(new ConstantStringType($modelName), 'type');
             }
         } else {
-            $closureParameters[] = $this->getParameterReflection($scope->getType(new StaticCall(new Name($modelName), new Identifier('query'))), 'query');
+            $closureParameters[] = new ClosureParameterReflection($scope->getType(new StaticCall(new Name($modelName), new Identifier('query'))), 'query');
         }
 
         return new ClosureType($closureParameters);
-    }
-
-    private function getParameterReflection(Type $type, string $name): ParameterReflection
-    {
-        return new class ($type, $name) implements ParameterReflection
-        {
-            public function __construct(
-                private Type $type,
-                private string $name,
-            ) {
-            }
-
-            public function getName(): string
-            {
-                return $this->name;
-            }
-
-            public function isOptional(): bool
-            {
-                return false;
-            }
-
-            public function getType(): Type
-            {
-                return $this->type;
-            }
-
-            public function passedByReference(): PassedByReference
-            {
-                return PassedByReference::createNo();
-            }
-
-            public function isVariadic(): bool
-            {
-                return false;
-            }
-
-            public function getDefaultValue(): Type|null
-            {
-                return null;
-            }
-        };
     }
 }

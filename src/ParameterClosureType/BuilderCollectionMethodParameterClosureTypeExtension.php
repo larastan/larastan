@@ -6,12 +6,12 @@ namespace Larastan\Larastan\ParameterClosureType;
 
 use Illuminate\Database\Eloquent\Builder;
 use Larastan\Larastan\Internal\LaravelVersion;
+use Larastan\Larastan\Reflection\ClosureParameterReflection;
 use Larastan\Larastan\Support\CollectionHelper;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParameterReflection;
-use PHPStan\Reflection\PassedByReference;
 use PHPStan\Type\ClosureType;
 use PHPStan\Type\IntegerRangeType;
 use PHPStan\Type\MethodParameterClosureTypeExtension;
@@ -59,50 +59,8 @@ class BuilderCollectionMethodParameterClosureTypeExtension implements MethodPara
         $collectionType = $this->collectionHelper->determineCollectionClass($model->getObjectClassNames()[0], $model);
 
         return new ClosureType([
-            $this->getParameterReflection($collectionType, 'collection'),
-            $this->getParameterReflection(IntegerRangeType::createAllGreaterThanOrEqualTo(1), 'page'),
+            new ClosureParameterReflection($collectionType, 'collection'),
+            new ClosureParameterReflection(IntegerRangeType::createAllGreaterThanOrEqualTo(1), 'page'),
         ]);
-    }
-
-    private function getParameterReflection(Type $type, string $name): ParameterReflection
-    {
-        return new class ($type, $name) implements ParameterReflection
-        {
-            public function __construct(
-                private Type $type,
-                private string $name,
-            ) {
-            }
-
-            public function getName(): string
-            {
-                return $this->name;
-            }
-
-            public function isOptional(): bool
-            {
-                return false;
-            }
-
-            public function getType(): Type
-            {
-                return $this->type;
-            }
-
-            public function passedByReference(): PassedByReference
-            {
-                return PassedByReference::createNo();
-            }
-
-            public function isVariadic(): bool
-            {
-                return false;
-            }
-
-            public function getDefaultValue(): Type|null
-            {
-                return null;
-            }
-        };
     }
 }
