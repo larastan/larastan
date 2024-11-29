@@ -175,7 +175,12 @@ class IntegrationTest extends PHPStanTestCase
         foreach ($errors as $error) {
             $errorLine = $error->getLine() ?? 0;
 
-            $this->assertArrayHasKey($errorLine, $expectedErrors);
+            $this->assertArrayHasKey(
+                $errorLine,
+                $expectedErrors,
+                sprintf('Unexpected error "%s" at line %d.', $error->getMessage(), $errorLine),
+            );
+
             $this->assertContains(
                 $error->getMessage(),
                 $expectedErrors[$errorLine],
