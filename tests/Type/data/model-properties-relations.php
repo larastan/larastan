@@ -4,7 +4,6 @@ namespace ModelPropertiesRelations;
 
 use App\Account;
 use App\User;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -98,8 +97,8 @@ function test(Foo $foo, Bar $bar, Account $account): void
     assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelations\Bar>', $foo->hasManyThroughRelation);
     assertType('ModelPropertiesRelations\Baz|null', $foo->hasOneThroughRelation);
     assertType('ModelPropertiesRelations\Foo', $bar->belongsToRelation);
-    assertType('mixed', $bar->morphToRelation);
-    assertType('App\Account|App\User', $bar->morphToUnionRelation);
+    assertType('Illuminate\Database\Eloquent\Model|null', $bar->morphToRelation);
+    assertType('App\Account|App\User|null', $bar->morphToUnionRelation);
     assertType('ModelPropertiesRelations\Bar|null', $foo->hasManyRelation->first());
     assertType('ModelPropertiesRelations\Bar|null', $foo->hasManyRelation()->find(1));
     assertType('App\User|null', $account->ownerRelation);
@@ -107,4 +106,3 @@ function test(Foo $foo, Bar $bar, Account $account): void
     assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelations\Bar>|ModelPropertiesRelations\Baz|null', $foo->relationReturningUnion2);
     assertType('Illuminate\Database\Eloquent\Collection<int, ModelPropertiesRelations\Foo>', $foo->ancestors);
 }
-

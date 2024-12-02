@@ -229,7 +229,7 @@ function test(
 
     assertType('Illuminate\Database\Eloquent\Relations\MorphTo<Illuminate\Database\Eloquent\Model, App\Comment>', $comment->commentable());
     assertType('Illuminate\Database\Eloquent\Model|null', $comment->commentable()->getResults());
-    assertType('mixed', $comment->commentable);
+    assertType('Illuminate\Database\Eloquent\Model|null', $comment->commentable);
     assertType('Illuminate\Database\Eloquent\Collection<int, App\Comment>', $comment->commentable()->getEager());
     assertType('Illuminate\Database\Eloquent\Model', $comment->commentable()->createModelByType('foo'));
     assertType('App\Comment', $comment->commentable()->associate(new Post()));
