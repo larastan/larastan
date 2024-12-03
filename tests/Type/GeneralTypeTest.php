@@ -93,6 +93,7 @@ class GeneralTypeTest extends TypeInferenceTestCase
             yield from self::gatherAssertTypes(__DIR__ . '/data/model-properties-l11.php');
             yield from self::gatherAssertTypes(__DIR__ . '/data/model-relations-l11-15.php');
             yield from self::gatherAssertTypes(__DIR__ . '/data/model-properties-relations-l11-15.php');
+            yield from self::gatherAssertTypes(__DIR__ . '/data/bug-2111.php');
         } else {
             yield from self::gatherAssertTypes(__DIR__ . '/data/model-properties-relations.php');
         }

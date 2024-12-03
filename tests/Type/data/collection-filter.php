@@ -31,10 +31,12 @@ function test(User $user, SupportCollection $users): void
     assertType('Illuminate\Support\Collection<int, int<3, max>>', collect([1, 2, 3, 4, 5, 6])->filter(function (int $value) {
         return $value > 2;
     }));
+    assertType('Illuminate\Support\Collection<int, int<3, max>>', collect([1, 2, 3, 4, 5, 6])->filter(fn (int $value) => $value > 2));
 
     assertType("Illuminate\Database\Eloquent\Collection<int, App\User>", $users->filter(function (User $user): bool {
         return ! $user->blocked;
     }));
+    assertType("Illuminate\Database\Eloquent\Collection<int, App\User>", $users->filter(fn (User $user) => ! $user->blocked));
 
     assertType(
         'Illuminate\Support\Collection<int, App\Account>',

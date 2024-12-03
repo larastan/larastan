@@ -18,10 +18,12 @@ use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
+use function assert;
 use function count;
+use function in_array;
 use function is_string;
 
-class CollectionFilterDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
+class CollectionFilterRejectDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
     public function getClass(): string
     {
@@ -30,7 +32,7 @@ class CollectionFilterDynamicReturnTypeExtension implements DynamicMethodReturnT
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-        return $methodReflection->getName() === 'filter';
+        return in_array($methodReflection->getName(), ['filter', 'reject'], true);
     }
 
     public function getTypeFromMethodCall(
@@ -51,10 +53,16 @@ class CollectionFilterDynamicReturnTypeExtension implements DynamicMethodReturnT
             return null;
         }
 
-        if (count($methodCall->getArgs()) < 1) {
-            $nonFalseyTypes = TypeCombinator::removeFalsey($valueType);
+        $methodName = $methodReflection->getName();
+        assert($methodName === 'filter' || $methodName === 'reject', 'proven in isMethodSupported');
 
-            return new GenericObjectType($calledOnType->getObjectClassNames()[0], [$keyType, $nonFalseyTypes]);
+        if (count($methodCall->getArgs()) < 1) {
+            $modifiedType = match ($methodName) {
+                'filter' => TypeCombinator::removeFalsey($valueType),
+                'reject' => TypeCombinator::removeTruthy($valueType)
+            };
+
+            return new GenericObjectType($calledOnType->getObjectClassNames()[0], [$keyType, $modifiedType]);
         }
 
         $callbackArg = $methodCall->getArgs()[0]->value;
@@ -82,8 +90,11 @@ class CollectionFilterDynamicReturnTypeExtension implements DynamicMethodReturnT
 
             $node = new Variable($itemVariableName);
             // @phpstan-ignore-next-line
-            $scope     = $scope->assignExpression($node, $valueType);
-            $scope     = $scope->filterByTruthyValue($expr);
+            $scope = $scope->assignExpression($node, $valueType);
+            $scope = match ($methodName) {
+                'filter' => $scope->filterByTruthyValue($expr),
+                'reject' => $scope->filterByFalseyValue($expr),
+            };
             $valueType = $scope->getVariableType($itemVariableName);
         }
 
