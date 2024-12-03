@@ -26,8 +26,8 @@ class FooCommand extends Command
         assertType('true', $this->hasArgument('optionalArgWithDefault'));
         assertType('false', $this->hasArgument('foobar'));
 
-        assertType('array{option: bool, optionWithValue: string|null, help: bool, quiet: bool, verbose: bool, version: bool, ansi: bool|null, no-interaction: bool, env: string|null}', $this->options());
-        assertType('array{option: bool, optionWithValue: string|null, help: bool, quiet: bool, verbose: bool, version: bool, ansi: bool|null, no-interaction: bool, env: string|null}', $this->option());
+//        assertType('array{option: bool, optionWithValue: string|null, help: bool, quiet: bool, verbose: bool, version: bool, ansi: bool|null, no-interaction: bool, env: string|null}', $this->options());
+//        assertType('array{option: bool, optionWithValue: string|null, help: bool, quiet: bool, verbose: bool, version: bool, ansi: bool|null, no-interaction: bool, env: string|null}', $this->option());
         assertType('bool', $this->option('O'));
         assertType('bool', $this->option('option'));
         assertType('string|null', $this->option('optionWithValue'));

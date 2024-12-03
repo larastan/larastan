@@ -76,19 +76,18 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
             $modelReflection = $this->reflectionProvider->getClass(Model::class);
         }
 
-        if ($modelReflection->getName() !== Model::class && ! $modelReflection->isSubclassOf(Model::class)) {
+        if (! $modelReflection->is(Model::class)) {
             return null;
         }
 
         $builderName = $this->builderHelper->determineBuilderName($modelReflection->getName());
+        $builderType = new GenericObjectType($builderName, [new ObjectType($modelReflection->getName())]);
 
-        $builderReflection = (new GenericObjectType($builderName, [new ObjectType($modelReflection->getName())]));
-
-        if (! $builderReflection->hasMethod($methodName)->yes()) {
+        if (! $builderType->hasMethod($methodName)->yes()) {
             return null;
         }
 
-        $reflection = $builderReflection->getMethod($methodName, new OutOfClassScope());
+        $reflection = $builderType->getMethod($methodName, new OutOfClassScope());
 
         $parametersAcceptor = $reflection->getVariants()[0];
         $returnType         = $parametersAcceptor->getReturnType();

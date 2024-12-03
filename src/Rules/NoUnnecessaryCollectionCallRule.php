@@ -21,9 +21,9 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
-use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use stdClass;
 
 use function array_diff;
 use function array_map;
@@ -225,7 +225,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
         $iterableType = $scope->getType($node->var)->getIterableValueType();
 
-        if ($iterableType instanceof MixedType) {
+        if ((new ObjectType(stdClass::class))->isSuperTypeOf($iterableType)->yes()) {
             $previousCall = $node->var;
             if ($previousCall instanceof MethodCall) {
                 $queryBuilderType = $scope->getType($previousCall->var);

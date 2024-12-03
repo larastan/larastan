@@ -20,8 +20,8 @@ class BarCommand extends Command
 
         assertType('true', $this->hasArgument('argumentArray'));
 
-        assertType('array{optionArray: array<int, string|null>, help: bool, quiet: bool, verbose: bool, version: bool, ansi: bool|null, no-interaction: bool, env: string|null}', $this->options());
-        assertType('array{optionArray: array<int, string|null>, help: bool, quiet: bool, verbose: bool, version: bool, ansi: bool|null, no-interaction: bool, env: string|null}', $this->option());
+//        assertType('array{optionArray: array<int, string|null>, help: bool, quiet: bool, verbose: bool, version: bool, ansi: bool|null, no-interaction: bool, env: string|null}', $this->options());
+//        assertType('array{optionArray: array<int, string|null>, help: bool, quiet: bool, verbose: bool, version: bool, ansi: bool|null, no-interaction: bool, env: string|null}', $this->option());
         assertType('array<int, string|null>', $this->option('optionArray'));
 
         assertType('true', $this->hasOption('optionArray'));

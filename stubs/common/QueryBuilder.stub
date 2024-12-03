@@ -187,9 +187,17 @@ class Builder
     /**
      * Get a lazy collection for the given query.
      *
-     * @return \Illuminate\Support\LazyCollection<int, mixed>
+     * @return \Illuminate\Support\LazyCollection<int, \stdClass>
      */
     public function cursor();
+
+    /**
+     * Execute the query as a "select" statement.
+     *
+     * @param  string[]|string  $columns
+     * @return \Illuminate\Support\Collection<int, \stdClass>
+     */
+    public function get($columns = ['*']);
 
     /**
      * Get an array with the values of a given column.
