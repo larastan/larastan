@@ -395,7 +395,7 @@ Checks model's `$appends` property for computed properties. The properties added
 ```php
 class User extends \Illuminate\Database\Eloquent\Model
 {
-    protected $casts = ['email'];
+    protected $appends = ['email'];
 }
 ```
 
