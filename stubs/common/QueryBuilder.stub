@@ -143,8 +143,7 @@ class Builder
     /**
      * Add a union statement to the query.
      *
-     * @template TModel of \Illuminate\Database\Eloquent\Model
-     * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<TModel>|\Closure  $query
+     * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<*>|\Closure  $query
      * @param  bool  $all
      * @return $this
      */
@@ -153,8 +152,7 @@ class Builder
     /**
      * Add a union all statement to the query.
      *
-     * @template TModel of \Illuminate\Database\Eloquent\Model
-     * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<TModel>|\Closure  $query
+     * @param  \Illuminate\Database\Query\Builder|\Illuminate\Database\Eloquent\Builder<*>|\Closure  $query
      * @return $this
      */
     public function unionAll($query);
