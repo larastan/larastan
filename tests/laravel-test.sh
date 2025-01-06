@@ -14,8 +14,7 @@ composer config minimum-stability dev
 composer config repositories.0 '{ "type": "path", "url": "../larastan", "options": { "symlink": false } }'
 
 # No version information with "type":"path"
-composer require --dev "larastan/larastan:*"
-composer du -o
+composer require --dev --optimize-autoloader "larastan/larastan:*"
 
 cat >phpstan.neon <<"EOF"
 includes:
@@ -28,7 +27,7 @@ EOF
 
 echo "Test Laravel"
 vendor/bin/phpstan analyse
-cd -
 
-echo "Test Laravel from other working directories"
-../laravel/vendor/bin/phpstan analyse --configuration=../laravel/phpstan.neon ../laravel/app
+echo "Test Laravel from another working directory"
+cd -
+../laravel/vendor/bin/phpstan analyse --configuration=../laravel/phpstan.neon
