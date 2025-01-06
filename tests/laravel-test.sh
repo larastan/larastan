@@ -7,6 +7,7 @@ LARAVEL_VERSION_CONSTRAINT="${1:-^11.0}"
 echo "Install Laravel ${LARAVEL_VERSION_CONSTRAINT}"
 composer create-project --quiet --prefer-dist "laravel/laravel:${LARAVEL_VERSION_CONSTRAINT}" ../laravel
 cd ../laravel/
+SAMPLE_APP_DIR="$(pwd)"
 composer show --direct
 
 echo "Add Larastan from source"
@@ -29,6 +30,5 @@ echo "Test Laravel"
 vendor/bin/phpstan analyse
 
 echo "Test Laravel from another working directory"
-cd -
-rm -rf vendor/
-../laravel/vendor/bin/phpstan analyse --configuration=../laravel/phpstan.neon --autoload-file=../laravel/vendor/autoload.php
+cd /tmp/
+${SAMPLE_APP_DIR}/vendor/bin/phpstan analyse --configuration=${SAMPLE_APP_DIR}/phpstan.neon
