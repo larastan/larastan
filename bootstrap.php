@@ -13,10 +13,13 @@ if (! defined('LARAVEL_START')) {
 }
 
 if (file_exists($applicationPath = getcwd().'/bootstrap/app.php')) { // Applications and Local Dev
+    error_log('bootstrap-path: '.$applicationPath);
     $app = require $applicationPath;
 } elseif (file_exists($applicationPath = dirname(__DIR__, 3).'/bootstrap/app.php')) { // Relative path from default vendor dir
+    error_log('bootstrap-path: '.$applicationPath);
     $app = require $applicationPath;
 } elseif (trait_exists(CreatesApplication::class)) { // Packages
+    error_log('bootstrap-path: Testbench');
     $app = ApplicationResolver::resolve();
 }
 
