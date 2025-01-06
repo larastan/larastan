@@ -30,4 +30,5 @@ vendor/bin/phpstan analyse
 
 echo "Test Laravel from another working directory"
 cd -
+rm -rf vendor/
 ../laravel/vendor/bin/phpstan analyse --configuration=../laravel/phpstan.neon --autoload-file=../laravel/vendor/autoload.php
