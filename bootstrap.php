@@ -13,7 +13,6 @@ if (! defined('LARAVEL_START')) {
 }
 
 if (file_exists($applicationPath = getcwd().'/bootstrap/app.php')) { // Applications and Local Dev
-    require_once getcwd().'/vendor/laravel/framework/src/Illuminate/Support/helpers.php';
     $app = require $applicationPath;
 } elseif (file_exists($applicationPath = dirname(__DIR__, 3).'/bootstrap/app.php')) { // Relative path from default vendor dir
     $app = require $applicationPath;
