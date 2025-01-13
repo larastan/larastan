@@ -12,7 +12,7 @@ By default, the default Laravel database migration path (`database/migrations`) 
 
 You can give absolute paths, or paths relative to the PHPStan config file.
 
-#### Example
+### Example
 ```neon
 parameters:
     databaseMigrationsPath:
@@ -27,7 +27,7 @@ parameters:
 
 You can disable use this config to disable migration scanning.
 
-#### Example
+### Example
 ```neon
 parameters:
     disableMigrationScan: true
@@ -37,7 +37,7 @@ parameters:
 
 By default, Larastan will check `database/schema` directory to find schema dumps. If you have them in other locations or if you have multiple folders, you can use this config option to add them.
 
-#### Example
+### Example
 ```neon
 parameters:
     squashedMigrationsPath:
@@ -45,7 +45,7 @@ parameters:
         - app/Domain/DomainB/schema
 ```
 
-#### PostgreSQL
+### PostgreSQL
 
 The package used to parse the schema dumps, [phpmyadmin/sql-parser](https://github.com/phpmyadmin/sql-parser), is primarily focused on the MySQL dialect.
 It can read (or rather, try to read) PostgreSQL dumps provided they are in the *plain text (and not the 'custom') format*, but the mileage may vary as problems have been noted with timestamp columns and lengthy parse time on more complicated dumps.
@@ -59,7 +59,7 @@ The viable options for PostgreSQL at the moment are:
 
 You can disable use this config to disable schema scanning.
 
-#### Example
+### Example
 ```neon
 parameters:
     disableSchemaScan: true
@@ -78,13 +78,13 @@ parameters:
 ```
 
 ## `checkModelAppends`
-**default**: `false`
+**default**: `true`
 
 This config parameter enables the checks the model's $appends property for computed properties. You can read the details [here](rules.md#modelappendsrule).
 
-To enable you can set it to `true`:
+To disable you can set it to `false`:
 
 ```neon
 parameters:
-    checkModelAppends: true
+    checkModelAppends: false
 ```
