@@ -48,4 +48,14 @@ trait EnumeratesValues
      * @return static<TFlatMapKey, TFlatMapValue>
      */
     public function flatMap(callable $callback);
+
+	/**
+     * Run a map over each nested chunk of items.
+     *
+     * @template TMapSpreadValue
+     *
+     * @param  callable(...TValue, ?TKey): TMapSpreadValue  $callback
+     * @return static<TKey, TMapSpreadValue>
+     */
+    public function mapSpread(callable $callback);
 }
