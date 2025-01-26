@@ -23,7 +23,7 @@ class Builder
      *
      * @param  string  $identifier
      * @param  \Illuminate\Database\Eloquent\Scope|\Closure  $scope
-     * @return static
+     * @return $this
      */
     public function withGlobalScope($identifier, $scope);
 
@@ -31,7 +31,7 @@ class Builder
      * Remove a registered global scope.
      *
      * @param  \Illuminate\Database\Eloquent\Scope|string  $scope
-     * @return static
+     * @return $this
      */
     public function withoutGlobalScope($scope);
 
@@ -194,7 +194,7 @@ class Builder
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
-     * @return static
+     * @return $this
      */
     public function where($column, $operator = null, $value = null, $boolean = 'and');
 
@@ -384,7 +384,7 @@ class Builder
      * @param  \Closure|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
-     * @return static
+     * @return $this
      */
     public function whereRelation($relation, $column, $operator = null, $value = null);
 
