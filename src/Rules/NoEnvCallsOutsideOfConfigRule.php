@@ -67,6 +67,6 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
 
     protected function isCalledOutsideOfPackageConfig(FuncCall $call, Scope $scope): bool
     {
-        return basename(dirname($scope->getFile())) !== 'config';
+        return str_starts_with($scope->getFile(), getcwd() . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR) === false;
     }
 }
