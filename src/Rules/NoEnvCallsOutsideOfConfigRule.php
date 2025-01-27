@@ -13,7 +13,9 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 
+use const DIRECTORY_SEPARATOR;
 use function config_path;
+use function getcwd;
 use function str_starts_with;
 
 /**
@@ -47,7 +49,7 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
             return [];
         }
 
-        if (! $this->isCalledOutsideOfPackageConfig($node, $scope)) {
+        if (! $this->isCalledOutsideOfPackageConfig($scope)) {
             return [];
         }
 
@@ -65,7 +67,7 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
         return str_starts_with($scope->getFile(), config_path()) === false;
     }
 
-    protected function isCalledOutsideOfPackageConfig(FuncCall $call, Scope $scope): bool
+    protected function isCalledOutsideOfPackageConfig(Scope $scope): bool
     {
         return str_starts_with($scope->getFile(), getcwd() . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR) === false;
     }
