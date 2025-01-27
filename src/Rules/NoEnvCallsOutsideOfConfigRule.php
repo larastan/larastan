@@ -47,6 +47,10 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
             return [];
         }
 
+        if (! $this->isCalledOutsideOfPackageConfig($node, $scope)) {
+            return [];
+        }
+
         return [
             RuleErrorBuilder::message("Called 'env' outside of the config directory which returns null when the config is cached, use 'config'.")
                 ->identifier('larastan.noEnvCallsOutsideOfConfig')
@@ -59,5 +63,10 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
     protected function isCalledOutsideOfConfig(FuncCall $call, Scope $scope): bool
     {
         return str_starts_with($scope->getFile(), config_path()) === false;
+    }
+
+    protected function isCalledOutsideOfPackageConfig(FuncCall $call, Scope $scope): bool
+    {
+        return basename(dirname($scope->getFile())) !== 'config';
     }
 }
