@@ -6,6 +6,7 @@ namespace Tests\Rules;
 
 use Illuminate\Foundation\Application;
 use Larastan\Larastan\Rules\NoEnvCallsOutsideOfConfigRule;
+use PHPStan\File\FileHelper;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
@@ -14,16 +15,22 @@ class NoEnvCallsOutsideOfConfigRuleTest extends RuleTestCase
 {
     protected function setUp(): void
     {
-        $this->overrideConfigPath(__DIR__ . '/data/config');
+        $this->overrideConfigPath(__DIR__ . '/data/config_path');
     }
 
     protected function getRule(): Rule
     {
-        return new NoEnvCallsOutsideOfConfigRule();
+        return new NoEnvCallsOutsideOfConfigRule(new FileHelper(__DIR__ . '/data/'));
     }
 
     /** @test */
     public function itDoesNotFailForEnvCallsInsideConfigDirectory(): void
+    {
+        $this->analyse([__DIR__ . '/data/config_path/env-calls.php'], []);
+    }
+
+    /** @test */
+    public function itDoesNotFailForEnvCallsInsidePackageConfigDirectory(): void
     {
         $this->analyse([__DIR__ . '/data/config/env-calls.php'], []);
     }

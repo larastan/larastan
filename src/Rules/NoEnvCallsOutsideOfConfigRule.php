@@ -9,13 +9,13 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
+use PHPStan\File\FileHelper;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 
 use const DIRECTORY_SEPARATOR;
 use function config_path;
-use function getcwd;
 use function str_starts_with;
 
 /**
@@ -26,6 +26,10 @@ use function str_starts_with;
 class NoEnvCallsOutsideOfConfigRule implements Rule
 {
     use HasContainer;
+
+    public function __construct(private FileHelper $fileHelper)
+    {
+    }
 
     public function getNodeType(): string
     {
@@ -69,6 +73,6 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
 
     protected function isCalledOutsideOfPackageConfig(Scope $scope): bool
     {
-        return str_starts_with($scope->getFile(), getcwd() . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR) === false;
+        return str_starts_with($scope->getFile(), $this->fileHelper->absolutizePath('config') . DIRECTORY_SEPARATOR) === false;
     }
 }
