@@ -7,11 +7,11 @@ namespace Larastan\Larastan\Properties;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Larastan\Larastan\Support\ModelHelper;
 use PhpParser;
 use PhpParser\NodeFinder;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ObjectType;
-use ReflectionException;
 
 use function array_key_exists;
 use function array_merge;
@@ -25,8 +25,11 @@ use function strtolower;
 final class SchemaAggregator
 {
     /** @param array<string, SchemaTable> $tables */
-    public function __construct(private ReflectionProvider $reflectionProvider, public array $tables = [])
-    {
+    public function __construct(
+        private ModelHelper $modelHelper,
+        private ReflectionProvider $reflectionProvider,
+        public array $tables = [],
+    ) {
     }
 
     /** @param  array<int, PhpParser\Node\Stmt> $stmts */
@@ -251,6 +254,7 @@ final class SchemaAggregator
                     $columnName = $secondArg->value;
                 }
 
+                /** @phpstan-ignore argument.type (not a class string) */
                 $type = $this->getModelReferenceType($modelClass);
                 if ($unsigned && ($type === null || $type === 'int')) {
                     $type = 'non-negative-int';
@@ -419,13 +423,12 @@ final class SchemaAggregator
         $this->tables[$newTableName] = $table;
     }
 
+    /** @param class-string<Model> $modelClass */
     private function getModelReferenceType(string $modelClass): string|null
     {
-        $classReflection = $this->reflectionProvider->getClass($modelClass);
-        try {
-            /** @var Model $modelInstance */
-            $modelInstance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
-        } catch (ReflectionException) {
+        $modelInstance = $this->modelHelper->getModelInstance($modelClass);
+
+        if ($modelInstance === null) {
             return null;
         }
 

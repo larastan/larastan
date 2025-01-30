@@ -8,19 +8,19 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Larastan\Larastan\Reflection\ReflectionHelper;
+use Larastan\Larastan\Support\ModelHelper;
 use PHPStan\PhpDoc\TypeStringResolver;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\TypeCombinator;
-use ReflectionException;
 
 use function array_key_exists;
 use function array_map;
+use function assert;
 use function count;
 use function in_array;
 use function is_string;
@@ -36,6 +36,7 @@ class ModelPropertyHelper
         private MigrationHelper $migrationHelper,
         private SquashedMigrationHelper $squashedMigrationHelper,
         private ModelCastHelper $modelCastHelper,
+        private ModelHelper $modelHelper,
     ) {
     }
 
@@ -68,10 +69,9 @@ class ModelPropertyHelper
             return false;
         }
 
-        try {
-            /** @var Model $modelInstance */
-            $modelInstance = $classReflectionOrTable->getNativeReflection()->newInstanceWithoutConstructor();
-        } catch (ReflectionException) {
+        $modelInstance = $this->modelHelper->getModelInstance($classReflectionOrTable);
+
+        if ($modelInstance === null) {
             return false;
         }
 
@@ -90,12 +90,8 @@ class ModelPropertyHelper
 
     public function getDatabaseProperty(ClassReflection $classReflection, string $propertyName): ModelProperty
     {
-        try {
-            /** @var Model $modelInstance */
-            $modelInstance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
-        } catch (ReflectionException) {
-            throw new ShouldNotHappenException();
-        }
+        $modelInstance = $this->modelHelper->getModelInstance($classReflection);
+        assert($modelInstance !== null);
 
         $tableName = $modelInstance->getTable();
 
