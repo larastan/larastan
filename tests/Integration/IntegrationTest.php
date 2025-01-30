@@ -97,6 +97,11 @@ class IntegrationTest extends PHPStanTestCase
                 25 => ['Parameter #2 $lineTwo of class ModelPropertyMutatorAndCasting\Address constructor expects string, mixed given.'],
             ],
         ];
+
+        yield 'ulid and uuid as primary keys' =>[
+            __DIR__ . '/data/ulid_and_uuid_as_primary_keys.php',
+            [],
+        ];
     }
 
     /**
