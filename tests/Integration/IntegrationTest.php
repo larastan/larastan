@@ -98,10 +98,7 @@ class IntegrationTest extends PHPStanTestCase
             ],
         ];
 
-        yield 'ulid and uuid as primary keys' =>[
-            __DIR__ . '/data/ulid_and_uuid_as_primary_keys.php',
-            [],
-        ];
+        yield [ __DIR__ . '/data/ulid_and_uuid_as_primary_keys.php'];
     }
 
     /**

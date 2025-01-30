@@ -92,16 +92,22 @@ class ModelPropertyHelper
     {
         try {
             /** @var Model $modelInstance */
-            $modelInstance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
+            $modelInstance = $classReflection->getNativeReflection()->newInstance();
         } catch (ReflectionException) {
             throw new ShouldNotHappenException();
         }
 
         $tableName = $modelInstance->getTable();
 
+        $isScalar = $this->stringResolver->resolve($modelInstance->getKeyType())->isScalar()->yes();
+
         if (
             $propertyName === $modelInstance->getKeyName()
-            && (! array_key_exists($tableName, $this->tables) || ! array_key_exists($propertyName, $this->tables[$tableName]->columns))
+            && (
+                ! array_key_exists($tableName, $this->tables)
+                || ! array_key_exists($propertyName, $this->tables[$tableName]->columns)
+                || $isScalar
+            )
         ) {
             return new ModelProperty(
                 $classReflection,
