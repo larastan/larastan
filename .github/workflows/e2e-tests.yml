@@ -30,6 +30,7 @@ jobs:
             php-version: "8.2"
             config: monicahq-monica.neon
             baseline: monicahq-monica
+
           - repository: koel/koel
             ref: d900c9cb26afb226f995ac63abfaf499eb85c56a
             php-version: "8.1"
@@ -100,7 +101,8 @@ jobs:
         with:
           name: "baseline-${{ matrix.baseline }}"
           path: "larastan/e2e/${{ matrix.baseline }}.baseline.neon"
-  merge:
+
+  merge-artifacts:
     runs-on: ubuntu-latest
     needs: integration-tests
     if: ${{ always() && needs.integration-tests.result == 'failure' }}
