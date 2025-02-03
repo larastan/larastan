@@ -1,3 +1,4 @@
+---
 name: "Tests"
 
 on:
@@ -25,10 +26,10 @@ jobs:
       fail-fast: false
       matrix:
         php: ["8.2", "8.3", "8.4"]
-        laravel: ["^11.15.0"]
+        laravel: ["^11.15.0", "^12.0"]
         dependencies:
-            - "lowest"
-            - "highest"
+          - "lowest"
+          - "highest"
 
     name: "PHP${{ matrix.php }} - Laravel${{ matrix.laravel }} ${{ matrix.dependencies == 'highest' && '↑' || '↓' }}"
 
@@ -69,4 +70,9 @@ jobs:
       - name: "Run Larastan on a sample Laravel application"
         run: |
           version="${{ matrix.laravel }}"
-          tests/laravel-test.sh "${version%%.*}.0"
+          if [[ "$version" == "^12.0" ]]; then
+            version="12.x-dev"
+          else
+            version="${version%%.*}.0"
+          fi
+          tests/laravel-test.sh "$version"
