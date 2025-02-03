@@ -1,3 +1,4 @@
+---
 name: "E2E"
 
 on:
@@ -24,39 +25,34 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          -
-            repository: monicahq/monica
+          - repository: monicahq/monica
             ref: a809ecb85d929e5c0d14ecc02b881e5132906337
             php-version: "8.2"
             config: monicahq-monica.neon
-            baseline: monicahq-monica.baseline.neon
-          -
-            repository: koel/koel
+            baseline: monicahq-monica
+          - repository: koel/koel
             ref: d900c9cb26afb226f995ac63abfaf499eb85c56a
             php-version: "8.1"
             config: koel-koel.neon
-            baseline: koel-koel.baseline.neon
+            baseline: koel-koel
 
-          -
-            repository: canvural/larastan-test
+          - repository: canvural/larastan-test
             ref: f6dddbd4916f199adc35419c6a1bd2c63ba6f734
             php-version: "8.1"
             config: canvural-larastan-test.neon
-            baseline: canvural-larastan-test.baseline.neon
+            baseline: canvural-larastan-test
 
-          -
-            repository: canvural/larastan-strict-rules
+          - repository: canvural/larastan-strict-rules
             ref: 4f658a8f9ca5334de22f733bdba1d24cbe9303a6
             php-version: "8.1"
             config: canvural-larastan-strict-rules.neon
-            baseline: canvural-larastan-strict-rules.baseline.neon
+            baseline: canvural-larastan-strict-rules
 
-          -
-            repository: filamentphp/filament
+          - repository: filamentphp/filament
             ref: 68a731e657bad430336a8cdc51f20fbe2e176254
             php-version: "8.2"
             config: filamentphp-filament.neon
-            baseline: filamentphp-filament.baseline.neon
+            baseline: filamentphp-filament
             force-phpstan-version: true
 
     steps:
@@ -99,9 +95,18 @@ jobs:
         working-directory: e2e
         run: composer exec phpstan analyse -- -c ../larastan/e2e/${{ matrix.config }} -b ../larastan/e2e/${{ matrix.baseline }}
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: ${{ failure() }}
         with:
+          name: "baseline-${{ matrix.baseline }}"
+          path: "larastan/e2e/${{ matrix.baseline }}.baseline.neon"
+  merge:
+    runs-on: ubuntu-latest
+    needs: integration-tests
+    if: ${{ always() && needs.integration-tests.result == 'failure' }}
+    steps:
+      - name: Merge Artifacts
+        uses: actions/upload-artifact/merge@v4
+        with:
           name: baselines
-          path: "larastan/e2e/${{ matrix.baseline }}"
-
+          pattern: baseline-*
