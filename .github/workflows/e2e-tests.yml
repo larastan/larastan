@@ -94,7 +94,7 @@ jobs:
       - name: "Generate baseline"
         if: ${{ failure() }}
         working-directory: e2e
-        run: composer exec phpstan analyse -- -c ../larastan/e2e/${{ matrix.config }} -b ../larastan/e2e/${{ matrix.baseline }}
+        run: composer exec phpstan analyse -- -c ../larastan/e2e/${{ matrix.config }} -b ../larastan/e2e/${{ matrix.baseline }}.baseline.neon
 
       - uses: actions/upload-artifact@v4
         if: ${{ failure() }}
