@@ -3,6 +3,10 @@ name: "PHPStan dev"
 on:
   schedule:
     - cron: "1 0 * * *"
+  pull_request:
+    paths-ignore:
+      - "**.md"
+      - 'docs/**'
   workflow_dispatch: null
 
 jobs:
