@@ -35,7 +35,7 @@
         "orchestra/canvas": "^7.11.1 || ^8.11.0 || ^9.0.2 || ^10.0",
         "orchestra/testbench-core": "^7.51.3 || ^8.32.3 || ^9.9.3 || ^10.0",
         "phpstan/phpstan-deprecation-rules": "^1.2",
-        "phpunit/phpunit": "^9.6.13 || ^10.5.16 || ^11.5.3"
+        "phpunit/phpunit": "^9.6.13 || ^10.5.16 || ^11.0"
     },
     "suggest": {
         "orchestra/testbench": "Using Larastan for analysing a package needs Testbench"
