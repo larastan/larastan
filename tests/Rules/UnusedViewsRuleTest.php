@@ -42,14 +42,6 @@ class UnusedViewsRuleTest extends RuleTestCase
         ];
     }
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        // This is a workaround for a weird PHPStan container cache issue.
-        require __DIR__ . '/../../bootstrap.php';
-    }
-
     public function testRule(): void
     {
         $this->analyse([__DIR__ . '/data/FooController.php'], [
