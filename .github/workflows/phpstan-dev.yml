@@ -3,10 +3,6 @@ name: "PHPStan dev"
 on:
   schedule:
     - cron: "1 0 * * *"
-  pull_request:
-    paths-ignore:
-      - "**.md"
-      - 'docs/**'
   workflow_dispatch: null
 
 jobs:
@@ -14,7 +10,7 @@ jobs:
     strategy:
       matrix:
         php: ["8.3"]
-        laravel: ["^11.0", "^12.0"]
+        laravel: ["^11.0"]
       fail-fast: false
 
     name: "P${{ matrix.php }} - L${{ matrix.laravel }}"
