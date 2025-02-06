@@ -18,8 +18,6 @@ use PHPStan\Collectors\Collector;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
-use function Orchestra\Testbench\laravel_version_compare;
-
 /** @extends RuleTestCase<UnusedViewsRule> */
 class UnusedViewsRuleTest extends RuleTestCase
 {

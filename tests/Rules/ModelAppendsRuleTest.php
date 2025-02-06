@@ -9,8 +9,6 @@ use Orchestra\Testbench\Foundation\Application as Testbench;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
-use function Orchestra\Testbench\laravel_version_compare;
-
 /** @extends RuleTestCase<ModelAppendsRule> */
 class ModelAppendsRuleTest extends RuleTestCase
 {
