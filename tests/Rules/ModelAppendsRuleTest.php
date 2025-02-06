@@ -5,20 +5,12 @@ declare(strict_types=1);
 namespace Tests\Rules;
 
 use Larastan\Larastan\Rules\ModelAppendsRule;
-use Orchestra\Testbench\Foundation\Application as Testbench;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
 /** @extends RuleTestCase<ModelAppendsRule> */
 class ModelAppendsRuleTest extends RuleTestCase
 {
-    // protected function tearDown(): void
-    // {
-    //     Testbench::flushState($this);
-
-    //     parent::tearDown();
-    // }
-
     protected function getRule(): Rule
     {
         return self::getContainer()->getByType(ModelAppendsRule::class);
