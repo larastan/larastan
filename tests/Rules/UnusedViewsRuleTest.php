@@ -55,11 +55,7 @@ class UnusedViewsRuleTest extends RuleTestCase
 
     protected function tearDown(): void
     {
-        if (laravel_version_compare('11.0', '>=')) {
-            Testbench::flushState($this);
-        } else {
-            Testbench::flushState();
-        }
+        Testbench::flushState($this);
 
         parent::tearDown();
     }
