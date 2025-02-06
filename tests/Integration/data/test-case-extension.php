@@ -7,27 +7,22 @@ class TestCaseExtension
 {
     public function testMockMethod(): void
     {
-        (new TestTestCase())->testMockMethod();
+        (new TestTestCase('foo'))->testMockMethod();
     }
 
     public function testPartialMockMethod(): void
     {
-        (new TestTestCase())->testPartialMockMethod();
+        (new TestTestCase('foo'))->testPartialMockMethod();
     }
 
     public function testSpyMethod(): void
     {
-        (new TestTestCase())->testSpyMethod();
+        (new TestTestCase('foo'))->testSpyMethod();
     }
 }
 
 class TestTestCase extends \Illuminate\Foundation\Testing\TestCase
 {
-    public function __construct()
-    {
-        parent::__construct('testcase');
-    }
-
     public function testMockMethod(): void
     {
         $mock = $this->mock(User::class);
