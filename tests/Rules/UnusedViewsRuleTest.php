@@ -12,6 +12,7 @@ use Larastan\Larastan\Collectors\UsedViewInAnotherViewCollector;
 use Larastan\Larastan\Collectors\UsedViewMakeCollector;
 use Larastan\Larastan\Rules\UnusedViewsRule;
 use Larastan\Larastan\Support\ViewFileHelper;
+use Orchestra\Testbench\Foundation\Application as Testbench;
 use PhpParser\Node;
 use PHPStan\Collectors\Collector;
 use PHPStan\Rules\Rule;
@@ -48,6 +49,13 @@ class UnusedViewsRuleTest extends RuleTestCase
 
         // This is a workaround for a weird PHPStan container cache issue.
         require __DIR__ . '/../../bootstrap.php';
+    }
+
+    protected function tearDown(): void
+    {
+        Testbench::flushState($this);
+
+        parent::tearDown();
     }
 
     public function testRule(): void
