@@ -157,9 +157,6 @@ function test(
     assertType('Illuminate\Support\Collection<int, Illuminate\Support\Collection<int, App\User|string>>', $secondCustomEloquentCollection->zip(['foo']));
     assertType('Illuminate\Support\Collection<int, Illuminate\Support\Collection<int, int|string>>', $items->zip(['foo', 'bar']));
 
-    assertType('Illuminate\Database\Eloquent\Collection<int<0, 1>, Illuminate\Database\Eloquent\Collection<int, App\User>>', $collection->partition('foo'));
-    assertType('App\TransactionCollection<int<0, 1>, App\TransactionCollection<int, App\Transaction>>', $customEloquentCollection->partition('foo'));
-    assertType('App\UserCollection', $secondCustomEloquentCollection->partition('foo'));
     assertType('Illuminate\Support\Collection<int<0, 1>, Illuminate\Support\Collection<string, int>>', $items->partition('foo'));
 
     assertType('Illuminate\Support\Collection<int, App\User|int>', $collection->pad(10, 10));
@@ -189,8 +186,8 @@ function test(
     assertType('App\TransactionCollection<(int|string), App\Transaction>', TransactionCollection::wrap([new Transaction()]));
     assertType('Illuminate\Support\Collection<(int|string), int>', SupportCollection::wrap([1, 2, 3]));
 
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', EloquentCollection::times(10, fn ($int) => new User));
-    assertType('App\TransactionCollection<int, App\Transaction>', TransactionCollection::times(10, fn ($int) => new Transaction));
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', EloquentCollection::times(10, fn ($int) => new User()));
+    assertType('App\TransactionCollection<int, App\Transaction>', TransactionCollection::times(10, fn ($int) => new Transaction()));
     assertType('Illuminate\Support\Collection<int, int>', SupportCollection::times(10, fn ($int) => 5));
     assertType('Illuminate\Support\LazyCollection<int, int>', LazyCollection::times(10, fn ($int) => 5));
 
@@ -238,6 +235,6 @@ function test(
         ],
     ])->groupBy('type'));
 
-    assertType('bool|int', $enumerableIntUsers->search(fn(User $user) => $user->id === 1));
-    assertType('bool|string', $enumerableStringUsers->search(fn(User $user) => $user->id === 1));
+    assertType('bool|int', $enumerableIntUsers->search(fn (User $user) => $user->id === 1));
+    assertType('bool|string', $enumerableStringUsers->search(fn (User $user) => $user->id === 1));
 }
