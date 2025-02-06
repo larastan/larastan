@@ -25,10 +25,17 @@ jobs:
       fail-fast: false
       matrix:
         php: ["8.0", "8.1", "8.2", "8.3"]
-        laravel: ["^9.52.16", "^10.28.0", "^11.16"]
+        laravel: ["^9.52.16", "^10.28.0", "^11.16", "^12.0"]
         dependencies:
             - "lowest"
             - "highest"
+        include:
+          - php: "8.4"
+            laravel: "^11.6"
+            dependencies: "highest"
+          - php: "8.4"
+            laravel: "^12.0"
+            dependencies: "highest"
         exclude:
           - php: "8.0"
             laravel: "^10.28.0"
@@ -47,6 +54,18 @@ jobs:
             dependencies: "highest"
           - php: "8.1"
             laravel: "^11.16"
+            dependencies: "lowest"
+          - php: "8.0"
+            laravel: "^12.0"
+            dependencies: "highest"
+          - php: "8.0"
+            laravel: "^12.0"
+            dependencies: "lowest"
+          - php: "8.1"
+            laravel: "^12.0"
+            dependencies: "highest"
+          - php: "8.1"
+            laravel: "^12.0"
             dependencies: "lowest"
 
     name: "PHP${{ matrix.php }} - Laravel${{ matrix.laravel }} ${{ matrix.dependencies == 'highest' && '↑' || '↓' }}"

@@ -17,25 +17,25 @@
     "require": {
         "php": "^8.0.2",
         "ext-json": "*",
-        "illuminate/console": "^9.52.16 || ^10.28.0 || ^11.16",
-        "illuminate/container": "^9.52.16 || ^10.28.0 || ^11.16",
-        "illuminate/contracts": "^9.52.16 || ^10.28.0 || ^11.16",
-        "illuminate/database": "^9.52.16 || ^10.28.0 || ^11.16",
-        "illuminate/http": "^9.52.16 || ^10.28.0 || ^11.16",
-        "illuminate/pipeline": "^9.52.16 || ^10.28.0 || ^11.16",
-        "illuminate/support": "^9.52.16 || ^10.28.0 || ^11.16",
+        "illuminate/console": "^9.52.16 || ^10.28.0 || ^11.16 || ^12.0",
+        "illuminate/container": "^9.52.16 || ^10.28.0 || ^11.16 || ^12.0",
+        "illuminate/contracts": "^9.52.16 || ^10.28.0 || ^11.16 || ^12.0",
+        "illuminate/database": "^9.52.16 || ^10.28.0 || ^11.16 || ^12.0",
+        "illuminate/http": "^9.52.16 || ^10.28.0 || ^11.16 || ^12.0",
+        "illuminate/pipeline": "^9.52.16 || ^10.28.0 || ^11.16 || ^12.0",
+        "illuminate/support": "^9.52.16 || ^10.28.0 || ^11.16 || ^12.0",
         "phpmyadmin/sql-parser": "^5.9.0",
         "phpstan/phpstan": "^1.12.17"
     },
     "require-dev": {
         "doctrine/coding-standard": "^12.0",
-        "laravel/framework": "^9.52.16 || ^10.28.0 || ^11.16",
+        "laravel/framework": "^9.52.16 || ^10.28.0 || ^11.16 || ^12.0",
         "mockery/mockery": "^1.5.1",
         "nikic/php-parser": "^4.19.1",
-        "orchestra/canvas": "^7.11.1 || ^8.11.0 || ^9.0.2",
-        "orchestra/testbench-core": "^7.33.0 || ^8.13.0 || ^9.0.9",
+        "orchestra/canvas": "^7.11.1 || ^8.11.0 || ^9.0.2 || ^10.0",
+        "orchestra/testbench-core": "^7.33.0 || ^8.13.0 || ^9.0.9 || ^10.0",
         "phpstan/phpstan-deprecation-rules": "^1.2",
-        "phpunit/phpunit": "^9.6.13 || ^10.5.16"
+        "phpunit/phpunit": "^9.6.13 || ^10.5.16 || ^11.5.3"
     },
     "suggest": {
         "orchestra/testbench": "Using Larastan for analysing a package needs Testbench"
