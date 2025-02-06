@@ -11,8 +11,8 @@ use PHPStan\Testing\PHPStanTestCase;
 use Throwable;
 
 use function implode;
-use function sprintf;
 use function Orchestra\Testbench\laravel_version_compare;
+use function sprintf;
 
 class IntegrationTest extends PHPStanTestCase
 {

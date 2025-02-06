@@ -10,8 +10,8 @@ use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 use ReflectionClass;
 
-use function str_replace;
 use function Orchestra\Testbench\laravel_version_compare;
+use function str_replace;
 
 /** @extends RuleTestCase<NoEnvCallsOutsideOfConfigRule> */
 class NoEnvCallsOutsideOfConfigRuleTest extends RuleTestCase
