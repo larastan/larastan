@@ -18,6 +18,8 @@ use PHPStan\Collectors\Collector;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
+use function Orchestra\Testbench\laravel_version_compare;
+
 /** @extends RuleTestCase<UnusedViewsRule> */
 class UnusedViewsRuleTest extends RuleTestCase
 {
@@ -53,7 +55,11 @@ class UnusedViewsRuleTest extends RuleTestCase
 
     protected function tearDown(): void
     {
-        Testbench::flushState($this);
+        if (laravel_version_compare('11.0', '>=')) {
+            Testbench::flushState($this);
+        } else {
+            Testbench::flushState();
+        }
 
         parent::tearDown();
     }
