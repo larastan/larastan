@@ -14,7 +14,7 @@ composer config repositories.0 '{ "type": "path", "url": "../larastan", "options
 # No version information with "type":"path"
 composer require --dev "larastan/larastan:*"
 composer du -o
-composer show -D
+composer show
 
 cat >phpstan.neon <<"EOF"
 includes:
