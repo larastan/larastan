@@ -11,7 +11,7 @@ use PHPStan\Testing\RuleTestCase;
 use ReflectionClass;
 
 use function str_replace;
-use function version_compare;
+use function Orchestra\Testbench\laravel_version_compare;
 
 /** @extends RuleTestCase<NoEnvCallsOutsideOfConfigRule> */
 class NoEnvCallsOutsideOfConfigRuleTest extends RuleTestCase
@@ -45,7 +45,7 @@ class NoEnvCallsOutsideOfConfigRuleTest extends RuleTestCase
     {
         $app = Application::getInstance();
 
-        if (version_compare(LARAVEL_VERSION, '10.0.0', '>=')) {
+        if (laravel_version_compare('10.0.0', '>=')) {
             $app->useConfigPath($path);
 
             return;

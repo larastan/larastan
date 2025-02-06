@@ -6,7 +6,7 @@ namespace Type;
 
 use PHPStan\Testing\TypeInferenceTestCase;
 
-use function version_compare;
+use function Orchestra\Testbench\laravel_version_compare;
 
 class GeneralTypeTest extends TypeInferenceTestCase
 {
@@ -25,6 +25,7 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1760.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1830.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1985.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1997.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/bug-2073.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/carbon.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/conditionable.php');
@@ -58,43 +59,30 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/view-exists.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/view.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/where-relation.php');
-        yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1997.php');
 
-        if (version_compare(LARAVEL_VERSION, '11.0.0', '<')) {
-            yield from self::gatherAssertTypes(__DIR__ . '/data/custom-eloquent-builder.php');
-            yield from self::gatherAssertTypes(__DIR__ . '/data/model-relations.php');
-        }
-
-        if (version_compare(LARAVEL_VERSION, '11.42.0', '<')) {
-            yield from self::gatherAssertTypes(__DIR__ . '/data/model.php');
-            yield from self::gatherAssertTypes(__DIR__ . '/data/eloquent-builder.php');
-        } else {
-            yield from self::gatherAssertTypes(__DIR__ . '/data/model-l11-42.php');
-            yield from self::gatherAssertTypes(__DIR__ . '/data/eloquent-builder-l11-42.php');
-        }
-
-        if (version_compare(LARAVEL_VERSION, '10.15.0', '>=')) {
+        if (laravel_version_compare('10.15.0', '>=')) {
             yield from self::gatherAssertTypes(__DIR__ . '/data/model-l10-15.php');
         }
 
-        if (version_compare(LARAVEL_VERSION, '10.20.0', '>=')) {
+        if (laravel_version_compare('10.20.0', '>=')) {
             yield from self::gatherAssertTypes(__DIR__ . '/data/model-l10-20.php');
             yield from self::gatherAssertTypes(__DIR__ . '/data/model-relations-l10-20.php');
         }
 
-        if (version_compare(LARAVEL_VERSION, '10.24.0', '>=')) {
+        if (laravel_version_compare('10.24.0', '>=')) {
             yield from self::gatherAssertTypes(__DIR__ . '/data/query-builder-l10-24.php');
         }
 
-        if (version_compare(LARAVEL_VERSION, '10.44.0', '>=')) {
+        if (laravel_version_compare('10.44.0', '>=')) {
             yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1819.php');
         }
 
-        if (version_compare(LARAVEL_VERSION, '11.28.0', '>=')) {
-            yield from self::gatherAssertTypes(__DIR__ . '/data/model-collections-l11-28.php');
+        if (laravel_version_compare('11.0.0', '<')) {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/custom-eloquent-builder.php');
+            yield from self::gatherAssertTypes(__DIR__ . '/data/model-relations.php');
         }
 
-        if (version_compare(LARAVEL_VERSION, '11.15.0', '>=')) {
+        if (laravel_version_compare('11.15.0', '>=')) {
             yield from self::gatherAssertTypes(__DIR__ . '/data/custom-eloquent-builder-l11-15.php');
             yield from self::gatherAssertTypes(__DIR__ . '/data/model-properties-l11.php');
             yield from self::gatherAssertTypes(__DIR__ . '/data/model-relations-l11-15.php');
@@ -104,8 +92,20 @@ class GeneralTypeTest extends TypeInferenceTestCase
             yield from self::gatherAssertTypes(__DIR__ . '/data/model-properties-relations.php');
         }
 
-        if (version_compare(LARAVEL_VERSION, '11.31.0', '>=')) {
+        if (laravel_version_compare('11.31.0', '>=')) {
             yield from self::gatherAssertTypes(__DIR__ . '/data/model-relations-l11-31.php');
+        }
+
+        if (laravel_version_compare('11.28.0', '>=')) {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/model-collections-l11-28.php');
+        }
+
+        if (laravel_version_compare('11.42.0', '<')) {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/model.php');
+            yield from self::gatherAssertTypes(__DIR__ . '/data/eloquent-builder.php');
+        } else {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/model-l11-42.php');
+            yield from self::gatherAssertTypes(__DIR__ . '/data/eloquent-builder-l11-42.php');
         }
 
         //##############################################################################################################

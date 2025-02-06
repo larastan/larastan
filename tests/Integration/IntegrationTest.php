@@ -12,7 +12,7 @@ use Throwable;
 
 use function implode;
 use function sprintf;
-use function version_compare;
+use function Orchestra\Testbench\laravel_version_compare;
 
 class IntegrationTest extends PHPStanTestCase
 {
@@ -28,7 +28,7 @@ class IntegrationTest extends PHPStanTestCase
         yield [__DIR__ . '/data/blade-view.php'];
         yield [__DIR__ . '/data/helpers.php'];
 
-        if (! version_compare(LARAVEL_VERSION, '10.0.0', '>=')) {
+        if (! laravel_version_compare('10.0.0', '>=')) {
             return;
         }
 
@@ -71,7 +71,7 @@ class IntegrationTest extends PHPStanTestCase
             ],
         ];
 
-        if (version_compare(LARAVEL_VERSION, '11.0.0', '<')) {
+        if (laravel_version_compare('11.0.0', '<')) {
             yield [
                 __DIR__ . '/data/model-property-relation.php',
                 [
@@ -104,7 +104,7 @@ class IntegrationTest extends PHPStanTestCase
 
         yield [__DIR__ . '/data/eloquent-builder-l10.php'];
 
-        if (version_compare(LARAVEL_VERSION, '11.15.0', '<')) {
+        if (laravel_version_compare('11.15.0', '<')) {
             return;
         }
 

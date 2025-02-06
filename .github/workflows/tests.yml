@@ -27,8 +27,8 @@ jobs:
         php: ["8.0", "8.1", "8.2", "8.3"]
         laravel: ["^9.52.20", "^10.48.28", "^11.41.3", "^12.0"]
         dependencies:
-            - "lowest"
-            - "highest"
+          - "lowest"
+          - "highest"
         include:
           - php: "8.4"
             laravel: "^11.6"
