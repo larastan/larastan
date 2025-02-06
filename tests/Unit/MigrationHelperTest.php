@@ -18,6 +18,8 @@ class MigrationHelperTest extends PHPStanTestCase
 
     private FileHelper $fileHelper;
 
+    private $reflectionProvider;
+
     public function setUp(): void
     {
         $this->parser             = self::getContainer()->getService('currentPhpVersionSimpleDirectParser');
