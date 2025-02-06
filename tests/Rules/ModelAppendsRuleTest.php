@@ -12,12 +12,12 @@ use PHPStan\Testing\RuleTestCase;
 /** @extends RuleTestCase<ModelAppendsRule> */
 class ModelAppendsRuleTest extends RuleTestCase
 {
-    protected function tearDown(): void
-    {
-        Testbench::flushState($this);
+    // protected function tearDown(): void
+    // {
+    //     Testbench::flushState($this);
 
-        parent::tearDown();
-    }
+    //     parent::tearDown();
+    // }
 
     protected function getRule(): Rule
     {

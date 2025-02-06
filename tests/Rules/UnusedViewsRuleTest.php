@@ -51,12 +51,12 @@ class UnusedViewsRuleTest extends RuleTestCase
         require __DIR__ . '/../../bootstrap.php';
     }
 
-    protected function tearDown(): void
-    {
-        Testbench::flushState($this);
+    // protected function tearDown(): void
+    // {
+    //     Testbench::flushState($this);
 
-        parent::tearDown();
-    }
+    //     parent::tearDown();
+    // }
 
     public function testRule(): void
     {
