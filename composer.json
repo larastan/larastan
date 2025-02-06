@@ -31,9 +31,9 @@
         "doctrine/coding-standard": "^12.0",
         "laravel/framework": "^9.52.20 || ^10.48.28 || ^11.41.3 || ^12.0",
         "mockery/mockery": "^1.5.1",
-        "nikic/php-parser": "^4.19.1 || ^5.3.1",
+        "nikic/php-parser": "^5.3.1",
         "orchestra/canvas": "^7.11.1 || ^8.11.0 || ^9.0.2 || ^10.0",
-        "orchestra/testbench-core": "^7.42.6 || ^8.23.8 || ^9.0.12 || ^10.0",
+        "orchestra/testbench-core": "^7.51.3 || ^8.32.3 || ^9.9.3 || ^10.0",
         "phpstan/phpstan-deprecation-rules": "^1.2",
         "phpunit/phpunit": "^9.6.13 || ^10.5.16 || ^11.5.3"
     },
