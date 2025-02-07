@@ -20,6 +20,6 @@ function test(
     UserCollection $secondCustomEloquentCollection,
 ): void {
     assertType('Illuminate\Support\Collection<int<0, 1>, Illuminate\Database\Eloquent\Collection<int, App\User>>', $collection->partition('foo'));
-    assertType('Illuminate\Support\Collection<int<0, 1>, Illuminate\Database\Eloquent\Collection<int, App\Transaction>>', $customEloquentCollection->partition('foo'));
-    assertType('Illuminate\Support\Collection<int<0, 1>, Illuminate\Database\Eloquent\Collection<int, App\User>>', $secondCustomEloquentCollection->partition('foo'));
+    assertType('Illuminate\Support\Collection<int<0, 1>, App\TransactionCollection<int, App\Transaction>>', $customEloquentCollection->partition('foo'));
+    assertType('Illuminate\Support\Collection<int<0, 1>, App\UserCollection>', $secondCustomEloquentCollection->partition('foo'));
 }
