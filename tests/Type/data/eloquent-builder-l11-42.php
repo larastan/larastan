@@ -320,8 +320,8 @@ function test(
         'posts.id'
     ));
 
-    assertType('Illuminate\Pagination\LengthAwarePaginator<App\User>', User::query()->paginate());
-    assertType('array<App\User>', User::query()->paginate()->items());
+    assertType('Illuminate\Pagination\LengthAwarePaginator<int, App\User>', User::query()->paginate());
+    assertType('array<int, App\User>', User::query()->paginate()->items());
 
     User::chunk(1000, fn ($collection) => assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection));
     User::chunkById(1000, fn ($collection) => assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection));

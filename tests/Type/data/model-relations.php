@@ -38,7 +38,7 @@ function test(
     assertType('int', $appUser->accounts()->decrement('id'));
     assertType('int', $appUser->accounts()->increment('id', 5));
     assertType('int', $appUser->accounts()->decrement('id', 5));
-    assertType('Illuminate\Pagination\LengthAwarePaginator<App\Account>', $appUser->accounts()->paginate(5));
+    assertType('Illuminate\Pagination\LengthAwarePaginator<int, App\Account>', $appUser->accounts()->paginate(5));
     assertType(
         'Illuminate\Database\Eloquent\Relations\MorphTo<Illuminate\Database\Eloquent\Model, App\Address>',
         $address->addressable()->where('name', 'bar')
