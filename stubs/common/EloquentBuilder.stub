@@ -315,7 +315,7 @@ class Builder
      * @param  array<int, (model-property<TModel>|'*')>  $columns
      * @param  string  $pageName
      * @param  int|null  $page
-     * @return \Illuminate\Pagination\LengthAwarePaginator<TModel>
+     * @return \Illuminate\Pagination\LengthAwarePaginator<int, TModel>
      *
      * @throws \InvalidArgumentException
      */
@@ -328,7 +328,7 @@ class Builder
      * @param  array<int, (model-property<TModel>|'*')>  $columns
      * @param  string  $pageName
      * @param  int|null  $page
-     * @return \Illuminate\Pagination\Paginator<TModel>
+     * @return \Illuminate\Pagination\Paginator<int, TModel>
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null);
 
@@ -339,7 +339,7 @@ class Builder
      * @param  array<int, (model-property<TModel>|'*')>  $columns
      * @param  string  $cursorName
      * @param  \Illuminate\Pagination\Cursor|string|null  $cursor
-     * @return \Illuminate\Pagination\CursorPaginator<TModel>
+     * @return \Illuminate\Pagination\CursorPaginator<int, TModel>
      */
      public function cursorPaginate($perPage = null, $columns = ['*'], $cursorName = 'cursor', $cursor = null);
 
