@@ -43,6 +43,7 @@ function test(): void
     assertType('bool', Storage::cloud()->deleteDirectory('foo'));
     assertType('string|false', Storage::putFile('foo', 'foo/bar'));
     assertType('mixed', Redis::get('foo'));
+    assertType('mixed', Redis::client());
 
     assertType('string', DummyFacade::foo());
     assertType('int', DummyFacade::bar());
