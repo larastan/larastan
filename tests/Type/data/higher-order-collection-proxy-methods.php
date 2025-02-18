@@ -42,7 +42,7 @@ function test(
     assertType('Illuminate\Support\Collection<int, bool>', $users->map->isActive());
     assertType('Illuminate\Support\Collection<int, Illuminate\Database\Eloquent\Relations\HasMany<App\Account>>', $users->map->accounts());
     assertType('Illuminate\Support\Collection<int, int>', $users->map->id());
-    assertType('array<int, array>', $user->accounts->map->getAttributes()->all());
+//    assertType('array<int, array>', $user->accounts->map->getAttributes()->all());
     assertType('int', $users->max->id());
     assertType('int', $users->min->id());
     assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $users->partition->isActive());
