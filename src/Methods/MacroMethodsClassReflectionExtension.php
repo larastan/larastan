@@ -26,8 +26,10 @@ use ReflectionException;
 use Throwable;
 
 use function array_key_exists;
+use function array_keys;
 use function explode;
 use function get_class;
+use function in_array;
 use function is_array;
 use function is_callable;
 use function is_string;
@@ -39,6 +41,9 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
 
     /** @var array<string, MethodReflection> */
     private array $methods = [];
+
+    /** @var array<string, array<string, bool>> */
+    private array $traitCache = [];
 
     public function __construct(private ReflectionProvider $reflectionProvider, private ClosureTypeFactory $closureTypeFactory)
     {
@@ -193,12 +198,14 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
 
     private function hasIndirectTraitUse(ClassReflection $class, string $traitName): bool
     {
-        foreach ($class->getTraits() as $trait) {
-            if ($this->hasIndirectTraitUse($trait, $traitName)) {
-                return true;
-            }
+        $className = $class->getName();
+
+        if (array_key_exists($className, $this->traitCache) && array_key_exists($traitName, $this->traitCache[$className])) {
+            return $this->traitCache[$className][$traitName];
         }
 
-        return $class->hasTraitUse($traitName);
+        $this->traitCache[$className][$traitName] = in_array($traitName, array_keys($class->getTraits(true)), true);
+
+        return $this->traitCache[$className][$traitName];
     }
 }
