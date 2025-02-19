@@ -1,22 +1,21 @@
-name: "Tests"
+name: Tests
 
 on:
   push:
     paths-ignore:
-      - "**.md"
-      - 'docs/**'
-    # Prevent duplicating jobs on PR-s from local branches
+      - **.md
+      - docs/**
     branches:
-      - "3.x"
+      - 3.x
   pull_request:
     paths-ignore:
-      - "**.md"
-      - 'docs/**'
+      - **.md
+      - docs/**
   schedule:
-    - cron: "0 0 * * *"
+    - cron: '0 0 * * *'
 
 concurrency:
-  group: tests-${{ github.head_ref || github.run_id }} # will be canceled on subsequent pushes in pull requests but not branches
+  group: tests-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
@@ -24,49 +23,47 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php: ["8.2", "8.3", "8.4"]
-        laravel: ["^11.15.0"]
-        dependencies:
-            - "lowest"
-            - "highest"
+        php: ['8.2', '8.3', '8.4']
+        laravel: ['12.0', ^11.15.0]
+        dependencies: [lowest, highest]
 
-    name: "PHP${{ matrix.php }} - Laravel${{ matrix.laravel }} ${{ matrix.dependencies == 'highest' && '↑' || '↓' }}"
+    name: PHP${{ matrix.php }} - Laravel${{ matrix.laravel }} ${{ matrix.dependencies == 'highest' && '↑' || '↓' }}
 
-    runs-on: "ubuntu-latest"
+    runs-on: ubuntu-latest
 
     steps:
-      - name: "Checkout code"
-        uses: "actions/checkout@v4"
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: "Setup PHP"
-        uses: "shivammathur/setup-php@v2"
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          php-version: "${{ matrix.php }}"
-          extensions: "dom, curl, libxml, mbstring, zip, fileinfo"
-          tools: "composer:v2"
-          coverage: "none"
+          php-version: ${{ matrix.php }}
+          extensions: dom, curl, libxml, mbstring, zip, fileinfo
+          tools: composer:v2
+          coverage: none
 
-      - name: "Check Composer configuration"
-        run: "composer validate"
+      - name: Check Composer configuration
+        run: composer validate
 
-      - name: "Check file permissions"
-        run: "test \"$(find . -type f -not -path './.git/*' -executable)\" == ./tests/laravel-test.sh"
+      - name: Check file permissions
+        run: test "$(find . -type f -not -path './.git/*' -executable)" == ./tests/laravel-test.sh
 
-      - name: "Install lowest dependencies from composer.json"
+      - name: Install lowest dependencies from composer.json
         if: "matrix.dependencies == 'lowest'"
-        run: "composer update --with='laravel/framework:${{ matrix.laravel }}' --no-interaction --no-progress --prefer-lowest"
+        run: composer update --with='laravel/framework:${{ matrix.laravel }}' --no-interaction --no-progress --prefer-lowest
 
-      - name: "Install highest dependencies from composer.json"
+      - name: Install highest dependencies from composer.json
         if: "matrix.dependencies == 'highest'"
-        run: "composer update --with='laravel/framework:${{ matrix.laravel }}' --no-interaction --no-progress"
+        run: composer update --with='laravel/framework:${{ matrix.laravel }}' --no-interaction --no-progress
 
-      - name: "Check PSR-4 mapping"
-        run: "composer dump-autoload --optimize --strict-psr"
+      - name: Check PSR-4 mapping
+        run: composer dump-autoload --optimize --strict-psr
 
-      - name: "Execute unit tests"
-        run: "composer run-script test:unit"
+      - name: Execute unit tests
+        run: composer run-script test:unit
 
-      - name: "Run Larastan on a sample Laravel application"
+      - name: Run Larastan on a sample Laravel application
         run: |
           version="${{ matrix.laravel }}"
           tests/laravel-test.sh "${version%%.*}.0"
