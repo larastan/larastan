@@ -188,7 +188,7 @@ class ModelCastHelper
             : IlluminateCarbon::class;
 
         if ($dateClass === IlluminateCarbon::class) {
-            return TypeCombinator::union(new ObjectType($dateClass), new ObjectType(Carbon::class));
+            return new ObjectType(Carbon::class);
         }
 
         return new ObjectType($dateClass);
