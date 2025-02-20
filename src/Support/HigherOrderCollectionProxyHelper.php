@@ -9,8 +9,11 @@ use Illuminate\Support\HigherOrderCollectionProxy;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type;
+use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\StringType;
 
 use function count;
 
@@ -99,7 +102,7 @@ class HigherOrderCollectionProxyHelper
             case 'map':
                 $returnType = $this->getCollectionType(
                     SupportCollection::class,
-                    new Type\IntegerType(),
+                    new BenevolentUnionType([new IntegerType(), new StringType()]),
                     $methodOrPropertyReturnType,
                 );
                 break;
