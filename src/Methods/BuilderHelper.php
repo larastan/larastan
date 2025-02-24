@@ -112,8 +112,6 @@ class BuilderHelper
 
         $classReflection = $this->reflectionProvider->getClass(QueryBuilder::class);
 
-        $methodReflection = $classReflection->getNativeMethod('dynamicWhere');
-
         return new EloquentBuilderMethodReflection(
             $methodName,
             $classReflection,
