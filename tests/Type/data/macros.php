@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
@@ -49,13 +50,15 @@ function test(): void
     assertType('string', Str::trimMacro(''));
     assertType('string', Str::asciiAliasMacro(''));
 
+    assertType('mixed', Cache::rememberIf(true, 'key', 60, fn () => 'value'));
+
     assertVariableCertainty(TrinaryLogic::createMaybe(), $foo);
 
-    Request::macro('foo', function() {
+    Request::macro('foo', function () {
         assertType(Request::class, $this);
     });
 
-    Foo::macro('foo', function() {
+    Foo::macro('foo', function () {
         assertType(Foo::class, $this);
     });
 }

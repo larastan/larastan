@@ -18,7 +18,7 @@ class MethodsClassReflectionExtensionTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/macros.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/redirect-response.php');
 
-        if (! version_compare(PHP_VERSION, '8.1.0', '>=') || ! version_compare(PHP_VERSION, '8.2.0', '<')) {
+        if (! version_compare(PHP_VERSION, '8.1.0', '>=')) {
             return;
         }
 
@@ -37,6 +37,6 @@ class MethodsClassReflectionExtensionTest extends TypeInferenceTestCase
     /** @return string[] */
     public static function getAdditionalConfigFiles(): array
     {
-        return [__DIR__ . '/../../extension.neon'];
+        return [__DIR__ . '/../phpstan-tests.neon'];
     }
 }
