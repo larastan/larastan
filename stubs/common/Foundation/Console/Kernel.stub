@@ -1,0 +1,20 @@
+<?php
+
+namespace Illuminate\Foundation\Console;
+
+class Kernel implements \Illuminate\Contracts\Console\Kernel
+{
+    /**
+     * Register a Closure based command with the application.
+     *
+     * @param  string  $signature
+     * @param  \Closure  $callback
+     * @param-closure-this \Illuminate\Foundation\Console\ClosureCommand  $callback
+     * @return \Illuminate\Foundation\Console\ClosureCommand
+     */
+    public function command($signature, \Closure $callback);
+}
+
+class ClosureCommand extends \Illuminate\Console\Command
+{
+}

@@ -33,3 +33,8 @@ class Log extends Facade {}
  * @mixin \Illuminate\Http\Request
  */
 class Request extends Facade {}
+
+/**
+ * @mixin \Illuminate\Foundation\Console\Kernel
+ */
+class Artisan extends Facade {}
