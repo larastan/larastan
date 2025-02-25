@@ -60,7 +60,7 @@ class NoModelMakeRule implements Rule
             RuleErrorBuilder::message("Called 'Model::make()' which performs unnecessary work, use 'new Model()'.")
                 ->identifier('larastan.noModelMake')
                 ->line($node->getStartLine())
-                ->file($scope->getFile())
+                ->file($scope->getFile(), $scope->getFileDescription())
                 ->build(),
         ];
     }
