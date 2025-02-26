@@ -19,7 +19,7 @@ class NoEnvCallsOutsideOfConfigRuleTest extends RuleTestCase
 
     protected function getRule(): Rule
     {
-        return new NoEnvCallsOutsideOfConfigRule();
+        return new NoEnvCallsOutsideOfConfigRule([__DIR__ . '/data/config'], $this->getFileHelper());
     }
 
     /** @test */

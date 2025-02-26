@@ -396,6 +396,15 @@ parameters:
     noEnvCallsOutsideOfConfig: false
 ```
 
+By default, this rule checks for env calls outside the application config directory. If your configuration files are stored elsewhere, you can use the configDirectories option to specify them.
+
+```neon
+parameters:
+    configDirectories:
+        - src/config
+        - tests
+```
+
 ## ModelAppendsRule
 
 Checks model's `$appends` property for computed properties. The properties added to `$appends` array should both exist in the model and be computed properties.
