@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\ReturnTypes;
 
-use Illuminate\Foundation\Application;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
@@ -17,9 +16,16 @@ use function count;
 
 class AppEnvironmentReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
+    /**
+     * @param class-string $class
+     */
+    public function __construct(private string $class)
+    {
+    }
+
     public function getClass(): string
     {
-        return Application::class;
+        return $this->class;
     }
 
     public function isMethodSupported(MethodReflection $methodReflection): bool

@@ -389,10 +389,20 @@ services:
         class: Larastan\Larastan\Types\GenericEloquentBuilderTypeNodeResolverExtension
         tags:
             - phpstan.phpDoc.typeNodeResolverExtension
+
     -
         class: Larastan\Larastan\ReturnTypes\AppEnvironmentReturnTypeExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
+        arguments:
+            class: "Illuminate\\Foundation\\Application"
+
+    -
+        class: Larastan\Larastan\ReturnTypes\AppEnvironmentReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+        arguments:
+            class: "Illuminate\\Contracts\\Foundation\\Application"
 
     -
         class: Larastan\Larastan\Types\ModelProperty\ModelPropertyTypeNodeResolverExtension
