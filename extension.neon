@@ -532,6 +532,11 @@ services:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
+        class: Larastan\Larastan\ReturnTypes\LangGetReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicStaticMethodReturnTypeExtension
+
+    -
         class: Larastan\Larastan\ReturnTypes\TransHelperReturnTypeExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
