@@ -16,7 +16,7 @@ interface Enumerable extends \Countable, \IteratorAggregate, \JsonSerializable, 
      *
      * @param  TValue|callable(TValue,TKey): bool  $value
      * @param  bool  $strict
-     * @return (TKey is int ? int|bool : string|bool)
+     * @return (TKey is int ? int|false : string|false)
      */
     public function search($value, $strict = false);
 
