@@ -16,7 +16,9 @@ use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use Throwable;
 
+use function class_exists;
 use function count;
+use function interface_exists;
 
 final class AppMakeHelper
 {
@@ -41,6 +43,11 @@ final class AppMakeHelper
                     $resolved = $this->resolve($constantString->getValue());
 
                     if ($resolved === null) {
+                        if (class_exists($constantString->getValue()) || interface_exists($constantString->getValue())) {
+                            $types[] = new ObjectType($constantString->getValue());
+                            continue;
+                        }
+
                         return new ErrorType();
                     }
 
