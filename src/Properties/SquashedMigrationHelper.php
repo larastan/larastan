@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Larastan\Larastan\Properties;
 
 use iamcal\SQLParser;
@@ -12,8 +14,10 @@ use RegexIterator;
 use SplFileInfo;
 
 use function array_key_exists;
+use function database_path;
 use function file_get_contents;
 use function is_array;
+use function is_bool;
 use function is_dir;
 use function iterator_to_array;
 use function ksort;
@@ -26,7 +30,8 @@ final class SquashedMigrationHelper
         private FileHelper $fileHelper,
         private MySqlDataTypeToPhpTypeConverter $converter,
         private bool $disableSchemaScan,
-    ) {}
+    ) {
+    }
 
     /** @return SchemaTable[] */
     public function initializeTables(): array
@@ -58,10 +63,10 @@ final class SquashedMigrationHelper
             }
 
             try {
-                $parser = new SQLParser;
+                $parser                      = new SQLParser();
                 $parser->throw_on_bad_syntax = true;
-                $tableDefinitions = $parser->parse($fileContents);
-            } catch (SQLParserSyntaxException $exception) {
+                $tableDefinitions            = $parser->parse($fileContents);
+            } catch (SQLParserSyntaxException) {
                 // TODO: re-throw the exception with a clear message?
                 continue;
             }
@@ -69,7 +74,9 @@ final class SquashedMigrationHelper
             foreach ($tableDefinitions as $definition) {
                 if (array_key_exists($definition['name'], $tables)) {
                     continue;
-                } elseif (! is_array($definition['fields'])) {
+                }
+
+                if (! is_array($definition['fields'])) {
                     continue;
                 }
 
@@ -82,7 +89,7 @@ final class SquashedMigrationHelper
                     $table->setColumn(new SchemaColumn(
                         $field['name'],
                         $this->converter->convert($field['type']),
-                        $this->isNullable($field)
+                        $this->isNullable($field),
                     ));
                 }
 
@@ -93,9 +100,7 @@ final class SquashedMigrationHelper
         return $tables;
     }
 
-    /**
-     * @return SplFileInfo[]
-     */
+    /** @return SplFileInfo[] */
     private function getSchemaFiles(): array
     {
         /** @var SplFileInfo[] $schemaFiles */
@@ -104,30 +109,32 @@ final class SquashedMigrationHelper
         foreach ($this->schemaPaths as $additionalPath) {
             $absolutePath = $this->fileHelper->absolutizePath($additionalPath);
 
-            if (is_dir($absolutePath)) {
-                $schemaFiles += iterator_to_array(
-                    new RegexIterator(
-                        new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
-                        '/\.dump|\.sql/i'
-                    )
-                );
+            if (! is_dir($absolutePath)) {
+                continue;
             }
+
+            $schemaFiles += iterator_to_array(
+                new RegexIterator(
+                    new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
+                    '/\.dump|\.sql/i',
+                ),
+            );
         }
 
         return $schemaFiles;
     }
 
-    /**
-     * @param  array<string, string|bool|null>  $definition
-     */
+    /** @param  array<string, string|bool|null> $definition */
     private function isNullable(array $definition): bool
     {
         if (! array_key_exists('null', $definition)) {
             return false;
-        } elseif (is_bool($definition['null'])) {
-            return $definition['null'];
-        } else {
-            return false;
         }
+
+        if (is_bool($definition['null'])) {
+            return $definition['null'];
+        }
+
+        return false;
     }
 }
