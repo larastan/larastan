@@ -453,7 +453,7 @@ services:
             - phpstan.rules.rule
 
     -
-        class: Larastan\Larastan\Properties\Schema\PhpMyAdminDataTypeToPhpTypeConverter
+        class: Larastan\Larastan\Properties\Schema\MySqlDataTypeToPhpTypeConverter
 
     -
         class: Larastan\Larastan\LarastanStubFilesExtension

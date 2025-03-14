@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Properties\Schema;
 
-use PhpMyAdmin\SqlParser\Components\DataType;
-
-final class PhpMyAdminDataTypeToPhpTypeConverter
+final class MySqlDataTypeToPhpTypeConverter
 {
-    public function convert(DataType $dataType): string
+    public function convert(string $type): string
     {
-        return match ($dataType->name) {
+        return match ($type) {
             'CHAR', 'VARCHAR', 'TINYTEXT', 'TEXT', 'MEDIUMTEXT', 'LONGTEXT', 'BINARY', 'VARBINARY', 'DATE', 'DATETIME', 'TIMESTAMP', 'TIME', 'TINYBLOB', 'BLOB', 'MEDIUMBLOB', 'JSON' => 'string',
             'BIT', 'TINYINT', 'SMALLINT', 'MEDIUMINT', 'INT', 'INTEGER', 'BIGINT', 'YEAR' => 'int',
             'DECIMAL', 'DEC', 'NUMERIC', 'FIXED', 'FLOAT', 'DOUBLE', 'DOUBLE PRECISION', 'REAL' => 'float',
