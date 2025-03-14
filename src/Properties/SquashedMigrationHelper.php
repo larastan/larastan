@@ -64,7 +64,7 @@ final class SquashedMigrationHelper
 
             try {
                 $parser                      = new SQLParser();
-                $parser->throw_on_bad_syntax = true;
+                $parser->throw_on_bad_syntax = true; // @phpcs:ignore
                 $tableDefinitions            = $parser->parse($fileContents);
             } catch (SQLParserSyntaxException) {
                 // TODO: re-throw the exception with a clear message?
