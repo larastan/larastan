@@ -5,17 +5,23 @@ namespace Illuminate\Database\Eloquent\Relations;
 /**
  * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
  * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ * @template TPivotModel of \Illuminate\Database\Eloquent\Relations\Pivot = \Illuminate\Database\Eloquent\Relations\Pivot
+ * @template TAccessor of string = 'pivot'
  *
- * @extends \Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, TDeclaringModel, \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>>
+ * @extends \Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, TDeclaringModel, \Illuminate\Database\Eloquent\Collection<int, TRelatedModel&object{pivot: TPivotModel}>>
  */
 class BelongsToMany extends Relation
 {
     /**
-     * Find a related model by its primary key or return new instance of the related model.
+     * Find a related model by its primary key or return a new instance of the related model.
      *
      * @param  mixed  $id
      * @param  array<int, (model-property<TRelatedModel>|'*')>|model-property<TRelatedModel>|'*'  $columns
-     * @return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> : TRelatedModel)
+     * @return (
+     *     $id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>)
+     *     ? \Illuminate\Database\Eloquent\Collection<int, TRelatedModel&object{pivot: TPivotModel}>
+     *     : TRelatedModel&object{pivot: TPivotModel}
+     * )
      */
     public function findOrNew($id, $columns = ['*']);
 
@@ -24,18 +30,18 @@ class BelongsToMany extends Relation
      *
      * @param  array<model-property<TRelatedModel>, mixed>  $attributes
      * @param  array<model-property<TRelatedModel>, mixed>  $values
-     * @return TRelatedModel
+     * @return TRelatedModel&object{pivot: TPivotModel}
      */
     public function firstOrNew(array $attributes = [], array $values = []);
 
     /**
-     * Get the first related record matching the attributes or create it.
+     * Get the first record matching the attributes. If the record is not found, create it.
      *
      * @param  array<model-property<TRelatedModel>, mixed>  $attributes
      * @param  array<model-property<TRelatedModel>, mixed>  $values
      * @param  array<string, mixed>  $joining
      * @param  bool  $touch
-     * @return TRelatedModel
+     * @return TRelatedModel&object{pivot: TPivotModel}
      */
     public function firstOrCreate(array $attributes = [], array $values = [], array $joining = [], $touch = true);
 
@@ -46,7 +52,7 @@ class BelongsToMany extends Relation
      * @param  array<model-property<TRelatedModel>, mixed>  $values
      * @param  array<string, mixed>  $joining
      * @param  bool  $touch
-     * @return TRelatedModel
+     * @return TRelatedModel&object{pivot: TPivotModel}
      */
     public function createOrFirst(array $attributes, array $values = [], array $joining = [], $touch = true);
 
@@ -57,7 +63,7 @@ class BelongsToMany extends Relation
      * @param  array<model-property<TRelatedModel>, mixed>  $values
      * @param  array<string, mixed>  $joining
      * @param  bool  $touch
-     * @return TRelatedModel
+     * @return TRelatedModel&object{pivot: TPivotModel}
      */
     public function updateOrCreate(array $attributes, array $values = [], array $joining = [], $touch = true);
 
@@ -66,7 +72,11 @@ class BelongsToMany extends Relation
      *
      * @param  mixed  $id
      * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
-     * @return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> : TRelatedModel|null)
+     * @return (
+     *     $id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>)
+     *     ? \Illuminate\Database\Eloquent\Collection<int, TRelatedModel&object{pivot: TPivotModel}>
+     *     : (TRelatedModel&object{pivot: TPivotModel})|null
+     * )
      */
     public function find($id, $columns = ['*']);
 
@@ -75,7 +85,7 @@ class BelongsToMany extends Relation
      *
      * @param  \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|int[]  $ids
      * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
-     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel&object{pivot: TPivotModel}>
      */
     public function findMany($ids, $columns = ['*']);
 
@@ -84,9 +94,13 @@ class BelongsToMany extends Relation
      *
      * @param  mixed  $id
      * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
-     * @return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> : TRelatedModel)
+     * @return (
+     *     $id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>)
+     *     ? \Illuminate\Database\Eloquent\Collection<int, TRelatedModel&object{pivot: TPivotModel}>
+     *     : TRelatedModel&object{pivot: TPivotModel}
+     * )
      *
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TRelatedModel>
      */
     public function findOrFail($id, $columns = ['*']);
 
@@ -94,7 +108,7 @@ class BelongsToMany extends Relation
      * Execute the query and get the first result.
      *
      * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
-     * @return TRelatedModel|null
+     * @return (TRelatedModel&object{pivot: TPivotModel})|null
      */
     public function first($columns = ['*']);
 
@@ -102,21 +116,11 @@ class BelongsToMany extends Relation
      * Execute the query and get the first result or throw an exception.
      *
      * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
-     * @return TRelatedModel
+     * @return TRelatedModel&object{pivot: TPivotModel}
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TRelatedModel>
      */
     public function firstOrFail($columns = ['*']);
-
-    /**
-     * Create a new instance of the related model.
-     *
-     * @param  array<model-property<TRelatedModel>, mixed>  $attributes
-     * @param  array<string, mixed>  $joining
-     * @param  bool  $touch
-     * @return TRelatedModel
-     */
-    public function create(array $attributes = [], array $joining = [], $touch = true);
 
     /**
      * Get a paginator for the "select" statement.
@@ -125,7 +129,7 @@ class BelongsToMany extends Relation
      * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
      * @param  string  $pageName
      * @param  int|null  $page
-     * @return \Illuminate\Pagination\LengthAwarePaginator<int, TRelatedModel>
+     * @return \Illuminate\Pagination\LengthAwarePaginator<int, TRelatedModel&object{pivot: TPivotModel}>
      */
     public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null);
 
@@ -136,7 +140,7 @@ class BelongsToMany extends Relation
      * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
      * @param  string  $pageName
      * @param  int|null  $page
-     * @return \Illuminate\Pagination\Paginator<int, TRelatedModel>
+     * @return \Illuminate\Contracts\Pagination\Paginator<int, TRelatedModel&object{pivot: TPivotModel}>
      */
     public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null);
 
@@ -147,7 +151,17 @@ class BelongsToMany extends Relation
      * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
      * @param  string  $cursorName
      * @param  string|null  $cursor
-     * @return \Illuminate\Pagination\CursorPaginator<int, TRelatedModel>
+     * @return \Illuminate\Contracts\Pagination\CursorPaginator<int, TRelatedModel&object{pivot: TPivotModel}>
      */
     public function cursorPaginate($perPage = null, $columns = ['*'], $cursorName = 'cursor', $cursor = null);
+
+    /**
+     * Create a new instance of the related model.
+     *
+     * @param  array<model-property<TRelatedModel>, mixed>  $attributes
+     * @param  array<string, mixed>  $joining
+     * @param  bool  $touch
+     * @return TRelatedModel&object{pivot: TPivotModel}
+     */
+    public function create(array $attributes = [], array $joining = [], $touch = true);
 }

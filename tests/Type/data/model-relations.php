@@ -114,7 +114,7 @@ function test(
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $users->getQuery());
     assertType('App\User', $users->make());
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\Account|App\User>', $union->group());
-    assertType('Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Post, App\Account|App\User>', $union->posts());
+    assertType('Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Post, App\Account|App\User, Illuminate\Database\Eloquent\Relations\Pivot>', $union->posts());
 
     assertType('App\Account', $appUser->accounts()->sole());
     assertType('App\Group', $appUser->group()->sole());
@@ -146,7 +146,7 @@ function test(
     assertType('App\Account|false', $user->accountsCamel()->save(new Account()));
     assertType('App\Account|false', $user->accountsCamel()->saveQuietly(new Account()));
 
-    assertType('Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Role, App\User>', $user->roles());
+    assertType('Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Role, App\User, Illuminate\Database\Eloquent\Relations\Pivot>', $user->roles());
     assertType('App\RoleCollection<int, App\Role>', $user->roles()->getResults());
     assertType('App\RoleCollection<int, App\Role>', $user->roles);
     assertType('App\RoleCollection<int, App\Role>', $user->roles()->find([1]));

@@ -1,0 +1,7 @@
+<?php
+
+namespace Illuminate\Database\Eloquent\Relations;
+
+class Pivot
+{
+}
