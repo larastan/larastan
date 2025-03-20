@@ -97,7 +97,7 @@ class ModelCastHelper
             return new ObjectType($cast);
         }
 
-        if ($classReflection->isSubclassOf(Castable::class)) {
+        if ($classReflection->is(Castable::class)) {
             $methodReflection = $classReflection->getNativeMethod('castUsing');
             $castUsingReturn  = $methodReflection->getVariants()[0]->getReturnType();
 
@@ -106,13 +106,13 @@ class ModelCastHelper
             }
         }
 
-        if ($classReflection->isSubclassOf(CastsAttributes::class)) {
+        if ($classReflection->is(CastsAttributes::class)) {
             $methodReflection = $classReflection->getNativeMethod('get');
 
             return $methodReflection->getVariants()[0]->getReturnType();
         }
 
-        if ($classReflection->isSubclassOf(CastsInboundAttributes::class)) {
+        if ($classReflection->is(CastsInboundAttributes::class)) {
             return $originalType;
         }
 
@@ -154,7 +154,7 @@ class ModelCastHelper
             return new ObjectType($cast);
         }
 
-        if ($classReflection->isSubclassOf(Castable::class)) {
+        if ($classReflection->is(Castable::class)) {
             $methodReflection = $classReflection->getNativeMethod('castUsing');
             $castUsingReturn  = $methodReflection->getVariants()[0]->getReturnType();
 
@@ -164,8 +164,8 @@ class ModelCastHelper
         }
 
         if (
-            $classReflection->isSubclassOf(CastsAttributes::class)
-            || $classReflection->isSubclassOf(CastsInboundAttributes::class)
+            $classReflection->is(CastsAttributes::class)
+            || $classReflection->is(CastsInboundAttributes::class)
         ) {
             $methodReflection = $classReflection->getNativeMethod('set');
             $parameters       = $methodReflection->getVariants()[0]->getParameters();

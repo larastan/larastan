@@ -32,7 +32,7 @@ class ModelFactoryMethodsClassReflectionExtension implements MethodsClassReflect
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        if (! $classReflection->isSubclassOf(Factory::class)) {
+        if (! $classReflection->is(Factory::class)) {
             return false;
         }
 

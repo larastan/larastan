@@ -49,7 +49,7 @@ class ModelAppendsRule implements Rule
 
         $classReflection = $scope->getClassReflection();
 
-        if (! $classReflection?->isSubclassOf(Model::class)) {
+        if (! $classReflection?->is(Model::class)) {
             return [];
         }
 

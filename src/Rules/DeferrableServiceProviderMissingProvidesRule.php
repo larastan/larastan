@@ -34,7 +34,7 @@ class DeferrableServiceProviderMissingProvidesRule implements Rule
         $classReflection = $node->getClassReflection();
 
         // This rule is only applicable to deferrable serviceProviders
-        if (! $classReflection->isSubclassOf(ServiceProvider::class) || ! $classReflection->implementsInterface(DeferrableProvider::class)) {
+        if (! $classReflection->is(ServiceProvider::class) || ! $classReflection->implementsInterface(DeferrableProvider::class)) {
             return [];
         }
 

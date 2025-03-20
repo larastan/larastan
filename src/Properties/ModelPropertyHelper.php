@@ -56,7 +56,7 @@ class ModelPropertyHelper
             return array_key_exists($propertyName, $this->tables[$classReflectionOrTable]->columns);
         }
 
-        if (! $classReflectionOrTable->isSubclassOf(Model::class)) {
+        if (! $classReflectionOrTable->is(Model::class)) {
             return false;
         }
 
@@ -161,7 +161,7 @@ class ModelPropertyHelper
      */
     public function hasAccessor(ClassReflection $classReflection, string $propertyName, bool $strictGenerics = true): bool
     {
-        if (! $classReflection->isSubclassOf(Model::class)) {
+        if (! $classReflection->is(Model::class)) {
             return false;
         }
 

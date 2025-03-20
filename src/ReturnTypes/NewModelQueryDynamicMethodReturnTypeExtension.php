@@ -56,7 +56,7 @@ class NewModelQueryDynamicMethodReturnTypeExtension implements DynamicMethodRetu
         $types = [];
 
         foreach ($classReflections as $classReflection) {
-            if (! $classReflection->isSubclassOf(Model::class)) {
+            if (! $classReflection->is(Model::class)) {
                 continue;
             }
 

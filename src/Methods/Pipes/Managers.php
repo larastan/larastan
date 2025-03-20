@@ -22,7 +22,7 @@ final class Managers implements PipeContract
 
         $found = false;
 
-        if ($classReflection->isSubclassOf(Manager::class) && ! $classReflection->isAbstract()) {
+        if ($classReflection->is(Manager::class) && ! $classReflection->isAbstract()) {
             $driver = null;
 
             $concrete = $this->resolve(

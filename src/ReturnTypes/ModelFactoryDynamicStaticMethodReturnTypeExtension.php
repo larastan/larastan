@@ -128,7 +128,7 @@ final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements Dynami
 
         foreach ($factoryReflections as $factoryReflection) {
             if (
-                $factoryReflection->isSubclassOf(Factory::class)
+                $factoryReflection->is(Factory::class)
                 && ! $factoryReflection->isAbstract()
             ) {
                 return $factoryReflection;
