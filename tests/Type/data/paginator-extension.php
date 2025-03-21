@@ -31,5 +31,5 @@ function test(): void
     assertType('Illuminate\Pagination\LengthAwarePaginator<int, App\Account>', (new User())->accounts()->paginate());
 
     // BelongsToMany
-    assertType('Illuminate\Pagination\LengthAwarePaginator<int, App\Post>', (new User())->posts()->paginate());
+    assertType('Illuminate\Pagination\LengthAwarePaginator<int, App\Post&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}>', (new User())->posts()->paginate());
 }

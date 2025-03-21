@@ -31,7 +31,7 @@ function test(
 ): void {
     assertType('App\Account', $appUser->accounts()->firstOrCreate([]));
     assertType('App\Account', $appUser->accounts()->createOrFirst([]));
-    assertType(Post::class, $appUser->posts()->create());
+    assertType('App\Post&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}', $appUser->posts()->create());
     assertType('App\Account', $appUser->accounts()->create());
     assertType('App\Account', $appUser->syncableRelation()->create());
     assertType('int', $appUser->accounts()->increment('id'));
@@ -59,14 +59,14 @@ function test(
     assertType('App\RoleCollection<int, App\Role>', $appUser->roles()->findOrFail([1]));
     assertType('42|App\RoleCollection<int, App\Role>', $appUser->roles()->findOr([1], fn () => 42));
     assertType('42|App\RoleCollection<int, App\Role>', $appUser->roles()->findOr([1], callback: fn () => 42));
-    assertType('App\Role', $appUser->roles()->findOrNew(1));
-    assertType('App\Role', $appUser->roles()->findOrFail(1));
-    assertType('App\Role|null', $appUser->roles()->find(1));
+    assertType('App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}', $appUser->roles()->findOrNew(1));
+    assertType('App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}', $appUser->roles()->findOrFail(1));
+    assertType('(App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot})|null', $appUser->roles()->find(1));
 //    assertType('App\Role|int', $appUser->roles()->findOr(1, fn () => 42));
 //    assertType('App\Role|int', $appUser->roles()->findOr(1, callback: fn () => 42));
-    assertType('App\Role|null', $appUser->roles()->first());
-    assertType('42|App\Role', $appUser->roles()->firstOr(fn () => 42));
-    assertType('42|App\Role', $appUser->roles()->firstOr(callback: fn () => 42));
+    assertType('(App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot})|null', $appUser->roles()->first());
+    assertType('42|(App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot})', $appUser->roles()->firstOr(fn () => 42));
+    assertType('42|(App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot})', $appUser->roles()->firstOr(callback: fn () => 42));
     assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account, App\User>', (new User())->accounts()->where('name', 'bar'));
     assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account, App\User>', (new User())->accounts()->whereIn('id', [1, 2, 3]));
     assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account, App\User>', (new User())->accounts()->whereActive(true));
@@ -114,7 +114,7 @@ function test(
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $users->getQuery());
     assertType('App\User', $users->make());
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\Account|App\User>', $union->group());
-    assertType('Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Post, App\Account|App\User, Illuminate\Database\Eloquent\Relations\Pivot>', $union->posts());
+    assertType('Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Post, App\Account|App\User, Illuminate\Database\Eloquent\Relations\Pivot, \'pivot\'>', $union->posts());
 
     assertType('App\Account', $appUser->accounts()->sole());
     assertType('App\Group', $appUser->group()->sole());
@@ -146,7 +146,7 @@ function test(
     assertType('App\Account|false', $user->accountsCamel()->save(new Account()));
     assertType('App\Account|false', $user->accountsCamel()->saveQuietly(new Account()));
 
-    assertType('Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Role, App\User, Illuminate\Database\Eloquent\Relations\Pivot>', $user->roles());
+    assertType('Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Role, App\User, Illuminate\Database\Eloquent\Relations\Pivot, \'pivot\'>', $user->roles());
     assertType('App\RoleCollection<int, App\Role>', $user->roles()->getResults());
     assertType('App\RoleCollection<int, App\Role>', $user->roles);
     assertType('App\RoleCollection<int, App\Role>', $user->roles()->find([1]));
@@ -155,35 +155,35 @@ function test(
     assertType('App\RoleCollection<int, App\Role>', $user->roles()->findOrFail([1]));
     assertType('42|App\RoleCollection<int, App\Role>', $user->roles()->findOr([1], fn () => 42));
     assertType('42|App\RoleCollection<int, App\Role>', $user->roles()->findOr([1], callback: fn () => 42));
-    assertType('App\Role', $user->roles()->findOrNew(1));
-    assertType('App\Role', $user->roles()->findOrFail(1));
-    assertType('App\Role|null', $user->roles()->find(1));
+    assertType('App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}', $user->roles()->findOrNew(1));
+    assertType('App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}', $user->roles()->findOrFail(1));
+    assertType('(App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot})|null', $user->roles()->find(1));
 //    assertType('int|App\Role', $user->roles()->findOr(1, fn () => 42));
 //    assertType('int|App\Role', $user->roles()->findOr(1, callback: fn () => 42));
-    assertType('App\Role|null', $user->roles()->first());
-    assertType('42|App\Role', $user->roles()->firstOr(fn () => 42));
-    assertType('42|App\Role', $user->roles()->firstOr(callback: fn () => 42));
-    assertType('App\Role|null', $user->roles()->firstWhere('foo'));
-    assertType('App\Role', $user->roles()->firstOrNew());
-    assertType('App\Role', $user->roles()->firstOrFail());
-    assertType('App\Role', $user->roles()->firstOrCreate());
-    assertType('App\Role', $user->roles()->create());
-    assertType('App\Role', $user->roles()->createOrFirst());
-    assertType('App\Role', $user->roles()->updateOrCreate([]));
-    assertType('App\Role', $user->roles()->save(new Role()));
-    assertType('App\Role', $user->roles()->saveQuietly(new Role()));
+    assertType('(App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot})|null', $user->roles()->first());
+    assertType('42|(App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot})', $user->roles()->firstOr(fn () => 42));
+    assertType('42|(App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot})', $user->roles()->firstOr(callback: fn () => 42));
+    assertType('(App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot})|null', $user->roles()->firstWhere('foo'));
+    assertType('App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}', $user->roles()->firstOrNew());
+    assertType('App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}', $user->roles()->firstOrFail());
+    assertType('App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}', $user->roles()->firstOrCreate());
+    assertType('App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}', $user->roles()->create());
+    assertType('App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}', $user->roles()->createOrFirst());
+    assertType('App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}', $user->roles()->updateOrCreate([]));
+    assertType('App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}', $user->roles()->save(new Role()));
+    assertType('App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}', $user->roles()->saveQuietly(new Role()));
     $roles = $user->roles()->getResults();
     assertType('App\RoleCollection<int, App\Role>', $user->roles()->saveMany($roles));
     assertType('array<int, App\Role>', $user->roles()->saveMany($roles->all()));
     assertType('App\RoleCollection<int, App\Role>', $user->roles()->saveManyQuietly($roles));
     assertType('array<int, App\Role>', $user->roles()->saveManyQuietly($roles->all()));
-    assertType('array<int, App\Role>', $user->roles()->createMany($roles));
+    assertType('array<int, App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}>', $user->roles()->createMany($roles));
     assertType('array{attached: array, detached: array, updated: array}', $user->roles()->sync($roles));
     assertType('array{attached: array, detached: array, updated: array}', $user->roles()->syncWithoutDetaching($roles));
     assertType('array{attached: array, detached: array, updated: array}', $user->roles()->syncWithPivotValues($roles, []));
-    assertType('Illuminate\Support\LazyCollection<int, App\Role>', $user->roles()->lazy());
-    assertType('Illuminate\Support\LazyCollection<int, App\Role>', $user->roles()->lazyById());
-    assertType('Illuminate\Support\LazyCollection<int, App\Role>', $user->roles()->cursor());
+    assertType('Illuminate\Support\LazyCollection<int, App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}>', $user->roles()->lazy());
+    assertType('Illuminate\Support\LazyCollection<int, App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}>', $user->roles()->lazyById());
+    assertType('Illuminate\Support\LazyCollection<int, App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}>', $user->roles()->cursor());
 
     assertType('Illuminate\Database\Eloquent\Relations\HasOneThrough<App\Car, App\Mechanic, App\User>', $user->car());
     assertType('App\Car|null', $user->car()->getResults());
@@ -235,7 +235,7 @@ function test(
     assertType('App\Comment', $comment->commentable()->associate(new Post()));
     assertType('App\Comment', $comment->commentable()->dissociate());
 
-    assertType('Illuminate\Database\Eloquent\Relations\MorphToMany<App\Tag, App\Post>', $post->tags());
+    assertType('Illuminate\Database\Eloquent\Relations\MorphToMany<App\Tag, App\Post, Illuminate\Database\Eloquent\Relations\MorphPivot, \'pivot\'>', $post->tags());
     assertType('Illuminate\Database\Eloquent\Collection<int, App\Tag>', $post->tags()->getResults());
     assertType('Illuminate\Database\Eloquent\Collection<int, App\Tag>', $post->tags);
 

@@ -104,11 +104,11 @@ function test(): void
     assertType('App\RoleCollection<int, App\Role>', (new User)->roles()->find([1, 2]));
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', (new Role)->users()->find([1, 2]));
 
-    assertType('App\Role|null', (new User)->roles()->find(1));
+    assertType('(App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot})|null', (new User)->roles()->find(1));
     assertType('App\RoleCollection<int, App\Role>', (new User)->roles()->findOrFail([1, 2]));
 
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', (new Role)->users()->findOrFail([1, 2]));
-    assertType('App\Role', (new User)->roles()->findOrFail(1));
+    assertType('App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}', (new User)->roles()->findOrFail(1));
 
     assertType('App\RoleCollection<int, App\Role>', (new User)->roles()->findMany([1, 2]));
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', (new Role)->users()->findMany([1, 2]));

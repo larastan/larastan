@@ -2,6 +2,7 @@
 
 namespace Illuminate\Database\Eloquent\Relations;
 
-class Pivot
-{
-}
+use Illuminate\Database\Eloquent\Model;
+
+class Pivot extends Model {}
+class MorphPivot extends Pivot {}

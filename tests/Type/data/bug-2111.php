@@ -13,8 +13,8 @@ class User extends Model
     public function teams(): BelongsToMany
     {
         $relation = $this->belongsToMany(Team::class);
-        assertType('Illuminate\Database\Eloquent\Relations\BelongsToMany<Bug2111\Team, $this(Bug2111\User), Illuminate\Database\Eloquent\Relations\Pivot>', $relation);
-        assertType('Illuminate\Database\Eloquent\Relations\BelongsToMany<Bug2111\Team, $this(Bug2111\User), Illuminate\Database\Eloquent\Relations\Pivot>', $relation->latest());
+        assertType('Illuminate\Database\Eloquent\Relations\BelongsToMany<Bug2111\Team, $this(Bug2111\User), Illuminate\Database\Eloquent\Relations\Pivot, \'pivot\'>', $relation);
+        assertType('Illuminate\Database\Eloquent\Relations\BelongsToMany<Bug2111\Team, $this(Bug2111\User), Illuminate\Database\Eloquent\Relations\Pivot, \'pivot\'>', $relation->latest());
 
         return $relation;
     }
@@ -22,7 +22,7 @@ class User extends Model
     public function paidTeams(): BelongsToMany
     {
         $relation = $this->teams()->whereHas('activeSubscriptions');
-        assertType('Illuminate\Database\Eloquent\Relations\BelongsToMany<Bug2111\Team, $this(Bug2111\User), Illuminate\Database\Eloquent\Relations\Pivot>', $relation);
+        assertType('Illuminate\Database\Eloquent\Relations\BelongsToMany<Bug2111\Team, $this(Bug2111\User), Illuminate\Database\Eloquent\Relations\Pivot, \'pivot\'>', $relation);
 
         return $relation;
     }

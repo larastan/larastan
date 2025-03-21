@@ -2,6 +2,9 @@
 
 namespace Illuminate\Database\Eloquent\Relations;
 
+use Closure;
+use Illuminate\Database\Eloquent\Model;
+
 /**
  * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
  * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
@@ -12,7 +15,6 @@ namespace Illuminate\Database\Eloquent\Relations;
  */
 class BelongsToMany extends Relation
 {
-
     /**
      * Specify the custom pivot model to use for the relationship.
      *
@@ -130,6 +132,33 @@ class BelongsToMany extends Relation
     public function findOrFail($id, $columns = ['*']);
 
     /**
+     * Find a related model by its primary key or call a callback.
+     *
+     * @template TValue
+     *
+     * @param  mixed  $id
+     * @param  (\Closure(): TValue)|list<string>|string  $columns
+     * @param  (\Closure(): TValue)|null  $callback
+     * @return (
+     *     $id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>)
+     *     ? \Illuminate\Database\Eloquent\Collection<int, TRelatedModel&object{pivot: TPivotModel}>|TValue
+     *     : (TRelatedModel&object{pivot: TPivotModel})|TValue
+     * )
+     */
+    public function findOr($id, $columns = ['*'], ?Closure $callback = null);
+
+    /**
+     * Add a basic where clause to the query, and return the first result.
+     *
+     * @param  (\Closure(\Illuminate\Database\Eloquent\Builder<TRelatedModel>):mixed)|model-property<TRelatedModel>|array<int|model-property<TRelatedModel>, mixed> $column
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @param  string  $boolean
+     * @return (TRelatedModel&object{pivot: TPivotModel})|null
+     */
+    public function firstWhere($column, $operator = null, $value = null, $boolean = 'and');
+
+    /**
      * Execute the query and get the first result.
      *
      * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
@@ -146,6 +175,17 @@ class BelongsToMany extends Relation
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TRelatedModel>
      */
     public function firstOrFail($columns = ['*']);
+
+    /**
+     * Execute the query and get the first result or call a callback.
+     *
+     * @template TValue
+     *
+     * @param  (\Closure(): TValue)|list<string>  $columns
+     * @param  (\Closure(): TValue)|null  $callback
+     * @return (TRelatedModel&object{pivot: TPivotModel})|TValue
+     */
+    public function firstOr($columns = ['*'], ?Closure $callback = null);
 
     /**
      * Get a paginator for the "select" statement.
@@ -181,6 +221,61 @@ class BelongsToMany extends Relation
     public function cursorPaginate($perPage = null, $columns = ['*'], $cursorName = 'cursor', $cursor = null);
 
     /**
+     * Query lazily, by chunks of the given size.
+     *
+     * @param  int  $chunkSize
+     * @return \Illuminate\Support\LazyCollection<int, TRelatedModel&object{pivot: TPivotModel}>
+     */
+    public function lazy($chunkSize = 1000);
+
+    /**
+     * Query lazily, by chunking the results of a query by comparing IDs.
+     *
+     * @param  int  $chunkSize
+     * @param  string|null  $column
+     * @param  string|null  $alias
+     * @return \Illuminate\Support\LazyCollection<int, TRelatedModel&object{pivot: TPivotModel}>
+     */
+    public function lazyById($chunkSize = 1000, $column = null, $alias = null);
+
+    /**
+     * Query lazily, by chunking the results of a query by comparing IDs in descending order.
+     *
+     * @param  int  $chunkSize
+     * @param  string|null  $column
+     * @param  string|null  $alias
+     * @return \Illuminate\Support\LazyCollection<int, TRelatedModel&object{pivot: TPivotModel}>
+     */
+    public function lazyByIdDesc($chunkSize = 1000, $column = null, $alias = null);
+
+    /**
+     * Get a lazy collection for the given query.
+     *
+     * @return \Illuminate\Support\LazyCollection<int, TRelatedModel&object{pivot: TPivotModel}>
+     */
+    public function cursor();
+
+    /**
+     * Save a new model and attach it to the parent model.
+     *
+     * @param  TRelatedModel  $model
+     * @param  array<model-string<TPivotModel>, mixed>  $pivotAttributes
+     * @param  bool  $touch
+     * @return TRelatedModel&object{pivot: TPivotModel}
+     */
+    public function save(Model $model, array $pivotAttributes = [], $touch = true);
+
+    /**
+     * Save a new model without raising any events and attach it to the parent model.
+     *
+     * @param  TRelatedModel  $model
+     * @param  array<model-string<TPivotModel>, mixed>  $pivotAttributes
+     * @param  bool  $touch
+     * @return TRelatedModel&object{pivot: TPivotModel}
+     */
+    public function saveQuietly(Model $model, array $pivotAttributes = [], $touch = true);
+
+    /**
      * Create a new instance of the related model.
      *
      * @param  array<model-property<TRelatedModel>, mixed>  $attributes
@@ -189,4 +284,13 @@ class BelongsToMany extends Relation
      * @return TRelatedModel&object{pivot: TPivotModel}
      */
     public function create(array $attributes = [], array $joining = [], $touch = true);
+
+    /**
+     * Create an array of new instances of the related models.
+     *
+     * @param  iterable<array-key, mixed>  $records
+     * @param  array<array-key, mixed>  $joinings
+     * @return array<int, TRelatedModel&object{pivot: TPivotModel}>
+     */
+    public function createMany(iterable $records, array $joinings = []);
 }
