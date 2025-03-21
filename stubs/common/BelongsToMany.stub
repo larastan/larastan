@@ -12,6 +12,31 @@ namespace Illuminate\Database\Eloquent\Relations;
  */
 class BelongsToMany extends Relation
 {
+
+    /**
+     * Specify the custom pivot model to use for the relationship.
+     *
+     * @template TNewPivotModel of \Illuminate\Database\Eloquent\Relations\Pivot
+     *
+     * @param  class-string<TNewPivotModel>  $class
+     * @return $this
+     *
+     * @phpstan-this-out static<TRelatedModel, TDeclaringModel, TNewPivotModel, TAccessor>
+     */
+    public function using($class);
+
+    /**
+     * Specify the custom pivot accessor to use for the relationship.
+     *
+     * @template TNewAccessor of string
+     *
+     * @param  TNewAccessor  $accessor
+     * @return $this
+     *
+     * @phpstan-this-out static<TRelatedModel, TDeclaringModel, TPivotModel, TNewAccessor>
+     */
+    public function as($accessor);
+
     /**
      * Find a related model by its primary key or return a new instance of the related model.
      *
