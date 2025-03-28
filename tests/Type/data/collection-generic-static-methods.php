@@ -238,6 +238,6 @@ function test(
         ],
     ])->groupBy('type'));
 
-    assertType('bool|int', $enumerableIntUsers->search(fn(User $user) => $user->id === 1));
-    assertType('bool|string', $enumerableStringUsers->search(fn(User $user) => $user->id === 1));
+    assertType('int|false', $enumerableIntUsers->search(fn(User $user) => $user->id === 1));
+    assertType('string|false', $enumerableStringUsers->search(fn(User $user) => $user->id === 1));
 }
