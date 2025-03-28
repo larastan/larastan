@@ -9,10 +9,12 @@ use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Type\ClosureType;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\Type;
 
+use PHPStan\Type\TypeTraverser;
 use function count;
 
 /** @internal */
@@ -33,16 +35,14 @@ final class ValueExtension implements DynamicFunctionReturnTypeExtension
         }
 
         $arg = $functionCall->getArgs()[0]->value;
-        if ($arg instanceof Closure) {
-            $callbackType = $scope->getType($arg);
+        $argType = $scope->getType($arg);
 
-            return ParametersAcceptorSelector::selectFromArgs(
-                $scope,
-                $functionCall->getArgs(),
-                $callbackType->getCallableParametersAcceptors($scope),
-            )->getReturnType();
-        }
+       return TypeTraverser::map($argType, function (Type $type, callable $traverse): Type {
+            if ($type instanceof ClosureType) {
+                return $type->getReturnType();
+            }
 
-        return $scope->getType($arg);
+            return $traverse($type);
+        });
     }
 }

@@ -10,7 +10,14 @@ use Throwable;
 
 use function PHPStan\Testing\assertType;
 
-function test(?int $value = 0): void
+/**
+ * @param int|null     $value
+ * @param int|(\Closure(mixed): string) $intOrClosure
+ *
+ * @return void
+ * @throws Throwable
+ */
+function test(?int $value = 0, int|\Closure $intOrClosure = 0): void
 {
     assertType('Illuminate\Foundation\Application', app());
     assertType('Larastan\Larastan\ApplicationResolver', app(ApplicationResolver::class));
@@ -137,6 +144,7 @@ function test(?int $value = 0): void
     }));
 
     assertType('5', value(5));
+    assertType('int|string', value($intOrClosure));
 
     assertType('array|null', transform(User::first(), fn (User $user) => $user->toArray()));
     assertType('array', transform(User::sole(), fn (User $user) => $user->toArray()));
