@@ -10,11 +10,16 @@ use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
+use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
+use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\ObjectWithoutClassType;
+use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
+use PHPStan\Type\TypeUtils;
 use function count;
 
 /** @internal */
@@ -39,10 +44,16 @@ final class RequestRouteExtension implements DynamicMethodReturnTypeExtension
             return TypeCombinator::addNull(new ObjectType(Route::class));
         }
 
-        return ParametersAcceptorSelector::selectFromArgs(
-            $scope,
-            $methodCall->getArgs(),
-            $methodReflection->getVariants(),
-        )->getReturnType();
+        if (count($methodCall->getArgs()) === 2) {
+            $defaultType = $scope->getType($methodCall->getArgs()[1]->value);
+        } else {
+            $defaultType = new NullType();
+        }
+
+        return TypeUtils::toBenevolentUnion(TypeCombinator::union(
+            new ObjectWithoutClassType(),
+            new StringType(),
+            $defaultType
+        ));
     }
 }
