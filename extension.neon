@@ -405,6 +405,11 @@ services:
             class: "Illuminate\\Contracts\\Foundation\\Application"
 
     -
+        class: Larastan\Larastan\ReturnTypes\AppFacadeEnvironmentReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicStaticMethodReturnTypeExtension
+
+    -
         class: Larastan\Larastan\Types\ModelProperty\ModelPropertyTypeNodeResolverExtension
         tags:
             - phpstan.phpDoc.typeNodeResolverExtension
