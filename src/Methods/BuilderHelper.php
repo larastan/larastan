@@ -141,6 +141,38 @@ class BuilderHelper
         $scopeName = 'scope' . ucfirst($methodName);
 
         foreach ($modelType->getObjectClassReflections() as $reflection) {
+            // Check for Scope attribute
+            if ($reflection->hasNativeMethod($methodName)) {
+                $methodReflection  = $reflection->getNativeMethod($methodName);
+                $hasScopeAttribute = false;
+                foreach ($methodReflection->getAttributes() as $attribute) {
+                    // using string instead of class constant to avoid failing on older Laravel versions
+                    if ($attribute->getName() === 'Illuminate\Database\Eloquent\Attributes\Scope') {
+                        $hasScopeAttribute = true;
+                        break;
+                    }
+                }
+
+                if (! $methodReflection->isPublic() && $hasScopeAttribute) {
+                    $parametersAcceptor = $methodReflection->getVariants()[0];
+
+                    $parameters = $parametersAcceptor->getParameters();
+                    // We shift the parameters,
+                    // because first parameter is the Builder
+                    array_shift($parameters);
+
+                    $returnType = $parametersAcceptor->getReturnType();
+
+                    return new EloquentBuilderMethodReflection(
+                        $methodName,
+                        $methodReflection->getDeclaringClass(),
+                        $parameters,
+                        $returnType,
+                        $parametersAcceptor->isVariadic(),
+                    );
+                }
+            }
+
             // Check for @method phpdoc tags
             if (array_key_exists($scopeName, $reflection->getMethodTags())) {
                 $methodTag = $reflection->getMethodTags()[$scopeName];
