@@ -16,7 +16,7 @@ use function sprintf;
 
 class IntegrationTest extends PHPStanTestCase
 {
-    /** @return iterable<mixed> */
+    /** @return iterable<array{0: string, 1?: array<int, array<int, string>>}> */
     public static function dataIntegrationTests(): iterable
     {
         self::getContainer();
@@ -101,7 +101,7 @@ class IntegrationTest extends PHPStanTestCase
     }
 
     /**
-     * @param array<int, array<int, string>> $expectedErrors
+     * @param array<int, array<int, string>>|null $expectedErrors
      *
      * @dataProvider dataIntegrationTests
      */
