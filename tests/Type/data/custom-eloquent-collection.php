@@ -101,26 +101,26 @@ function test(): void
     assertType('App\NonGenericCollection', (new User)->modelsWithNonGenericCollection);
     assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', (new User)->modelsWithOnlyValueGenericCollection);
 
-    assertType('App\RoleCollection<int, App\Role>', (new User)->roles()->find([1, 2]));
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', (new Role)->users()->find([1, 2]));
+    assertType('App\RoleCollection<int, App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}>', (new User)->roles()->find([1, 2]));
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}>', (new Role)->users()->find([1, 2]));
 
     assertType('(App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot})|null', (new User)->roles()->find(1));
-    assertType('App\RoleCollection<int, App\Role>', (new User)->roles()->findOrFail([1, 2]));
+    assertType('App\RoleCollection<int, App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}>', (new User)->roles()->findOrFail([1, 2]));
 
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', (new Role)->users()->findOrFail([1, 2]));
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}>', (new Role)->users()->findOrFail([1, 2]));
     assertType('App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}', (new User)->roles()->findOrFail(1));
 
-    assertType('App\RoleCollection<int, App\Role>', (new User)->roles()->findMany([1, 2]));
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', (new Role)->users()->findMany([1, 2]));
+    assertType('App\RoleCollection<int, App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}>', (new User)->roles()->findMany([1, 2]));
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}>', (new Role)->users()->findMany([1, 2]));
 
     assertType('App\TransactionCollection<int, App\Transaction>', (new User)->transactions()->find([1, 2]));
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', (new Role)->users()->find([1, 2]));
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}>', (new Role)->users()->find([1, 2]));
     assertType('App\Transaction|null', (new User)->transactions()->find(1));
     assertType('App\TransactionCollection<int, App\Transaction>', (new User)->transactions()->findOrFail([1, 2]));
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', (new Role)->users()->findOrFail([1, 2]));
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}>', (new Role)->users()->findOrFail([1, 2]));
     assertType('App\Transaction', (new User)->transactions()->findOrFail(1));
     assertType('App\TransactionCollection<int, App\Transaction>', (new User)->transactions()->findMany([1, 2]));
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', (new Role)->users()->findMany([1, 2]));
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}>', (new Role)->users()->findMany([1, 2]));
     assertType('App\AccountCollection<int, App\Account>', (new Group)->accounts()->find([1, 2]));
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', (new User)->children()->find([1, 2]));
     assertType('App\Account|null', (new Group)->accounts()->find(1));
