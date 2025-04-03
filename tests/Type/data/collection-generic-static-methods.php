@@ -110,8 +110,8 @@ function test(
     assertType('App\UserCollection', $secondCustomEloquentCollection->pop(2));
     assertType('Illuminate\Support\Collection<int, int>', $items->pop(3));
 
-    assertType('App\Role', User::firstOrFail(1)->roles->random());
-    assertType('App\RoleCollection<int, App\Role>', User::firstOrFail(1)->roles->random(1));
+    assertType('App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}', User::firstOrFail(1)->roles->random());
+    assertType('App\RoleCollection<int, App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}>', User::firstOrFail(1)->roles->random(1));
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->random(1));
     assertType('App\TransactionCollection<int, App\Transaction>', $customEloquentCollection->random(2));
     assertType('App\UserCollection', $secondCustomEloquentCollection->random(2));
