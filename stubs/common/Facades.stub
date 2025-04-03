@@ -5,6 +5,7 @@ namespace Illuminate\Support\Facades;
 abstract class Facade {}
 
 /**
+ * @mixin \Illuminate\Redis\Connections\Connection
  * @mixin \Redis
  * @mixin \Illuminate\Redis\RedisManager
  * @mixin \Illuminate\Contracts\Redis\Factory
