@@ -4,11 +4,11 @@ namespace ModelFactories;
 
 use App\Post;
 use App\User;
-
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 use function PHPStan\Testing\assertType;
 
 function test(?int $foo): void {
@@ -94,6 +94,12 @@ class Comment extends Model
 {
     use HasFactory;
 
+    /** @return BelongsTo<User> */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
     /** @return CommentFactory */
     protected static function newFactory(): Factory
     {
@@ -112,5 +118,26 @@ class CommentFactory extends Factory
     public function definition(): array
     {
         return [];
+    }
+
+    public function foo(): static
+    {
+        return $this->state(['foo' => 'bar']);
+    }
+
+    private function test(User $user): void
+    {
+        $type = 'static(ModelFactories\CommentFactory)';
+        assertType($type, $this->state([]));
+        assertType($type, $this->afterMaking(fn ($c) => $c));
+        assertType($type, $this->afterCreating(fn ($c) => $c));
+        assertType($type, $this->foo());
+        assertType($type, $this->recycle($user));
+        assertType($type, $this->has(User::factory()));
+        assertType($type, $this->hasAttached(User::factory()));
+        assertType($type, $this->for(User::factory()));
+        assertType($type, $this->for($user));
+        assertType($type, $this->forUser());
+        assertType($type, $this->hasUser());
     }
 }

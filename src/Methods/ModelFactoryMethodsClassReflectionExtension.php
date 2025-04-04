@@ -18,7 +18,7 @@ use PHPStan\Reflection\ParametersAcceptor;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\Generic\TemplateTypeMap;
-use PHPStan\Type\ObjectType;
+use PHPStan\Type\StaticType;
 use PHPStan\Type\Type;
 
 use function array_key_exists;
@@ -116,7 +116,7 @@ class ModelFactoryMethodsClassReflectionExtension implements MethodsClassReflect
             /** @return ParametersAcceptor[] */
             public function getVariants(): array
             {
-                $returnType     = new ObjectType($this->classReflection->getName());
+                $returnType     = new StaticType($this->classReflection);
                 $stateParameter = $this->classReflection->getMethod('state', new OutOfClassScope())->getVariants()[0]->getParameters()[0];
                 $countParameter = $this->classReflection->getMethod('count', new OutOfClassScope())->getVariants()[0]->getParameters()[0];
 
