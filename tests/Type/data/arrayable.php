@@ -1,6 +1,6 @@
 <?php
 
-namespace AbortTests;
+namespace Arrayable;
 
 use App\ValueObjects\Foo;
 use App\ValueObjects\FooList;
