@@ -9,12 +9,12 @@ use function PHPStan\Testing\assertType;
 function test(): void
 {
     $foo = new Foo;
-    assertType('array<string, mixed>', $foo->toArray());
+    assertType('array<string, int>', $foo->toArray());
 
     $fooList = new FooList;
     $array = $fooList->toArray();
+    assertType('array<int, Illuminate\Contracts\Support\Arrayable<string, int>>', $array);
     $fooFromArray = $array[0];
-    assertType('array<int, Illuminate\Contracts\Support\Arrayable<string, mixed>>', $array);
-    assertType('Illuminate\Contracts\Support\Arrayable<string, mixed>', $fooFromArray);
-    assertType('array<string, mixed>', $fooFromArray->toArray());
+    assertType('Illuminate\Contracts\Support\Arrayable<string, int>', $fooFromArray);
+    assertType('array<string, int>', $fooFromArray->toArray());
 }
