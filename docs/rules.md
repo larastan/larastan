@@ -63,7 +63,7 @@ $user->roles()->where('name', 'a role name')->exists();
 This rule is enabled by default.
 To disable, add the following to your `phpstan.neon` file:
 
-```
+```neon
 parameters:
     noUnnecessaryCollectionCall: false
 ```
@@ -72,14 +72,14 @@ You can also configure the collection methods which this rule
 checks for. By default, all collection methods are checked.
 To only enable a specific set of methods, you could set the
 `noUnnecessaryCollectionCallOnly` configuration key. For example:
-```
+```neon
 parameters:
     noUnnecessaryCollectionCallOnly: ['count', 'first']
 ```
 will only throw errors on the `count` and `first` methods.
 The inverse is also configurable, to not throw an exception
 on the `contains` method, one could set the following value:
-```
+```neon
 parameters:
     noUnnecessaryCollectionCallExcept: ['contains']
 ```
@@ -99,7 +99,7 @@ parameters:
 This rule is disabled by default.
 To enable, add the following to your `phpstan.neon` file:
 
-```
+```neon
 parameters:
     checkModelProperties: true
 ```
@@ -151,7 +151,7 @@ You can read more about why in [the official Octane docs](https://laravel.com/do
 This rule is disabled by default.
 To enable, add the following to your `phpstan.neon` file:
 
-```
+```neon
 parameters:
     checkOctaneCompatibility: true
 ```
