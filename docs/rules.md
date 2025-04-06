@@ -60,7 +60,7 @@ $user->roles()->where('name', 'a role name')->exists();
 
 #### Configuration
 This rule is enabled by default. To disable it completely, add:
-```
+```neon
 parameters:
     noUnnecessaryCollectionCall: false
 ```
@@ -70,14 +70,14 @@ You can also configure the collection methods which this rule
 checks for. By default, all collection methods are checked.
 To only enable a specific set of methods, you could set the
 `noUnnecessaryCollectionCallOnly` configuration key. For example:
-```
+```neon
 parameters:
     noUnnecessaryCollectionCallOnly: ['count', 'first']
 ```
 will only throw errors on the `count` and `first` methods.
 The inverse is also configurable, to not throw an exception
 on the `contains` method, one could set the following value:
-```
+```neon
 parameters:
     noUnnecessaryCollectionCallExcept: ['contains']
 ```
@@ -94,7 +94,7 @@ parameters:
 
 ### Configuration
 This rule is disabled by default. You can enable it by putting
-```
+```neon
 parameters:
     checkModelProperties: true
 ```
@@ -145,7 +145,7 @@ You can read more about why in [the official Octane docs](https://laravel.com/do
 ### Configuration
 
 This rule is disabled by default. You can enable it by adding
-```
+```neon
 parameters:
     checkOctaneCompatibility: true
 ```
