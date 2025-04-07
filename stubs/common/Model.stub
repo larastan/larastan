@@ -71,6 +71,13 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
      * @return \Illuminate\Database\Eloquent\Builder<static>
      */
     public static function with($relations);
+
+    /**
+     * Convert the model instance to an array.
+     *
+     * @return array<mixed>
+     */
+    public function toArray();
 }
 
 /**
