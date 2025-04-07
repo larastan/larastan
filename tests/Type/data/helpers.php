@@ -138,8 +138,8 @@ function test(?int $value = 0): void
 
     assertType('5', value(5));
 
-    assertType('array<mixed>|null', transform(User::first(), fn (User $user) => $user->toArray()));
-    assertType('array<mixed>', transform(User::sole(), fn (User $user) => $user->toArray()));
+    assertType('array<string, mixed>|null', transform(User::first(), fn (User $user) => $user->toArray()));
+    assertType('array<string, mixed>', transform(User::sole(), fn (User $user) => $user->toArray()));
 
     // falls back to default if provided
     assertType("1|'default'", transform(optional(), fn () => 1, 'default'));
