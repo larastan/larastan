@@ -38,3 +38,18 @@ class Request extends Facade {}
  * @mixin \Illuminate\Foundation\Console\Kernel
  */
 class Artisan extends Facade {}
+
+/**
+ * @mixin \Illuminate\Cookie\CookieJar
+ */
+class Cookie extends Facade {
+    /**
+     * Retrieve a cookie from the request.
+     *
+     * @template TDefault
+     * @param  string|null  $key
+     * @param  TDefault  $default
+     * @return ($key is null ? array<string, string> : string|TDefault)
+     */
+    public static function get($key = null, $default = null);
+}
