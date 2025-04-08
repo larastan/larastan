@@ -17,7 +17,7 @@ use function PHPStan\Testing\assertType;
  * @return void
  * @throws Throwable
  */
-function test(?int $value = 0, int|\Closure $intOrClosure = 0): void
+function test(?int $value = 0, int|\Closure $intOrClosure = 0, int|\Closure $intOrClosureWithNoDocBlock = 0): void
 {
     assertType('Illuminate\Foundation\Application', app());
     assertType('Larastan\Larastan\ApplicationResolver', app(ApplicationResolver::class));
@@ -145,6 +145,7 @@ function test(?int $value = 0, int|\Closure $intOrClosure = 0): void
 
     assertType('5', value(5));
     assertType('int|string', value($intOrClosure));
+    assertType('mixed', value($intOrClosureWithNoDocBlock));
 
     assertType('array|null', transform(User::first(), fn (User $user) => $user->toArray()));
     assertType('array', transform(User::sole(), fn (User $user) => $user->toArray()));
