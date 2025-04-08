@@ -26,6 +26,8 @@ parameters:
     checkPhpDocMissingReturn: false
     checkUnusedViews: false
     checkModelAppends: false
+    configPaths: []
+    generalizeEnvReturnType: false
 
 parametersSchema:
     checkOctaneCompatibility: bool()
@@ -42,6 +44,7 @@ parametersSchema:
     checkModelProperties: bool()
     checkUnusedViews: bool()
     checkModelAppends: bool()
+    configPaths: listOf(string())
     generalizeEnvReturnType: bool()
 
 conditionalTags:
@@ -577,7 +580,21 @@ services:
         class: Larastan\Larastan\Support\HigherOrderCollectionProxyHelper
 
     -
+        class: Larastan\Larastan\ReturnTypes\ConfigFunctionDynamicFunctionReturnTypeExtension
+        arguments:
+            parser: @currentPhpVersionSimpleDirectParser
+            configPaths: %configPaths%
+        tags:
+            - phpstan.broker.dynamicFunctionReturnTypeExtension
+
+    -
         class: Larastan\Larastan\ReturnTypes\Helpers\EnvFunctionDynamicFunctionReturnTypeExtension
+
+    -
+        class: Larastan\Larastan\ReturnTypes\FormRequestSafeDynamicMethodReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
 rules:
     - Larastan\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule
     - Larastan\Larastan\Rules\UselessConstructs\NoUselessValueFunctionCallsRule

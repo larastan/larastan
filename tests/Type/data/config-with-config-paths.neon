@@ -1,0 +1,5 @@
+includes:
+    - ../../phpstan-tests.neon
+parameters:
+    configPaths:
+        - %rootDir%/../../../tests/application/config
