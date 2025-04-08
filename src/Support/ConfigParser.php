@@ -2,21 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Larastan\Larastan\ReturnTypes;
+namespace Larastan\Larastan\Support;
 
 use PhpParser\Node;
 use PhpParser\Node\Expr\Array_;
-use PhpParser\Node\Expr\FuncCall;
 use PhpParser\NodeFinder;
 use PHPStan\Analyser\Scope;
 use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
 use PHPStan\Parser\ParserErrorsException;
-use PHPStan\Reflection\FunctionReflection;
-use PHPStan\Type\DynamicFunctionReturnTypeExtension;
-use PHPStan\Type\GeneralizePrecision;
+use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Type;
-use PHPStan\Type\TypeCombinator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
@@ -24,14 +20,13 @@ use SplFileInfo;
 
 use function array_key_exists;
 use function array_shift;
-use function count;
 use function explode;
 use function is_dir;
 use function iterator_to_array;
 use function property_exists;
 use function str_ends_with;
 
-class ConfigFunctionDynamicFunctionReturnTypeExtension implements DynamicFunctionReturnTypeExtension
+final class ConfigParser
 {
     /** @var list<string> */
     private array $configPaths = [];
@@ -59,42 +54,14 @@ class ConfigFunctionDynamicFunctionReturnTypeExtension implements DynamicFunctio
         $this->configFiles = $this->getConfigFiles();
     }
 
-    public function isFunctionSupported(FunctionReflection $functionReflection): bool
+    /**
+     * @param ConstantStringType[] $constantStrings
+     *
+     * @return Type[]
+     */
+    public function getTypes(array $constantStrings, Scope $scope): array
     {
-        if ($this->configPaths === []) {
-            return false;
-        }
-
-        return $functionReflection->getName() === 'config';
-    }
-
-    public function getTypeFromFunctionCall(
-        FunctionReflection $functionReflection,
-        FuncCall $functionCall,
-        Scope $scope,
-    ): Type|null {
-        $args     = $functionCall->getArgs();
-        $argCount = count($args);
-
-        if ($argCount === 0) {
-            return null;
-        }
-
-        $firstArgType = $scope->getType($args[0]->value);
-
-        $defaultArgType = null;
-
-        if ($argCount > 1) {
-            $defaultArgType = $scope->getType($args[1]->value);
-        }
-
-        $constantStrings = $firstArgType->getConstantStrings();
-
         $returnTypes = [];
-
-        if ($defaultArgType !== null) {
-            $returnTypes[] = $defaultArgType->generalize(GeneralizePrecision::lessSpecific());
-        }
 
         foreach ($constantStrings as $constantString) {
             $key = $constantString->getValue();
@@ -114,7 +81,7 @@ class ConfigFunctionDynamicFunctionReturnTypeExtension implements DynamicFunctio
 
                 // We could not parse the file or couldn't find the return array
                 if ($cachedConfigFile === null) {
-                    return null;
+                    return [];
                 }
 
                 $this->parsedConfigFiles[$configFileName] = $cachedConfigFile;
@@ -166,7 +133,7 @@ class ConfigFunctionDynamicFunctionReturnTypeExtension implements DynamicFunctio
             $returnTypes[] = $scope->getType($ret);
         }
 
-        return $returnTypes === [] ? null : TypeCombinator::union(...$returnTypes);
+        return $returnTypes;
     }
 
     /** @return array<string, SplFileInfo> */
@@ -219,5 +186,11 @@ class ConfigFunctionDynamicFunctionReturnTypeExtension implements DynamicFunctio
         }
 
         return null;
+    }
+
+    /** @return list<string> */
+    public function getConfigPaths(): array
+    {
+        return $this->configPaths;
     }
 }

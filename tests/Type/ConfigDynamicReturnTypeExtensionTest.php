@@ -6,12 +6,13 @@ namespace Type;
 
 use PHPStan\Testing\TypeInferenceTestCase;
 
-class ConfigFunctionDynamicFunctionReturnTypeExtensionTest extends TypeInferenceTestCase
+class ConfigDynamicReturnTypeExtensionTest extends TypeInferenceTestCase
 {
     /** @return iterable<mixed> */
     public static function dataFileAsserts(): iterable
     {
         yield from self::gatherAssertTypes(__DIR__ . '/data/config-helper-function.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/config-repository-method.php');
     }
 
     /** @dataProvider dataFileAsserts */

@@ -580,12 +580,20 @@ services:
         class: Larastan\Larastan\Support\HigherOrderCollectionProxyHelper
 
     -
-        class: Larastan\Larastan\ReturnTypes\ConfigFunctionDynamicFunctionReturnTypeExtension
+        class: Larastan\Larastan\ReturnTypes\Helpers\ConfigFunctionDynamicFunctionReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicFunctionReturnTypeExtension
+
+    -
+        class: Larastan\Larastan\ReturnTypes\ConfigGetDynamicMethodReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
+        class: Larastan\Larastan\Support\ConfigParser
         arguments:
             parser: @currentPhpVersionSimpleDirectParser
             configPaths: %configPaths%
-        tags:
-            - phpstan.broker.dynamicFunctionReturnTypeExtension
 
     -
         class: Larastan\Larastan\ReturnTypes\Helpers\EnvFunctionDynamicFunctionReturnTypeExtension
