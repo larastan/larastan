@@ -12,6 +12,7 @@ use PHPStan\Type\BooleanType;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
+
 use function count;
 
 class AppFacadeEnvironmentReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
