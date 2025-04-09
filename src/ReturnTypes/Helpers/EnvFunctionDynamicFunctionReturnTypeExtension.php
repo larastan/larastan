@@ -12,7 +12,6 @@ use PHPStan\Type\GeneralizePrecision;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeTraverser;
 
-use PHPStan\Type\VerbosityLevel;
 use function count;
 
 class EnvFunctionDynamicFunctionReturnTypeExtension implements DynamicFunctionReturnTypeExtension
