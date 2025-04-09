@@ -61,7 +61,7 @@ class ConfigGetDynamicMethodReturnTypeExtension implements DynamicMethodReturnTy
 
         if ($defaultArgType !== null) {
             $returnTypes[] = TypeTraverser::map($defaultArgType, static function (Type $type, callable $traverse) use ($scope): Type {
-                if ($type->isCallable()->yes()) {
+                if ($type->isConstantScalarValue()->no() && $type->isCallable()->yes()) {
                     return $type->getCallableParametersAcceptors($scope)[0]->getReturnType();
                 }
 

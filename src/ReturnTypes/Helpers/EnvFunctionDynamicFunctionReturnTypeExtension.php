@@ -12,6 +12,7 @@ use PHPStan\Type\GeneralizePrecision;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeTraverser;
 
+use PHPStan\Type\VerbosityLevel;
 use function count;
 
 class EnvFunctionDynamicFunctionReturnTypeExtension implements DynamicFunctionReturnTypeExtension
@@ -35,7 +36,7 @@ class EnvFunctionDynamicFunctionReturnTypeExtension implements DynamicFunctionRe
         $defaultArgType = $scope->getType($functionCall->getArgs()[1]->value);
 
         return TypeTraverser::map($defaultArgType, static function (Type $type, callable $traverse) use ($scope): Type {
-            if ($type->isCallable()->yes()) {
+            if ($type->isConstantScalarValue()->no() && $type->isCallable()->yes()) {
                 return $type->getCallableParametersAcceptors($scope)[0]->getReturnType();
             }
 
