@@ -178,7 +178,8 @@ function test(?int $value = 0, int|\Closure $intOrClosure = 0, int|\Closure $int
     }
 
     assertType('bool|string|null', env('foo'));
-    assertType('bool|string|null', env('foo', null));
-    assertType('bool|int|string', env('foo', 120));
-    assertType('bool|string', env('foo', ''));
+    assertType('bool|string|null', env('foo'));
+    assertType('int', env('foo', 120));
+    assertType('string', env('foo', ''));
+    assertType('int', env('foo', fn () => 120));
 }

@@ -10,6 +10,7 @@ use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
 use PHPStan\Type\GeneralizePrecision;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeTraverser;
 
 use function count;
 
@@ -31,6 +32,14 @@ class EnvFunctionDynamicFunctionReturnTypeExtension implements DynamicFunctionRe
             return null;
         }
 
-        return $scope->getType($functionCall->getArgs()[1]->value)->generalize(GeneralizePrecision::lessSpecific());
+        $defaultArgType = $scope->getType($functionCall->getArgs()[1]->value);
+
+        return TypeTraverser::map($defaultArgType, static function (Type $type, callable $traverse) use ($scope): Type {
+            if ($type->isCallable()->yes()) {
+                return $type->getCallableParametersAcceptors($scope)[0]->getReturnType();
+            }
+
+            return $traverse($type);
+        })->generalize(GeneralizePrecision::lessSpecific());
     }
 }

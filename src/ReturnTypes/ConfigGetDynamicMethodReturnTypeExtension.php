@@ -13,6 +13,7 @@ use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\GeneralizePrecision;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\TypeTraverser;
 
 use function count;
 
@@ -59,7 +60,13 @@ class ConfigGetDynamicMethodReturnTypeExtension implements DynamicMethodReturnTy
         $returnTypes     = [];
 
         if ($defaultArgType !== null) {
-            $returnTypes[] = $defaultArgType->generalize(GeneralizePrecision::lessSpecific());
+            $returnTypes[] = TypeTraverser::map($defaultArgType, static function (Type $type, callable $traverse) use ($scope): Type {
+                if ($type->isCallable()->yes()) {
+                    return $type->getCallableParametersAcceptors($scope)[0]->getReturnType();
+                }
+
+                return $traverse($type);
+            })->generalize(GeneralizePrecision::lessSpecific());
         }
 
         $returnTypes += $this->configParser->getTypes($constantStrings, $scope);
