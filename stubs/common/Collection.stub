@@ -76,6 +76,14 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      * @return static<($keyBy is string ? array-key : ($keyBy is array ? array-key : TNewKey)), TValue>
      */
     public function keyBy($keyBy);
+
+    /**
+     * Chunk the collection into chunks with a callback.
+     *
+     * @param  callable(TValue, TKey, static<TKey, TValue>): bool  $callback
+     * @return static<int, static<TKey, TValue>>
+     */
+    public function chunkWhile(callable $callback);
 }
 
 /**
@@ -100,4 +108,12 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * @return static<array-key, TCombineValue>
      */
     public function combine($values);
+
+    /**
+     * Chunk the collection into chunks with a callback.
+     *
+     * @param  callable(TValue, TKey, static<TKey, TValue>): bool  $callback
+     * @return static<int, static<TKey, TValue>>
+     */
+    public function chunkWhile(callable $callback);
 }
