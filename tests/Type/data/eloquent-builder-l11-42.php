@@ -365,9 +365,9 @@ class TestModel extends Model
 {
     public function test(): void
     {
-        assertType('Illuminate\Database\Eloquent\Collection<int, EloquentBuilder\TestModel>', $this->where('email', 1)->get());
+        assertType('Illuminate\Database\Eloquent\Collection<int, static(EloquentBuilder\TestModel)>', $this->where('email', 1)->get());
         assertType('Illuminate\Database\Eloquent\Builder<static(EloquentBuilder\TestModel)>', static::query()->where('email', 'bar'));
-        assertType('Illuminate\Database\Eloquent\Builder<EloquentBuilder\TestModel>', $this->where('email', 'bar'));
+        assertType('Illuminate\Database\Eloquent\Builder<static(EloquentBuilder\TestModel)>', $this->where('email', 'bar'));
     }
 }
 

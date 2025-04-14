@@ -23,6 +23,7 @@ class IntegrationTest extends PHPStanTestCase
         self::getContainer();
 
         yield [__DIR__ . '/data/bug-2074.php'];
+        yield [__DIR__ . '/data/bug-2263.php'];
         yield [__DIR__ . '/data/test-case-extension.php', [34 => ['Call to function method_exists() with $this(TestTestCase) and \'partialMock\' will always evaluate to true.']]];
         yield [__DIR__ . '/data/model-builder.php'];
         yield [__DIR__ . '/data/model-properties.php'];
@@ -37,7 +38,7 @@ class IntegrationTest extends PHPStanTestCase
                 16 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::firstWhere() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'id\'|\'unionNotExisting\' given.'],
                 17 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::where() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
                 19 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::where() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
-                20 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::where() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
+                20 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<static(App\User)>::where() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
                 24 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::where() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, string given.'],
                 25 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::orWhere() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
                 26 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::orWhere() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
@@ -85,10 +86,10 @@ class IntegrationTest extends PHPStanTestCase
         yield [
             __DIR__ . '/data/model-property-static-call.php',
             [
-                10 => ['Parameter #1 $attributes of static method Illuminate\Database\Eloquent\Builder<App\User>::create() expects array<model property of App\User, mixed>, array<string, string> given.'],
-                14 => ['Parameter #1 $attributes of static method Illuminate\Database\Eloquent\Builder<App\User>::create() expects array<model property of App\User, mixed>, array<string, string> given.'],
-                26 => ['Parameter #1 $attributes of static method Illuminate\Database\Eloquent\Builder<ModelPropertyStaticCall\ModelPropertyStaticCallsInClass>::create() expects array<model property of ModelPropertyStaticCall\ModelPropertyStaticCallsInClass, mixed>, array<string, string> given.'],
-                34 => ['Parameter #1 $attributes of static method Illuminate\Database\Eloquent\Builder<ModelPropertyStaticCall\ModelPropertyStaticCallsInClass>::create() expects array<model property of ModelPropertyStaticCall\ModelPropertyStaticCallsInClass, mixed>, array<string, string> given.'],
+                10 => ['Parameter #1 $attributes of static method Illuminate\Database\Eloquent\Builder<static(App\User)>::create() expects array<model property of App\User, mixed>, array<string, string> given.'],
+                14 => ['Parameter #1 $attributes of static method Illuminate\Database\Eloquent\Builder<static(App\User)>::create() expects array<model property of App\User, mixed>, array<string, string> given.'],
+                26 => ['Parameter #1 $attributes of static method Illuminate\Database\Eloquent\Builder<static(ModelPropertyStaticCall\ModelPropertyStaticCallsInClass)>::create() expects array<model property of static(ModelPropertyStaticCall\ModelPropertyStaticCallsInClass), mixed>, array<string, string> given.'],
+                34 => ['Parameter #1 $attributes of static method Illuminate\Database\Eloquent\Builder<static(ModelPropertyStaticCall\ModelPropertyStaticCallsInClass)>::create() expects array<model property of static(ModelPropertyStaticCall\ModelPropertyStaticCallsInClass), mixed>, array<string, string> given.'],
             ],
         ];
 
