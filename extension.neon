@@ -27,7 +27,6 @@ parameters:
     checkPhpDocMissingReturn: false
     checkUnusedViews: false
     checkModelAppends: false
-    configPaths: []
     generalizeEnvReturnType: false
 
 parametersSchema:
@@ -46,7 +45,6 @@ parametersSchema:
     checkModelProperties: bool()
     checkUnusedViews: bool()
     checkModelAppends: bool()
-    configPaths: listOf(string())
     generalizeEnvReturnType: bool()
 
 conditionalTags:
@@ -597,7 +595,7 @@ services:
         class: Larastan\Larastan\Support\ConfigParser
         arguments:
             parser: @currentPhpVersionSimpleDirectParser
-            configPaths: %configPaths%
+            configPaths: %configDirectories%
 
     -
         class: Larastan\Larastan\ReturnTypes\Helpers\EnvFunctionDynamicFunctionReturnTypeExtension
