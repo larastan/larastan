@@ -44,7 +44,7 @@ final class ConfigParser
     public function __construct(private FileHelper $fileHelper, private Parser $parser, array $configPaths)
     {
         if ($configPaths === []) {
-            return;
+            $configPaths = [config_path()];
         }
 
         foreach ($configPaths as $configPath) {
