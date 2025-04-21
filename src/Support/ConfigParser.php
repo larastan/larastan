@@ -20,6 +20,7 @@ use SplFileInfo;
 
 use function array_key_exists;
 use function array_shift;
+use function config_path;
 use function explode;
 use function is_dir;
 use function iterator_to_array;

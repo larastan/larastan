@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <ruleset>
+    <config name="php_version" value="80002"/>
+
     <arg name="basepath" value="."/>
     <arg name="extensions" value="php"/>
     <arg name="parallel" value="80"/>
