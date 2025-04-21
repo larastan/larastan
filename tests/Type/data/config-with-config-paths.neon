@@ -1,5 +1,6 @@
 includes:
     - ../../phpstan-tests.neon
 parameters:
+    checkConfigTypes: true
     configDirectories:
         - %rootDir%/../../../tests/application/config
