@@ -88,3 +88,60 @@ To enable you can set it to `true`:
 parameters:
     checkModelAppends: true
 ```
+
+## `checkConfigTypes`
+**default**: `false`
+
+This config parameter enables the checks for `config` helper function return type and `\Illuminate\Config\Repository::get` method return type.
+
+By default, Larastan assumes your config files are under `/config` directory. It uses `config_path` function from Laravel to determine this. But if you have unconventional config file structure, you can use `configDirectories` config parameter to tell Larastan where your config files are stored.
+
+```neon
+parameters:
+    configDirectories:
+        - src/config
+        - foo/config
+```
+
+### Example
+With this parameter enabled, the following code
+```php
+// config/auth.php
+return [
+    'defaults' => [
+        'guard' => 'web',
+        'passwords' => 'users',
+    ],
+];
+
+// test.php
+echo config('auth.defaults');
+```
+
+would give an error:
+```
+Parameter #1 (array{guard: 'web', passwords: 'users'}) of echo cannot be converted to string.
+```
+
+### Performance
+Larastan parses the config files to be able to understand their structure. But it does this lazily. Only the config files that were accessed during the analysis will be parsed. Also, it has internal caching mechanisms so that one file will not be parsed twice.
+
+**Note**: Although everything is done lazily, parsing big number of config files might add a little bit of overhead. Use with caution.
+
+## `generalizeEnvReturnType`
+**default**: `false`
+
+This config parameter, if enabled, will generalize the return type of `env` function if the default argument is passed. For example:
+```php
+$foo = env('FOO', 'bar');
+\PHPStan\dumpType($foo);
+```
+
+will dump `string` when the parameter is enabled. Or
+```php
+$foo = env('FOO', fn() => 'bar');
+\PHPStan\dumpType($foo);
+```
+will also dump `string` when the parameter is enabled.
+
+The reasoning behind it is that the default value is always used when the environment variable is not set. And for almost all the cases the default value should be the same type as the actual env variable. So it makes sense to generalize the return type to the type of the default value.
