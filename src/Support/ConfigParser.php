@@ -44,10 +44,6 @@ final class ConfigParser
     /** @param list<non-empty-string> $configPaths */
     public function __construct(private FileHelper $fileHelper, private Parser $parser, array $configPaths)
     {
-        if ($configPaths === []) {
-            $configPaths = [config_path()];
-        }
-
         foreach ($configPaths as $configPath) {
             $this->configPaths[] = $this->fileHelper->absolutizePath($configPath);
         }
@@ -192,6 +188,12 @@ final class ConfigParser
     /** @return list<string> */
     public function getConfigPaths(): array
     {
+        // Fallback to default config path if no config paths are set
+        if ($this->configFiles === []) {
+            $this->configPaths = [config_path()];
+            $this->configFiles = $this->getConfigFiles();
+        }
+
         return $this->configPaths;
     }
 }
