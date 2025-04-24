@@ -16,6 +16,7 @@ use SplFileInfo;
 use function array_key_exists;
 use function database_path;
 use function file_get_contents;
+use function glob;
 use function is_array;
 use function is_bool;
 use function is_dir;
