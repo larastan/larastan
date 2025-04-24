@@ -10,7 +10,7 @@ trait InteractsWithInput
      * @template TDefault
      * @param  string|null  $key
      * @param  TDefault  $default
-     * @return ($key is null ? array : string|TDefault)
+     * @return ($key is null ? array : string|array|TDefault)
      */
     public function query($key = null, $default = null);
 
@@ -20,7 +20,7 @@ trait InteractsWithInput
      * @template TDefault
      * @param  string|null  $key
      * @param  TDefault  $default
-     * @return ($key is null ? array : string|TDefault)
+     * @return ($key is null ? array : string|array|TDefault)
      */
     public function post($key = null, $default = null);
 
