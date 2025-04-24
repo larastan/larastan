@@ -18,6 +18,7 @@ parameters:
     databaseMigrationsPath:
         - app/Domain/DomainA/migrations
         - app/Domain/DomainB/migrations
+        - modules/*/migrations
 ```
 
 **Note:** If your migrations are using `if` statements to conditionally alter database structure (ex: create table only if it's not there, add column only if table exists and column does not etc...) Larastan will assume those if statements evaluate to true and will consider everything from the `if` body.
@@ -43,6 +44,7 @@ parameters:
     squashedMigrationsPath:
         - app/Domain/DomainA/schema
         - app/Domain/DomainB/schema
+        - modules/*/schema
 ```
 
 ### PostgreSQL
@@ -100,7 +102,7 @@ By default, Larastan assumes your config files are under `/config` directory. It
 parameters:
     configDirectories:
         - src/config
-        - foo/config
+        - modules/*/config
 ```
 
 ### Example

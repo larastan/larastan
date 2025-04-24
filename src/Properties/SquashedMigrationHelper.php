@@ -106,19 +106,21 @@ final class SquashedMigrationHelper
         /** @var SplFileInfo[] $schemaFiles */
         $schemaFiles = [];
 
-        foreach ($this->schemaPaths as $additionalPath) {
-            $absolutePath = $this->fileHelper->absolutizePath($additionalPath);
+        foreach ($this->schemaPaths as $additionalPathGlob) {
+            foreach ((glob($additionalPathGlob) ?: []) as $additionalPath) {
+                $absolutePath = $this->fileHelper->absolutizePath($additionalPath);
 
-            if (! is_dir($absolutePath)) {
-                continue;
+                if (! is_dir($absolutePath)) {
+                    continue;
+                }
+
+                $schemaFiles += iterator_to_array(
+                    new RegexIterator(
+                        new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
+                        '/\.dump|\.sql/i',
+                    ),
+                );
             }
-
-            $schemaFiles += iterator_to_array(
-                new RegexIterator(
-                    new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
-                    '/\.dump|\.sql/i',
-                ),
-            );
         }
 
         return $schemaFiles;
