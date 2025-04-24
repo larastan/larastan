@@ -34,7 +34,7 @@ class NoEnvCallsOutsideOfConfigRuleTest extends RuleTestCase
     /** @test */
     public function itDoesNotFailForEnvCallsInsideGlobConfigDirectory(): void
     {
-        $this->analyse([__DIR__ . '/data/module/foo/config/env-calls.php'], []);
+        $this->analyse([__DIR__ . '/data/module/foo/config/env-calls.php', __DIR__ . '/data/module/bar/config/env-calls.php'], []);
     }
 
     /** @test */
