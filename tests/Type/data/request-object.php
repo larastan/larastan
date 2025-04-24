@@ -22,9 +22,11 @@ function test(Request $request): void
     assertType('string|null', $request->server('foo'));
     assertType('5|string', $request->server('foo', 5));
 
+    assertType('array', $request->post());
     assertType('array|string|null', $request->post('foo'));
     assertType('array|string', $request->post('foo', 'bar'));
 
+    assertType('array', $request->query());
     assertType('array|string|null', $request->query('foo'));
     assertType('array|string', $request->query('foo', 'bar'));
 }
