@@ -1,0 +1,10 @@
+<?php
+
+namespace Illuminate\Http\Client;
+
+class PendingRequest {}
+
+/**
+ * @mixin \Illuminate\Http\Client\PendingRequest
+ */
+class Factory {}
