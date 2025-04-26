@@ -29,6 +29,7 @@ Larastan was created by [Can Vural](https://github.com/canvural) and [Nuno Madur
 | < 9                | 1.x              |
 | \> 9.0 && >= 11.16 | 2.x              |
 | 11.16+             | 3.0+             |
+| 12.0+              | 3.4+             |
 
 ## Sponsors
 <a href="https://blackfire.io/docs/introduction?utm_source=larastan&utm_medium=github_readme&utm_campaign=logo"><img src="assets/blackfire-logo.png" alt="Blackfire.io" width="254" height="64"></a>
@@ -42,7 +43,7 @@ Larastan was created by [Can Vural](https://github.com/canvural) and [Nuno Madur
 **1**: First, you may use [Composer](https://getcomposer.org) to install Larastan as a development dependency into your Laravel project:
 
 ```bash
-composer require --dev "larastan/larastan:^3.0"
+composer require --dev larastan/larastan
 ```
 
 > Using Larastan for analysing Laravel packages? You may need to install `orchestra/testbench`.
