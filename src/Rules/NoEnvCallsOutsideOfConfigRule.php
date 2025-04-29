@@ -17,6 +17,7 @@ use PHPStan\Rules\RuleErrorBuilder;
 use function config_path;
 use function count;
 use function is_dir;
+use function str_replace;
 use function str_starts_with;
 
 /**
@@ -71,14 +72,20 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
 
     protected function isCalledOutsideOfConfig(FuncCall $call, Scope $scope): bool
     {
+        // Normalize file path to use forward slashes
+        $filePath = str_replace('\\', '/', $scope->getFile());
+
         foreach ($this->configDirectories as $configDirectory) {
             $absolutePath = $this->fileHelper->absolutizePath($configDirectory);
+
+            // Normalize config path to use forward slashes
+            $absolutePath = str_replace('\\', '/', $absolutePath);
 
             if (! is_dir($absolutePath)) {
                 continue;
             }
 
-            if (str_starts_with($scope->getFile(), $absolutePath)) {
+            if (str_starts_with($filePath, $absolutePath)) {
                 return false;
             }
         }
