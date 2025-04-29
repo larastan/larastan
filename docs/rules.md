@@ -1,6 +1,6 @@
 # Rules
 
-All rules that are specific to Laravel applications 
+All rules that are specific to Laravel applications
 are listed here with their configurable options.
 
 ## NoModelMake
@@ -33,10 +33,10 @@ parameters:
 
 ## NoUnnecessaryCollectionCall
 
-Checks for method calls on instances of `Illuminate\Support\Collection` and their 
-subclasses. If the same result could have been determined 
+Checks for method calls on instances of `Illuminate\Support\Collection` and their
+subclasses. If the same result could have been determined
 directly with a query then this rule will produce an error.
-This rule exists to reduce unnecessarily heavy queries on the database 
+This rule exists to reduce unnecessarily heavy queries on the database
 and to prevent unneeded loops over Collections.
 
 ### Examples
@@ -293,7 +293,7 @@ use Illuminate\Support\ServiceProvider;
 class CorrectDeferrableProvider extends ServiceProvider implements DeferrableProvider
 {
     public function register() {}
-    
+
     public function provides(): array
     {
         return [
@@ -404,6 +404,10 @@ parameters:
         - src/config
         - tests
 ```
+
+### Cross-Platform Compatibility
+
+This rule works correctly on both Windows and Unix-like systems. It normalizes file paths to use forward slashes before comparison, ensuring that the rule works consistently regardless of the operating system's directory separator.
 
 ## ModelAppendsRule
 
