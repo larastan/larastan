@@ -9,29 +9,36 @@ use Larastan\Larastan\Rules\NoEnvCallsOutsideOfConfigRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
+use function file_exists;
+use function file_put_contents;
+use function str_replace;
+use function unlink;
+
+use const DIRECTORY_SEPARATOR;
+
 /** @extends RuleTestCase<NoEnvCallsOutsideOfConfigRule> */
 class NoEnvCallsOutsideOfConfigRuleTest extends RuleTestCase
 {
     protected function setUp(): void
     {
-        $this->overrideConfigPath(__DIR__.'/data/config');
+        $this->overrideConfigPath(__DIR__ . '/data/config');
     }
 
     protected function getRule(): Rule
     {
-        return new NoEnvCallsOutsideOfConfigRule([__DIR__.'/data/config'], $this->getFileHelper());
+        return new NoEnvCallsOutsideOfConfigRule([__DIR__ . '/data/config'], $this->getFileHelper());
     }
 
     /** @test */
     public function it_does_not_fail_for_env_calls_inside_config_directory(): void
     {
-        $this->analyse([__DIR__.'/data/config/env-calls.php'], []);
+        $this->analyse([__DIR__ . '/data/config/env-calls.php'], []);
     }
 
     /** @test */
     public function it_reports_env_calls_outside_of_config_directory(): void
     {
-        $this->analyse([__DIR__.'/data/env-calls.php'], [
+        $this->analyse([__DIR__ . '/data/env-calls.php'], [
             ["Called 'env' outside of the config directory which returns null when the config is cached, use 'config'.", 7],
             ["Called 'env' outside of the config directory which returns null when the config is cached, use 'config'.", 8],
         ]);
@@ -41,8 +48,8 @@ class NoEnvCallsOutsideOfConfigRuleTest extends RuleTestCase
     public function it_does_not_report_trait_functions_that_have_been_overridden(): void
     {
         $this->analyse([
-            __DIR__.'/data/EnvUsageClassOverride.php',
-            __DIR__.'/data/EnvUsageTrait.php',
+            __DIR__ . '/data/EnvUsageClassOverride.php',
+            __DIR__ . '/data/EnvUsageTrait.php',
         ], []);
     }
 
@@ -50,8 +57,8 @@ class NoEnvCallsOutsideOfConfigRuleTest extends RuleTestCase
     public function it_reports_env_calls_in_trait_rather_than_class(): void
     {
         $actualErrors = $this->gatherAnalyserErrors([
-            __DIR__.'/data/EnvUsageClass.php',
-            __DIR__.'/data/EnvUsageTrait.php',
+            __DIR__ . '/data/EnvUsageClass.php',
+            __DIR__ . '/data/EnvUsageTrait.php',
         ]);
 
         $this->assertCount(2, $actualErrors);
@@ -60,7 +67,7 @@ class NoEnvCallsOutsideOfConfigRuleTest extends RuleTestCase
             $actualErrors[0]->getMessage(),
         );
         $this->assertSame(
-            __DIR__.'/data/EnvUsageTrait.php (in context of class Tests\Rules\Data\EnvUsageClass)',
+            __DIR__ . '/data/EnvUsageTrait.php (in context of class Tests\Rules\Data\EnvUsageClass)',
             $actualErrors[0]->getFile(),
         );
         $this->assertSame(17, $actualErrors[0]->getLine());
@@ -70,7 +77,7 @@ class NoEnvCallsOutsideOfConfigRuleTest extends RuleTestCase
             $actualErrors[1]->getMessage(),
         );
         $this->assertSame(
-            __DIR__.'/data/EnvUsageTrait.php (in context of class Tests\Rules\Data\EnvUsageClass)',
+            __DIR__ . '/data/EnvUsageTrait.php (in context of class Tests\Rules\Data\EnvUsageClass)',
             $actualErrors[1]->getFile(),
         );
         $this->assertSame(18, $actualErrors[1]->getLine());
@@ -91,7 +98,7 @@ class NoEnvCallsOutsideOfConfigRuleTest extends RuleTestCase
         }
 
         // Create a test file with env() calls
-        $testFile = __DIR__.'/data/windows-test-env-calls.php';
+        $testFile = __DIR__ . '/data/windows-test-env-calls.php';
         file_put_contents($testFile, '<?php env("foo"); ?>');
 
         try {
@@ -102,7 +109,7 @@ class NoEnvCallsOutsideOfConfigRuleTest extends RuleTestCase
             ]);
 
             // Test file inside config directory (should not report)
-            $configFile = __DIR__.'/data/config/windows-test.php';
+            $configFile = __DIR__ . '/data/config/windows-test.php';
             file_put_contents($configFile, '<?php env("foo"); ?>');
             $configFilePath = str_replace('/', '\\', $configFile);
 
@@ -112,6 +119,7 @@ class NoEnvCallsOutsideOfConfigRuleTest extends RuleTestCase
             if (file_exists($testFile)) {
                 unlink($testFile);
             }
+
             if (isset($configFile) && file_exists($configFile)) {
                 unlink($configFile);
             }
