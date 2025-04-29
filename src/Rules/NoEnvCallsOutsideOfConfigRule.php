@@ -19,6 +19,8 @@ use function count;
 use function is_dir;
 use function str_replace;
 use function str_starts_with;
+use function strpos;
+use function substr;
 
 /**
  * Catches `env()` calls outside of the config directory.
@@ -83,6 +85,15 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
 
             if (! is_dir($absolutePath)) {
                 continue;
+            }
+
+            if (strpos($filePath, ':') !== false && strpos($absolutePath, ':') !== false) {
+                $driveLetter    = substr($filePath, 0, 3);
+                $normalizedPath = $driveLetter . $absolutePath;
+
+                if (str_starts_with($filePath, $normalizedPath)) {
+                    return false;
+                }
             }
 
             if (str_starts_with($filePath, $absolutePath)) {
