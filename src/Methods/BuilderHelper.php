@@ -153,7 +153,7 @@ class BuilderHelper
                     }
                 }
 
-                if (! $methodReflection->isPublic() && $hasScopeAttribute) {
+                if ($hasScopeAttribute) {
                     $parametersAcceptor = $methodReflection->getVariants()[0];
 
                     $parameters = $parametersAcceptor->getParameters();
