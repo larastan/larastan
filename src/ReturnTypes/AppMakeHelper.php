@@ -16,9 +16,7 @@ use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use Throwable;
 
-use function class_exists;
 use function count;
-use function interface_exists;
 
 final class AppMakeHelper
 {
