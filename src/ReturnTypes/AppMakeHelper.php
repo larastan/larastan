@@ -43,8 +43,8 @@ final class AppMakeHelper
                     $resolved = $this->resolve($constantString->getValue());
 
                     if ($resolved === null) {
-                        if (class_exists($constantString->getValue()) || interface_exists($constantString->getValue())) {
-                            $types[] = new ObjectType($constantString->getValue());
+                        if ($constantString->isClassString()) {
+                            $types[] = $constantString->getClassStringObjectType();
                             continue;
                         }
 
