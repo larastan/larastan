@@ -16,7 +16,6 @@ use PHPStan\Type\IntegerType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
-use PHPStan\Type\TypeCombinator;
 
 use function count;
 
