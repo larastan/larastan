@@ -10,8 +10,10 @@ use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\ArrayType;
+use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\IntegerType;
+use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
@@ -44,9 +46,9 @@ final class RequestFileExtension implements DynamicMethodReturnTypeExtension
         }
 
         if (count($methodCall->getArgs()) === 1) {
-            return TypeCombinator::addNull($uploadedFileType);
+            return new BenevolentUnionType([$uploadedFileArrayType, $uploadedFileType, new NullType()]);
         }
 
-        return TypeCombinator::union(TypeCombinator::union($uploadedFileArrayType, $uploadedFileType), $scope->getType($methodCall->getArgs()[1]->value));
+        return new BenevolentUnionType([$uploadedFileArrayType, $uploadedFileType, $scope->getType($methodCall->getArgs()[1]->value)]);
     }
 }
