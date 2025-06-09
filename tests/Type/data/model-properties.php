@@ -79,7 +79,7 @@ function test(
     assertType('string', $thread->custom_property);
     assertType('Illuminate\Database\Eloquent\Casts\ArrayObject', $user->options);
     assertType('int<0, max>', count($user->options));
-    assertType('Illuminate\Support\Collection<(int|string), mixed>', $user->properties);
+    assertType('(Illuminate\Support\Collection<(int|string), mixed>|null)', $user->properties);
     assertType('int<0, max>', count($user->properties));
     assertType('mixed', $user->properties->first());
     assertType('non-falsy-string|null', $user->deleted_at?->format('d/m/Y'));

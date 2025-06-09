@@ -36,6 +36,7 @@ use PHPStan\Type\FloatType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\MixedType;
+use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
@@ -79,7 +80,10 @@ class ModelCastHelper
             'date', 'datetime' => $this->getDateType(),
             'immutable_date', 'immutable_datetime' => new ObjectType(CarbonImmutable::class),
             AsArrayObject::class, AsEncryptedArrayObject::class => new ObjectType(ArrayObject::class),
-            AsCollection::class, AsEncryptedCollection::class => new GenericObjectType(Collection::class, [new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()]),
+            AsCollection::class, AsEncryptedCollection::class => new BenevolentUnionType([
+                new GenericObjectType(Collection::class, [new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()]),
+                new NullType(),
+            ]),
             AsStringable::class => new ObjectType(IlluminateStringable::class),
             default => null,
         };
