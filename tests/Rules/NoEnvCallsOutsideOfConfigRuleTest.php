@@ -23,13 +23,22 @@ class NoEnvCallsOutsideOfConfigRuleTest extends RuleTestCase
 
     protected function getRule(): Rule
     {
-        return new NoEnvCallsOutsideOfConfigRule([__DIR__ . '/data/config'], $this->getFileHelper());
+        return new NoEnvCallsOutsideOfConfigRule([
+            __DIR__ . '/data/config',
+            __DIR__ . '/data/module/*/config',
+        ], $this->getFileHelper());
     }
 
     /** @test */
     public function itDoesNotFailForEnvCallsInsideConfigDirectory(): void
     {
         $this->analyse([__DIR__ . '/data/config/env-calls.php'], []);
+    }
+
+    /** @test */
+    public function itDoesNotFailForEnvCallsInsideGlobConfigDirectory(): void
+    {
+        $this->analyse([__DIR__ . '/data/module/foo/config/env-calls.php', __DIR__ . '/data/module/bar/config/env-calls.php'], []);
     }
 
     /** @test */

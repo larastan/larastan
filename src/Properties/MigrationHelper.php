@@ -15,6 +15,7 @@ use SplFileInfo;
 
 use function count;
 use function database_path;
+use function glob;
 use function is_dir;
 use function iterator_to_array;
 use function uasort;
@@ -32,7 +33,7 @@ class MigrationHelper
     }
 
     /**
-     * @param  array<string, SchemaTable> $tables
+     * @param array<string, SchemaTable> $tables
      *
      * @return array<string, SchemaTable>
      */
@@ -74,19 +75,21 @@ class MigrationHelper
         /** @var SplFileInfo[] $migrationFiles */
         $migrationFiles = [];
 
-        foreach ($this->databaseMigrationPath as $additionalPath) {
-            $absolutePath = $this->fileHelper->absolutizePath($additionalPath);
+        foreach ($this->databaseMigrationPath as $additionalPathGlob) {
+            foreach ((glob($additionalPathGlob) ?: []) as $additionalPath) {
+                $absolutePath = $this->fileHelper->absolutizePath($additionalPath);
 
-            if (! is_dir($absolutePath)) {
-                continue;
+                if (! is_dir($absolutePath)) {
+                    continue;
+                }
+
+                $migrationFiles += iterator_to_array(
+                    new RegexIterator(
+                        new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
+                        '/\.php$/i',
+                    ),
+                );
             }
-
-            $migrationFiles += iterator_to_array(
-                new RegexIterator(
-                    new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
-                    '/\.php$/i',
-                ),
-            );
         }
 
         return $migrationFiles;
