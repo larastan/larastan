@@ -13,6 +13,7 @@ use Larastan\Larastan\Methods\BuilderHelper;
 use Larastan\Larastan\Support\CollectionHelper;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
+use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
@@ -20,10 +21,12 @@ use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\Generic\TemplateType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
+use PHPStan\Type\VerbosityLevel;
 use function array_intersect;
 use function count;
 use function in_array;
@@ -91,27 +94,7 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
                 $type = $type->getClassStringObjectType();
             }
 
-            $classNames = $type->getObjectClassNames();
-
-            $types = [];
-
-            foreach ($classNames as $className) {
-                if (! $this->reflectionProvider->hasClass($className)) {
-                    continue;
-                }
-
-                try {
-                    $types[] = new GenericObjectType(
-                        $this->builderHelper->determineBuilderName($className),
-                        [new ObjectType($className)],
-                    );
-                } catch (MissingMethodFromReflectionException) {
-                }
-            }
-
-            if ($types !== []) {
-                return TypeCombinator::union(...$types);
-            }
+            return new GenericObjectType($type->getMethod('newEloquentBuilder', new OutOfClassScope())->getVariants()[0]->getReturnType()->getObjectClassNames()[0], [$type]);
         }
 
         if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
