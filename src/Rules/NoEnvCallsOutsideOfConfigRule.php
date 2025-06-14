@@ -15,7 +15,6 @@ use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 
 use function config_path;
-use function count;
 use function str_starts_with;
 
 /**
@@ -27,21 +26,17 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
 {
     use HasContainer;
 
-    /** @var list<string> */
-    private array $configDirectories = [];
+    /** @var  list<non-empty-string> */
+    private array $directories;
 
     /** @param  list<non-empty-string> $configDirectories */
     public function __construct(array $configDirectories, private FileHelper $fileHelper)
     {
-        if (count($configDirectories) !== 0) {
-            foreach ($configDirectories as $directory) {
-                $this->configDirectories[] = $this->fileHelper->normalizePath($directory);
-            }
-
-            return;
+        if ($configDirectories === []) {
+            $configDirectories = [config_path()]; // @phpstan-ignore-line
         }
 
-        $this->configDirectories = [config_path()]; // @phpstan-ignore-line
+        $this->directories = $this->fileHelper->getDirectories($configDirectories);
     }
 
     public function getNodeType(): string
@@ -77,10 +72,9 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
 
     protected function isCalledOutsideOfConfig(FuncCall $call, Scope $scope): bool
     {
-        $directories = $this->fileHelper->getDirectories($this->configDirectories);
-        $file        = $scope->getFile();
+        $file = $scope->getFile();
 
-        foreach ($directories as $directory) {
+        foreach ($this->directories as $directory) {
             if (str_starts_with($file, $directory)) {
                 return false;
             }

@@ -39,7 +39,8 @@ final class FileHelper
         return array_values(array_reduce(
             $directories,
             function (array $carry, string $path): array {
-                $absolutePath = $this->fileHelper->absolutizePath($path);
+                $normalPath   = $this->fileHelper->normalizePath($path);
+                $absolutePath = $this->fileHelper->absolutizePath($normalPath);
 
                 if ($this->isGlobPattern($absolutePath)) {
                     $glob = glob($absolutePath, GLOB_ONLYDIR);
