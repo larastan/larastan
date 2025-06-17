@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Date;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
@@ -59,11 +58,7 @@ class DateExtension implements DynamicStaticMethodReturnTypeExtension
     ): Type {
         $dateType = new ObjectType(get_class(now()));
 
-        if (in_array($methodReflection->getName(), ['createFromFormat', 'createSafe'], true)) {
-            return TypeCombinator::union($dateType, new ConstantBooleanType(false));
-        }
-
-        if (in_array($methodReflection->getName(), ['getTestNow', 'make'], true)) {
+        if (in_array($methodReflection->getName(), ['createFromFormat', 'createSafe', 'getTestNow', 'make'], true)) {
             return TypeCombinator::addNull($dateType);
         }
 
