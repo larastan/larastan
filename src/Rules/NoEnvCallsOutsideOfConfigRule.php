@@ -33,6 +33,10 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
     public function __construct(private array $configDirectories, private FileHelper $fileHelper)
     {
         if (count($configDirectories) !== 0) {
+            foreach ($this->configDirectories as &$directory) {
+                $directory = $this->fileHelper->normalizePath($directory);
+            }
+
             return;
         }
 
@@ -73,7 +77,6 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
     protected function isCalledOutsideOfConfig(FuncCall $call, Scope $scope): bool
     {
         foreach ($this->configDirectories as $configDirectoryGlob) {
-            $configDirectoryGlob = str_replace('/', DIRECTORY_SEPARATOR, $configDirectoryGlob);
             foreach ((glob($configDirectoryGlob) ?: []) as $configDirectory) {
                 $absolutePath = $this->fileHelper->absolutizePath($configDirectory);
 
