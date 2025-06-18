@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
 use Larastan\Larastan\Reflection\AnnotationScopeMethodParameterReflection;
 use Larastan\Larastan\Reflection\DynamicWhereParameterReflection;
 use Larastan\Larastan\Reflection\EloquentBuilderMethodReflection;
+use PhpParser\Node\Expr\ClassConstFetch;
+use PhpParser\Node\Name;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
@@ -246,7 +249,20 @@ class BuilderHelper
      */
     public function determineBuilderName(string $modelClassName): string
     {
-        $method = $this->reflectionProvider->getClass($modelClassName)->getNativeMethod('newEloquentBuilder');
+        $modelReflection = $this->reflectionProvider->getClass($modelClassName);
+        $method          = $modelReflection->getNativeMethod('newEloquentBuilder');
+
+        if ($method->getDeclaringClass()->getName() === Model::class) {
+            $attrs = $modelReflection->getNativeReflection()->getAttributes('Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder'); //@phpstan-ignore argument.type (Attribute class might not exist)
+
+            if ($attrs !== []) {
+                $expr =  $attrs[0]->getArgumentsExpressions()[0];
+
+                if ($expr instanceof ClassConstFetch && $expr->class instanceof Name) {
+                    return $expr->class->toString();
+                }
+            }
+        }
 
         $returnType = $method->getVariants()[0]->getReturnType();
 
