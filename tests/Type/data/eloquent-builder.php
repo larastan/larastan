@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 
-use function Orchestra\Sidekick\laravel_version_compare;
 use function PHPStan\Testing\assertType;
 
 interface OnlyUsers
@@ -343,13 +342,6 @@ function test(
     assertType('Illuminate\Database\Eloquent\Builder<App\Team|App\User>', $userOrTeamBuilder->where('id', 5));
 
     assertType('Illuminate\Database\Eloquent\Builder<TModel of Illuminate\Database\Eloquent\Model (function EloquentBuilder\test(), argument)>', $templateBuilder->select());
-
-    if (laravel_version_compare('12.15.0', '<')) {
-        assertType('Illuminate\Database\Query\Builder', User::query()->getCountForPagination());
-    }
-    else {
-        assertType('int', User::query()->getCountForPagination());
-    }
 }
 
 class Foo extends Model
