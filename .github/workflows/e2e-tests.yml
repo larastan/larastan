@@ -26,31 +26,19 @@ jobs:
       matrix:
         include:
           - repository: monicahq/monica
-            ref: a809ecb85d929e5c0d14ecc02b881e5132906337
-            php-version: "8.2"
+            ref: 080fb79c38716496b2888d6daacd1152ca27acf8
+            php-version: "8.3"
             config: monicahq-monica.neon
             baseline: monicahq-monica
 
-          - repository: koel/koel
-            ref: d900c9cb26afb226f995ac63abfaf499eb85c56a
-            php-version: "8.1"
-            config: koel-koel.neon
-            baseline: koel-koel
-
-          - repository: canvural/larastan-test
-            ref: f6dddbd4916f199adc35419c6a1bd2c63ba6f734
-            php-version: "8.1"
-            config: canvural-larastan-test.neon
-            baseline: canvural-larastan-test
-
           - repository: canvural/larastan-strict-rules
-            ref: 4f658a8f9ca5334de22f733bdba1d24cbe9303a6
-            php-version: "8.1"
+            ref: 53d60b6e4b852d3944361d31c55205b2c4c61b0c
+            php-version: "8.2"
             config: canvural-larastan-strict-rules.neon
             baseline: canvural-larastan-strict-rules
 
           - repository: filamentphp/filament
-            ref: 68a731e657bad430336a8cdc51f20fbe2e176254
+            ref: a1b7f4506e89ea4b0e1e5b4982574dff4eb7fa00
             php-version: "8.2"
             config: filamentphp-filament.neon
             baseline: filamentphp-filament
@@ -79,8 +67,11 @@ jobs:
         run: |
           cd e2e/
           composer install --no-scripts --no-interaction
-          composer config repositories.0 '{ "type": "path", "url": "../larastan" }'
+          composer config repositories.0 '{ "type": "path", "url": "../larastan", "options": { "symlink": true } }'
           composer config minimum-stability dev
+          if [ "${{ matrix.repository }}" = "monicahq/monica" ]; then
+            composer remove --dev -n tomasvotruba/bladestan
+          fi
           if [ "${{ matrix.force-phpstan-version }}" = "true" ]; then
             composer require --dev --update-with-all-dependencies "larastan/larastan:*" "phpstan/phpstan:*"
           else
