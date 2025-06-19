@@ -29,10 +29,17 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
 {
     use HasContainer;
 
+    /** @var list<string> */
+    private array $configDirectories = [];
+
     /** @param  list<non-empty-string> $configDirectories */
-    public function __construct(private array $configDirectories, private FileHelper $fileHelper)
+    public function __construct(array $configDirectories, private FileHelper $fileHelper)
     {
         if (count($configDirectories) !== 0) {
+            foreach ($configDirectories as $directory) {
+                $this->configDirectories[] = $this->fileHelper->normalizePath($directory);
+            }
+
             return;
         }
 
