@@ -27,10 +27,10 @@ use function array_key_exists;
 use function array_shift;
 use function count;
 use function in_array;
-use function Orchestra\Testbench\laravel_version_compare;
 use function preg_split;
 use function substr;
 use function ucfirst;
+use function version_compare;
 
 use const PREG_SPLIT_DELIM_CAPTURE;
 
@@ -75,7 +75,7 @@ class BuilderHelper
         private bool $checkProperties,
         private MacroMethodsClassReflectionExtension $macroMethodsClassReflectionExtension,
     ) {
-        if (laravel_version_compare('12.15.0', '<')) {
+        if (! defined('LARAVEL_VERSION') || version_compare(\LARAVEL_VERSION, '12.15.0', '<')) {
             return;
         }
 

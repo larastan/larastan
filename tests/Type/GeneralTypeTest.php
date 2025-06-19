@@ -88,6 +88,9 @@ class GeneralTypeTest extends TypeInferenceTestCase
 
         if (laravel_version_compare('12.15.0', '>=')) {
             yield from self::gatherAssertTypes(__DIR__ . '/data/eloquent-builder-l12-15.php');
+            yield from self::gatherAssertTypes(__DIR__ . '/data/passthru-l12-15.php');
+        } else {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/passthru');
         }
 
         //##############################################################################################################

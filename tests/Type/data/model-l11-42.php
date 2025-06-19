@@ -10,8 +10,10 @@ use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Http\FormRequest;
 
+use function Orchestra\Sidekick\laravel_version_compare;
 use function PHPStan\Testing\assertType;
 
 class AbstractModel extends Model
