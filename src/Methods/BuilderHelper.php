@@ -76,6 +76,7 @@ class BuilderHelper
         private bool $checkProperties,
         private MacroMethodsClassReflectionExtension $macroMethodsClassReflectionExtension,
     ) {
+        // @phpstan-ignore-next-line
         if (! defined('LARAVEL_VERSION') || version_compare(LARAVEL_VERSION, '12.15.0', '<')) {
             return;
         }
