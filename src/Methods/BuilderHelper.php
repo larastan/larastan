@@ -81,6 +81,7 @@ class BuilderHelper
             return;
         }
 
+        // @phpstan-ignore-next-line
         $this->passthru[] = 'getCountForPagination';
     }
 
