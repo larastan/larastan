@@ -7,6 +7,7 @@ namespace Larastan\Larastan\ReturnTypes;
 use Illuminate\Database\Eloquent\Model;
 use Larastan\Larastan\Methods\BuilderHelper;
 use PhpParser\Node\Expr\MethodCall;
+use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
@@ -46,6 +47,8 @@ class NewModelQueryDynamicMethodReturnTypeExtension implements DynamicMethodRetu
         Scope $scope,
     ): Type|null {
         $calledOnType = $scope->getType($methodCall->var);
+
+        return new GenericObjectType($calledOnType->getMethod('newEloquentBuilder', new OutOfClassScope())->getVariants()[0]->getReturnType()->getObjectClassNames()[0], [$calledOnType]);
 
         $classReflections = $calledOnType->getObjectClassReflections();
 

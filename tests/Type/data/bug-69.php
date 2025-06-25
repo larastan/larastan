@@ -39,6 +39,8 @@ abstract class BaseRepository
      */
     public function query(array $search = []): Builder
     {
+        assertType('Illuminate\Database\Eloquent\Builder<BaseModel of Illuminate\Database\Eloquent\Model (class Bug69\BaseRepository, argument)>', $this->model()::query());
+        assertType('BaseModel of Illuminate\Database\Eloquent\Model (class Bug69\BaseRepository, argument)|null', $this->model()::query()->first());
         return $this->model()::query();
     }
 }
@@ -51,5 +53,5 @@ function returnUnion(): A|C {
 
 function test(): void
 {
-    dumpType(returnUnion()::query());
+    assertType('Bug69\B<Bug69\A|Bug69\C>', returnUnion()::query());
 }

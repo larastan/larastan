@@ -94,6 +94,28 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
                 $type = $type->getClassStringObjectType();
             }
 
+//            $classNames = $type->getObjectClassNames();
+//
+//            $types = [];
+//
+//            foreach ($classNames as $className) {
+//                if (! $this->reflectionProvider->hasClass($className)) {
+//                    continue;
+//                }
+//
+//                try {
+//                    $types[] = new GenericObjectType(
+//                        $this->builderHelper->determineBuilderName($className),
+//                        [new ObjectType($className)],
+//                    );
+//                } catch (MissingMethodFromReflectionException) {
+//                }
+//            }
+//
+//            if ($types !== []) {
+//                return TypeCombinator::union(...$types);
+//            }
+
             return new GenericObjectType($type->getMethod('newEloquentBuilder', new OutOfClassScope())->getVariants()[0]->getReturnType()->getObjectClassNames()[0], [$type]);
         }
 
