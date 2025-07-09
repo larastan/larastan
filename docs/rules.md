@@ -84,6 +84,41 @@ parameters:
     noUnnecessaryCollectionCallExcept: ['contains']
 ```
 
+## NoUnnecessaryEnumerableToArrayCalls
+
+This rule checks for unnecessary calls `Enumerable::toArray()` that
+could have used `all()` instead. The `toArray()` method recursively
+converts all Arrayable items in the Enumerable to an array and if
+none of the items are Arrayable, it is unnecessary map call.
+
+### Examples
+
+```php
+collect([1, 2, 3])->toArray();
+```
+
+Will result in the following error:
+
+```
+Called [toArray()] on an Enumerable which does not contain any Arrayables.
+```
+
+To fix the error, the code in the previous example could be changed to:
+
+```php
+collect([1, 2, 3])->all();
+```
+
+### Configuration
+
+This rule is disabled by default.
+To enable, add the following to your `phpstan.neon` file:
+
+```neon
+parameters:
+    noUnnecessaryEnumerableToArrayCalls: true
+```
+
 ## ModelPropertyRule
 
 ---

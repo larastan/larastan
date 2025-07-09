@@ -15,6 +15,7 @@ parameters:
     noUnnecessaryCollectionCall: true
     noUnnecessaryCollectionCallOnly: []
     noUnnecessaryCollectionCallExcept: []
+    noUnnecessaryEnumerableToArrayCalls: false
     squashedMigrationsPath: []
     databaseMigrationsPath: []
     disableMigrationScan: false
@@ -34,6 +35,7 @@ parametersSchema:
     noUnnecessaryCollectionCall: bool()
     noUnnecessaryCollectionCallOnly: listOf(string())
     noUnnecessaryCollectionCallExcept: listOf(string())
+    noUnnecessaryEnumerableToArrayCalls: bool()
     databaseMigrationsPath: listOf(string())
     disableMigrationScan: bool()
     configDirectories: listOf(string())
@@ -53,6 +55,8 @@ conditionalTags:
         phpstan.rules.rule: %noModelMake%
     Larastan\Larastan\Rules\NoUnnecessaryCollectionCallRule:
         phpstan.rules.rule: %noUnnecessaryCollectionCall%
+    Larastan\Larastan\Rules\NoUnnecessaryEnumerableToArrayCallsRule:
+        phpstan.rules.rule: %noUnnecessaryEnumerableToArrayCalls%
     Larastan\Larastan\Rules\OctaneCompatibilityRule:
         phpstan.rules.rule: %checkOctaneCompatibility%
     Larastan\Larastan\Rules\UnusedViewsRule:
@@ -387,6 +391,9 @@ services:
         arguments:
             onlyMethods: %noUnnecessaryCollectionCallOnly%
             excludeMethods: %noUnnecessaryCollectionCallExcept%
+
+    -
+        class: Larastan\Larastan\Rules\NoUnnecessaryEnumerableToArrayCallsRule
 
     -
         class: Larastan\Larastan\Rules\ModelAppendsRule
