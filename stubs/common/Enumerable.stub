@@ -4,7 +4,7 @@ namespace Illuminate\Support;
 
 /**
  * @template TKey of array-key
- * @template TValue
+ * @template-covariant TValue
  *
  * @extends \IteratorAggregate<TKey, TValue>
  * @extends \Illuminate\Contracts\Support\Arrayable<TKey, TValue>
