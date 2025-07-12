@@ -111,14 +111,43 @@ final class SchemaAggregator
 
     private function alterTable(PhpParser\Node\Expr\StaticCall|PhpParser\Node\Expr\MethodCall $call, bool $creating): void
     {
-        if (
-            ! isset($call->args[0])
-            || ! $call->getArgs()[0]->value instanceof PhpParser\Node\Scalar\String_
-        ) {
+        if (! isset($call->args[0])) {
             return;
         }
 
-        $tableName = $call->getArgs()[0]->value->value;
+        $value = $call->getArgs()[0]->value;
+
+        $tableName = null;
+
+        if ($value instanceof PhpParser\Node\Scalar\String_) {
+            $tableName = $value->value;
+        }
+
+        if ($value instanceof PhpParser\Node\Expr\ClassConstFetch) {
+            if (! $value->class instanceof PhpParser\Node\Name\FullyQualified) {
+                return;
+            }
+
+            if (! $value->name instanceof PhpParser\Node\Identifier) {
+                return;
+            }
+
+            if (! $this->reflectionProvider->hasClass($value->class->name)) {
+                return;
+            }
+
+            $class = $this->reflectionProvider->getClass($value->class->name);
+
+            $constantValueType = $class->getConstant($value->name->toString())->getValueType();
+
+            if ($constantValueType->getConstantStrings() !== []) {
+                $tableName = $constantValueType->getConstantStrings()[0]->getValue();
+            }
+        }
+
+        if ($tableName === null) {
+            return;
+        }
 
         if ($creating) {
             $this->tables[$tableName] = new SchemaTable($tableName);

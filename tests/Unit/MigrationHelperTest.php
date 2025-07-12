@@ -256,4 +256,16 @@ class MigrationHelperTest extends PHPStanTestCase
         self::assertArrayHasKey('address1', $tables['users']->columns);
         self::assertArrayHasKey('address2', $tables['users']->columns);
     }
+
+    #[Test]
+    public function it_can_handle_migrations_with_const_as_table(): void
+    {
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migration_with_const'], $this->fileHelper, false, $this->reflectionProvider);
+
+        $tables = $migrationHelper->initializeTables();
+
+        self::assertArrayHasKey('id', $tables['users']->columns);
+        self::assertArrayHasKey('name', $tables['users']->columns);
+        self::assertArrayHasKey('email', $tables['users']->columns);
+    }
 }
