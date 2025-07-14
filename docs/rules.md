@@ -559,3 +559,72 @@ parameters:
     checkConfigTypes: true
 ```
 
+## NoModelForwardingToBuilder
+
+This rule checks for calling methods on an `Illuminate\Database\Eloquent\Model` instance that are actually forwarded to a Builder instance. It helps prevent unexpected behaviors like executing `first()`, `get()` on already fetched models.
+
+### Examples
+
+Given the following Eloquent model:
+
+```php
+class Post extends Model {}
+```
+
+The following code would result in refetching all posts from the database which is not intended usage:
+
+```php
+$post = Post::find(1);
+$post->first();
+```
+
+### Configuration
+
+This rule is disabled by default. To enable it, add the following to your `phpstan.neon` file:
+
+```neon
+parameters:
+    larastan:
+        noModelForwardingToBuilder: true
+```
+
+## NoModelStaticForwardingToBuilder
+
+This rule checks for calling methods on an `Illuminate\Database\Eloquent\Model` instance that are actually forwarded to a Builder instance. It helps prevent hidden coupling and unexpected behaviors by ensuring you explicitly use `query()` or `newQuery()` when calling query builder methods on a model.
+
+### Examples
+
+Given the following Eloquent model:
+
+```php
+class Post extends Model {}
+```
+
+The following code would be detected by this rule:
+
+```php
+Post::first();
+```
+
+```
+Static method [first] is forwarded to a Builder instance, which is not allowed.
+```
+
+To fix this, you should explicitly call `query()` or `newQuery()`:
+
+```php
+Post::query()->first();
+
+// or
+Post::newQuery()->first();
+```
+
+### Configuration
+
+This rule is disabled by default. To enable it, add the following to your `phpstan.neon` file:
+
+```neon
+parameters:
+    larastan:
+        noModelStaticForwardingToBuilder: true
+```
