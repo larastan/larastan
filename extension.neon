@@ -28,6 +28,7 @@ parameters:
     generalizeEnvReturnType: false
     checkConfigTypes: false
     checkAuthCallsWhenInRequestScope: false
+    noFirstOnSingularModel: true
 
 parametersSchema:
     checkOctaneCompatibility: bool()
@@ -49,6 +50,7 @@ parametersSchema:
     generalizeEnvReturnType: bool()
     checkConfigTypes: bool()
     checkAuthCallsWhenInRequestScope: bool()
+    noFirstOnSingularModel: bool()
 
 conditionalTags:
     Larastan\Larastan\Rules\NoEnvCallsOutsideOfConfigRule:
@@ -79,7 +81,8 @@ conditionalTags:
         phpstan.broker.dynamicStaticMethodReturnTypeExtension: %checkConfigTypes%
     Larastan\Larastan\Rules\ConfigCollectionRule:
         phpstan.rules.rule: %checkConfigTypes%
-
+    Larastan\Larastan\Rules\NoFirstOnSingularModelRule:
+        phpstan.rules.rule: %noFirstOnSingularModel%
 services:
     -
         class: Larastan\Larastan\Methods\RelationForwardsCallsExtension
@@ -625,7 +628,8 @@ services:
 
     -
         class: Larastan\Larastan\Rules\ConfigCollectionRule
-
+    -
+        class: Larastan\Larastan\Rules\NoFirstOnSingularModelRule
 rules:
     - Larastan\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule
     - Larastan\Larastan\Rules\UselessConstructs\NoUselessValueFunctionCallsRule
