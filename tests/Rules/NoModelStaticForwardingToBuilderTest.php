@@ -16,7 +16,7 @@ class NoModelStaticForwardingToBuilderTest extends RuleTestCase
         return new NoModelStaticForwardingToBuilder();
     }
 
-    public function testRuleDetectsModelStaticForwardingToBuilderInstance(): void
+    public function testRule(): void
     {
         $this->analyse([__DIR__ . '/data/NoModelStaticForwardingToBuilderInstance.php'], [
             ["Static method [first] is forwarded to a Builder instance, which is not allowed.\n    💡 Use [::query()->first()] instead.", 3],
