@@ -6,3 +6,4 @@
 \App\User::paginate();
 \App\User::where('id', 1);
 \App\User::take(1);
+\App\User::max('foo');

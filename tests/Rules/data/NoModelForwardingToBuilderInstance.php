@@ -8,3 +8,5 @@ $user->find();
 $user->paginate();
 $user->where('id', 1);
 $user->take(1);
+$user->max('foo');
+

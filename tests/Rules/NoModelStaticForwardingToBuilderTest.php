@@ -25,6 +25,7 @@ class NoModelStaticForwardingToBuilderTest extends RuleTestCase
             ["Static method [paginate] is forwarded to a Builder instance, which is not allowed.\n    💡 Use [::query()->paginate()] instead.", 6],
             ["Static method [where] is forwarded to a Builder instance, which is not allowed.\n    💡 Use [::query()->where()] instead.", 7],
             ["Static method [take] is forwarded to a Builder instance, which is not allowed.\n    💡 Use [::query()->take()] instead.", 8],
+            ["Static method [max] is forwarded to a Builder instance, which is not allowed.\n    💡 Use [::query()->max()] instead.", 9],
         ]);
     }
 
