@@ -578,14 +578,17 @@ $post = Post::find(1);
 $post->first();
 ```
 
+```
+Method [first] is forwarded to a Builder instance, which is not allowed.
+```
+
 ### Configuration
 
 This rule is disabled by default. To enable it, add the following to your `phpstan.neon` file:
 
 ```neon
 parameters:
-    larastan:
-        noModelForwardingToBuilder: true
+    noModelForwardingToBuilder: true
 ```
 
 ## NoModelStaticForwardingToBuilder
@@ -625,6 +628,5 @@ This rule is disabled by default. To enable it, add the following to your `phpst
 
 ```neon
 parameters:
-    larastan:
-        noModelStaticForwardingToBuilder: true
+    noModelStaticForwardingToBuilder: true
 ```
