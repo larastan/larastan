@@ -28,7 +28,8 @@ parameters:
     generalizeEnvReturnType: false
     checkConfigTypes: false
     checkAuthCallsWhenInRequestScope: false
-    noFirstOnSingularModel: true
+    noModelForwardingToBuilder: false
+    noModelStaticForwardingToBuilder: false
 
 parametersSchema:
     checkOctaneCompatibility: bool()
@@ -50,7 +51,8 @@ parametersSchema:
     generalizeEnvReturnType: bool()
     checkConfigTypes: bool()
     checkAuthCallsWhenInRequestScope: bool()
-    noFirstOnSingularModel: bool()
+    noModelForwardingToBuilder: bool()
+    noModelStaticForwardingToBuilder: bool()
 
 conditionalTags:
     Larastan\Larastan\Rules\NoEnvCallsOutsideOfConfigRule:
@@ -81,8 +83,10 @@ conditionalTags:
         phpstan.broker.dynamicStaticMethodReturnTypeExtension: %checkConfigTypes%
     Larastan\Larastan\Rules\ConfigCollectionRule:
         phpstan.rules.rule: %checkConfigTypes%
-    Larastan\Larastan\Rules\NoFirstOnSingularModelRule:
-        phpstan.rules.rule: %noFirstOnSingularModel%
+    Larastan\Larastan\Rules\NoModelForwardingToBuilder:
+        phpstan.rules.rule: %noModelForwardingToBuilder%
+    Larastan\Larastan\Rules\NoModelStaticForwardingToBuilder:
+        phpstan.rules.rule: %noModelStaticForwardingToBuilder%
 services:
     -
         class: Larastan\Larastan\Methods\RelationForwardsCallsExtension
@@ -629,7 +633,9 @@ services:
     -
         class: Larastan\Larastan\Rules\ConfigCollectionRule
     -
-        class: Larastan\Larastan\Rules\NoFirstOnSingularModelRule
+        class: Larastan\Larastan\Rules\NoModelForwardingToBuilder
+    -
+        class: Larastan\Larastan\Rules\NoModelStaticForwardingToBuilder
 rules:
     - Larastan\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule
     - Larastan\Larastan\Rules\UselessConstructs\NoUselessValueFunctionCallsRule
