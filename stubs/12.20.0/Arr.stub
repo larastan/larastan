@@ -1,0 +1,19 @@
+<?php
+
+namespace Illuminate\Support;
+
+class Arr
+{
+   /**
+    * Pluck an array of values from an array.
+    *
+    * @template TValue
+    * @template TPluckValueReturn = mixed
+    * @template TPluckKeyReturn of array-key = array-key
+    * @param  iterable<TValue>  $array
+    * @param  string|array<array-key, string>|(\Closure(TValue): TPluckValueReturn)|null  $value
+    * @param  string|array<array-key, string>|(\Closure(TValue): TPluckKeyReturn)|null  $key
+    * @return array<TPluckKeyReturn, TPluckValueReturn>
+    */
+   public function pluck($array, $value, $key = null);
+}

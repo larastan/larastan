@@ -64,5 +64,5 @@ function test(User $user, SupportCollection $users, SupportCollection $mixedColl
         assertType('App\Account', $account);
     });
 
-    assertType("Illuminate\Support\Collection<(int|string), mixed~(0|0.0|''|'0'|array{}|false|null)>", $mixedCollection->pluck('foo')->filter());
+    assertType("Illuminate\Support\Collection<int, mixed~(0|0.0|''|'0'|array{}|false|null)>", $mixedCollection->pluck('foo')->filter());
 }

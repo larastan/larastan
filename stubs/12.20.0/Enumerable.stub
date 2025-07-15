@@ -49,13 +49,13 @@ interface Enumerable extends \Countable, \IteratorAggregate, \JsonSerializable, 
    public function chunkWhile(callable $callback);
 
    /**
-    * Get an array with the values of a given key.
+    * Get the values of a given key.
     *
-    * @template TPluckValueReturn
-    * @template TPluckKeyReturn of array-key
+    * @template TPluckValueReturn = mixed
+    * @template TPluckKeyReturn of array-key = array-key
     * @param  string|array<array-key, string>|(\Closure(TValue): TPluckValueReturn)|null  $value
-    * @param  string|(\Closure(TValue): TPluckKeyReturn)|null  $key
-    * @return ($value is \Closure ? ($key is \Closure ? \Illuminate\Support\Collection<TPluckKeyReturn, TPluckValueReturn> : \Illuminate\Support\Collection<array-key, TPluckValueReturn>) : ($key is \Closure ? \Illuminate\Support\Collection<TPluckKeyReturn, mixed> : \Illuminate\Support\Collection<array-key, mixed>))
+    * @param  string|array<array-key, string>|(\Closure(TValue): TPluckKeyReturn)|null  $key
+    * @return static<TPluckKeyReturn, TPluckValueReturn>
     */
    public function pluck($value, $key = null);
 }

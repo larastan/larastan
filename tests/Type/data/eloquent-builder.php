@@ -277,7 +277,7 @@ function test(
         ->oldest(\Illuminate\Support\Facades\DB::raw('created_at'))
         ->toBase()
     );
-    assertType('Illuminate\Support\Collection<(int|string), mixed>', User::query()
+    assertType('Illuminate\Support\Collection<int, mixed>', User::query()
         ->whereNull('name')
         ->pluck(\Illuminate\Support\Facades\DB::raw('created_at'))
         ->toBase()

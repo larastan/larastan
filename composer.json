@@ -25,7 +25,7 @@
     },
     "require-dev": {
         "doctrine/coding-standard": "^13",
-        "nikic/php-parser": "^5.4",
+        "nikic/php-parser": "^5.6",
         "laravel/framework": "^11.44.2 || ^12.7.2",
         "mockery/mockery": "^1.6.12",
         "orchestra/canvas": "^v9.2.2 || ^10.0.1",

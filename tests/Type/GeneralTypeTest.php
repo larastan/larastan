@@ -18,6 +18,7 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/abstract-manager.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/app-make.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/application-make.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/arr-pluck.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/auth.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/benchmark.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1346.php');
@@ -42,7 +43,9 @@ class GeneralTypeTest extends TypeInferenceTestCase
             yield from self::gatherAssertTypes(__DIR__ . '/data/date-extension-l11.php');
         }
 
+        yield from self::gatherAssertTypes(__DIR__ . '/data/eloquent-builder-pluck.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/environment-helper.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/enumerable-pluck.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/facades.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/form-request.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/gate-facade.php');
@@ -98,7 +101,9 @@ class GeneralTypeTest extends TypeInferenceTestCase
         }
 
         if (laravel_version_compare('12.20.0', '>=')) {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/arr-pluck-l12-20.php');
             yield from self::gatherAssertTypes(__DIR__ . '/data/facades-l12-20.php');
+            yield from self::gatherAssertTypes(__DIR__ . '/data/collection-stubs-l12-20.php');
         }
 
         //##############################################################################################################
