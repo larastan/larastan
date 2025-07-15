@@ -63,7 +63,7 @@ $user->roles()->where('name', 'a role name')->exists();
 This rule is enabled by default.
 To disable, add the following to your `phpstan.neon` file:
 
-```neon
+```
 parameters:
     noUnnecessaryCollectionCall: false
 ```
@@ -72,51 +72,16 @@ You can also configure the collection methods which this rule
 checks for. By default, all collection methods are checked.
 To only enable a specific set of methods, you could set the
 `noUnnecessaryCollectionCallOnly` configuration key. For example:
-```neon
+```
 parameters:
     noUnnecessaryCollectionCallOnly: ['count', 'first']
 ```
 will only throw errors on the `count` and `first` methods.
 The inverse is also configurable, to not throw an exception
 on the `contains` method, one could set the following value:
-```neon
+```
 parameters:
     noUnnecessaryCollectionCallExcept: ['contains']
-```
-
-## NoUnnecessaryEnumerableToArrayCalls
-
-This rule checks for unnecessary calls `Enumerable::toArray()` that
-could have used `all()` instead. The `toArray()` method recursively
-converts all Arrayable items in the Enumerable to an array and if
-none of the items are Arrayable, it is unnecessary map call.
-
-### Examples
-
-```php
-collect([1, 2, 3])->toArray();
-```
-
-Will result in the following error:
-
-```
-Called [toArray()] on an Enumerable which does not contain any Arrayables.
-```
-
-To fix the error, the code in the previous example could be changed to:
-
-```php
-collect([1, 2, 3])->all();
-```
-
-### Configuration
-
-This rule is disabled by default.
-To enable, add the following to your `phpstan.neon` file:
-
-```neon
-parameters:
-    noUnnecessaryEnumerableToArrayCalls: true
 ```
 
 ## ModelPropertyRule
@@ -134,7 +99,7 @@ parameters:
 This rule is disabled by default.
 To enable, add the following to your `phpstan.neon` file:
 
-```neon
+```
 parameters:
     checkModelProperties: true
 ```
@@ -186,7 +151,7 @@ You can read more about why in [the official Octane docs](https://laravel.com/do
 This rule is disabled by default.
 To enable, add the following to your `phpstan.neon` file:
 
-```neon
+```
 parameters:
     checkOctaneCompatibility: true
 ```
@@ -328,7 +293,7 @@ use Illuminate\Support\ServiceProvider;
 class CorrectDeferrableProvider extends ServiceProvider implements DeferrableProvider
 {
     public function register() {}
-
+    
     public function provides(): array
     {
         return [
@@ -522,64 +487,25 @@ parameters:
     checkAuthCallsWhenInRequestScope: true
 ```
 
-## ConfigCollectionRule
-
-This rule checks for incorrect keys passed into the `Config::collection` method. It helps to prevent runtime errors when a configuration key that is not an array is used.
-
-### Examples
-
-Given a configuration file `config/foo.php` with the following content:
-```php
-return [
-    'foo' => 'bar',
-    'bar' => [1, 2, 3],
-];
-```
-
-The following code would produce an error:
-```php
-$collection = Config::collection('foo.foo');
-```
-
-```
-Config key 'foo.foo' is not an array.
-```
-
-To fix this, you should use a config key that returns an array:
-```php
-$collection = Config::collection('foo.bar');
-```
-
-### Configuration
-
-This rule is disabled by default. To enable, add the following to your `phpstan.neon` file:
-
-```neon
-parameters:
-    checkConfigTypes: true
-```
-
 ## NoModelForwardingToBuilder
 
-This rule checks for calling methods on an `Illuminate\Database\Eloquent\Model` instance that are actually forwarded to a Builder instance. It helps prevent unexpected behaviors like executing `first()`, `get()` on already fetched models.
+This rule checks for calling methods on an `Illuminate\Database\Eloquent\Model` instance that are actually forwarded to a Builder instance.
+It helps prevent unexpected behaviors like executing `first()`, `get()` on already fetched models.
 
 ### Examples
 
-Given the following Eloquent model:
-
-```php
-class Post extends Model {}
-```
-
-The following code would result in refetching all posts from the database which is not intended usage:
+The following code:
 
 ```php
 $post = Post::find(1);
 $post->first();
 ```
 
+Will result in the following error:
+
 ```
 Method [first] is forwarded to a Builder instance, which is not allowed.
+    💡 Use [::first()], [::query()->first()] or [->newQuery()->first()] instead.
 ```
 
 ### Configuration
@@ -593,33 +519,22 @@ parameters:
 
 ## NoModelStaticForwardingToBuilder
 
-This rule checks for calling methods on an `Illuminate\Database\Eloquent\Model` instance that are actually forwarded to a Builder instance. It helps prevent hidden coupling and unexpected behaviors by ensuring you explicitly use `query()` or `newQuery()` when calling query builder methods on a model.
+This rule checks for calling methods on an `Illuminate\Database\Eloquent\Model` instance that are actually forwarded to a Builder instance.
+It helps prevent hidden coupling and unexpected behaviors by ensuring you explicitly use `::query()` when calling query builder methods on a model.
 
 ### Examples
 
-Given the following Eloquent model:
-
-```php
-class Post extends Model {}
-```
-
-The following code would be detected by this rule:
+The following code:
 
 ```php
 Post::first();
 ```
 
+Will result in the following error:
+
 ```
 Static method [first] is forwarded to a Builder instance, which is not allowed.
-```
-
-To fix this, you should explicitly call `query()` or `newQuery()`:
-
-```php
-Post::query()->first();
-
-// or
-Post::newQuery()->first();
+    💡 Use [::query()->first()] instead.
 ```
 
 ### Configuration
