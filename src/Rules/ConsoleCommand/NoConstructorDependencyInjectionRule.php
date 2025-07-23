@@ -6,9 +6,8 @@ namespace Larastan\Larastan\Rules\ConsoleCommand;
 
 use Illuminate\Console\Command;
 use PhpParser\Node;
-use PhpParser\Node\Stmt\Class_;
 use PHPStan\Analyser\Scope;
-use PHPStan\Node\InClassNode;
+use PHPStan\Node\InClassMethodNode;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -16,21 +15,27 @@ use PHPStan\Rules\RuleErrorBuilder;
 use function count;
 use function sprintf;
 
-/** @implements Rule<InClassNode> */
+/** @implements Rule<InClassMethodNode> */
 final class NoConstructorDependencyInjectionRule implements Rule
 {
     public function getNodeType(): string
     {
-        return InClassNode::class;
+        return InClassMethodNode::class;
     }
 
     /**
-     * @param InClassNode $node
+     * @param InClassMethodNode $node
      *
-     * @return list<RuleError>
+     * @return RuleError[] errors
      */
     public function processNode(Node $node, Scope $scope): array
     {
+        $method = $node->getMethodReflection();
+
+        if (! $method->isConstructor()) {
+            return [];
+        }
+
         $classReflection = $node->getClassReflection();
 
         if (! $classReflection->isSubclassOf(Command::class)) {
@@ -41,34 +46,17 @@ final class NoConstructorDependencyInjectionRule implements Rule
             return [];
         }
 
-        $originalNode = $node->getOriginalNode();
-        if (! $originalNode instanceof Class_) {
-            return [];
-        }
+        $methodNode = $node->getOriginalNode();
 
-        $constructor = null;
-        foreach ($originalNode->stmts as $stmt) {
-            if ($stmt instanceof Node\Stmt\ClassMethod && $stmt->name->toString() === '__construct') {
-                $constructor = $stmt;
-                break;
-            }
-        }
-
-        if ($constructor === null) {
-            return [];
-        }
-
-        $params = $constructor->params;
-
-        if (count($params) > 0) {
+        if (count($methodNode->params) > 0) {
             return [
                 RuleErrorBuilder::message(
                     sprintf(
-                        'Console command "%s" should not have constructor arguments. Use dependency injection in the handle() method instead.',
+                        'Console command "%s" should not have constructor arguments. Use dependency injection in the handle() or __invoke() method instead.',
                         $classReflection->getName(),
                     ),
-                )->line($constructor->getLine())
-                    ->tip('Move all dependencies to the handle() method parameters for better testability and Laravel best practices.')
+                )->line($methodNode->getLine())
+                    ->tip('Move all dependencies to the handle() or __invoke() method parameters for better testability and Laravel best practices.')
                     ->identifier('larastan.console.constructorInjection')
                     ->build(),
             ];

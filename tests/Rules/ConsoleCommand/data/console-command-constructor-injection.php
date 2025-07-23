@@ -1,6 +1,6 @@
 <?php
 
-namespace Larastan\Larastan\Tests\Rules\ConsoleCommand\data;
+namespace Tests\Rules\ConsoleCommand\Data;
 
 use Illuminate\Console\Command;
 
@@ -75,4 +75,33 @@ class SomeService
 
 class AnotherService
 {
+}
+
+class InvokableCommandWithConstructorDI extends Command
+{
+    public function __construct(private SomeService $service)
+    {
+        parent::__construct();
+    }
+
+    public function __invoke(): int
+    {
+        return 0;
+    }
+}
+
+class InvokableCommandWithoutConstructor extends Command
+{
+    public function __invoke(): int
+    {
+        return 0;
+    }
+}
+
+class InvokableCommandWithMethodInjection extends Command
+{
+    public function __invoke(SomeService $service, AnotherService $anotherService): int
+    {
+        return 0;
+    }
 }
