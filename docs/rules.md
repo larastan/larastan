@@ -559,3 +559,59 @@ parameters:
     checkConfigTypes: true
 ```
 
+## NoConstructorDependencyInjectionRule
+
+This rule ensures that console commands follow Laravel's best practice of using method injection in the `handle()` method rather than constructor injection.
+
+### Examples
+
+Constructor dependency injection:
+```php
+class MyCommand extends Command
+{
+    public function __construct(
+        private UserService $userService
+    ) {
+        parent::__construct();
+    }
+    
+    public function handle(): int
+    {
+        // ...
+    }
+}
+```
+
+This will result in the following error:
+```
+Console command "MyCommand" should not have constructor arguments. Use dependency injection in the handle() method instead.
+```
+
+To fix the error, use method injection in the handle method:
+```php
+class MyCommand extends Command
+{
+    public function handle(UserService $userService): int
+    {
+        // ...
+    }
+}
+```
+
+### Why This Rule Exists
+
+Laravel's documentation and community best practices recommend avoiding constructor dependency injection in console commands. This pattern:
+- Improves testability
+- Follows Laravel conventions
+- Avoids potential issues with command initialization
+- Makes commands more consistent with the framework
+
+### Configuration
+
+This rule is disabled by default. To enable, add the following to your `phpstan.neon` file:
+
+```neon
+parameters:
+    noConsoleCommandConstructorInjection: true
+```
+
