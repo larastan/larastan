@@ -22,19 +22,19 @@ class NoConstructorDependencyInjectionRuleTest extends RuleTestCase
     {
         $this->analyse([__DIR__ . '/data/console-command-constructor-injection.php'], [
             [
-                'Console command "Tests\Rules\ConsoleCommand\Data\CommandWithConstructorDI" should not have constructor arguments. Use dependency injection in the handle() or __invoke() method instead.',
+                'Console command "Tests\Rules\ConsoleCommand\Data\CommandWithConstructorDI" should not have constructor arguments.',
                 9,
-                'Move all dependencies to the handle() or __invoke() method parameters for better testability and Laravel best practices.',
+                'Move all dependencies to the handle() or __invoke() methods.',
             ],
             [
-                'Console command "Tests\Rules\ConsoleCommand\Data\CommandWithMultipleConstructorArgs" should not have constructor arguments. Use dependency injection in the handle() or __invoke() method instead.',
+                'Console command "Tests\Rules\ConsoleCommand\Data\CommandWithMultipleConstructorArgs" should not have constructor arguments.',
                 43,
-                'Move all dependencies to the handle() or __invoke() method parameters for better testability and Laravel best practices.',
+                'Move all dependencies to the handle() or __invoke() methods.',
             ],
             [
-                'Console command "Tests\Rules\ConsoleCommand\Data\InvokableCommandWithConstructorDI" should not have constructor arguments. Use dependency injection in the handle() or __invoke() method instead.',
+                'Console command "Tests\Rules\ConsoleCommand\Data\InvokableCommandWithConstructorDI" should not have constructor arguments.',
                 82,
-                'Move all dependencies to the handle() or __invoke() method parameters for better testability and Laravel best practices.',
+                'Move all dependencies to the handle() or __invoke() methods.',
             ],
         ]);
     }

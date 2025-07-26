@@ -561,7 +561,7 @@ parameters:
 
 ## NoConstructorDependencyInjectionRule
 
-This rule ensures that console commands follow Laravel's best practice of using method injection in the `handle()` method rather than constructor injection.
+This rule ensures that console commands follow Laravel's best practice of using method injection in the `handle()` or `__invoke()` method rather than constructor injection.
 
 ### Examples
 
@@ -584,14 +584,25 @@ class MyCommand extends Command
 
 This will result in the following error:
 ```
-Console command "MyCommand" should not have constructor arguments. Use dependency injection in the handle() method instead.
+Console command "MyCommand" should not have constructor arguments. Use dependency injection in the handle() or __invoke() method instead.
 ```
 
-To fix the error, use method injection in the handle method:
+To fix the error, use method injection in the handle or __invoke method:
 ```php
 class MyCommand extends Command
 {
     public function handle(UserService $userService): int
+    {
+        // ...
+    }
+}
+```
+
+Or with an invokable command:
+```php
+class MyInvokableCommand extends Command
+{
+    public function __invoke(UserService $userService): int
     {
         // ...
     }

@@ -38,7 +38,7 @@ final class NoConstructorDependencyInjectionRule implements Rule
 
         $classReflection = $node->getClassReflection();
 
-        if (! $classReflection->isSubclassOf(Command::class)) {
+        if (! $classReflection->is(Command::class)) {
             return [];
         }
 
@@ -52,11 +52,11 @@ final class NoConstructorDependencyInjectionRule implements Rule
             return [
                 RuleErrorBuilder::message(
                     sprintf(
-                        'Console command "%s" should not have constructor arguments. Use dependency injection in the handle() or __invoke() method instead.',
+                        'Console command "%s" should not have constructor arguments.',
                         $classReflection->getName(),
                     ),
                 )->line($methodNode->getLine())
-                    ->tip('Move all dependencies to the handle() or __invoke() method parameters for better testability and Laravel best practices.')
+                    ->tip('Move all dependencies to the handle() or __invoke() methods.')
                     ->identifier('larastan.console.constructorInjection')
                     ->build(),
             ];
