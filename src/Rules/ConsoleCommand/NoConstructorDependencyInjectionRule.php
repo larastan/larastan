@@ -57,7 +57,7 @@ final class NoConstructorDependencyInjectionRule implements Rule
                     ),
                 )->line($methodNode->getLine())
                     ->tip('Move all dependencies to the handle() or __invoke() methods.')
-                    ->identifier('larastan.console.constructorInjection')
+                    ->identifier('larastan.consoleConstructorInjection')
                     ->build(),
             ];
         }
