@@ -21,7 +21,7 @@ class User extends Model
         return static::query()->create();
     }
 
-    public static function testCreateSelf(): static
+    public static function testCreateSelf(): self
     {
         return self::query()->create();
     }

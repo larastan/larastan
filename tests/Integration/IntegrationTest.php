@@ -23,6 +23,7 @@ class IntegrationTest extends PHPStanTestCase
         self::getContainer();
 
         yield [__DIR__ . '/data/bug-2074.php'];
+        yield [__DIR__ . '/data/bug-final_model_query.php'];
         yield [__DIR__ . '/data/test-case-extension.php', [34 => ['Call to function method_exists() with $this(TestTestCase) and \'partialMock\' will always evaluate to true.']]];
         yield [__DIR__ . '/data/model-builder.php'];
         yield [__DIR__ . '/data/model-properties.php'];

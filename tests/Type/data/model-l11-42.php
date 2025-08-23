@@ -39,10 +39,10 @@ class Bar extends Model
 
     public function test(): void
     {
-        assertType('Illuminate\Database\Eloquent\Builder<$this(Model\Bar)>', self::query());
+        assertType('Illuminate\Database\Eloquent\Builder<Model\Bar>', self::query());
         assertType('Illuminate\Database\Eloquent\Builder<static(Model\Bar)>', static::query());
 
-        assertType('$this(Model\Bar)|null', self::query()->first());
+        assertType('Model\Bar|null', self::query()->first());
         assertType('static(Model\Bar)|null', static::query()->first());
         assertType('Illuminate\Database\Eloquent\Builder<static(Model\Bar)>', static::query()->orWhere('foo', 'bar'));
         assertType('Illuminate\Database\Eloquent\Builder<static(Model\Bar)>', static::query()->select('foo'));
