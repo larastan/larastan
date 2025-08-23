@@ -21,6 +21,7 @@ use PHPStan\Rules\RuleErrorBuilder;
 
 use function array_diff;
 use function array_filter;
+use function array_unique;
 use function collect;
 use function iterator_to_array;
 use function view;
@@ -56,26 +57,20 @@ final class UnusedViewsRule implements Rule
             $this->viewsUsedInOtherViews,
         ])->flatten()->unique()->toArray();
 
+        /** @var Factory $factory */
+        $factory = view();
+        $finder  = $factory->getFinder();
+
         $allViews = iterator_to_array($this->viewFileHelper->getAllViewNames());
 
-        $existingViews = [];
+        $usedViews = static::filterExistingViews($factory, $usedViews);
+        $allViews  = static::filterExistingViews($factory, $allViews);
 
-        /** @var Factory $view */
-        $view = view();
-
-        foreach ($usedViews as $viewName) {
-            if (! $view->exists($viewName)) {
-                continue;
-            }
-
-            $existingViews[] = $viewName;
-        }
-
-        $unusedViews = array_diff($allViews, array_filter($existingViews));
+        $unusedViews = array_unique(array_diff($allViews, $usedViews));
 
         $errors = [];
         foreach ($unusedViews as $file) {
-            $path = $view->getFinder()->find($file);
+            $path = $finder->find($file);
 
             $errors[] = RuleErrorBuilder::message('This view is not used in the project.')
                 ->file($path)
@@ -85,5 +80,17 @@ final class UnusedViewsRule implements Rule
         }
 
         return $errors;
+    }
+
+    /**
+     * @param string[] $views
+     *
+     * @return string[]
+     */
+    protected static function filterExistingViews(Factory $factory, array $views): array
+    {
+        return array_filter($views, static function (string $view) use ($factory): bool {
+            return $factory->exists($view);
+        });
     }
 }
