@@ -37,6 +37,9 @@ function test(Builder $builder, User $user, string $union): void
 
     // Joins
     User::query()->join('roles', 'users.role_id', '=', 'roles.id')->where('roles.foo', 'admin');
+
+    User::query()->get(DB::raw('name'));
+    User::query()->get([DB::raw('name')]);
 }
 
 //// Currently, there is no way to change the type of `$query` inside the callback.
