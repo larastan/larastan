@@ -24,6 +24,7 @@ parameters:
     viewDirectories: []
     checkModelProperties: false
     checkUnusedViews: false
+    checkMissingTranslations: false
     checkModelAppends: true
     generalizeEnvReturnType: false
     checkConfigTypes: false
@@ -45,6 +46,7 @@ parametersSchema:
     disableSchemaScan: bool()
     checkModelProperties: bool()
     checkUnusedViews: bool()
+    checkMissingTranslations: bool()
     checkModelAppends: bool()
     generalizeEnvReturnType: bool()
     checkConfigTypes: bool()
@@ -63,6 +65,8 @@ conditionalTags:
         phpstan.rules.rule: %checkOctaneCompatibility%
     Larastan\Larastan\Rules\UnusedViewsRule:
         phpstan.rules.rule: %checkUnusedViews%
+    Larastan\Larastan\Rules\NoMissingTranslationsRule:
+        phpstan.rules.rule: %checkMissingTranslations%
     Larastan\Larastan\Rules\ModelAppendsRule:
         phpstan.rules.rule: %checkModelAppends%
     Larastan\Larastan\Rules\NoAuthFacadeInRequestScopeRule:
@@ -528,6 +532,29 @@ services:
         class: Larastan\Larastan\Support\ViewFileHelper
         arguments:
             viewDirectories: %viewDirectories%
+
+    -
+        class: Larastan\Larastan\Rules\NoMissingTranslationsRule
+
+    -
+        class: Larastan\Larastan\Collectors\UsedTranslationFunctionCollector
+        tags:
+            - phpstan.collector
+
+    -
+        class: Larastan\Larastan\Collectors\UsedTranslationTranslatorCollector
+        tags:
+            - phpstan.collector
+
+    -
+        class: Larastan\Larastan\Collectors\UsedTranslationFacadeCollector
+        tags:
+            - phpstan.collector
+
+    -
+        class: Larastan\Larastan\Collectors\UsedTranslationViewCollector
+        arguments:
+            parser: @currentPhpVersionSimpleDirectParser
 
     -
         class: Larastan\Larastan\ReturnTypes\ApplicationMakeDynamicReturnTypeExtension
