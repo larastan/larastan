@@ -65,7 +65,7 @@ class Builder
      * Find a model by its primary key.
      *
      * @param  mixed  $id
-     * @param  array<int, (model-property<TModel>|'*')>|model-property<TModel>|'*'  $columns
+     * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
      * @phpstan-return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TModel> : TModel|null)
      */
     public function find($id, $columns = ['*']);
@@ -74,7 +74,7 @@ class Builder
      * Find multiple models by their primary keys.
      *
      * @param  \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>  $ids
-     * @param  array<int, (model-property<TModel>|'*')>|model-property<TModel>|'*'  $columns
+     * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
      * @phpstan-return \Illuminate\Database\Eloquent\Collection<int, TModel>
      */
     public function findMany($ids, $columns = ['*']);
@@ -83,7 +83,7 @@ class Builder
      * Find a model by its primary key or throw an exception.
      *
      * @param  mixed  $id
-     * @param  array<int, (model-property<TModel>|'*')>|model-property<TModel>|'*'  $columns
+     * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
      * @phpstan-return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TModel> : TModel)
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TModel>
@@ -94,7 +94,7 @@ class Builder
      * Find a model by its primary key or return fresh model instance.
      *
      * @param  mixed  $id
-     * @param  array<int, (model-property<TModel>|'*')>|model-property<TModel>|'*'  $columns
+     * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
      * @phpstan-return ($id is array ? \Illuminate\Database\Eloquent\Collection<int, TModel> : TModel)
      */
     public function findOrNew($id, $columns = ['*']);
@@ -102,7 +102,7 @@ class Builder
     /**
      * Execute the query and get the first result.
      *
-     * @param  array<int, (model-property<TModel>|'*')>|model-property<TModel>|'*'  $columns
+     * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
      * @return TModel|null
      */
     public function first($columns = ['*']);
@@ -128,7 +128,7 @@ class Builder
     /**
      * Execute the query and get the first result or throw an exception.
      *
-     * @param  array<int, (model-property<TModel>|'*')>|model-property<TModel>|'*'  $columns
+     * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
      * @phpstan-return TModel
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TModel>
@@ -179,7 +179,7 @@ class Builder
     /**
      * Execute the query and get the first result if it's the sole matching record.
      *
-     * @param  array<int, (model-property<TModel>|'*')>|model-property<TModel>|'*'  $columns
+     * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
      * @return TModel
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TModel>
@@ -259,7 +259,7 @@ class Builder
     /**
      * Execute the query as a "select" statement.
      *
-     * @param  array<int, (model-property<TModel>|'*')>|model-property<TModel>|'*'  $columns
+     * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
      * @phpstan-return \Illuminate\Database\Eloquent\Collection<int, TModel>
      */
     public function get($columns = ['*']);
@@ -274,7 +274,7 @@ class Builder
     /**
      * Get the hydrated models without eager loading.
      *
-     * @param  array<int, (model-property<TModel>|'*')>|model-property<TModel>|'*'  $columns
+     * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
      * @return list<TModel>
      */
     public function getModels($columns = ['*']);
