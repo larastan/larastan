@@ -26,7 +26,7 @@ final class UsedTranslationViewCollector
     {
     }
 
-    /** @return string[] */
+    /** @return array<string, array{0: string, 1: int}[]> */
     public function getUsedTranslations(): array
     {
         $translations = [];
@@ -47,7 +47,7 @@ final class UsedTranslationViewCollector
     /**
      * @param Node\Stmt[] $nodes
      *
-     * @return string[]
+     * @return array{0: string, 1: int}[]
      */
     private function processNodes(array $nodes): array
     {

@@ -21,7 +21,11 @@ final class UsedTranslationTranslatorCollector implements Collector
         return Node\Expr\MethodCall::class;
     }
 
-    /** @param Node\Expr\MethodCall $node */
+    /**
+     * @param Node\Expr\MethodCall $node
+     *
+     * @return array{0: string, 1: int}
+     */
     public function processNode(Node $node, Scope $scope): array|null
     {
         $name = $node->name;

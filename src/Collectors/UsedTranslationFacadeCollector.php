@@ -21,7 +21,11 @@ final class UsedTranslationFacadeCollector implements Collector
         return Node\Expr\StaticCall::class;
     }
 
-    /** @param Node\Expr\StaticCall $node */
+    /**
+     * @param Node\Expr\StaticCall $node
+     *
+     * @return array{0: string, 1: int}
+     */
     public function processNode(Node $node, Scope $scope): array|null
     {
         $name = $node->name;

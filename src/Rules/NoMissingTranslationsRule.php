@@ -38,6 +38,7 @@ final class NoMissingTranslationsRule implements Rule
     /** @return RuleError[] */
     public function processNode(Node $node, Scope $scope): array
     {
+        /** @var array<string, array{0: string, 1: int}[]>[] $collectors */
         $collectors = [
             $node->get(UsedTranslationFunctionCollector::class),
             $node->get(UsedTranslationTranslatorCollector::class),

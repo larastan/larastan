@@ -19,7 +19,11 @@ final class UsedTranslationFunctionCollector implements Collector
         return Node\Expr\FuncCall::class;
     }
 
-    /** @param Node\Expr\FuncCall $node */
+    /**
+     * @param Node\Expr\FuncCall $node
+     *
+     * @return array{0: string, 1: int}
+     */
     public function processNode(Node $node, Scope $scope): array|null
     {
         if (! $node->name instanceof Node\Name) {
