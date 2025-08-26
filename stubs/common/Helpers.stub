@@ -154,7 +154,7 @@ function __($key = null, $replace = [], $locale = null) {}
  * @param  ?callable(TValue): TReturn  $callback
  * @return ($callback is null ? mixed : ($value is null ? null : TReturn))
  */
-function optional($value = null, callable $callback = null) {}
+function optional($value = null, ?callable $callback = null) {}
 
 /**
  * Transform the given value if it is present.

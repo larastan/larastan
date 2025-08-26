@@ -144,7 +144,7 @@ class Builder
      * @param  (\Closure(): TValue)|null  $callback
      * @return TModel|TValue
      */
-    public function firstOr($columns = ['*'], \Closure $callback = null);
+    public function firstOr($columns = ['*'], ?\Closure $callback = null);
 
     /**
      * Attempt to create the record. If a unique constraint violation occurs, attempt to find the matching record.
