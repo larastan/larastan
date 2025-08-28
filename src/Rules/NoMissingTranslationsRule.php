@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Rules;
 
-use Illuminate\Contracts\Translation\Translator as TranslatorContract;
-use Illuminate\Translation\Translator;
+use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Arr;
 use Larastan\Larastan\Collectors\UsedTranslationFacadeCollector;
 use Larastan\Larastan\Collectors\UsedTranslationFunctionCollector;
 use Larastan\Larastan\Collectors\UsedTranslationTranslatorCollector;
@@ -17,17 +17,28 @@ use PHPStan\Node\CollectedDataNode;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
+use Symfony\Component\Finder\SplFileInfo;
 
 use function array_key_exists;
+use function array_keys;
+use function array_map;
 use function array_merge;
+use function in_array;
+use function is_dir;
+use function json_decode;
+use function lang_path;
 
 /** @implements Rule<CollectedDataNode> */
 final class NoMissingTranslationsRule implements Rule
 {
     use HasContainer;
 
-    public function __construct(private UsedTranslationViewCollector $usedTranslationViewCollector)
-    {
+    /** @param string[] $translationDirectories */
+    public function __construct(
+        private UsedTranslationViewCollector $usedTranslationViewCollector,
+        private Filesystem $filesystem,
+        private array $translationDirectories,
+    ) {
     }
 
     public function getNodeType(): string
@@ -38,6 +49,8 @@ final class NoMissingTranslationsRule implements Rule
     /** @return RuleError[] */
     public function processNode(Node $node, Scope $scope): array
     {
+        $paths = $this->translationDirectories ?: [lang_path()];
+
         /** @var array<string, array{0: string, 1: int}[]>[] $collectors */
         $collectors = [
             $node->get(UsedTranslationFunctionCollector::class),
@@ -45,6 +58,32 @@ final class NoMissingTranslationsRule implements Rule
             $node->get(UsedTranslationFacadeCollector::class),
             $this->usedTranslationViewCollector->getUsedTranslations(),
         ];
+
+        $availableTranslations = [];
+
+        foreach ($paths as $path) {
+            if (! is_dir($path)) {
+                continue;
+            }
+
+            $files = $this->filesystem->allFiles($path);
+
+            $translations = array_map(function (SplFileInfo $file): array {
+                $translations = [];
+
+                if ($file->getExtension() === 'php') {
+                    $translations = Arr::dot([
+                        $file->getFilenameWithoutExtension() => $this->filesystem->getRequire($file->getPathname()),
+                    ]);
+                } elseif ($file->getExtension() === 'json') {
+                    $translations = json_decode($this->filesystem->get($file->getPathname()), true);
+                }
+
+                return array_keys($translations);
+            }, $files);
+
+            $availableTranslations = array_merge($availableTranslations, ...$translations);
+        }
 
         $usedTranslations = [];
 
@@ -58,14 +97,11 @@ final class NoMissingTranslationsRule implements Rule
             }
         }
 
-        /** @var Translator $translator */
-        $translator = $this->resolve(TranslatorContract::class);
-
         $errors = [];
 
         foreach ($usedTranslations as $file => $translations) {
             foreach ($translations as [$translation, $line]) {
-                if ($translator->has($translation)) {
+                if (in_array($translation, $availableTranslations, true)) {
                     continue;
                 }
 

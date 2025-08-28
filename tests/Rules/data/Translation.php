@@ -30,5 +30,8 @@ class Translation
 
         Lang::get('messages.test');
         Lang::choice('messages.test', 1);
+
+        __('foo bar baz');
+        __('messages.nested.key');
     }
 }

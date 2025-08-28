@@ -22,6 +22,7 @@ parameters:
     disableSchemaScan: false
     configDirectories: []
     viewDirectories: []
+    translationDirectories: []
     checkModelProperties: false
     checkUnusedViews: false
     checkMissingTranslations: false
@@ -42,6 +43,7 @@ parametersSchema:
     disableMigrationScan: bool()
     configDirectories: listOf(string())
     viewDirectories: listOf(string())
+    translationDirectories: listOf(string())
     squashedMigrationsPath: listOf(string())
     disableSchemaScan: bool()
     checkModelProperties: bool()
@@ -535,6 +537,8 @@ services:
 
     -
         class: Larastan\Larastan\Rules\NoMissingTranslationsRule
+        arguments:
+            translationDirectories: %translationDirectories%
 
     -
         class: Larastan\Larastan\Collectors\UsedTranslationFunctionCollector
@@ -652,6 +656,9 @@ services:
 
     -
         class: Larastan\Larastan\Rules\ConfigCollectionRule
+
+    -
+        class: Illuminate\Filesystem\Filesystem
 
 rules:
     - Larastan\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule

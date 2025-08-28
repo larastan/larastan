@@ -399,7 +399,9 @@ parameters:
 
 ## NoMissingTranslationsRule
 
-This rule will find any untranslated strings in your application. This rule is primarily meant for applications that make use of the dot syntax like `messages.greet`. If you're using translation strings as keys, this rule is unnecessary.
+This rule will find any untranslated strings in your application. This rule is primarily meant for applications that make use of the dot syntax like `messages.greet`. If you're using translation strings as keys, this rule may be unnecessary.
+
+> **NOTE**: If you store your translations in a database, this rule will not be able to detect them. You should leave this rule disabled in such case.
 
 ### Examples
 
@@ -421,6 +423,16 @@ To enable, add the following to your `phpstan.neon` file:
 ```neon
 parameters:
     checkMissingTranslations: true
+```
+
+By default, the path `resources/lang` is scanned. If you have translations elsewhere, make sure to register all the paths.
+
+```neon
+parameters:
+    checkMissingTranslations: true
+    translationDirectories:
+        - resources/lang
+        - resources/translations
 ```
 
 ## NoEnvCallsOutsideOfConfig
