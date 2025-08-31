@@ -192,18 +192,22 @@ class ModelPropertyHelper
 
     public function getAccessor(ClassReflection $classReflection, string $propertyName): ModelProperty
     {
-        $studlyName = Str::studly($propertyName);
+        $camelCase = Str::camel($propertyName);
 
-        if ($classReflection->hasNativeMethod($studlyName)) {
-            $methodReflection = $classReflection->getNativeMethod($studlyName);
+        if ($classReflection->hasNativeMethod($camelCase)) {
+            $methodReflection = $classReflection->getNativeMethod($camelCase);
 
-            $returnType = $methodReflection->getVariants()[0]->getReturnType();
+            if (! $methodReflection->isPublic() && ! $methodReflection->isPrivate()) {
+                $returnType = $methodReflection->getVariants()[0]->getReturnType();
 
-            return new ModelProperty(
-                $classReflection,
-                $returnType->getTemplateType(Attribute::class, 'TGet'),
-                $returnType->getTemplateType(Attribute::class, 'TSet'),
-            );
+                if ((new ObjectType(Attribute::class))->isSuperTypeOf($returnType)->yes()) {
+                    return new ModelProperty(
+                        $classReflection,
+                        $returnType->getTemplateType(Attribute::class, 'TGet'),
+                        $returnType->getTemplateType(Attribute::class, 'TSet'),
+                    );
+                }
+            }
         }
 
         $method = $classReflection->getNativeMethod('get' . Str::studly($propertyName) . 'Attribute');
