@@ -240,7 +240,7 @@ public function user(): BelongsTo
     return $this->belongsTo(User::class);
 }
 
-/** @return HasMany<Post> */
+/** @return HasMany<Post, $this> */
 public function posts(): HasMany
 {
     return $this->hasMany(Post::class);
