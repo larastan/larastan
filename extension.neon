@@ -28,6 +28,7 @@ parameters:
     generalizeEnvReturnType: false
     checkConfigTypes: false
     checkAuthCallsWhenInRequestScope: false
+    noConsoleCommandConstructorInjection: false
 
 parametersSchema:
     checkOctaneCompatibility: bool()
@@ -49,6 +50,7 @@ parametersSchema:
     generalizeEnvReturnType: bool()
     checkConfigTypes: bool()
     checkAuthCallsWhenInRequestScope: bool()
+    noConsoleCommandConstructorInjection: bool()
 
 conditionalTags:
     Larastan\Larastan\Rules\NoEnvCallsOutsideOfConfigRule:
@@ -79,6 +81,8 @@ conditionalTags:
         phpstan.broker.dynamicStaticMethodReturnTypeExtension: %checkConfigTypes%
     Larastan\Larastan\Rules\ConfigCollectionRule:
         phpstan.rules.rule: %checkConfigTypes%
+    Larastan\Larastan\Rules\ConsoleCommand\NoConstructorDependencyInjectionRule:
+        phpstan.rules.rule: %noConsoleCommandConstructorInjection%
 
 services:
     -
@@ -625,6 +629,9 @@ services:
 
     -
         class: Larastan\Larastan\Rules\ConfigCollectionRule
+
+    -
+        class: Larastan\Larastan\Rules\ConsoleCommand\NoConstructorDependencyInjectionRule
 
 rules:
     - Larastan\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule
