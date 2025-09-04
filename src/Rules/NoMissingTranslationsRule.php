@@ -10,7 +10,6 @@ use Larastan\Larastan\Collectors\UsedTranslationFacadeCollector;
 use Larastan\Larastan\Collectors\UsedTranslationFunctionCollector;
 use Larastan\Larastan\Collectors\UsedTranslationTranslatorCollector;
 use Larastan\Larastan\Collectors\UsedTranslationViewCollector;
-use Larastan\Larastan\Concerns\HasContainer;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\CollectedDataNode;
@@ -31,8 +30,6 @@ use function lang_path;
 /** @implements Rule<CollectedDataNode> */
 final class NoMissingTranslationsRule implements Rule
 {
-    use HasContainer;
-
     /** @param string[] $translationDirectories */
     public function __construct(
         private UsedTranslationViewCollector $usedTranslationViewCollector,

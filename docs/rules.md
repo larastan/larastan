@@ -399,9 +399,9 @@ parameters:
 
 ## NoMissingTranslationsRule
 
-This rule will find any untranslated strings in your application. This rule is primarily meant for applications that make use of the dot syntax like `messages.greet`. If you're using translation strings as keys, this rule may be unnecessary.
+This rule will find any untranslated strings in your application. It is primarily meant for applications that make use of the dot syntax like `messages.greet`. If you're using translation strings as keys, this rule may be unnecessary. Enabling this rule may decrease performance as it will scan the available views and translations.
 
-> **NOTE**: If you store your translations in a database, this rule will not be able to detect them. You should leave this rule disabled in such case.
+> **NOTE**: If you store your translations in a database, this rule will not be able to detect them. You should leave this rule disabled in such cases.
 
 ### Examples
 

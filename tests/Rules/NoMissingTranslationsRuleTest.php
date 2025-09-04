@@ -11,6 +11,7 @@ use Larastan\Larastan\Collectors\UsedTranslationTranslatorCollector;
 use Larastan\Larastan\Collectors\UsedTranslationViewCollector;
 use Larastan\Larastan\Rules\NoMissingTranslationsRule;
 use Larastan\Larastan\Support\ViewFileHelper;
+use Larastan\Larastan\Support\ViewParser;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
@@ -19,12 +20,10 @@ class NoMissingTranslationsRuleTest extends RuleTestCase
 {
     protected function getRule(): Rule
     {
+        $viewParser     = new ViewParser($this->getContainer()->getService('currentPhpVersionSimpleDirectParser'));
         $viewFileHelper = new ViewFileHelper([], $this->getFileHelper());
 
-        return new NoMissingTranslationsRule(new UsedTranslationViewCollector(
-            $this->getContainer()->getService('currentPhpVersionSimpleDirectParser'),
-            $viewFileHelper,
-        ), new Filesystem(), []);
+        return new NoMissingTranslationsRule(new UsedTranslationViewCollector($viewParser, $viewFileHelper), new Filesystem(), []);
     }
 
     /** @return array<Collector<Node, mixed>> */

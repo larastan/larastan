@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Collectors;
 
 use Larastan\Larastan\Support\ViewFileHelper;
+use Larastan\Larastan\Support\ViewParser;
 use PhpParser\Node;
-use PHPStan\Parser\Parser;
-use PHPStan\Parser\ParserErrorsException;
 
 use function array_filter;
 use function array_map;
@@ -22,7 +21,7 @@ final class UsedTranslationViewCollector
     /** @see https://regex101.com/r/ksUgGz/1 */
     private const TRANSLATION_REGEX = '/[^\w](trans|trans_choice|Lang::get|Lang::choice|Lang::trans|Lang::transChoice|@lang|@choice|__|\$t)\((?P<quote>[\'"])(?P<string>(?:\\k{quote}|(?!\k{quote}).)*)\k{quote}[\),]/m';
 
-    public function __construct(private Parser $parser, private ViewFileHelper $viewFileHelper)
+    public function __construct(private ViewParser $viewParser, private ViewFileHelper $viewFileHelper)
     {
     }
 
@@ -32,13 +31,9 @@ final class UsedTranslationViewCollector
         $translations = [];
 
         foreach ($this->viewFileHelper->getRootViewFilePaths() as $viewFile) {
-            try {
-                $parserNodes = $this->parser->parseFile($viewFile);
+            $parserNodes = $this->viewParser->getNodes($viewFile);
 
-                $translations[$viewFile] = $this->processNodes($parserNodes);
-            } catch (ParserErrorsException) {
-                continue;
-            }
+            $translations[$viewFile] = $this->processNodes($parserNodes);
         }
 
         return $translations;

@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Collectors;
 
 use Larastan\Larastan\Support\ViewFileHelper;
+use Larastan\Larastan\Support\ViewParser;
 use PhpParser\Node;
-use PHPStan\Parser\Parser;
-use PHPStan\Parser\ParserErrorsException;
 
 use function array_filter;
 use function array_map;
@@ -22,7 +21,7 @@ final class UsedViewInAnotherViewCollector
     /** @see https://regex101.com/r/OyHHCY/1 */
     private const VIEW_NAME_REGEX = '/@(extends|include(If|Unless|When|First)?)(\(.*?([\'"])(.*?)([\'"])([),]))/m';
 
-    public function __construct(private Parser $parser, private ViewFileHelper $viewFileHelper)
+    public function __construct(private ViewParser $viewParser, private ViewFileHelper $viewFileHelper)
     {
     }
 
@@ -30,14 +29,11 @@ final class UsedViewInAnotherViewCollector
     public function getUsedViews(): array
     {
         $usedViews = [];
-        foreach ($this->viewFileHelper->getAllViewFilePaths() as $viewFile) {
-            try {
-                $parserNodes = $this->parser->parseFile($viewFile);
 
-                $usedViews = array_merge($usedViews, $this->processNodes($parserNodes));
-            } catch (ParserErrorsException) {
-                continue;
-            }
+        foreach ($this->viewFileHelper->getAllViewFilePaths() as $viewFile) {
+            $parserNodes = $this->viewParser->getNodes($viewFile);
+
+            $usedViews = array_merge($usedViews, $this->processNodes($parserNodes));
         }
 
         return $usedViews;

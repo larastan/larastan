@@ -528,12 +528,16 @@ services:
             - phpstan.collector
     -
         class: Larastan\Larastan\Collectors\UsedViewInAnotherViewCollector
-        arguments:
-            parser: @currentPhpVersionSimpleDirectParser
+
     -
         class: Larastan\Larastan\Support\ViewFileHelper
         arguments:
             viewDirectories: %viewDirectories%
+
+    -
+        class: Larastan\Larastan\Support\ViewParser
+        arguments:
+            parser: @currentPhpVersionSimpleDirectParser
 
     -
         class: Larastan\Larastan\Rules\NoMissingTranslationsRule
@@ -557,8 +561,6 @@ services:
 
     -
         class: Larastan\Larastan\Collectors\UsedTranslationViewCollector
-        arguments:
-            parser: @currentPhpVersionSimpleDirectParser
 
     -
         class: Larastan\Larastan\ReturnTypes\ApplicationMakeDynamicReturnTypeExtension
