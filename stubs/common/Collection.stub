@@ -76,6 +76,15 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      * @return static<($keyBy is string ? array-key : ($keyBy is array ? array-key : TNewKey)), TValue>
      */
     public function keyBy($keyBy);
+
+    /**
+     * Chunk the collection into chunks of the given size.
+     *
+     * @param  int  $size
+     * @param  bool  $preserveKeys
+     * @return $preserveKeys is true ? static<int, static> : static<int, static<int, TValue>>
+    **/
+    public function chunk($size, $preserveKeys = true);
 }
 
 /**
