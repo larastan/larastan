@@ -33,5 +33,8 @@ class Translation
 
         __('foo bar baz');
         __('messages.nested.key');
+
+        Lang::get('sub/lines.greeting');
+        Lang::get('sub/lines.farewell');
     }
 }

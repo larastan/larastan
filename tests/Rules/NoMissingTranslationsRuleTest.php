@@ -67,6 +67,10 @@ class NoMissingTranslationsRuleTest extends RuleTestCase
                 'Translation "messages.test" has not been found.',
                 32,
             ],
+            [
+                'Translation "sub/lines.farewell" has not been found.',
+                38,
+            ],
         ]);
     }
 

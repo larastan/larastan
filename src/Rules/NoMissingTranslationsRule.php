@@ -6,6 +6,7 @@ namespace Larastan\Larastan\Rules;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Larastan\Larastan\Collectors\UsedTranslationFacadeCollector;
 use Larastan\Larastan\Collectors\UsedTranslationFunctionCollector;
 use Larastan\Larastan\Collectors\UsedTranslationTranslatorCollector;
@@ -26,6 +27,9 @@ use function in_array;
 use function is_dir;
 use function json_decode;
 use function lang_path;
+use function strlen;
+
+use const DIRECTORY_SEPARATOR;
 
 /** @implements Rule<CollectedDataNode> */
 final class NoMissingTranslationsRule implements Rule
@@ -69,8 +73,17 @@ final class NoMissingTranslationsRule implements Rule
                 $translations = [];
 
                 if ($file->getExtension() === 'php') {
+                    $prefix = Str::of($file->getRelativePathname())
+                        ->explode(DIRECTORY_SEPARATOR)
+                        ->slice(1, -1) // Trim locale and filename
+                        ->join('/');
+
+                    $key = strlen($prefix) > 0
+                        ? $prefix . '/' . $file->getFilenameWithoutExtension()
+                        : $file->getFilenameWithoutExtension();
+
                     $translations = Arr::dot([
-                        $file->getFilenameWithoutExtension() => $this->filesystem->getRequire($file->getPathname()),
+                        $key => $this->filesystem->getRequire($file->getPathname()),
                     ]);
                 } elseif ($file->getExtension() === 'json') {
                     $translations = json_decode($this->filesystem->get($file->getPathname()), true);
