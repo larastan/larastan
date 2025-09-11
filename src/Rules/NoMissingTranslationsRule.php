@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Rules;
 
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Larastan\Larastan\Collectors\UsedTranslationFacadeCollector;
 use Larastan\Larastan\Collectors\UsedTranslationFunctionCollector;
 use Larastan\Larastan\Collectors\UsedTranslationTranslatorCollector;
 use Larastan\Larastan\Collectors\UsedTranslationViewCollector;
+use Larastan\Larastan\Support\Filesystem;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\CollectedDataNode;

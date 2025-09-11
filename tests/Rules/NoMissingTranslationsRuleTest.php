@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Rules;
 
-use Illuminate\Filesystem\Filesystem;
 use Larastan\Larastan\Collectors\UsedTranslationFacadeCollector;
 use Larastan\Larastan\Collectors\UsedTranslationFunctionCollector;
 use Larastan\Larastan\Collectors\UsedTranslationTranslatorCollector;
 use Larastan\Larastan\Collectors\UsedTranslationViewCollector;
 use Larastan\Larastan\Rules\NoMissingTranslationsRule;
+use Larastan\Larastan\Support\Filesystem;
 use Larastan\Larastan\Support\ViewFileHelper;
 use Larastan\Larastan\Support\ViewParser;
 use PHPStan\Rules\Rule;

@@ -667,7 +667,8 @@ services:
         class: Larastan\Larastan\Rules\ConfigCollectionRule
 
     -
-        class: Illuminate\Filesystem\Filesystem
+        class: Larastan\Larastan\Support\Filesystem
+        autowired: self
 
 rules:
     - Larastan\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule
