@@ -66,3 +66,21 @@ parameters:
 			count: 2
 			path: src/Rules/ModelRuleHelper.php
 
+		-
+			message: '#^Implementing PHPStan\\Type\\CompoundType is not covered by backward compatibility promise\. The interface might change in a minor PHPStan version\.$#'
+			identifier: phpstanApi.interface
+			count: 1
+			path: src/Types/CollectionOf/CollectionOfType.php
+
+		-
+			message: '#^Using PHPStan\\Type\\Traits\\LateResolvableTypeTrait is not covered by backward compatibility promise\. The trait might change in a minor PHPStan version\.$#'
+			identifier: phpstanApi.trait
+			count: 1
+			path: src/Types/CollectionOf/CollectionOfType.php
+
+		-
+			message: '#^Using PHPStan\\Type\\Traits\\NonGeneralizableTypeTrait is not covered by backward compatibility promise\. The trait might change in a minor PHPStan version\.$#'
+			identifier: phpstanApi.trait
+			count: 1
+			path: src/Types/CollectionOf/CollectionOfType.php
+

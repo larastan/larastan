@@ -6,6 +6,8 @@ namespace EloquentBuilder;
 
 use App\Post;
 use App\PostBuilder;
+use App\Role;
+use App\RoleCollection;
 use App\Team;
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -324,7 +326,9 @@ function test(
     assertType('array<int, App\User>', User::query()->paginate()->items());
 
     User::chunk(1000, fn ($collection) => assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection));
+    Role::chunk(1000, fn ($collection) => assertType('App\RoleCollection<int, App\Role>', $collection));
     User::chunkById(1000, fn ($collection) => assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection));
+    Role::chunkById(1000, fn ($collection) => assertType('App\RoleCollection<int, App\Role>', $collection));
     assertType('Illuminate\Support\Collection<int, string>', User::chunkMap(function ($model) {
         assertType('App\User', $model);
 

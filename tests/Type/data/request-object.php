@@ -17,6 +17,7 @@ function test(Request $request): void
     assertType('Illuminate\Routing\Route|null', $request->route());
     assertType('(object|string|null)', $request->route('foo'));
     assertType('(object|string)', $request->route('foo', 'bar'));
+    assertType('(123|object|string)', $request->route('foo', fn() => 123));
 
     assertType('array<string, string>', $request->server());
     assertType('string|null', $request->server('foo'));

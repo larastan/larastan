@@ -261,16 +261,6 @@ services:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
-        class: Larastan\Larastan\ReturnTypes\ModelFindExtension
-        tags:
-            - phpstan.broker.dynamicStaticMethodReturnTypeExtension
-
-    -
-        class: Larastan\Larastan\ReturnTypes\BuilderModelFindExtension
-        tags:
-            - phpstan.broker.dynamicMethodReturnTypeExtension
-
-    -
         class: Larastan\Larastan\ReturnTypes\TestCaseExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
@@ -451,6 +441,11 @@ services:
             - phpstan.phpDoc.typeNodeResolverExtension
         arguments:
             active: %checkModelProperties%
+
+    -
+        class: Larastan\Larastan\Types\CollectionOf\CollectionOfTypeNodeResolverExtension
+        tags:
+            - phpstan.phpDoc.typeNodeResolverExtension
 
     -
         class: Larastan\Larastan\Properties\MigrationHelper
