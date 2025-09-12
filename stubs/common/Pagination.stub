@@ -15,6 +15,18 @@ abstract class AbstractPaginator implements \Illuminate\Contracts\Support\Htmlab
      * @return TValue|null
      */
     public function offsetGet($key): mixed;
+
+    /**
+     * Transform each item in the slice of items using a callback.
+     *
+     * @template TMapValue
+     *
+     * @param  callable(TValue, TKey): TMapValue  $callback
+     * @return $this
+     *
+     * @phpstan-this-out static<TKey, TMapValue>
+     */
+    public function through(callable $callback);
 }
 
 /**
@@ -71,6 +83,18 @@ abstract class AbstractCursorPaginator implements \Illuminate\Contracts\Support\
      * @return TValue|null
      */
     public function offsetGet($key): mixed;
+
+    /**
+     * Transform each item in the slice of items using a callback.
+     *
+     * @template TMapValue
+     *
+     * @param  callable(TValue, TKey): TMapValue  $callback
+     * @return $this
+     *
+     * @phpstan-this-out static<TKey, TMapValue>
+     */
+    public function through(callable $callback);
 }
 
 /**
