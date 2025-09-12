@@ -27,6 +27,7 @@ use function in_array;
 use function is_dir;
 use function json_decode;
 use function lang_path;
+use function str_contains;
 use function strlen;
 
 use const DIRECTORY_SEPARATOR;
@@ -111,7 +112,7 @@ final class NoMissingTranslationsRule implements Rule
 
         foreach ($usedTranslations as $file => $translations) {
             foreach ($translations as [$translation, $line]) {
-                if (in_array($translation, $availableTranslations, true)) {
+                if (in_array($translation, $availableTranslations, true) || str_contains($translation, '::')) {
                     continue;
                 }
 
