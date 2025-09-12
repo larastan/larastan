@@ -6,6 +6,7 @@ namespace Larastan\Larastan\Support;
 
 use Illuminate\Filesystem\Filesystem as BaseFilesystem;
 
+/** @internal */
 final class Filesystem extends BaseFilesystem
 {
 }
