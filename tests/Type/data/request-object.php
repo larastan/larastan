@@ -18,9 +18,9 @@ function test(Request $request): void
     assertType('(object|string|null)', $request->route('foo'));
     assertType('(object|string)', $request->route('foo', 'bar'));
 
-    assertType('array<string, string>', $request->server());
-    assertType('string|null', $request->server('foo'));
-    assertType('5|string', $request->server('foo', 5));
+    assertType('array<string, float|int|list<string>|string>', $request->server());
+    assertType('float|int|list<string>|string|null', $request->server('foo'));
+    assertType('float|int|list<string>|string', $request->server('foo', 5));
 
     assertType('array', $request->post());
     assertType('(array|string|null)', $request->post('foo'));
