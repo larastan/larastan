@@ -32,6 +32,8 @@ class Translation
         Lang::choice('messages.test', 1);
 
         __('foo bar baz');
+        __('messages');
+        __('messages.nested');
         __('messages.nested.key');
 
         Lang::get('sub/lines.greeting');

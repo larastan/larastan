@@ -69,7 +69,7 @@ class NoMissingTranslationsRuleTest extends RuleTestCase
             ],
             [
                 'Translation "sub/lines.farewell" has not been found.',
-                38,
+                40,
             ],
         ]);
     }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Rules;
 
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Larastan\Larastan\Collectors\UsedTranslationFacadeCollector;
 use Larastan\Larastan\Collectors\UsedTranslationFunctionCollector;
@@ -24,6 +23,7 @@ use function array_keys;
 use function array_map;
 use function array_merge;
 use function in_array;
+use function is_array;
 use function is_dir;
 use function json_decode;
 use function lang_path;
@@ -78,18 +78,20 @@ final class NoMissingTranslationsRule implements Rule
                         ->slice(1, -1) // Trim locale and filename
                         ->join('/');
 
-                    $key = strlen($prefix) > 0
+                    $root = strlen($prefix) > 0
                         ? $prefix . '/' . $file->getFilenameWithoutExtension()
                         : $file->getFilenameWithoutExtension();
 
-                    $translations = Arr::dot([
-                        $key => $this->filesystem->getRequire($file->getPathname()),
-                    ]);
+                    $array = $this->filesystem->getRequire($file->getPathname());
+
+                    $translations = array_merge([$root], $this->keys($array, $root));
                 } elseif ($file->getExtension() === 'json') {
-                    $translations = json_decode($this->filesystem->get($file->getPathname()), true);
+                    $translations = array_keys(
+                        json_decode($this->filesystem->get($file->getPathname()), true),
+                    );
                 }
 
-                return array_keys($translations);
+                return $translations;
             }, $files);
 
             $availableTranslations = array_merge($availableTranslations, ...$translations);
@@ -124,5 +126,29 @@ final class NoMissingTranslationsRule implements Rule
         }
 
         return $errors;
+    }
+
+    /**
+     * @param array<string, mixed> $array
+     *
+     * @return string[]
+     */
+    protected function keys(array $array, string $prefix): array
+    {
+        $results = [];
+
+        foreach ($array as $key => $value) {
+            $newKey = $prefix . '.' . $key;
+
+            $results[] = $newKey;
+
+            if (! is_array($value)) {
+                continue;
+            }
+
+            $results = array_merge($results, $this->keys($value, $newKey));
+        }
+
+        return $results;
     }
 }
