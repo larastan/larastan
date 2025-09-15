@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use Larastan\Larastan\Reflection\AnnotationScopeMethodParameterReflection;
 use Larastan\Larastan\Reflection\DynamicWhereParameterReflection;
 use Larastan\Larastan\Reflection\EloquentBuilderMethodReflection;
@@ -283,12 +284,17 @@ class BuilderHelper
 
     /**
      * @throws MissingMethodFromReflectionException
-     * @throws ShouldNotHappenException
+     * @throws InvalidArgumentException
      */
     public function determineBuilderName(string $modelClassName): string
     {
         $modelReflection = $this->reflectionProvider->getClass($modelClassName);
-        $method          = $modelReflection->getNativeMethod('newEloquentBuilder');
+
+        if (! $modelReflection->is(Model::class)) {
+            throw new InvalidArgumentException($modelClassName . ' is not a Model.');
+        }
+
+        $method = $modelReflection->getNativeMethod('newEloquentBuilder');
 
         if ($method->getDeclaringClass()->getName() === Model::class) {
             $attrs = $modelReflection->getNativeReflection()->getAttributes('Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder'); //@phpstan-ignore argument.type (Attribute class might not exist)
@@ -315,5 +321,34 @@ class BuilderHelper
         }
 
         return $returnType->describe(VerbosityLevel::value());
+    }
+
+    public function determineBuilderClass(string $modelClassName): Type|null
+    {
+        try {
+            $builderClassName = $this->determineBuilderName($modelClassName);
+        } catch (InvalidArgumentException) {
+            return null;
+        }
+
+        $builderReflection = $this->reflectionProvider->getClass($builderClassName);
+
+        if ($builderReflection->isGeneric()) {
+            $typeMap = $builderReflection->getActiveTemplateTypeMap();
+
+            // Specifies only model (TModel parameter)
+            if (($typeMap->count() === 1) && $typeMap->hasType('TModel')) {
+                return new GenericObjectType($builderClassName, [new ObjectType($modelClassName)]);
+            }
+
+            // If it has other generic parameters, we still try to add the model as the first parameter
+            // This handles cases where builders might have additional template parameters
+            if ($typeMap->count() >= 1) {
+                return new GenericObjectType($builderClassName, [new ObjectType($modelClassName)]);
+            }
+        }
+
+        // Not generic. So return the type as is
+        return new ObjectType($builderClassName);
     }
 }
