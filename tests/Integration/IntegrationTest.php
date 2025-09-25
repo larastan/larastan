@@ -44,8 +44,8 @@ class IntegrationTest extends PHPStanTestCase
                 26 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::orWhere() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
                 27 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::orWhere() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, array{foo: \'foo\'} given.'],
                 30 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::value() expects Illuminate\Contracts\Database\Query\Expression|model property of App\User, string given.'],
-                35 => ['Parameter #1 $columns of method Illuminate\Database\Eloquent\Builder<App\User>::first() expects array<int, Illuminate\Contracts\Database\Query\Expression|model property of App\User>|Illuminate\Contracts\Database\Query\Expression|model property of App\User, array<int, string> given.'],
-                36 => ['Parameter #1 $columns of method Illuminate\Database\Eloquent\Builder<App\User>::first() expects array<int, Illuminate\Contracts\Database\Query\Expression|model property of App\User>|Illuminate\Contracts\Database\Query\Expression|model property of App\User, string given.'],
+                35 => ['Parameter #1 $columns of method Illuminate\Database\Eloquent\Builder<App\User>::first() expects \'*\'|array<int, \'*\'|Illuminate\Contracts\Database\Query\Expression|model property of App\User>|Illuminate\Contracts\Database\Query\Expression|model property of App\User, array{\'foo\', \'bar\'} given.'],
+                36 => ['Parameter #1 $columns of method Illuminate\Database\Eloquent\Builder<App\User>::first() expects \'*\'|array<int, \'*\'|Illuminate\Contracts\Database\Query\Expression|model property of App\User>|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
                 39 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::where() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'roles.foo\' given.'],
             ],
         ];
@@ -90,6 +90,15 @@ class IntegrationTest extends PHPStanTestCase
                 14 => ['Parameter #1 $attributes of static method Illuminate\Database\Eloquent\Builder<App\User>::create() expects array<model property of App\User, mixed>, array<string, string> given.'],
                 26 => ['Parameter #1 $attributes of static method Illuminate\Database\Eloquent\Builder<ModelPropertyStaticCall\ModelPropertyStaticCallsInClass>::create() expects array<model property of ModelPropertyStaticCall\ModelPropertyStaticCallsInClass, mixed>, array<string, string> given.'],
                 34 => ['Parameter #1 $attributes of static method Illuminate\Database\Eloquent\Builder<ModelPropertyStaticCall\ModelPropertyStaticCallsInClass>::create() expects array<model property of ModelPropertyStaticCall\ModelPropertyStaticCallsInClass, mixed>, array<string, string> given.'],
+            ],
+        ];
+
+        yield [
+            __DIR__ . '/data/collection-of-type.php',
+            [
+                36 => ['Parameter #1 $accounts of method CollectionOfType\CollectionOfTypeTest::acceptsAccountCollection() expects App\AccountCollection<int, App\Account>, Illuminate\Database\Eloquent\Collection<int, App\User> given.'],
+                39 => ['Parameter #1 $users of method CollectionOfType\CollectionOfTypeTest::acceptsUserCollection() expects Illuminate\Database\Eloquent\Collection<int, App\User>, App\AccountCollection<int, App\Account> given.'],
+                69 => ['Parameter #1 $collection of method CollectionOfType\GenericTest::acceptsAccountCollection() expects App\AccountCollection<(int|string), App\Account>, Illuminate\Database\Eloquent\Collection<int, App\User> given.'],
             ],
         ];
 

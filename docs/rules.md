@@ -397,6 +397,46 @@ parameters:
 - `@includeWhen` Blade directive.
 - `@includeFirst` Blade directive.
 
+## NoMissingTranslationsRule
+
+This rule will find any untranslated strings in your application. It is primarily meant for applications that make use of the dot syntax like `messages.greet`. If you're using translation strings as keys, this rule may be unnecessary. Enabling this rule may decrease performance as it will scan the available views and translations.
+
+Translations from vendors like `vendor::key` will not be checked.
+
+> **NOTE**: If you store your translations in a database, this rule will not be able to detect them. You should leave this rule disabled in such cases.
+
+### Examples
+
+For the following code:
+```php
+__('messages.greet')
+```
+
+Larastan may report the following error:
+```
+Translation "messages.greet" has not been found.
+```
+
+### Configuration
+
+This rule is disabled by default.
+To enable, add the following to your `phpstan.neon` file:
+
+```neon
+parameters:
+    checkMissingTranslations: true
+```
+
+By default, the path `resources/lang` is scanned. If you have translations elsewhere, make sure to register all the paths.
+
+```neon
+parameters:
+    checkMissingTranslations: true
+    translationDirectories:
+        - resources/lang
+        - resources/translations
+```
+
 ## NoEnvCallsOutsideOfConfig
 
 Checks for `env` calls outside the `config` directory, which return `null` when the config is cached.
@@ -467,6 +507,71 @@ To disable, add the following to your `phpstan.neon` file:
 ```neon
 parameters:
     checkModelAppends: false
+```
+
+## NoPublicModelScopeAndAccessorRule
+
+Ensures Eloquent model local query scopes and attribute accessors are not part of the public API. 
+Local scopes and attribute accessors should be declared `protected`.
+
+### Examples
+
+Public local scope method:
+
+```php
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class User extends Model
+{
+    // ❌ Should be protected
+    public function scopeActive(Builder $query): void
+    {
+        $query->where('active', true);
+    }
+}
+```
+
+Will result in the following error:
+
+```
+Local query scope method 'scopeActive' should be declared as protected.
+```
+
+Public accessor returning `Attribute`:
+
+```php
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Model;
+
+class User extends Model
+{
+    // ❌ Should be protected
+    public function fullName(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, $attributes) => $attributes['first_name'].' '.$attributes['last_name'],
+        );
+    }
+}
+```
+
+Will result in the following error:
+
+```
+Model accessor method 'fullName' should be declared as protected.
+```
+
+Fix by changing the visibility to `protected` in both cases.
+
+### Configuration
+
+This rule is disabled by default.
+To enable, add the following to your `phpstan.neon` file:
+
+```neon
+parameters:
+    checkModelMethodVisibility: true
 ```
 
 ## NoAuthFacadeInRequestScopeRule and NoAuthHelperInRequestScopeRule
@@ -558,4 +663,3 @@ This rule is disabled by default. To enable, add the following to your `phpstan.
 parameters:
     checkConfigTypes: true
 ```
-

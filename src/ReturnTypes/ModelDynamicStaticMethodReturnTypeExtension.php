@@ -57,10 +57,6 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
             return false;
         }
 
-        if (in_array($name, ['get', 'hydrate', 'fromQuery'], true)) {
-            return true;
-        }
-
         return $this->reflectionProvider->getClass(Model::class)->hasNativeMethod($name);
     }
 

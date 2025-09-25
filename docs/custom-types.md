@@ -45,3 +45,59 @@ All of the Laravel core methods have this type thanks to the stubs. So whenever 
 
 The actual check is done by the `ModelPropertyRule`. You can read the details [here](rules.md#ModelPropertyRule).
 
+## collection-of
+
+The `collection-of<Model>` type resolves to the appropriate collection class for a given Eloquent model. This is useful when you want to type-hint that a method returns or accepts a collection of specific model instances.
+
+Larastan automatically determines the correct collection type:
+- If the model has a custom collection (via `newCollection()` method or `CollectedBy` attribute), it resolves to that collection
+- Otherwise, it resolves to `Illuminate\Database\Eloquent\Collection<int, Model>`
+
+**Example:**
+
+```php
+use App\User;
+use App\Post;
+use Illuminate\Database\Eloquent\Collection;
+
+/**
+ * @phpstan-return collection-of<User>
+ */
+function getActiveUsers(): Collection
+{
+    return User::where('active', true)->get();
+}
+
+/**
+ * @phpstan-param collection-of<Post> $posts
+ */
+function publishPosts(Collection $posts): void
+{
+    $posts->each(fn ($post) => $post->publish());
+}
+```
+
+If `User` has a custom `UserCollection`, `collection-of<User>` will resolve to `UserCollection<int, User>`. 
+If `Post` uses the standard Eloquent collection, `collection-of<Post>` will resolve to `Illuminate\Database\Eloquent\Collection<int, Post>`.
+
+**Template Support:**
+
+The `collection-of` type also works with generic templates:
+
+```php
+/**
+ * @template TModel of \Illuminate\Database\Eloquent\Model
+ */
+class ModelRepository
+{
+    /**
+     * @phpstan-param class-string<TModel> $modelClass
+     * @phpstan-return collection-of<TModel>
+     */
+    public function findAll(string $modelClass): Collection
+    {
+        return $modelClass::all();
+    }
+}
+```
+

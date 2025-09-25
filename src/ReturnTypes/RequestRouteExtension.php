@@ -48,6 +48,10 @@ final class RequestRouteExtension implements DynamicMethodReturnTypeExtension
             $defaultType = new NullType();
         }
 
+        if ($defaultType->isCallable()->yes()) {
+            $defaultType = $defaultType->getCallableParametersAcceptors($scope)[0]->getReturnType();
+        }
+
         return TypeUtils::toBenevolentUnion(TypeCombinator::union(
             new ObjectWithoutClassType(),
             new StringType(),

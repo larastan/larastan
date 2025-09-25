@@ -48,7 +48,7 @@ class Builder
      * Create a collection of models from plain arrays.
      *
      * @param  array<mixed>  $items
-     * @phpstan-return \Illuminate\Database\Eloquent\Collection<int, TModel>
+     * @phpstan-return collection-of<TModel>
      */
     public function hydrate(array $items);
 
@@ -57,7 +57,7 @@ class Builder
      *
      * @param  string  $query
      * @param  array<mixed>  $bindings
-     * @phpstan-return \Illuminate\Database\Eloquent\Collection<int, TModel>
+     * @phpstan-return collection-of<TModel>
      */
     public function fromQuery($query, $bindings = []);
 
@@ -66,7 +66,7 @@ class Builder
      *
      * @param  mixed  $id
      * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
-     * @phpstan-return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TModel> : TModel|null)
+     * @phpstan-return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? collection-of<TModel> : TModel|null)
      */
     public function find($id, $columns = ['*']);
 
@@ -75,7 +75,7 @@ class Builder
      *
      * @param  \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>  $ids
      * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
-     * @phpstan-return \Illuminate\Database\Eloquent\Collection<int, TModel>
+     * @phpstan-return collection-of<TModel>
      */
     public function findMany($ids, $columns = ['*']);
 
@@ -84,7 +84,7 @@ class Builder
      *
      * @param  mixed  $id
      * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
-     * @phpstan-return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TModel> : TModel)
+     * @phpstan-return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? collection-of<TModel> : TModel)
      *
      * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TModel>
      */
@@ -95,7 +95,7 @@ class Builder
      *
      * @param  mixed  $id
      * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
-     * @phpstan-return ($id is array ? \Illuminate\Database\Eloquent\Collection<int, TModel> : TModel)
+     * @phpstan-return ($id is array ? collection-of<TModel> : TModel)
      */
     public function findOrNew($id, $columns = ['*']);
 
@@ -260,7 +260,7 @@ class Builder
      * Execute the query as a "select" statement.
      *
      * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
-     * @phpstan-return \Illuminate\Database\Eloquent\Collection<int, TModel>
+     * @phpstan-return collection-of<TModel>
      */
     public function get($columns = ['*']);
 
@@ -392,7 +392,7 @@ class Builder
      * Gets the result of a query in chunks.
      *
      * @param  int  $count
-     * @param  callable(\Illuminate\Database\Eloquent\Collection<int, TModel>, int): mixed $callback
+     * @param  callable(collection-of<TModel>, int): mixed $callback
      * @return bool
      */
     public function chunk($count, $callback);
@@ -401,7 +401,7 @@ class Builder
      * Chunk the results of a query by comparing IDs.
      *
      * @param  int  $count
-     * @param  callable(\Illuminate\Database\Eloquent\Collection<int, TModel>, int): mixed  $callback
+     * @param  callable(collection-of<TModel>, int): mixed  $callback
      * @param  string|null  $column
      * @param  string|null  $alias
      * @return bool

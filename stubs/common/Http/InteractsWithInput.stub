@@ -30,7 +30,7 @@ trait InteractsWithInput
      * @template TDefault
      * @param  string|null  $key
      * @param  TDefault  $default
-     * @return ($key is null ? array<string, string> : string|TDefault)
+     * @return ($key is null ? array<string, float|int|list<string>|string> : float|int|list<string>|string|TDefault)
      */
     public function server($key = null, $default = null);
 }
