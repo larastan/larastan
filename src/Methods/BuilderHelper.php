@@ -112,7 +112,7 @@ class BuilderHelper
                             continue;
                         }
 
-                        $trinaryLogic = $trinaryLogic->and($modelType->hasProperty(Str::snake($segment)));
+                        $trinaryLogic = $trinaryLogic->and($modelType->hasInstanceProperty(Str::snake($segment)));
                     }
 
                     if (! $trinaryLogic->yes()) {
