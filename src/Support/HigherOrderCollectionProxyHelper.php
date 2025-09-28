@@ -57,7 +57,7 @@ class HigherOrderCollectionProxyHelper
             return $valueType->hasMethod($name)->yes();
         }
 
-        return $valueType->hasProperty($name)->yes();
+        return $valueType->hasInstanceProperty($name)->yes();
     }
 
     public function determineReturnType(string $name, Type\Type $valueType, Type\Type $methodOrPropertyReturnType, string $collectionType): Type\Type
