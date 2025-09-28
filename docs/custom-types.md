@@ -101,3 +101,59 @@ class ModelRepository
 }
 ```
 
+## builder-of
+
+The `builder-of<Model>` type resolves to the appropriate Eloquent builder class for a given Eloquent model.
+
+Larastan automatically determines the correct builder type:
+- If the model has a custom builder (via `newEloquentBuilder()` method or `UseEloquentBuilder` attribute), it resolves to that builder class
+- Otherwise, it resolves to `Illuminate\Database\Eloquent\Builder<Model>`
+
+**Example:**
+
+```php
+use App\User;
+use App\Post;
+use Illuminate\Database\Eloquent\Builder;
+
+/**
+ * @phpstan-return builder-of<User>
+ */
+function getActiveUsers(): Builder
+{
+    return User::where('active', true)->query();
+}
+
+/**
+ * @phpstan-param builder-of<Post> $posts
+ */
+function publishPosts(Builder $postQuery): void
+{
+    $postQuery->where('foo', 'bar')->get()->each(fn ($post) => $post->publish());
+}
+```
+
+**Template Support:**
+
+The `builder-of` type also works with generic templates:
+
+```php
+
+use Illuminate\Database\Eloquent\Builder;
+
+/**
+ * @template TModel of \Illuminate\Database\Eloquent\Model
+ */
+class ModelRepository
+{
+    /**
+     * @phpstan-param class-string<TModel> $modelClass
+     * @phpstan-return builder-of<TModel>
+     */
+    public function getQuery(string $modelClass): Builder
+    {
+        return $modelClass::query();
+    }
+}
+```
+

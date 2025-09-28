@@ -103,6 +103,16 @@ class IntegrationTest extends PHPStanTestCase
         ];
 
         yield [
+            __DIR__ . '/data/builder-of-type.php',
+            [
+                44 => ['Parameter #1 $accountQuery of method BuilderOfType\BuilderOfTypeTest::acceptsAccountBuilder() expects Illuminate\Database\Eloquent\Builder<App\Account>, Illuminate\Database\Eloquent\Builder<App\User> given.'],
+                47 => ['Parameter #1 $userQuery of method BuilderOfType\BuilderOfTypeTest::acceptsUserBuilder() expects Illuminate\Database\Eloquent\Builder<App\User>, Illuminate\Database\Eloquent\Builder<App\Account> given.'],
+                50 => ['Parameter #1 $userQuery of method BuilderOfType\BuilderOfTypeTest::acceptsUserBuilder() expects Illuminate\Database\Eloquent\Builder<App\User>, App\ChildTeamBuilder given.'],
+                89 => ['Parameter #1 $builder of method BuilderOfType\GenericTest::acceptsAccountBuilder() expects Illuminate\Database\Eloquent\Builder<App\Account>, Illuminate\Database\Eloquent\Builder<App\User> given.'],
+            ],
+        ];
+
+        yield [
             __DIR__ . '/data/model-property-mutator-and-casting.php',
             [
                 24 => ['Parameter #1 $lineOne of class ModelPropertyMutatorAndCasting\Address constructor expects string, mixed given.'],

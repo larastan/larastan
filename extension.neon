@@ -448,6 +448,11 @@ services:
             - phpstan.phpDoc.typeNodeResolverExtension
 
     -
+        class: Larastan\Larastan\Types\BuilderOf\BuilderOfTypeNodeResolverExtension
+        tags:
+            - phpstan.phpDoc.typeNodeResolverExtension
+
+    -
         class: Larastan\Larastan\Properties\MigrationHelper
         arguments:
             databaseMigrationPath: %databaseMigrationsPath%

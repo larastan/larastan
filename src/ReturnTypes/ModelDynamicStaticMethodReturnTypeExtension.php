@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use Larastan\Larastan\Methods\BuilderHelper;
 use Larastan\Larastan\Support\CollectionHelper;
 use PhpParser\Node\Expr\StaticCall;
@@ -78,6 +79,10 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
             if ($methodCall->class instanceof Name) {
                 $type = $scope->resolveTypeByName($methodCall->class);
 
+                if (! (new ObjectType(Model::class))->isSuperTypeOf($type)->yes()) {
+                    return null;
+                }
+
                 return new GenericObjectType(
                     $this->builderHelper->determineBuilderName($scope->resolveName($methodCall->class)),
                     [$type instanceof ThisType ? $type->getStaticObjectType() : $type],
@@ -104,7 +109,7 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
                         $this->builderHelper->determineBuilderName($className),
                         [new ObjectType($className)],
                     );
-                } catch (MissingMethodFromReflectionException) {
+                } catch (MissingMethodFromReflectionException | InvalidArgumentException) {
                 }
             }
 
