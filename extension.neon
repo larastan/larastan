@@ -455,6 +455,19 @@ services:
             parser: @currentPhpVersionSimpleDirectParser
             reflectionProvider: @reflectionProvider
 
+    iamcalSqlParser:
+        class: Larastan\Larastan\SQL\IamcalSqlParser
+        autowired: false
+
+    sqlParserFactory:
+        class: Larastan\Larastan\SQL\SqlParserFactory
+        arguments:
+            iamcalSqlParser: @iamcalSqlParser
+
+    sqlParser:
+        type: Larastan\Larastan\SQL\SqlParser
+        factory: [@sqlParserFactory, create]
+
     -
         class: Larastan\Larastan\Properties\SquashedMigrationHelper
         arguments:

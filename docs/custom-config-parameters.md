@@ -49,8 +49,10 @@ parameters:
 
 ### PostgreSQL
 
-The package used to parse the schema dumps, [iamcal/sql-parser](https://github.com/iamcal/sql-parser), is primarily focused on the MySQL dialect.
+The default package used to parse the schema dumps, [iamcal/sql-parser](https://github.com/iamcal/sql-parser), is primarily focused on the MySQL dialect.
 It can read (or rather, try to read) PostgreSQL dumps provided they are in the *plain text (and not the 'custom') format*, but the mileage may vary as problems have been noted with timestamp columns and lengthy parse time on more complicated dumps.
+
+If you install [phpmyadmin/sql-parser](https://github.com/phpmyadmin/sql-parser) (tested with `^5.9`), Larastan will automatically switch to that parser at runtime with no additional configuration. When the package is missing or cannot be loaded, Larastan silently falls back to the bundled parser. If the switch does not occur, verify that Composer autoloads have been regenerated (`composer dump-autoload`) and that only one version of `phpmyadmin/sql-parser` is present in your dependency tree.
 
 The viable options for PostgreSQL at the moment are:
 1. Use the [laravel-ide-helper](https://github.com/barryvdh/laravel-ide-helper) package to write PHPDocs directly to the Models. 

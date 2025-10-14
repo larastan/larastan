@@ -72,3 +72,32 @@ jobs:
           version="${{ matrix.laravel }}"
           version="${version%%.*}.0"
           tests/laravel-test.sh "$version"
+
+  tests-phpmyadmin:
+    name: "With PHPMyAdmin parser"
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout code"
+        uses: "actions/checkout@v4"
+
+      - name: "Setup PHP"
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "8.3"
+          extensions: "dom, curl, libxml, mbstring, zip, fileinfo"
+          tools: "composer:v2"
+          coverage: "none"
+
+      - name: "Check Composer configuration"
+        run: "composer validate"
+
+      - name: "Install dependencies"
+        run: |
+          composer require --dev phpmyadmin/sql-parser:^5.9 --no-interaction --no-progress
+
+      - name: "Check PSR-4 mapping"
+        run: "composer dump-autoload --optimize --strict-psr"
+
+      - name: "Execute unit tests"
+        run: "composer run-script test:unit"

@@ -97,6 +97,66 @@ parameters:
 			path: src/Rules/UselessConstructs/NoUselessWithFunctionCallsRule.php
 
 		-
+			rawMessage: Access to property $name on an unknown class PhpMyAdmin\SqlParser\Components\CreateDefinition.
+			identifier: class.notFound
+			count: 2
+			path: src/SQL/PhpMyAdminSqlParser.php
+
+		-
+			rawMessage: Access to property $name on an unknown class PhpMyAdmin\SqlParser\Statements\CreateStatement.
+			identifier: class.notFound
+			count: 1
+			path: src/SQL/PhpMyAdminSqlParser.php
+
+		-
+			rawMessage: Access to property $options on an unknown class PhpMyAdmin\SqlParser\Components\CreateDefinition.
+			identifier: class.notFound
+			count: 1
+			path: src/SQL/PhpMyAdminSqlParser.php
+
+		-
+			rawMessage: Access to property $statements on an unknown class PhpMyAdmin\SqlParser\Parser.
+			identifier: class.notFound
+			count: 1
+			path: src/SQL/PhpMyAdminSqlParser.php
+
+		-
+			rawMessage: Access to property $type on an unknown class PhpMyAdmin\SqlParser\Components\CreateDefinition.
+			identifier: class.notFound
+			count: 2
+			path: src/SQL/PhpMyAdminSqlParser.php
+
+		-
+			rawMessage: Caught class PhpMyAdmin\SqlParser\Exceptions\ParserException not found.
+			identifier: class.notFound
+			count: 1
+			path: src/SQL/PhpMyAdminSqlParser.php
+
+		-
+			rawMessage: Class PhpMyAdmin\SqlParser\Components\CreateDefinition not found.
+			identifier: class.notFound
+			count: 1
+			path: src/SQL/PhpMyAdminSqlParser.php
+
+		-
+			rawMessage: Class PhpMyAdmin\SqlParser\Statements\CreateStatement not found.
+			identifier: class.notFound
+			count: 1
+			path: src/SQL/PhpMyAdminSqlParser.php
+
+		-
+			rawMessage: Instantiated class PhpMyAdmin\SqlParser\Parser not found.
+			identifier: class.notFound
+			count: 1
+			path: src/SQL/PhpMyAdminSqlParser.php
+
+		-
+			rawMessage: 'Parameter $definition of method Larastan\Larastan\SQL\PhpMyAdminSqlParser::isNullable() has invalid type PhpMyAdmin\SqlParser\Components\CreateDefinition.'
+			identifier: class.notFound
+			count: 1
+			path: src/SQL/PhpMyAdminSqlParser.php
+
+		-
 			rawMessage: Implementing PHPStan\Type\CompoundType is not covered by backward compatibility promise. The interface might change in a minor PHPStan version.
 			identifier: phpstanApi.interface
 			count: 1

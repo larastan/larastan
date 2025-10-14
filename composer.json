@@ -34,7 +34,8 @@
         "phpunit/phpunit": "^10.5.35 || ^11.5.15"
     },
     "suggest": {
-        "orchestra/testbench": "Using Larastan for analysing a package needs Testbench"
+        "orchestra/testbench": "Using Larastan for analysing a package needs Testbench",
+        "phpmyadmin/sql-parser": "Install to enable Larastan's optional phpMyAdmin-based SQL parser automatically"
     },
     "autoload-dev": {
         "psr-4": {
