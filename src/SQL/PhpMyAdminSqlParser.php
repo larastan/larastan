@@ -18,7 +18,7 @@ final class PhpMyAdminSqlParser implements SqlParser
     public function parseTables(string $sql): array
     {
         try {
-            $parser = new Parser($sql);
+            $parser = new Parser($sql, true);
         } catch (ParserException $exception) {
             throw SqlParserFailure::create('Failed to parse SQL schema with phpmyadmin/sql-parser.', $exception);
         }
