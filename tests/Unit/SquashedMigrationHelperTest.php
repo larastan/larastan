@@ -6,7 +6,6 @@ namespace Tests\Unit;
 
 use Larastan\Larastan\Properties\Schema\MySqlDataTypeToPhpTypeConverter;
 use Larastan\Larastan\Properties\SquashedMigrationHelper;
-use Larastan\Larastan\SQL\IamcalSqlParser;
 use PHPStan\File\FileHelper;
 use PHPStan\Testing\PHPStanTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -24,7 +23,7 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
             [__DIR__ . '/data/schema/basic_schema'],
             self::getContainer()->getByType(FileHelper::class),
             new MySqlDataTypeToPhpTypeConverter(),
-            new IamcalSqlParser(),
+            self::getContainer()->getService('sqlParser'),
             false,
         );
 
@@ -49,7 +48,7 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
             [__DIR__ . '/data/schema/multiple_schemas_for_same_table'],
             self::getContainer()->getByType(FileHelper::class),
             new MySqlDataTypeToPhpTypeConverter(),
-            new IamcalSqlParser(),
+            self::getContainer()->getService('sqlParser'),
             false,
         );
 
@@ -74,7 +73,7 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
             [__DIR__ . '/data/schema/basic_schema_with_sql_extension'],
             self::getContainer()->getByType(FileHelper::class),
             new MySqlDataTypeToPhpTypeConverter(),
-            new IamcalSqlParser(),
+            self::getContainer()->getService('sqlParser'),
             false,
         );
 
@@ -99,7 +98,7 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
             [__DIR__ . '/data/schema/multiple_schemas_with_different_extensions'],
             self::getContainer()->getByType(FileHelper::class),
             new MySqlDataTypeToPhpTypeConverter(),
-            new IamcalSqlParser(),
+            self::getContainer()->getService('sqlParser'),
             false,
         );
 
@@ -133,12 +132,18 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
             [__DIR__ . '/data/schema/multiple_schemas_with_different_extensions'],
             self::getContainer()->getByType(FileHelper::class),
             new MySqlDataTypeToPhpTypeConverter(),
-            new IamcalSqlParser(),
+            self::getContainer()->getService('sqlParser'),
             true,
         );
 
         $tables = $schemaParser->initializeTables();
 
         $this->assertSame([], $tables);
+    }
+
+    /** @return string[] */
+    public static function getAdditionalConfigFiles(): array
+    {
+        return [__DIR__ . '/../phpstan-tests.neon'];
     }
 }
