@@ -25,6 +25,7 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\ClosureTypeFactory;
 use ReflectionException;
+use ReflectionFunction;
 use Throwable;
 
 use function array_key_exists;
@@ -167,9 +168,9 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
                         $macroClassReflection,
                         $methodName,
                         $this->closureTypeFactory->fromClosureObject($macroDefinition),
+                        /** @phpstan-ignore phpstanApi.runtimeReflection */
+                        (new ReflectionFunction($macroDefinition))->isStatic(),
                     );
-
-                    $methodReflection->setIsStatic(true);
                 }
 
                 $this->methods[$classReflection->getName() . '-' . $methodName] = $methodReflection;

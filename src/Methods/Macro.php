@@ -20,11 +20,6 @@ use function array_key_exists;
 final class Macro implements MethodReflection
 {
     /**
-     * The is static.
-     */
-    private bool $isStatic = false;
-
-    /**
      * Map of macro methods and thrown exception classes.
      *
      * @var string[]
@@ -34,7 +29,7 @@ final class Macro implements MethodReflection
         'validateWithBag' => ValidationException::class,
     ];
 
-    public function __construct(private ClassReflection $classReflection, private string $methodName, private ClosureType $closureType)
+    public function __construct(private ClassReflection $classReflection, private string $methodName, private ClosureType $closureType, private bool $isStatic = false)
     {
     }
 
@@ -66,14 +61,6 @@ final class Macro implements MethodReflection
     public function isStatic(): bool
     {
         return $this->isStatic;
-    }
-
-    /**
-     * Set the is static value.
-     */
-    public function setIsStatic(bool $isStatic): void
-    {
-        $this->isStatic = $isStatic;
     }
 
     public function getDocComment(): string|null

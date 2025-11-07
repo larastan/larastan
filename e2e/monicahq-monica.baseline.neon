@@ -1,16 +1,7 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Parameter \\#1 \\$address of static method App\\\\Helpers\\\\MapHelper\\:\\:getMapLink\\(\\) expects App\\\\Models\\\\Address, Illuminate\\\\Database\\\\Eloquent\\\\Model given\\.$#"
+			message: '#^Static call to instance method Illuminate\\Support\\Str\:\:markdownExternalLink\(\)\.$#'
+			identifier: method.staticCall
 			count: 1
-			path: ../../e2e/app/Domains/Contact/ManageContactFeed/Web/ViewHelpers/Actions/ActionFeedAddress.php
-
-		-
-			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany\\<App\\\\Models\\\\Contact, App\\\\Models\\\\Vault\\>\\:\\:unsearchable\\(\\)\\.$#"
-			count: 1
-			path: ../../e2e/app/Models/Vault.php
-
-		-
-			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany\\<App\\\\Models\\\\Note, App\\\\Models\\\\Contact\\>\\:\\:unsearchable\\(\\)\\.$#"
-			count: 1
-			path: ../../e2e/app/Models/Vault.php
+			path: ../../e2e/app/Http/Middleware/HandleInertiaRequests.php
