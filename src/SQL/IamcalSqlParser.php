@@ -65,8 +65,6 @@ final class IamcalSqlParser implements SqlParser
 
     /**
      * @param array<string, mixed> $field
-     * 
-     * @return bool
      */
     private function isNullable(array $field): bool
     {
