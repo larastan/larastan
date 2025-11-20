@@ -559,6 +559,8 @@ final class SchemaAggregator
             case 'datetimetz':
             case 'date':
             case 'datetime':
+            case 'foreignulid':
+            case 'foreignuuid':
             case 'ipaddress':
             case 'json':
             case 'jsonb':
