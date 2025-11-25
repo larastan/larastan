@@ -258,7 +258,7 @@ Here is an example:
  * @return array{
  *   is_admin: 'boolean',
  *   meta: 'array',
- *   role: '\App\Enums\Role::class'
+ *   role: '\App\Enums\Role'
  * }
  */
 public function casts(): array
