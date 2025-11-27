@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Importer;
 use Illuminate\Auth\RequestGuard;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Database\Eloquent\Builder;
@@ -35,6 +36,8 @@ Str::macro('asciiAliasMacro', Str::class . '::ascii');
 
 
 Cache::macro('rememberIf', static fn ($cond, $key, $ttl, $callback): mixed => $cond ? Cache::remember($key, $ttl, $callback) : $callback());
+
+Importer::macro('foo', fn () => $this);
 
 class CustomCollectionMacro
 {

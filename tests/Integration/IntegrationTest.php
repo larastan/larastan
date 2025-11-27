@@ -37,6 +37,7 @@ class IntegrationTest extends PHPStanTestCase
         yield [__DIR__ . '/data/model-factories.php'];
         yield [__DIR__ . '/data/blade-view.php'];
         yield [__DIR__ . '/data/helpers.php'];
+        yield [__DIR__ . '/data/facade-static-call.php', [9 => ['Static call to instance method App\Facades\Importer::facadeMethod().']]];
 
         yield [
             __DIR__ . '/data/model-property-builder.php',

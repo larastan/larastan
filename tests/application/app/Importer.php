@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace App;
 
 use Illuminate\Support\Str;
+use Illuminate\Support\Traits\Macroable;
 
 class Importer
 {
+    use Macroable;
+
     /** @var bool */
     public $isImported;
 
