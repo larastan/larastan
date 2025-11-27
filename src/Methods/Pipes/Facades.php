@@ -6,7 +6,6 @@ namespace Larastan\Larastan\Methods\Pipes;
 
 use Closure;
 use Illuminate\Support\Facades\Facade;
-use Illuminate\Support\Str;
 use Larastan\Larastan\Contracts\Methods\PassableContract;
 use Larastan\Larastan\Contracts\Methods\Pipes\PipeContract;
 use Larastan\Larastan\Reflection\ReflectionHelper;
