@@ -2,7 +2,7 @@
 
 namespace Illuminate\Database\Eloquent\Concerns;
 
-/** @phpstan-require-extends Model */
+/** @phpstan-require-extends \Illuminate\Database\Eloquent\Model */
 trait HasEvents
 {
     /**
