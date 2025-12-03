@@ -48,4 +48,6 @@ function test(): void
 
     assertType('string', DummyFacade::foo());
     assertType('int', DummyFacade::bar());
+
+    assertType('Illuminate\Support\Collection', Queue::pushed());
 }

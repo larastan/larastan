@@ -6,7 +6,6 @@ namespace Larastan\Larastan\Methods\Pipes;
 
 use Closure;
 use Illuminate\Support\Facades\Facade;
-use Illuminate\Support\Str;
 use Larastan\Larastan\Contracts\Methods\PassableContract;
 use Larastan\Larastan\Contracts\Methods\Pipes\PipeContract;
 use Larastan\Larastan\Reflection\ReflectionHelper;
@@ -51,7 +50,7 @@ final class Facades implements PipeContract
                 }
             }
 
-            if (! $found && Str::startsWith($passable->getMethodName(), 'assert')) {
+            if (! $found) {
                 $fakeFacadeClass = $this->getFake($facadeClass);
 
                 if ($passable->getReflectionProvider()->hasClass($fakeFacadeClass)) {
