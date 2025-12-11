@@ -39,6 +39,8 @@ function test(
     assertType('string', $user->email);
     assertType('array', $user->allowed_ips);
     assertType('numeric-string', $user->floatButRoundedDecimalString);
+    assertType('int<0, max>', $user->unsigned_integer);
+    assertType('int<0, max>', $user->unsigned_integer_method);
 
     // Model Casts
     assertType('int', $user->int);
@@ -86,16 +88,20 @@ function test(
     assertType('int<0, max>', count($user->properties));
     assertType('mixed', $user->properties->first());
     assertType('non-falsy-string|null', $user->deleted_at?->format('d/m/Y'));
-    assertType('int', $address->user_id);
-    assertType('int', $address->custom_foreign_id_for_name);
+    assertType('int<0, max>', $address->user_id);
+    assertType('int<0, max>', $address->custom_foreign_id_for_name);
     assertType('string', $address->address_id);
     assertType('string', $address->nullable_address_id); // overridden by a @property
-    assertType('int', $address->foreign_id_constrained);
-    assertType('int|null', $address->nullable_foreign_id_constrained);
+    assertType('int<0, max>', $address->foreign_id_constrained);
+    assertType('int<0, max>|null', $address->nullable_foreign_id_constrained);
+    assertType('string', $address->foreign_uuid);
+    assertType('string|null', $address->nullable_foreign_uuid);
+    assertType('string', $address->foreign_ulid);
+    assertType('string|null', $address->nullable_foreign_ulid);
     assertType('App\ValueObjects\Favorites', $user->favorites);
     assertType('string', $address->uuid);
     assertType('string', $roleUser->role_id);
-    assertType('int', $roleUser->user_id);
+    assertType('int<0, max>', $roleUser->user_id);
 
     assertType('bool', $modelWithCasts->integer);
     assertType(Stringable::class, $modelWithCasts->string);

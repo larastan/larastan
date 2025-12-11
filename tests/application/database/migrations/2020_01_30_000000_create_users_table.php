@@ -39,6 +39,8 @@ class CreateUsersTable extends Migration
             // Testing property casts
             $table->integer('int');
             $table->integer('integer');
+            $table->unsignedInteger('unsigned_integer');
+            $table->integer('unsigned_integer_method')->unsigned();
             $table->float('real');
             $table->float('float');
             $table->double('double');

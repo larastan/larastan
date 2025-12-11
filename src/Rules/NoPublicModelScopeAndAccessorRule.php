@@ -6,6 +6,7 @@ namespace Larastan\Larastan\Rules;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use PhpParser\Modifiers;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope as AnalyserScope;
 use PHPStan\Node\InClassMethodNode;
@@ -57,6 +58,13 @@ class NoPublicModelScopeAndAccessorRule implements Rule
                     ->identifier('larastan.noPublicModelScopeMethod')
                     ->line($node->getStartLine())
                     ->file($scope->getFile())
+                    ->fixNode($node->getOriginalNode(), static function (Node $node) {
+                        $node->flags &= ~Modifiers::PUBLIC;
+                        $node->flags &= ~Modifiers::PRIVATE;
+                        $node->flags |= Modifiers::PROTECTED;
+
+                        return $node;
+                    })
                     ->build(),
                 ];
             }
@@ -74,6 +82,13 @@ class NoPublicModelScopeAndAccessorRule implements Rule
                     ->identifier('larastan.noPublicModelAccessorMethod')
                     ->line($node->getStartLine())
                     ->file($scope->getFile())
+                    ->fixNode($node->getOriginalNode(), static function (Node $node) {
+                        $node->flags &= ~Modifiers::PUBLIC;
+                        $node->flags &= ~Modifiers::PRIVATE;
+                        $node->flags |= Modifiers::PROTECTED;
+
+                        return $node;
+                    })
                     ->build(),
                 ];
             }

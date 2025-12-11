@@ -213,22 +213,14 @@ class ModelCastHelper
 
     public function hasCastForProperty(ClassReflection $modelClassReflection, string $propertyName): bool
     {
-        if (! array_key_exists($modelClassReflection->getName(), $this->modelCasts)) {
-            $modelCasts = $this->getModelCasts($modelClassReflection);
-        } else {
-            $modelCasts = $this->modelCasts[$modelClassReflection->getName()];
-        }
+        $modelCasts = $this->getModelCasts($modelClassReflection);
 
         return array_key_exists($propertyName, $modelCasts);
     }
 
     public function getCastForProperty(ClassReflection $modelClassReflection, string $propertyName): string|null
     {
-        if (! array_key_exists($modelClassReflection->getName(), $this->modelCasts)) {
-            $modelCasts = $this->getModelCasts($modelClassReflection);
-        } else {
-            $modelCasts = $this->modelCasts[$modelClassReflection->getName()];
-        }
+        $modelCasts = $this->getModelCasts($modelClassReflection);
 
         return $modelCasts[$propertyName] ?? null;
     }
@@ -241,6 +233,12 @@ class ModelCastHelper
      */
     private function getModelCasts(ClassReflection $modelClassReflection): array
     {
+        $className = $modelClassReflection->getName();
+
+        if (array_key_exists($className, $this->modelCasts)) {
+            return $this->modelCasts[$className];
+        }
+
         try {
             /** @var Model $modelInstance */
             $modelInstance = $modelClassReflection->getNativeReflection()->newInstanceWithoutConstructor();
@@ -264,6 +262,8 @@ class ModelCastHelper
                 ),
             );
         }
+
+        $this->modelCasts[$className] = $modelCasts;
 
         return $modelCasts;
     }

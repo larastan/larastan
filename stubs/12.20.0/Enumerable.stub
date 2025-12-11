@@ -53,7 +53,7 @@ interface Enumerable extends \Countable, \IteratorAggregate, \JsonSerializable, 
     *
     * @template TPluckValueReturn
     * @template TPluckKeyReturn of array-key
-    * @param  string|array<array-key, string>|(\Closure(TValue): TPluckValueReturn)|null  $value
+    * @param  int|string|array<array-key, string>|(\Closure(TValue): TPluckValueReturn)|null  $value
     * @param  string|(\Closure(TValue): TPluckKeyReturn)|null  $key
     * @return ($value is \Closure ? ($key is \Closure ? \Illuminate\Support\Collection<TPluckKeyReturn, TPluckValueReturn> : \Illuminate\Support\Collection<array-key, TPluckValueReturn>) : ($key is \Closure ? \Illuminate\Support\Collection<TPluckKeyReturn, mixed> : \Illuminate\Support\Collection<array-key, mixed>))
     */

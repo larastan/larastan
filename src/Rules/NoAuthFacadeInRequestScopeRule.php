@@ -7,6 +7,9 @@ namespace Larastan\Larastan\Rules;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PhpParser\Node;
+use PhpParser\Node\Expr\BinaryOp\Identical;
+use PhpParser\Node\Expr\BinaryOp\NotIdentical;
+use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
@@ -66,6 +69,15 @@ class NoAuthFacadeInRequestScopeRule implements Rule
             return [
                 RuleErrorBuilder::message(sprintf($message, 'this'))
                     ->identifier('larastan.noAuthFacadeInRequestScope')
+                    ->fixNode($node, static function (Node $node) use ($methodName) {
+                        $variable = new Node\Expr\Variable('this');
+
+                        return match ($methodName) {
+                            'check' => new NotIdentical(new MethodCall($variable, 'user', []), new Node\Expr\ConstFetch(new Name('null'))),
+                            'user' => new MethodCall($variable, 'user', []),
+                            'guest' => new Identical(new MethodCall($variable, 'user', []), new Node\Expr\ConstFetch(new Name('null'))),
+                        };
+                    })
                     ->build(),
             ];
         }
@@ -83,6 +95,15 @@ class NoAuthFacadeInRequestScopeRule implements Rule
         return [
             RuleErrorBuilder::message(sprintf($message, 'request'))
                 ->identifier('larastan.noAuthFacadeInRequestScope')
+                ->fixNode($node, static function (Node $node) use ($methodName) {
+                    $variable = new Node\Expr\Variable('request');
+
+                    return match ($methodName) {
+                        'check' => new NotIdentical(new MethodCall($variable, 'user', []), new Node\Expr\ConstFetch(new Name('null'))),
+                        'user' => new MethodCall($variable, 'user', []),
+                        'guest' => new Identical(new MethodCall($variable, 'user', []), new Node\Expr\ConstFetch(new Name('null'))),
+                    };
+                })
                 ->build(),
         ];
     }

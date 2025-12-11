@@ -1,85 +1,175 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^PHPDoc tag @var assumes the expression with type PHPStan\\Type\\Type\|null is always PHPStan\\Type\\Constant\\ConstantStringType but it''s error\-prone and dangerous\.$#'
+			rawMessage: PHPDoc tag @var assumes the expression with type PHPStan\Type\Type|null is always PHPStan\Type\Constant\ConstantStringType but it's error-prone and dangerous.
 			identifier: phpstanApi.varTagAssumption
 			count: 1
 			path: src/Methods/HigherOrderCollectionProxyExtension.php
 
 		-
-			message: '#^PHPDoc tag @var assumes the expression with type PHPStan\\Type\\Type\|null is always PHPStan\\Type\\ObjectType but it''s error\-prone and dangerous\.$#'
+			rawMessage: PHPDoc tag @var assumes the expression with type PHPStan\Type\Type|null is always PHPStan\Type\ObjectType but it's error-prone and dangerous.
 			identifier: phpstanApi.varTagAssumption
 			count: 1
 			path: src/Methods/HigherOrderCollectionProxyExtension.php
 
 		-
-			message: '#^Creating new PHPStan\\Reflection\\Php\\DummyParameter is not covered by backward compatibility promise\. The class might change in a minor PHPStan version\.$#'
+			rawMessage: Creating new PHPStan\Reflection\Php\DummyParameter is not covered by backward compatibility promise. The class might change in a minor PHPStan version.
 			identifier: phpstanApi.constructor
 			count: 1
 			path: src/Methods/ModelForwardsCallsExtension.php
 
 		-
-			message: '#^PHPDoc tag @var assumes the expression with type PHPStan\\Type\\Type\|null is always PHPStan\\Type\\Constant\\ConstantStringType but it''s error\-prone and dangerous\.$#'
+			rawMessage: PHPDoc tag @var assumes the expression with type PHPStan\Type\Type|null is always PHPStan\Type\Constant\ConstantStringType but it's error-prone and dangerous.
 			identifier: phpstanApi.varTagAssumption
 			count: 1
 			path: src/Properties/HigherOrderCollectionProxyPropertyExtension.php
 
 		-
-			message: '#^PHPDoc tag @var assumes the expression with type PHPStan\\Type\\Type\|null is always PHPStan\\Type\\ObjectType but it''s error\-prone and dangerous\.$#'
+			rawMessage: PHPDoc tag @var assumes the expression with type PHPStan\Type\Type|null is always PHPStan\Type\ObjectType but it's error-prone and dangerous.
 			identifier: phpstanApi.varTagAssumption
 			count: 1
 			path: src/Properties/HigherOrderCollectionProxyPropertyExtension.php
 
 		-
-			message: '#^Call to internal method Symfony\\Component\\Console\\Command\\Command\:\:mergeApplicationDefinition\(\) from outside its root namespace Symfony\.$#'
+			rawMessage: 'Call to internal method Symfony\Component\Console\Command\Command::mergeApplicationDefinition() from outside its root namespace Symfony.'
 			identifier: method.internal
 			count: 1
 			path: src/ReturnTypes/ConsoleCommand/ArgumentDynamicReturnTypeExtension.php
 
 		-
-			message: '#^Call to internal method Symfony\\Component\\Console\\Command\\Command\:\:mergeApplicationDefinition\(\) from outside its root namespace Symfony\.$#'
+			rawMessage: 'Call to internal method Symfony\Component\Console\Command\Command::mergeApplicationDefinition() from outside its root namespace Symfony.'
 			identifier: method.internal
 			count: 1
 			path: src/ReturnTypes/ConsoleCommand/HasArgumentDynamicReturnTypeExtension.php
 
 		-
-			message: '#^Call to internal method Symfony\\Component\\Console\\Command\\Command\:\:mergeApplicationDefinition\(\) from outside its root namespace Symfony\.$#'
+			rawMessage: 'Call to internal method Symfony\Component\Console\Command\Command::mergeApplicationDefinition() from outside its root namespace Symfony.'
 			identifier: method.internal
 			count: 1
 			path: src/ReturnTypes/ConsoleCommand/HasOptionDynamicReturnTypeExtension.php
 
 		-
-			message: '#^Call to internal method Symfony\\Component\\Console\\Command\\Command\:\:mergeApplicationDefinition\(\) from outside its root namespace Symfony\.$#'
+			rawMessage: 'Call to internal method Symfony\Component\Console\Command\Command::mergeApplicationDefinition() from outside its root namespace Symfony.'
 			identifier: method.internal
 			count: 1
 			path: src/ReturnTypes/ConsoleCommand/OptionDynamicReturnTypeExtension.php
 
 		-
-			message: '#^Call to internal method Symfony\\Component\\Console\\Command\\Command\:\:mergeApplicationDefinition\(\) from outside its root namespace Symfony\.$#'
+			rawMessage: 'Call to internal method Symfony\Component\Console\Command\Command::mergeApplicationDefinition() from outside its root namespace Symfony.'
 			identifier: method.internal
 			count: 1
 			path: src/Rules/ConsoleCommand/UndefinedArgumentOrOptionRule.php
 
 		-
-			message: '#^Doing instanceof PHPStan\\Type\\Generic\\GenericObjectType is error\-prone and deprecated\.$#'
+			rawMessage: Doing instanceof PHPStan\Type\Generic\GenericObjectType is error-prone and deprecated.
 			identifier: phpstanApi.instanceofType
 			count: 2
 			path: src/Rules/ModelRuleHelper.php
 
 		-
-			message: '#^Implementing PHPStan\\Type\\CompoundType is not covered by backward compatibility promise\. The interface might change in a minor PHPStan version\.$#'
+			rawMessage: 'Call to internal method PHPStan\Rules\RuleErrorBuilder::fixNode() from outside its root namespace PHPStan.'
+			identifier: method.internal
+			count: 2
+			path: src/Rules/NoAuthFacadeInRequestScopeRule.php
+
+		-
+			rawMessage: 'Call to internal method PHPStan\Rules\RuleErrorBuilder::fixNode() from outside its root namespace PHPStan.'
+			identifier: method.internal
+			count: 2
+			path: src/Rules/NoAuthHelperInRequestScopeRule.php
+
+		-
+			rawMessage: 'Call to internal method PHPStan\Rules\RuleErrorBuilder::fixNode() from outside its root namespace PHPStan.'
+			identifier: method.internal
+			count: 2
+			path: src/Rules/NoPublicModelScopeAndAccessorRule.php
+
+		-
+			rawMessage: 'Call to internal method PHPStan\Rules\RuleErrorBuilder::fixNode() from outside its root namespace PHPStan.'
+			identifier: method.internal
+			count: 1
+			path: src/Rules/UselessConstructs/NoUselessValueFunctionCallsRule.php
+
+		-
+			rawMessage: 'Call to internal method PHPStan\Rules\RuleErrorBuilder::fixNode() from outside its root namespace PHPStan.'
+			identifier: method.internal
+			count: 2
+			path: src/Rules/UselessConstructs/NoUselessWithFunctionCallsRule.php
+
+		-
+			rawMessage: Access to property $fields on an unknown class PhpMyAdmin\SqlParser\Statements\CreateStatement.
+			identifier: class.notFound
+			count: 2
+			path: src/SQL/PhpMyAdminSqlParser.php
+
+		-
+			rawMessage: Access to property $name on an unknown class PhpMyAdmin\SqlParser\Statements\CreateStatement.
+			identifier: class.notFound
+			count: 2
+			path: src/SQL/PhpMyAdminSqlParser.php
+
+		-
+			rawMessage: Access to property $options on an unknown class PhpMyAdmin\SqlParser\Components\CreateDefinition.
+			identifier: class.notFound
+			count: 1
+			path: src/SQL/PhpMyAdminSqlParser.php
+
+		-
+			rawMessage: Access to property $options on an unknown class PhpMyAdmin\SqlParser\Components\OptionsArray.
+			identifier: class.notFound
+			count: 1
+			path: src/SQL/PhpMyAdminSqlParser.php
+
+		-
+			rawMessage: Access to property $statements on an unknown class PhpMyAdmin\SqlParser\Parser.
+			identifier: class.notFound
+			count: 1
+			path: src/SQL/PhpMyAdminSqlParser.php
+
+		-
+			rawMessage: Caught class PhpMyAdmin\SqlParser\Exceptions\ParserException not found.
+			identifier: class.notFound
+			count: 1
+			path: src/SQL/PhpMyAdminSqlParser.php
+
+		-
+			rawMessage: Class PhpMyAdmin\SqlParser\Statements\CreateStatement not found.
+			identifier: class.notFound
+			count: 1
+			path: src/SQL/PhpMyAdminSqlParser.php
+
+		-
+			rawMessage: Instantiated class PhpMyAdmin\SqlParser\Parser not found.
+			identifier: class.notFound
+			count: 1
+			path: src/SQL/PhpMyAdminSqlParser.php
+
+		-
+			rawMessage: 'Parameter $definition of method Larastan\Larastan\SQL\PhpMyAdminSqlParser::isNullable() has invalid type PhpMyAdmin\SqlParser\Components\CreateDefinition.'
+			identifier: class.notFound
+			count: 1
+			path: src/SQL/PhpMyAdminSqlParser.php
+
+		-
+			rawMessage: 'Parameter $options of method Larastan\Larastan\SQL\PhpMyAdminSqlParser::convertTypeOptions() has invalid type PhpMyAdmin\SqlParser\Components\OptionsArray.'
+			identifier: class.notFound
+			count: 1
+			path: src/SQL/PhpMyAdminSqlParser.php
+
+		-
+			rawMessage: Implementing PHPStan\Type\CompoundType is not covered by backward compatibility promise. The interface might change in a minor PHPStan version.
 			identifier: phpstanApi.interface
 			count: 1
 			path: src/Types/CollectionOf/CollectionOfType.php
 
 		-
-			message: '#^Using PHPStan\\Type\\Traits\\LateResolvableTypeTrait is not covered by backward compatibility promise\. The trait might change in a minor PHPStan version\.$#'
+			rawMessage: Using PHPStan\Type\Traits\LateResolvableTypeTrait is not covered by backward compatibility promise. The trait might change in a minor PHPStan version.
 			identifier: phpstanApi.trait
 			count: 1
 			path: src/Types/CollectionOf/CollectionOfType.php
 
 		-
-			message: '#^Using PHPStan\\Type\\Traits\\NonGeneralizableTypeTrait is not covered by backward compatibility promise\. The trait might change in a minor PHPStan version\.$#'
+			rawMessage: Using PHPStan\Type\Traits\NonGeneralizableTypeTrait is not covered by backward compatibility promise. The trait might change in a minor PHPStan version.
 			identifier: phpstanApi.trait
 			count: 1
 			path: src/Types/CollectionOf/CollectionOfType.php

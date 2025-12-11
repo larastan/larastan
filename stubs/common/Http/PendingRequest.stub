@@ -1,0 +1,101 @@
+<?php
+
+namespace Illuminate\Http\Client
+{
+    /**
+     * @template TAsync of bool = false
+     */
+    class PendingRequest
+    {
+        /**
+         * Whether the requests should be asynchronous.
+         *
+         * @var TAsync
+         */
+        protected $async = false;
+
+        /**
+         * Toggle asynchronicity in requests.
+         *
+         * @template T of bool = true
+         * @param T $async
+         * @return self<T>
+         * @phpstan-self-out self<T>
+         */
+        public function async(bool $async = true);
+
+        /**
+         * Issue a GET request to the given URL.
+         *
+         * @param  string  $url
+         * @param  array<string, mixed>|array{array{name: scalar, contents: scalar}}|string|null  $query
+         * @return (TAsync is true ? \GuzzleHttp\Promise\PromiseInterface : \Illuminate\Http\Client\Response)
+         */
+        public function get(string $url, $query = null);
+
+        /**
+         * Issue a HEAD request to the given URL.
+         *
+         * @param  string  $url
+         * @param  array<string, mixed>|array{array{name: scalar, contents: scalar}}|string|null  $query
+         * @return (TAsync is true ? \GuzzleHttp\Promise\PromiseInterface : \Illuminate\Http\Client\Response)
+         */
+        public function head(string $url, $query = null);
+
+        /**
+         * Issue a POST request to the given URL.
+         *
+         * @param  string  $url
+         * @param  array<string, mixed>|array{array{name: scalar, contents: scalar}}|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>  $data
+         * @return (TAsync is true ? \GuzzleHttp\Promise\PromiseInterface : \Illuminate\Http\Client\Response)
+         */
+        public function post(string $url, $data = []);
+
+        /**
+         * Issue a PATCH request to the given URL.
+         *
+         * @param  string  $url
+         * @param  array<string, mixed>|array{array{name: scalar, contents: scalar}}|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>  $data
+         * @return (TAsync is true ? \GuzzleHttp\Promise\PromiseInterface : \Illuminate\Http\Client\Response)
+         */
+        public function patch(string $url, $data = []);
+
+        /**
+         * Issue a PUT request to the given URL.
+         *
+         * @param  string  $url
+         * @param  array<string, mixed>|array{array{name: scalar, contents: scalar}}|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>  $data
+         * @return (TAsync is true ? \GuzzleHttp\Promise\PromiseInterface : \Illuminate\Http\Client\Response)
+         */
+        public function put(string $url, $data = []);
+
+        /**
+         * Issue a DELETE request to the given URL.
+         *
+         * @param  string  $url
+         * @param  array<string, mixed>|array{array{name: scalar, contents: scalar}}|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>  $data
+         * @return (TAsync is true ? \GuzzleHttp\Promise\PromiseInterface : \Illuminate\Http\Client\Response)
+         */
+        public function delete(string $url, $data = []);
+
+        /**
+         * Send the request to the given URL.
+         *
+         * @param string  $method
+         * @param string  $url
+         * @param array<string, mixed>|array{array{name: scalar, contents: scalar}} $options
+         * @return (TAsync is true ? \GuzzleHttp\Promise\PromiseInterface : \Illuminate\Http\Client\Response)
+         */
+        public function send(string $method, string $url, array $options = []);
+    }
+
+    /**
+     * @implements \ArrayAccess<array-key, mixed>
+     */
+    class Response implements \ArrayAccess, \Stringable {}
+
+    /**
+     * @mixin \Illuminate\Http\Client\PendingRequest
+     */
+    class Factory {}
+}

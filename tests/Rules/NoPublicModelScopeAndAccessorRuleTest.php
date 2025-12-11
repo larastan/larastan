@@ -27,6 +27,11 @@ class NoPublicModelScopeAndAccessorRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testFix(): void
+    {
+        $this->fix(__DIR__ . '/data/no-public-model-scope-and-accessor.php', __DIR__ . '/data/no-public-model-scope-and-accessor-fixed.php');
+    }
+
     /** @return string[] */
     public static function getAdditionalConfigFiles(): array
     {

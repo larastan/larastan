@@ -26,6 +26,11 @@ class NoAuthHelperInRequestScopeRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testFix(): void
+    {
+        $this->fix(__DIR__ . '/data/no-auth-helper-in-request-scope-rule.php', __DIR__ . '/data/no-auth-helper-in-request-scope-rule-fixed.php');
+    }
+
     /** @return string[] */
     public static function getAdditionalConfigFiles(): array
     {

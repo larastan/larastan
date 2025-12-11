@@ -205,14 +205,18 @@ final class SchemaAggregator
             $firstMethodCall = $rootVar;
 
             $nullable = false;
+            $unsigned = false;
 
             while ($rootVar instanceof PhpParser\Node\Expr\MethodCall) {
-                if (
-                    $rootVar->name instanceof PhpParser\Node\Identifier
-                    && $rootVar->name->name === 'nullable'
-                    && $this->getNullableArgumentValue($rootVar) === true
-                ) {
-                    $nullable = true;
+                if ($rootVar->name instanceof PhpParser\Node\Identifier) {
+                    if (
+                        $rootVar->name->name === 'nullable'
+                        && $this->getNullableArgumentValue($rootVar) === true
+                    ) {
+                        $nullable = true;
+                    } elseif ($rootVar->name->name === 'unsigned') {
+                        $unsigned = true;
+                    }
                 }
 
                 $firstMethodCall = $rootVar;
@@ -248,6 +252,10 @@ final class SchemaAggregator
                 }
 
                 $type = $this->getModelReferenceType($modelClass);
+                if ($unsigned && ($type === null || $type === 'int')) {
+                    $type = 'non-negative-int';
+                }
+
                 $table->setColumn(new SchemaColumn($columnName, $type ?? 'int', $nullable));
 
                 continue;
@@ -338,6 +346,7 @@ final class SchemaAggregator
                 $table,
                 $columnName,
                 $nullable,
+                $unsigned,
                 $secondArg,
                 $argName,
                 $tableName,
@@ -484,7 +493,7 @@ final class SchemaAggregator
     }
 
     /**
-     * @param array<int, mixed> $secondArgArray
+     * @param array<int, mixed>|null $secondArgArray
      *
      * @throws Exception
      */
@@ -494,6 +503,7 @@ final class SchemaAggregator
         SchemaTable $table,
         string $columnName,
         bool $nullable,
+        bool $unsigned,
         mixed $secondArg,
         PhpParser\Node\Expr|string $argName,
         string $tableName,
@@ -508,6 +518,7 @@ final class SchemaAggregator
                     $table,
                     $firstMethodCall->args[1]->value->value ?? '',
                     $nullable,
+                    $unsigned,
                     $secondArg,
                     $argName,
                     $tableName,
@@ -517,25 +528,30 @@ final class SchemaAggregator
 
                 return;
 
+            case 'integer':
+            case 'tinyinteger':
+            case 'smallinteger':
+            case 'mediuminteger':
             case 'biginteger':
+                $columnType = $unsigned ? 'non-negative-int' : 'int';
+                $table->setColumn(new SchemaColumn($columnName, $columnType, $nullable));
+
+                return;
+
             case 'increments':
             case 'id':
-            case 'integer':
-            case 'integerincrements':
-            case 'mediumincrements':
-            case 'mediuminteger':
-            case 'smallincrements':
-            case 'smallinteger':
-            case 'tinyincrements':
-            case 'tinyinteger':
             case 'unsignedbiginteger':
             case 'unsignedinteger':
             case 'unsignedmediuminteger':
             case 'unsignedsmallinteger':
             case 'unsignedtinyinteger':
+            case 'integerincrements':
+            case 'mediumincrements':
+            case 'smallincrements':
+            case 'tinyincrements':
             case 'bigincrements':
             case 'foreignid':
-                $table->setColumn(new SchemaColumn($columnName, 'int', $nullable));
+                $table->setColumn(new SchemaColumn($columnName, 'non-negative-int', $nullable));
 
                 return;
 
@@ -543,6 +559,8 @@ final class SchemaAggregator
             case 'datetimetz':
             case 'date':
             case 'datetime':
+            case 'foreignulid':
+            case 'foreignuuid':
             case 'ipaddress':
             case 'json':
             case 'jsonb':

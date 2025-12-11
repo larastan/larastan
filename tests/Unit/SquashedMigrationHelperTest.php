@@ -23,6 +23,7 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
             [__DIR__ . '/data/schema/basic_schema'],
             self::getContainer()->getByType(FileHelper::class),
             new MySqlDataTypeToPhpTypeConverter(),
+            self::getContainer()->getService('sqlParser'),
             false,
         );
 
@@ -32,7 +33,7 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
         $this->assertArrayHasKey('accounts', $tables);
         $this->assertCount(6, $tables['accounts']->columns);
         $this->assertSame(['id', 'name', 'active', 'description', 'created_at', 'updated_at'], array_keys($tables['accounts']->columns));
-        $this->assertSame('int', $tables['accounts']->columns['id']->readableType);
+        $this->assertSame('non-negative-int', $tables['accounts']->columns['id']->readableType);
         $this->assertSame('string', $tables['accounts']->columns['name']->readableType);
         $this->assertSame('string', $tables['accounts']->columns['active']->readableType);
         $this->assertSame('string', $tables['accounts']->columns['description']->readableType);
@@ -47,6 +48,7 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
             [__DIR__ . '/data/schema/multiple_schemas_for_same_table'],
             self::getContainer()->getByType(FileHelper::class),
             new MySqlDataTypeToPhpTypeConverter(),
+            self::getContainer()->getService('sqlParser'),
             false,
         );
 
@@ -56,7 +58,7 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
         $this->assertArrayHasKey('accounts', $tables);
         $this->assertCount(6, $tables['accounts']->columns);
         $this->assertSame(['id', 'name', 'active', 'description', 'created_at', 'updated_at'], array_keys($tables['accounts']->columns));
-        $this->assertSame('int', $tables['accounts']->columns['id']->readableType);
+        $this->assertSame('non-negative-int', $tables['accounts']->columns['id']->readableType);
         $this->assertSame('string', $tables['accounts']->columns['name']->readableType);
         $this->assertSame('string', $tables['accounts']->columns['active']->readableType);
         $this->assertSame('string', $tables['accounts']->columns['description']->readableType);
@@ -71,6 +73,7 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
             [__DIR__ . '/data/schema/basic_schema_with_sql_extension'],
             self::getContainer()->getByType(FileHelper::class),
             new MySqlDataTypeToPhpTypeConverter(),
+            self::getContainer()->getService('sqlParser'),
             false,
         );
 
@@ -80,7 +83,7 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
         $this->assertArrayHasKey('accounts', $tables);
         $this->assertCount(6, $tables['accounts']->columns);
         $this->assertSame(['id', 'name', 'active', 'description', 'created_at', 'updated_at'], array_keys($tables['accounts']->columns));
-        $this->assertSame('int', $tables['accounts']->columns['id']->readableType);
+        $this->assertSame('non-negative-int', $tables['accounts']->columns['id']->readableType);
         $this->assertSame('string', $tables['accounts']->columns['name']->readableType);
         $this->assertSame('string', $tables['accounts']->columns['active']->readableType);
         $this->assertSame('string', $tables['accounts']->columns['description']->readableType);
@@ -95,6 +98,7 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
             [__DIR__ . '/data/schema/multiple_schemas_with_different_extensions'],
             self::getContainer()->getByType(FileHelper::class),
             new MySqlDataTypeToPhpTypeConverter(),
+            self::getContainer()->getService('sqlParser'),
             false,
         );
 
@@ -104,7 +108,7 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
         $this->assertArrayHasKey('accounts', $tables);
         $this->assertCount(6, $tables['accounts']->columns);
         $this->assertSame(['id', 'name', 'active', 'description', 'created_at', 'updated_at'], array_keys($tables['accounts']->columns));
-        $this->assertSame('int', $tables['accounts']->columns['id']->readableType);
+        $this->assertSame('non-negative-int', $tables['accounts']->columns['id']->readableType);
         $this->assertSame('string', $tables['accounts']->columns['name']->readableType);
         $this->assertSame('string', $tables['accounts']->columns['active']->readableType);
         $this->assertSame('string', $tables['accounts']->columns['description']->readableType);
@@ -113,7 +117,7 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
         $this->assertArrayHasKey('users', $tables);
         $this->assertCount(6, $tables['users']->columns);
         $this->assertSame(['id', 'name', 'active', 'description', 'created_at', 'updated_at'], array_keys($tables['users']->columns));
-        $this->assertSame('int', $tables['users']->columns['id']->readableType);
+        $this->assertSame('non-negative-int', $tables['users']->columns['id']->readableType);
         $this->assertSame('string', $tables['users']->columns['name']->readableType);
         $this->assertSame('string', $tables['users']->columns['active']->readableType);
         $this->assertSame('string', $tables['users']->columns['description']->readableType);
@@ -128,11 +132,18 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
             [__DIR__ . '/data/schema/multiple_schemas_with_different_extensions'],
             self::getContainer()->getByType(FileHelper::class),
             new MySqlDataTypeToPhpTypeConverter(),
+            self::getContainer()->getService('sqlParser'),
             true,
         );
 
         $tables = $schemaParser->initializeTables();
 
         $this->assertSame([], $tables);
+    }
+
+    /** @return string[] */
+    public static function getAdditionalConfigFiles(): array
+    {
+        return [__DIR__ . '/../phpstan-tests.neon'];
     }
 }
