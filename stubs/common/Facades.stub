@@ -13,6 +13,12 @@ abstract class Facade {}
 class Redis {}
 
 /**
+ * @mixin \Illuminate\Cache\CacheManager
+ * @mixin \Illuminate\Cache\Repository
+ */
+class Cache extends Facade {}
+
+/**
  * @mixin \Illuminate\Database\DatabaseManager
  * @mixin \Illuminate\Database\Connection
  * @mixin \Illuminate\Database\ConnectionInterface

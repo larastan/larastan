@@ -3,6 +3,7 @@
 namespace Facades;
 
 use App\DummyFacade;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Http;
@@ -66,4 +67,14 @@ function test(): void
     assertType('GuzzleHttp\Promise\PromiseInterface', Http::timeout(30)->async()->get('https://example.test'));
     assertType('GuzzleHttp\Promise\PromiseInterface', Http::withHeaders(['X-Foo' => 'bar'])->async()->post('https://example.test'));
 
+    assertType('Illuminate\Contracts\Cache\Repository', Cache::driver());
+    assertType('\'123\'', Cache::remember(
+        key: 'cache-key',
+        ttl: 60,
+        callback: static fn (): string => '123',
+    ));
+    assertType('int', Cache::rememberForever(
+        key: 'cache-key',
+        callback: static fn (): int => 123,
+    ));
 }

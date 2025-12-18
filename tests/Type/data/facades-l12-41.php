@@ -2,17 +2,9 @@
 
 namespace FacadesL1241;
 
-use App\DummyFacade;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Queue;
-use Illuminate\Support\Facades\Redis;
-use Illuminate\Support\Facades\Request;
-use Illuminate\Support\Facades\Storage;
 
-use function PHPStan\dumpType;
 use function PHPStan\Testing\assertType;
 
 function test(): void
@@ -33,4 +25,14 @@ function test(): void
     assertType('Illuminate\Http\Client\Promises\LazyPromise', Http::timeout(30)->async()->get('https://example.test'));
     assertType('Illuminate\Http\Client\Promises\LazyPromise', Http::withHeaders(['X-Foo' => 'bar'])->async()->post('https://example.test'));
 
+    assertType('Illuminate\Contracts\Cache\Repository', Cache::driver());
+    assertType('\'123\'', Cache::remember(
+        key: 'cache-key',
+        ttl: 60,
+        callback: static fn (): string => '123',
+    ));
+    assertType('123', Cache::rememberForever(
+        key: 'cache-key',
+        callback: static fn (): int => 123,
+    ));
 }
