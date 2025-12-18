@@ -25,7 +25,7 @@ function test(): void
         ttl: 60,
         callback: static fn (): string => '123',
     ));
-    assertType('int', Cache::rememberForever(
+    assertType('123', Cache::rememberForever(
         key: 'cache-key',
         callback: static fn (): int => 123,
     ));
