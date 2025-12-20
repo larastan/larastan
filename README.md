@@ -47,7 +47,7 @@ composer require --dev "larastan/larastan:^3.0"
 
 > Using Larastan for analysing Laravel packages? You may need to install `orchestra/testbench`.
 
-**2**: Then, create a `phpstan.neon` or `phpstan.neon.dist` file in the root of your application. It might look like this:
+**2**: Then, create a `phpstan.neon.` or `phpstan.neon.dist` file in the root of your application. It might look like this:
 
 ```
 includes:
