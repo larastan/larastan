@@ -8,6 +8,7 @@ use iamcal\SQLParser as VendorIamcalSqlParser;
 use iamcal\SQLParserSyntaxException;
 
 use function array_key_exists;
+use function in_array;
 use function is_array;
 use function is_string;
 
@@ -79,11 +80,7 @@ final class IamcalSqlParser implements SqlParser
         return $result;
     }
 
-    /**
-     * @param array<string, mixed> $field
-     *
-     * @return bool
-     */
+    /** @param array<string, mixed> $field */
     private function resolveNullable(array $field): bool
     {
         // If the parser explicitly captured NULL / NOT NULL, trust it.
@@ -93,17 +90,24 @@ final class IamcalSqlParser implements SqlParser
 
         // Types where MySQL generally omits DEFAULT NULL in SHOW CREATE TABLE,
         // but the column is still nullable unless NOT NULL is explicitly present.
-        if (in_array($type, [
-            'TEXT', 'TINYTEXT', 'MEDIUMTEXT', 'LONGTEXT',
-            'BLOB', 'TINYBLOB', 'MEDIUMBLOB', 'LONGBLOB',
+        return in_array($field['type'], [
+            'TEXT',
+            'TINYTEXT',
+            'MEDIUMTEXT',
+            'LONGTEXT',
+            'BLOB',
+            'TINYBLOB',
+            'MEDIUMBLOB',
+            'LONGBLOB',
             'JSON',
-            'GEOMETRY', 'POINT', 'LINESTRING', 'POLYGON',
-            'MULTIPOINT', 'MULTILINESTRING', 'MULTIPOLYGON', 'GEOMETRYCOLLECTION',
-        ], true)) {
-            return true;
-        }
-
-        // Without explicit metadata, assume NOT nullable.
-        return false;
+            'GEOMETRY',
+            'POINT',
+            'LINESTRING',
+            'POLYGON',
+            'MULTIPOINT',
+            'MULTILINESTRING',
+            'MULTIPOLYGON',
+            'GEOMETRYCOLLECTION',
+        ], true);
     }
 }
