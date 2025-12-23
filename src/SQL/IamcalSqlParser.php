@@ -53,7 +53,7 @@ final class IamcalSqlParser implements SqlParser
                     $fieldName,
                     $fieldType,
                     $this->resolveTypeOptions($field),
-                    $field['null'] ?? false,
+                    $this->isNullable($field),
                 );
             }
 
@@ -61,6 +61,16 @@ final class IamcalSqlParser implements SqlParser
         }
 
         return $tables;
+    }
+
+    /** @param array<string, mixed> $field */
+    private function isNullable(array $field): bool
+    {
+        if (! array_key_exists('null', $field)) {
+            return true;
+        }
+
+        return (bool) $field['null'];
     }
 
     /**
