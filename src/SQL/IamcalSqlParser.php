@@ -53,7 +53,7 @@ final class IamcalSqlParser implements SqlParser
                     $fieldName,
                     $fieldType,
                     $this->resolveTypeOptions($field),
-                    $field['null'] ?? false,
+                    $this->resolveNullable($field),
                 );
             }
 
@@ -77,5 +77,33 @@ final class IamcalSqlParser implements SqlParser
         }
 
         return $result;
+    }
+
+    /**
+     * @param array<string, mixed> $field
+     *
+     * @return bool
+     */
+    private function resolveNullable(array $field): bool
+    {
+        // If the parser explicitly captured NULL / NOT NULL, trust it.
+        if (isset($field['null'])) {
+            return $field['null'];
+        }
+
+        // Types where MySQL generally omits DEFAULT NULL in SHOW CREATE TABLE,
+        // but the column is still nullable unless NOT NULL is explicitly present.
+        if (in_array($type, [
+            'TEXT', 'TINYTEXT', 'MEDIUMTEXT', 'LONGTEXT',
+            'BLOB', 'TINYBLOB', 'MEDIUMBLOB', 'LONGBLOB',
+            'JSON',
+            'GEOMETRY', 'POINT', 'LINESTRING', 'POLYGON',
+            'MULTIPOINT', 'MULTILINESTRING', 'MULTIPOLYGON', 'GEOMETRYCOLLECTION',
+        ], true)) {
+            return true;
+        }
+
+        // Without explicit metadata, assume NOT nullable.
+        return false;
     }
 }
