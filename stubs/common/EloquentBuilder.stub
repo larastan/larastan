@@ -439,6 +439,16 @@ class Builder
     public function increment($column, $amount = 1, array $extra = []);
 
     /**
+     * Increment a column's value by a given amount without raising any events.
+     *
+     * @param  model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @param  float|int  $amount
+     * @param  array<model-property<TModel>, mixed>  $extra
+     * @return int
+     */
+    public function incrementQuietly($column, $amount = 1, array $extra = []);
+
+    /**
      * Decrement a column's value by a given amount.
      *
      * @param  model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression  $column
@@ -447,6 +457,16 @@ class Builder
      * @return int
      */
     public function decrement($column, $amount = 1, array $extra = []);
+
+    /**
+     * Decrement a column's value by a given amount without raising any events.
+     *
+     * @param  model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @param  float|int  $amount
+     * @param  array<model-property<TModel>, mixed>  $extra
+     * @return int
+     */
+    public function decrementQuietly($column, $amount = 1, array $extra = []);
 
     /**
      * Qualify the given column name by the model's table.
