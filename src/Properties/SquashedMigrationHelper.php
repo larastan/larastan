@@ -91,7 +91,7 @@ final class SquashedMigrationHelper
     }
 
     /** @return SplFileInfo[] */
-    private function getSchemaFiles(): array
+    public function getSchemaFiles(): array
     {
         /** @var SplFileInfo[] $schemaFiles */
         $schemaFiles = [];

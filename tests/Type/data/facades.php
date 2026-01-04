@@ -3,15 +3,17 @@
 namespace Facades;
 
 use App\DummyFacade;
-use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
 
+use function PHPStan\dumpType;
 use function PHPStan\Testing\assertType;
 
 function test(): void
@@ -48,4 +50,31 @@ function test(): void
 
     assertType('string', DummyFacade::foo());
     assertType('int', DummyFacade::bar());
+
+    assertType('Illuminate\Http\Client\Response', Http::get('https://example.test'));
+    assertType('Illuminate\Http\Client\Response', Http::post('https://example.test'));
+    assertType('Illuminate\Http\Client\Response', Http::put('https://example.test'));
+    assertType('Illuminate\Http\Client\Response', Http::patch('https://example.test'));
+    assertType('Illuminate\Http\Client\Response', Http::delete('https://example.test'));
+    assertType('Illuminate\Http\Client\Response', Http::head('https://example.test'));
+    assertType('Illuminate\Http\Client\Response', Http::send('GET', 'https://example.test'));
+    assertType('Illuminate\Http\Client\Response', Http::timeout(30)->get('https://example.test'));
+    assertType('Illuminate\Http\Client\Response', Http::withHeaders(['X-Foo' => 'bar'])->post('https://example.test'));
+
+    assertType('GuzzleHttp\Promise\PromiseInterface', Http::async()->get('https://example.test'));
+    assertType('GuzzleHttp\Promise\PromiseInterface', Http::async()->post('https://example.test'));
+    assertType('GuzzleHttp\Promise\PromiseInterface', Http::async()->send('GET', 'https://example.test'));
+    assertType('GuzzleHttp\Promise\PromiseInterface', Http::timeout(30)->async()->get('https://example.test'));
+    assertType('GuzzleHttp\Promise\PromiseInterface', Http::withHeaders(['X-Foo' => 'bar'])->async()->post('https://example.test'));
+
+    assertType('Illuminate\Contracts\Cache\Repository', Cache::driver());
+    assertType('\'123\'', Cache::remember(
+        key: 'cache-key',
+        ttl: 60,
+        callback: static fn (): string => '123',
+    ));
+    assertType('123', Cache::rememberForever(
+        key: 'cache-key',
+        callback: static fn (): int => 123,
+    ));
 }

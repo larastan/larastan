@@ -43,7 +43,8 @@ class TestModel extends Model
         return $query->where('with_attribute', true);
     }
 
-    #[Scope]protected function publicWithAttribute(Builder $query): Builder
+    #[Scope]
+    protected function publicWithAttribute(Builder $query): Builder
     {
         return $query->where('public_with_attribute', true);
     }

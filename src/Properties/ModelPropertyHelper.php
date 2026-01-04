@@ -36,6 +36,7 @@ class ModelPropertyHelper
         private MigrationHelper $migrationHelper,
         private SquashedMigrationHelper $squashedMigrationHelper,
         private ModelCastHelper $modelCastHelper,
+        private MigrationCache $migrationCache,
     ) {
     }
 
@@ -226,11 +227,20 @@ class ModelPropertyHelper
 
     private function loadMigrations(): void
     {
-        // First try to create tables from squashed migrations, if there are any
-        // Then scan the normal migration files for further changes to tables.
-        $tables = $this->squashedMigrationHelper->initializeTables();
+        $migrationFiles = $this->migrationHelper->getMigrationFiles();
+        $schemaFiles    = $this->squashedMigrationHelper->getSchemaFiles();
 
-        $this->tables = $this->migrationHelper->initializeTables($tables);
+        $this->tables = $this->migrationCache->remember(
+            $migrationFiles,
+            $schemaFiles,
+            function () {
+                // First try to create tables from squashed migrations, if there are any
+                // Then scan the normal migration files for further changes to tables.
+                $tables = $this->squashedMigrationHelper->initializeTables();
+
+                return $this->migrationHelper->initializeTables($tables);
+            },
+        );
     }
 
     private function hasDate(Model $modelInstance, string $propertyName): bool

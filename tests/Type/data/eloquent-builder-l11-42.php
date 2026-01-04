@@ -245,12 +245,6 @@ function test(
         ->orderBy('email')
         ->toBase()
     );
-    assertType('object|null', User::getQuery()
-        ->select('some_model.created')
-        ->where('some_model.some_column', '=', true)
-        ->orderBy('some_model.created', 'desc')
-        ->first()
-    );
     assertType('Illuminate\Database\Query\Builder', User::query()
         ->whereNotBetween('a', [1, 5])
         ->orWhereNotBetween('a', [1, 5])

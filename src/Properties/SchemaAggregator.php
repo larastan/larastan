@@ -89,23 +89,13 @@ final class SchemaAggregator
                 continue;
             }
 
-            switch ($statement->name->name) {
-                case 'create':
-                    $this->alterTable($statement, true);
-                    break;
-
-                case 'table':
-                    $this->alterTable($statement, false);
-                    break;
-
-                case 'drop':
-                case 'dropIfExists':
-                    $this->dropTable($statement);
-                    break;
-
-                case 'rename':
-                    $this->renameTableThroughStaticCall($statement);
-            }
+            match ($statement->name->name) {
+                'create' => $this->alterTable($statement, true),
+                'table' => $this->alterTable($statement, false),
+                'drop', 'dropIfExists' => $this->dropTable($statement),
+                'rename' => $this->renameTableThroughStaticCall($statement),
+                default => null,
+            };
         }
     }
 
@@ -559,6 +549,8 @@ final class SchemaAggregator
             case 'datetimetz':
             case 'date':
             case 'datetime':
+            case 'foreignulid':
+            case 'foreignuuid':
             case 'ipaddress':
             case 'json':
             case 'jsonb':

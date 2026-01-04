@@ -64,66 +64,23 @@ class HigherOrderCollectionProxyHelper
     {
         $integerType = new Type\IntegerType();
 
-        switch ($name) {
-            case 'average':
-            case 'avg':
-                $returnType = new Type\FloatType();
-                break;
-            case 'contains':
-            case 'every':
-            case 'some':
-                $returnType = new Type\BooleanType();
-                break;
-            case 'each':
-            case 'filter':
-            case 'reject':
-            case 'skipUntil':
-            case 'skipWhile':
-            case 'sortBy':
-            case 'sortByDesc':
-            case 'takeUntil':
-            case 'takeWhile':
-            case 'unique':
-                $returnType = $this->getCollectionType($collectionType, $integerType, $valueType);
-                break;
-            case 'keyBy':
-                $returnType = $this->getCollectionType($collectionType, new Type\BenevolentUnionType([$integerType, new Type\StringType()]), $valueType);
-                break;
-            case 'first':
-                $returnType = Type\TypeCombinator::addNull($valueType);
-                break;
-            case 'flatMap':
-                $returnType = $this->getCollectionType(SupportCollection::class, $integerType, new Type\MixedType());
-                break;
-            case 'groupBy':
-            case 'partition':
-                $returnType = $this->getCollectionType($collectionType, $integerType, $this->getCollectionType($collectionType, $integerType, $valueType));
-                break;
-            case 'map':
-                $returnType = $this->getCollectionType(
-                    SupportCollection::class,
-                    new BenevolentUnionType([new IntegerType(), new StringType()]),
-                    $methodOrPropertyReturnType,
-                );
-                break;
-            case 'max':
-            case 'min':
-                $returnType = $methodOrPropertyReturnType;
-                break;
-            case 'sum':
-                if ($methodOrPropertyReturnType->accepts(new Type\IntegerType(), true)->yes()) {
-                    $returnType = new Type\IntegerType();
-                } else {
-                    $returnType = new Type\ErrorType();
-                }
-
-                break;
-            default:
-                $returnType = new Type\ErrorType();
-                break;
-        }
-
-        return $returnType;
+        return match ($name) {
+            'average', 'avg' => new Type\FloatType(),
+            'contains', 'every', 'some' => new Type\BooleanType(),
+            'each', 'filter', 'reject', 'skipUntil', 'skipWhile', 'sortBy', 'sortByDesc', 'takeUntil', 'takeWhile', 'unique' => $this->getCollectionType($collectionType, $integerType, $valueType),
+            'keyBy' => $this->getCollectionType($collectionType, new Type\BenevolentUnionType([$integerType, new Type\StringType()]), $valueType),
+            'first' => Type\TypeCombinator::addNull($valueType),
+            'flatMap' => $this->getCollectionType(SupportCollection::class, $integerType, new Type\MixedType()),
+            'groupBy', 'partition' => $this->getCollectionType($collectionType, $integerType, $this->getCollectionType($collectionType, $integerType, $valueType)),
+            'map' => $this->getCollectionType(
+                SupportCollection::class,
+                new BenevolentUnionType([new IntegerType(), new StringType()]),
+                $methodOrPropertyReturnType,
+            ),
+            'max', 'min' => $methodOrPropertyReturnType,
+            'sum' => $methodOrPropertyReturnType->accepts(new Type\IntegerType(), true)->yes() ? new Type\IntegerType() : new Type\ErrorType(),
+            default => new Type\ErrorType(),
+        };
     }
 
     private function getCollectionType(string $collectionClassName, Type\Type $keyType, Type\Type $valueType): Type\Type
