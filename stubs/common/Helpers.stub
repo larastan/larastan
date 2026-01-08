@@ -101,7 +101,7 @@ function rescue(callable $callback, $rescue = null, $report = true) {}
  * @param int|array<int, int> $times
  * @param callable(int): TValue $callback
  * @param int|callable(int, \Exception): int $sleepMilliseconds
- * @param null|callable(\Exception): bool $when
+ * @param null|callable(\Throwable): bool $when
  * @phpstan-return TValue
  *
  * @throws \Exception
