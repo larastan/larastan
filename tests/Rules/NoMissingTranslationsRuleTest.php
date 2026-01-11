@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Rules;
 
-use Illuminate\Filesystem\Filesystem;
 use Larastan\Larastan\Collectors\UsedTranslationFacadeCollector;
 use Larastan\Larastan\Collectors\UsedTranslationFunctionCollector;
 use Larastan\Larastan\Collectors\UsedTranslationTranslatorCollector;
@@ -23,7 +22,7 @@ class NoMissingTranslationsRuleTest extends RuleTestCase
         $viewParser     = new ViewParser($this->getContainer()->getService('currentPhpVersionSimpleDirectParser'));
         $viewFileHelper = new ViewFileHelper([], $this->getFileHelper());
 
-        return new NoMissingTranslationsRule(new UsedTranslationViewCollector($viewParser, $viewFileHelper), new Filesystem(), []);
+        return new NoMissingTranslationsRule(new UsedTranslationViewCollector($viewParser, $viewFileHelper), []);
     }
 
     /** @return array<Collector<Node, mixed>> */

@@ -687,10 +687,6 @@ services:
     -
         class: Larastan\Larastan\Rules\ConfigCollectionRule
 
-    -
-        class: Illuminate\Filesystem\Filesystem
-        autowired: self
-
     migrationsParser:
         class: PHPStan\Parser\CachedParser
         arguments:

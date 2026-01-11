@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Rules;
 
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Str;
 use Larastan\Larastan\Collectors\UsedTranslationFacadeCollector;
 use Larastan\Larastan\Collectors\UsedTranslationFunctionCollector;
@@ -16,15 +15,18 @@ use PHPStan\Node\CollectedDataNode;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
 use function array_key_exists;
 use function array_keys;
 use function array_map;
 use function array_merge;
+use function array_values;
 use function in_array;
 use function is_array;
 use function is_dir;
+use function iterator_to_array;
 use function json_decode;
 use function lang_path;
 use function str_contains;
@@ -38,7 +40,6 @@ final class NoMissingTranslationsRule implements Rule
     /** @param string[] $translationDirectories */
     public function __construct(
         private UsedTranslationViewCollector $usedTranslationViewCollector,
-        private Filesystem $filesystem,
         private array $translationDirectories,
     ) {
     }
@@ -68,7 +69,9 @@ final class NoMissingTranslationsRule implements Rule
                 continue;
             }
 
-            $files = $this->filesystem->allFiles($path);
+            $finder = Finder::create()->files()->in($path);
+
+            $files = iterator_to_array($finder);
 
             $translations = array_map(function (SplFileInfo $file): array {
                 $translations = [];
@@ -83,19 +86,19 @@ final class NoMissingTranslationsRule implements Rule
                         ? $prefix . '/' . $file->getFilenameWithoutExtension()
                         : $file->getFilenameWithoutExtension();
 
-                    $array = $this->filesystem->getRequire($file->getPathname());
+                    $array = (static fn (): array => require $file->getPathname())();
 
                     $translations = array_merge([$root], $this->keys($array, $root));
                 } elseif ($file->getExtension() === 'json') {
                     $translations = array_keys(
-                        json_decode($this->filesystem->get($file->getPathname()), true),
+                        json_decode($file->getContents(), true),
                     );
                 }
 
                 return $translations;
             }, $files);
 
-            $availableTranslations = array_merge($availableTranslations, ...$translations);
+            $availableTranslations = array_merge($availableTranslations, ...array_values($translations));
         }
 
         $usedTranslations = [];
