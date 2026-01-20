@@ -28,7 +28,7 @@ namespace Illuminate\Http\Client
          * Issue a GET request to the given URL.
          *
          * @param  string  $url
-         * @param  array<string, mixed>|array{array{name: scalar, contents: scalar}}|string|null  $query
+         * @param  array<string, mixed>|list<array{name: scalar, contents: scalar}>|string|null  $query
          * @return (TAsync is true ? \GuzzleHttp\Promise\PromiseInterface : \Illuminate\Http\Client\Response)
          */
         public function get(string $url, $query = null);
@@ -37,7 +37,7 @@ namespace Illuminate\Http\Client
          * Issue a HEAD request to the given URL.
          *
          * @param  string  $url
-         * @param  array<string, mixed>|array{array{name: scalar, contents: scalar}}|string|null  $query
+         * @param  array<string, mixed>|list<array{name: scalar, contents: scalar}>|string|null  $query
          * @return (TAsync is true ? \GuzzleHttp\Promise\PromiseInterface : \Illuminate\Http\Client\Response)
          */
         public function head(string $url, $query = null);
@@ -46,7 +46,7 @@ namespace Illuminate\Http\Client
          * Issue a POST request to the given URL.
          *
          * @param  string  $url
-         * @param  array<string, mixed>|array{array{name: scalar, contents: scalar}}|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>  $data
+         * @param  array<string, mixed>|list<array{name: scalar, contents: scalar}>|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>  $data
          * @return (TAsync is true ? \GuzzleHttp\Promise\PromiseInterface : \Illuminate\Http\Client\Response)
          */
         public function post(string $url, $data = []);
@@ -55,7 +55,7 @@ namespace Illuminate\Http\Client
          * Issue a PATCH request to the given URL.
          *
          * @param  string  $url
-         * @param  array<string, mixed>|array{array{name: scalar, contents: scalar}}|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>  $data
+         * @param  array<string, mixed>|list<array{name: scalar, contents: scalar}>|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>  $data
          * @return (TAsync is true ? \GuzzleHttp\Promise\PromiseInterface : \Illuminate\Http\Client\Response)
          */
         public function patch(string $url, $data = []);
@@ -64,7 +64,7 @@ namespace Illuminate\Http\Client
          * Issue a PUT request to the given URL.
          *
          * @param  string  $url
-         * @param  array<string, mixed>|array{array{name: scalar, contents: scalar}}|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>  $data
+         * @param  array<string, mixed>|list<array{name: scalar, contents: scalar}>|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>  $data
          * @return (TAsync is true ? \GuzzleHttp\Promise\PromiseInterface : \Illuminate\Http\Client\Response)
          */
         public function put(string $url, $data = []);
@@ -73,7 +73,7 @@ namespace Illuminate\Http\Client
          * Issue a DELETE request to the given URL.
          *
          * @param  string  $url
-         * @param  array<string, mixed>|array{array{name: scalar, contents: scalar}}|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>  $data
+         * @param  array<string, mixed>|list<array{name: scalar, contents: scalar}>|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>  $data
          * @return (TAsync is true ? \GuzzleHttp\Promise\PromiseInterface : \Illuminate\Http\Client\Response)
          */
         public function delete(string $url, $data = []);
@@ -83,7 +83,7 @@ namespace Illuminate\Http\Client
          *
          * @param string  $method
          * @param string  $url
-         * @param array<string, mixed>|array{array{name: scalar, contents: scalar}} $options
+         * @param array<string, mixed>|list<array{name: scalar, contents: scalar}> $options
          * @return (TAsync is true ? \GuzzleHttp\Promise\PromiseInterface : \Illuminate\Http\Client\Response)
          */
         public function send(string $method, string $url, array $options = []);
