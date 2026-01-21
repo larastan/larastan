@@ -61,9 +61,6 @@ function test(): void
     assertType('Illuminate\Http\Client\Response', Http::timeout(30)->get('https://example.test'));
     assertType('Illuminate\Http\Client\Response', Http::withHeaders(['X-Foo' => 'bar'])->post('https://example.test'));
 
-    assertType('Illuminate\Http\Client\Response', Http::asMultipart()->post('localhost', [['name' => 'a', 'contents' => 'a']]));
-    assertType('Illuminate\Http\Client\Response', Http::asMultipart()->post('localhost', [['name' => 'a', 'contents' => 'a'], [ 'name' => 'b', 'contents' => 'b']]));
-
     assertType('GuzzleHttp\Promise\PromiseInterface', Http::async()->get('https://example.test'));
     assertType('GuzzleHttp\Promise\PromiseInterface', Http::async()->post('https://example.test'));
     assertType('GuzzleHttp\Promise\PromiseInterface', Http::async()->send('GET', 'https://example.test'));

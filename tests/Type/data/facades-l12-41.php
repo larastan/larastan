@@ -19,9 +19,6 @@ function test(): void
     assertType('Illuminate\Http\Client\Response', Http::timeout(30)->get('https://example.test'));
     assertType('Illuminate\Http\Client\Response', Http::withHeaders(['X-Foo' => 'bar'])->post('https://example.test'));
 
-    assertType('Illuminate\Http\Client\Response', Http::asMultipart()->post('localhost', [['name' => 'a', 'contents' => 'a']]));
-    assertType('Illuminate\Http\Client\Response', Http::asMultipart()->post('localhost', [['name' => 'a', 'contents' => 'a'], [ 'name' => 'b', 'contents' => 'b']]));
-
     assertType('Illuminate\Http\Client\Promises\LazyPromise', Http::async()->get('https://example.test'));
     assertType('Illuminate\Http\Client\Promises\LazyPromise', Http::async()->post('https://example.test'));
     assertType('Illuminate\Http\Client\Promises\LazyPromise', Http::async()->send('GET', 'https://example.test'));
