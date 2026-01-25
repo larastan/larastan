@@ -55,6 +55,7 @@ final class IamcalSqlParser implements SqlParser
                     $fieldType,
                     $this->resolveTypeOptions($field),
                     $this->resolveNullable($field),
+                    $field['values'] ?? [],
                 );
             }
 
