@@ -31,8 +31,8 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
 
         $this->assertCount(1, $tables);
         $this->assertArrayHasKey('accounts', $tables);
-        $this->assertCount(8, $tables['accounts']->columns);
-        $this->assertSame(['id', 'name', 'active', 'description', 'notes', 'profile_text', 'created_at', 'updated_at'], array_keys($tables['accounts']->columns));
+        $this->assertCount(9, $tables['accounts']->columns);
+        $this->assertSame(['id', 'name', 'active', 'description', 'notes', 'profile_text', 'enum_status', 'created_at', 'updated_at'], array_keys($tables['accounts']->columns));
         $this->assertSame('non-negative-int', $tables['accounts']->columns['id']->readableType);
         $this->assertSame('string', $tables['accounts']->columns['name']->readableType);
         $this->assertSame(false, $tables['accounts']->columns['name']->nullable);
@@ -44,6 +44,8 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
         $this->assertSame(true, $tables['accounts']->columns['notes']->nullable);
         $this->assertSame('string', $tables['accounts']->columns['profile_text']->readableType);
         $this->assertSame(false, $tables['accounts']->columns['profile_text']->nullable);
+        $this->assertSame("'active'|'don\'t know'|'inactive'", $tables['accounts']->columns['enum_status']->readableType);
+        $this->assertSame(false, $tables['accounts']->columns['enum_status']->nullable);
         $this->assertSame('string', $tables['accounts']->columns['created_at']->readableType);
         $this->assertSame(true, $tables['accounts']->columns['created_at']->nullable);
         $this->assertSame('string', $tables['accounts']->columns['updated_at']->readableType);
