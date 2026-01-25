@@ -43,10 +43,6 @@ class MigrationHelper
             return $tables;
         }
 
-        if (count($this->databaseMigrationPath) === 0) {
-            $this->databaseMigrationPath = [database_path('migrations')];
-        }
-
         $schemaAggregator = new SchemaAggregator($this->reflectionProvider, $tables);
         $filesArray       = $this->getMigrationFiles();
 
@@ -70,10 +66,14 @@ class MigrationHelper
     }
 
     /** @return SplFileInfo[] */
-    private function getMigrationFiles(): array
+    public function getMigrationFiles(): array
     {
         /** @var SplFileInfo[] $migrationFiles */
         $migrationFiles = [];
+
+        if (count($this->databaseMigrationPath) === 0) {
+            $this->databaseMigrationPath = [database_path('migrations')];
+        }
 
         foreach ($this->databaseMigrationPath as $additionalPathGlob) {
             foreach ((glob($additionalPathGlob) ?: []) as $additionalPath) {

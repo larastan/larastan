@@ -270,3 +270,11 @@ public function casts(): array
     ];
 }
 ```
+## Bootstrap Error Reporting (since 3.9.0)
+
+Larastan boots your Laravel application during analysis. If that bootstrap fails, Larastan can print a
+ beautifully styled error report with a clear title, useful tips to resolve the issue and a stack trace. Depending on if the error is coming from the framework itself or from user code, it provides different tips and messages. The output respects `--ansi`
+and `--no-ansi` flags.
+
+![Screenshot of a failed PHPStan analysis showcasing the custom styled error.](/docs/framework-bootstrap-error.png)
+

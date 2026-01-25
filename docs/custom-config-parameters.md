@@ -34,6 +34,22 @@ parameters:
     disableMigrationScan: true
 ```
 
+## `enableMigrationCache`
+**default**: `false`
+
+Larastan caches parsed migrations and schema dumps between runs to speed up model property inference.
+Cache files are stored in PHPStan's temp directory and invalidated when migration or schema files change
+(based on file paths and modification times).
+
+Caching is disabled by default. Set this to `true` to enable caching. Keep it `false` if you want to
+always re-scan migrations or if your temp directory is read-only.
+
+### Example
+```neon
+parameters:
+    enableMigrationCache: true
+```
+
 ## `squashedMigrationsPath`
 
 By default, Larastan will check `database/schema` directory to find schema dumps. If you have them in other locations or if you have multiple folders, you can use this config option to add them.
@@ -91,6 +107,34 @@ To disable you can set it to `false`:
 ```neon
 parameters:
     checkModelAppends: false
+```
+
+## `parseModelCastsMethod`
+**default**: `false`
+
+By default, Larastan only relies on the return type of the `casts()` method to infer cast definitions.
+When this option is enabled, Larastan parses the `casts()` method body and uses the returned array values
+to determine cast types.
+
+This can improve inference when you build casts using class constants or concatenation, but it requires
+parsing the source file thus it might be slower and is disabled by default for that reason.
+
+### Example
+```php
+class User extends Model
+{
+    public function casts(): array
+    {
+        return [
+            'string' => \Illuminate\Database\Eloquent\Casts\AsStringable::class . ':argument',
+        ];
+    }
+}
+```
+
+```neon
+parameters:
+    parseModelCastsMethod: true
 ```
 
 ## `checkConfigTypes`

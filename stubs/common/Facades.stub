@@ -13,6 +13,12 @@ abstract class Facade {}
 class Redis {}
 
 /**
+ * @mixin \Illuminate\Cache\CacheManager
+ * @mixin \Illuminate\Cache\Repository
+ */
+class Cache extends Facade {}
+
+/**
  * @mixin \Illuminate\Database\DatabaseManager
  * @mixin \Illuminate\Database\Connection
  * @mixin \Illuminate\Database\ConnectionInterface
@@ -59,3 +65,8 @@ class Cookie extends Facade {
  * @mixin \Illuminate\Config\Repository
  */
  class Config extends Facade {}
+
+/**
+ * @mixin \Illuminate\Http\Client\Factory
+ */
+ class Http extends Facade {}

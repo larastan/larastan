@@ -15,13 +15,20 @@ use Illuminate\Database\Eloquent\Casts\AsCollection;
 use Illuminate\Database\Eloquent\Casts\AsEncryptedArrayObject;
 use Illuminate\Database\Eloquent\Casts\AsEncryptedCollection;
 use Illuminate\Database\Eloquent\Casts\AsStringable;
+use Illuminate\Database\Eloquent\Concerns\HasUniqueStringIds;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon as IlluminateCarbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Stringable as IlluminateStringable;
+use PhpParser\Node;
+use PhpParser\Node\Expr\Array_;
+use PhpParser\NodeFinder;
 use PHPStan\Analyser\OutOfClassScope;
+use PHPStan\Analyser\ScopeContext;
+use PHPStan\Analyser\ScopeFactory;
+use PHPStan\Parser\Parser;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ParameterReflection;
@@ -41,6 +48,7 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\VerbosityLevel;
 use ReflectionException;
 use stdClass;
 use Stringable;
@@ -59,7 +67,10 @@ class ModelCastHelper
     private array $modelCasts = [];
 
     public function __construct(
-        protected ReflectionProvider $reflectionProvider,
+        private ReflectionProvider $reflectionProvider,
+        private Parser $parser,
+        private bool $parseModelCastsMethod,
+        private ScopeFactory $scopeFactory,
     ) {
     }
 
@@ -246,19 +257,33 @@ class ModelCastHelper
             throw new ShouldNotHappenException();
         }
 
+        if ($modelClassReflection->hasTraitUse(HasUniqueStringIds::class)) {
+            $modelInstance->usesUniqueIds = true;
+        }
+
         $modelCasts = $modelInstance->getCasts();
 
-        $castsMethodReturnType = $modelClassReflection->getMethod(
-            'casts',
-            new OutOfClassScope(),
-        )->getVariants()[0]->getReturnType();
+        if ($this->parseModelCastsMethod) {
+            $castsMethodReturnType = $this->parseCastsMethod($modelClassReflection);
+        } else {
+            $castsMethodReturnType = $modelClassReflection->getMethod(
+                'casts',
+                new OutOfClassScope(),
+            )->getVariants()[0]->getReturnType();
+        }
 
         if ($castsMethodReturnType->isConstantArray()->yes()) {
             $modelCasts = array_merge(
                 $modelCasts,
                 array_combine(
                     array_map(static fn ($key) => $key->getValue(), $castsMethodReturnType->getKeyTypes()), // @phpstan-ignore-line
-                    array_map(static fn ($value) => str_replace('\\\\', '\\', $value->getValue()), $castsMethodReturnType->getValueTypes()), // @phpstan-ignore-line
+                    array_map(static function (Type $value) {
+                        if ($value->isConstantValue()->yes()) {
+                            return str_replace('\\\\', '\\', (string) $value->getValue()); // @phpstan-ignore-line
+                        }
+
+                        return $value->describe(VerbosityLevel::value());
+                    }, $castsMethodReturnType->getValueTypes()), // @phpstan-ignore-line
                 ),
             );
         }
@@ -266,5 +291,40 @@ class ModelCastHelper
         $this->modelCasts[$className] = $modelCasts;
 
         return $modelCasts;
+    }
+
+    private function parseCastsMethod(ClassReflection $modelClassReflection): Type
+    {
+        $castsMethod = $modelClassReflection->getNativeMethod('casts');
+        $fileName    = $castsMethod->getDeclaringClass()->getFileName();
+
+        if ($fileName === null) {
+            return new NullType();
+        }
+
+        $stmts = $this->parser->parseFile($fileName);
+
+        $castsMethodNode = (new NodeFinder())->findFirst($stmts, static function (Node $node) use ($castsMethod): bool {
+            return $node instanceof Node\Stmt\ClassMethod && $node->name->toString() === $castsMethod->getName();
+        });
+
+        if ($castsMethodNode === null) {
+            return new NullType();
+        }
+
+        /** @var Node\Stmt\Return_|null $returnNode */
+        $returnNode = (new NodeFinder())->findFirstInstanceOf($castsMethodNode, Node\Stmt\Return_::class);
+
+        if ($returnNode === null) {
+            return new NullType();
+        }
+
+        if (! $returnNode->expr instanceof Array_) {
+            return new NullType();
+        }
+
+        $scope = $this->scopeFactory->create(ScopeContext::create($fileName));
+
+        return $scope->getType($returnNode->expr);
     }
 }
