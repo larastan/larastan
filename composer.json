@@ -13,7 +13,7 @@
     "require": {
         "php": "^8.2",
         "ext-json": "*",
-        "iamcal/sql-parser": "^0.6.0",
+        "iamcal/sql-parser": "^0.7.0",
         "illuminate/console": "^11.44.2 || ^12.4.1",
         "illuminate/container": "^11.44.2 || ^12.4.1",
         "illuminate/contracts": "^11.44.2 || ^12.4.1",
