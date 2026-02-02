@@ -58,6 +58,11 @@ class GenericModelPropertyType extends StringType
 
         if (count($type->getConstantStrings()) === 1) {
             $givenString = $type->getConstantStrings()[0]->getValue();
+
+            if ($givenString === '*') {
+                return AcceptsResult::createNo();
+            }
+
             $genericType = $this->getGenericType();
 
             if ($genericType instanceof MixedType) {
@@ -115,6 +120,10 @@ class GenericModelPropertyType extends StringType
         $constantStrings = $type->getConstantStrings();
 
         if (count($constantStrings) === 1) {
+            if ($constantStrings[0]->getValue() === '*') {
+                return IsSuperTypeOfResult::createNo();
+            }
+
             if (! $this->getGenericType()->hasInstanceProperty($constantStrings[0]->getValue())->yes()) {
                 return IsSuperTypeOfResult::createNo();
             }
