@@ -11,7 +11,9 @@ use PHPStan\Analyser\Scope;
 use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
 use PHPStan\Parser\ParserErrorsException;
+use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\FileTypeMapper;
 use PHPStan\Type\Type;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -23,6 +25,7 @@ use function array_shift;
 use function config_path;
 use function explode;
 use function is_dir;
+use function is_numeric;
 use function iterator_to_array;
 use function property_exists;
 use function str_ends_with;
@@ -38,12 +41,16 @@ final class ConfigParser
     /** @var array<string, Type> */
     private array $parsedConfigs = [];
 
-    /** @var array<string, Array_> */
+    /** @var array<string, Node\Stmt\Return_> */
     private array $parsedConfigFiles = [];
 
     /** @param list<non-empty-string> $configPaths */
-    public function __construct(private FileHelper $fileHelper, private Parser $parser, array $configPaths)
-    {
+    public function __construct(
+        private FileHelper $fileHelper,
+        private Parser $parser,
+        private FileTypeMapper $fileTypeMapper,
+        array $configPaths,
+    ) {
         foreach ($configPaths as $configPath) {
             $this->configPaths[] = $this->fileHelper->absolutizePath($configPath);
         }
@@ -84,8 +91,43 @@ final class ConfigParser
                 $this->parsedConfigFiles[$configFileName] = $cachedConfigFile;
             }
 
+            // Check if we have a type from the docblock
+            $docComment = $cachedConfigFile->getDocComment();
+
+            if ($docComment !== null) {
+                $resolvedPhpDoc = $this->fileTypeMapper->getResolvedPhpDoc(
+                    $scope->getFile(),
+                    $scope->getClassReflection()?->getName(),
+                    $scope->getTraitReflection()?->getName(),
+                    $scope->getFunctionName(),
+                    $docComment->getText(),
+                );
+
+                $returnTag = $resolvedPhpDoc->getReturnTag();
+
+                if ($returnTag !== null) {
+                    $type = $returnTag->getType();
+
+                    foreach ($configKeyParts as $part) {
+                        $offset = is_numeric($part) ? new ConstantIntegerType((int) $part) : new ConstantStringType($part);
+
+                        $type = $type->getOffsetValueType($offset);
+                    }
+
+                    $this->parsedConfigs[$key] = $type;
+                    $returnTypes[]             = $type;
+                    continue;
+                }
+            }
+
+            if (! $cachedConfigFile->expr instanceof Array_) {
+                continue;
+            }
+
+            $arrayNode = $cachedConfigFile->expr;
+
             if ($configKeyParts === []) {
-                $type = $scope->getType($cachedConfigFile);
+                $type = $scope->getType($arrayNode);
 
                 $this->parsedConfigs[$key] = $type;
                 $returnTypes[]             = $type;
@@ -94,7 +136,7 @@ final class ConfigParser
             }
 
             $ret   = null;
-            $items = $cachedConfigFile->items;
+            $items = $arrayNode->items;
 
             foreach ($configKeyParts as $configKeyPart) {
                 foreach ($items as $item) {
@@ -151,7 +193,7 @@ final class ConfigParser
         return $configFiles;
     }
 
-    private function parseConfigFile(string $configFileName): Array_|null
+    private function parseConfigFile(string $configFileName): Node\Stmt\Return_|null
     {
         foreach ($this->configFiles as $configFile) {
             if (str_ends_with($configFile->getPathname(), $configFileName . '.php')) {
@@ -168,13 +210,9 @@ final class ConfigParser
                     continue;
                 }
 
-                if (! $returnNode->expr instanceof Array_) {
-                    continue;
-                }
+                $this->parsedConfigFiles[$configFileName] = $returnNode;
 
-                $this->parsedConfigFiles[$configFileName] = $returnNode->expr;
-
-                return $returnNode->expr;
+                return $returnNode;
             }
         }
 
