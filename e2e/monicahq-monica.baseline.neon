@@ -1,16 +1,19 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Parameter \\#1 \\$address of static method App\\\\Helpers\\\\MapHelper\\:\\:getMapLink\\(\\) expects App\\\\Models\\\\Address, Illuminate\\\\Database\\\\Eloquent\\\\Model given\\.$#"
+			message: '#^Method App\\Domains\\Contact\\Dav\\Web\\Backend\\CardDAV\\CardDAVBackend\:\:getDeletedObjects\(\) should return Illuminate\\Support\\Collection\<\(int\|string\), App\\Domains\\Contact\\Dav\\IDavResource\> but returns Illuminate\\Support\\Collection\<TKey of \(int\|string\), TValue\>\.$#'
+			identifier: return.type
 			count: 1
-			path: ../../e2e/app/Domains/Contact/ManageContactFeed/Web/ViewHelpers/Actions/ActionFeedAddress.php
+			path: ../../e2e/app/Domains/Contact/Dav/Web/Backend/CardDAV/CardDAVBackend.php
 
 		-
-			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany\\<App\\\\Models\\\\Contact, App\\\\Models\\\\Vault\\>\\:\\:unsearchable\\(\\)\\.$#"
+			message: '#^Method App\\Domains\\Contact\\Dav\\Web\\Backend\\CardDAV\\CardDAVBackend\:\:getObjects\(\) should return Illuminate\\Support\\Collection\<\(int\|string\), App\\Domains\\Contact\\Dav\\IDavResource\> but returns Illuminate\\Support\\Collection\<TKey of \(int\|string\), TValue\>\.$#'
+			identifier: return.type
 			count: 1
-			path: ../../e2e/app/Models/Vault.php
+			path: ../../e2e/app/Domains/Contact/Dav/Web/Backend/CardDAV/CardDAVBackend.php
 
 		-
-			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany\\<App\\\\Models\\\\Note, App\\\\Models\\\\Contact\\>\\:\\:unsearchable\\(\\)\\.$#"
+			message: '#^PHPDoc type array of property App\\Models\\File\:\:\$dispatchesEvents is not covariant with PHPDoc type array\<string, class\-string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$dispatchesEvents\.$#'
+			identifier: property.phpDocType
 			count: 1
-			path: ../../e2e/app/Models/Vault.php
+			path: ../../e2e/app/Models/File.php
