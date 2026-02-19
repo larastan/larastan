@@ -9,6 +9,7 @@ use PhpParser\Node\Expr\Array_;
 use PhpParser\NodeFinder;
 use PHPStan\Analyser\Scope;
 use PHPStan\File\FileHelper;
+use PHPStan\DependencyInjection\AutowiredParameter;
 use PHPStan\Parser\Parser;
 use PHPStan\Parser\ParserErrorsException;
 use PHPStan\Type\Constant\ConstantIntegerType;
@@ -50,6 +51,8 @@ final class ConfigParser
         private Parser $parser,
         private FileTypeMapper $fileTypeMapper,
         array $configPaths,
+        #[AutowiredParameter]
+        private bool $treatPhpDocTypesAsCertain,
     ) {
         foreach ($configPaths as $configPath) {
             $this->configPaths[] = $this->fileHelper->absolutizePath($configPath);
@@ -94,7 +97,7 @@ final class ConfigParser
             // Check if we have a type from the docblock
             $docComment = $cachedConfigFile->getDocComment();
 
-            if ($docComment !== null) {
+            if ($docComment !== null && $this->treatPhpDocTypesAsCertain) {
                 $resolvedPhpDoc = $this->fileTypeMapper->getResolvedPhpDoc(
                     $scope->getFile(),
                     $scope->getClassReflection()?->getName(),
