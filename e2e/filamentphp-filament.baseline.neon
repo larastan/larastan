@@ -1,151 +1,91 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
+			identifier: function.impossibleType
 			count: 1
-			path: ../../e2e/packages/actions/src/Commands/MakeExporterCommand.php
+			path: ../../e2e/packages/forms/src/Components/TableSelect/Livewire/TableSelectLivewireComponent.php
 
 		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
+			identifier: function.impossibleType
 			count: 1
-			path: ../../e2e/packages/actions/src/Commands/MakeImporterCommand.php
+			path: ../../e2e/packages/forms/src/FormsComponent.php
 
 		-
-			message: "#^Parameter \\#1 \\$related of method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:belongsTo\\(\\) expects class\\-string\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, string given\\.$#"
+			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
+			identifier: function.impossibleType
 			count: 1
-			path: ../../e2e/packages/actions/src/Exports/Models/Export.php
+			path: ../../e2e/packages/notifications/src/Livewire/DatabaseNotifications.php
 
 		-
-			message: "#^Unable to resolve the template type TRelatedModel in call to method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:belongsTo\\(\\)$#"
-			count: 2
-			path: ../../e2e/packages/actions/src/Exports/Models/Export.php
-
-		-
-			message: "#^Parameter \\#1 \\$related of method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:belongsTo\\(\\) expects class\\-string\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, string given\\.$#"
+			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
+			identifier: function.impossibleType
 			count: 1
-			path: ../../e2e/packages/actions/src/Imports/Models/Import.php
+			path: ../../e2e/packages/panels/src/Livewire/Sidebar.php
 
 		-
-			message: "#^Unable to resolve the template type TRelatedModel in call to method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:belongsTo\\(\\)$#"
-			count: 2
-			path: ../../e2e/packages/actions/src/Imports/Models/Import.php
-
-		-
-			message: "#^Access to an undefined property Filament\\\\Actions\\\\Contracts\\\\HasActions\\:\\:\\$mountedActions\\.$#"
-			count: 2
-			path: ../../e2e/packages/actions/src/Testing/TestsActions.php
-
-		-
-			message: "#^Access to an undefined property Filament\\\\Actions\\\\Contracts\\\\HasActions\\:\\:\\$mountedActionsData\\.$#"
-			count: 6
-			path: ../../e2e/packages/actions/src/Testing/TestsActions.php
-
-		-
-			message: "#^Call to an undefined method Filament\\\\Actions\\\\Contracts\\\\HasActions\\:\\:getId\\(\\)\\.$#"
-			count: 2
-			path: ../../e2e/packages/actions/src/Testing/TestsActions.php
-
-		-
-			message: "#^Call to an undefined method Filament\\\\Actions\\\\Contracts\\\\HasActions\\:\\:getMountedAction\\(\\)\\.$#"
-			count: 2
-			path: ../../e2e/packages/actions/src/Testing/TestsActions.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
+			identifier: function.impossibleType
 			count: 1
-			path: ../../e2e/packages/forms/src/Commands/MakeFormCommand.php
+			path: ../../e2e/packages/panels/src/Livewire/SimpleUserMenu.php
 
 		-
-			message: "#^Parameter \\#2 \\$callback of method Illuminate\\\\Support\\\\Collection\\<string,float\\|string\\|true\\>\\:\\:when\\(\\) expects \\(callable\\(Illuminate\\\\Support\\\\Collection\\<string, float\\|string\\|true\\>, bool\\)\\: Illuminate\\\\Support\\\\Collection\\<string, bool\\|float\\|string\\>\\)\\|null, Closure\\(Illuminate\\\\Support\\\\Collection\\)\\: Illuminate\\\\Support\\\\Collection\\<string, float\\|string\\|true\\> given\\.$#"
+			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
+			identifier: function.impossibleType
 			count: 1
-			path: ../../e2e/packages/forms/src/Components/FileUpload.php
+			path: ../../e2e/packages/panels/src/Livewire/Topbar.php
 
 		-
-			message: "#^Access to an undefined property Filament\\\\Forms\\\\Contracts\\\\HasForms\\:\\:\\$mountedFormComponentActions\\.$#"
-			count: 2
-			path: ../../e2e/packages/forms/src/Testing/TestsComponentActions.php
-
-		-
-			message: "#^Access to an undefined property Filament\\\\Forms\\\\Contracts\\\\HasForms\\:\\:\\$mountedFormComponentActionsData\\.$#"
-			count: 6
-			path: ../../e2e/packages/forms/src/Testing/TestsComponentActions.php
-
-		-
-			message: "#^Call to an undefined method Filament\\\\Forms\\\\Contracts\\\\HasForms\\:\\:getCachedForms\\(\\)\\.$#"
+			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
+			identifier: function.impossibleType
 			count: 1
-			path: ../../e2e/packages/forms/src/Testing/TestsComponentActions.php
+			path: ../../e2e/packages/panels/src/Pages/BasePage.php
 
 		-
-			message: "#^Call to an undefined method Filament\\\\Forms\\\\Contracts\\\\HasForms\\:\\:getId\\(\\)\\.$#"
-			count: 2
-			path: ../../e2e/packages/forms/src/Testing/TestsComponentActions.php
-
-		-
-			message: "#^Call to an undefined method Filament\\\\Forms\\\\Contracts\\\\HasForms\\:\\:getMountedFormComponentAction\\(\\)\\.$#"
-			count: 2
-			path: ../../e2e/packages/forms/src/Testing/TestsComponentActions.php
-
-		-
-			message: "#^Access to an undefined property Filament\\\\Infolists\\\\Contracts\\\\HasInfolists\\:\\:\\$mountedInfolistActions\\.$#"
-			count: 2
-			path: ../../e2e/packages/infolists/src/Testing/TestsActions.php
-
-		-
-			message: "#^Access to an undefined property Filament\\\\Infolists\\\\Contracts\\\\HasInfolists\\:\\:\\$mountedInfolistActionsData\\.$#"
-			count: 6
-			path: ../../e2e/packages/infolists/src/Testing/TestsActions.php
-
-		-
-			message: "#^Call to an undefined method Filament\\\\Infolists\\\\Contracts\\\\HasInfolists\\:\\:getId\\(\\)\\.$#"
-			count: 2
-			path: ../../e2e/packages/infolists/src/Testing/TestsActions.php
-
-		-
-			message: "#^Call to an undefined method Filament\\\\Infolists\\\\Contracts\\\\HasInfolists\\:\\:getMountedInfolistAction\\(\\)\\.$#"
-			count: 2
-			path: ../../e2e/packages/infolists/src/Testing/TestsActions.php
-
-		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
+			identifier: function.impossibleType
 			count: 1
-			path: ../../e2e/packages/panels/src/Commands/MakeResourceCommand.php
+			path: ../../e2e/packages/panels/src/Resources/RelationManagers/RelationManager.php
 
 		-
-			message: "#^Unable to resolve the template type TMapValue in call to method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),string\\>\\:\\:map\\(\\)$#"
+			message: '#^Instanceof between mixed and BackedEnum will always evaluate to false\.$#'
+			identifier: instanceof.alwaysFalse
+			count: 2
+			path: ../../e2e/packages/schemas/src/Components/StateCasts/EnumArrayStateCast.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
 			count: 1
-			path: ../../e2e/packages/spatie-laravel-tags-plugin/src/Forms/Components/SpatieTagsInput.php
+			path: ../../e2e/packages/schemas/src/Components/StateCasts/EnumArrayStateCast.php
 
 		-
-			message: "#^Access to an undefined property Filament\\\\Tables\\\\Contracts\\\\HasTable\\:\\:\\$mountedTableActions\\.$#"
+			message: '#^Instanceof between mixed and BackedEnum will always evaluate to false\.$#'
+			identifier: instanceof.alwaysFalse
 			count: 2
-			path: ../../e2e/packages/tables/src/Testing/TestsActions.php
+			path: ../../e2e/packages/schemas/src/Components/StateCasts/OptionsArrayStateCast.php
 
 		-
-			message: "#^Access to an undefined property Filament\\\\Tables\\\\Contracts\\\\HasTable\\:\\:\\$mountedTableActionsData\\.$#"
-			count: 6
-			path: ../../e2e/packages/tables/src/Testing/TestsActions.php
-
-		-
-			message: "#^Call to an undefined method Filament\\\\Tables\\\\Contracts\\\\HasTable\\:\\:getId\\(\\)\\.$#"
-			count: 2
-			path: ../../e2e/packages/tables/src/Testing/TestsActions.php
-
-		-
-			message: "#^Access to an undefined property Filament\\\\Tables\\\\Contracts\\\\HasTable\\:\\:\\$mountedTableBulkAction\\.$#"
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getFallbackMediaUrl\(\)\.$#'
+			identifier: method.notFound
 			count: 1
-			path: ../../e2e/packages/tables/src/Testing/TestsBulkActions.php
+			path: ../../e2e/packages/spatie-laravel-media-library-plugin/src/Infolists/Components/SpatieMediaLibraryImageEntry.php
 
 		-
-			message: "#^Call to an undefined method Filament\\\\Tables\\\\Contracts\\\\HasTable\\:\\:getId\\(\\)\\.$#"
-			count: 2
-			path: ../../e2e/packages/tables/src/Testing/TestsBulkActions.php
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getFallbackMediaUrl\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: ../../e2e/packages/spatie-laravel-media-library-plugin/src/Tables/Columns/SpatieMediaLibraryImageColumn.php
 
 		-
-			message: "#^Call to an undefined method Filament\\\\Tables\\\\Contracts\\\\HasTable\\:\\:getId\\(\\)\\.$#"
-			count: 2
-			path: ../../e2e/packages/tables/src/Testing/TestsColumns.php
+			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: ../../e2e/packages/tables/src/TableComponent.php
 
 		-
-			message: "#^Call to an undefined method Filament\\\\Tables\\\\Contracts\\\\HasTable\\:\\:getId\\(\\)\\.$#"
-			count: 2
-			path: ../../e2e/packages/tables/src/Testing/TestsRecords.php
+			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: ../../e2e/packages/widgets/src/TableWidget.php

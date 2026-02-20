@@ -666,6 +666,7 @@ services:
         arguments:
             parser: @currentPhpVersionSimpleDirectParser
             configPaths: %configDirectories%
+            treatPhpDocTypesAsCertain: %treatPhpDocTypesAsCertain%
 
     -
         class: Larastan\Larastan\Internal\ConfigHelper
