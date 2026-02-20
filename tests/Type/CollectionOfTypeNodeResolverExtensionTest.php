@@ -87,7 +87,7 @@ class CollectionOfTypeNodeResolverExtensionTest extends PHPStanTestCase
         $this->assertNull($result);
     }
 
-    /** @dataProvider validModelTypesProvider */
+    #[DataProvider('validModelTypesProvider')]
     public function testCollectionOfWithValidModelTypes(string $modelClass, string $expectedDescription): void
     {
         $typeNode = new GenericTypeNode(
