@@ -12,7 +12,7 @@ Please review these guidelines before submitting any pull requests.
 
 ## Guidelines
 
-* Please follow the [PSR-2 Coding Style Guide](http://www.php-fig.org/psr/psr-2), enforced by [StyleCI](https://styleci.io).
+* Please follow the coding standards enforced by [PHP_CodeSniffer](https://github.com/PHPCSStandards/PHP_CodeSniffer). You can check the code style by running `composer test:cs` and automatically format it using `./vendor/bin/phpcbf`.
 * Send a coherent commit history, making sure each individual commit in your pull request is meaningful.
 * You may need to [rebase](https://git-scm.com/book/en/v2/Git-Branching-Rebasing) to avoid merge conflicts.
 * Please remember that we follow [SemVer](http://semver.org).
