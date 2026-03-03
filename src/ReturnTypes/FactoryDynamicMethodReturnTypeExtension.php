@@ -15,8 +15,6 @@ use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\ErrorType;
-use PHPStan\Type\IntegerType;
-use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
@@ -54,11 +52,11 @@ class FactoryDynamicMethodReturnTypeExtension implements DynamicMethodReturnType
 
             $argType = $scope->getType($methodCall->getArgs()[0]->value);
 
-            if ((new IntegerType())->isSuperTypeOf($argType)->yes()) {
+            if ($argType->isInteger()->yes()) {
                 return new ModelFactoryType($calledOnType->getClassName(), null, null, TrinaryLogic::createNo());
             }
 
-            if ((new NullType())->isSuperTypeOf($argType)->yes()) {
+            if ($argType->isNull()->yes()) {
                 return new ModelFactoryType($calledOnType->getClassName(), null, null, TrinaryLogic::createYes());
             }
 

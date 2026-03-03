@@ -19,12 +19,10 @@ use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
-use PHPStan\Type\IntersectionType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\UnionType;
 
 use function array_map;
 use function class_exists;
@@ -63,16 +61,16 @@ final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements Dynami
         } else {
             $argType = $scope->getType($methodCall->getArgs()[0]->value);
 
-            $numericTypes = [
+            $numericType = TypeCombinator::union(
                 new IntegerType(),
                 new FloatType(),
-                new IntersectionType([
+                TypeCombinator::intersect(
                     new StringType(),
                     new AccessoryNumericStringType(),
-                ]),
-            ];
+                ),
+            );
 
-            $isSingleModel = (new UnionType($numericTypes))->isSuperTypeOf($argType)->negate()->result;
+            $isSingleModel = $numericType->isSuperTypeOf($argType)->negate()->result;
         }
 
         return TypeCombinator::union(...array_map(

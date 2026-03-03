@@ -13,11 +13,9 @@ use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\FloatType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntegerType;
-use PHPStan\Type\NullType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\UnionType;
 
 use function count;
 
@@ -58,12 +56,12 @@ class CollectionWhereNotNullDynamicReturnTypeExtension implements DynamicMethodR
             return new GenericObjectType($calledOnType->getObjectClassNames()[0], [$keyType, $nonFalseyTypes]);
         }
 
-        $scalarTypes = new UnionType([
+        $scalarTypes = TypeCombinator::union(
             new StringType(),
             new IntegerType(),
             new FloatType(),
             new BooleanType(),
-        ]);
+        );
 
         $nonFalseyTypes = TypeCombinator::remove($nonFalseyTypes, $scalarTypes);
 
@@ -78,6 +76,6 @@ class CollectionWhereNotNullDynamicReturnTypeExtension implements DynamicMethodR
 
         $argType = $scope->getType($methodCall->getArgs()[0]->value);
 
-        return (new NullType())->isSuperTypeOf($argType)->no();
+        return $argType->isNull()->no();
     }
 }

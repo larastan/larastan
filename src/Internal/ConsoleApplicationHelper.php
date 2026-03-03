@@ -16,7 +16,6 @@ use PHPStan\Type\NullType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\UnionType;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -96,7 +95,7 @@ final class ConsoleApplicationHelper
     {
         if (! $option->acceptValue()) {
             if ($option->isNegatable()) {
-                return new UnionType([new BooleanType(), new NullType()]);
+                return TypeCombinator::addNull(new BooleanType());
             }
 
             return new BooleanType();

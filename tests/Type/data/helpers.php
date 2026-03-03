@@ -130,13 +130,13 @@ function test(?int $value = 0, int|\Closure $intOrClosure = 0, int|\Closure $int
 
     assertType('Illuminate\Support\HigherOrderTapProxy<App\User>', tap(new User()));
     assertType('App\User', tap(new User())->update(['name' => 'Taylor Otwell']));
-    assertType('Illuminate\Contracts\Validation\Validator&Illuminate\Validation\Validator', tap(validator([], []))->addReplacers());
+    assertType('Illuminate\Validation\Validator', tap(validator([], []))->addReplacers());
 
     assertType('string', url('/path'));
     assertType('Illuminate\Contracts\Routing\UrlGenerator', url());
 
     assertType('Illuminate\Contracts\Validation\Factory', validator());
-    assertType('Illuminate\Contracts\Validation\Validator&Illuminate\Validation\Validator', validator(['foo' => 'bar'], ['foo' => 'required']));
+    assertType('Illuminate\Validation\Validator', validator(['foo' => 'bar'], ['foo' => 'required']));
     assertType('array', validator(['foo' => 'bar'], ['foo' => 'required'])->valid());
 
     assertType('App\User|null', value(function (): ?User {
