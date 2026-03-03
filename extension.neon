@@ -126,7 +126,19 @@ services:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
-        class: Larastan\Larastan\Methods\Extension
+        class: Larastan\Larastan\Methods\ContractsMethodsExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+    -
+        class: Larastan\Larastan\Methods\FacadesMethodsExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+    -
+        class: Larastan\Larastan\Methods\ManagersMethodsExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+    -
+        class: Larastan\Larastan\Methods\AuthsMethodsExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension
     -
