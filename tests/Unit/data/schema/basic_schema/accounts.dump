@@ -14,7 +14,7 @@ CREATE TABLE `accounts` (
   `description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `notes` text COLLATE utf8mb4_unicode_ci,
   `profile_text` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `enum_status` enum('active','inactive','don''t know') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `enum_status` enum('active','inactive','don''t know','a very long string that exceeds the ConstantStringType DESCRIBE_LIMIT') COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
