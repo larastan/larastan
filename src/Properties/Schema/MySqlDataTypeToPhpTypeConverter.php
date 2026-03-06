@@ -28,7 +28,7 @@ final class MySqlDataTypeToPhpTypeConverter
                 return TypeCombinator::union(...array_map(
                     static fn (string $value): ConstantStringType => new ConstantStringType($value),
                     $values,
-                ))->describe(VerbosityLevel::value());
+                ))->describe(VerbosityLevel::precise());
             })(),
             default => 'mixed',
         };
