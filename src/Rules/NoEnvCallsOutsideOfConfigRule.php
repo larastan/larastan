@@ -44,9 +44,11 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
 
         $path = $this->resolve('path.config');
 
-        if ($path !== null) {
-            $this->configDirectories = [(string) $path];
+        if ($path === null) {
+            return;
         }
+
+        $this->configDirectories = [(string) $path];
     }
 
     public function getNodeType(): string
