@@ -71,7 +71,6 @@ jobs:
         run: "composer run-script test:unit"
 
       - name: "Run Larastan on a sample Laravel application"
-        if: "matrix.laravel != '^13.0'"
         run: |
           version="${{ matrix.laravel }}"
           version="${version%%.*}.0"
