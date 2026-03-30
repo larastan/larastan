@@ -73,8 +73,8 @@ function test(
     assertType('Illuminate\Support\Collection<(int|string), mixed>', $items->pluck('1'));
 
     assertType('Illuminate\Support\Collection<int, int>', $customEloquentCollection->map(fn (Transaction $transaction): int => $transaction->id));
-    assertType('Illuminate\Support\Collection<int, int>', $secondCustomEloquentCollection->map(fn (User $user): int => $user->id));
-    assertType('Illuminate\Support\Collection<int, int>', $collection->map(fn (User $user): int => $user->id));
+    assertType('Illuminate\Support\Collection<int, int>', $secondCustomEloquentCollection->map(fn (User $user): int => $user->id));assertType('Illuminate\Support\Collection<int, int>', $collection->map(fn (User $user): int => $user->id));
+    assertType('Illuminate\Support\Collection<int, App\User|null>', $collection->map(fn (User $user): ?User => $user->id > 5 ? $user : null));
     assertType('Illuminate\Support\Collection<string, int>', $items->map(fn (int $value, string $key): int => $value));
 
     assertType('App\TransactionCollection<int, App\Transaction>', $customEloquentCollection->map(fn (Transaction $transaction): Transaction => $transaction));
@@ -86,8 +86,8 @@ function test(
     assertType('App\UserCollection', $secondCustomEloquentCollection->mapToDictionary(fn (User $t) => ['foo'=> $t->id]));
     assertType('Illuminate\Support\Collection<string, array<int, int>>', $items->mapToDictionary(fn (int $v) => ['foo' => $v]));
 
-    assertType('Illuminate\Support\Collection<int, string>', $customEloquentCollection->mapWithKeys(fn (Transaction $transaction): array => [$transaction->id => 'foo']));
-    assertType('Illuminate\Support\Collection<int, string>', $secondCustomEloquentCollection->mapWithKeys(fn (User $user): array => [$user->id => 'foo']));
+    assertType('Illuminate\Support\Collection<int, \'foo\'>', $customEloquentCollection->mapWithKeys(fn (Transaction $transaction): array => [$transaction->id => 'foo']));
+    assertType('Illuminate\Support\Collection<int, \'foo\'>', $secondCustomEloquentCollection->mapWithKeys(fn (User $user): array => [$user->id => 'foo']));
     assertType('Illuminate\Support\Collection<int, int>', $collection->mapWithKeys(fn (User $user): array => [$user->id => $user->id]));
     assertType('Illuminate\Support\Collection<string, int>', $items->mapWithKeys(fn (int $value, string $key): array => ['foo' => $value]));
 
@@ -174,9 +174,9 @@ function test(
     assertType('App\UserCollection', $secondCustomEloquentCollection->concat([new User()]));
     assertType('Illuminate\Support\Collection<string, App\User|int>', $items->concat([new User()]));
 
-    ////////////////////////////
-    // EnumeratesValues Trait //
-    ////////////////////////////
+     ////////////////////////////
+     // EnumeratesValues Trait //
+     ////////////////////////////
 
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', EloquentCollection::make([new User()]));
     assertType('App\TransactionCollection<int, App\Transaction>', TransactionCollection::make([new Transaction()]));
@@ -191,49 +191,49 @@ function test(
     assertType('Illuminate\Support\Collection<int, int>', SupportCollection::times(10, fn ($int) => 5));
     assertType('Illuminate\Support\LazyCollection<int, int>', LazyCollection::times(10, fn ($int) => 5));
 
-    // In runtime it returns `Illuminate\Support\Collection<string, Illuminate\Database\Eloquent\Collection<int, int>>`
-    // Might be fixed in Laravel or needs a separate extension
+     // In runtime it returns `Illuminate\Support\Collection<string, Illuminate\Database\Eloquent\Collection<int, int>>`
+     // Might be fixed in Laravel or needs a separate extension
     assertType(
-        'Illuminate\Database\Eloquent\Collection<string, Illuminate\Database\Eloquent\Collection<int, int>>',
-        $collection->mapToGroups(fn (User $user, int $key): array => ['foo' => $user->id])
-    );
+         'Illuminate\Database\Eloquent\Collection<string, Illuminate\Database\Eloquent\Collection<int, int>>',
+         $collection->mapToGroups(fn (User $user, int $key): array => ['foo' => $user->id])
+     );
 
     assertType(
-        'Illuminate\Database\Eloquent\Collection<int, int>',
-        $collection->flatMap(function (User $user, int $id) {
-            return [$user->id];
-        })
-    );
+         'Illuminate\Database\Eloquent\Collection<int, int>',
+         $collection->flatMap(function (User $user, int $id) {
+             return [$user->id];
+         })
+     );
 
     assertType(
-        'Illuminate\Support\Collection<int, int>',
-        $items->flatMap(function (int $int) {
-            return [$int * 2];
-        })
-    );
+         'Illuminate\Support\Collection<int, int>',
+         $items->flatMap(function (int $int) {
+             return [$int * 2];
+         })
+     );
 
     assertType(
-        'Illuminate\Support\LazyCollection<int, int>',
-        $lazyCollection->flatMap(function (User $user, int $id) {
-            return [$user->id];
-        })
-    );
+         'Illuminate\Support\LazyCollection<int, int>',
+         $lazyCollection->flatMap(function (User $user, int $id) {
+             return [$user->id];
+         })
+     );
 
     assertType(
-        'Illuminate\Support\LazyCollection<int, int>',
-        LazyCollection::times(10, fn ($int) => 5)->flatMap(fn (int $i) => [$i * 2]),
-    );
+         'Illuminate\Support\LazyCollection<int, int>',
+         LazyCollection::times(10, fn ($int) => 5)->flatMap(fn (int $i) => [$i * 2]),
+     );
 
     assertType('Illuminate\Support\Collection<(int|string), Illuminate\Support\Collection<int, array{id: int, type: string}>>', collect([
-        [
-            'id'   => 1,
-            'type' => 'A',
-        ],
-        [
-            'id'   => 1,
-            'type' => 'B',
-        ],
-    ])->groupBy('type'));
+         [
+             'id'   => 1,
+             'type' => 'A',
+         ],
+         [
+             'id'   => 1,
+             'type' => 'B',
+         ],
+     ])->groupBy('type'));
 
     assertType('int|false', $enumerableIntUsers->search(fn(User $user) => $user->id === 1));
     assertType('string|false', $enumerableStringUsers->search(fn(User $user) => $user->id === 1));
