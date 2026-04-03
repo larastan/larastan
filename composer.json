@@ -21,7 +21,7 @@
         "illuminate/http": "^11.44.2 || ^12.4.1 || ^13",
         "illuminate/pipeline": "^11.44.2 || ^12.4.1 || ^13",
         "illuminate/support": "^11.44.2 || ^12.4.1 || ^13",
-        "phpstan/phpstan": "^2.1.44"
+        "phpstan/phpstan": "^2.2.0"
     },
     "require-dev": {
         "doctrine/coding-standard": "^13",
