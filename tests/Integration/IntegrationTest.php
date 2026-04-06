@@ -40,6 +40,13 @@ class IntegrationTest extends PHPStanTestCase
         yield [__DIR__ . '/data/helpers.php'];
 
         yield [
+            __DIR__ . '/data/gate-helpers.php',
+            [
+                13 => ['Call to static method Illuminate\Auth\Access\Response::deny() on a separate line has no effect.'],
+            ],
+        ];
+
+        yield [
             __DIR__ . '/data/model-property-builder.php',
             [
                 15 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::firstWhere() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
