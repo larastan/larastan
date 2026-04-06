@@ -113,8 +113,8 @@ function test(
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->get());
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $users->getQuery());
     assertType('App\User', $users->make());
-    assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\Account|App\User>', $union->group());
-    assertType('Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Post, App\Account|App\User, Illuminate\Database\Eloquent\Relations\Pivot, \'pivot\'>', $union->posts());
+    assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\Account>|Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\User>', $union->group());
+    assertType('Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Post, App\Account, Illuminate\Database\Eloquent\Relations\Pivot, \'pivot\'>|Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Post, App\User, Illuminate\Database\Eloquent\Relations\Pivot, \'pivot\'>', $union->posts());
 
     assertType('App\Account', $appUser->accounts()->sole());
     assertType('App\Group', $appUser->group()->sole());
