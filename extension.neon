@@ -206,6 +206,11 @@ services:
             - phpstan.broker.propertiesClassReflectionExtension
 
     -
+        class: Larastan\Larastan\Properties\FormRequestExtension
+        tags:
+            - phpstan.broker.propertiesClassReflectionExtension
+
+    -
         class: Larastan\Larastan\ReturnTypes\HigherOrderTapProxyExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
@@ -541,6 +546,11 @@ services:
         arguments:
             parser: @currentPhpVersionSimpleDirectParser
             parseModelCastsMethod: %parseModelCastsMethod%
+
+    -
+        class: Larastan\Larastan\Support\FormRequestHelper
+        arguments:
+            parser: @currentPhpVersionSimpleDirectParser
 
     -
         class: Larastan\Larastan\Properties\MigrationCache
