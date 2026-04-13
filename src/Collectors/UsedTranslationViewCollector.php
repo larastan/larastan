@@ -13,6 +13,7 @@ use function array_map;
 use function array_merge;
 use function count;
 use function preg_match_all;
+use function str_replace;
 
 use const PREG_SET_ORDER;
 
@@ -59,11 +60,19 @@ final class UsedTranslationViewCollector
         foreach ($nodes as $node) {
             preg_match_all(self::TRANSLATION_REGEX, $node->value, $matches, PREG_SET_ORDER, 0);
 
-            $translations = array_merge($translations, array_map(static function (array $match): array {
-                return [$match[3], 0];
+            $translations = array_merge($translations, array_map(function (array $match): array {
+                return [$this->unescapeMatch($match), 0];
             }, $matches));
         }
 
         return $translations;
+    }
+
+    /** @param array{quote: array{string, int}, string: array{string, int}} $match */
+    private function unescapeMatch(array $match): string
+    {
+        $quote = $match['quote'][0];
+
+        return str_replace('\\' . $quote, $quote, $match['string'][0]);
     }
 }
