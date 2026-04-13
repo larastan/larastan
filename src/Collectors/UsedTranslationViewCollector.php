@@ -14,7 +14,10 @@ use function array_merge;
 use function count;
 use function preg_match_all;
 use function str_replace;
+use function substr;
+use function substr_count;
 
+use const PREG_OFFSET_CAPTURE;
 use const PREG_SET_ORDER;
 
 final class UsedTranslationViewCollector
@@ -58,10 +61,13 @@ final class UsedTranslationViewCollector
         $translations = [];
 
         foreach ($nodes as $node) {
-            preg_match_all(self::TRANSLATION_REGEX, $node->value, $matches, PREG_SET_ORDER, 0);
+            preg_match_all(self::TRANSLATION_REGEX, $node->value, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE, 0);
 
-            $translations = array_merge($translations, array_map(function (array $match): array {
-                return [$this->unescapeMatch($match), 0];
+            $translations = array_merge($translations, array_map(function (array $match) use ($node): array {
+                return [
+                    $this->unescapeMatch($match),
+                    $this->matchLine($match, $node),
+                ];
             }, $matches));
         }
 
@@ -74,5 +80,13 @@ final class UsedTranslationViewCollector
         $quote = $match['quote'][0];
 
         return str_replace('\\' . $quote, $quote, $match['string'][0]);
+    }
+
+    /** @param array{0: array{string, int}} $match */
+    private function matchLine(array $match, Node\Stmt\InlineHTML $node): int
+    {
+        $stringUntilMatch = substr($node->value, 0, $match[0][1]);
+
+        return $node->getStartLine() + substr_count($stringUntilMatch, "\n");
     }
 }
