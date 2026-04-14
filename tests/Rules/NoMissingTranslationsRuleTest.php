@@ -12,6 +12,8 @@ use Larastan\Larastan\Collectors\UsedTranslationViewCollector;
 use Larastan\Larastan\Rules\NoMissingTranslationsRule;
 use Larastan\Larastan\Support\ViewFileHelper;
 use Larastan\Larastan\Support\ViewParser;
+use PhpParser\Node\Expr\CallLike;
+use PHPStan\Collectors\Collector;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
@@ -26,7 +28,7 @@ class NoMissingTranslationsRuleTest extends RuleTestCase
         return new NoMissingTranslationsRule(new UsedTranslationViewCollector($viewParser, $viewFileHelper), new Filesystem(), []);
     }
 
-    /** @return array<Collector<Node, mixed>> */
+    /** @return array<Collector<CallLike, mixed>> */
     protected function getCollectors(): array
     {
         return [
