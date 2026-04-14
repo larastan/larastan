@@ -76,3 +76,8 @@ function routeView(): void
 {
     Route::view('/welcome', 'route-view');
 }
+
+function dummyTranslationView()
+{
+    return view('translations');
+}
