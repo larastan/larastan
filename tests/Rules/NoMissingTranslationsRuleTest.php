@@ -38,7 +38,45 @@ class NoMissingTranslationsRuleTest extends RuleTestCase
 
     public function testRule(): void
     {
+        /** @see ../application/resources/views/translations.blade.php */
+        $errorsFromBladeFile = [
+            ['Translation "lang.get" has not been found.', 26],
+            ['Translation "lang.choice" has not been found.', 27],
+            ['Translation "lang.trans" has not been found.', 28],
+            ['Translation "lang.transChoice" has not been found.', 29],
+
+            ['Translation "a.b" has not been found.', 31],
+            ['Translation "a.b.c" has not been found.', 32],
+            ['Translation "a_b.c-d" has not been found.', 33],
+            ['Translation "a.b" has not been found.', 34],
+            ['Translation "a.b!" has not been found.', 35],
+            ['Translation "a.translate me!" has not been found.', 36],
+            ['Translation "a.über~" has not been found.', 37],
+            ['Translation "app.i\\\'m" has not been found.', 38],
+            ['Translation "app.i\'m" has not been found.', 39],
+            ['Translation "app.\\"ok\\"" has not been found.', 40],
+            ['Translation "app."ok"" has not been found.', 41],
+            ['Translation "a.b" has not been found.', 42],
+
+            ['Translation "directive.lang" has not been found.', 44],
+            ['Translation "directive.choice" has not been found.', 45],
+
+            ['Translation "surrounded.by.text" has not been found.', 47],
+            ['Translation "surrounded.by.html.tags" has not been found.', 48],
+
+            ['Translation "trans.uppercase" has not been found.', 50],
+            ['Translation "object.instance.method" has not been found.', 51],
+            ['Translation "dollar.t" has not been found.', 52],
+            ['Translation "double.underscore.helper.function" has not been found.', 53],
+
+            ['Translation "lang.in.html.attribute" has not been found.', 55],
+            ['Translation "lang.with.extra.paramater" has not been found.', 56],
+            ['Translation "lang.in.blade.comment" has not been found.', 57],
+            ['Translation "lang.in.html.comment" has not been found.', 58],
+        ];
+
         $this->analyse([__DIR__ . '/data/Translation.php'], [
+            ...$errorsFromBladeFile,
             [
                 'Translation "messages.test" has not been found.',
                 18,

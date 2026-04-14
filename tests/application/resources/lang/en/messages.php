@@ -8,4 +8,8 @@ return [
     'nested' => [
         'key' => 'value',
     ],
+
+    'You\'re beautiful' => 'Du bist schön',
+
+    'A.Key.With.Dots.' => 'A key with dots.',
 ];

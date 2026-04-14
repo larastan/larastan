@@ -40,5 +40,9 @@ class Translation
         Lang::get('sub/lines.farewell');
 
         __('vendor::key');
+
+        __('messages.You\'re beautiful');
+
+        __('messages.A.Key.With.Dots.');
     }
 }
