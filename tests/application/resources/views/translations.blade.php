@@ -66,3 +66,18 @@ Should not match:
 {{ Method1trans('method.1.trans') }}
 {{ some_other_method_trans('some.other.method.trans') }}
 {{ trans('trans.with.concatenated.string' . $object->property) }}
+
+Keys with special characters:
+@lang("lang.with.new\nline.char")
+@lang('lang.spanning
+multiple.lines')
+@lang('lang.with.a.back\\slash.single.quotes')
+@lang("lang.with.a.back\\slash.double.quotes")
+@lang("lang.with.\x61.hex.char")
+
+@lang("messages.with.new\nline.char")
+@lang('messages.spanning
+multiple.lines')
+@lang('messages.with.a.back\\slash.single.quotes')
+@lang("messages.with.a.back\\slash.double.quotes")
+@lang("messages.with.\x61.hex.char")

@@ -14,6 +14,7 @@ use function array_merge;
 use function count;
 use function preg_match_all;
 use function str_replace;
+use function stripcslashes;
 use function substr;
 use function substr_count;
 
@@ -95,7 +96,17 @@ final class UsedTranslationViewCollector
     {
         $quote = $match['quote'][0];
 
-        return str_replace('\\' . $quote, $quote, $match['string'][0]);
+        $string = $match['string'][0];
+
+        if ($quote === '"') {
+            $string = str_replace("\\'", "\\\\'", $string);
+            $string = stripcslashes($string); // supports all escape sequences except Unicode
+        } else {
+            $string = str_replace('\\\\', '\\', $string);
+            $string = str_replace("\\'", "'", $string);
+        }
+
+        return $string;
     }
 
     /** @param array{0: array{string, int}} $match */

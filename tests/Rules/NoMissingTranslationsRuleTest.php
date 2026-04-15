@@ -17,6 +17,8 @@ use PHPStan\Collectors\Collector;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
+use const PHP_EOL;
+
 /** @extends RuleTestCase<NoMissingTranslationsRule> */
 class NoMissingTranslationsRuleTest extends RuleTestCase
 {
@@ -77,6 +79,12 @@ class NoMissingTranslationsRuleTest extends RuleTestCase
             ['Translation "lang.in.html.comment" has not been found.', 58],
             ['Translation "and.a.simple.translation.afterwards" has not been found.', 59],
             ['Translation "lang.with.prefix" has not been found.', 60],
+
+            ['Translation "lang.with.new' . "\n" . 'line.char" has not been found.', 71],
+            ['Translation "lang.spanning' . PHP_EOL . 'multiple.lines" has not been found.', 72],
+            ['Translation "lang.with.a.back\\slash.single.quotes" has not been found.', 74],
+            ['Translation "lang.with.a.back\\slash.double.quotes" has not been found.', 75],
+            ['Translation "lang.with.a.hex.char" has not been found.', 76],
         ];
 
         $this->analyse([__DIR__ . '/data/Translation.php'], [
