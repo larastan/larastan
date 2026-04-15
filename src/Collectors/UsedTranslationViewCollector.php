@@ -22,8 +22,24 @@ use const PREG_SET_ORDER;
 
 final class UsedTranslationViewCollector
 {
-    /** @see https://regex101.com/r/ukW3jd/1 */
-    private const TRANSLATION_REGEX = '/(?<!\w)(trans|trans_choice|Lang::get|Lang::choice|Lang::trans|Lang::transChoice|@lang|@choice|__|\$t)\((?P<quote>[\'"])(?P<string>(?:\\k{quote}|(?!\k{quote}).)*?)\k{quote}[\),]/im';
+    /** @see https://regex101.com/r/xFN4fv/1 */
+    private const TRANSLATION_REGEX = <<<'REGEXP'
+    /
+        (
+            (
+                (?<!\w)
+                (trans|trans_choice|Lang::get|Lang::choice|Lang::trans|Lang::transChoice|__|\$t)
+            )
+            |
+            (@lang|@choice)
+        )
+        \(
+        (?P<quote>['"])
+        (?P<string>(\\.|(?!(?P=quote))[^\\\\])*?)
+        (?P=quote)
+        [),]
+    /mix
+    REGEXP;
 
     public function __construct(private ViewParser $viewParser, private ViewFileHelper $viewFileHelper)
     {

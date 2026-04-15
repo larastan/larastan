@@ -75,6 +75,8 @@ class NoMissingTranslationsRuleTest extends RuleTestCase
             ['Translation "lang.with.extra.paramater" has not been found.', 56],
             ['Translation "lang.in.blade.comment" has not been found.', 57],
             ['Translation "lang.in.html.comment" has not been found.', 58],
+            ['Translation "and.a.simple.translation.afterwards" has not been found.', 59],
+            ['Translation "lang.with.prefix" has not been found.', 60],
         ];
 
         $this->analyse([__DIR__ . '/data/Translation.php'], [

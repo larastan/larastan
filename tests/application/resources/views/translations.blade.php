@@ -56,6 +56,8 @@ Test:@lang('surrounded.by.text')!
 <p>@lang('lang.with.extra.paramater', ['name' => config('app.name')])</p>
 {{-- @lang('lang.in.blade.comment') --}}
 <!-- @lang('lang.in.html.comment') -->
+@lang('translation.with.a.'.$variable) @lang('and.a.simple.translation.afterwards')
+test@lang('lang.with.prefix')
 
 Should not match:
 {{ trans($variableInsteadOfString) }}
