@@ -9,8 +9,10 @@ use Larastan\Larastan\Support\ViewParser;
 use PhpParser\Node;
 
 use function array_filter;
+use function array_key_exists;
 use function array_map;
 use function array_merge;
+use function assert;
 use function count;
 use function preg_match_all;
 use function str_replace;
@@ -81,6 +83,10 @@ final class UsedTranslationViewCollector
             preg_match_all(self::TRANSLATION_REGEX, $node->value, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE, 0);
 
             $translations = array_merge($translations, array_map(function (array $match) use ($node): array {
+                assert(array_key_exists(0, $match));
+                assert(array_key_exists('quote', $match));
+                assert(array_key_exists('string', $match));
+
                 return [
                     $this->unescapeMatch($match),
                     $this->matchLine($match, $node),
