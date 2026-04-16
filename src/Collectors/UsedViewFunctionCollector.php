@@ -9,6 +9,7 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
 
+use PHPStan\Type\Constant\ConstantStringType;
 use function count;
 
 /** @implements Collector<Node\Expr\FuncCall, string> */
@@ -42,10 +43,16 @@ final class UsedViewFunctionCollector implements Collector
 
         $template = $node->getArgs()[0]->value;
 
-        if (! $template instanceof Node\Scalar\String_) {
-            return null;
+        if ($template instanceof Node\Scalar\String_) {
+            return ViewName::normalize($template->value);
         }
 
-        return ViewName::normalize($template->value);
+        if ($template instanceof Node\Expr\BinaryOp\Concat) {
+            $template = $scope->getType($template);
+
+            return ViewName::normalize($template->getValue());
+        }
+
+        return null;
     }
 }
