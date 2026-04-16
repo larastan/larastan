@@ -52,7 +52,7 @@ class UnusedViewsRuleTest extends RuleTestCase
     {
         $this->analyse([__DIR__ . '/data/FooController.php'], [
             [
-                'This view is not used in the project.',
+                'The "unused" view is not used in the project.',
                 00,
             ],
         ]);
