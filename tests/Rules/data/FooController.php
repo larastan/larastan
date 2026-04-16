@@ -109,3 +109,10 @@ function dummyTranslationView()
 {
     return view('translations');
 }
+
+class SomeClass {
+    function someView(): void
+    {
+        view('modals/' . __FUNCTION__);
+    }
+}
