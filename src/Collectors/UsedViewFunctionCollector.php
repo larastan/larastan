@@ -9,7 +9,6 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
 
-use PHPStan\Type\Constant\ConstantStringType;
 use function count;
 
 /** @implements Collector<Node\Expr\FuncCall, string> */
@@ -50,7 +49,13 @@ final class UsedViewFunctionCollector implements Collector
         if ($template instanceof Node\Expr\BinaryOp\Concat) {
             $template = $scope->getType($template);
 
-            return ViewName::normalize($template->getValue());
+            $constantStrings = $template->getConstantStrings();
+
+            if (count($constantStrings) !== 1) {
+                return null;
+            }
+
+            return ViewName::normalize($constantStrings[0]->getValue());
         }
 
         return null;
