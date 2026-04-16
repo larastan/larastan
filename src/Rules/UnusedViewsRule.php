@@ -7,6 +7,7 @@ namespace Larastan\Larastan\Rules;
 use Illuminate\View\Factory;
 use Larastan\Larastan\Collectors\UsedEmailAlternativeSyntaxViewCollector;
 use Larastan\Larastan\Collectors\UsedEmailViewCollector;
+use Larastan\Larastan\Collectors\UsedEmailSendViewCollector;
 use Larastan\Larastan\Collectors\UsedRouteFacadeViewCollector;
 use Larastan\Larastan\Collectors\UsedViewFacadeMakeCollector;
 use Larastan\Larastan\Collectors\UsedViewFunctionCollector;
@@ -53,6 +54,7 @@ final class UnusedViewsRule implements Rule
             $node->get(UsedViewFunctionCollector::class),
             $node->get(UsedEmailViewCollector::class),
             $node->get(UsedEmailAlternativeSyntaxViewCollector::class),
+            $node->get(UsedEmailSendViewCollector::class),
             $node->get(UsedViewMakeCollector::class),
             $node->get(UsedViewFacadeMakeCollector::class),
             $node->get(UsedRouteFacadeViewCollector::class),
