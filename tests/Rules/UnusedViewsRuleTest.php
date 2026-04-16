@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Rules;
 
 use Larastan\Larastan\Collectors\UsedEmailAlternativeSyntaxViewCollector;
-use Larastan\Larastan\Collectors\UsedEmailViewCollector;
 use Larastan\Larastan\Collectors\UsedEmailSendViewCollector;
+use Larastan\Larastan\Collectors\UsedEmailViewCollector;
 use Larastan\Larastan\Collectors\UsedRouteFacadeViewCollector;
 use Larastan\Larastan\Collectors\UsedViewFacadeMakeCollector;
 use Larastan\Larastan\Collectors\UsedViewFunctionCollector;
