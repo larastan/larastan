@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Rules;
 
+use Larastan\Larastan\Collectors\UsedEmailAlternativeSyntaxViewCollector;
 use Larastan\Larastan\Collectors\UsedEmailViewCollector;
 use Larastan\Larastan\Collectors\UsedRouteFacadeViewCollector;
 use Larastan\Larastan\Collectors\UsedViewFacadeMakeCollector;
@@ -38,6 +39,7 @@ class UnusedViewsRuleTest extends RuleTestCase
         return [
             new UsedViewFunctionCollector(),
             new UsedEmailViewCollector(),
+            new UsedEmailAlternativeSyntaxViewCollector(),
             new UsedViewMakeCollector(),
             new UsedViewFacadeMakeCollector(),
             new UsedRouteFacadeViewCollector(),
