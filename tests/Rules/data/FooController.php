@@ -4,6 +4,7 @@ namespace Tests\Rules\Data;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\Facades\Route;
 use Illuminate\View\Factory;
@@ -41,6 +42,14 @@ class FooMailable extends Mailable
     public function bar(): self
     {
         return $this->view('emails.mailable.view');
+    }
+
+    public function content(): Content
+    {
+        $foo = new Content('emails.mailable.content.view',);
+        $bar = new Content(markdown: 'emails.mailable.content.markdown');
+
+        return $bar;
     }
 }
 
