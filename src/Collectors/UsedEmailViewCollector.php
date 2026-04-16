@@ -19,6 +19,8 @@ use function in_array;
 /** @implements Collector<Node\Expr\MethodCall, string> */
 final class UsedEmailViewCollector implements Collector
 {
+    private const VIEW_METHOD_NAMES = ['view', 'html', 'text', 'markdown'];
+
     public function getNodeType(): string
     {
         return Node\Expr\MethodCall::class;
@@ -33,7 +35,7 @@ final class UsedEmailViewCollector implements Collector
             return null;
         }
 
-        if (! in_array($name->name, ['markdown', 'view'], true)) {
+        if (! in_array($name->name, self::VIEW_METHOD_NAMES, true)) {
             return null;
         }
 
