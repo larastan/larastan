@@ -49,6 +49,10 @@ class FooMailable extends Mailable
         $foo = new Content('emails.mailable.content.view',);
         $bar = new Content(markdown: 'emails.mailable.content.markdown');
 
+        $foo
+            ->text('emails.mailable.content.text')
+            ->html('emails.mailable.content.html');
+
         return $bar;
     }
 }
