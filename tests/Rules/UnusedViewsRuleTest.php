@@ -25,7 +25,7 @@ class UnusedViewsRuleTest extends RuleTestCase
     {
         $viewParser     = new ViewParser($this->getContainer()->getService('currentPhpVersionSimpleDirectParser'));
         $viewFileHelper = new ViewFileHelper([
-            __DIR__ . '/../application/resources/views',
+            __DIR__ . '/../application/resources/views/',
             __DIR__ . '/../../vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/views',
         ], $this->getFileHelper());
 
