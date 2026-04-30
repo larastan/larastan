@@ -440,6 +440,8 @@ services:
         class: Larastan\Larastan\Rules\NoEnvCallsOutsideOfConfigRule
         arguments:
             configDirectories: %configDirectories%
+            singleReflectionFile: %singleReflectionFile%
+            singleReflectionInsteadOfFile: %singleReflectionInsteadOfFile%
 
     -
         class: Larastan\Larastan\Rules\NoModelMakeRule
