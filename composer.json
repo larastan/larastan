@@ -24,7 +24,7 @@
         "phpstan/phpstan": "^2.1.44"
     },
     "require-dev": {
-        "doctrine/coding-standard": "^13",
+        "doctrine/coding-standard": "^14",
         "nikic/php-parser": "^5.4",
         "laravel/framework": "^11.44.2 || ^12.7.2 || ^13",
         "mockery/mockery": "^1.6.12",
