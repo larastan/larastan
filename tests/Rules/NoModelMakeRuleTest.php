@@ -8,6 +8,8 @@ use Larastan\Larastan\Rules\NoModelMakeRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
+use const DIRECTORY_SEPARATOR;
+
 /** @extends RuleTestCase<NoModelMakeRule> */
 class NoModelMakeRuleTest extends RuleTestCase
 {
@@ -45,7 +47,7 @@ class NoModelMakeRuleTest extends RuleTestCase
             $actualErrors[0]->getMessage(),
         );
         $this->assertSame(
-            __DIR__ . '/data/ModelMakeTrait.php (in context of class Tests\Rules\Data\ModelMake)',
+            __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'ModelMakeTrait.php (in context of class Tests\Rules\Data\ModelMake)',
             $actualErrors[0]->getFile(),
         );
         $this->assertSame(13, $actualErrors[0]->getLine());

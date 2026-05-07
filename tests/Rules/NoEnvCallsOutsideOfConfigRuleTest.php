@@ -10,6 +10,8 @@ use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 use PHPUnit\Framework\Attributes\Test;
 
+use const DIRECTORY_SEPARATOR;
+
 /** @extends RuleTestCase<NoEnvCallsOutsideOfConfigRule> */
 class NoEnvCallsOutsideOfConfigRuleTest extends RuleTestCase
 {
@@ -70,7 +72,7 @@ class NoEnvCallsOutsideOfConfigRuleTest extends RuleTestCase
             $actualErrors[0]->getMessage(),
         );
         $this->assertSame(
-            __DIR__ . '/data/EnvUsageTrait.php (in context of class Tests\Rules\Data\EnvUsageClass)',
+            __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'EnvUsageTrait.php (in context of class Tests\Rules\Data\EnvUsageClass)',
             $actualErrors[0]->getFile(),
         );
         $this->assertSame(17, $actualErrors[0]->getLine());
@@ -80,7 +82,7 @@ class NoEnvCallsOutsideOfConfigRuleTest extends RuleTestCase
             $actualErrors[1]->getMessage(),
         );
         $this->assertSame(
-            __DIR__ . '/data/EnvUsageTrait.php (in context of class Tests\Rules\Data\EnvUsageClass)',
+            __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'EnvUsageTrait.php (in context of class Tests\Rules\Data\EnvUsageClass)',
             $actualErrors[1]->getFile(),
         );
         $this->assertSame(18, $actualErrors[1]->getLine());
