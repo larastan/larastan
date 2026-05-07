@@ -26,6 +26,8 @@ use function is_string;
 
 class CollectionFilterRejectDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
+    private const SUPPORTED_METHOD_NAMES = ['filter', 'reject', 'where'];
+
     public function getClass(): string
     {
         return Enumerable::class;
@@ -33,7 +35,7 @@ class CollectionFilterRejectDynamicReturnTypeExtension implements DynamicMethodR
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-        return in_array($methodReflection->getName(), ['filter', 'reject'], true);
+        return in_array($methodReflection->getName(), self::SUPPORTED_METHOD_NAMES, true);
     }
 
     public function getTypeFromMethodCall(
@@ -63,15 +65,18 @@ class CollectionFilterRejectDynamicReturnTypeExtension implements DynamicMethodR
         }
 
         $methodName = $methodReflection->getName();
-        assert($methodName === 'filter' || $methodName === 'reject', 'proven in isMethodSupported');
+        assert(in_array($methodName, self::SUPPORTED_METHOD_NAMES), 'proven in isMethodSupported');
 
         if (count($methodCall->getArgs()) < 1) {
             $modifiedType = match ($methodName) {
                 'filter' => TypeCombinator::removeFalsey($valueType),
-                'reject' => TypeCombinator::removeTruthy($valueType)
+                'reject' => TypeCombinator::removeTruthy($valueType),
+                'where' => null,
             };
 
-            return new GenericObjectType($calledOnType->getObjectClassNames()[0], [$keyType, $modifiedType]);
+            return $modifiedType !== null
+                ? new GenericObjectType($calledOnType->getObjectClassNames()[0], [$keyType, $modifiedType])
+                : null;
         }
 
         $callbackArg = $methodCall->getArgs()[0]->value;
@@ -88,6 +93,9 @@ class CollectionFilterRejectDynamicReturnTypeExtension implements DynamicMethodR
         } elseif ($callbackArg instanceof ArrowFunction && count($callbackArg->params) > 0) {
             $var  = $callbackArg->params[0]->var;
             $expr = $callbackArg->expr;
+        } elseif ($methodName === 'where') {
+            // where call may have non-callable as first parameter; we don't support narrowing in this case
+            return null;
         }
 
         if ($var !== null && $expr !== null) {
@@ -101,7 +109,7 @@ class CollectionFilterRejectDynamicReturnTypeExtension implements DynamicMethodR
             // @phpstan-ignore-next-line
             $scope = $scope->assignExpression($node, $valueType, $valueType);
             $scope = match ($methodName) {
-                'filter' => $scope->filterByTruthyValue($expr),
+                'filter', 'where' => $scope->filterByTruthyValue($expr),
                 'reject' => $scope->filterByFalseyValue($expr),
             };
             $valueType = $scope->getVariableType($itemVariableName);
