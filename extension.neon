@@ -704,6 +704,16 @@ services:
 
     -
         class: Larastan\Larastan\Rules\ConfigCollectionRule
+    -
+        class: Larastan\Larastan\DynamicParameter\EloquentBuilderRelationParameterExtension
+        tags:
+            - phpstan.dynamicMethodParameterTypeExtension
+            - phpstan.dynamicStaticMethodParameterTypeExtension
+    -
+        class: Larastan\Larastan\DynamicParameter\EloquentWithParameterExtension
+        tags:
+            - phpstan.dynamicMethodParameterTypeExtension
+            - phpstan.dynamicStaticMethodParameterTypeExtension
 
     -
         class: Illuminate\Filesystem\Filesystem
