@@ -5,28 +5,32 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Support;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Larastan\Larastan\Support\Validation\ValidationRule;
+use Larastan\Larastan\Support\Validation\RuleTreeBuilder;
+use Larastan\Larastan\Support\Validation\RuleTreeNode;
+use Larastan\Larastan\Support\Validation\RuleTreeTypeResolver;
 use Larastan\Larastan\Support\Validation\ValidationRuleFactory;
+use PhpParser\ConstExprEvaluationException;
 use PhpParser\ConstExprEvaluator;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\NodeFinder;
 use PHPStan\Parser\Parser;
-use PHPStan\PhpDoc\TypeStringResolver;
 use PHPStan\Reflection\ClassReflection;
-use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\Type;
 
 use function array_key_exists;
+use function is_array;
+use function is_string;
 
 /** @internal */
 final class FormRequestHelper
 {
-    /** @var array<class-string<FormRequest>, array<string, ValidationRule>> */
+    /** @var array<class-string<FormRequest>, array<string, RuleTreeNode>> */
     private array $properties = [];
 
     public function __construct(
-        private TypeStringResolver $stringResolver,
+        private RuleTreeTypeResolver $treeTypeResolver,
         private Parser $parser,
     ) {
     }
@@ -43,23 +47,15 @@ final class FormRequestHelper
         return array_key_exists($propertyName, $this->properties[$className]);
     }
 
-    public function getProperty(ClassReflection $classReflection, string $propertyName): mixed
+    public function getProperty(ClassReflection $classReflection, string $propertyName): Type
     {
         /** @var class-string<FormRequest> $className */
         $className = $classReflection->getName();
 
-        $valType = $this->properties[$className][$propertyName];
-
-        $type = $this->stringResolver->resolve($valType->type);
-
-        if ($valType->nullable) {
-            $type = TypeCombinator::addNull($type);
-        }
-
-        return $type;
+        return $this->treeTypeResolver->resolveTopLevel($this->properties[$className][$propertyName]);
     }
 
-    /** @return array<string, ValidationRule> */
+    /** @return array<string, RuleTreeNode> */
     private function parseProperties(ClassReflection $classReflection): array
     {
         /** @var string $fileName */
@@ -67,16 +63,16 @@ final class FormRequestHelper
 
         $stmts = $this->parser->parseFile($fileName);
 
-        $castsMethodNode = (new NodeFinder())->findFirst($stmts, static function (Node $node): bool {
+        $rulesMethodNode = (new NodeFinder())->findFirst($stmts, static function (Node $node): bool {
             return $node instanceof Node\Stmt\ClassMethod && $node->name->toString() === 'rules';
         });
 
-        if ($castsMethodNode === null) {
+        if ($rulesMethodNode === null) {
             return [];
         }
 
         /** @var Node\Stmt\Return_|null $returnNode */
-        $returnNode = (new NodeFinder())->findFirstInstanceOf($castsMethodNode, Node\Stmt\Return_::class);
+        $returnNode = (new NodeFinder())->findFirstInstanceOf($rulesMethodNode, Node\Stmt\Return_::class);
 
         if ($returnNode === null) {
             return [];
@@ -86,16 +82,29 @@ final class FormRequestHelper
             return [];
         }
 
-        $realArray = (new ConstExprEvaluator(static fn (Expr $expr) => null))->evaluateSilently($returnNode->expr);
+        $evaluator = new ConstExprEvaluator(static fn (Expr $expr) => null);
 
-        $return = [];
+        $flatRules = [];
 
-        foreach ($realArray as $propertyName => $rules) {
-            $type = ValidationRuleFactory::make($rules);
+        foreach ($returnNode->expr->items as $item) {
+            if ($item->unpack || $item->key === null) {
+                continue;
+            }
 
-            $return[$propertyName] = $type;
+            try {
+                $propertyName = $evaluator->evaluateSilently($item->key);
+                $rules        = $evaluator->evaluateSilently($item->value);
+            } catch (ConstExprEvaluationException) {
+                continue;
+            }
+
+            if (! is_string($propertyName) || (! is_string($rules) && ! is_array($rules))) {
+                continue;
+            }
+
+            $flatRules[$propertyName] = ValidationRuleFactory::make($rules);
         }
 
-        return $return;
+        return RuleTreeBuilder::build($flatRules);
     }
 }
