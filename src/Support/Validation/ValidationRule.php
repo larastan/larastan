@@ -11,6 +11,7 @@ final readonly class ValidationRule
         public string $type,
         public bool $nullable = false,
         public bool $possiblyUndefined = false,
+        public bool $required = false,
     ) {
     }
 }

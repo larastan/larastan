@@ -37,7 +37,7 @@ class FormRequestExtension implements PropertiesClassReflectionExtension
         return new class ($classReflection, $propertyName, $propertyType) implements PropertyReflection {
             public function __construct(
                 private ClassReflection $classReflection,
-                private string $propertyName,
+                private string $propertyName, // @phpstan-ignore-line
                 private Type $type,
             ) {
             }

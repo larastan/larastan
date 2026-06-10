@@ -507,6 +507,9 @@ services:
             parser: @currentPhpVersionSimpleDirectParser
 
     -
+        class: Larastan\Larastan\Support\Validation\RuleTreeTypeResolver
+
+    -
         class: Larastan\Larastan\Properties\MigrationCache
         arguments:
             cacheDirectory: %tmpDir%

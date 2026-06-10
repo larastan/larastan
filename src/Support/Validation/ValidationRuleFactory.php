@@ -5,28 +5,38 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Support\Validation;
 
 use function array_filter;
+use function array_unique;
 use function explode;
+use function filter_var;
 use function implode;
 use function in_array;
+use function is_numeric;
 use function is_string;
 use function str_contains;
+use function str_replace;
+
+use const FILTER_VALIDATE_INT;
 
 /** @internal */
 final class ValidationRuleFactory
 {
-    /** @param string|string[] $rules */
+    /** @param string|mixed[] $rules */
     public static function make(string|array $rules): ValidationRule
     {
         $possiblyUndefined = false;
         $nullable          = false;
+        $required          = false;
 
-        $type = '';
+        $type     = '';
+        $inValues = null;
+        $min      = null;
+        $max      = null;
 
         if (is_string($rules)) {
             $rules = explode('|', $rules);
         }
 
-        $rules = array_filter($rules);
+        $rules = array_filter($rules, static fn ($rule) => is_string($rule) && $rule !== '');
 
         foreach ($rules as $rule) {
             $parameters = [];
@@ -34,6 +44,12 @@ final class ValidationRuleFactory
             if (str_contains($rule, ':')) {
                 [$rule, $parameters] = explode(':', $rule, 2);
                 $parameters          = explode(',', $parameters);
+            }
+
+            if ($rule === 'in') {
+                $inValues = $parameters;
+
+                continue;
             }
 
             if (self::isUtility($rule)) {
@@ -45,19 +61,46 @@ final class ValidationRuleFactory
                     $possiblyUndefined = true;
                 }
 
+                // `present` guarantees the key exists just like `required`; it only
+                // additionally allows the value to be empty, which doesn't affect the type.
+                if ($rule === 'required' || $rule === 'present') {
+                    $required = true;
+                }
+
+                if ($rule === 'min') {
+                    $min = self::intParameter($parameters, 0);
+                }
+
+                if ($rule === 'max') {
+                    $max = self::intParameter($parameters, 0);
+                }
+
                 continue;
             }
 
-            $type = self::determineType($rule);
+            if ($rule === 'between') {
+                $min = self::intParameter($parameters, 0);
+                $max = self::intParameter($parameters, 1);
+            }
+
+            $type = self::determineType($rule, $parameters);
+        }
+
+        if ($inValues !== null) {
+            $type = self::determineInType($inValues, $type);
+        }
+
+        // `min`/`max`/`between` constrain the value only for integers (for strings they
+        // constrain the length, for arrays the count).
+        if ($type === 'int' && ($min !== null || $max !== null) && ($min === null || $max === null || $min <= $max)) {
+            $type = 'int<' . ($min ?? 'min') . ', ' . ($max ?? 'max') . '>';
         }
 
         if ($type === '') {
-            // write to a file to debug later with $rules array and rulenames that are not utility, string or boolean or integer
-             file_put_contents(__DIR__ . '/debug.txt', implode('|', $rules) . PHP_EOL, FILE_APPEND);
-             $type = 'mixed';
+            $type = 'mixed';
         }
 
-        return new ValidationRule(implode('|', $rules), $type, $nullable, $possiblyUndefined);
+        return new ValidationRule(implode('|', $rules), $type, $nullable, $possiblyUndefined, $required);
     }
 
     private static function isUtility(string $rule): bool
@@ -121,7 +164,6 @@ final class ValidationRuleFactory
             'ends_with',
             'enum',
             'hex_color',
-            'in',
             'ip',
             'json',
             'lowercase',
@@ -175,6 +217,10 @@ final class ValidationRuleFactory
     /** @param list<int|string> $parameters */
     private static function determineType(string $rule, array $parameters = []): string
     {
+        if ($rule === 'array' || $rule === 'list') {
+            return $rule;
+        }
+
         if (self::isString($rule)) {
             return match ($rule) {
                 'lowercase' => 'lowercase-string',
@@ -193,9 +239,36 @@ final class ValidationRuleFactory
         }
 
         if (self::isInteger($rule)) {
-            return 'int';
+            return match ($rule) {
+                'numeric' => 'float|int|numeric-string',
+                default => 'int',
+            };
         }
 
         return 'mixed';
+    }
+
+    /** @param list<int|string> $parameters */
+    private static function intParameter(array $parameters, int $index): int|null
+    {
+        $value = filter_var($parameters[$index] ?? null, FILTER_VALIDATE_INT);
+
+        return $value === false ? null : $value;
+    }
+
+    /** @param list<string> $values */
+    private static function determineInType(array $values, string $baseType): string
+    {
+        $literals = [];
+
+        foreach ($values as $value) {
+            if ($baseType === 'int' && is_numeric($value)) {
+                $literals[] = $value;
+            } else {
+                $literals[] = "'" . str_replace("'", "\\'", $value) . "'";
+            }
+        }
+
+        return implode('|', array_unique($literals));
     }
 }
