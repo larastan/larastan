@@ -9,10 +9,8 @@ use Larastan\Larastan\Support\ViewParser;
 use PhpParser\Node;
 
 use function array_filter;
-use function array_key_exists;
 use function array_map;
 use function array_merge;
-use function assert;
 use function count;
 use function preg_match_all;
 use function str_replace;
@@ -83,9 +81,7 @@ final class UsedTranslationViewCollector
             preg_match_all(self::TRANSLATION_REGEX, $node->value, $matches, PREG_SET_ORDER | PREG_OFFSET_CAPTURE, 0);
 
             $translations = array_merge($translations, array_map(function (array $match) use ($node): array {
-                assert(array_key_exists(0, $match));
-                assert(array_key_exists('quote', $match));
-                assert(array_key_exists('string', $match));
+                /** @var array{0: array{string, int}, quote: array{string, int}, string: array{string, int}} $match */
 
                 return [
                     $this->unescapeMatch($match),
@@ -97,7 +93,7 @@ final class UsedTranslationViewCollector
         return $translations;
     }
 
-    /** @param array{quote: array{string, int}, string: array{string, int}} $match */
+    /** @param array{0: array{string, int}, quote: array{string, int}, string: array{string, int}} $match */
     private function unescapeMatch(array $match): string
     {
         $quote = $match['quote'][0];
@@ -115,7 +111,7 @@ final class UsedTranslationViewCollector
         return $string;
     }
 
-    /** @param array{0: array{string, int}} $match */
+    /** @param array{0: array{string, int}, quote: array{string, int}, string: array{string, int}} $match */
     private function matchLine(array $match, Node\Stmt\InlineHTML $node): int
     {
         $stringUntilMatch = substr($node->value, 0, $match[0][1]);

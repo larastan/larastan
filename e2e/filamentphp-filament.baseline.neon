@@ -1,50 +1,80 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
-			identifier: function.impossibleType
+			message: '#^Using nullsafe method call on non\-nullable type Filament\\Actions\\Contracts\\HasActions\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 1
+			path: ../../e2e/packages/actions/src/Action.php
+
+		-
+			message: '#^Property Filament\\Actions\\ActionGroup\:\:\$viewIdentifier \(string\) in isset\(\) is not nullable\.$#'
+			identifier: isset.property
+			count: 1
+			path: ../../e2e/packages/actions/src/ActionGroup.php
+
+		-
+			message: '#^Anonymous function never returns Illuminate\\Contracts\\Support\\Arrayable so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: ../../e2e/packages/forms/src/Components/Field.php
+
+		-
+			message: '#^Anonymous function never returns array so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: ../../e2e/packages/forms/src/Components/Field.php
+
+		-
+			message: '#^Anonymous function never returns string so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: ../../e2e/packages/forms/src/Components/Field.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Contracts\\Pagination\\CursorPaginator\<\(int\|string\), mixed\>\:\:pluck\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: ../../e2e/packages/forms/src/Components/TableSelect/Livewire/TableSelectLivewireComponent.php
 
 		-
-			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
-			identifier: function.impossibleType
+			message: '#^Property Filament\\Forms\\Components\\TableSelect\\Livewire\\TableSelectLivewireComponent\:\:\$tableColumnSearches \(array\<string, array\<string, string\|null\>\|string\|null\>\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
 			count: 1
-			path: ../../e2e/packages/forms/src/FormsComponent.php
+			path: ../../e2e/packages/forms/src/Components/TableSelect/Livewire/TableSelectLivewireComponent.php
 
 		-
-			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
-			identifier: function.impossibleType
+			message: '#^Call to an undefined method Illuminate\\Contracts\\Pagination\\CursorPaginator\<\(int\|string\), mixed\>\:\:pluck\(\)\.$#'
+			identifier: method.notFound
 			count: 1
-			path: ../../e2e/packages/notifications/src/Livewire/DatabaseNotifications.php
+			path: ../../e2e/packages/panels/src/Resources/Pages/ListRecords.php
 
 		-
-			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
-			identifier: function.impossibleType
+			message: '#^Property Filament\\Resources\\Pages\\ListRecords\:\:\$tableColumnSearches \(array\<string, array\<string, string\|null\>\|string\|null\>\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
 			count: 1
-			path: ../../e2e/packages/panels/src/Livewire/Sidebar.php
+			path: ../../e2e/packages/panels/src/Resources/Pages/ListRecords.php
 
 		-
-			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
-			identifier: function.impossibleType
+			message: '#^Call to an undefined method Illuminate\\Contracts\\Pagination\\CursorPaginator\<\(int\|string\), mixed\>\:\:pluck\(\)\.$#'
+			identifier: method.notFound
 			count: 1
-			path: ../../e2e/packages/panels/src/Livewire/SimpleUserMenu.php
+			path: ../../e2e/packages/panels/src/Resources/Pages/ManageRelatedRecords.php
 
 		-
-			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
-			identifier: function.impossibleType
+			message: '#^Property Filament\\Resources\\Pages\\ManageRelatedRecords\<TModel of Illuminate\\Database\\Eloquent\\Model \= Illuminate\\Database\\Eloquent\\Model\>\:\:\$tableColumnSearches \(array\<string, array\<string, string\|null\>\|string\|null\>\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
 			count: 1
-			path: ../../e2e/packages/panels/src/Livewire/Topbar.php
+			path: ../../e2e/packages/panels/src/Resources/Pages/ManageRelatedRecords.php
 
 		-
-			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
-			identifier: function.impossibleType
+			message: '#^Call to an undefined method Illuminate\\Contracts\\Pagination\\CursorPaginator\<\(int\|string\), mixed\>\:\:pluck\(\)\.$#'
+			identifier: method.notFound
 			count: 1
-			path: ../../e2e/packages/panels/src/Pages/BasePage.php
+			path: ../../e2e/packages/panels/src/Resources/RelationManagers/RelationManager.php
 
 		-
-			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
-			identifier: function.impossibleType
+			message: '#^Property Filament\\Resources\\RelationManagers\\RelationManager\:\:\$tableColumnSearches \(array\<string, array\<string, string\|null\>\|string\|null\>\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
 			count: 1
 			path: ../../e2e/packages/panels/src/Resources/RelationManagers/RelationManager.php
 
@@ -67,6 +97,18 @@ parameters:
 			path: ../../e2e/packages/schemas/src/Components/StateCasts/OptionsArrayStateCast.php
 
 		-
+			message: '#^Call to an undefined method Spatie\\MediaLibrary\\HasMedia\:\:addMediaFromString\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: ../../e2e/packages/spatie-laravel-media-library-plugin/src/Forms/Components/RichEditor/FileAttachmentProviders/SpatieMediaLibraryFileAttachmentProvider.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model&Spatie\\MediaLibrary\\HasMedia\:\:getRegisteredMediaCollections\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: ../../e2e/packages/spatie-laravel-media-library-plugin/src/Forms/Components/SpatieMediaLibraryFileUpload.php
+
+		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Model\:\:getFallbackMediaUrl\(\)\.$#'
 			identifier: method.notFound
 			count: 1
@@ -79,13 +121,31 @@ parameters:
 			path: ../../e2e/packages/spatie-laravel-media-library-plugin/src/Tables/Columns/SpatieMediaLibraryImageColumn.php
 
 		-
-			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
-			identifier: function.impossibleType
+			message: '#^Call to an undefined method Illuminate\\Contracts\\Pagination\\CursorPaginator\<\(int\|string\), mixed\>\:\:pluck\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: ../../e2e/packages/tables/src/TableComponent.php
 
 		-
+			message: '#^Property Filament\\Tables\\TableComponent\:\:\$tableColumnSearches \(array\<string, array\<string, string\|null\>\|string\|null\>\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
+			count: 1
+			path: ../../e2e/packages/tables/src/TableComponent.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Contracts\\Pagination\\CursorPaginator\<\(int\|string\), mixed\>\:\:pluck\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: ../../e2e/packages/widgets/src/TableWidget.php
+
+		-
 			message: '#^Call to function is_array\(\) with string will always evaluate to false\.$#'
 			identifier: function.impossibleType
+			count: 1
+			path: ../../e2e/packages/widgets/src/TableWidget.php
+
+		-
+			message: '#^Property Filament\\Widgets\\TableWidget\:\:\$tableColumnSearches \(array\<string, array\<string, string\|null\>\|string\|null\>\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
 			count: 1
 			path: ../../e2e/packages/widgets/src/TableWidget.php

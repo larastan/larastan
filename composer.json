@@ -21,17 +21,17 @@
         "illuminate/http": "^11.44.2 || ^12.4.1 || ^13",
         "illuminate/pipeline": "^11.44.2 || ^12.4.1 || ^13",
         "illuminate/support": "^11.44.2 || ^12.4.1 || ^13",
-        "phpstan/phpstan": "^2.1.44"
+        "phpstan/phpstan": "^2.2.2"
     },
     "require-dev": {
-        "doctrine/coding-standard": "^13",
+        "doctrine/coding-standard": "^14",
         "nikic/php-parser": "^5.4",
         "laravel/framework": "^11.44.2 || ^12.7.2 || ^13",
         "mockery/mockery": "^1.6.12",
         "orchestra/canvas": "^v9.2.2 || ^10.0.1 || ^11",
         "orchestra/testbench-core": "^9.12.0 || ^10.1 || ^11",
         "phpstan/phpstan-deprecation-rules": "^2.0.1",
-        "phpunit/phpunit": "^10.5.35 || ^11.5.15 || ^12.5.8"
+        "phpunit/phpunit": "^10.5.35 || ^11.5.15 || ^12.5.8 || ^13.1.8"
     },
     "suggest": {
         "orchestra/testbench": "Using Larastan for analysing a package needs Testbench",
@@ -73,7 +73,7 @@
     },
     "scripts": {
         "test:cs": "phpcs",
-        "test:types": "phpstan analyse --ansi --memory-limit 256M",
+        "test:types": "phpstan analyse --ansi --memory-limit 300M",
         "test:unit": "phpunit --colors=always -d memory_limit=1408M",
         "test": [
             "@test:types",

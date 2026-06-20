@@ -134,6 +134,10 @@ class CheckDispatchArgumentTypesCompatibleWithClassConstructorRule implements Ru
             'Return type of call to ' . $classDisplayName . ' constructor contains unresolvable type.',
             '',
             '', // no named arguments
+            '',
+            '',
+            '',
+            null,
         );
     }
 

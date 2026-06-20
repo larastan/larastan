@@ -26,7 +26,7 @@ function test(
         return false;
     }));
 
-    assertType('Illuminate\Support\Collection<string, lowercase-string&numeric-string&uppercase-string>', $items->map(function (int $item): string {
+    assertType('Illuminate\Support\Collection<string, decimal-int-string>', $items->map(function (int $item): string {
         return (string) $item;
     }));
 
