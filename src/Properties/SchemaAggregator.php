@@ -18,6 +18,7 @@ use function array_merge;
 use function class_basename;
 use function count;
 use function is_string;
+use function method_exists;
 use function property_exists;
 use function strtolower;
 
@@ -415,6 +416,10 @@ final class SchemaAggregator
         try {
             /** @var Model $modelInstance */
             $modelInstance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
+            // @phpstan-ignore function.alreadyNarrowedType (method exists only since Laravel 13)
+            if (method_exists($modelInstance, 'initializeModelAttributes')) {
+                $modelInstance->initializeModelAttributes();
+            }
         } catch (ReflectionException) {
             return null;
         }

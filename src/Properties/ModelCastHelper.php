@@ -61,6 +61,7 @@ use function array_map;
 use function array_merge;
 use function class_exists;
 use function explode;
+use function method_exists;
 use function str_replace;
 
 class ModelCastHelper
@@ -255,6 +256,10 @@ class ModelCastHelper
         try {
             /** @var Model $modelInstance */
             $modelInstance = $modelClassReflection->getNativeReflection()->newInstanceWithoutConstructor();
+            // @phpstan-ignore function.alreadyNarrowedType (method exists only since Laravel 13)
+            if (method_exists($modelInstance, 'initializeModelAttributes')) {
+                $modelInstance->initializeModelAttributes();
+            }
         } catch (ReflectionException) {
             throw new ShouldNotHappenException();
         }
