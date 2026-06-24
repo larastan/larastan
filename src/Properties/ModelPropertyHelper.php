@@ -168,27 +168,25 @@ class ModelPropertyHelper
 
         $camelCase = Str::camel($propertyName);
 
-        if (! $classReflection->hasNativeMethod($camelCase)) {
-            return $classReflection->hasNativeMethod('get' . Str::studly($propertyName) . 'Attribute');
+        if ($classReflection->hasNativeMethod($camelCase)) {
+            $methodReflection = $classReflection->getNativeMethod($camelCase);
+
+            if (! $methodReflection->isPublic() && ! $methodReflection->isPrivate()) {
+                $returnType = $methodReflection->getVariants()[0]->getReturnType();
+
+                if (! $strictGenerics) {
+                    if ((new ObjectType(Attribute::class))->isSuperTypeOf($returnType)->yes()) {
+                        return true;
+                    }
+                } elseif ($returnType->getObjectClassReflections() !== [] && $returnType->getObjectClassReflections()[0]->isGeneric()) {
+                    if ((new GenericObjectType(Attribute::class, [new MixedType(), new MixedType()]))->isSuperTypeOf($returnType)->yes()) {
+                        return true;
+                    }
+                }
+            }
         }
 
-        $methodReflection = $classReflection->getNativeMethod($camelCase);
-
-        if ($methodReflection->isPublic() || $methodReflection->isPrivate()) {
-            return false;
-        }
-
-        $returnType = $methodReflection->getVariants()[0]->getReturnType();
-
-        if (! $strictGenerics) {
-            return (new ObjectType(Attribute::class))->isSuperTypeOf($returnType)->yes();
-        }
-
-        if ($returnType->getObjectClassReflections() === [] || ! $returnType->getObjectClassReflections()[0]->isGeneric()) {
-            return false;
-        }
-
-        return (new GenericObjectType(Attribute::class, [new MixedType(), new MixedType()]))->isSuperTypeOf($returnType)->yes();
+        return $classReflection->hasNativeMethod('get' . Str::studly($propertyName) . 'Attribute');
     }
 
     public function getAccessor(ClassReflection $classReflection, string $propertyName): ModelProperty
