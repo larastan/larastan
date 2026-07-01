@@ -262,26 +262,18 @@ final class SchemaAggregator
                     }
                 }
 
-                if (
-                    $firstMethodCall->name->name === 'timestamps'
-                    || $firstMethodCall->name->name === 'timestampsTz'
-                    || $firstMethodCall->name->name === 'nullableTimestamps'
-                    || $firstMethodCall->name->name === 'nullableTimestampsTz'
-                    || $firstMethodCall->name->name === 'rememberToken'
-                ) {
-                    switch (strtolower($firstMethodCall->name->name)) {
-                        case 'remembertoken':
-                            $table->setColumn(new SchemaColumn('remember_token', 'string', $nullable));
-                            continue 2;
+                switch (strtolower($firstMethodCall->name->name)) {
+                    case 'remembertoken':
+                        $table->setColumn(new SchemaColumn('remember_token', 'string', $nullable));
+                        continue 2;
 
-                        case 'timestamps':
-                        case 'timestampstz':
-                        case 'nullabletimestamps':
-                        case 'nullabletimestampstz':
-                            $table->setColumn(new SchemaColumn('created_at', 'string', true));
-                            $table->setColumn(new SchemaColumn('updated_at', 'string', true));
-                            continue 2;
-                    }
+                    case 'timestamps':
+                    case 'timestampstz':
+                    case 'nullabletimestamps':
+                    case 'nullabletimestampstz':
+                        $table->setColumn(new SchemaColumn('created_at', 'string', true));
+                        $table->setColumn(new SchemaColumn('updated_at', 'string', true));
+                        continue 2;
                 }
 
                 $defaultsMap = [
