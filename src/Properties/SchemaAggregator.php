@@ -270,23 +270,14 @@ final class SchemaAggregator
                     || $firstMethodCall->name->name === 'rememberToken'
                 ) {
                     switch (strtolower($firstMethodCall->name->name)) {
-                        case 'droptimestamps':
-                        case 'droptimestampstz':
-                            $table->dropColumn('created_at');
-                            $table->dropColumn('updated_at');
-                            break;
-
                         case 'remembertoken':
                             $table->setColumn(new SchemaColumn('remember_token', 'string', $nullable));
-                            break;
-
-                        case 'dropremembertoken':
-                            $table->dropColumn('remember_token');
                             break;
 
                         case 'timestamps':
                         case 'timestampstz':
                         case 'nullabletimestamps':
+                        case 'nullabletimestampstz':
                             $table->setColumn(new SchemaColumn('created_at', 'string', true));
                             $table->setColumn(new SchemaColumn('updated_at', 'string', true));
                             break;
