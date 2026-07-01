@@ -10,6 +10,7 @@ use Symfony\Component\Finder\Finder;
 
 use function array_keys;
 use function array_values;
+use function defined;
 use function iterator_to_array;
 use function version_compare;
 
@@ -22,7 +23,7 @@ final class LarastanStubFilesExtension implements StubFilesExtension
 
         // Include only applicable versions
         $stubDirectories
-            ->filter(static fn (SplFileInfo $directory) => version_compare($directory->getFilename(), LARAVEL_VERSION, '<='))
+            ->filter(static fn (SplFileInfo $directory) => defined('LARAVEL_VERSION') && version_compare($directory->getFilename(), LARAVEL_VERSION, '<='))
             ->sort(static fn (SplFileInfo $a, SplFileInfo $b) => version_compare($a->getFilename(), $b->getFilename()));
 
         $files = [];
