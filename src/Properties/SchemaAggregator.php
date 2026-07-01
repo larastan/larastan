@@ -272,7 +272,7 @@ final class SchemaAggregator
                     switch (strtolower($firstMethodCall->name->name)) {
                         case 'remembertoken':
                             $table->setColumn(new SchemaColumn('remember_token', 'string', $nullable));
-                            break;
+                            continue 2;
 
                         case 'timestamps':
                         case 'timestampstz':
@@ -280,10 +280,8 @@ final class SchemaAggregator
                         case 'nullabletimestampstz':
                             $table->setColumn(new SchemaColumn('created_at', 'string', true));
                             $table->setColumn(new SchemaColumn('updated_at', 'string', true));
-                            break;
+                            continue 2;
                     }
-
-                    continue;
                 }
 
                 $defaultsMap = [
