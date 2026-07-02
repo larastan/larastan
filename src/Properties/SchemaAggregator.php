@@ -274,6 +274,12 @@ final class SchemaAggregator
                         $table->setColumn(new SchemaColumn('created_at', 'string', true));
                         $table->setColumn(new SchemaColumn('updated_at', 'string', true));
                         continue 2;
+
+                    case 'droptimestamps':
+                    case 'droptimestampstz':
+                        $table->dropColumn('created_at');
+                        $table->dropColumn('updated_at');
+                        continue 2;
                 }
 
                 $defaultsMap = [

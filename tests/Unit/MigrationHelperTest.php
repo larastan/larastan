@@ -259,6 +259,21 @@ class MigrationHelperTest extends PHPStanTestCase
     }
 
     #[Test]
+    public function it_can_handle_migrations_with_drop_timestamps(): void
+    {
+        $migrationHelper = new MigrationHelper($this->parser, [
+            __DIR__ . '/data/migrations_using_drop_timestamps',
+        ], $this->fileHelper, false, $this->reflectionProvider);
+
+        $tables = $migrationHelper->initializeTables();
+
+        self::assertCount(1, $tables);
+        self::assertArrayHasKey('users', $tables);
+        self::assertCount(3, $tables['users']->columns);
+        self::assertSame(['id', 'name', 'email'], array_keys($tables['users']->columns));
+    }
+
+    #[Test]
     public function it_can_handle_migrations_with_if_statements(): void
     {
         $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/conditional_migrations'], $this->fileHelper, false, $this->reflectionProvider);
