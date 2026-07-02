@@ -267,6 +267,10 @@ final class SchemaAggregator
                         $table->setColumn(new SchemaColumn('remember_token', 'string', $nullable));
                         continue 2;
 
+                    case 'dropremembertoken':
+                        $table->dropColumn('remember_token');
+                        continue 2;
+
                     case 'timestamps':
                     case 'timestampstz':
                     case 'nullabletimestamps':
