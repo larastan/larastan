@@ -18,6 +18,7 @@ use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\ThisType;
+use PHPStan\Type\Type;
 
 use function array_key_exists;
 
@@ -92,7 +93,7 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
         $parametersAcceptor = $reflection->getVariants()[0];
         $returnType         = $parametersAcceptor->getReturnType();
 
-        if ((new ObjectType(Builder::class))->isSuperTypeOf($returnType)->yes()) {
+        if ($this->returnTypeReferencesBuilder($returnType)) {
             $returnType = new ThisType($classReflection);
         }
 
@@ -103,5 +104,29 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
             $returnType,
             $parametersAcceptor->isVariadic(),
         );
+    }
+
+    /**
+     * Checks whether the return type references an Eloquent Builder class.
+     *
+     * This handles conditional return types (e.g. from Conditionable::when())
+     * where isSuperTypeOf() returns maybe() instead of yes() because the
+     * type contains unresolved template parameters alongside a Builder branch.
+     */
+    private function returnTypeReferencesBuilder(Type $returnType): bool
+    {
+        $builderObjectType = new ObjectType(Builder::class);
+
+        if ($builderObjectType->isSuperTypeOf($returnType)->yes()) {
+            return true;
+        }
+
+        foreach ($returnType->getReferencedClasses() as $class) {
+            if ($builderObjectType->isSuperTypeOf(new ObjectType($class))->yes()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

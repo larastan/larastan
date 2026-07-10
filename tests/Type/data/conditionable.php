@@ -14,34 +14,34 @@ class Foo
 }
 
 /** @param Builder<User> $query */
-function test(Builder $query): void
+function test(Foo $foo, User $user, Builder $query): void
 {
-    assertType('ConditionableStubs\Foo', (new Foo())->when(true, function (Foo $foo) {
+    assertType('ConditionableStubs\Foo', $foo->when(true, function (Foo $foo) {
         // do nothing
     }));
 
-    assertType('ConditionableStubs\Foo', (new Foo())->when(true, function (Foo $foo) {
+    assertType('ConditionableStubs\Foo', $foo->when(true, function (Foo $foo) {
         return null;
     }));
 
-    assertType('int<0, max>', (new Foo())->when(true, function (Foo $foo): int {
+    assertType('int<0, max>', $foo->when(true, function (Foo $foo): int {
         return rand();
     }));
 
     // Test to make sure the callback has a non-null value.
-    (new Foo())->when(User::first(), function (Foo $foo, $user): void {
+    $foo->when(User::first(), function (Foo $foo, $user): void {
         assertType(User::class, $user);
     });
 
-    assertType('ConditionableStubs\Foo', (new Foo())->unless(true, function (Foo $foo) {
+    assertType('ConditionableStubs\Foo', $foo->unless(true, function (Foo $foo) {
         // do nothing
     }));
 
-    assertType('ConditionableStubs\Foo', (new Foo())->unless(true, function (Foo $foo) {
+    assertType('ConditionableStubs\Foo', $foo->unless(true, function (Foo $foo) {
         return null;
     }));
 
-    assertType('int<0, max>', (new Foo())->unless(true, function (Foo $foo): int {
+    assertType('int<0, max>', $foo->unless(true, function (Foo $foo): int {
         return rand();
     }));
 
@@ -49,4 +49,12 @@ function test(Builder $query): void
         /** @phpstan-var Builder<User> $query */
         return $query->whereNull('name');
     }));
+
+    // when()/unless() on relations should return the relation type, not the builder type
+    assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account, App\User>', $user->accounts()->when(true, fn ($q) => $q));
+    assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account, App\User>', $user->accounts()->unless(false, fn ($q) => $q));
+    assertType("Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Role, App\User, Illuminate\Database\Eloquent\Relations\Pivot, 'pivot'>", $user->roles()->when(true, fn ($q) => $q));
+
+    // when() on a relation with a custom builder model should still return the relation type
+    assertType("Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Post, App\User, Illuminate\Database\Eloquent\Relations\Pivot, 'pivot'>", $user->posts()->when(true, fn ($q) => $q));
 }

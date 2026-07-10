@@ -255,6 +255,10 @@ function test(
             ['name' => 'bar'],
         ]),
     );
+
+    // value() on a relation should return mixed, not the relation type
+    assertType('mixed', $user->accounts()->value('id'));
+    assertType('mixed', $user->roles()->value('name'));
 }
 
 /**
