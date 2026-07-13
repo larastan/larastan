@@ -13,6 +13,16 @@ interface Factory
      * @phpstan-assert-if-true view-string $view
      */
     public function exists($view);
+
+    /**
+     * Get the evaluated view contents for the given view.
+     *
+     * @param  view-string  $view
+     * @param  array<string, mixed>  $data
+     * @param  array<string, mixed>  $mergeData
+     * @return \Illuminate\Contracts\View\View
+     */
+    public function make($view, $data = [], $mergeData = []);
 }
 
 interface View

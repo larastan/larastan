@@ -37,6 +37,21 @@ class IntegrationTest extends PHPStanTestCase
 
         yield [__DIR__ . '/data/model-factories.php'];
         yield [__DIR__ . '/data/blade-view.php'];
+
+        yield [
+            __DIR__ . '/data/view-string-signatures.php',
+            [
+                16 => ['Parameter #1 $view of method Illuminate\Contracts\View\Factory::make() expects view-string, string given.'],
+                22 => ['Parameter #2 $view of method Illuminate\Routing\Router::view() expects view-string, string given.'],
+                28 => ['Parameter #1 $view of method Illuminate\Notifications\Messages\MailMessage::view() expects view-string, string given.'],
+                30 => ['Parameter #1 $view of method Illuminate\Notifications\Messages\MailMessage::markdown() expects view-string, string given.'],
+                37 => ['Parameter #1 $value of method Illuminate\Testing\TestResponse<Illuminate\Http\Response>::assertViewIs() expects view-string, string given.'],
+                51 => ['Parameter #1 $view of method ViewStringSignatures\UsesInteractsWithViews::view() expects view-string, string given.'],
+                58 => ['Parameter #1 $view of static method Illuminate\View\Factory::make() expects view-string, string given.'],
+                64 => ['Parameter #2 $view of static method Illuminate\Support\Facades\Route::view() expects view-string, string given.'],
+            ],
+        ];
+
         yield [__DIR__ . '/data/helpers.php'];
         yield [__DIR__ . '/data/facades.php'];
 

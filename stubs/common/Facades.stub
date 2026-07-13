@@ -63,14 +63,25 @@ class Cookie extends Facade {
 /**
  * @mixin \Illuminate\Config\Repository
  */
- class Config extends Facade {}
+class Config extends Facade {}
 
 /**
  * @mixin \Illuminate\Http\Client\Factory
  */
- class Http extends Facade {}
+class Http extends Facade {}
 
- /**
-  * @mixin \Illuminate\View\Factory
-  */
- class View extends Facade {}
+/**
+ * @mixin \Illuminate\View\Factory
+ */
+class View extends Facade {}
+
+class Route extends Facade {
+    /**
+     * @param  string  $uri
+     * @param  view-string  $view
+     * @param  array<string, mixed>  $data
+     * @param  array<string, string>  $headers
+     * @return \Illuminate\Routing\Route
+     */
+    public static function view($uri, $view, $data = [], int $status = 200, array $headers = []);
+}
