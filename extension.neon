@@ -33,6 +33,7 @@ parameters:
     checkAuthCallsWhenInRequestScope: false
     parseModelCastsMethod: false
     enableMigrationCache: false
+    checkStrictContracts: false
 
 parametersSchema:
     checkOctaneCompatibility: bool()
@@ -59,6 +60,7 @@ parametersSchema:
     checkAuthCallsWhenInRequestScope: bool()
     parseModelCastsMethod: bool()
     enableMigrationCache: bool()
+    checkStrictContracts: bool()
 
 conditionalTags:
     Larastan\Larastan\Rules\NoEnvCallsOutsideOfConfigRule:
@@ -654,6 +656,8 @@ services:
 
     -
         class: Larastan\Larastan\ReturnTypes\AppMakeHelper
+        arguments:
+            checkStrictContracts: %checkStrictContracts%
 
     -
         class: Larastan\Larastan\Internal\ConsoleApplicationResolver
