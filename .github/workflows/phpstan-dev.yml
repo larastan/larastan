@@ -19,10 +19,10 @@ jobs:
 
     steps:
       - name: "Checkout code"
-        uses: "actions/checkout@v4"
+        uses: actions/checkout@v7
 
       - name: "Setup PHP"
-        uses: "shivammathur/setup-php@v2"
+        uses: shivammathur/setup-php@v2
         with:
           php-version: "${{ matrix.php }}"
           extensions: "dom, curl, libxml, mbstring, zip, fileinfo"
@@ -35,10 +35,10 @@ jobs:
         run: "composer config prefer-stable false"
 
       - name: "Require PHPStan dev version"
-        run: "composer require phpstan/phpstan:@dev --no-update --no-interaction --no-progress"
+        run: "composer require phpstan/phpstan:@dev --no-update --no-interaction --no-progress --ansi"
 
       - name: "Install highest dependencies from composer.json"
-        run: "composer update --with='laravel/framework:${{ matrix.laravel }}' --no-interaction --no-progress"
+        run: "composer update --with='laravel/framework:${{ matrix.laravel }}' --no-interaction --no-progress --ansi"
 
       - name: "Execute static analysis"
-        run: "composer run-script test:types"
+        run: "composer run-script test:types -- --no-progress"

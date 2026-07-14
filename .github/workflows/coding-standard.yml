@@ -29,10 +29,10 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v4"
+        uses: actions/checkout@v7
 
       - name: "Setup PHP"
-        uses: "shivammathur/setup-php@v2"
+        uses: shivammathur/setup-php@v2
         with:
           php-version: "${{ matrix.php }}"
           extensions: "dom, curl, libxml, mbstring, zip, fileinfo"
@@ -40,21 +40,21 @@ jobs:
           coverage: "none"
 
       - name: "Check Composer configuration"
-        run: "composer validate"
+        run: "composer validate --ansi"
 
       - name: "Determine composer cache directory"
         id: "determine-composer-cache-directory"
         run: "echo \"COMPOSER_CACHE_DIR=$(composer config cache-dir)\" >> $GITHUB_ENV"
 
       - name: "Cache dependencies installed with composer"
-        uses: "actions/cache@v4"
+        uses: actions/cache@v6
         with:
           path: "${{ env.COMPOSER_CACHE_DIR }}"
           key: "php-${{ matrix.php }}-composer-${{ matrix.dependencies }}-${{ hashFiles('composer.lock') }}"
           restore-keys: "php-${{ matrix.php }}-composer-${{ matrix.dependencies }}-"
 
       - name: "Install dependencies from composer.json"
-        run: "composer update --no-interaction --no-progress"
+        run: "composer update --no-interaction --no-progress --ansi"
 
       - name: "Run phpcs"
         run: "composer test:cs"

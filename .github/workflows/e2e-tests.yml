@@ -1,4 +1,3 @@
----
 name: "E2E"
 
 on:
@@ -46,18 +45,18 @@ jobs:
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v4"
+        uses: actions/checkout@v7
         with:
           path: "larastan"
 
       - name: "Install PHP"
-        uses: "shivammathur/setup-php@v2"
+        uses: shivammathur/setup-php@v2
         with:
           coverage: "none"
           php-version: "${{ matrix.php-version }}"
 
       - name: "Checkout dependent repo"
-        uses: "actions/checkout@v4"
+        uses: actions/checkout@v7
         with:
           repository: "${{ matrix.repository }}"
           ref: "${{ matrix.ref }}"
@@ -66,28 +65,28 @@ jobs:
       - name: "Install dependencies"
         run: |
           cd e2e/
-          composer install --no-scripts --no-interaction
+          composer install --no-scripts --no-interaction --ansi
           composer config repositories.0 '{ "type": "path", "url": "../larastan", "options": { "symlink": true } }'
           composer config minimum-stability dev
           if [ "${{ matrix.repository }}" = "monicahq/monica" ]; then
             composer remove --dev -n tomasvotruba/bladestan
           fi
           if [ "${{ matrix.force-phpstan-version }}" = "true" ]; then
-            composer require --dev --update-with-all-dependencies "larastan/larastan:*" "phpstan/phpstan:*"
+            composer require --dev --update-with-all-dependencies "larastan/larastan:*" "phpstan/phpstan:*" --ansi
           else
-            composer require --dev --update-with-all-dependencies "larastan/larastan:*"
+            composer require --dev --update-with-all-dependencies "larastan/larastan:*" --ansi
           fi
 
       - name: "Perform static analysis"
         working-directory: e2e
-        run: composer exec phpstan analyse -- -c "../larastan/e2e/${{ matrix.config }}"
+        run: composer exec phpstan analyse -- -c "../larastan/e2e/${{ matrix.config }}" --no-progress --ansi
 
       - name: "Generate baseline"
         if: ${{ failure() }}
         working-directory: e2e
-        run: composer exec phpstan analyse -- -c ../larastan/e2e/${{ matrix.config }} -b ../larastan/e2e/${{ matrix.baseline }}.baseline.neon
+        run: composer exec phpstan analyse -- -c ../larastan/e2e/${{ matrix.config }} -b ../larastan/e2e/${{ matrix.baseline }}.baseline.neon --no-progress --ansi
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: ${{ failure() }}
         with:
           name: "baseline-${{ matrix.baseline }}"
@@ -99,7 +98,7 @@ jobs:
     if: ${{ always() && needs.integration-tests.result == 'failure' }}
     steps:
       - name: Merge Artifacts
-        uses: actions/upload-artifact/merge@v4
+        uses: actions/upload-artifact/merge@v7
         with:
           name: baselines
           pattern: baseline-*

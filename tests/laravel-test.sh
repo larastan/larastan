@@ -9,7 +9,7 @@ export COMPOSER_NO_SECURITY_BLOCKING=1
 LARAVEL_VERSION_CONSTRAINT="${1:-^11.0}"
 
 echo "Install Laravel ${LARAVEL_VERSION_CONSTRAINT}"
-composer create-project --quiet --prefer-dist "laravel/laravel:${LARAVEL_VERSION_CONSTRAINT}" ../laravel
+composer create-project --quiet --prefer-dist --ansi "laravel/laravel:${LARAVEL_VERSION_CONSTRAINT}" ../laravel
 cd ../laravel/
 SAMPLE_APP_DIR="$(pwd)"
 composer show --direct
@@ -19,7 +19,7 @@ composer config minimum-stability dev
 composer config repositories.0 '{ "type": "path", "url": "../larastan", "options": { "symlink": false } }'
 
 # No version information with "type":"path"
-composer require --dev --optimize-autoloader "larastan/larastan:*"
+composer require --dev --optimize-autoloader "larastan/larastan:*" --ansi
 
 cat >phpstan.neon <<"EOF"
 includes:
@@ -31,8 +31,8 @@ parameters:
 EOF
 
 echo "Test Laravel"
-vendor/bin/phpstan analyse
+vendor/bin/phpstan analyse --no-progress --ansi
 
 echo "Test Laravel from another working directory"
 cd /tmp/
-${SAMPLE_APP_DIR}/vendor/bin/phpstan analyse --configuration=${SAMPLE_APP_DIR}/phpstan.neon
+${SAMPLE_APP_DIR}/vendor/bin/phpstan analyse --configuration=${SAMPLE_APP_DIR}/phpstan.neon --no-progress --ansi
