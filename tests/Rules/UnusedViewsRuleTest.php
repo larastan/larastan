@@ -46,7 +46,14 @@ class UnusedViewsRuleTest extends RuleTestCase
 
     public function testRule(): void
     {
+        // `unused.blade.php` and `components/orphan.blade.php` are referenced nowhere. The
+        // `components/alert.blade.php` view IS used, but only through the `<x-alert>` Blade component tag
+        // in `index.blade.php` — so it must not be reported (regression guard for component-tag detection).
         $this->analyse([__DIR__ . '/data/FooController.php'], [
+            [
+                'This view is not used in the project.',
+                00,
+            ],
             [
                 'This view is not used in the project.',
                 00,
