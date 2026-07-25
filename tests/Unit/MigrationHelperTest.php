@@ -8,6 +8,7 @@ use Larastan\Larastan\Properties\MigrationHelper;
 use Larastan\Larastan\Properties\SchemaTable;
 use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Testing\PHPStanTestCase;
 use PHPUnit\Framework\Attributes\Test;
 
@@ -18,6 +19,8 @@ class MigrationHelperTest extends PHPStanTestCase
     private Parser $parser;
 
     private FileHelper $fileHelper;
+
+    private ReflectionProvider $reflectionProvider;
 
     public function setUp(): void
     {

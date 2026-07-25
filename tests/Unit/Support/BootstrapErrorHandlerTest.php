@@ -24,7 +24,6 @@ class BootstrapErrorHandlerTest extends TestCase
         // Mock getFile to return a path that looks like user code (not in vendor)
         $reflection   = new ReflectionClass($exception);
         $fileProperty = $reflection->getProperty('file');
-        $fileProperty->setAccessible(true);
         $fileProperty->setValue($exception, getcwd() . '/app/Providers/AppServiceProvider.php');
 
         $handler->handle($exception);
@@ -47,7 +46,6 @@ class BootstrapErrorHandlerTest extends TestCase
         // Mock getFile to return a path that looks like framework code (in vendor)
         $reflection   = new ReflectionClass($exception);
         $fileProperty = $reflection->getProperty('file');
-        $fileProperty->setAccessible(true);
         $fileProperty->setValue($exception, getcwd() . '/vendor/laravel/framework/src/Illuminate/Foundation/Application.php');
 
         $handler->handle($exception);
@@ -87,7 +85,6 @@ class BootstrapErrorHandlerTest extends TestCase
         // Mock getFile to return a path that looks like user code
         $reflection   = new ReflectionClass($exception);
         $fileProperty = $reflection->getProperty('file');
-        $fileProperty->setAccessible(true);
         $fileProperty->setValue($exception, getcwd() . '/app/Providers/AppServiceProvider.php');
 
         $handler->handle($exception);
@@ -110,7 +107,6 @@ class BootstrapErrorHandlerTest extends TestCase
         // Mock getFile to return a path that looks like user code
         $reflection   = new ReflectionClass($exception);
         $fileProperty = $reflection->getProperty('file');
-        $fileProperty->setAccessible(true);
         $fileProperty->setValue($exception, getcwd() . '/app/Providers/AppServiceProvider.php');
 
         $handler->handle($exception);
