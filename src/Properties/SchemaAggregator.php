@@ -114,19 +114,30 @@ final class SchemaAggregator
         }
 
         if ($value instanceof PhpParser\Node\Expr\ClassConstFetch) {
-            if (! $value->class instanceof PhpParser\Node\Name\FullyQualified) {
+            if (
+                ! $value->class instanceof PhpParser\Node\Name
+                || ! $value->name instanceof PhpParser\Node\Identifier
+            ) {
                 return;
             }
 
-            if (! $value->name instanceof PhpParser\Node\Identifier) {
+            if ($value->class instanceof PhpParser\Node\Name\FullyQualified) {
+                $className = $value->class->name;
+            } else {
+                $resolvedName = $value->class->getAttribute('resolvedName');
+
+                if (! $resolvedName instanceof PhpParser\Node\Name\FullyQualified) {
+                    return;
+                }
+
+                $className = $resolvedName->name;
+            }
+
+            if (! $this->reflectionProvider->hasClass($className)) {
                 return;
             }
 
-            if (! $this->reflectionProvider->hasClass($value->class->name)) {
-                return;
-            }
-
-            $class = $this->reflectionProvider->getClass($value->class->name);
+            $class = $this->reflectionProvider->getClass($className);
 
             $constantValueType = $class->getConstant($value->name->toString())->getValueType();
 
