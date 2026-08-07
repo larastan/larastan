@@ -1,3 +1,4 @@
+---
 name: "Static Analysis"
 
 on:
@@ -39,10 +40,10 @@ jobs:
 
     steps:
       - name: "Checkout code"
-        uses: actions/checkout@v7
+        uses: "actions/checkout@v7"
 
       - name: "Setup PHP"
-        uses: shivammathur/setup-php@v2
+        uses: "shivammathur/setup-php@v2"
         with:
           php-version: "${{ matrix.php }}"
           extensions: "dom, curl, libxml, mbstring, zip, fileinfo"
@@ -51,11 +52,11 @@ jobs:
 
       - name: "Install dependencies from composer.json"
         if: "matrix.dependencies != 'lowest'"
-        run: "composer update --with='laravel/framework:${{ matrix.laravel }}' --no-interaction --no-progress --ansi"
+        run: "composer update --with='laravel/framework:${{ matrix.laravel }}' --no-interaction --no-progress"
 
       - name: "Install lowest dependencies from composer.json"
         if: "matrix.dependencies == 'lowest'"
-        run: "composer update --with='laravel/framework:${{ matrix.laravel }}' --no-interaction --no-progress --prefer-lowest --ansi"
+        run: "composer update --with='laravel/framework:${{ matrix.laravel }}' --no-interaction --no-progress --prefer-lowest"
 
       - name: "Execute static analysis"
-        run: "composer run-script test:types -- --no-progress"
+        run: "composer run-script test:types"

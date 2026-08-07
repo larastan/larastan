@@ -1,3 +1,4 @@
+---
 name: "Tests"
 
 on:
@@ -39,10 +40,10 @@ jobs:
 
     steps:
       - name: "Checkout code"
-        uses: actions/checkout@v7
+        uses: "actions/checkout@v7"
 
       - name: "Setup PHP"
-        uses: shivammathur/setup-php@v2
+        uses: "shivammathur/setup-php@v2"
         with:
           php-version: "${{ matrix.php }}"
           extensions: "dom, curl, libxml, mbstring, zip, fileinfo"
@@ -50,24 +51,24 @@ jobs:
           coverage: "none"
 
       - name: "Check Composer configuration"
-        run: "composer validate --ansi"
+        run: "composer validate"
 
       - name: "Check file permissions"
         run: "test \"$(find . -type f -not -path './.git/*' -executable)\" == ./tests/laravel-test.sh"
 
       - name: "Install lowest dependencies from composer.json"
         if: "matrix.dependencies == 'lowest'"
-        run: "composer update --with='laravel/framework:${{ matrix.laravel }}' --no-interaction --no-progress --prefer-lowest --ansi"
+        run: "composer update --with='laravel/framework:${{ matrix.laravel }}' --no-interaction --no-progress --prefer-lowest"
 
       - name: "Install highest dependencies from composer.json"
         if: "matrix.dependencies == 'highest'"
-        run: "composer update --with='laravel/framework:${{ matrix.laravel }}' --no-interaction --no-progress --ansi"
+        run: "composer update --with='laravel/framework:${{ matrix.laravel }}' --no-interaction --no-progress"
 
       - name: "Check PSR-4 mapping"
-        run: "composer dump-autoload --optimize --strict-psr --ansi"
+        run: "composer dump-autoload --optimize --strict-psr"
 
       - name: "Execute unit tests"
-        run: "composer run-script test:unit --ansi -- --no-progress"
+        run: "composer run-script test:unit"
 
       - name: "Run Larastan on a sample Laravel application"
         run: |
@@ -81,10 +82,10 @@ jobs:
 
     steps:
       - name: "Checkout code"
-        uses: actions/checkout@v7
+        uses: "actions/checkout@v7"
 
       - name: "Setup PHP"
-        uses: shivammathur/setup-php@v2
+        uses: "shivammathur/setup-php@v2"
         with:
           php-version: "8.3"
           extensions: "dom, curl, libxml, mbstring, zip, fileinfo"
@@ -92,14 +93,14 @@ jobs:
           coverage: "none"
 
       - name: "Check Composer configuration"
-        run: "composer validate --ansi"
+        run: "composer validate"
 
       - name: "Install dependencies"
         run: |
-          composer require --dev phpmyadmin/sql-parser:^5.9 --no-interaction --no-progress --ansi
+          composer require --dev phpmyadmin/sql-parser:^5.9 --no-interaction --no-progress
 
       - name: "Check PSR-4 mapping"
-        run: "composer dump-autoload --optimize --strict-psr --ansi"
+        run: "composer dump-autoload --optimize --strict-psr"
 
       - name: "Execute SQL parser tests"
-        run: "./vendor/bin/phpunit tests/Unit/SQL/ --colors=always -d memory_limit=1408M --no-progress"
+        run: "./vendor/bin/phpunit tests/Unit/SQL/ --colors=always -d memory_limit=1408M"
