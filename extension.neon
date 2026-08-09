@@ -33,6 +33,13 @@ parameters:
     checkAuthCallsWhenInRequestScope: false
     parseModelCastsMethod: false
     enableMigrationCache: true
+    checkUniqueJobUniqueFor: false
+    checkUniqueJobUniqueId: false
+    noBatchedUniqueJob: false
+    checkJobSerializesModels: false
+    checkBatchedJobIsBatchable: false
+    checkBatchableJobChecksCancellation: false
+    checkDispatchInTransactionAfterCommit: false
 
 parametersSchema:
     checkOctaneCompatibility: bool()
@@ -59,6 +66,13 @@ parametersSchema:
     checkAuthCallsWhenInRequestScope: bool()
     parseModelCastsMethod: bool()
     enableMigrationCache: bool()
+    checkUniqueJobUniqueFor: bool()
+    checkUniqueJobUniqueId: bool()
+    noBatchedUniqueJob: bool()
+    checkJobSerializesModels: bool()
+    checkBatchedJobIsBatchable: bool()
+    checkBatchableJobChecksCancellation: bool()
+    checkDispatchInTransactionAfterCommit: bool()
 
 conditionalTags:
     Larastan\Larastan\Rules\NoEnvCallsOutsideOfConfigRule:
@@ -93,6 +107,20 @@ conditionalTags:
         phpstan.broker.dynamicStaticMethodReturnTypeExtension: %checkConfigTypes%
     Larastan\Larastan\Rules\ConfigCollectionRule:
         phpstan.rules.rule: %checkConfigTypes%
+    Larastan\Larastan\Rules\Queue\UniqueJobDeclaresUniqueForRule:
+        phpstan.rules.rule: %checkUniqueJobUniqueFor%
+    Larastan\Larastan\Rules\Queue\UniqueJobDeclaresUniqueIdRule:
+        phpstan.rules.rule: %checkUniqueJobUniqueId%
+    Larastan\Larastan\Rules\Queue\NoBatchedUniqueJobRule:
+        phpstan.rules.rule: %noBatchedUniqueJob%
+    Larastan\Larastan\Rules\Queue\JobWithModelPropertyDeclaresSerializesModelsRule:
+        phpstan.rules.rule: %checkJobSerializesModels%
+    Larastan\Larastan\Rules\Queue\BatchedJobIsBatchableRule:
+        phpstan.rules.rule: %checkBatchedJobIsBatchable%
+    Larastan\Larastan\Rules\Queue\BatchableJobChecksCancellationRule:
+        phpstan.rules.rule: %checkBatchableJobChecksCancellation%
+    Larastan\Larastan\Rules\Queue\JobDispatchedInTransactionUsesAfterCommitRule:
+        phpstan.rules.rule: %checkDispatchInTransactionAfterCommit%
 
 services:
     -
@@ -704,6 +732,27 @@ services:
 
     -
         class: Larastan\Larastan\Rules\ConfigCollectionRule
+
+    -
+        class: Larastan\Larastan\Rules\Queue\UniqueJobDeclaresUniqueForRule
+
+    -
+        class: Larastan\Larastan\Rules\Queue\UniqueJobDeclaresUniqueIdRule
+
+    -
+        class: Larastan\Larastan\Rules\Queue\NoBatchedUniqueJobRule
+
+    -
+        class: Larastan\Larastan\Rules\Queue\JobWithModelPropertyDeclaresSerializesModelsRule
+
+    -
+        class: Larastan\Larastan\Rules\Queue\BatchedJobIsBatchableRule
+
+    -
+        class: Larastan\Larastan\Rules\Queue\BatchableJobChecksCancellationRule
+
+    -
+        class: Larastan\Larastan\Rules\Queue\JobDispatchedInTransactionUsesAfterCommitRule
 
     -
         class: Illuminate\Filesystem\Filesystem
