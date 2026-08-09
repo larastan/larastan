@@ -40,6 +40,9 @@ function test(Builder $builder, User $user, string $union): void
 
     User::query()->get(DB::raw('name'));
     User::query()->get([DB::raw('name')]);
+
+    User::query()->createQuietly(['foo' => 'bar']);
+    User::query()->createQuietly(['id' => 1]);
 }
 
 //// Currently, there is no way to change the type of `$query` inside the callback.
