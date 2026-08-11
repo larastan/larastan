@@ -1,0 +1,11 @@
+<?php
+
+namespace Illuminate\Database\Eloquent\Relations;
+
+/**
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template-covariant TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ *
+ * @extends \Illuminate\Database\Eloquent\Relations\MorphOneOrMany<TRelatedModel, TDeclaringModel, \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>>
+ */
+class MorphMany extends MorphOneOrMany {}

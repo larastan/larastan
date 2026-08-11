@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
- * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ * @template-covariant TDeclaringModel of \Illuminate\Database\Eloquent\Model
  * @template TResult
  */
 abstract class Relation
@@ -36,7 +36,7 @@ abstract class Relation
      * Essentially, these queries compare on column names like whereColumn.
      *
      * @param  \Illuminate\Database\Eloquent\Builder<TRelatedModel>  $query
-     * @param  \Illuminate\Database\Eloquent\Builder<TDeclaringModel>  $parentQuery
+     * @param  \Illuminate\Database\Eloquent\Builder<\Illuminate\Database\Eloquent\Model>  $parentQuery
      * @param  array<model-property<TRelatedModel>>|model-property<TRelatedModel>  $columns
      * @return \Illuminate\Database\Eloquent\Builder<TRelatedModel>
      */
