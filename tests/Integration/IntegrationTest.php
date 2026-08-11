@@ -13,6 +13,7 @@ use Throwable;
 
 use function count;
 use function implode;
+use function Orchestra\Testbench\laravel_version_compare;
 use function sprintf;
 
 class IntegrationTest extends PHPStanTestCase
@@ -109,6 +110,16 @@ class IntegrationTest extends PHPStanTestCase
                 69 => ['Parameter #1 $collection of method CollectionOfType\GenericTest::acceptsAccountCollection() expects App\AccountCollection<(int|string), App\Account>, Illuminate\Database\Eloquent\Collection<int, App\User> given.'],
             ],
         ];
+
+        if (laravel_version_compare('13.0.0', '>=')) {
+            yield [
+                __DIR__ . '/data/model-property-table-attribute-l13.php',
+                [
+                    25 => ['Access to an undefined property ModelPropertyTableAttribute\TableAttributeModel::$not_a_column.'],
+                    30 => ['Function ModelPropertyTableAttribute\keyType() should return int but returns string.'],
+                ],
+            ];
+        }
 
         yield [
             __DIR__ . '/data/model-property-mutator-and-casting.php',

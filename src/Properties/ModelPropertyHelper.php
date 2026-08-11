@@ -76,6 +76,8 @@ class ModelPropertyHelper
             return false;
         }
 
+        $this->initializeModel($modelInstance);
+
         if ($propertyName === $modelInstance->getKeyName()) {
             return true;
         }
@@ -97,6 +99,8 @@ class ModelPropertyHelper
         } catch (ReflectionException) {
             throw new ShouldNotHappenException();
         }
+
+        $this->initializeModel($modelInstance);
 
         $tableName = $modelInstance->getTable();
 
@@ -218,6 +222,22 @@ class ModelPropertyHelper
             $method->getVariants()[0]->getReturnType(),
             $method->getVariants()[0]->getReturnType(),
         );
+    }
+
+    /**
+     * Resolve the class attributes, like `#[Table]`, that the constructor would
+     * normally apply. The model is built without it, so `getTable()` would
+     * otherwise fall back to the name derived from the class.
+     */
+    private function initializeModel(Model $modelInstance): void
+    {
+        // @phpstan-ignore-next-line
+        if (! method_exists($modelInstance, 'initializeModelAttributes')) {
+            return;
+        }
+
+        // @phpstan-ignore-next-line
+        $modelInstance->initializeModelAttributes();
     }
 
     private function migrationsLoaded(): bool
