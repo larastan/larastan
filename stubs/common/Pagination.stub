@@ -15,6 +15,19 @@ abstract class AbstractPaginator implements \Illuminate\Contracts\Support\Htmlab
      * @return TValue|null
      */
     public function offsetGet($key): mixed;
+
+    /**
+     * @return (TValue is \Illuminate\Database\Eloquent\Model
+     *     ? \Illuminate\Database\Eloquent\Collection<TKey, TValue>
+     *     : \Illuminate\Support\Collection<TKey, TValue>)
+     */
+    public function getCollection();
+
+    /**
+     * @param \Illuminate\Support\Collection<TKey, TValue> $collection
+     * @return $this
+     */
+    public function setCollection(\Illuminate\Support\Collection $collection);
 }
 
 /**
