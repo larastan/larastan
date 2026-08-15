@@ -223,15 +223,15 @@ class User extends Model
 > }
 > ```
 
+## Model Properties
+
+Larastan will automatically scan your application's migrations in order to infer the database schema and therefore it is able to infer the existence of magic properties on Eloquent model classes.
+
+Various parameters can be set to [configure this behavior](custom-config-parameters.md#databasemigrationspath).
+
 ## Model Relationships
 
-In order for Larastan to recognize Model relationships:
-
-- the return type must be defined
-- the method must be `public`
-- the relationship method argument must be a literal string (not a variable)
-
-If the above conditions are not met, then adding the `@return` docblock can help
+In order for Larastan to recognize Model relationships you are required to document the generic types of the relation class:
 
 ```php
 /** @return BelongsTo<User, $this> */
