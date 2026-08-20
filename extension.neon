@@ -134,6 +134,10 @@ services:
         tags:
             - phpstan.broker.methodsClassReflectionExtension
     -
+        class: Larastan\Larastan\Methods\FacadeThrowTypeExtension
+        tags:
+            - phpstan.dynamicStaticMethodThrowTypeExtension
+    -
         class: Larastan\Larastan\Methods\ManagersMethodsExtension
         tags:
             - phpstan.broker.methodsClassReflectionExtension

@@ -38,6 +38,12 @@ class IntegrationTest extends PHPStanTestCase
         yield [__DIR__ . '/data/model-factories.php'];
         yield [__DIR__ . '/data/blade-view.php'];
         yield [__DIR__ . '/data/helpers.php'];
+        yield [
+            __DIR__ . '/data/facade-throw-type.php',
+            [
+                37 => ['Dead catch - JsonException is never thrown in the try block.'],
+            ],
+        ];
 
         yield [
             __DIR__ . '/data/model-property-builder.php',
