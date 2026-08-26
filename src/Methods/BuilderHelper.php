@@ -76,13 +76,21 @@ class BuilderHelper
         private bool $checkProperties,
         private MacroMethodsClassReflectionExtension $macroMethodsClassReflectionExtension,
     ) {
+    }
+
+    /** @return string[] */
+    public function getPassthru(): array
+    {
         // @phpstan-ignore-next-line
         if (! defined('LARAVEL_VERSION') || version_compare(LARAVEL_VERSION, '12.15.0', '<')) {
-            return;
+            return $this->passthru;
         }
 
         // @phpstan-ignore-next-line
-        $this->passthru[] = 'getCountForPagination';
+        $passthru   = $this->passthru;
+        $passthru[] = 'getCountForPagination';
+
+        return $passthru;
     }
 
     public function dynamicWhere(
@@ -236,7 +244,7 @@ class BuilderHelper
 
         $queryBuilderReflection = $this->reflectionProvider->getClass(QueryBuilder::class);
 
-        if (in_array($methodName, $this->passthru, true)) {
+        if (in_array($methodName, $this->getPassthru(), true)) {
             return $queryBuilderReflection->getNativeMethod($methodName);
         }
 
