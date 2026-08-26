@@ -32,7 +32,7 @@ jobs:
             baseline: monicahq-monica
 
           - repository: canvural/larastan-strict-rules
-            ref: 53d60b6e4b852d3944361d31c55205b2c4c61b0c
+            ref: d9a615fdab8fd4f70513fd8be1266b2d856d586d
             php-version: "8.2"
             config: canvural-larastan-strict-rules.neon
             baseline: canvural-larastan-strict-rules
