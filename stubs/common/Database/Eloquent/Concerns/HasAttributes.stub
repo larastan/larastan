@@ -11,4 +11,18 @@ trait HasAttributes
      * @return array<string, string>
      */
     public function getCasts();
+
+    /**
+     * Get the accessors that are being appended to model arrays.
+     *
+     * @return list<string>
+     */
+    public function getAppends();
+
+    /**
+     * Get the mutated attributes for a given instance.
+     *
+     * @return list<string>
+     */
+    public function getMutatedAttributes();
 }
