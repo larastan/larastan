@@ -157,6 +157,21 @@ class MigrationHelperTest extends PHPStanTestCase
     }
 
     #[Test]
+    public function it_can_handle_migrations_with_nullable_timestamps_tz(): void
+    {
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migrations_using_nullable_timestamps_tz'], $this->fileHelper, false, $this->reflectionProvider);
+
+        $tables = $migrationHelper->initializeTables();
+
+        self::assertCount(1, $tables);
+        self::assertArrayHasKey('users', $tables);
+        self::assertCount(5, $tables['users']->columns);
+        self::assertSame(['id', 'name', 'email', 'created_at', 'updated_at'], array_keys($tables['users']->columns));
+        self::assertSame('string', $tables['users']->columns['created_at']->readableType);
+        self::assertSame('string', $tables['users']->columns['updated_at']->readableType);
+    }
+
+    #[Test]
     public function it_can_handle_migrations_with_default_arguments(): void
     {
         $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migration_with_default_arguments'], $this->fileHelper, false, $this->reflectionProvider);
@@ -241,6 +256,36 @@ class MigrationHelperTest extends PHPStanTestCase
         self::assertArrayHasKey('users', $tables);
         self::assertCount(5, $tables['users']->columns);
         self::assertSame(['id', 'name', 'email', 'created_at', 'updated_at'], array_keys($tables['users']->columns));
+    }
+
+    #[Test]
+    public function it_can_handle_migrations_with_drop_timestamps(): void
+    {
+        $migrationHelper = new MigrationHelper($this->parser, [
+            __DIR__ . '/data/migrations_using_drop_timestamps',
+        ], $this->fileHelper, false, $this->reflectionProvider);
+
+        $tables = $migrationHelper->initializeTables();
+
+        self::assertCount(1, $tables);
+        self::assertArrayHasKey('users', $tables);
+        self::assertCount(3, $tables['users']->columns);
+        self::assertSame(['id', 'name', 'email'], array_keys($tables['users']->columns));
+    }
+
+    #[Test]
+    public function it_can_handle_migrations_with_drop_remember_token(): void
+    {
+        $migrationHelper = new MigrationHelper($this->parser, [
+            __DIR__ . '/data/migrations_using_drop_remember_token',
+        ], $this->fileHelper, false, $this->reflectionProvider);
+
+        $tables = $migrationHelper->initializeTables();
+
+        self::assertCount(1, $tables);
+        self::assertArrayHasKey('users', $tables);
+        self::assertCount(3, $tables['users']->columns);
+        self::assertSame(['id', 'name', 'email'], array_keys($tables['users']->columns));
     }
 
     #[Test]

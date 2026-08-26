@@ -262,37 +262,28 @@ final class SchemaAggregator
                     }
                 }
 
-                if (
-                    $firstMethodCall->name->name === 'timestamps'
-                    || $firstMethodCall->name->name === 'timestampsTz'
-                    || $firstMethodCall->name->name === 'nullableTimestamps'
-                    || $firstMethodCall->name->name === 'nullableTimestampsTz'
-                    || $firstMethodCall->name->name === 'rememberToken'
-                ) {
-                    switch (strtolower($firstMethodCall->name->name)) {
-                        case 'droptimestamps':
-                        case 'droptimestampstz':
-                            $table->dropColumn('created_at');
-                            $table->dropColumn('updated_at');
-                            break;
+                switch (strtolower($firstMethodCall->name->name)) {
+                    case 'remembertoken':
+                        $table->setColumn(new SchemaColumn('remember_token', 'string', $nullable));
+                        continue 2;
 
-                        case 'remembertoken':
-                            $table->setColumn(new SchemaColumn('remember_token', 'string', $nullable));
-                            break;
+                    case 'dropremembertoken':
+                        $table->dropColumn('remember_token');
+                        continue 2;
 
-                        case 'dropremembertoken':
-                            $table->dropColumn('remember_token');
-                            break;
+                    case 'timestamps':
+                    case 'timestampstz':
+                    case 'nullabletimestamps':
+                    case 'nullabletimestampstz':
+                        $table->setColumn(new SchemaColumn('created_at', 'string', true));
+                        $table->setColumn(new SchemaColumn('updated_at', 'string', true));
+                        continue 2;
 
-                        case 'timestamps':
-                        case 'timestampstz':
-                        case 'nullabletimestamps':
-                            $table->setColumn(new SchemaColumn('created_at', 'string', true));
-                            $table->setColumn(new SchemaColumn('updated_at', 'string', true));
-                            break;
-                    }
-
-                    continue;
+                    case 'droptimestamps':
+                    case 'droptimestampstz':
+                        $table->dropColumn('created_at');
+                        $table->dropColumn('updated_at');
+                        continue 2;
                 }
 
                 $defaultsMap = [
