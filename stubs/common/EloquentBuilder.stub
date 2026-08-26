@@ -45,6 +45,14 @@ class Builder
     public function create(array $attributes = []);
 
     /**
+     * Save a new model and return the instance without raising model events.
+     *
+     * @phpstan-param array<model-property<TModel>, mixed> $attributes
+     * @phpstan-return TModel
+     */
+    public function createQuietly(array $attributes = []);
+
+    /**
      * Create a collection of models from plain arrays.
      *
      * @param  array<mixed>  $items
