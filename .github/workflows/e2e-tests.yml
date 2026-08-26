@@ -38,7 +38,7 @@ jobs:
             baseline: canvural-larastan-strict-rules
 
           - repository: filamentphp/filament
-            ref: 8d69f914b70cf0264e6f869d233ac482ae68e992
+            ref: 0b845f734eb2e59af2b702089e60bc13aa815284
             php-version: "8.3"
             config: filamentphp-filament.neon
             baseline: filamentphp-filament
