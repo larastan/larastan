@@ -17,3 +17,9 @@ function retryAcceptsCallableAsSleepMilliseconds(): void
         return true;
     });
 }
+
+function translationsAcceptClosureReplacements(): void
+{
+    trans('<wrap>Hello</wrap>', ['wrap' => fn (string $chunk): string => '<b>' . $chunk . '</b>']);
+    __('<wrap>Hello</wrap>', ['wrap' => fn (string $chunk): string => '<b>' . $chunk . '</b>']);
+}
