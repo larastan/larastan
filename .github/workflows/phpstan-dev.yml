@@ -9,8 +9,8 @@ jobs:
   phpstan-dev:
     strategy:
       matrix:
-        php: ["8.3"]
-        laravel: ["^11.0"]
+        php: ["8.5"]
+        laravel: ["^13.0"]
       fail-fast: false
 
     name: "P${{ matrix.php }} - L${{ matrix.laravel }}"
