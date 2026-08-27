@@ -49,7 +49,7 @@ class ModelFactoryDynamicStaticMethodReturnTypeExtensionTest extends PHPStanTest
         $class = new Name(User::class);
 
         $scope = $this->createMock(Scope::class);
-        $scope->method('resolveName')->with($class)->willReturn(User::class);
+        $scope->expects($this->once())->method('resolveName')->with($class)->willReturn(User::class);
 
         $extension = new ModelFactoryDynamicStaticMethodReturnTypeExtension(
             $this->createReflectionProvider(),
@@ -72,7 +72,7 @@ class ModelFactoryDynamicStaticMethodReturnTypeExtensionTest extends PHPStanTest
         $class = new Name(User::class);
 
         $scope = $this->createMock(Scope::class);
-        $scope->method('resolveName')->with($class)->willReturn(User::class);
+        $scope->expects($this->once())->method('resolveName')->with($class)->willReturn(User::class);
         $scope->method('getType')->willReturn($phpstanType);
 
         $extension = new ModelFactoryDynamicStaticMethodReturnTypeExtension(
