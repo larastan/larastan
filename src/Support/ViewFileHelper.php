@@ -8,7 +8,6 @@ use Generator;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Larastan\Larastan\Concerns\HasContainer;
 use PHPStan\File\FileHelper;
-use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
 use SplFileInfo;

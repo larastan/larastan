@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Properties;
 
+use Larastan\Larastan\Support\RecursiveDirectoryIterator;
 use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
 use PHPStan\Parser\ParserErrorsException;
 use PHPStan\Reflection\ReflectionProvider;
-use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
 use SplFileInfo;
