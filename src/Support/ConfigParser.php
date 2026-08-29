@@ -16,6 +16,8 @@ use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\FileTypeMapper;
 use PHPStan\Type\Type;
+use RecursiveIteratorIterator;
+use RegexIterator;
 use SplFileInfo;
 
 use function array_key_exists;
@@ -24,6 +26,7 @@ use function config_path;
 use function explode;
 use function is_dir;
 use function is_numeric;
+use function iterator_to_array;
 use function property_exists;
 use function str_ends_with;
 
@@ -181,7 +184,12 @@ final class ConfigParser
                 continue;
             }
 
-            $configFiles += DirectoryScanner::findFiles($configPath, '/\.php$/i');
+            $configFiles += iterator_to_array(
+                new RegexIterator(
+                    new RecursiveIteratorIterator(new RecursiveDirectoryIterator($configPath)),
+                    '/\.php$/i',
+                ),
+            );
         }
 
         return $configFiles;

@@ -7,8 +7,10 @@ namespace Larastan\Larastan\Properties;
 use Larastan\Larastan\Properties\Schema\MySqlDataTypeToPhpTypeConverter;
 use Larastan\Larastan\SQL\SqlParser;
 use Larastan\Larastan\SQL\SqlParserFailure;
-use Larastan\Larastan\Support\DirectoryScanner;
+use Larastan\Larastan\Support\RecursiveDirectoryIterator;
 use PHPStan\File\FileHelper;
+use RecursiveIteratorIterator;
+use RegexIterator;
 use SplFileInfo;
 
 use function array_key_exists;
@@ -16,6 +18,7 @@ use function database_path;
 use function file_get_contents;
 use function glob;
 use function is_dir;
+use function iterator_to_array;
 use function ksort;
 
 final class SquashedMigrationHelper
@@ -101,7 +104,12 @@ final class SquashedMigrationHelper
                     continue;
                 }
 
-                $schemaFiles += DirectoryScanner::findFiles($absolutePath, '/\.dump|\.sql/i');
+                $schemaFiles += iterator_to_array(
+                    new RegexIterator(
+                        new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
+                        '/\.dump|\.sql/i',
+                    ),
+                );
             }
         }
 

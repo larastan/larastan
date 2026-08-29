@@ -8,6 +8,8 @@ use Generator;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Larastan\Larastan\Concerns\HasContainer;
 use PHPStan\File\FileHelper;
+use RecursiveIteratorIterator;
+use RegexIterator;
 use SplFileInfo;
 
 use function array_merge;
@@ -15,6 +17,7 @@ use function array_values;
 use function count;
 use function explode;
 use function is_dir;
+use function iterator_to_array;
 use function rtrim;
 use function str_contains;
 use function str_replace;
@@ -89,6 +92,11 @@ final class ViewFileHelper
             return [];
         }
 
-        return DirectoryScanner::findFiles($absolutePath, '/\.blade\.php$/i');
+        return iterator_to_array(
+            new RegexIterator(
+                new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
+                '/\.blade\.php$/i',
+            ),
+        );
     }
 }
