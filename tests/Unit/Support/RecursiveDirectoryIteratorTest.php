@@ -21,6 +21,8 @@ use function random_bytes;
 use function rmdir;
 use function scandir;
 use function sprintf;
+use function stream_wrapper_register;
+use function stream_wrapper_unregister;
 use function sys_get_temp_dir;
 use function unlink;
 
@@ -134,6 +136,26 @@ class RecursiveDirectoryIteratorTest extends TestCase
         // skipped by the same rule — a subdirectory's first buffered chunk
         // must not be lost either.
         self::assertInstanceOf(RecursiveDirectoryIterator::class, $children);
+    }
+
+    #[Test]
+    public function it_does_not_rewind_a_newly_constructed_directory_stream(): void
+    {
+        BrokenRewindDirectoryStream::$rewindCalls = 0;
+
+        self::assertTrue(stream_wrapper_register(BrokenRewindDirectoryStream::SCHEME, BrokenRewindDirectoryStream::class));
+
+        try {
+            $files = $this->scan(BrokenRewindDirectoryStream::SCHEME . '://root');
+
+            self::assertSame([
+                BrokenRewindDirectoryStream::SCHEME . '://root/one.php',
+                BrokenRewindDirectoryStream::SCHEME . '://root/two.php',
+            ], array_keys($files));
+            self::assertSame(0, BrokenRewindDirectoryStream::$rewindCalls);
+        } finally {
+            stream_wrapper_unregister(BrokenRewindDirectoryStream::SCHEME);
+        }
     }
 
     private function removeDirectory(string $directory): void
