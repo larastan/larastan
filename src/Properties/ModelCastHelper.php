@@ -18,7 +18,6 @@ use Illuminate\Database\Eloquent\Casts\AsStringable;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Concerns\HasUniqueStringIds;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon as IlluminateCarbon;
 use Illuminate\Support\Collection;
@@ -61,7 +60,6 @@ use function array_map;
 use function array_merge;
 use function class_exists;
 use function explode;
-use function method_exists;
 use function str_replace;
 
 class ModelCastHelper
@@ -254,12 +252,7 @@ class ModelCastHelper
         }
 
         try {
-            /** @var Model $modelInstance */
-            $modelInstance = $modelClassReflection->getNativeReflection()->newInstanceWithoutConstructor();
-            // @phpstan-ignore function.alreadyNarrowedType (method exists only since Laravel 13)
-            if (method_exists($modelInstance, 'initializeModelAttributes')) {
-                $modelInstance->initializeModelAttributes();
-            }
+            $modelInstance = ModelHelper::newInstanceWithoutConstructor($modelClassReflection);
         } catch (ReflectionException) {
             throw new ShouldNotHappenException();
         }

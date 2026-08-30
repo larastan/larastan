@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Properties;
 
 use Exception;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use PhpParser;
 use PhpParser\NodeFinder;
@@ -18,7 +17,6 @@ use function array_merge;
 use function class_basename;
 use function count;
 use function is_string;
-use function method_exists;
 use function property_exists;
 use function strtolower;
 
@@ -405,12 +403,7 @@ final class SchemaAggregator
     {
         $classReflection = $this->reflectionProvider->getClass($modelClass);
         try {
-            /** @var Model $modelInstance */
-            $modelInstance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
-            // @phpstan-ignore function.alreadyNarrowedType (method exists only since Laravel 13)
-            if (method_exists($modelInstance, 'initializeModelAttributes')) {
-                $modelInstance->initializeModelAttributes();
-            }
+            $modelInstance = ModelHelper::newInstanceWithoutConstructor($classReflection);
         } catch (ReflectionException) {
             return null;
         }
