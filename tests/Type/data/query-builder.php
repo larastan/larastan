@@ -54,4 +54,5 @@ function test(): void
     assertType('float|int|numeric-string', DB::table('users')->sum(DB::raw('id')));
     assertType('float|int|numeric-string|null', DB::table('users')->avg(DB::raw('id')));
     assertType('float|int|numeric-string|null', DB::table('users')->average(DB::raw('id')));
+    assertType('array{select: list<mixed>, from: list<mixed>, join: list<mixed>, where: list<mixed>, groupBy: list<mixed>, having: list<mixed>, order: list<mixed>, union: list<mixed>, unionOrder: list<mixed>}', DB::table('users')->getRawBindings());
 }
