@@ -7,6 +7,23 @@ class Expression {}
 class Builder
 {
     /**
+     * Get the raw array of bindings.
+     *
+     * @return array{
+     *     select: list<mixed>,
+     *     from: list<mixed>,
+     *     join: list<mixed>,
+     *     where: list<mixed>,
+     *     groupBy: list<mixed>,
+     *     having: list<mixed>,
+     *     order: list<mixed>,
+     *     union: list<mixed>,
+     *     unionOrder: list<mixed>
+     * }
+     */
+    public function getRawBindings();
+
+    /**
      * Add a basic where clause to the query.
      *
      * @param  \Closure|string|array<string|int, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
