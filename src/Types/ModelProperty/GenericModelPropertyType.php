@@ -50,6 +50,11 @@ class GenericModelPropertyType extends StringType
         return $this->type;
     }
 
+    public function equals(Type $type): bool
+    {
+        return $type instanceof self && $this->type->equals($type->type);
+    }
+
     public function accepts(Type $type, bool $strictTypes): AcceptsResult
     {
         if ($type instanceof CompoundType) {

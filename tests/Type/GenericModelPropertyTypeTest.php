@@ -26,6 +26,31 @@ use function sprintf;
 
 class GenericModelPropertyTypeTest extends PHPStanTestCase
 {
+    #[DataProvider('dataEquals')]
+    public function testEquals(GenericModelPropertyType $left, GenericModelPropertyType $right, bool $expected): void
+    {
+        $this->assertSame($expected, $left->equals($right));
+        $this->assertSame($expected, $right->equals($left));
+    }
+
+    /** @return iterable<array{GenericModelPropertyType, GenericModelPropertyType, bool}> */
+    public static function dataEquals(): iterable
+    {
+        $modelPropertyHelper = static::getContainer()->getByType(ModelPropertyHelper::class);
+
+        yield [
+            new GenericModelPropertyType(new ObjectType(User::class), $modelPropertyHelper),
+            new GenericModelPropertyType(new ObjectType(User::class), $modelPropertyHelper),
+            true,
+        ];
+
+        yield [
+            new GenericModelPropertyType(new ObjectType(User::class), $modelPropertyHelper),
+            new GenericModelPropertyType(new ObjectType(Account::class), $modelPropertyHelper),
+            false,
+        ];
+    }
+
     /** @param class-string<Type> $expectedTypeClass */
     #[DataProvider('dataUnion')]
     public function testUnion(
