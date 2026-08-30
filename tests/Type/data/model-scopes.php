@@ -28,9 +28,8 @@ class Scopes extends Model
     /** @param Builder<Scopes> $query */
     public function test(User $user, Builder $query): void
     {
-        // TODO: fix these
-//        assertType('Illuminate\Database\Eloquent\Relations\HasOne<App\User, ModelScope\Scopes>', $this->hasOne(User::class)->active());
-//        assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\User, ModelScope\Scopes>', $this->hasMany(User::class)->active());
+        assertType('Illuminate\Database\Eloquent\Relations\HasOne<App\User, $this(ModelScope\Scopes)>', $this->hasOne(User::class)->active());
+        assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\User, $this(ModelScope\Scopes)>', $this->hasMany(User::class)->active());
         assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->active());
 
         assertType('Illuminate\Database\Eloquent\Builder<App\User>', $this->user->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->where('name', 'bar')->active());
