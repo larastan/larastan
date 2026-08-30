@@ -7,6 +7,7 @@ namespace Larastan\Larastan\ReturnTypes;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
+use Larastan\Larastan\Reflection\EloquentBuilderMethodReflection;
 use Larastan\Larastan\Support\CollectionHelper;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
@@ -23,8 +24,10 @@ use function in_array;
 
 final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
 {
-    public function __construct(private ReflectionProvider $reflectionProvider, private CollectionHelper $collectionHelper)
-    {
+    public function __construct(
+        private ReflectionProvider $reflectionProvider,
+        private CollectionHelper $collectionHelper,
+    ) {
     }
 
     public function getClass(): string
@@ -35,6 +38,10 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
         $builderReflection = $this->reflectionProvider->getClass(EloquentBuilder::class);
+
+        if ($this->isForwardedQueryBuilderMethod($methodReflection)) {
+            return true;
+        }
 
         // Don't handle dynamic wheres
         if (
@@ -69,6 +76,10 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
         MethodCall $methodCall,
         Scope $scope,
     ): Type|null {
+        if ($this->isForwardedQueryBuilderMethod($methodReflection)) {
+            return $scope->getType($methodCall->var);
+        }
+
         $returnType      = ParametersAcceptorSelector::selectFromArgs($scope, $methodCall->getArgs(), $methodReflection->getVariants())->getReturnType();
         $templateTypeMap = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap();
 
@@ -103,5 +114,13 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
         }
 
         return null;
+    }
+
+    private function isForwardedQueryBuilderMethod(MethodReflection $methodReflection): bool
+    {
+        $prototype = $methodReflection->getPrototype();
+
+        return $prototype instanceof EloquentBuilderMethodReflection
+            && $prototype->isForwardedQueryBuilderMethod();
     }
 }

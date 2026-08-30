@@ -20,9 +20,20 @@ final class EloquentBuilderMethodReflection implements MethodReflection
     private Type $returnType;
 
     /** @param list<ParameterReflection> $parameters */
-    public function __construct(private string $methodName, private ClassReflection $classReflection, private array $parameters, Type|null $returnType = null, private bool $isVariadic = false)
-    {
+    public function __construct(
+        private string $methodName,
+        private ClassReflection $classReflection,
+        private array $parameters,
+        Type|null $returnType = null,
+        private bool $isVariadic = false,
+        private bool $isForwardedQueryBuilderMethod = false,
+    ) {
         $this->returnType = $returnType ?? new ObjectType(Builder::class);
+    }
+
+    public function isForwardedQueryBuilderMethod(): bool
+    {
+        return $this->isForwardedQueryBuilderMethod;
     }
 
     public function getDeclaringClass(): ClassReflection

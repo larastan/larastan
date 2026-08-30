@@ -5,11 +5,12 @@ namespace CustomEloquentBuilder;
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 use function PHPStan\Testing\assertType;
 
-function test(FooModel $foo, NonGenericBuilder $nonGenericBuilder): void
+function test(FooModel $foo, NonGenericBuilder $nonGenericBuilder, ModelWithNonGenericBuilder $nonGenericModel): void
 {
     assertType('CustomEloquentBuilder\ModelWithCustomBuilder|null', ModelWithCustomBuilder::where('email', 'bar')->first());
     assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::where('email', 'bar'));
@@ -52,7 +53,25 @@ function test(FooModel $foo, NonGenericBuilder $nonGenericBuilder): void
 
     assertType('CustomEloquentBuilder\ModelWithNonGenericBuilder|null', ModelWithNonGenericBuilder::where('email', 'bar')->first());
     assertType('CustomEloquentBuilder\ChildNonGenericBuilder', ModelWithNonGenericBuilder::where('email', 'bar')->orderBy('email'));
+    assertType('CustomEloquentBuilder\ChildNonGenericBuilder', ModelWithNonGenericBuilder::whereEmail('bar'));
+    assertType('CustomEloquentBuilder\ChildNonGenericBuilder', ModelWithNonGenericBuilder::query());
+    assertType('list<string>', ModelWithNonGenericBuilder::query()->getColumns());
+    assertType('CustomEloquentBuilder\ChildNonGenericBuilder', $nonGenericModel->newQuery());
+    assertType('CustomEloquentBuilder\ChildNonGenericBuilder', ModelWithNonGenericBuilder::withTrashed());
+    assertType('Illuminate\Database\Eloquent\Relations\HasMany<CustomEloquentBuilder\ModelWithNonGenericBuilder, CustomEloquentBuilder\FooModel>', $foo->nonGenericModels()->wherePublishable());
     assertType('Illuminate\Database\Eloquent\Collection<int, CustomEloquentBuilder\ModelWithNonGenericBuilder>', ModelWithNonGenericBuilder::get());
+
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->whereNotIn('id', [1]));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::whereNotIn('id', [1]));
+    assertType('string', ModelWithCustomBuilder::query()->getColumns());
+    assertType('CustomEloquentBuilder\ChildNonGenericBuilder', ModelWithNonGenericBuilder::query()->whereNotIn('id', [1]));
+    assertType('int<0, max>', ModelWithCustomBuilder::query()->count());
+}
+
+/** @param ChildNonGenericBuilder|ModelWithNonGenericBuilder $builder */
+function testNonGenericBuilderDocBlock($builder): void
+{
+    assertType('CustomEloquentBuilder\ChildNonGenericBuilder', $builder);
 }
 
 /**
@@ -79,6 +98,12 @@ class ModelWithCustomBuilder extends Model
         return $query->where(['email' => $foo]);
     }
 
+    /** @param CustomEloquentBuilder<ModelWithCustomBuilder> $query */
+    public function scopeLockForUpdate(CustomEloquentBuilder $query): CustomEloquentBuilder
+    {
+        return $query;
+    }
+
     /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
     public function testCustomBuilderReturnType(): CustomEloquentBuilder
     {
@@ -102,6 +127,25 @@ class ModelWithCustomBuilder extends Model
  */
 class CustomEloquentBuilder extends Builder
 {
+    public function testScopeCollision(): void
+    {
+        assertType('CustomEloquentBuilder\CustomEloquentBuilder<TModel of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>', $this->lockForUpdate());
+    }
+
+    public function wherePublishable(): static
+    {
+        assertType('$this(CustomEloquentBuilder\CustomEloquentBuilder<TModel of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->whereNotIn('status', ['draft', 'archived']));
+
+        return $this->whereNotIn('status', ['draft', 'archived']);
+    }
+
+    public function wherePublished(): static
+    {
+        assertType('static(CustomEloquentBuilder\CustomEloquentBuilder<TModel of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->where('status', 'published'));
+
+        return $this->where('status', 'published');
+    }
+
     /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
     public function category(string $category): CustomEloquentBuilder
     {
@@ -125,7 +169,7 @@ class CustomEloquentBuilder extends Builder
      */
     public function categories(array $categories): CustomEloquentBuilder
     {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<TModel of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>', $this->whereIn('category', $categories));
+        assertType('$this(CustomEloquentBuilder\CustomEloquentBuilder<TModel of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->whereIn('category', $categories));
 
         return $this->whereIn('category', $categories);
     }
@@ -137,6 +181,12 @@ class FooModel extends Model
     public function customModels(): HasMany
     {
         return $this->hasMany(ModelWithCustomBuilder::class);
+    }
+
+    /** @return HasMany<ModelWithNonGenericBuilder, $this> */
+    public function nonGenericModels(): HasMany
+    {
+        return $this->hasMany(ModelWithNonGenericBuilder::class);
     }
 }
 
@@ -168,6 +218,8 @@ class CustomBuilder2 extends Builder
 
 class ModelWithNonGenericBuilder extends Model
 {
+    use SoftDeletes;
+
     /**
      * @param  \Illuminate\Database\Query\Builder  $query
      * @return ChildNonGenericBuilder
@@ -183,8 +235,19 @@ class ModelWithNonGenericBuilder extends Model
  */
 class NonGenericBuilder extends Builder
 {
+    public function wherePublishable(): static
+    {
+        assertType('$this(CustomEloquentBuilder\NonGenericBuilder)', $this->whereNotIn('status', ['draft', 'archived']));
+
+        return $this->whereNotIn('status', ['draft', 'archived']);
+    }
 }
 
 class ChildNonGenericBuilder extends NonGenericBuilder
 {
+    /** @return list<string> */
+    public function getColumns(): array
+    {
+        return [];
+    }
 }

@@ -20,6 +20,7 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\VerbosityLevel;
 
@@ -266,7 +267,16 @@ class BuilderHelper
             return $this->macroMethodsClassReflectionExtension->getMethod($queryBuilderReflection, $methodName);
         }
 
-        return $this->dynamicWhere($methodName, new GenericObjectType($eloquentBuilder->getName(), [$modelType]));
+        return $this->dynamicWhere($methodName, $this->getBuilderType($eloquentBuilder->getName(), $modelType));
+    }
+
+    public function getBuilderType(string $builderClassName, Type $modelType): ObjectType
+    {
+        if (! $this->reflectionProvider->getClass($builderClassName)->isGeneric()) {
+            return new ObjectType($builderClassName);
+        }
+
+        return new GenericObjectType($builderClassName, [$modelType]);
     }
 
     /**

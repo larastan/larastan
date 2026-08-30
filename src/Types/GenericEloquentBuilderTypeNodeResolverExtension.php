@@ -67,6 +67,10 @@ class GenericEloquentBuilderTypeNodeResolverExtension implements TypeNodeResolve
         $builderTypeName = $nameScope->resolveStringName($builderTypeNode->name);
         $modelTypeName   = $nameScope->resolveStringName($modelTypeNode->name);
 
+        if (! $this->provider->getClass($builderTypeName)->isGeneric()) {
+            return new ObjectType($builderTypeName);
+        }
+
         return new GenericObjectType($builderTypeName, [
             new ObjectType($modelTypeName),
         ]);

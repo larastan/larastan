@@ -6,6 +6,7 @@ namespace Larastan\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Larastan\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\ClassReflection;
@@ -124,7 +125,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
                     $methodName,
                     $classReflection,
                     $ref->getVariants()[0]->getParameters(),
-                    new GenericObjectType($classReflection->getName(), [$modelType]),
+                    $this->builderHelper->getBuilderType($classReflection->getName(), $modelType),
                     $ref->getVariants()[0]->isVariadic(),
                 );
             }
@@ -138,6 +139,10 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
         }
 
         $parametersAcceptor = $ref->getVariants()[0];
+
+        $isForwardedQueryBuilderMethod = $ref->getDeclaringClass()->getName() === QueryBuilder::class
+            && $this->reflectionProvider->getClass(QueryBuilder::class)->hasNativeMethod($methodName)
+            && ! in_array($methodName, $this->builderHelper->getPassthru(), true);
 
         if (in_array($methodName, $this->builderHelper->getPassthru(), true)) {
             $returnType = $parametersAcceptor->getReturnType();
@@ -155,6 +160,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             $parametersAcceptor->getParameters(),
             $returnType,
             $parametersAcceptor->isVariadic(),
+            $isForwardedQueryBuilderMethod,
         );
     }
 }

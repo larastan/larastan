@@ -10,7 +10,6 @@ use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
-use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
@@ -62,7 +61,7 @@ class NewModelQueryDynamicMethodReturnTypeExtension implements DynamicMethodRetu
 
             $builderName = $this->builderHelper->determineBuilderName($classReflection->getName());
 
-            $types[] = new GenericObjectType($builderName, [new ObjectType($classReflection->getName())]);
+            $types[] = $this->builderHelper->getBuilderType($builderName, new ObjectType($classReflection->getName()));
         }
 
         if ($types === []) {

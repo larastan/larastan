@@ -19,7 +19,6 @@ use PHPStan\Reflection\Php\DummyParameter;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\TrinaryLogic;
-use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StaticType;
 use PHPStan\Type\Type;
@@ -168,17 +167,17 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
             };
         }
 
-        $builderReflection          = $this->reflectionProvider->getClass($builderName)->withTypes([new ObjectType($classReflection->getName())]);
-        $genericBuilderAndModelType = new GenericObjectType($builderName, [new ObjectType($classReflection->getName())]);
+        $builderType       = $this->builderHelper->getBuilderType($builderName, new ObjectType($classReflection->getName()));
+        $builderReflection = $builderType->getClassReflection() ?? $this->reflectionProvider->getClass($builderName);
 
         if ($builderReflection->hasNativeMethod($methodName)) {
             $reflection = $builderReflection->getNativeMethod($methodName);
 
-            $parametersAcceptor = $this->transformStaticParameters($reflection, $genericBuilderAndModelType);
+            $parametersAcceptor = $this->transformStaticParameters($reflection, $builderType);
 
-            $returnType = TypeTraverser::map($parametersAcceptor->getReturnType(), static function (Type $type, callable $traverse) use ($genericBuilderAndModelType) {
+            $returnType = TypeTraverser::map($parametersAcceptor->getReturnType(), static function (Type $type, callable $traverse) use ($builderType) {
                 if ($type instanceof TypeWithClassName && $type->getClassName() === Builder::class) {
-                    return $genericBuilderAndModelType;
+                    return $builderType;
                 }
 
                 return $traverse($type);
@@ -200,7 +199,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
         return null;
     }
 
-    private function transformStaticParameters(MethodReflection $method, GenericObjectType $builder): ParametersAcceptor
+    private function transformStaticParameters(MethodReflection $method, ObjectType $builder): ParametersAcceptor
     {
         $acceptor = $method->getVariants()[0];
 
@@ -218,7 +217,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
         }, $acceptor->getParameters()), $acceptor->isVariadic(), $this->transformStaticType($acceptor->getReturnType(), $builder));
     }
 
-    private function transformStaticType(Type $type, GenericObjectType $builder): Type
+    private function transformStaticType(Type $type, ObjectType $builder): Type
     {
         return TypeTraverser::map($type, static function (Type $type, callable $traverse) use ($builder): Type {
             if ($type instanceof StaticType) {

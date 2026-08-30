@@ -15,7 +15,6 @@ use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
-use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\ThisType;
 
@@ -81,7 +80,7 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
         }
 
         $builderName = $this->builderHelper->determineBuilderName($modelReflection->getName());
-        $builderType = new GenericObjectType($builderName, [new ObjectType($modelReflection->getName())]);
+        $builderType = $this->builderHelper->getBuilderType($builderName, new ObjectType($modelReflection->getName()));
 
         if (! $builderType->hasMethod($methodName)->yes()) {
             return null;

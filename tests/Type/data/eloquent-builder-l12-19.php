@@ -28,6 +28,6 @@ class AnotherCustomBuilder extends \Illuminate\Database\Eloquent\Builder {}
 
 function test(): void
 {
-    assertType('EloquentBuilder1215\CustomBuilder<EloquentBuilder1215\A>', A::query());
-    assertType('EloquentBuilder1215\AnotherCustomBuilder<EloquentBuilder1215\B>', B::query());
+    assertType('EloquentBuilder1215\CustomBuilder', A::query());
+    assertType('EloquentBuilder1215\AnotherCustomBuilder', B::query());
 }

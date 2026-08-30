@@ -19,7 +19,6 @@ use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
-use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\ThisType;
 use PHPStan\Type\Type;
@@ -78,9 +77,9 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
             if ($methodCall->class instanceof Name) {
                 $type = $scope->resolveTypeByName($methodCall->class);
 
-                return new GenericObjectType(
+                return $this->builderHelper->getBuilderType(
                     $this->builderHelper->determineBuilderName($scope->resolveName($methodCall->class)),
-                    [$type instanceof ThisType ? $type->getStaticObjectType() : $type],
+                    $type instanceof ThisType ? $type->getStaticObjectType() : $type,
                 );
             }
 
@@ -100,9 +99,9 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
                 }
 
                 try {
-                    $types[] = new GenericObjectType(
+                    $types[] = $this->builderHelper->getBuilderType(
                         $this->builderHelper->determineBuilderName($className),
-                        [new ObjectType($className)],
+                        new ObjectType($className),
                     );
                 } catch (MissingMethodFromReflectionException) {
                 }
