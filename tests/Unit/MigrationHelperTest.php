@@ -13,6 +13,7 @@ use PHPStan\Testing\PHPStanTestCase;
 use PHPUnit\Framework\Attributes\Test;
 
 use function array_keys;
+use function class_exists;
 
 class MigrationHelperTest extends PHPStanTestCase
 {
@@ -315,5 +316,32 @@ class MigrationHelperTest extends PHPStanTestCase
         self::assertArrayHasKey('id', $tables['users']->columns);
         self::assertArrayHasKey('name', $tables['users']->columns);
         self::assertArrayHasKey('email', $tables['users']->columns);
+    }
+
+    #[Test]
+    public function it_resolves_foreign_id_for_column_type_using_table_php_attribute(): void
+    {
+        if (! class_exists('Illuminate\Database\Eloquent\Attributes\Table')) {
+            $this->markTestSkipped('Eloquent PHP attributes require Laravel 13+.');
+        }
+
+        $migrationHelper = new MigrationHelper(
+            $this->parser,
+            [
+                __DIR__ . '/data/basic_migration',
+                __DIR__ . '/data/migration_with_foreign_id_for',
+            ],
+            $this->fileHelper,
+            false,
+            $this->reflectionProvider,
+        );
+
+        $tables = $migrationHelper->initializeTables();
+
+        // foreignIdFor(Member::class) resolves Member's table via initializeModelAttributes().
+        // Member maps to 'users' (via #[Table]), so member_id inherits the type of users.id
+        // which is non-negative-int. Without the fix, Member would resolve to the non-existent
+        // 'members' table and the column would fall back to 'int'.
+        self::assertSame('non-negative-int', $tables['articles']->columns['member_id']->readableType);
     }
 }

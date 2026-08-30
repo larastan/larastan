@@ -70,8 +70,7 @@ class ModelPropertyHelper
         }
 
         try {
-            /** @var Model $modelInstance */
-            $modelInstance = $classReflectionOrTable->getNativeReflection()->newInstanceWithoutConstructor();
+            $modelInstance = $this->newModelInstance($classReflectionOrTable);
         } catch (ReflectionException) {
             return false;
         }
@@ -92,8 +91,7 @@ class ModelPropertyHelper
     public function getDatabaseProperty(ClassReflection $classReflection, string $propertyName): ModelProperty
     {
         try {
-            /** @var Model $modelInstance */
-            $modelInstance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
+            $modelInstance = $this->newModelInstance($classReflection);
         } catch (ReflectionException) {
             throw new ShouldNotHappenException();
         }
@@ -253,5 +251,18 @@ class ModelPropertyHelper
         }
 
         return in_array($propertyName, $dates, true);
+    }
+
+    /** @throws ReflectionException */
+    private function newModelInstance(ClassReflection $classReflection): Model
+    {
+        /** @var Model $instance */
+        $instance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
+        // @phpstan-ignore function.alreadyNarrowedType (method exists only since Laravel 13)
+        if (method_exists($instance, 'initializeModelAttributes')) {
+            $instance->initializeModelAttributes();
+        }
+
+        return $instance;
     }
 }
