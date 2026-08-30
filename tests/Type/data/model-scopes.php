@@ -25,6 +25,11 @@ class Scopes extends Model
         $query->where('whyuse', 'void');
     }
 
+    public function scopeCount(Builder $query): void
+    {
+        $query->whereNotNull('id');
+    }
+
     /** @param Builder<Scopes> $query */
     public function test(User $user, Builder $query): void
     {
@@ -36,6 +41,7 @@ class Scopes extends Model
         assertType('App\User|null', $this->user->where('name', 'bar')->active()->first());
         assertType('Illuminate\Database\Eloquent\Builder<ModelScope\Scopes>', $this->withVoidReturn());
         assertType('ModelScope\Scopes|null', $this->withVoidReturn()->first());
+        assertType('Illuminate\Database\Eloquent\Builder<ModelScope\Scopes>', self::query()->count());
         assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::query()->whereActive());
 
         assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->someScope());
