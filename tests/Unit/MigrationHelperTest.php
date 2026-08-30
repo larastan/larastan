@@ -338,10 +338,6 @@ class MigrationHelperTest extends PHPStanTestCase
 
         $tables = $migrationHelper->initializeTables();
 
-        // foreignIdFor(Member::class) resolves Member's table via initializeModelAttributes().
-        // Member maps to 'users' (via #[Table]), so member_id inherits the type of users.id
-        // which is non-negative-int. Without the fix, Member would resolve to the non-existent
-        // 'members' table and the column would fall back to 'int'.
-        self::assertSame('non-negative-int', $tables['articles']->columns['member_id']->readableType);
+        self::assertSame('string', $tables['articles']->columns['member_with_custom_key_id']->readableType);
     }
 }

@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace Tests\Unit;
 
 use App\Member;
+use App\MemberWithCustomKey;
+use App\MemberWithNonIncrementingStringKey;
+use App\MemberWithoutTimestampsAttribute;
+use App\MemberWithoutTimestampsTable;
 use Larastan\Larastan\Properties\MigrationCache;
 use Larastan\Larastan\Properties\MigrationHelper;
 use Larastan\Larastan\Properties\ModelCastHelper;
@@ -17,9 +21,10 @@ use PHPStan\Parser\Parser;
 use PHPStan\PhpDoc\TypeStringResolver;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Testing\PHPStanTestCase;
+use PHPStan\Type\StringType;
+use PHPStan\Type\TypeCombinator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
-use ReflectionClass;
 
 use function class_exists;
 use function sys_get_temp_dir;
@@ -45,21 +50,6 @@ class ModelPropertyHelperTest extends PHPStanTestCase
     }
 
     #[Test]
-    public function it_applies_table_php_attribute_after_initialize_model_attributes(): void
-    {
-        $reflection = new ReflectionClass(Member::class);
-        $instance   = $reflection->newInstanceWithoutConstructor();
-
-        // Without initializeModelAttributes() the #[Table] attribute is ignored and Laravel
-        // derives the table name from the class name instead.
-        self::assertNotSame('users', $instance->getTable());
-
-        $instance->initializeModelAttributes();
-
-        self::assertSame('users', $instance->getTable());
-    }
-
-    #[Test]
     public function it_uses_custom_table_name_from_table_php_attribute_when_checking_database_property(): void
     {
         $modelPropertyHelper = $this->buildModelPropertyHelper(
@@ -73,6 +63,49 @@ class ModelPropertyHelperTest extends PHPStanTestCase
         // table is resolved and columns from the users table are found.
         self::assertTrue($modelPropertyHelper->hasDatabaseProperty($classReflection, 'email'));
         self::assertFalse($modelPropertyHelper->hasDatabaseProperty($classReflection, 'nonexistent_column'));
+    }
+
+    #[Test]
+    public function it_uses_custom_key_metadata_from_table_php_attribute(): void
+    {
+        $modelPropertyHelper = $this->buildModelPropertyHelper([__DIR__ . '/data/basic_migration']);
+        $classReflection     = $this->reflectionProvider->getClass(MemberWithCustomKey::class);
+
+        self::assertTrue($modelPropertyHelper->hasDatabaseProperty($classReflection, 'uuid'));
+        self::assertInstanceOf(
+            StringType::class,
+            $modelPropertyHelper->getDatabaseProperty($classReflection, 'uuid')->getReadableType(),
+        );
+    }
+
+    #[Test]
+    public function it_applies_non_incrementing_string_key_metadata(): void
+    {
+        $modelPropertyHelper = $this->buildModelPropertyHelper([__DIR__ . '/data/basic_migration']);
+        $classReflection     = $this->reflectionProvider->getClass(MemberWithNonIncrementingStringKey::class);
+
+        self::assertInstanceOf(
+            StringType::class,
+            $modelPropertyHelper->getDatabaseProperty($classReflection, 'id')->getReadableType(),
+        );
+    }
+
+    #[Test]
+    public function it_applies_attributes_that_disable_timestamps(): void
+    {
+        $modelPropertyHelper = $this->buildModelPropertyHelper([__DIR__ . '/data/basic_migration']);
+
+        foreach ([MemberWithoutTimestampsTable::class, MemberWithoutTimestampsAttribute::class] as $modelClass) {
+            $classReflection = $this->reflectionProvider->getClass($modelClass);
+
+            self::assertTrue($modelPropertyHelper->hasDatabaseProperty($classReflection, 'created_at'));
+            self::assertInstanceOf(
+                StringType::class,
+                TypeCombinator::removeNull(
+                    $modelPropertyHelper->getDatabaseProperty($classReflection, 'created_at')->getReadableType(),
+                ),
+            );
+        }
     }
 
     /** @param string[] $migrationPaths */
