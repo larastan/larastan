@@ -24,11 +24,12 @@ use function array_key_exists;
 use function array_map;
 use function array_merge;
 use function array_values;
+use function assert;
 use function in_array;
 
 final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflectionExtension
 {
-    /** @var array<string, MethodReflection> */
+    /** @var array<string, MethodReflection|null> */
     private array $cache = [];
 
     public function __construct(private BuilderHelper $builderHelper, private ReflectionProvider $reflectionProvider)
@@ -41,24 +42,22 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
      */
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        if (array_key_exists($classReflection->getCacheKey() . '-' . $methodName, $this->cache)) {
-            return true;
+        $cacheKey = $classReflection->getCacheKey() . '-' . $methodName;
+
+        if (array_key_exists($cacheKey, $this->cache)) {
+            return $this->cache[$cacheKey] !== null;
         }
 
-        $methodReflection = $this->findMethod($classReflection, $methodName);
-
-        if ($methodReflection !== null) {
-            $this->cache[$classReflection->getCacheKey() . '-' . $methodName] = $methodReflection;
-
-            return true;
-        }
-
-        return false;
+        return ($this->cache[$cacheKey] = $this->findMethod($classReflection, $methodName)) !== null;
     }
 
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
-        return $this->cache[$classReflection->getCacheKey() . '-' . $methodName];
+        $method = $this->cache[$classReflection->getCacheKey() . '-' . $methodName];
+
+        assert($method !== null);
+
+        return $method;
     }
 
     /**
