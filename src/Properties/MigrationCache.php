@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Properties;
 
+use Composer\InstalledVersions;
+use OutOfBoundsException;
 use SplFileInfo;
 
 use function array_filter;
@@ -30,10 +32,14 @@ use function unserialize;
 
 use const LOCK_EX;
 use const LOCK_UN;
+use const PHP_VERSION;
 
 final class MigrationCache
 {
     private const CACHE_PREFIX = 'larastan_migrations_';
+
+    /** Bump when the serialized shape of SchemaTable/SchemaColumn or the aggregation logic changes. */
+    private const CACHE_FORMAT_VERSION = '1';
 
     public function __construct(
         private string $cacheDirectory,
@@ -129,7 +135,22 @@ final class MigrationCache
 
         sort($metadata);
 
-        return hash('xxh128', implode('|', $metadata));
+        return hash('xxh128', implode('|', [
+            self::CACHE_FORMAT_VERSION,
+            PHP_VERSION,
+            self::larastanVersion(),
+            ...$metadata,
+        ]));
+    }
+
+    private static function larastanVersion(): string
+    {
+        try {
+            return (InstalledVersions::getVersion('larastan/larastan') ?? 'unknown')
+                . '@' . (InstalledVersions::getReference('larastan/larastan') ?? 'unknown');
+        } catch (OutOfBoundsException) {
+            return 'unknown';
+        }
     }
 
     private function getCachePath(string $fingerprint): string
