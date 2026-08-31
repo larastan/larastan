@@ -62,6 +62,7 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
         $classNames         = [];
         $found              = false;
         $macroTraitProperty = null;
+        $isFacade           = false;
 
         if ($classReflection->isInterface() && Str::startsWith($classReflection->getName(), 'Illuminate\Contracts')) {
             /** @var object|null $concrete */
@@ -109,6 +110,7 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
                     if ($facadeClassName) {
                         $classNames         = [$facadeClassName];
                         $macroTraitProperty = 'macros';
+                        $isFacade           = true;
                     }
                 }
             }
@@ -169,7 +171,7 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
                         $this->closureTypeFactory->fromClosureObject($macroDefinition),
                     );
 
-                    $methodReflection->setIsStatic(true);
+                    $methodReflection->setIsStatic($isFacade);
                 }
 
                 $this->methods[$classReflection->getName() . '-' . $methodName] = $methodReflection;
