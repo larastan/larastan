@@ -32,7 +32,7 @@ parameters:
     checkConfigTypes: false
     checkAuthCallsWhenInRequestScope: false
     parseModelCastsMethod: false
-    enableMigrationCache: false
+    enableMigrationCache: true
 
 parametersSchema:
     checkOctaneCompatibility: bool()
