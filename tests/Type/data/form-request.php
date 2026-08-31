@@ -9,7 +9,20 @@ use Illuminate\Foundation\Http\FormRequest;
 
 use function PHPStan\Testing\assertType;
 
-function test(FormRequest $request, FooRequest $fooRequest): void
+class VariableRulesRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        $rules = [
+            'title' => 'required|string',
+            'quantity' => ['required', 'integer'],
+        ];
+
+        return $rules;
+    }
+}
+
+function test(FormRequest $request, FooRequest $fooRequest, VariableRulesRequest $variableRulesRequest): void
 {
     assertType('Illuminate\Support\ValidatedInput', $request->safe());
     assertType('array{key: mixed}', $request->safe(['key']));
@@ -42,4 +55,6 @@ function test(FormRequest $request, FooRequest $fooRequest): void
     assertType('array{fragment: string|null, domain: string, path: string|null, port: mixed}', $fooRequest->url);
     assertType('mixed', $fooRequest->fallback);
     assertType('mixed', $fooRequest->dynamicRules);
+    assertType('string', $variableRulesRequest->title);
+    assertType('int', $variableRulesRequest->quantity);
 }
