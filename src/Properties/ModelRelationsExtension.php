@@ -22,6 +22,7 @@ use PHPStan\Type\Type;
 use PHPStan\Type\TypeTraverser;
 use PHPStan\Type\UnionType;
 
+use function array_key_exists;
 use function str_ends_with;
 
 /** @internal */
@@ -33,12 +34,26 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
     {
     }
 
+    /** @var array<string, bool> */
+    private array $hasPropertyCache = [];
+
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
     {
         if (! $classReflection->is(Model::class)) {
             return false;
         }
 
+        $cacheKey = $classReflection->getCacheKey() . '-' . $propertyName;
+
+        if (array_key_exists($cacheKey, $this->hasPropertyCache)) {
+            return $this->hasPropertyCache[$cacheKey];
+        }
+
+        return $this->hasPropertyCache[$cacheKey] = $this->resolveHasProperty($classReflection, $propertyName);
+    }
+
+    private function resolveHasProperty(ClassReflection $classReflection, string $propertyName): bool
+    {
         if (ReflectionHelper::hasPropertyTag($classReflection, $propertyName)) {
             return false;
         }

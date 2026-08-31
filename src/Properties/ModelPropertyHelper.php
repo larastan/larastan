@@ -31,6 +31,9 @@ class ModelPropertyHelper
     /** @var array<string, SchemaTable> */
     private array $tables = [];
 
+    /** @var array<string, bool> */
+    private array $accessorCache = [];
+
     public function __construct(
         private TypeStringResolver $stringResolver,
         private MigrationHelper $migrationHelper,
@@ -164,6 +167,17 @@ class ModelPropertyHelper
             return false;
         }
 
+        $cacheKey = $classReflection->getCacheKey() . '-' . $propertyName . '-' . ($strictGenerics ? '1' : '0');
+
+        if (array_key_exists($cacheKey, $this->accessorCache)) {
+            return $this->accessorCache[$cacheKey];
+        }
+
+        return $this->accessorCache[$cacheKey] = $this->resolveHasAccessor($classReflection, $propertyName, $strictGenerics);
+    }
+
+    private function resolveHasAccessor(ClassReflection $classReflection, string $propertyName, bool $strictGenerics): bool
+    {
         $camelCase = Str::camel($propertyName);
 
         if (! $classReflection->hasNativeMethod($camelCase)) {
