@@ -96,7 +96,7 @@ final class FormRequestHelper
             $stmts,
             $scope,
             static function (Node $node, Scope $scope) use ($rulesMethod, $declaringClass, &$flatRules, &$foundRules): void {
-                if ($foundRules || ! $node instanceof Return_ || ! $node->expr instanceof Array_) {
+                if ($foundRules || ! $node instanceof Return_ || $node->expr === null) {
                     return;
                 }
 
@@ -110,20 +110,39 @@ final class FormRequestHelper
                     return;
                 }
 
-                $foundRules = true;
+                $keyTypes   = [];
+                $valueTypes = [];
 
-                foreach ($node->expr->items as $item) {
-                    if ($item->unpack || $item->key === null) {
-                        continue;
+                if ($node->expr instanceof Array_) {
+                    foreach ($node->expr->items as $item) {
+                        if ($item->unpack || $item->key === null) {
+                            continue;
+                        }
+
+                        $keyTypes[]   = $scope->getType($item->key);
+                        $valueTypes[] = $scope->getType($item->value);
+                    }
+                } else {
+                    $constantArrays = $scope->getType($node->expr)->getConstantArrays();
+
+                    if (count($constantArrays) !== 1) {
+                        return;
                     }
 
-                    $propertyName = self::extractConstantString($scope->getType($item->key));
+                    $keyTypes   = $constantArrays[0]->getKeyTypes();
+                    $valueTypes = $constantArrays[0]->getValueTypes();
+                }
+
+                $foundRules = true;
+
+                foreach ($keyTypes as $index => $keyType) {
+                    $propertyName = self::extractConstantString($keyType);
 
                     if ($propertyName === null) {
                         continue;
                     }
 
-                    $rules = self::extractConstantRules($scope->getType($item->value));
+                    $rules = self::extractConstantRules($valueTypes[$index]);
 
                     if ($rules === null) {
                         continue;
