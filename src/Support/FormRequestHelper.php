@@ -6,7 +6,6 @@ namespace Larastan\Larastan\Support;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Larastan\Larastan\Support\Validation\RuleTreeBuilder;
-use Larastan\Larastan\Support\Validation\RuleTreeNode;
 use Larastan\Larastan\Support\Validation\RuleTreeTypeResolver;
 use Larastan\Larastan\Support\Validation\ValidationRuleFactory;
 use PhpParser\Node;
@@ -22,12 +21,13 @@ use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\Type;
 
 use function array_key_exists;
+use function array_map;
 use function count;
 
 /** @internal */
 final class FormRequestHelper
 {
-    /** @var array<class-string<FormRequest>, array<string, RuleTreeNode>> */
+    /** @var array<class-string<FormRequest>, array<string, Type>> */
     private array $properties = [];
 
     /** @var array<class-string<FormRequest>, true> */
@@ -68,10 +68,10 @@ final class FormRequestHelper
         /** @var class-string<FormRequest> $className */
         $className = $classReflection->getName();
 
-        return $this->treeTypeResolver->resolveTopLevel($this->properties[$className][$propertyName]);
+        return $this->properties[$className][$propertyName];
     }
 
-    /** @return array<string, RuleTreeNode> */
+    /** @return array<string, Type> */
     private function parseProperties(ClassReflection $classReflection): array
     {
         if (! $classReflection->hasNativeMethod('rules')) {
@@ -134,7 +134,10 @@ final class FormRequestHelper
             },
         );
 
-        return RuleTreeBuilder::build($flatRules);
+        return array_map(
+            $this->treeTypeResolver->resolveTopLevel(...),
+            RuleTreeBuilder::build($flatRules),
+        );
     }
 
     /** @return string|list<string>|null */
