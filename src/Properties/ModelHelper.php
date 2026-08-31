@@ -24,7 +24,7 @@ final class ModelHelper
                 continue;
             }
 
-            // @phpstan-ignore method.notFound (methods only exist since Laravel 13)
+            // @phpstan-ignore method.notFound, method.notFound (methods only exist since Laravel 13)
             $model->{$initializer}();
         }
 
