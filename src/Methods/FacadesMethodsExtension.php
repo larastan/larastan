@@ -15,6 +15,7 @@ use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\ReflectionProvider;
 use Throwable;
 
+use function array_key_exists;
 use function assert;
 use function class_exists;
 use function sprintf;
@@ -24,8 +25,11 @@ use function substr;
 /** @internal */
 final class FacadesMethodsExtension implements MethodsClassReflectionExtension
 {
-    /** @var array<string, MethodReflection> */
+    /** @var array<string, MethodReflection|false> */
     private array $cache = [];
+
+    /** @var array<class-string, object|null> */
+    private array $facadeRoots = [];
 
     public function __construct(private ReflectionProvider $reflectionProvider)
     {
@@ -40,7 +44,7 @@ final class FacadesMethodsExtension implements MethodsClassReflectionExtension
         $key = $classReflection->getName() . '-' . $methodName;
 
         if (isset($this->cache[$key])) {
-            return true;
+            return $this->cache[$key] !== false;
         }
 
         $result = RecursionGuard::run($key, function () use ($classReflection, $methodName, $key) {
@@ -50,12 +54,7 @@ final class FacadesMethodsExtension implements MethodsClassReflectionExtension
 
             $facadeClass = $classReflection->getName();
 
-            $concrete = null;
-
-            try {
-                $concrete = $facadeClass::getFacadeRoot();
-            } catch (Throwable) {
-            }
+            $concrete = $this->getFacadeRoot($facadeClass);
 
             if ($concrete !== null) {
                 $concreteClass = $concrete::class;
@@ -96,12 +95,37 @@ final class FacadesMethodsExtension implements MethodsClassReflectionExtension
             return false;
         });
 
+        if ($result === false) {
+            $this->cache[$key] = false;
+        }
+
         return $result ?? false;
+    }
+
+    /** @param class-string $facadeClass */
+    private function getFacadeRoot(string $facadeClass): object|null
+    {
+        if (array_key_exists($facadeClass, $this->facadeRoots)) {
+            return $this->facadeRoots[$facadeClass];
+        }
+
+        $concrete = null;
+
+        try {
+            $concrete = $facadeClass::getFacadeRoot();
+        } catch (Throwable) {
+        }
+
+        return $this->facadeRoots[$facadeClass] = $concrete;
     }
 
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
-        return $this->cache[$classReflection->getName() . '-' . $methodName];
+        $method = $this->cache[$classReflection->getName() . '-' . $methodName];
+
+        assert($method !== false);
+
+        return $method;
     }
 
     private function getFake(string $facade): string
