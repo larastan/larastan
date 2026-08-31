@@ -13,9 +13,22 @@ use function method_exists;
 /** @internal */
 final class ModelHelper
 {
-    /** @throws ReflectionException */
+    /** @var array<string, Model> */
+    private static array $instances = [];
+
+    /**
+     * Instances are memoized per class, so callers must treat them as read-only.
+     *
+     * @throws ReflectionException
+     */
     public static function newInstanceWithoutConstructor(ClassReflection $classReflection): Model
     {
+        $className = $classReflection->getName();
+
+        if (isset(self::$instances[$className])) {
+            return self::$instances[$className];
+        }
+
         /** @var Model $model */
         $model = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
 
@@ -28,6 +41,6 @@ final class ModelHelper
             $model->{$initializer}();
         }
 
-        return $model;
+        return self::$instances[$className] = $model;
     }
 }
