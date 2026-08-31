@@ -47,6 +47,9 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
     /** @var array<string, array<string, bool>> */
     private array $traitCache = [];
 
+    /** @var array<string, array{class-string[], string|null}> */
+    private array $macroSources = [];
+
     public function __construct(private ReflectionProvider $reflectionProvider, private ClosureTypeFactory $closureTypeFactory)
     {
     }
@@ -58,61 +61,9 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
      */
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        /** @var class-string[] $classNames */
-        $classNames         = [];
-        $found              = false;
-        $macroTraitProperty = null;
+        [$classNames, $macroTraitProperty] = $this->getMacroSources($classReflection);
 
-        if ($classReflection->isInterface() && Str::startsWith($classReflection->getName(), 'Illuminate\Contracts')) {
-            /** @var object|null $concrete */
-            $concrete = $this->resolve($classReflection->getName());
-
-            if ($concrete !== null) {
-                $className = $concrete::class;
-
-                if ($className && $this->reflectionProvider->getClass($className)->hasTraitUse(Macroable::class)) {
-                    $classNames         = [$className];
-                    $macroTraitProperty = 'macros';
-                }
-            }
-        } elseif (
-            $this->hasIndirectTraitUse($classReflection, Macroable::class) ||
-            $classReflection->is(Builder::class) ||
-            $classReflection->is(QueryBuilder::class)
-        ) {
-            $classNames         = [$classReflection->getName()];
-            $macroTraitProperty = 'macros';
-
-            if ($classReflection->is(Builder::class)) {
-                $classNames[] = Builder::class;
-            }
-        } elseif ($classReflection->is(Facade::class)) {
-            $facadeClass = $classReflection->getName();
-
-            if ($facadeClass === Auth::class) {
-                $classNames         = [SessionGuard::class, RequestGuard::class];
-                $macroTraitProperty = 'macros';
-            } elseif ($facadeClass === Cache::class) {
-                $classNames         = [CacheManager::class, CacheRepository::class];
-                $macroTraitProperty = 'macros';
-            } else {
-                $concrete = null;
-
-                try {
-                    $concrete = $facadeClass::getFacadeRoot();
-                } catch (Throwable) {
-                }
-
-                if ($concrete) {
-                    $facadeClassName = $concrete::class;
-
-                    if ($facadeClassName) {
-                        $classNames         = [$facadeClassName];
-                        $macroTraitProperty = 'macros';
-                    }
-                }
-            }
-        }
+        $found = false;
 
         if ($classNames !== [] && $macroTraitProperty) {
             foreach ($classNames as $className) {
@@ -123,14 +74,15 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
                 }
 
                 $refProperty = $macroClassReflection->getNativeReflection()->getProperty($macroTraitProperty);
+                $macros      = $refProperty->getValue();
 
-                $found = array_key_exists($methodName, $refProperty->getValue());
+                $found = array_key_exists($methodName, $macros);
 
                 if (! $found) {
                     continue;
                 }
 
-                $macroDefinition = $refProperty->getValue()[$methodName];
+                $macroDefinition = $macros[$methodName];
 
                 if (is_string($macroDefinition)) {
                     if (str_contains($macroDefinition, '::')) {
@@ -186,6 +138,81 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
         string $methodName,
     ): MethodReflection {
         return $this->methods[$classReflection->getName() . '-' . $methodName];
+    }
+
+    /**
+     * Determine which classes' macro definitions apply to the given class.
+     *
+     * This only depends on the class itself, so it is memoized — the trait
+     * scans, container resolutions, and facade root lookups involved are
+     * too expensive to repeat for every method lookup.
+     *
+     * @return array{class-string[], string|null}
+     */
+    private function getMacroSources(ClassReflection $classReflection): array
+    {
+        $cacheKey = $classReflection->getName();
+
+        if (array_key_exists($cacheKey, $this->macroSources)) {
+            return $this->macroSources[$cacheKey];
+        }
+
+        /** @var class-string[] $classNames */
+        $classNames         = [];
+        $macroTraitProperty = null;
+
+        if ($classReflection->isInterface() && Str::startsWith($classReflection->getName(), 'Illuminate\Contracts')) {
+            /** @var object|null $concrete */
+            $concrete = $this->resolve($classReflection->getName());
+
+            if ($concrete !== null) {
+                $className = $concrete::class;
+
+                if ($className && $this->reflectionProvider->getClass($className)->hasTraitUse(Macroable::class)) {
+                    $classNames         = [$className];
+                    $macroTraitProperty = 'macros';
+                }
+            }
+        } elseif (
+            $this->hasIndirectTraitUse($classReflection, Macroable::class) ||
+            $classReflection->is(Builder::class) ||
+            $classReflection->is(QueryBuilder::class)
+        ) {
+            $classNames         = [$classReflection->getName()];
+            $macroTraitProperty = 'macros';
+
+            if ($classReflection->is(Builder::class)) {
+                $classNames[] = Builder::class;
+            }
+        } elseif ($classReflection->is(Facade::class)) {
+            $facadeClass = $classReflection->getName();
+
+            if ($facadeClass === Auth::class) {
+                $classNames         = [SessionGuard::class, RequestGuard::class];
+                $macroTraitProperty = 'macros';
+            } elseif ($facadeClass === Cache::class) {
+                $classNames         = [CacheManager::class, CacheRepository::class];
+                $macroTraitProperty = 'macros';
+            } else {
+                $concrete = null;
+
+                try {
+                    $concrete = $facadeClass::getFacadeRoot();
+                } catch (Throwable) {
+                }
+
+                if ($concrete) {
+                    $facadeClassName = $concrete::class;
+
+                    if ($facadeClassName) {
+                        $classNames         = [$facadeClassName];
+                        $macroTraitProperty = 'macros';
+                    }
+                }
+            }
+        }
+
+        return $this->macroSources[$cacheKey] = [$classNames, $macroTraitProperty];
     }
 
     private function hasIndirectTraitUse(ClassReflection $class, string $traitName): bool
