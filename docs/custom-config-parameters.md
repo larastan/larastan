@@ -193,3 +193,25 @@ $foo = env('FOO', fn() => 'bar');
 will also dump `string` when the parameter is enabled.
 
 The reasoning behind it is that the default value is always used when the environment variable is not set. And for almost all the cases the default value should be the same type as the actual env variable. So it makes sense to generalize the return type to the type of the default value.
+
+## `checkStrictContracts`
+**default**: `false`
+
+By default, when Larastan sees a class or interface FQCN passed to `resolve()`, `app()`, `App::make()`/`App::makeWith()`, or `Container::make()`/`makeWith()`/`resolve()`, it resolves the argument through the container bindings and infers the return type as the concrete class that would be bound at runtime. This can lead to incorrect assumptions when the binding varies between environments (e.g. production vs. testing), since code may end up relying on methods that only exist on the concrete implementation and not on the interface it type-hinted.
+
+When this option is enabled, Larastan will not resolve container bindings for arguments that are already a class or interface FQCN, and will instead infer the type as the FQCN itself. Aliases (e.g. `resolve('cache')`) are unaffected and continue to resolve to their concrete implementation.
+
+### Example
+```php
+use Illuminate\Contracts\Config\Repository;
+
+$repository = resolve(Repository::class);
+\PHPStan\dumpType($repository);
+```
+
+With `checkStrictContracts` disabled (default), this dumps `Illuminate\Config\Repository` (the concrete implementation bound in the container). With it enabled, this dumps `Illuminate\Contracts\Config\Repository` (the interface that was type-hinted).
+
+```neon
+parameters:
+    checkStrictContracts: true
+```

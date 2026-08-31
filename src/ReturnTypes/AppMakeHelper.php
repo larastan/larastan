@@ -22,6 +22,11 @@ final class AppMakeHelper
 {
     use HasContainer;
 
+    public function __construct(
+        private readonly bool $checkStrictContracts = false,
+    ) {
+    }
+
     public function resolveTypeFromCall(FuncCall|MethodCall|StaticCall $call, Scope $scope): Type
     {
         $args = $call->getArgs();
@@ -36,6 +41,11 @@ final class AppMakeHelper
         if (count($constantStrings) > 0) {
             $types = [];
             foreach ($constantStrings as $constantString) {
+                if ($this->checkStrictContracts && $constantString->isClassString()->yes()) {
+                    $types[] = $constantString->getClassStringObjectType();
+                    continue;
+                }
+
                 try {
                     /** @var object|null $resolved */
                     $resolved = $this->resolve($constantString->getValue());

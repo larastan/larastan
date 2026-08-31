@@ -1,0 +1,4 @@
+includes:
+    - ../../phpstan-tests.neon
+parameters:
+    checkStrictContracts: true
