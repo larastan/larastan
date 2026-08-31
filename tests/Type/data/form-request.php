@@ -9,13 +9,23 @@ use Illuminate\Foundation\Http\FormRequest;
 
 use function PHPStan\Testing\assertType;
 
+const GLOBAL_RULE = 'integer';
+
 class VariableRulesRequest extends FormRequest
 {
+    private const MAX = 20;
+
+    private const RULE = 'string';
+
     public function rules(): array
     {
+        $localRule = 'integer';
+
         $rules = [
-            'title' => 'required|string',
-            'quantity' => ['required', 'integer'],
+            'title' => 'required|' . self::RULE,
+            'quantity' => ['required', $localRule],
+            'maximum' => ['required', 'integer', 'max:' . self::MAX],
+            'global' => 'required|' . GLOBAL_RULE,
         ];
 
         return $rules;
@@ -57,4 +67,6 @@ function test(FormRequest $request, FooRequest $fooRequest, VariableRulesRequest
     assertType('mixed', $fooRequest->dynamicRules);
     assertType('string', $variableRulesRequest->title);
     assertType('int', $variableRulesRequest->quantity);
+    assertType('int<min, 20>', $variableRulesRequest->maximum);
+    assertType('int', $variableRulesRequest->global);
 }
