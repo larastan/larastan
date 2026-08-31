@@ -16,10 +16,25 @@ use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
+use function array_key_exists;
 use function count;
 
 class GenericEloquentBuilderTypeNodeResolverExtension implements TypeNodeResolverExtension
 {
+    private const KIND_MODEL = 1;
+
+    private const KIND_BUILDER = 2;
+
+    /**
+     * This extension is consulted for every PHPDoc type node, so the verdict
+     * for a resolved identifier (model class, builder class, or neither) is
+     * memoized to avoid repeated reflection lookups for common union members
+     * like `string` or `null`.
+     *
+     * @var array<string, int|null>
+     */
+    private array $classKind = [];
+
     public function __construct(private ReflectionProvider $provider)
     {
     }
@@ -30,42 +45,29 @@ class GenericEloquentBuilderTypeNodeResolverExtension implements TypeNodeResolve
             return null;
         }
 
-        $modelTypeNode   = null;
-        $builderTypeNode = null;
-        foreach ($typeNode->types as $innerTypeNode) {
-            if (
-                ! ($innerTypeNode instanceof IdentifierTypeNode)
-                || ! $this->provider->hasClass($nameScope->resolveStringName($innerTypeNode->name))
-                || ! (new ObjectType(Model::class))->isSuperTypeOf(new ObjectType($nameScope->resolveStringName($innerTypeNode->name)))->yes()
-            ) {
-                continue;
-            }
-
-            $modelTypeNode = $innerTypeNode;
-        }
-
-        if ($modelTypeNode === null) {
-            return null;
-        }
+        $modelTypeName   = null;
+        $builderTypeName = null;
 
         foreach ($typeNode->types as $innerTypeNode) {
-            if (
-                ! ($innerTypeNode instanceof IdentifierTypeNode)
-                || ! $this->provider->hasClass($nameScope->resolveStringName($innerTypeNode->name))
-                || ($nameScope->resolveStringName($innerTypeNode->name) !== Builder::class && ! (new ObjectType(Builder::class))->isSuperTypeOf(new ObjectType($nameScope->resolveStringName($innerTypeNode->name)))->yes())
-            ) {
-                continue;
+            // A matching union needs a model member and a builder member, so
+            // any member that is not a plain identifier means we can bail out.
+            if (! $innerTypeNode instanceof IdentifierTypeNode) {
+                return null;
             }
 
-            $builderTypeNode = $innerTypeNode;
+            $resolvedName = $nameScope->resolveStringName($innerTypeNode->name);
+            $kind         = $this->resolveClassKind($resolvedName);
+
+            if ($kind === self::KIND_MODEL && $modelTypeName === null) {
+                $modelTypeName = $resolvedName;
+            } elseif ($kind === self::KIND_BUILDER && $builderTypeName === null) {
+                $builderTypeName = $resolvedName;
+            }
         }
 
-        if ($builderTypeNode === null) {
+        if ($modelTypeName === null || $builderTypeName === null) {
             return null;
         }
-
-        $builderTypeName = $nameScope->resolveStringName($builderTypeNode->name);
-        $modelTypeName   = $nameScope->resolveStringName($modelTypeNode->name);
 
         if (! $this->provider->getClass($builderTypeName)->isGeneric()) {
             return new ObjectType($builderTypeName);
@@ -74,5 +76,26 @@ class GenericEloquentBuilderTypeNodeResolverExtension implements TypeNodeResolve
         return new GenericObjectType($builderTypeName, [
             new ObjectType($modelTypeName),
         ]);
+    }
+
+    private function resolveClassKind(string $resolvedName): int|null
+    {
+        if (array_key_exists($resolvedName, $this->classKind)) {
+            return $this->classKind[$resolvedName];
+        }
+
+        $kind = null;
+
+        if ($this->provider->hasClass($resolvedName)) {
+            $classReflection = $this->provider->getClass($resolvedName);
+
+            if ($classReflection->is(Model::class)) {
+                $kind = self::KIND_MODEL;
+            } elseif ($classReflection->is(Builder::class)) {
+                $kind = self::KIND_BUILDER;
+            }
+        }
+
+        return $this->classKind[$resolvedName] = $kind;
     }
 }
