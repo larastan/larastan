@@ -12,10 +12,27 @@ use function array_key_exists;
 
 final class ReflectionHelper
 {
+    /** @var array<string, bool> */
+    private static array $propertyTagCache = [];
+
+    /** @var array<string, bool> */
+    private static array $methodTagCache = [];
+
     /**
      * Does the given class or any of its ancestors have an `@property*` annotation with the given name?
      */
     public static function hasPropertyTag(ClassReflection $classReflection, string $propertyName): bool
+    {
+        $cacheKey = $classReflection->getName() . '-' . $propertyName;
+
+        if (array_key_exists($cacheKey, self::$propertyTagCache)) {
+            return self::$propertyTagCache[$cacheKey];
+        }
+
+        return self::$propertyTagCache[$cacheKey] = self::resolvePropertyTag($classReflection, $propertyName);
+    }
+
+    private static function resolvePropertyTag(ClassReflection $classReflection, string $propertyName): bool
     {
         if (array_key_exists($propertyName, $classReflection->getPropertyTags())) {
             return true;
@@ -36,6 +53,17 @@ final class ReflectionHelper
      * Does the given class or any of its ancestors have an `@method*` annotation with the given name?
      */
     public static function hasMethodTag(ClassReflection $classReflection, string $methodName): bool
+    {
+        $cacheKey = $classReflection->getName() . '-' . $methodName;
+
+        if (array_key_exists($cacheKey, self::$methodTagCache)) {
+            return self::$methodTagCache[$cacheKey];
+        }
+
+        return self::$methodTagCache[$cacheKey] = self::resolveMethodTag($classReflection, $methodName);
+    }
+
+    private static function resolveMethodTag(ClassReflection $classReflection, string $methodName): bool
     {
         if (array_key_exists($methodName, $classReflection->getMethodTags())) {
             return true;
