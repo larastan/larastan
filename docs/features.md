@@ -247,6 +247,29 @@ public function posts(): HasMany
 }
 ```
 
+## Laravel 11 `casts()` method
+
+Larastan supports Laravel 11's ⁠`casts()` method. When using the `⁠casts()` method in your models, you need to update the return type of the `⁠casts()` method to ⁠array in your model classes. You also need to provide the correct array shape for the return type so that Larastan can recognize the model casts.
+
+Here is an example:
+
+```php
+/**
+ * @return array{
+ *   is_admin: 'boolean',
+ *   meta: 'array',
+ *   role: 'App\\Enums\\Role'
+ * }
+ */
+public function casts(): array
+{
+    return [
+        'is_admin' => 'boolean',
+        'meta' => 'array',
+        'role' => \App\Enums\Role::class
+    ];
+}
+```
 ## Bootstrap Error Reporting (since 3.9.0)
 
 Larastan boots your Laravel application during analysis. If that bootstrap fails, Larastan can print a
