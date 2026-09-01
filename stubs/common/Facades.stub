@@ -69,3 +69,8 @@ class Cookie extends Facade {
  * @mixin \Illuminate\Http\Client\Factory
  */
  class Http extends Facade {}
+
+ /**
+  * @mixin \Illuminate\View\Factory
+  */
+ class View extends Facade {}

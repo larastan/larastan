@@ -38,6 +38,7 @@ class IntegrationTest extends PHPStanTestCase
         yield [__DIR__ . '/data/model-factories.php'];
         yield [__DIR__ . '/data/blade-view.php'];
         yield [__DIR__ . '/data/helpers.php'];
+        yield [__DIR__ . '/data/facades.php'];
 
         yield [
             __DIR__ . '/data/model-property-builder.php',
