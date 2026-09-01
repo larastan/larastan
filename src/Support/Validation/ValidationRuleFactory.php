@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Support\Validation;
 
+use Illuminate\Validation\Validator;
+use ReflectionMethod;
+
 use function array_filter;
 use function array_unique;
 use function explode;
@@ -20,6 +23,8 @@ use const FILTER_VALIDATE_INT;
 /** @internal */
 final class ValidationRuleFactory
 {
+    private const LOOSE_INTEGER_TYPE = 'float|int|numeric-string|true|Stringable';
+
     /** @param string|mixed[] $rules */
     public static function make(string|array $rules): ValidationRule
     {
@@ -81,6 +86,10 @@ final class ValidationRuleFactory
             if ($rule === 'between') {
                 $min = self::intParameter($parameters, 0);
                 $max = self::intParameter($parameters, 1);
+
+                if ($type === self::LOOSE_INTEGER_TYPE) {
+                    continue;
+                }
             }
 
             $type = self::determineType($rule, $parameters);
@@ -241,6 +250,9 @@ final class ValidationRuleFactory
         if (self::isInteger($rule)) {
             return match ($rule) {
                 'numeric' => 'float|int|numeric-string',
+                'integer' => in_array('strict', $parameters, true) && self::supportsStrictInteger()
+                    ? 'int'
+                    : self::LOOSE_INTEGER_TYPE,
                 default => 'int',
             };
         }
@@ -259,6 +271,10 @@ final class ValidationRuleFactory
     /** @param list<string> $values */
     private static function determineInType(array $values, string $baseType): string
     {
+        if ($baseType === self::LOOSE_INTEGER_TYPE) {
+            return $baseType;
+        }
+
         $literals = [];
 
         foreach ($values as $value) {
@@ -270,5 +286,12 @@ final class ValidationRuleFactory
         }
 
         return implode('|', array_unique($literals));
+    }
+
+    private static function supportsStrictInteger(): bool
+    {
+        static $supportsStrictInteger;
+
+        return $supportsStrictInteger ??= (new ReflectionMethod(Validator::class, 'validateInteger'))->getNumberOfParameters() >= 3;
     }
 }
