@@ -25,12 +25,15 @@ final class ValidationRuleFactory
 {
     private const LOOSE_INTEGER_TYPE = 'float|int|numeric-string|true|Stringable';
 
+    private const NUMERIC_TYPE = 'float|int|numeric-string';
+
     /** @param string|mixed[] $rules */
     public static function make(string|array $rules): ValidationRule
     {
         $possiblyUndefined = false;
         $nullable          = false;
         $required          = false;
+        $benevolent        = false;
 
         $type     = '';
         $inValues = null;
@@ -86,13 +89,16 @@ final class ValidationRuleFactory
             if ($rule === 'between') {
                 $min = self::intParameter($parameters, 0);
                 $max = self::intParameter($parameters, 1);
-
-                if ($type === self::LOOSE_INTEGER_TYPE) {
-                    continue;
-                }
             }
 
-            $type = self::determineType($rule, $parameters);
+            $determinedType = self::determineType($rule, $parameters);
+
+            if ($determinedType === null) {
+                continue;
+            }
+
+            $type       = $determinedType;
+            $benevolent = $determinedType === self::NUMERIC_TYPE;
         }
 
         if ($inValues !== null) {
@@ -109,7 +115,7 @@ final class ValidationRuleFactory
             $type = 'mixed';
         }
 
-        return new ValidationRule(implode('|', $rules), $type, $nullable, $possiblyUndefined, $required);
+        return new ValidationRule(implode('|', $rules), $type, $nullable, $possiblyUndefined, $required, $benevolent);
     }
 
     private static function isUtility(string $rule): bool
@@ -156,108 +162,32 @@ final class ValidationRuleFactory
         ], true);
     }
 
-    public static function isString(string $rule): bool
-    {
-        return in_array($rule, [
-            'active_url',
-            'alpha',
-            'alpha_dash',
-            'alpha_num',
-            'ascii',
-            'confirmed',
-            'current_password',
-            'different',
-            'doesnt_start_with',
-            'doesnt_end_with',
-            'email',
-            'ends_with',
-            'enum',
-            'hex_color',
-            'ip',
-            'json',
-            'lowercase',
-            'mac_address',
-            'not_in',
-            'regex',
-            'not_regex',
-            'same',
-            'size',
-            'starts_with',
-            'string',
-            'uppercase',
-            'url',
-            'ulid',
-            'uuid',
-        ], true);
-    }
-
-    public static function isBoolean(string $rule): bool
-    {
-        return in_array($rule, [
-            'accepted',
-            'accepted_if',
-            'boolean',
-            'declined',
-            'declined_if',
-        ], true);
-    }
-
-    public static function isInteger(string $rule): bool
-    {
-        return in_array($rule, [
-            'between',
-            'decimal',
-            'different',
-            'digits',
-            'digits_between',
-            'gt',
-            'gte',
-            'integer',
-            'lt',
-            'lte',
-            'max_digits',
-            'min_digits',
-            'multiple_of',
-            'numeric',
-            'same',
-        ], true);
-    }
-
     /** @param list<int|string> $parameters */
-    private static function determineType(string $rule, array $parameters = []): string
+    private static function determineType(string $rule, array $parameters = []): string|null
     {
-        if ($rule === 'array' || $rule === 'list') {
-            return $rule;
-        }
-
-        if (self::isString($rule)) {
-            return match ($rule) {
-                'lowercase' => 'lowercase-string',
-                'uppercase' => 'uppercase-string',
-                default => 'string',
-            };
-        }
-
-        if (self::isBoolean($rule)) {
-            return match ($rule) {
-                'accepted', 'accepted_if' => "'yes'|'on'|1|'1'|true|'true'",
-                'declined', 'declined_if' => "'no'|'off'|0|'0'|false|'false'",
-                'boolean' => in_array('strict', $parameters, true) ? 'bool' : "true|false|1|0|'1'|'0'",
-                default => 'bool',
-            };
-        }
-
-        if (self::isInteger($rule)) {
-            return match ($rule) {
-                'numeric' => 'float|int|numeric-string',
-                'integer' => in_array('strict', $parameters, true) && self::supportsStrictInteger()
-                    ? 'int'
-                    : self::LOOSE_INTEGER_TYPE,
-                default => 'int',
-            };
-        }
-
-        return 'mixed';
+        return match ($rule) {
+            'array', 'list' => $rule,
+            'lowercase' => 'lowercase-string',
+            'uppercase' => 'uppercase-string',
+            'active_url', 'alpha', 'ascii', 'hex_color', 'string', 'url', 'ulid', 'uuid' => 'string',
+            'alpha_dash', 'alpha_num', 'doesnt_end_with', 'doesnt_start_with', 'ends_with', 'not_regex',
+            'regex', 'starts_with' => 'float|int|string',
+            'email', 'ip', 'mac_address' => 'string|Stringable',
+            'json' => 'bool|float|int|string|Stringable',
+            'accepted' => "'yes'|'on'|1|'1'|true|'true'",
+            'declined' => "'no'|'off'|0|'0'|false|'false'",
+            'boolean' => in_array('strict', $parameters, true) && self::supportsStrictRule('validateBoolean')
+                ? 'bool'
+                : "true|false|1|0|'1'|'0'",
+            'numeric' => in_array('strict', $parameters, true) && self::supportsStrictRule('validateNumeric')
+                ? 'float|int'
+                : self::NUMERIC_TYPE,
+            'decimal', 'digits', 'digits_between', 'max_digits', 'min_digits', 'multiple_of' => self::NUMERIC_TYPE,
+            'integer' => in_array('strict', $parameters, true) && self::supportsStrictRule('validateInteger')
+                ? 'int'
+                : self::LOOSE_INTEGER_TYPE,
+            default => null,
+        };
     }
 
     /** @param list<int|string> $parameters */
@@ -288,10 +218,8 @@ final class ValidationRuleFactory
         return implode('|', array_unique($literals));
     }
 
-    private static function supportsStrictInteger(): bool
+    private static function supportsStrictRule(string $method): bool
     {
-        static $supportsStrictInteger;
-
-        return $supportsStrictInteger ??= (new ReflectionMethod(Validator::class, 'validateInteger'))->getNumberOfParameters() >= 3;
+        return (new ReflectionMethod(Validator::class, $method))->getNumberOfParameters() >= 3;
     }
 }

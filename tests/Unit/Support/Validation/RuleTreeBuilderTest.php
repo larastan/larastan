@@ -52,7 +52,7 @@ class RuleTreeBuilderTest extends TestCase
 
         $element = $users->children[RuleTreeNode::WILDCARD];
         $this->assertNull($element->rule);
-        $this->assertSame('string', $element->children['email']->rule?->type);
+        $this->assertSame('string|Stringable', $element->children['email']->rule?->type);
     }
 
     public function testMultiWildcardChain(): void

@@ -13,6 +13,7 @@ use PHPStan\Type\IntegerType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\TypeUtils;
 
 use function in_array;
 
@@ -134,6 +135,8 @@ final class RuleTreeTypeResolver
             return new MixedType();
         }
 
-        return $this->stringResolver->resolve($node->rule->type);
+        $type = $this->stringResolver->resolve($node->rule->type);
+
+        return $node->rule->benevolent ? TypeUtils::toBenevolentUnion($type) : $type;
     }
 }
