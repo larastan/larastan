@@ -4,6 +4,7 @@ namespace ViewStringSignatures;
 
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Foundation\Testing\Concerns\InteractsWithViews;
+use Illuminate\Mail\Mailable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
@@ -62,4 +63,16 @@ function routeFacadeView(): void
 {
     Route::view('/uri', 'route-view');
     Route::view('/uri', 'route-view-does-not-exist');
+}
+
+function mailMessageText(MailMessage $message): void
+{
+    $message->text('emails.mail-message.view');
+    $message->text('emails.mail-message.text-does-not-exist');
+}
+
+function mailableText(Mailable $mailable): void
+{
+    $mailable->text('emails.mailable.view');
+    $mailable->text('emails.mailable.text-does-not-exist');
 }
