@@ -39,10 +39,10 @@ function test(FormRequest $request, FooRequest $fooRequest, VariableRulesRequest
     assertType('array<string, mixed>', $request->validated());
 
     assertType('string', $fooRequest->name);
-    assertType('int', $fooRequest->age);
+    assertType('float|int|numeric-string|Stringable|true', $fooRequest->age);
     assertType("1|'1'|'on'|'true'|'yes'|true|null", $fooRequest->newsletter);
     assertType("'date'|'rating'", $fooRequest->type);
-    assertType('0|1', $fooRequest->rating);
+    assertType('float|int|numeric-string|Stringable|true', $fooRequest->rating);
     assertType("'dash'|'john-d'|null", $fooRequest->nickname);
     assertType('float|int|numeric-string', $fooRequest->price);
     assertType("'asc'|'desc'|null", $fooRequest->sortOrder);
@@ -52,21 +52,21 @@ function test(FormRequest $request, FooRequest $fooRequest, VariableRulesRequest
     assertType('array{theme?: string}|null', $fooRequest->prefs);
     assertType('array|null', $fooRequest->positions);
     assertType('list<string>|null', $fooRequest->tags);
-    assertType('list<int|null>|null', $fooRequest->scores);
-    assertType('list<array{email: string, age?: int, addresses?: list<array{city: string}>, address?: array{city: string}}>|null', $fooRequest->users);
+    assertType('list<float|int|numeric-string|Stringable|true|null>|null', $fooRequest->scores);
+    assertType('list<array{email: string, age?: float|int|numeric-string|Stringable|true, addresses?: list<array{city: string}>, address?: array{city: string}}>|null', $fooRequest->users);
     assertType('list<array{name: string}>', $fooRequest->guests);
-    assertType('list<array{id: int}>|null', $fooRequest->accounts);
+    assertType('list<array{id: float|int|numeric-string|Stringable|true}>|null', $fooRequest->accounts);
     assertType('string', $fooRequest->conflicted);
     assertType('list<array{origin: array{zip: string}|null}>|null', $fooRequest->shipping);
     assertType('string', $fooRequest->{'v1.0'});
     assertType('array|null', $fooRequest->flags);
     assertType('mixed', $fooRequest->{'author.name'});
-    assertType('int<1, 20>|null', $fooRequest->limit);
+    assertType('float|int|numeric-string|Stringable|true|null', $fooRequest->limit);
     assertType('array{fragment: string|null, domain: string, path: string|null, port: mixed}', $fooRequest->url);
     assertType('mixed', $fooRequest->fallback);
     assertType('mixed', $fooRequest->dynamicRules);
     assertType('string', $variableRulesRequest->title);
-    assertType('int', $variableRulesRequest->quantity);
-    assertType('int<min, 20>', $variableRulesRequest->maximum);
-    assertType('int', $variableRulesRequest->global);
+    assertType('float|int|numeric-string|Stringable|true', $variableRulesRequest->quantity);
+    assertType('float|int|numeric-string|Stringable|true', $variableRulesRequest->maximum);
+    assertType('float|int|numeric-string|Stringable|true', $variableRulesRequest->global);
 }
