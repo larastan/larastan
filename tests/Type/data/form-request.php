@@ -44,7 +44,7 @@ function test(FormRequest $request, FooRequest $fooRequest, VariableRulesRequest
     assertType("'date'|'rating'", $fooRequest->type);
     assertType('float|int|numeric-string|Stringable|true', $fooRequest->rating);
     assertType("'dash'|'john-d'|null", $fooRequest->nickname);
-    assertType('float|int|numeric-string', $fooRequest->price);
+    assertType('(float|int|numeric-string)', $fooRequest->price);
     assertType("'asc'|'desc'|null", $fooRequest->sortOrder);
     assertType('array', $fooRequest->settings);
     assertType('array{name: string, surname?: string|null, nickname?: string, thing: mixed}', $fooRequest->author);
@@ -53,7 +53,7 @@ function test(FormRequest $request, FooRequest $fooRequest, VariableRulesRequest
     assertType('array|null', $fooRequest->positions);
     assertType('list<string>|null', $fooRequest->tags);
     assertType('list<float|int|numeric-string|Stringable|true|null>|null', $fooRequest->scores);
-    assertType('list<array{email: string, age?: float|int|numeric-string|Stringable|true, addresses?: list<array{city: string}>, address?: array{city: string}}>|null', $fooRequest->users);
+    assertType('list<array{email: string|Stringable, age?: float|int|numeric-string|Stringable|true, addresses?: list<array{city: string}>, address?: array{city: string}}>|null', $fooRequest->users);
     assertType('list<array{name: string}>', $fooRequest->guests);
     assertType('list<array{id: float|int|numeric-string|Stringable|true}>|null', $fooRequest->accounts);
     assertType('string', $fooRequest->conflicted);
