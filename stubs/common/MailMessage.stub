@@ -12,7 +12,7 @@ class MailMessage
     public function markdown($view, array $data = []);
 
     /**
-     * @param  view-string  $view
+     * @param  view-string[]|view-string  $view
      * @param  array<string, mixed>  $data
      * @return $this
      */

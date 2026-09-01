@@ -43,7 +43,7 @@ class IntegrationTest extends PHPStanTestCase
             [
                 16 => ['Parameter #1 $view of method Illuminate\Contracts\View\Factory::make() expects view-string, string given.'],
                 22 => ['Parameter #2 $view of method Illuminate\Routing\Router::view() expects view-string, string given.'],
-                28 => ['Parameter #1 $view of method Illuminate\Notifications\Messages\MailMessage::view() expects view-string, string given.'],
+                28 => ['Parameter #1 $view of method Illuminate\Notifications\Messages\MailMessage::view() expects array<view-string>|view-string, string given.'],
                 30 => ['Parameter #1 $view of method Illuminate\Notifications\Messages\MailMessage::markdown() expects view-string, string given.'],
                 37 => ['Parameter #1 $value of method Illuminate\Testing\TestResponse<Illuminate\Http\Response>::assertViewIs() expects view-string, string given.'],
                 51 => ['Parameter #1 $view of method ViewStringSignatures\UsesInteractsWithViews::view() expects view-string, string given.'],
