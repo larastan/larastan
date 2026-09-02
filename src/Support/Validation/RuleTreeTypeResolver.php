@@ -57,10 +57,15 @@ final class RuleTreeTypeResolver
             $type = $this->leafType($node);
         } elseif (isset($node->children[RuleTreeNode::WILDCARD])) {
             // The builder degrades levels mixing wildcard and named segments, so the wildcard is the only child here.
-            $type = TypeCombinator::intersect(
-                new ArrayType(new IntegerType(), $this->resolveNode($node->children[RuleTreeNode::WILDCARD])),
-                new AccessoryArrayListType(),
+            $itemType = $this->resolveNode($node->children[RuleTreeNode::WILDCARD]);
+            $type     = new ArrayType(
+                $node->rule?->type === 'list' ? new IntegerType() : new MixedType(),
+                $itemType,
             );
+
+            if ($node->rule?->type === 'list') {
+                $type = TypeCombinator::intersect($type, new AccessoryArrayListType());
+            }
         } else {
             $builder = ConstantArrayTypeBuilder::createEmpty();
 
