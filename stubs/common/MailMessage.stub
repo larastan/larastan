@@ -1,18 +1,18 @@
 <?php
 
-namespace Illuminate\Mail;
+namespace Illuminate\Notifications\Messages;
 
-class Mailable
+class MailMessage
 {
     /**
-     * @param view-string $view
+     * @param  view-string  $view
      * @param  array<string, mixed>  $data
      * @return $this
      */
     public function markdown($view, array $data = []);
 
     /**
-     * @param  view-string  $view
+     * @param  view-string[]|view-string  $view
      * @param  array<string, mixed>  $data
      * @return $this
      */

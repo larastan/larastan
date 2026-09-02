@@ -37,6 +37,23 @@ class IntegrationTest extends PHPStanTestCase
 
         yield [__DIR__ . '/data/model-factories.php'];
         yield [__DIR__ . '/data/blade-view.php'];
+
+        yield [
+            __DIR__ . '/data/view-string-signatures.php',
+            [
+                17 => ['Parameter #1 $view of method Illuminate\Contracts\View\Factory::make() expects view-string, string given.'],
+                23 => ['Parameter #2 $view of method Illuminate\Routing\Router::view() expects view-string, string given.'],
+                29 => ['Parameter #1 $view of method Illuminate\Notifications\Messages\MailMessage::view() expects array<view-string>|view-string, string given.'],
+                31 => ['Parameter #1 $view of method Illuminate\Notifications\Messages\MailMessage::markdown() expects view-string, string given.'],
+                38 => ['Parameter #1 $value of method Illuminate\Testing\TestResponse<Illuminate\Http\Response>::assertViewIs() expects view-string, string given.'],
+                52 => ['Parameter #1 $view of method ViewStringSignatures\UsesInteractsWithViews::view() expects view-string, string given.'],
+                59 => ['Parameter #1 $view of static method Illuminate\View\Factory::make() expects view-string, string given.'],
+                65 => ['Parameter #2 $view of static method Illuminate\Routing\Router::view() expects view-string, string given.'],
+                71 => ['Parameter #1 $textView of method Illuminate\Notifications\Messages\MailMessage::text() expects view-string, string given.'],
+                77 => ['Parameter #1 $textView of method Illuminate\Mail\Mailable::text() expects view-string, string given.'],
+            ],
+        ];
+
         yield [__DIR__ . '/data/helpers.php'];
         yield [__DIR__ . '/data/facades.php'];
 
