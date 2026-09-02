@@ -26,7 +26,7 @@ final class RuleTreeTypeResolver
 
     public function resolveTopLevel(RuleTreeNode $node): Type
     {
-        if ($node->children === [] && ! $node->degraded) {
+        if ($node->children === [] && ! $node->degraded && $node->rule?->allowedKeys === null) {
             $type = $this->leafType($node);
 
             if ($node->rule !== null && ($node->rule->nullable || $node->rule->possiblyUndefined)) {
@@ -51,7 +51,9 @@ final class RuleTreeTypeResolver
             return new ArrayType(new MixedType(), new MixedType());
         }
 
-        if ($node->children === [] || $this->hasConflictingScalarRule($node)) {
+        if ($node->rule?->allowedKeys !== null) {
+            $type = $this->allowedKeysType($node);
+        } elseif ($node->children === [] || $this->hasConflictingScalarRule($node)) {
             $type = $this->leafType($node);
         } elseif (isset($node->children[RuleTreeNode::WILDCARD])) {
             // The builder degrades levels mixing wildcard and named segments, so the wildcard is the only child here.
@@ -112,7 +114,7 @@ final class RuleTreeTypeResolver
      */
     private function isGuaranteedPresent(RuleTreeNode $node): bool
     {
-        if ($node->rule?->required === true) {
+        if ($node->rule?->required === true && ! $node->rule->possiblyUndefined) {
             return true;
         }
 
@@ -137,6 +139,28 @@ final class RuleTreeTypeResolver
 
         $type = $this->stringResolver->resolve($node->rule->type);
 
-        return $node->rule->benevolent ? TypeUtils::toBenevolentUnion($type) : $type;
+        $type = $node->rule->benevolent ? TypeUtils::toBenevolentUnion($type) : $type;
+
+        return $node->rule->constraintType === null
+            ? $type
+            : TypeCombinator::intersect($type, $node->rule->constraintType);
+    }
+
+    private function allowedKeysType(RuleTreeNode $node): Type
+    {
+        $builder = ConstantArrayTypeBuilder::createEmpty();
+
+        foreach ($node->rule->allowedKeys ?? [] as $keyType) {
+            $key   = (string) $keyType->getValue();
+            $child = $node->children[$key] ?? null;
+
+            $builder->setOffsetValueType(
+                $keyType,
+                $child === null ? new MixedType() : $this->resolveNode($child),
+                $child === null || $this->isOptionalKey($child),
+            );
+        }
+
+        return $builder->getArray();
     }
 }

@@ -2,7 +2,37 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
+enum RequestStatus: string
+{
+    case Draft = 'draft';
+    case Published = 'published';
+}
+
+enum RequestPriority: int
+{
+    case Low = 1;
+    case High = 2;
+}
+
+enum RequestRole
+{
+    case Admin;
+    case User;
+}
+
+/** @implements Arrayable<int, string> */
+final class RequestValues implements Arrayable
+{
+    /** @return array{'draft', 'published'} */
+    public function toArray(): array
+    {
+        return ['draft', 'published'];
+    }
+}
 
 class FooRequest extends FormRequest
 {
@@ -10,6 +40,9 @@ class FooRequest extends FormRequest
     {
         $limit = config('app.rule.limit');
         $rule = config('app.rule.rule');
+        $mixedValue = config('app.rule.value');
+        $stateRule = Rule::in(['draft', 'published']);
+        $numericRule = Rule::numeric()->integer()->min(1)->max(10);
 
         return [
             'name' => 'required|string',
@@ -53,6 +86,25 @@ class FooRequest extends FormRequest
             'url.port' => ['required', $rule],
             ...$this->defaultRules(),
             'dynamicRules' => [...$this->defaultRules()],
+            'state' => ['required', 'string', $stateRule],
+            'status' => ['required', Rule::enum(RequestStatus::class)],
+            'stringStatus' => ['required', 'string', Rule::enum(RequestStatus::class)],
+            'priority' => ['required', Rule::enum(RequestPriority::class)],
+            'role' => ['required', Rule::enum(RequestRole::class)],
+            'arrayableState' => ['required', 'string', Rule::in(new RequestValues())],
+            'primitiveState' => ['required', 'string', Rule::in([1, 1.5, true, false, null])],
+            'objectState' => ['required', 'string', Rule::in([RequestRole::Admin])],
+            'escapedState' => ['required', 'string', Rule::in(['a\\'])],
+            'untypedState' => ['required', Rule::in(['draft', 'published'])],
+            'uncertainState' => ['required', 'string', Rule::in([1, $mixedValue])],
+            'payload' => ['required', Rule::array(['name', 'count'])],
+            'payload.name' => 'required|string',
+            'arrayablePayload' => ['required', Rule::array(new RequestValues())],
+            'arrayablePayload.draft' => 'required|string',
+            'sometimesPayload' => ['sometimes', 'required', Rule::array(['name'])],
+            'commaPayload' => ['required', Rule::array(['first,last'])],
+            'numericValue' => ['required', Rule::numeric()],
+            'integerValue' => ['required', $numericRule],
         ];
     }
 

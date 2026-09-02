@@ -179,6 +179,25 @@ services:
             - phpstan.broker.propertiesClassReflectionExtension
 
     -
+        class: Larastan\Larastan\ReturnTypes\ValidationRuleDynamicStaticMethodReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicStaticMethodReturnTypeExtension
+
+    -
+        class: Larastan\Larastan\ReturnTypes\ValidationRuleBuilderDynamicMethodReturnTypeExtension
+        arguments:
+            className: Illuminate\Validation\Rules\Numeric
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
+        class: Larastan\Larastan\ReturnTypes\ValidationRuleBuilderDynamicMethodReturnTypeExtension
+        arguments:
+            className: Illuminate\Validation\Rules\StringRule
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
         class: Larastan\Larastan\ReturnTypes\HigherOrderTapProxyExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension

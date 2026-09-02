@@ -69,4 +69,21 @@ function test(FormRequest $request, FooRequest $fooRequest, VariableRulesRequest
     assertType('(int|numeric-string)', $variableRulesRequest->quantity);
     assertType('(int|numeric-string)', $variableRulesRequest->maximum);
     assertType('(int|numeric-string)', $variableRulesRequest->global);
+    assertType("'draft'|'published'", $fooRequest->state);
+    assertType("'draft'|'published'|App\\Http\\Requests\\RequestStatus::Draft|App\\Http\\Requests\\RequestStatus::Published|Stringable", $fooRequest->status);
+    assertType("'draft'|'published'", $fooRequest->stringStatus);
+    assertType('1|2|App\\Http\\Requests\\RequestPriority::High|App\\Http\\Requests\\RequestPriority::Low|float|true|numeric-string', $fooRequest->priority);
+    assertType('App\\Http\\Requests\\RequestRole::Admin|App\\Http\\Requests\\RequestRole::User', $fooRequest->role);
+    assertType("'draft'|'published'", $fooRequest->arrayableState);
+    assertType("''|numeric-string", $fooRequest->primitiveState);
+    assertType("'Admin'", $fooRequest->objectState);
+    assertType('string', $fooRequest->escapedState);
+    assertType('mixed', $fooRequest->untypedState);
+    assertType('string', $fooRequest->uncertainState);
+    assertType('array{name: string, count?: mixed}', $fooRequest->payload);
+    assertType('array{draft: string, published?: mixed}', $fooRequest->arrayablePayload);
+    assertType('array{name?: mixed}|null', $fooRequest->sometimesPayload);
+    assertType('array{first?: mixed, last?: mixed}', $fooRequest->commaPayload);
+    assertType('(float|int|numeric-string)', $fooRequest->numericValue);
+    assertType('(int|numeric-string)', $fooRequest->integerValue);
 }
