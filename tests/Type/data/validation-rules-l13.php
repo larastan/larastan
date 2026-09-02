@@ -16,6 +16,7 @@ final class ArrayKeysRequest extends FormRequest
         return [
             'payload' => ['required', Rule::arrayKeys(['name', 'email'])],
             'payload.name' => ['required', 'string'],
+            'tags' => ['required', Rule::contains(['php', 'laravel'])],
         ];
     }
 }
@@ -27,4 +28,5 @@ function test(ArrayKeysRequest $request): void
         Rule::arrayKeys(['name', 'email']),
     );
     assertType('array{name: string, email?: mixed}', $request->payload);
+    assertType('array', $request->tags);
 }
