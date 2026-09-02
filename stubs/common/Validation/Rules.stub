@@ -10,6 +10,13 @@ class ArrayRule
 }
 
 /**
+ * @template-covariant TValue = \DateTimeInterface|float|int|string
+ */
+class Date
+{
+}
+
+/**
  * @template-covariant TEnum of string = string
  */
 class Enum

@@ -1,0 +1,10 @@
+<?php
+
+namespace Illuminate\Validation\Rules;
+
+/**
+ * @template-covariant TKeys of array = array
+ */
+class ArrayKeys
+{
+}
