@@ -82,6 +82,8 @@ final class ValidationRuleFactory
             } elseif ((new ObjectType(ArrayRule::class))->isSuperTypeOf($rule)->yes()) {
                 $type        = 'array';
                 $allowedKeys = self::constantArrayKeys($rule->getTemplateType(ArrayRule::class, 'TKeys'));
+            } elseif ((new ObjectType('Illuminate\\Validation\\Rules\\Contains'))->isSuperTypeOf($rule)->yes()) {
+                $type = 'array';
             } elseif ((new ObjectType(Date::class))->isSuperTypeOf($rule)->yes()) {
                 $dateType       = $rule->getTemplateType(Date::class, 'TValue');
                 $constraintType = $constraintType === null
