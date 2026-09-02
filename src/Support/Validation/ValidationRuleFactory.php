@@ -4,18 +4,35 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Support\Validation;
 
+use Illuminate\Validation\Rules\ArrayRule;
+use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\Rules\In;
+use Illuminate\Validation\Rules\Numeric;
 use Illuminate\Validation\Validator;
+use PHPStan\Type\Accessory\AccessoryNumericStringType;
+use PHPStan\Type\Constant\ConstantBooleanType;
+use PHPStan\Type\Constant\ConstantIntegerType;
+use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\FloatType;
+use PHPStan\Type\IntegerType;
+use PHPStan\Type\ObjectType;
+use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
 use ReflectionMethod;
+use Stringable;
 
 use function array_filter;
 use function array_unique;
+use function count;
 use function explode;
 use function filter_var;
 use function implode;
 use function in_array;
+use function is_int;
 use function is_numeric;
 use function is_string;
 use function str_contains;
+use function str_getcsv;
 use function str_replace;
 
 use const FILTER_VALIDATE_INT;
@@ -23,11 +40,13 @@ use const FILTER_VALIDATE_INT;
 /** @internal */
 final class ValidationRuleFactory
 {
+    private const STRING_RULE = 'Illuminate\\Validation\\Rules\\StringRule';
+
     private const LOOSE_INTEGER_TYPE = 'int|numeric-string';
 
     private const NUMERIC_TYPE = 'float|int|numeric-string';
 
-    /** @param string|mixed[] $rules */
+    /** @param string|array<string|Type> $rules */
     public static function make(string|array $rules): ValidationRule
     {
         $possiblyUndefined = false;
@@ -40,8 +59,39 @@ final class ValidationRuleFactory
         $min      = null;
         $max      = null;
 
+        $constraintType = null;
+        $allowedKeys    = null;
+
         if (is_string($rules)) {
             $rules = explode('|', $rules);
+        }
+
+        $ruleObjects = array_filter($rules, static fn ($rule) => ! is_string($rule));
+
+        foreach ($ruleObjects as $rule) {
+            if ((new ObjectType(ArrayRule::class))->isSuperTypeOf($rule)->yes()) {
+                $type        = 'array';
+                $allowedKeys = self::constantArrayKeys($rule->getTemplateType(ArrayRule::class, 'TKeys'));
+            } elseif ((new ObjectType(Enum::class))->isSuperTypeOf($rule)->yes()) {
+                $enumType = self::enumType($rule->getTemplateType(Enum::class, 'TEnum'));
+
+                if ($enumType !== null) {
+                    $constraintType = $constraintType === null
+                        ? $enumType
+                        : TypeCombinator::intersect($constraintType, $enumType);
+                }
+            } elseif ((new ObjectType(Numeric::class))->isSuperTypeOf($rule)->yes()) {
+                $numericType    = $rule->getTemplateType(Numeric::class, 'TValue');
+                $constraintType = $constraintType === null
+                    ? $numericType
+                    : TypeCombinator::intersect($constraintType, $numericType);
+            } elseif ((new ObjectType(self::STRING_RULE))->isSuperTypeOf($rule)->yes()) {
+                $type           = 'string';
+                $stringType     = $rule->getTemplateType(self::STRING_RULE, 'TValue');
+                $constraintType = $constraintType === null
+                    ? $stringType
+                    : TypeCombinator::intersect($constraintType, $stringType);
+            }
         }
 
         $rules = array_filter($rules, static fn ($rule) => is_string($rule) && $rule !== '');
@@ -115,7 +165,204 @@ final class ValidationRuleFactory
             $type = 'mixed';
         }
 
-        return new ValidationRule(implode('|', $rules), $type, $nullable, $possiblyUndefined, $required, $benevolent);
+        foreach ($ruleObjects as $rule) {
+            if (! (new ObjectType(In::class))->isSuperTypeOf($rule)->yes()) {
+                continue;
+            }
+
+            $inType = self::inType($rule->getTemplateType(In::class, 'TValues'), $type);
+
+            if ($inType === null) {
+                continue;
+            }
+
+            $constraintType = $constraintType === null
+                ? $inType
+                : TypeCombinator::intersect($constraintType, $inType);
+        }
+
+        return new ValidationRule(
+            implode('|', $rules),
+            $type,
+            $nullable,
+            $possiblyUndefined,
+            $required,
+            $benevolent,
+            $constraintType,
+            $allowedKeys,
+        );
+    }
+
+    /** @return list<ConstantIntegerType|ConstantStringType>|null */
+    private static function constantArrayKeys(Type $type): array|null
+    {
+        $constantArrays = $type->getConstantArrays();
+
+        if (count($constantArrays) !== 1 || $constantArrays[0]->getValueTypes() === []) {
+            return null;
+        }
+
+        $serializedKeys = [];
+
+        foreach ($constantArrays[0]->getValueTypes() as $valueType) {
+            $value = self::constantRuleString($valueType);
+
+            if ($value === null) {
+                return null;
+            }
+
+            $serializedKeys[] = $value->getValue();
+        }
+
+        $keys = [];
+
+        foreach (str_getcsv(implode(',', $serializedKeys), escape: '\\') as $value) {
+            $keyType         = (new ConstantStringType((string) $value))->toArrayKey();
+            $constantStrings = $keyType->getConstantStrings();
+
+            if (count($constantStrings) === 1) {
+                $keys[] = $constantStrings[0];
+
+                continue;
+            }
+
+            $values = $keyType->getConstantScalarValues();
+
+            if (count($values) !== 1 || ! is_int($values[0])) {
+                return null;
+            }
+
+            $keys[] = new ConstantIntegerType($values[0]);
+        }
+
+        return $keys;
+    }
+
+    private static function enumType(Type $classStringType): Type|null
+    {
+        $cases = $classStringType->getClassStringObjectType()->getEnumCases();
+
+        if ($cases === []) {
+            return null;
+        }
+
+        $types            = [];
+        $integerBacked    = false;
+        $numericString    = false;
+        $trueAccepted     = false;
+        $falseAccepted    = false;
+        $stringBackedEnum = false;
+
+        foreach ($cases as $case) {
+            $types[] = $case;
+
+            $backingValueType = $case->getBackingValueType();
+
+            if ($backingValueType === null) {
+                continue;
+            }
+
+            $types[] = $backingValueType;
+
+            foreach ($backingValueType->getConstantScalarValues() as $value) {
+                if (is_int($value)) {
+                    $integerBacked = true;
+                    $trueAccepted  = $trueAccepted || $value === 1;
+                    $falseAccepted = $falseAccepted || $value === 0;
+
+                    continue;
+                }
+
+                $stringBackedEnum = true;
+                $numericString    = $numericString || is_numeric($value);
+                $trueAccepted     = $trueAccepted || $value === '1';
+                $falseAccepted    = $falseAccepted || $value === '';
+            }
+        }
+
+        if ($integerBacked) {
+            $types[] = new AccessoryNumericStringType();
+            $types[] = new FloatType();
+        }
+
+        if ($stringBackedEnum) {
+            $types[] = new ObjectType(Stringable::class);
+        }
+
+        if ($numericString) {
+            $types[] = new IntegerType();
+            $types[] = new FloatType();
+        }
+
+        if ($trueAccepted) {
+            $types[] = new ConstantBooleanType(true);
+        }
+
+        if ($falseAccepted) {
+            $types[] = new ConstantBooleanType(false);
+        }
+
+        return TypeCombinator::union(...$types);
+    }
+
+    private static function inType(Type $valuesType, string $baseType): Type|null
+    {
+        if ($baseType !== 'string' && $baseType !== 'lowercase-string' && $baseType !== 'uppercase-string') {
+            return null;
+        }
+
+        $constantArrays = $valuesType->getConstantArrays();
+
+        if (count($constantArrays) !== 1) {
+            return null;
+        }
+
+        $types = [];
+
+        foreach ($constantArrays[0]->getValueTypes() as $valueType) {
+            $value = self::constantRuleString($valueType);
+
+            if ($value === null) {
+                return null;
+            }
+
+            if (str_contains($value->getValue(), '\\') || str_contains($value->getValue(), '"')) {
+                return null;
+            }
+
+            $types[] = is_numeric($value->getValue())
+                ? new AccessoryNumericStringType()
+                : $value;
+        }
+
+        return $types === [] ? null : TypeCombinator::union(...$types);
+    }
+
+    private static function constantRuleString(Type $type): ConstantStringType|null
+    {
+        $values = $type->getConstantScalarValues();
+
+        if ($type->isConstantScalarValue()->yes() && count($values) === 1) {
+            return new ConstantStringType((string) $values[0]);
+        }
+
+        $cases = $type->getEnumCases();
+
+        if (! $type->isEnum()->yes() || count($cases) !== 1) {
+            return null;
+        }
+
+        $backingValueType = $cases[0]->getBackingValueType();
+
+        if ($backingValueType === null) {
+            return new ConstantStringType($cases[0]->getEnumCaseName());
+        }
+
+        $values = $backingValueType->getConstantScalarValues();
+
+        return count($values) === 1
+            ? new ConstantStringType((string) $values[0])
+            : null;
     }
 
     private static function isUtility(string $rule): bool

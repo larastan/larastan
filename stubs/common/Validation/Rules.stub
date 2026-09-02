@@ -1,0 +1,42 @@
+<?php
+
+namespace Illuminate\Validation\Rules;
+
+/**
+ * @template-covariant TKeys of array = array
+ */
+class ArrayRule
+{
+}
+
+/**
+ * @template-covariant TEnum of string = string
+ */
+class Enum
+{
+}
+
+/**
+ * @template-covariant TValues of array = array
+ */
+class In
+{
+}
+
+/**
+ * @template-covariant TValue = float|int|numeric-string
+ */
+class Numeric
+{
+}
+
+namespace Illuminate\Validation;
+
+class Rule
+{
+    /**
+     * @param \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<array-key, mixed>|null $keys
+     * @return \Illuminate\Validation\Rules\ArrayRule
+     */
+    public static function array($keys = null);
+}
