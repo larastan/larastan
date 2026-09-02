@@ -18,7 +18,7 @@ class ValidationRuleFactoryTest extends TestCase
     /** @return iterable<string, array{string|string[], string, bool, bool, bool}> */
     public static function rulesProvider(): iterable
     {
-        $looseInteger  = 'float|int|numeric-string|true|Stringable';
+        $looseInteger  = 'int|numeric-string';
         $strictInteger = (new ReflectionMethod(Validator::class, 'validateInteger'))->getNumberOfParameters() >= 3
             ? 'int'
             : $looseInteger;

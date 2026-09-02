@@ -23,7 +23,7 @@ class RuleTreeBuilderTest extends TestCase
         $this->assertSame(['name', 'age'], array_keys($roots));
         $this->assertSame('string', $roots['name']->rule?->type);
         $this->assertSame([], $roots['name']->children);
-        $this->assertSame('float|int|numeric-string|true|Stringable', $roots['age']->rule?->type);
+        $this->assertSame('int|numeric-string', $roots['age']->rule?->type);
         $this->assertFalse($roots['name']->degraded);
     }
 

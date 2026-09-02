@@ -23,7 +23,7 @@ use const FILTER_VALIDATE_INT;
 /** @internal */
 final class ValidationRuleFactory
 {
-    private const LOOSE_INTEGER_TYPE = 'float|int|numeric-string|true|Stringable';
+    private const LOOSE_INTEGER_TYPE = 'int|numeric-string';
 
     private const NUMERIC_TYPE = 'float|int|numeric-string';
 
@@ -98,7 +98,7 @@ final class ValidationRuleFactory
             }
 
             $type       = $determinedType;
-            $benevolent = $determinedType === self::NUMERIC_TYPE;
+            $benevolent = $determinedType === self::NUMERIC_TYPE || $determinedType === self::LOOSE_INTEGER_TYPE;
         }
 
         if ($inValues !== null) {
