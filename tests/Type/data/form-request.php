@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace FormRequest;
 
 use App\Http\Requests\FooRequest;
+use App\Http\Requests\RequestPriority;
+use App\Http\Requests\RequestStatus;
 use Illuminate\Foundation\Http\FormRequest;
 
 use function PHPStan\Testing\assertType;
@@ -70,10 +72,18 @@ function test(FormRequest $request, FooRequest $fooRequest, VariableRulesRequest
     assertType('(int|numeric-string)', $variableRulesRequest->maximum);
     assertType('(int|numeric-string)', $variableRulesRequest->global);
     assertType("'draft'|'published'", $fooRequest->state);
-    assertType("'draft'|'published'|App\\Http\\Requests\\RequestStatus::Draft|App\\Http\\Requests\\RequestStatus::Published|Stringable", $fooRequest->status);
+    assertType("'draft'|'published'", $fooRequest->status);
     assertType("'draft'|'published'", $fooRequest->stringStatus);
-    assertType('1|2|App\\Http\\Requests\\RequestPriority::High|App\\Http\\Requests\\RequestPriority::Low|float|true|numeric-string', $fooRequest->priority);
+    assertType("1|2|'1'|'2'", $fooRequest->priority);
     assertType('App\\Http\\Requests\\RequestRole::Admin|App\\Http\\Requests\\RequestRole::User', $fooRequest->role);
+    assertType(
+        'App\\Http\\Requests\\RequestStatus::Draft|App\\Http\\Requests\\RequestStatus::Published',
+        RequestStatus::from($fooRequest->status),
+    );
+    assertType(
+        'App\\Http\\Requests\\RequestPriority::High|App\\Http\\Requests\\RequestPriority::Low',
+        RequestPriority::from($fooRequest->priority),
+    );
     assertType("'draft'|'published'", $fooRequest->arrayableState);
     assertType("''|numeric-string", $fooRequest->primitiveState);
     assertType("'Admin'", $fooRequest->objectState);
