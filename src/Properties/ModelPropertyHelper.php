@@ -12,8 +12,6 @@ use PHPStan\PhpDoc\TypeStringResolver;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Constant\ConstantStringType;
-use PHPStan\Type\Generic\GenericObjectType;
-use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\TypeCombinator;
@@ -196,11 +194,7 @@ class ModelPropertyHelper
             return (new ObjectType(Attribute::class))->isSuperTypeOf($returnType)->yes();
         }
 
-        if ($returnType->getObjectClassReflections() === [] || ! $returnType->getObjectClassReflections()[0]->isGeneric()) {
-            return false;
-        }
-
-        return (new GenericObjectType(Attribute::class, [new MixedType(), new MixedType()]))->isSuperTypeOf($returnType)->yes();
+        return (new ObjectType(Attribute::class))->isSuperTypeOf($returnType)->yes();
     }
 
     public function getAccessor(ClassReflection $classReflection, string $propertyName): ModelProperty
