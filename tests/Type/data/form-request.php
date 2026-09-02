@@ -98,4 +98,6 @@ function test(FormRequest $request, FooRequest $fooRequest, VariableRulesRequest
     assertType('array{first?: mixed, last?: mixed}', $fooRequest->commaPayload);
     assertType('(float|int|numeric-string)', $fooRequest->numericValue);
     assertType('(int|numeric-string)', $fooRequest->integerValue);
+    assertType('string|null', $fooRequest->extension);
+    assertType('string|null', $fooRequest->reversedExtension);
 }

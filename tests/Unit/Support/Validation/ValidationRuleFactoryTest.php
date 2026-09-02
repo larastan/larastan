@@ -138,13 +138,15 @@ class ValidationRuleFactoryTest extends TestCase
         $this->assertSame($value, $validator->validated()['value']);
     }
 
-    /** @return iterable<string, array{string, mixed, bool}> */
+    /** @return iterable<string, array{string|string[], mixed, bool}> */
     public static function mappedRuleValuesProvider(): iterable
     {
         yield 'digits accepts a numeric string' => ['digits:2', '42', true];
         yield 'digits accepts an integral float' => ['digits:2', 42.0, true];
         yield 'digits rejects a word' => ['digits:2', 'foo', false];
         yield 'alpha numeric accepts an integer' => ['alpha_num', 42, true];
+        yield 'string alpha numeric accepts a numeric string' => [['string', 'alpha_num'], '55', true];
+        yield 'string alpha numeric rejects an integer' => [['string', 'alpha_num'], 55, false];
         yield 'starts with accepts an integer' => ['starts_with:4', 42, true];
 
         yield 'email accepts a stringable object' => ['email', new LaravelStringable('a@example.com'), true];
@@ -156,8 +158,9 @@ class ValidationRuleFactoryTest extends TestCase
         yield 'JSON accepts a stringable object' => ['json', new LaravelStringable('{"valid":true}'), true];
     }
 
+    /** @param string|string[] $rule */
     #[DataProvider('mappedRuleValuesProvider')]
-    public function testMappedRulePreservesAcceptedValues(string $rule, mixed $value, bool $passes): void
+    public function testMappedRulePreservesAcceptedValues(string|array $rule, mixed $value, bool $passes): void
     {
         $validator = new Validator(
             new Translator(new ArrayLoader(), 'en'),

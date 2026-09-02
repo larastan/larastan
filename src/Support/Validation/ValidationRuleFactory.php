@@ -166,8 +166,13 @@ final class ValidationRuleFactory
                 continue;
             }
 
-            $type       = $determinedType;
-            $benevolent = $determinedType === self::NUMERIC_TYPE || $determinedType === self::LOOSE_INTEGER_TYPE;
+            $type = $type === '' || $type === $determinedType
+                ? $determinedType
+                : '(' . $type . ')&(' . $determinedType . ')';
+
+            $benevolent = $benevolent
+                || $determinedType === self::NUMERIC_TYPE
+                || $determinedType === self::LOOSE_INTEGER_TYPE;
         }
 
         if ($inValues !== null) {

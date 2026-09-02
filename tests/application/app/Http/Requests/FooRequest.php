@@ -109,6 +109,8 @@ class FooRequest extends FormRequest
             'commaPayload' => ['required', Rule::array(['first,last'])],
             'numericValue' => ['required', Rule::numeric()],
             'integerValue' => ['required', $numericRule],
+            'extension' => ['sometimes', 'nullable', 'string', 'max:4', 'alpha_num'],
+            'reversedExtension' => ['sometimes', 'nullable', 'alpha_num', 'max:4', 'string'],
         ];
     }
 
