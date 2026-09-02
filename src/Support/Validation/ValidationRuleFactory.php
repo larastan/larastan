@@ -15,16 +15,12 @@ use Illuminate\Validation\Rules\Numeric;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\Validator;
 use PHPStan\Type\Accessory\AccessoryNumericStringType;
-use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\Constant\ConstantStringType;
-use PHPStan\Type\FloatType;
-use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use ReflectionMethod;
-use Stringable;
 
 use function array_filter;
 use function array_unique;
@@ -269,60 +265,26 @@ final class ValidationRuleFactory
             return null;
         }
 
-        $types            = [];
-        $integerBacked    = false;
-        $numericString    = false;
-        $trueAccepted     = false;
-        $falseAccepted    = false;
-        $stringBackedEnum = false;
+        $types = [];
 
         foreach ($cases as $case) {
-            $types[] = $case;
-
             $backingValueType = $case->getBackingValueType();
 
             if ($backingValueType === null) {
+                $types[] = $case;
+
                 continue;
             }
 
             $types[] = $backingValueType;
 
             foreach ($backingValueType->getConstantScalarValues() as $value) {
-                if (is_int($value)) {
-                    $integerBacked = true;
-                    $trueAccepted  = $trueAccepted || $value === 1;
-                    $falseAccepted = $falseAccepted || $value === 0;
-
+                if (! is_int($value)) {
                     continue;
                 }
 
-                $stringBackedEnum = true;
-                $numericString    = $numericString || is_numeric($value);
-                $trueAccepted     = $trueAccepted || $value === '1';
-                $falseAccepted    = $falseAccepted || $value === '';
+                $types[] = new ConstantStringType((string) $value);
             }
-        }
-
-        if ($integerBacked) {
-            $types[] = new AccessoryNumericStringType();
-            $types[] = new FloatType();
-        }
-
-        if ($stringBackedEnum) {
-            $types[] = new ObjectType(Stringable::class);
-        }
-
-        if ($numericString) {
-            $types[] = new IntegerType();
-            $types[] = new FloatType();
-        }
-
-        if ($trueAccepted) {
-            $types[] = new ConstantBooleanType(true);
-        }
-
-        if ($falseAccepted) {
-            $types[] = new ConstantBooleanType(false);
         }
 
         return TypeCombinator::union(...$types);
