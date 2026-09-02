@@ -198,6 +198,13 @@ services:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
+        class: Larastan\Larastan\ReturnTypes\ValidationRuleBuilderDynamicMethodReturnTypeExtension
+        arguments:
+            className: Illuminate\Validation\Rules\Date
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
         class: Larastan\Larastan\ReturnTypes\HigherOrderTapProxyExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension

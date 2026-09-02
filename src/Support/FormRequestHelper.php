@@ -5,10 +5,6 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Support;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\ArrayRule;
-use Illuminate\Validation\Rules\Enum;
-use Illuminate\Validation\Rules\In;
-use Illuminate\Validation\Rules\Numeric;
 use Larastan\Larastan\Support\Validation\RuleTreeBuilder;
 use Larastan\Larastan\Support\Validation\RuleTreeTypeResolver;
 use Larastan\Larastan\Support\Validation\ValidationRuleFactory;
@@ -22,7 +18,6 @@ use PHPStan\Analyser\ScopeFactory;
 use PHPStan\Parser\Parser;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
 use function array_key_exists;
@@ -32,8 +27,6 @@ use function count;
 /** @internal */
 final class FormRequestHelper
 {
-    private const STRING_RULE = 'Illuminate\\Validation\\Rules\\StringRule';
-
     /** @var array<class-string<FormRequest>, array<string, Type>> */
     private array $properties = [];
 
@@ -175,7 +168,7 @@ final class FormRequestHelper
             return $rule;
         }
 
-        if (self::isSupportedRuleObject($type)) {
+        if ($type->isObject()->yes()) {
             return [$type];
         }
 
@@ -191,7 +184,7 @@ final class FormRequestHelper
             $rule = self::extractConstantString($valueType);
 
             if ($rule === null) {
-                if (self::isSupportedRuleObject($valueType)) {
+                if ($valueType->isObject()->yes()) {
                     $rules[] = $valueType;
                 }
 
@@ -202,17 +195,6 @@ final class FormRequestHelper
         }
 
         return $rules;
-    }
-
-    private static function isSupportedRuleObject(Type $type): bool
-    {
-        foreach ([ArrayRule::class, Enum::class, In::class, Numeric::class, self::STRING_RULE] as $ruleClass) {
-            if ((new ObjectType($ruleClass))->isSuperTypeOf($type)->yes()) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private static function extractConstantString(Type $type): string|null

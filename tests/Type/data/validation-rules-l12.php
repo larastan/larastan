@@ -32,6 +32,7 @@ function test(StringRuleRequest $request, bool $strict): void
     assertType('Illuminate\\Validation\\Rules\\Numeric<int>', Rule::numeric()->integer(strict: true)->min(1));
     assertType('Illuminate\\Validation\\Rules\\Numeric<(int|numeric-string)>', Rule::numeric()->integer(strict: false));
     assertType('Illuminate\\Validation\\Rules\\Numeric<(int|numeric-string)>', Rule::numeric()->integer(strict: $strict));
+    assertType('Illuminate\\Validation\\Rules\\Date<float|int|string>', Rule::dateTime());
 
     assertType('lowercase-string', $request->lowercase);
     assertType('uppercase-string', $request->uppercase);

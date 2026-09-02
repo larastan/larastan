@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\ReturnTypes;
 
+use Illuminate\Validation\Rules\Date;
 use Illuminate\Validation\Rules\Numeric;
 use LogicException;
 use PhpParser\Node\Expr\MethodCall;
@@ -13,8 +14,10 @@ use PHPStan\Type\Accessory\AccessoryLowercaseStringType;
 use PHPStan\Type\Accessory\AccessoryNumericStringType;
 use PHPStan\Type\Accessory\AccessoryUppercaseStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
+use PHPStan\Type\FloatType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntegerType;
+use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\TypeUtils;
@@ -47,6 +50,7 @@ final class ValidationRuleBuilderDynamicMethodReturnTypeExtension implements Dyn
         $valueType = match ($methodReflection->getName()) {
             'lowercase' => new AccessoryLowercaseStringType(),
             'uppercase' => new AccessoryUppercaseStringType(),
+            'format' => TypeCombinator::union(new FloatType(), new IntegerType(), new StringType()),
             'integer' => isset($methodCall->getArgs()[0])
                 && $scope->getType($methodCall->getArgs()[0]->value)->isTrue()->yes()
                     ? new IntegerType()
@@ -66,9 +70,11 @@ final class ValidationRuleBuilderDynamicMethodReturnTypeExtension implements Dyn
     /** @return list<string> */
     private function refiningMethods(): array
     {
-        return $this->className === Numeric::class
-            ? ['digits', 'digitsBetween', 'exactly', 'integer']
-            : ['lowercase', 'uppercase'];
+        return match ($this->className) {
+            Numeric::class => ['digits', 'digitsBetween', 'exactly', 'integer'],
+            Date::class => ['format'],
+            default => ['lowercase', 'uppercase'],
+        };
     }
 
     private static function looseIntegerType(): Type

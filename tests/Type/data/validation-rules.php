@@ -6,7 +6,9 @@ namespace ValidationRules;
 
 use App\Casts\BackedEnumeration;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 use Stringable;
 
 use function PHPStan\Testing\assertType;
@@ -35,8 +37,23 @@ final class RuleValues implements Arrayable
     }
 }
 
+final class AdditionalRulesRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'dateValue' => ['required', Rule::date()],
+            'formattedDate' => ['required', Rule::date()->format('Y-m-d')],
+            'emailValue' => ['required', Rule::email()],
+            'fileValue' => ['required', Rule::file()],
+            'imageValue' => ['required', Rule::imageFile()],
+            'passwordValue' => ['required', Password::min(8)->letters()->numbers()],
+        ];
+    }
+}
+
 /** @param array{'draft'}|'published' $arrayOrString */
-function test(mixed $mixed, array|string $arrayOrString): void
+function test(mixed $mixed, array|string $arrayOrString, AdditionalRulesRequest $request): void
 {
     assertType("Illuminate\\Validation\\Rules\\In<array{'foo', 'bar'}>", Rule::in(['foo', 'bar']));
     assertType("Illuminate\\Validation\\Rules\\ArrayRule<array{'name', 'email'}>", Rule::array(['name', 'email']));
@@ -80,4 +97,17 @@ function test(mixed $mixed, array|string $arrayOrString): void
             ->multipleOf(0.5)
             ->same('confirmation'),
     );
+
+    assertType('Illuminate\\Validation\\Rules\\Date<DateTimeInterface|float|int|string>', Rule::date());
+    assertType(
+        'Illuminate\\Validation\\Rules\\Date<float|int|string>',
+        Rule::date()->format('Y-m-d')->beforeToday(),
+    );
+
+    assertType('DateTimeInterface|float|int|string', $request->dateValue);
+    assertType('float|int|string', $request->formattedDate);
+    assertType('string|Stringable', $request->emailValue);
+    assertType('Illuminate\\Http\\UploadedFile', $request->fileValue);
+    assertType('Illuminate\\Http\\UploadedFile', $request->imageValue);
+    assertType('string', $request->passwordValue);
 }

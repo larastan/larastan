@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\ReturnTypes;
 
+use DateTimeInterface;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\ArrayRule;
+use Illuminate\Validation\Rules\Date;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\In;
 use Illuminate\Validation\Rules\Numeric;
@@ -37,6 +39,8 @@ use function in_array;
 /** @internal */
 final class ValidationRuleDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
 {
+    private const ARRAY_KEYS = 'Illuminate\\Validation\\Rules\\ArrayKeys';
+
     private const STRING_RULE = 'Illuminate\\Validation\\Rules\\StringRule';
 
     public function getClass(): string
@@ -46,7 +50,11 @@ final class ValidationRuleDynamicStaticMethodReturnTypeExtension implements Dyna
 
     public function isStaticMethodSupported(MethodReflection $methodReflection): bool
     {
-        return in_array($methodReflection->getName(), ['array', 'enum', 'in', 'numeric', 'string'], true);
+        return in_array(
+            $methodReflection->getName(),
+            ['array', 'arrayKeys', 'date', 'dateTime', 'enum', 'in', 'numeric', 'string'],
+            true,
+        );
     }
 
     public function getTypeFromStaticMethodCall(
@@ -56,6 +64,22 @@ final class ValidationRuleDynamicStaticMethodReturnTypeExtension implements Dyna
     ): Type|null {
         return match ($methodReflection->getName()) {
             'array' => new GenericObjectType(ArrayRule::class, [$this->arrayArgumentType($methodCall->getArgs(), $scope)]),
+            'arrayKeys' => new GenericObjectType(self::ARRAY_KEYS, [$this->arrayArgumentType($methodCall->getArgs(), $scope)]),
+            'date' => new GenericObjectType(Date::class, [
+                TypeCombinator::union(
+                    new ObjectType(DateTimeInterface::class),
+                    new FloatType(),
+                    new IntegerType(),
+                    new StringType(),
+                ),
+            ]),
+            'dateTime' => new GenericObjectType(Date::class, [
+                TypeCombinator::union(
+                    new FloatType(),
+                    new IntegerType(),
+                    new StringType(),
+                ),
+            ]),
             'enum' => new GenericObjectType(Enum::class, [$this->enumArgumentType($methodCall->getArgs(), $scope)]),
             'in' => new GenericObjectType(In::class, [$this->arrayArgumentType($methodCall->getArgs(), $scope)]),
             'numeric' => new GenericObjectType(Numeric::class, [

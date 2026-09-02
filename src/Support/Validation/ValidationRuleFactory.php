@@ -4,10 +4,15 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Support\Validation;
 
+use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rules\ArrayRule;
+use Illuminate\Validation\Rules\Date;
+use Illuminate\Validation\Rules\Email;
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\Validation\Rules\File as FileRule;
 use Illuminate\Validation\Rules\In;
 use Illuminate\Validation\Rules\Numeric;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\Validator;
 use PHPStan\Type\Accessory\AccessoryNumericStringType;
 use PHPStan\Type\Constant\ConstantBooleanType;
@@ -40,6 +45,8 @@ use const FILTER_VALIDATE_INT;
 /** @internal */
 final class ValidationRuleFactory
 {
+    private const ARRAY_KEYS = 'Illuminate\\Validation\\Rules\\ArrayKeys';
+
     private const STRING_RULE = 'Illuminate\\Validation\\Rules\\StringRule';
 
     private const LOOSE_INTEGER_TYPE = 'int|numeric-string';
@@ -69,9 +76,19 @@ final class ValidationRuleFactory
         $ruleObjects = array_filter($rules, static fn ($rule) => ! is_string($rule));
 
         foreach ($ruleObjects as $rule) {
-            if ((new ObjectType(ArrayRule::class))->isSuperTypeOf($rule)->yes()) {
+            if ((new ObjectType(self::ARRAY_KEYS))->isSuperTypeOf($rule)->yes()) {
+                $type        = 'array';
+                $allowedKeys = self::constantArrayKeys($rule->getTemplateType(self::ARRAY_KEYS, 'TKeys'));
+            } elseif ((new ObjectType(ArrayRule::class))->isSuperTypeOf($rule)->yes()) {
                 $type        = 'array';
                 $allowedKeys = self::constantArrayKeys($rule->getTemplateType(ArrayRule::class, 'TKeys'));
+            } elseif ((new ObjectType(Date::class))->isSuperTypeOf($rule)->yes()) {
+                $dateType       = $rule->getTemplateType(Date::class, 'TValue');
+                $constraintType = $constraintType === null
+                    ? $dateType
+                    : TypeCombinator::intersect($constraintType, $dateType);
+            } elseif ((new ObjectType(Email::class))->isSuperTypeOf($rule)->yes()) {
+                $type = 'string|Stringable';
             } elseif ((new ObjectType(Enum::class))->isSuperTypeOf($rule)->yes()) {
                 $enumType = self::enumType($rule->getTemplateType(Enum::class, 'TEnum'));
 
@@ -91,6 +108,10 @@ final class ValidationRuleFactory
                 $constraintType = $constraintType === null
                     ? $stringType
                     : TypeCombinator::intersect($constraintType, $stringType);
+            } elseif ((new ObjectType(FileRule::class))->isSuperTypeOf($rule)->yes()) {
+                $type = UploadedFile::class;
+            } elseif ((new ObjectType(Password::class))->isSuperTypeOf($rule)->yes()) {
+                $type = 'string';
             }
         }
 
