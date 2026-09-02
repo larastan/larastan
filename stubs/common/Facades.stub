@@ -75,6 +75,9 @@ class Http extends Facade {}
  */
 class View extends Facade {}
 
+/**
+ * @mixin \Illuminate\Routing\Router
+ */
 class Route extends Facade {
     /**
      * @param  string  $uri

@@ -48,7 +48,7 @@ class IntegrationTest extends PHPStanTestCase
                 38 => ['Parameter #1 $value of method Illuminate\Testing\TestResponse<Illuminate\Http\Response>::assertViewIs() expects view-string, string given.'],
                 52 => ['Parameter #1 $view of method ViewStringSignatures\UsesInteractsWithViews::view() expects view-string, string given.'],
                 59 => ['Parameter #1 $view of static method Illuminate\View\Factory::make() expects view-string, string given.'],
-                65 => ['Parameter #2 $view of static method Illuminate\Support\Facades\Route::view() expects view-string, string given.'],
+                65 => ['Parameter #2 $view of static method Illuminate\Routing\Router::view() expects view-string, string given.'],
                 71 => ['Parameter #1 $textView of method Illuminate\Notifications\Messages\MailMessage::text() expects view-string, string given.'],
                 77 => ['Parameter #1 $textView of method Illuminate\Mail\Mailable::text() expects view-string, string given.'],
             ],
