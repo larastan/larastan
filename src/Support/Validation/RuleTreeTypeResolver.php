@@ -29,7 +29,10 @@ final class RuleTreeTypeResolver
         if ($node->children === [] && ! $node->degraded && $node->rule?->allowedKeys === null) {
             $type = $this->leafType($node);
 
-            if ($node->rule !== null && ($node->rule->nullable || $node->rule->possiblyUndefined)) {
+            if (
+                $node->rule !== null
+                && (($node->rule->nullable && ! $node->rule->rejectsNull) || $node->rule->possiblyUndefined)
+            ) {
                 $type = TypeCombinator::addNull($type);
             }
 
@@ -80,7 +83,24 @@ final class RuleTreeTypeResolver
             $type = $builder->getArray();
         }
 
-        if ($node->rule?->nullable === true) {
+        if (
+            $node->children !== []
+            && $node->rule !== null
+            && $node->rule->anyOfRuleGroups !== []
+            && ! $this->hasConflictingScalarRule($node)
+        ) {
+            $ruleType = $this->leafType($node);
+            $type     = TypeCombinator::intersect($type, $ruleType);
+
+            if (! $this->hasGuaranteedNamedDescendant($node)) {
+                $type = TypeCombinator::union(
+                    $type,
+                    TypeCombinator::remove($ruleType, new ArrayType(new MixedType(), new MixedType())),
+                );
+            }
+        }
+
+        if ($node->rule?->nullable === true && ! $node->rule->rejectsNull) {
             $type = TypeCombinator::addNull($type);
         }
 
@@ -136,19 +156,53 @@ final class RuleTreeTypeResolver
         return false;
     }
 
+    private function hasGuaranteedNamedDescendant(RuleTreeNode $node): bool
+    {
+        foreach ($node->children as $segment => $child) {
+            if ($segment !== RuleTreeNode::WILDCARD && $this->isGuaranteedPresent($child)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private function leafType(RuleTreeNode $node): Type
     {
         if ($node->rule === null) {
             return new MixedType();
         }
 
-        $type = $this->stringResolver->resolve($node->rule->type);
+        return $this->ruleType($node->rule);
+    }
 
-        $type = $node->rule->benevolent ? TypeUtils::toBenevolentUnion($type) : $type;
+    private function ruleType(ValidationRule $rule, bool $includeNullable = false): Type
+    {
+        $type = $this->stringResolver->resolve($rule->type);
 
-        return $node->rule->constraintType === null
-            ? $type
-            : TypeCombinator::intersect($type, $node->rule->constraintType);
+        $type = $rule->benevolent ? TypeUtils::toBenevolentUnion($type) : $type;
+
+        if ($rule->constraintType !== null) {
+            $type = TypeCombinator::intersect($type, $rule->constraintType);
+        }
+
+        foreach ($rule->anyOfRuleGroups as $alternatives) {
+            $alternativeTypes = [];
+
+            foreach ($alternatives as $alternative) {
+                $alternativeTypes[] = $this->ruleType($alternative, true);
+            }
+
+            $type = TypeCombinator::intersect($type, TypeCombinator::union(...$alternativeTypes));
+        }
+
+        if ($rule->rejectsNull) {
+            $type = TypeCombinator::removeNull($type);
+        } elseif ($includeNullable && $rule->nullable) {
+            $type = TypeCombinator::addNull($type);
+        }
+
+        return $type;
     }
 
     private function allowedKeysType(RuleTreeNode $node): Type

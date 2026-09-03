@@ -41,6 +41,8 @@ use const FILTER_VALIDATE_INT;
 /** @internal */
 final class ValidationRuleFactory
 {
+    private const ANY_OF = 'Illuminate\\Validation\\Rules\\AnyOf';
+
     private const ARRAY_KEYS = 'Illuminate\\Validation\\Rules\\ArrayKeys';
 
     private const STRING_RULE = 'Illuminate\\Validation\\Rules\\StringRule';
@@ -56,14 +58,16 @@ final class ValidationRuleFactory
         $nullable          = false;
         $required          = false;
         $benevolent        = false;
+        $rejectsNull       = false;
 
         $type     = '';
         $inValues = null;
         $min      = null;
         $max      = null;
 
-        $constraintType = null;
-        $allowedKeys    = null;
+        $constraintType  = null;
+        $allowedKeys     = null;
+        $anyOfRuleGroups = [];
 
         if (is_string($rules)) {
             $rules = explode('|', $rules);
@@ -72,7 +76,13 @@ final class ValidationRuleFactory
         $ruleObjects = array_filter($rules, static fn ($rule) => ! is_string($rule));
 
         foreach ($ruleObjects as $rule) {
-            if ((new ObjectType(self::ARRAY_KEYS))->isSuperTypeOf($rule)->yes()) {
+            if ((new ObjectType(self::ANY_OF))->isSuperTypeOf($rule)->yes()) {
+                $alternatives = self::anyOfAlternatives($rule->getTemplateType(self::ANY_OF, 'TRules'));
+
+                if ($alternatives !== null) {
+                    $anyOfRuleGroups[] = $alternatives;
+                }
+            } elseif ((new ObjectType(self::ARRAY_KEYS))->isSuperTypeOf($rule)->yes()) {
                 $type        = 'array';
                 $allowedKeys = self::constantArrayKeys($rule->getTemplateType(self::ARRAY_KEYS, 'TKeys'));
             } elseif ((new ObjectType(ArrayRule::class))->isSuperTypeOf($rule)->yes()) {
@@ -140,7 +150,12 @@ final class ValidationRuleFactory
 
                 // `present` guarantees the key exists just like `required`; it only
                 // additionally allows the value to be empty, which doesn't affect the type.
-                if ($rule === 'required' || $rule === 'present') {
+                if ($rule === 'required') {
+                    $rejectsNull = true;
+                    $required    = true;
+                }
+
+                if ($rule === 'present') {
                     $required = true;
                 }
 
@@ -214,7 +229,70 @@ final class ValidationRuleFactory
             $benevolent,
             $constraintType,
             $allowedKeys,
+            $anyOfRuleGroups,
+            $rejectsNull,
         );
+    }
+
+    /** @return list<ValidationRule>|null */
+    private static function anyOfAlternatives(Type $type): array|null
+    {
+        // Laravel also lets non-implicit list alternatives pass associative input because it validates that input
+        // directly. Including `array` in every inferred AnyOf type would erase most useful narrowing.
+        $constantArrays = $type->getConstantArrays();
+
+        if (count($constantArrays) !== 1 || ! $constantArrays[0]->isList()->yes()) {
+            return null;
+        }
+
+        $alternatives = [];
+
+        foreach ($constantArrays[0]->getValueTypes() as $alternativeType) {
+            $alternative = self::anyOfAlternative($alternativeType);
+
+            if ($alternative === null) {
+                return null;
+            }
+
+            $alternatives[] = $alternative;
+        }
+
+        return $alternatives === [] ? null : $alternatives;
+    }
+
+    private static function anyOfAlternative(Type $type): ValidationRule|null
+    {
+        $strings = $type->getConstantStrings();
+
+        if (count($strings) === 1) {
+            return self::make($strings[0]->getValue());
+        }
+
+        if ($type->isObject()->yes()) {
+            return self::make([$type]);
+        }
+
+        $constantArrays = $type->getConstantArrays();
+
+        if (count($constantArrays) !== 1 || ! $constantArrays[0]->isList()->yes()) {
+            return null;
+        }
+
+        $rules = [];
+
+        foreach ($constantArrays[0]->getValueTypes() as $ruleType) {
+            $strings = $ruleType->getConstantStrings();
+
+            if (count($strings) === 1) {
+                $rules[] = $strings[0]->getValue();
+            } elseif ($ruleType->isObject()->yes()) {
+                $rules[] = $ruleType;
+            } else {
+                return self::make([]);
+            }
+        }
+
+        return self::make($rules);
     }
 
     /** @return list<ConstantIntegerType|ConstantStringType>|null */
@@ -408,7 +486,7 @@ final class ValidationRuleFactory
             'uppercase' => 'uppercase-string',
             'active_url', 'alpha', 'ascii', 'hex_color', 'string', 'url', 'ulid', 'uuid' => 'string',
             'alpha_dash', 'alpha_num', 'doesnt_end_with', 'doesnt_start_with', 'ends_with', 'not_regex',
-            'regex', 'starts_with' => 'float|int|string',
+            'date_format', 'regex', 'starts_with' => 'float|int|string',
             'email', 'ip', 'mac_address' => 'string|Stringable',
             'json' => 'bool|float|int|string|Stringable',
             'accepted' => "'yes'|'on'|1|'1'|true|'true'",

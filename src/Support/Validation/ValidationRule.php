@@ -10,7 +10,10 @@ use PHPStan\Type\Type;
 
 final readonly class ValidationRule
 {
-    /** @param list<ConstantIntegerType|ConstantStringType>|null $allowedKeys */
+    /**
+     * @param list<ConstantIntegerType|ConstantStringType>|null $allowedKeys
+     * @param list<list<ValidationRule>>                        $anyOfRuleGroups
+     */
     public function __construct(
         public string $rule,
         public string $type,
@@ -20,6 +23,8 @@ final readonly class ValidationRule
         public bool $benevolent = false,
         public Type|null $constraintType = null,
         public array|null $allowedKeys = null,
+        public array $anyOfRuleGroups = [],
+        public bool $rejectsNull = false,
     ) {
     }
 }
