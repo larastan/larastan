@@ -186,9 +186,11 @@ final class FormRequestHelper
             if ($rule === null) {
                 if ($valueType->isObject()->yes()) {
                     $rules[] = $valueType;
+
+                    continue;
                 }
 
-                continue;
+                return [];
             }
 
             $rules[] = $rule;
