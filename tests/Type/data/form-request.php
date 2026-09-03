@@ -41,7 +41,7 @@ function test(FormRequest $request, FooRequest $fooRequest, VariableRulesRequest
     assertType('array<string, mixed>', $request->validated());
 
     assertType('string', $fooRequest->name);
-    assertType('(int|numeric-string)', $fooRequest->age);
+    assertType('mixed', $fooRequest->age);
     assertType("1|'1'|'on'|'true'|'yes'|true|null", $fooRequest->newsletter);
     assertType("'date'|'rating'", $fooRequest->type);
     assertType('(int|numeric-string)', $fooRequest->rating);
@@ -66,7 +66,7 @@ function test(FormRequest $request, FooRequest $fooRequest, VariableRulesRequest
     assertType('array|null', $fooRequest->flags);
     assertType('mixed', $fooRequest->{'author.name'});
     assertType('int|numeric-string|null', $fooRequest->limit);
-    assertType('array{fragment: string|null, domain: string, path: string|null, port: mixed}', $fooRequest->url);
+    assertType('array{fragment: string|null, domain?: mixed, path: string|null, port?: mixed}', $fooRequest->url);
     assertType('mixed', $fooRequest->fallback);
     assertType('mixed', $fooRequest->dynamicRules);
     assertType('string', $variableRulesRequest->title);
