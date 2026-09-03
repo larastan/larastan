@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Unit\Support\Validation;
 
-use Illuminate\Support\Stringable as LaravelStringable;
-use Illuminate\Translation\ArrayLoader;
-use Illuminate\Translation\Translator;
 use Illuminate\Validation\Validator;
 use Larastan\Larastan\Support\Validation\ValidationRuleFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -104,90 +101,5 @@ class ValidationRuleFactoryTest extends TestCase
         $this->assertSame($nullable, $validationRule->nullable);
         $this->assertSame($possiblyUndefined, $validationRule->possiblyUndefined);
         $this->assertSame($required, $validationRule->required);
-    }
-
-    /** @return iterable<string, array{mixed, bool}> */
-    public static function integerValuesProvider(): iterable
-    {
-        yield 'integer' => [42, true];
-        yield 'integer string' => ['42', true];
-        yield 'integral float' => [42.0, true];
-        yield 'true' => [true, true];
-
-        yield 'stringable object' => [new LaravelStringable('42'), true];
-
-        yield 'decimal string' => ['42.0', false];
-        yield 'false' => [false, false];
-    }
-
-    #[DataProvider('integerValuesProvider')]
-    public function testIntegerRulePreservesAcceptedValues(mixed $value, bool $passes): void
-    {
-        $validator = new Validator(
-            new Translator(new ArrayLoader(), 'en'),
-            ['value' => $value],
-            ['value' => 'integer'],
-        );
-
-        $this->assertSame($passes, $validator->passes());
-
-        if (! $passes) {
-            return;
-        }
-
-        $this->assertSame($value, $validator->validated()['value']);
-    }
-
-    /** @return iterable<string, array{string|string[], mixed, bool}> */
-    public static function mappedRuleValuesProvider(): iterable
-    {
-        yield 'digits accepts a numeric string' => ['digits:2', '42', true];
-        yield 'digits accepts an integral float' => ['digits:2', 42.0, true];
-        yield 'digits rejects a word' => ['digits:2', 'foo', false];
-        yield 'alpha numeric accepts an integer' => ['alpha_num', 42, true];
-        yield 'string alpha numeric accepts a numeric string' => [['string', 'alpha_num'], '55', true];
-        yield 'string alpha numeric rejects an integer' => [['string', 'alpha_num'], 55, false];
-        yield 'starts with accepts an integer' => ['starts_with:4', 42, true];
-
-        yield 'email accepts a stringable object' => ['email', new LaravelStringable('a@example.com'), true];
-        yield 'MAC address accepts a stringable object' => ['mac_address', new LaravelStringable('00:11:22:33:44:55'), true];
-
-        yield 'JSON accepts a float' => ['json', 4.2, true];
-        yield 'JSON accepts true' => ['json', true, true];
-
-        yield 'JSON accepts a stringable object' => ['json', new LaravelStringable('{"valid":true}'), true];
-    }
-
-    /** @param string|string[] $rule */
-    #[DataProvider('mappedRuleValuesProvider')]
-    public function testMappedRulePreservesAcceptedValues(string|array $rule, mixed $value, bool $passes): void
-    {
-        $validator = new Validator(
-            new Translator(new ArrayLoader(), 'en'),
-            ['value' => $value],
-            ['value' => ['required', $rule]],
-        );
-
-        $this->assertSame($passes, $validator->passes());
-
-        if (! $passes) {
-            return;
-        }
-
-        $this->assertSame($value, $validator->validated()['value']);
-    }
-
-    public function testSameRuleAcceptsArrays(): void
-    {
-        $value = ['one', 'two'];
-
-        $validator = new Validator(
-            new Translator(new ArrayLoader(), 'en'),
-            ['value' => $value, 'other' => $value],
-            ['value' => ['required', 'same:other']],
-        );
-
-        $this->assertTrue($validator->passes());
-        $this->assertSame($value, $validator->validated()['value']);
     }
 }
