@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\MigrationWithConst;
+namespace Tests\Unit\MigrationWithConst\Support;
 
 class Table
 {
