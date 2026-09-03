@@ -39,6 +39,8 @@ use function in_array;
 /** @internal */
 final class ValidationRuleDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
 {
+    private const ANY_OF = 'Illuminate\\Validation\\Rules\\AnyOf';
+
     private const ARRAY_KEYS = 'Illuminate\\Validation\\Rules\\ArrayKeys';
 
     private const STRING_RULE = 'Illuminate\\Validation\\Rules\\StringRule';
@@ -52,7 +54,7 @@ final class ValidationRuleDynamicStaticMethodReturnTypeExtension implements Dyna
     {
         return in_array(
             $methodReflection->getName(),
-            ['array', 'arrayKeys', 'date', 'dateTime', 'enum', 'in', 'numeric', 'string'],
+            ['anyOf', 'array', 'arrayKeys', 'date', 'dateTime', 'enum', 'in', 'numeric', 'string'],
             true,
         );
     }
@@ -63,6 +65,7 @@ final class ValidationRuleDynamicStaticMethodReturnTypeExtension implements Dyna
         Scope $scope,
     ): Type|null {
         return match ($methodReflection->getName()) {
+            'anyOf' => new GenericObjectType(self::ANY_OF, [$this->anyOfArgumentType($methodCall->getArgs(), $scope)]),
             'array' => new GenericObjectType(ArrayRule::class, [$this->arrayArgumentType($methodCall->getArgs(), $scope)]),
             'arrayKeys' => new GenericObjectType(self::ARRAY_KEYS, [$this->arrayArgumentType($methodCall->getArgs(), $scope)]),
             'date' => new GenericObjectType(Date::class, [
@@ -92,6 +95,20 @@ final class ValidationRuleDynamicStaticMethodReturnTypeExtension implements Dyna
             'string' => new GenericObjectType(self::STRING_RULE, [new StringType()]),
             default => null,
         };
+    }
+
+    /** @param array<Arg> $args */
+    private function anyOfArgumentType(array $args, Scope $scope): Type
+    {
+        if ($args === [] || $args[0]->unpack) {
+            return new ArrayType(new MixedType(), new MixedType());
+        }
+
+        $type = $scope->getType($args[0]->value);
+
+        return $type->isArray()->yes()
+            ? $type
+            : new ArrayType(new MixedType(), new MixedType());
     }
 
     /** @param array<Arg> $args */

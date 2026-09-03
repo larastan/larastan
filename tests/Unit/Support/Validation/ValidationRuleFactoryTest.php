@@ -58,6 +58,7 @@ class ValidationRuleFactoryTest extends TestCase
         yield 'multiple of' => ['required|multiple_of:0.5', 'float|int|numeric-string', false, false, true];
         yield 'alpha numeric' => ['required|alpha_num', 'float|int|string', false, false, true];
         yield 'starts with' => ['required|starts_with:4', 'float|int|string', false, false, true];
+        yield 'date format' => ['required|date_format:H:i', 'float|int|string', false, false, true];
         yield 'regex' => [['required', 'regex:/^[0-9]+$/'], 'float|int|string', false, false, true];
         yield 'email' => ['required|email', 'string|Stringable', false, false, true];
         yield 'IP address' => ['required|ip', 'string|Stringable', false, false, true];
