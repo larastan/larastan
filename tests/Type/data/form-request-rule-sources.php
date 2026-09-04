@@ -114,10 +114,72 @@ class ParentCompositionRequest extends ExactRulesRequest
 
 class RuleRegistryModel extends Model
 {
+    /** @return array{age: array{'integer', 'required'}, name: 'required|string'} */
+    public static function exactValidationRules(): array
+    {
+        return [
+            'age' => ['integer', 'required'],
+            'name' => 'required|string',
+        ];
+    }
+
     /** @return array<string, string> */
     public static function validationRules(): array
     {
         return ['registry' => 'required|string'];
+    }
+}
+
+class ExactPhpDocDirectRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return RuleRegistryModel::exactValidationRules();
+    }
+}
+
+class ExactPhpDocSpreadRequest extends FormRequest
+{
+    /** @return array{email: array{'required', 'email'}} */
+    private function commonRules(): array
+    {
+        return ['email' => ['required', 'email']];
+    }
+
+    public function rules(): array
+    {
+        return [...$this->commonRules()];
+    }
+}
+
+class BroadPhpDocDirectRequest extends FormRequest
+{
+    /** @return array<mixed> */
+    private function broadRules(): array
+    {
+        return [];
+    }
+
+    public function rules(): array
+    {
+        return $this->broadRules();
+    }
+}
+
+class BroadPhpDocSpreadRequest extends FormRequest
+{
+    /** @return array<string, mixed> */
+    private function commonRules(): array
+    {
+        return ['broadOnly' => 'required|string'];
+    }
+
+    public function rules(): array
+    {
+        return [
+            ...$this->commonRules(),
+            'stable' => 'required|string',
+        ];
     }
 }
 
@@ -183,6 +245,10 @@ function testRuleSources(
     MultipleReturnsRequest $multiple,
     NestedReturnsRequest $nested,
     ParentCompositionRequest $parentComposition,
+    ExactPhpDocDirectRequest $exactPhpDocDirect,
+    ExactPhpDocSpreadRequest $exactPhpDocSpread,
+    BroadPhpDocDirectRequest $broadPhpDocDirect,
+    BroadPhpDocSpreadRequest $broadPhpDocSpread,
     StaticRegistryRequest $staticRegistry,
     CollectionSelectionRequest $collectionSelection,
     ComputedRulesRequest $computed,
@@ -209,6 +275,12 @@ function testRuleSources(
 
     assertType('mixed', $parentComposition->exact);
     assertType('mixed', $parentComposition->composed);
+    assertType('(int|numeric-string)', $exactPhpDocDirect->age);
+    assertType('string', $exactPhpDocDirect->name);
+    assertType('string|Stringable', $exactPhpDocSpread->email);
+    assertType('mixed', $broadPhpDocDirect->anything);
+    assertType('mixed', $broadPhpDocSpread->broadOnly);
+    assertType('string', $broadPhpDocSpread->stable);
     assertType('mixed', $staticRegistry->registry);
     assertType('mixed', $collectionSelection->selected);
 
