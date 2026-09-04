@@ -56,6 +56,7 @@ class IntegrationTest extends PHPStanTestCase
 
         yield [__DIR__ . '/data/helpers.php'];
         yield [__DIR__ . '/data/facades.php'];
+        yield [__DIR__ . '/data/form-request-feature-enabled.php'];
 
         yield [
             __DIR__ . '/data/model-property-builder.php',

@@ -31,6 +31,7 @@ parameters:
     generalizeEnvReturnType: false
     checkConfigTypes: false
     checkAuthCallsWhenInRequestScope: false
+    checkFormRequestTypes: false
     parseModelCastsMethod: false
     enableMigrationCache: true
 
@@ -57,10 +58,17 @@ parametersSchema:
     generalizeEnvReturnType: bool()
     checkConfigTypes: bool()
     checkAuthCallsWhenInRequestScope: bool()
+    checkFormRequestTypes: bool()
     parseModelCastsMethod: bool()
     enableMigrationCache: bool()
 
 conditionalTags:
+    Larastan\Larastan\Properties\FormRequestExtension:
+        phpstan.broker.propertiesClassReflectionExtension: %checkFormRequestTypes%
+    Larastan\Larastan\ReturnTypes\ValidationRuleDynamicStaticMethodReturnTypeExtension:
+        phpstan.broker.dynamicStaticMethodReturnTypeExtension: %checkFormRequestTypes%
+    Larastan\Larastan\ReturnTypes\ValidationRuleBuilderDynamicMethodReturnTypeExtension:
+        phpstan.broker.dynamicMethodReturnTypeExtension: %checkFormRequestTypes%
     Larastan\Larastan\Rules\NoEnvCallsOutsideOfConfigRule:
         phpstan.rules.rule: %noEnvCallsOutsideOfConfig%
     Larastan\Larastan\Rules\NoModelMakeRule:
@@ -175,34 +183,24 @@ services:
 
     -
         class: Larastan\Larastan\Properties\FormRequestExtension
-        tags:
-            - phpstan.broker.propertiesClassReflectionExtension
 
     -
         class: Larastan\Larastan\ReturnTypes\ValidationRuleDynamicStaticMethodReturnTypeExtension
-        tags:
-            - phpstan.broker.dynamicStaticMethodReturnTypeExtension
 
     -
         class: Larastan\Larastan\ReturnTypes\ValidationRuleBuilderDynamicMethodReturnTypeExtension
         arguments:
             className: Illuminate\Validation\Rules\Numeric
-        tags:
-            - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
         class: Larastan\Larastan\ReturnTypes\ValidationRuleBuilderDynamicMethodReturnTypeExtension
         arguments:
             className: Illuminate\Validation\Rules\StringRule
-        tags:
-            - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
         class: Larastan\Larastan\ReturnTypes\ValidationRuleBuilderDynamicMethodReturnTypeExtension
         arguments:
             className: Illuminate\Validation\Rules\Date
-        tags:
-            - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
         class: Larastan\Larastan\ReturnTypes\HigherOrderTapProxyExtension
@@ -578,6 +576,8 @@ services:
 
     -
         class: Larastan\Larastan\LarastanStubFilesExtension
+        arguments:
+            checkFormRequestTypes: %checkFormRequestTypes%
         tags:
             - phpstan.stubFilesExtension
 

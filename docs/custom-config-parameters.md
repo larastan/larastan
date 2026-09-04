@@ -96,6 +96,17 @@ parameters:
     checkModelProperties: true
 ```
 
+## `checkFormRequestTypes`
+**default**: `false`
+
+This config parameter enables rule-derived types for FormRequest magic
+properties and the supporting generic validation rule objects.
+
+```neon
+parameters:
+    checkFormRequestTypes: true
+```
+
 ## `checkModelAppends`
 **default**: `true`
 
