@@ -1,0 +1,464 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Larastan\Larastan\Support;
+
+use Larastan\Larastan\Support\Validation\ValidationRule;
+use Larastan\Larastan\Support\Validation\ValidationRuleFactory;
+use PhpParser\Node;
+use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Stmt;
+use PhpParser\Node\Stmt\ClassLike;
+use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Namespace_;
+use PhpParser\Node\Stmt\Return_;
+use PhpParser\Node\Stmt\Trait_;
+use PhpParser\NodeFinder;
+use PHPStan\Analyser\NodeScopeResolver;
+use PHPStan\Analyser\Scope;
+use PHPStan\Analyser\ScopeContext;
+use PHPStan\Analyser\ScopeFactory;
+use PHPStan\Parser\Parser;
+use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\MethodReflection;
+use PHPStan\Type\Constant\ConstantArrayType;
+use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
+
+use function array_filter;
+use function array_key_exists;
+use function array_map;
+use function array_reverse;
+use function array_shift;
+use function array_values;
+use function count;
+
+/** @internal */
+final class FormRequestRuleExtractor
+{
+    public function __construct(
+        private Parser $parser,
+        private ScopeFactory $scopeFactory,
+        private NodeScopeResolver $nodeScopeResolver,
+    ) {
+    }
+
+    /** @return array<string, ValidationRule>|null */
+    public function extract(ClassReflection $classReflection): array|null
+    {
+        if (! $classReflection->hasNativeMethod('rules')) {
+            return null;
+        }
+
+        $rulesMethod    = $classReflection->getNativeMethod('rules');
+        $declaringClass = $rulesMethod->getDeclaringClass();
+        $nativeMethod   = $declaringClass->getNativeReflection()->getMethod($rulesMethod->getName());
+        $fileName       = $nativeMethod->getFileName();
+        $startLine      = $nativeMethod->getStartLine();
+
+        if ($fileName === false || $startLine === false) {
+            return null;
+        }
+
+        $nodes = $this->isolateMethod(
+            $this->parser->parseFile($fileName),
+            $rulesMethod->getName(),
+            $startLine,
+        );
+
+        if ($nodes === null) {
+            return null;
+        }
+
+        $nodeFinder = new NodeFinder();
+        $trait      = $nodeFinder->findFirstInstanceOf($nodes, Trait_::class);
+
+        if ($trait !== null) {
+            $method        = $nodeFinder->findFirstInstanceOf($nodes, ClassMethod::class);
+            $classFileName = $declaringClass->getFileName();
+
+            if ($method === null || $classFileName === null) {
+                return null;
+            }
+
+            $nodes = $this->isolateClassWithMethod(
+                $this->parser->parseFile($classFileName),
+                $declaringClass->getName(),
+                $method,
+            );
+
+            if ($nodes === null) {
+                return null;
+            }
+
+            $fileName = $classFileName;
+        }
+
+        $scope   = $this->scopeFactory->create(ScopeContext::create($fileName));
+        $returns = [];
+
+        $this->nodeScopeResolver->processNodes(
+            $nodes,
+            $scope,
+            static function (Node $node, Scope $scope) use ($rulesMethod, &$returns): void {
+                if (! $node instanceof Return_ || $node->expr === null || $scope->isInAnonymousFunction()) {
+                    return;
+                }
+
+                $function = $scope->getFunction();
+
+                if (! $function instanceof MethodReflection || $function->getName() !== $rulesMethod->getName()) {
+                    return;
+                }
+
+                $returns[] = self::extractReturn($node, $scope);
+            },
+        );
+
+        if ($returns === []) {
+            return null;
+        }
+
+        /** @var list<array<string, ValidationRule>> $supportedReturns */
+        $supportedReturns = [];
+
+        foreach ($returns as $return) {
+            if ($return === null) {
+                return null;
+            }
+
+            $supportedReturns[] = $return;
+        }
+
+        return self::mergeReturns($supportedReturns);
+    }
+
+    /**
+     * @param array<Stmt> $nodes
+     *
+     * @return array<Stmt>|null
+     */
+    private function isolateMethod(array $nodes, string $methodName, int $startLine): array|null
+    {
+        foreach ($nodes as $node) {
+            if ($node instanceof Namespace_) {
+                $isolated = $this->isolateMethod($node->stmts, $methodName, $startLine);
+
+                if ($isolated === null) {
+                    continue;
+                }
+
+                $node->stmts = $isolated;
+
+                return array_values(array_filter(
+                    $nodes,
+                    static fn (Stmt $statement): bool => $statement instanceof Stmt\Declare_ || $statement === $node,
+                ));
+            }
+
+            if (! $node instanceof ClassLike) {
+                continue;
+            }
+
+            foreach ($node->stmts as $statement) {
+                if (
+                    ! $statement instanceof ClassMethod
+                    || $statement->name->toString() !== $methodName
+                    || $statement->getStartLine() !== $startLine
+                ) {
+                    continue;
+                }
+
+                $node->stmts = [$statement];
+
+                return array_values(array_filter(
+                    $nodes,
+                    static fn (Stmt $fileStatement): bool => self::isContextStatement($fileStatement)
+                        || $fileStatement === $node,
+                ));
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array<Stmt> $nodes
+     *
+     * @return array<Stmt>|null
+     */
+    private function isolateClassWithMethod(
+        array $nodes,
+        string $className,
+        ClassMethod $method,
+        string $namespace = '',
+    ): array|null {
+        foreach ($nodes as $node) {
+            if ($node instanceof Namespace_) {
+                $isolated = $this->isolateClassWithMethod(
+                    $node->stmts,
+                    $className,
+                    $method,
+                    $node->name?->toString() ?? '',
+                );
+
+                if ($isolated === null) {
+                    continue;
+                }
+
+                $node->stmts = $isolated;
+
+                return array_values(array_filter(
+                    $nodes,
+                    static fn (Stmt $statement): bool => $statement instanceof Stmt\Declare_ || $statement === $node,
+                ));
+            }
+
+            if (! $node instanceof ClassLike || $node->name === null) {
+                continue;
+            }
+
+            $candidateName = $namespace === ''
+                ? $node->name->toString()
+                : $namespace . '\\' . $node->name->toString();
+
+            if ($candidateName !== $className) {
+                continue;
+            }
+
+            $node->stmts = [$method];
+
+            return array_values(array_filter(
+                $nodes,
+                static fn (Stmt $statement): bool => self::isContextStatement($statement) || $statement === $node,
+            ));
+        }
+
+        return null;
+    }
+
+    private static function isContextStatement(Stmt $statement): bool
+    {
+        return $statement instanceof Stmt\Declare_
+            || $statement instanceof Stmt\Use_
+            || $statement instanceof Stmt\GroupUse
+            || $statement instanceof Stmt\Const_;
+    }
+
+    /** @return array<string, ValidationRule>|null */
+    private static function extractReturn(Return_ $return, Scope $scope): array|null
+    {
+        if ($return->expr === null) {
+            return null;
+        }
+
+        if (! $return->expr instanceof Array_) {
+            return self::extractConstantArrays($scope->getType($return->expr));
+        }
+
+        $rules    = [];
+        $seenKeys = [];
+
+        foreach (array_reverse($return->expr->items) as $item) {
+            if ($item->unpack) {
+                $unpackedRules = self::extractConstantArrays($scope->getType($item->value));
+
+                if ($unpackedRules === null) {
+                    continue;
+                }
+
+                foreach (array_reverse($unpackedRules, true) as $key => $rule) {
+                    if (array_key_exists($key, $seenKeys)) {
+                        continue;
+                    }
+
+                    $rules[$key]    = $rule;
+                    $seenKeys[$key] = true;
+                }
+
+                continue;
+            }
+
+            if ($item->key === null) {
+                continue;
+            }
+
+            $propertyName = self::extractConstantString($scope->getType($item->key));
+
+            if ($propertyName === null) {
+                continue;
+            }
+
+            if (array_key_exists($propertyName, $seenKeys)) {
+                continue;
+            }
+
+            $seenKeys[$propertyName] = true;
+
+            $rule = self::extractRule($scope->getType($item->value));
+
+            if ($rule === null) {
+                continue;
+            }
+
+            $rules[$propertyName] = $rule;
+        }
+
+        return array_reverse($rules, true);
+    }
+
+    /** @return array<string, ValidationRule>|null */
+    private static function extractConstantArrays(Type $type): array|null
+    {
+        $constantArrays = $type->getConstantArrays();
+
+        if ($constantArrays === []) {
+            return null;
+        }
+
+        return self::mergeReturns(array_map(self::extractConstantArray(...), $constantArrays));
+    }
+
+    /** @return array<string, ValidationRule> */
+    private static function extractConstantArray(ConstantArrayType $array): array
+    {
+        $rules = [];
+
+        foreach ($array->getKeyTypes() as $index => $keyType) {
+            if ($array->isOptionalKey($index)) {
+                continue;
+            }
+
+            $propertyName = self::extractConstantString($keyType);
+
+            if ($propertyName === null) {
+                continue;
+            }
+
+            $rule = self::extractRule($array->getValueTypes()[$index]);
+
+            if ($rule === null) {
+                continue;
+            }
+
+            $rules[$propertyName] = $rule;
+        }
+
+        return $rules;
+    }
+
+    /**
+     * @param list<array<string, ValidationRule>> $returns
+     *
+     * @return array<string, ValidationRule>
+     */
+    private static function mergeReturns(array $returns): array
+    {
+        $merged = array_shift($returns) ?? [];
+
+        foreach ($returns as $rules) {
+            foreach ($merged as $key => $rule) {
+                if (! array_key_exists($key, $rules)) {
+                    unset($merged[$key]);
+
+                    continue;
+                }
+
+                $mergedRule = self::mergeRules($rule, $rules[$key]);
+
+                if ($mergedRule === null) {
+                    unset($merged[$key]);
+
+                    continue;
+                }
+
+                $merged[$key] = $mergedRule;
+            }
+        }
+
+        return $merged;
+    }
+
+    private static function mergeRules(ValidationRule $left, ValidationRule $right): ValidationRule|null
+    {
+        if ($left->allowedKeys !== $right->allowedKeys || $left->anyOfRuleGroups !== $right->anyOfRuleGroups) {
+            return null;
+        }
+
+        $constraintType = $left->constraintType === null || $right->constraintType === null
+            ? null
+            : TypeCombinator::union($left->constraintType, $right->constraintType);
+
+        return new ValidationRule(
+            $left->rule === $right->rule ? $left->rule : '',
+            $left->type === $right->type ? $left->type : '(' . $left->type . ')|(' . $right->type . ')',
+            $left->nullable || $right->nullable,
+            $left->possiblyUndefined || $right->possiblyUndefined,
+            $left->required && $right->required,
+            $left->benevolent || $right->benevolent,
+            $constraintType,
+            $left->allowedKeys,
+            $left->anyOfRuleGroups,
+            $left->rejectsNull && $right->rejectsNull,
+        );
+    }
+
+    private static function extractRule(Type $type): ValidationRule|null
+    {
+        $rules = self::extractConstantRules($type);
+
+        return $rules === null ? null : ValidationRuleFactory::make($rules);
+    }
+
+    /** @return string|list<string|Type>|null */
+    private static function extractConstantRules(Type $type): string|array|null
+    {
+        $rule = self::extractConstantString($type);
+
+        if ($rule !== null) {
+            return $rule;
+        }
+
+        if ($type->isObject()->yes()) {
+            return [$type];
+        }
+
+        $constantArrays = $type->getConstantArrays();
+
+        if (count($constantArrays) !== 1) {
+            return null;
+        }
+
+        $rules = [];
+
+        foreach ($constantArrays[0]->getValueTypes() as $valueType) {
+            $rule = self::extractConstantString($valueType);
+
+            if ($rule === null) {
+                if ($valueType->isObject()->yes()) {
+                    $rules[] = $valueType;
+
+                    continue;
+                }
+
+                return [];
+            }
+
+            $rules[] = $rule;
+        }
+
+        return $rules;
+    }
+
+    private static function extractConstantString(Type $type): string|null
+    {
+        $constantStrings = $type->getConstantStrings();
+
+        if (count($constantStrings) !== 1) {
+            return null;
+        }
+
+        return $constantStrings[0]->getValue();
+    }
+}

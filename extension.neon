@@ -528,9 +528,12 @@ services:
             parseModelCastsMethod: %parseModelCastsMethod%
 
     -
-        class: Larastan\Larastan\Support\FormRequestHelper
+        class: Larastan\Larastan\Support\FormRequestRuleExtractor
         arguments:
             parser: @currentPhpVersionSimpleDirectParser
+
+    -
+        class: Larastan\Larastan\Support\FormRequestHelper
 
     -
         class: Larastan\Larastan\Support\Validation\RuleTreeTypeResolver
