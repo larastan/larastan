@@ -15,6 +15,17 @@ use function version_compare;
 
 final class LarastanStubFilesExtension implements StubFilesExtension
 {
+    private const FORM_REQUEST_TYPE_STUBS = [
+        'Validation/AnyOf.stub' => true,
+        'Validation/ArrayKeys.stub' => true,
+        'Validation/Rules.stub' => true,
+        'Validation/StringRule.stub' => true,
+    ];
+
+    public function __construct(private bool $checkFormRequestTypes)
+    {
+    }
+
     /** @inheritDoc */
     public function getFiles(): array
     {
@@ -32,7 +43,13 @@ final class LarastanStubFilesExtension implements StubFilesExtension
         $stubFiles = Finder::create()->files()->name('*.stub')->in($stubDirs);
 
         foreach ($stubFiles as $stubFile) {
-            $files[$stubFile->getRelativePathname()] = $stubFile->getRealPath();
+            $relativePath = $stubFile->getRelativePathname();
+
+            if (! $this->checkFormRequestTypes && isset(self::FORM_REQUEST_TYPE_STUBS[$relativePath])) {
+                continue;
+            }
+
+            $files[$relativePath] = $stubFile->getRealPath();
         }
 
         return array_values($files);

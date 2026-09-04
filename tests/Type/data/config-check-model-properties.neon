@@ -1,4 +1,5 @@
 includes:
     - ../../phpstan-tests.neon
 parameters:
+    checkFormRequestTypes: true
     checkModelProperties: true
