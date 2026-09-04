@@ -553,6 +553,16 @@ services:
             - phpstan.collector
 
     -
+        class: Larastan\Larastan\Collectors\UsedEmailAlternativeSyntaxViewCollector
+        tags:
+            - phpstan.collector
+
+    -
+        class: Larastan\Larastan\Collectors\UsedEmailSendViewCollector
+        tags:
+            - phpstan.collector
+
+    -
         class: Larastan\Larastan\Collectors\UsedViewMakeCollector
         tags:
             - phpstan.collector

@@ -42,10 +42,22 @@ final class UsedViewFunctionCollector implements Collector
 
         $template = $node->getArgs()[0]->value;
 
-        if (! $template instanceof Node\Scalar\String_) {
-            return null;
+        if ($template instanceof Node\Scalar\String_) {
+            return ViewName::normalize($template->value);
         }
 
-        return ViewName::normalize($template->value);
+        if ($template instanceof Node\Expr\BinaryOp\Concat) {
+            $template = $scope->getType($template);
+
+            $constantStrings = $template->getConstantStrings();
+
+            if (count($constantStrings) !== 1) {
+                return null;
+            }
+
+            return ViewName::normalize($constantStrings[0]->getValue());
+        }
+
+        return null;
     }
 }

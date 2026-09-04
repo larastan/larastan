@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Rules;
 
+use Larastan\Larastan\Collectors\UsedEmailAlternativeSyntaxViewCollector;
+use Larastan\Larastan\Collectors\UsedEmailSendViewCollector;
 use Larastan\Larastan\Collectors\UsedEmailViewCollector;
 use Larastan\Larastan\Collectors\UsedRouteFacadeViewCollector;
 use Larastan\Larastan\Collectors\UsedViewFacadeMakeCollector;
@@ -38,6 +40,8 @@ class UnusedViewsRuleTest extends RuleTestCase
         return [
             new UsedViewFunctionCollector(),
             new UsedEmailViewCollector(),
+            new UsedEmailAlternativeSyntaxViewCollector(),
+            new UsedEmailSendViewCollector(),
             new UsedViewMakeCollector(),
             new UsedViewFacadeMakeCollector(),
             new UsedRouteFacadeViewCollector(),
@@ -48,7 +52,7 @@ class UnusedViewsRuleTest extends RuleTestCase
     {
         $this->analyse([__DIR__ . '/data/FooController.php'], [
             [
-                'This view is not used in the project.',
+                'The "unused" view is not used in the project.',
                 00,
             ],
         ]);
