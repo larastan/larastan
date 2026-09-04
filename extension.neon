@@ -16,6 +16,7 @@ parameters:
     noUnnecessaryCollectionCallOnly: []
     noUnnecessaryCollectionCallExcept: []
     noUnnecessaryEnumerableToArrayCalls: false
+    noSchemaExistenceChecksInMigrations: false
     squashedMigrationsPath: []
     databaseMigrationsPath: []
     disableMigrationScan: false
@@ -42,6 +43,7 @@ parametersSchema:
     noUnnecessaryCollectionCallOnly: listOf(string())
     noUnnecessaryCollectionCallExcept: listOf(string())
     noUnnecessaryEnumerableToArrayCalls: bool()
+    noSchemaExistenceChecksInMigrations: bool()
     databaseMigrationsPath: listOf(string())
     disableMigrationScan: bool()
     configDirectories: listOf(string())
@@ -69,6 +71,8 @@ conditionalTags:
         phpstan.rules.rule: %noUnnecessaryCollectionCall%
     Larastan\Larastan\Rules\NoUnnecessaryEnumerableToArrayCallsRule:
         phpstan.rules.rule: %noUnnecessaryEnumerableToArrayCalls%
+    Larastan\Larastan\Rules\NoSchemaExistenceChecksInMigrationsRule:
+        phpstan.rules.rule: %noSchemaExistenceChecksInMigrations%
     Larastan\Larastan\Rules\OctaneCompatibilityRule:
         phpstan.rules.rule: %checkOctaneCompatibility%
     Larastan\Larastan\Rules\UnusedViewsRule:
@@ -420,6 +424,11 @@ services:
 
     -
         class: Larastan\Larastan\Rules\NoUnnecessaryEnumerableToArrayCallsRule
+
+    -
+        class: Larastan\Larastan\Rules\NoSchemaExistenceChecksInMigrationsRule
+        arguments:
+            migrationDirectories: %databaseMigrationsPath%
 
     -
         class: Larastan\Larastan\Rules\ModelAppendsRule

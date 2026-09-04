@@ -480,6 +480,79 @@ parameters:
         - tests
 ```
 
+## NoSchemaExistenceChecksInMigrations
+
+Checks for schema existence checks — `Schema::hasTable()`, `Schema::hasColumn()` and `Schema::hasColumns()` —
+inside your migration directories.
+
+A migration always runs against a known schema state: the state left behind by the migrations before it.
+Guarding a migration with an existence check silently turns a broken migration history into a no-op,
+so the failure only surfaces much later, on a different environment.
+
+### Examples
+
+```php
+return new class extends Migration
+{
+    public function up(): void
+    {
+        if (! Schema::hasTable('users')) {
+            Schema::create('users', function (Blueprint $table) {
+                $table->id();
+            });
+        }
+    }
+};
+```
+
+Will result in the following error:
+
+```
+Called 'Schema::hasTable()' inside a migration. A migration runs against a known schema state, remove the conditional check.
+```
+
+Write the migration unconditionally instead:
+
+```php
+Schema::create('users', function (Blueprint $table) {
+    $table->id();
+});
+```
+
+The rule reports the check whether or not it is negated, and it also catches checks made on a
+specific connection, like `Schema::connection('mysql')->hasTable('users')`.
+
+### Configuration
+
+This rule is disabled by default, since packages legitimately need to guard against the schema of the
+application they are installed into. To enable it, add the following to your `phpstan.neon` file:
+
+```neon
+parameters:
+    noSchemaExistenceChecksInMigrations: true
+```
+
+By default, this rule checks the application migrations directory (`database/migrations`). If your
+migrations are stored elsewhere, use the [`databaseMigrationsPath`](custom-config-parameters.md#databasemigrationspath)
+option to specify them. Globs are supported:
+
+```neon
+parameters:
+    databaseMigrationsPath:
+        - database/migrations
+        - modules/*/database/migrations
+```
+
+If a migration genuinely needs the check, ignore it for that file:
+
+```neon
+parameters:
+    ignoreErrors:
+        -
+            identifier: larastan.noSchemaExistenceChecksInMigrations
+            path: database/migrations/2024_01_01_000000_fix_legacy_table.php
+```
+
 ## ModelAppendsRule
 
 Checks model's `$appends` property for computed properties. The properties added to `$appends` array should both exist in the model and be computed properties.
