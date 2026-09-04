@@ -7,6 +7,7 @@ namespace Larastan\Larastan\Support\Validation;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rules\ArrayRule;
 use Illuminate\Validation\Rules\Date;
+use Illuminate\Validation\Rules\Dimensions;
 use Illuminate\Validation\Rules\Email;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\File as FileRule;
@@ -90,6 +91,8 @@ final class ValidationRuleFactory
                 $allowedKeys = self::constantArrayKeys($rule->getTemplateType(ArrayRule::class, 'TKeys'));
             } elseif ((new ObjectType('Illuminate\\Validation\\Rules\\Contains'))->isSuperTypeOf($rule)->yes()) {
                 $type = 'array';
+            } elseif ((new ObjectType('Illuminate\\Validation\\Rules\\DoesntContain'))->isSuperTypeOf($rule)->yes()) {
+                $type = 'array';
             } elseif ((new ObjectType(Date::class))->isSuperTypeOf($rule)->yes()) {
                 $dateType       = $rule->getTemplateType(Date::class, 'TValue');
                 $constraintType = $constraintType === null
@@ -116,6 +119,8 @@ final class ValidationRuleFactory
                 $constraintType = $constraintType === null
                     ? $stringType
                     : TypeCombinator::intersect($constraintType, $stringType);
+            } elseif ((new ObjectType(Dimensions::class))->isSuperTypeOf($rule)->yes()) {
+                $type = UploadedFile::class;
             } elseif ((new ObjectType(FileRule::class))->isSuperTypeOf($rule)->yes()) {
                 $type = UploadedFile::class;
             } elseif ((new ObjectType(Password::class))->isSuperTypeOf($rule)->yes()) {

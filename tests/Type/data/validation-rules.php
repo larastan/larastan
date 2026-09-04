@@ -45,6 +45,7 @@ final class AdditionalRulesRequest extends FormRequest
             'dateValue' => ['required', Rule::date()],
             'formattedDate' => ['required', Rule::date()->format('Y-m-d')],
             'emailValue' => ['required', Rule::email()],
+            'dimensionsValue' => ['required', Rule::dimensions()->maxWidth(1920)],
             'fileValue' => ['required', Rule::file()],
             'imageValue' => ['required', Rule::imageFile()],
             'passwordValue' => ['required', Password::min(8)->letters()->numbers()],
@@ -107,6 +108,7 @@ function test(mixed $mixed, array|string $arrayOrString, AdditionalRulesRequest 
     assertType('DateTimeInterface|float|int|string', $request->dateValue);
     assertType('float|int|string', $request->formattedDate);
     assertType('string|Stringable', $request->emailValue);
+    assertType('Illuminate\\Http\\UploadedFile', $request->dimensionsValue);
     assertType('Illuminate\\Http\\UploadedFile', $request->fileValue);
     assertType('Illuminate\\Http\\UploadedFile', $request->imageValue);
     assertType('string', $request->passwordValue);
