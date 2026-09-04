@@ -61,10 +61,22 @@ final class FormRequestRuleExtractor
             return null;
         }
 
-        $nodes = $this->isolateMethod(
+        $methodName = $rulesMethod->getName();
+        $nodes      = $this->isolateClassMethod(
             $this->parser->parseFile($fileName),
-            $rulesMethod->getName(),
-            $startLine,
+            static function (ClassLike $class) use ($methodName, $startLine): ClassMethod|null {
+                foreach ($class->stmts as $statement) {
+                    if (
+                        $statement instanceof ClassMethod
+                        && $statement->name->toString() === $methodName
+                        && $statement->getStartLine() === $startLine
+                    ) {
+                        return $statement;
+                    }
+                }
+
+                return null;
+            },
         );
 
         if ($nodes === null) {
@@ -82,10 +94,20 @@ final class FormRequestRuleExtractor
                 return null;
             }
 
-            $nodes = $this->isolateClassWithMethod(
+            $className = $declaringClass->getName();
+            $nodes     = $this->isolateClassMethod(
                 $this->parser->parseFile($classFileName),
-                $declaringClass->getName(),
-                $method,
+                static function (ClassLike $class, string $namespace) use ($className, $method): ClassMethod|null {
+                    if ($class->name === null) {
+                        return null;
+                    }
+
+                    $candidateName = $namespace === ''
+                        ? $class->name->toString()
+                        : $namespace . '\\' . $class->name->toString();
+
+                    return $candidateName === $className ? $method : null;
+                },
             );
 
             if ($nodes === null) {
@@ -135,15 +157,23 @@ final class FormRequestRuleExtractor
     }
 
     /**
-     * @param array<Stmt> $nodes
+     * @param array<Stmt>                                     $nodes
+     * @param callable(ClassLike, string): (ClassMethod|null) $findMethod
      *
      * @return array<Stmt>|null
      */
-    private function isolateMethod(array $nodes, string $methodName, int $startLine): array|null
-    {
+    private function isolateClassMethod(
+        array $nodes,
+        callable $findMethod,
+        string $namespace = '',
+    ): array|null {
         foreach ($nodes as $node) {
             if ($node instanceof Namespace_) {
-                $isolated = $this->isolateMethod($node->stmts, $methodName, $startLine);
+                $isolated = $this->isolateClassMethod(
+                    $node->stmts,
+                    $findMethod,
+                    $node->name?->toString() ?? '',
+                );
 
                 if ($isolated === null) {
                     continue;
@@ -161,69 +191,9 @@ final class FormRequestRuleExtractor
                 continue;
             }
 
-            foreach ($node->stmts as $statement) {
-                if (
-                    ! $statement instanceof ClassMethod
-                    || $statement->name->toString() !== $methodName
-                    || $statement->getStartLine() !== $startLine
-                ) {
-                    continue;
-                }
+            $method = $findMethod($node, $namespace);
 
-                $node->stmts = [$statement];
-
-                return array_values(array_filter(
-                    $nodes,
-                    static fn (Stmt $fileStatement): bool => self::isContextStatement($fileStatement)
-                        || $fileStatement === $node,
-                ));
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @param array<Stmt> $nodes
-     *
-     * @return array<Stmt>|null
-     */
-    private function isolateClassWithMethod(
-        array $nodes,
-        string $className,
-        ClassMethod $method,
-        string $namespace = '',
-    ): array|null {
-        foreach ($nodes as $node) {
-            if ($node instanceof Namespace_) {
-                $isolated = $this->isolateClassWithMethod(
-                    $node->stmts,
-                    $className,
-                    $method,
-                    $node->name?->toString() ?? '',
-                );
-
-                if ($isolated === null) {
-                    continue;
-                }
-
-                $node->stmts = $isolated;
-
-                return array_values(array_filter(
-                    $nodes,
-                    static fn (Stmt $statement): bool => $statement instanceof Stmt\Declare_ || $statement === $node,
-                ));
-            }
-
-            if (! $node instanceof ClassLike || $node->name === null) {
-                continue;
-            }
-
-            $candidateName = $namespace === ''
-                ? $node->name->toString()
-                : $namespace . '\\' . $node->name->toString();
-
-            if ($candidateName !== $className) {
+            if ($method === null) {
                 continue;
             }
 

@@ -6,7 +6,6 @@ namespace Larastan\Larastan\Support;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Larastan\Larastan\Support\Validation\RuleTreeBuilder;
-use Larastan\Larastan\Support\Validation\RuleTreeNode;
 use Larastan\Larastan\Support\Validation\RuleTreeTypeResolver;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\Type;
@@ -19,9 +18,6 @@ final class FormRequestHelper
 {
     /** @var array<class-string<FormRequest>, array<string, Type>> */
     private array $properties = [];
-
-    /** @var array<class-string<FormRequest>, array<string, RuleTreeNode>|null> */
-    private array $trees = [];
 
     /** @var array<class-string<FormRequest>, true> */
     private array $resolving = [];
@@ -45,11 +41,14 @@ final class FormRequestHelper
             $this->resolving[$className] = true;
 
             try {
-                $tree = $this->getTree($classReflection);
+                $rules = $this->ruleExtractor->extract($classReflection);
 
-                $this->properties[$className] = $tree === null
+                $this->properties[$className] = $rules === null
                     ? []
-                    : array_map($this->treeTypeResolver->resolveTopLevel(...), $tree);
+                    : array_map(
+                        $this->treeTypeResolver->resolveTopLevel(...),
+                        RuleTreeBuilder::build($rules),
+                    );
             } finally {
                 unset($this->resolving[$className]);
             }
@@ -64,20 +63,5 @@ final class FormRequestHelper
         $className = $classReflection->getName();
 
         return $this->properties[$className][$propertyName];
-    }
-
-    /** @return array<string, RuleTreeNode>|null */
-    private function getTree(ClassReflection $classReflection): array|null
-    {
-        /** @var class-string<FormRequest> $className */
-        $className = $classReflection->getName();
-
-        if (! array_key_exists($className, $this->trees)) {
-            $rules = $this->ruleExtractor->extract($classReflection);
-
-            $this->trees[$className] = $rules === null ? null : RuleTreeBuilder::build($rules);
-        }
-
-        return $this->trees[$className];
     }
 }
