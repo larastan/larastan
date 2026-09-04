@@ -22,6 +22,7 @@ use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\TypeUtils;
 
+use function class_exists;
 use function in_array;
 
 /** @internal */
@@ -34,7 +35,7 @@ final class ValidationRuleBuilderDynamicMethodReturnTypeExtension implements Dyn
 
     public function getClass(): string
     {
-        return $this->className;
+        return class_exists($this->className) ? $this->className : self::class;
     }
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
