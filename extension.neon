@@ -190,11 +190,6 @@ services:
     -
         class: Larastan\Larastan\ReturnTypes\ValidationRuleBuilderDynamicMethodReturnTypeExtension
         arguments:
-            className: Illuminate\Validation\Rules\Numeric
-
-    -
-        class: Larastan\Larastan\ReturnTypes\ValidationRuleBuilderDynamicMethodReturnTypeExtension
-        arguments:
             className: Illuminate\Validation\Rules\StringRule
 
     -

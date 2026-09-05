@@ -35,6 +35,27 @@ class In
  */
 class Numeric
 {
+    /**
+     * @return self<__benevolent<int|numeric-string>>
+     */
+    public function digits(int $length);
+
+    /**
+     * @return self<__benevolent<int|numeric-string>>
+     */
+    public function digitsBetween(int $min, int $max);
+
+    /**
+     * @return self<__benevolent<int|numeric-string>>
+     */
+    public function exactly(int $value);
+
+    /**
+     * @template TStrict of bool = false
+     * @param TStrict $strict
+     * @return (TStrict is false ? self<__benevolent<int|numeric-string>> : self<int>)
+     */
+    public function integer(bool $strict = false);
 }
 
 namespace Illuminate\Validation;
@@ -46,4 +67,31 @@ class Rule
      * @return \Illuminate\Validation\Rules\ArrayRule
      */
     public static function array($keys = null);
+
+    /**
+     * @template TEnum of \UnitEnum
+     * @param class-string<TEnum> $type
+     * @return \Illuminate\Validation\Rules\Enum<class-string<TEnum>>
+     */
+    public static function enum($type);
+
+    /**
+     * @return \Illuminate\Validation\Rules\Date<\DateTimeInterface|float|int|string>
+     */
+    public static function date();
+
+    /**
+     * @return \Illuminate\Validation\Rules\Date<float|int|string>
+     */
+    public static function dateTime();
+
+    /**
+     * @return \Illuminate\Validation\Rules\Numeric<__benevolent<float|int|numeric-string>>
+     */
+    public static function numeric();
+
+    /**
+     * @return \Illuminate\Validation\Rules\StringRule<string>
+     */
+    public static function string();
 }

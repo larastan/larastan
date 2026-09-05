@@ -73,8 +73,8 @@ function test(mixed $mixed, array|string $arrayOrString, AdditionalRulesRequest 
     assertType("Illuminate\\Validation\\Rules\\ArrayRule<array{1, 'foo'}>", Rule::array(new RuleValues()));
     assertType('Illuminate\\Validation\\Rules\\ArrayRule<array{}>', Rule::array());
 
-    assertType("Illuminate\\Validation\\Rules\\Enum<'App\\\\Casts\\\\BackedEnumeration'>", Rule::enum(BackedEnumeration::class));
-    assertType("Illuminate\\Validation\\Rules\\Enum<'ValidationRules\\\\UnitEnumeration'>", Rule::enum(UnitEnumeration::class));
+    assertType('Illuminate\\Validation\\Rules\\Enum<class-string<App\\Casts\\BackedEnumeration>>', Rule::enum(BackedEnumeration::class));
+    assertType('Illuminate\\Validation\\Rules\\Enum<class-string<ValidationRules\\UnitEnumeration>>', Rule::enum(UnitEnumeration::class));
 
     assertType('Illuminate\\Validation\\Rules\\Numeric<(float|int|numeric-string)>', Rule::numeric());
     assertType('Illuminate\\Validation\\Rules\\Numeric<(int|numeric-string)>', Rule::numeric()->digits(3));
