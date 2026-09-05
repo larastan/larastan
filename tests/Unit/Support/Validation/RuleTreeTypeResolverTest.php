@@ -51,6 +51,34 @@ class RuleTreeTypeResolverTest extends PHPStanTestCase
                 allowedKeys: [new ConstantStringType('name'), new ConstantStringType('count')],
             ),
             'payload.name' => ValidationRuleFactory::make('required|string'),
+            'alwaysExcluded' => ValidationRuleFactory::make('exclude|string'),
+            'possiblyExcluded' => ValidationRuleFactory::make('exclude_if:kind,skip|integer'),
+            'conditionalBranch' => new ValidationRule(
+                type: new MixedType(true),
+                required: true,
+                anyOfRuleGroups: [
+                    [
+                        ValidationRuleFactory::make('array'),
+                        ValidationRuleFactory::make('string'),
+                    ],
+                ],
+            ),
+            'conditionalExclusion' => new ValidationRule(
+                type: new MixedType(true),
+                required: true,
+                anyOfRuleGroups: [
+                    [
+                        ValidationRuleFactory::make('exclude'),
+                        ValidationRuleFactory::make('string'),
+                    ],
+                ],
+                possiblyExcluded: true,
+            ),
+            'secrets' => ValidationRuleFactory::make('required|array'),
+            'secrets.hidden' => ValidationRuleFactory::make('exclude|string'),
+            'secrets.visible' => ValidationRuleFactory::make('required|string'),
+            'emptyItems' => ValidationRuleFactory::make('required|array'),
+            'emptyItems.*' => ValidationRuleFactory::make('exclude'),
         ]);
 
         $rawProperties = $this->resolver->resolveRawProperties($tree);
@@ -79,10 +107,21 @@ class RuleTreeTypeResolverTest extends PHPStanTestCase
             'array{name: string, count?: mixed}',
             $rawProperties['payload']->describe(VerbosityLevel::precise()),
         );
+        self::assertSame('mixed', $rawProperties['alwaysExcluded']->describe(VerbosityLevel::precise()));
+        self::assertSame('mixed', $rawProperties['possiblyExcluded']->describe(VerbosityLevel::precise()));
+        self::assertSame('array|string', $rawProperties['conditionalBranch']->describe(VerbosityLevel::precise()));
+        self::assertSame('mixed', $rawProperties['conditionalExclusion']->describe(VerbosityLevel::precise()));
+        self::assertSame(
+            'array{hidden?: mixed, visible: string, ...}',
+            $rawProperties['secrets']->describe(VerbosityLevel::precise()),
+        );
+        self::assertSame('array', $rawProperties['emptyItems']->describe(VerbosityLevel::precise()));
         self::assertSame(
             'array{optional?: string, author: array{name: string, nickname?: string}, prefs?: array{theme?: string}, '
                 . 'tags?: array<string>, items?: array<int, string>, users?: array<array{email: string}>, '
-                . 'copied: array{name: string, ...}, profile: array{name: string}, payload: array{name: string}}',
+                . 'copied: array{name: string, ...}, profile: array{name: string}, payload: array{name: string}, '
+                . 'possiblyExcluded?: (int|numeric-string), conditionalBranch: array|string, '
+                . 'conditionalExclusion?: string, secrets: array{visible: string}, emptyItems?: array{}}',
             $this->resolver->resolveValidatedData($tree)->describe(VerbosityLevel::precise()),
         );
     }

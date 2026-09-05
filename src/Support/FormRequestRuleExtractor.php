@@ -340,6 +340,9 @@ final class FormRequestRuleExtractor
             $left->allowedKeys,
             $left->anyOfRuleGroups,
             $left->rejectsNull && $right->rejectsNull,
+            $left->possiblyExcluded || $right->possiblyExcluded,
+            $left->excluded && $right->excluded,
+            $left->degraded || $right->degraded,
         );
     }
 

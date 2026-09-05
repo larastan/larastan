@@ -34,6 +34,10 @@ final class RuleTreeTypeResolver
         $builder = ConstantArrayTypeBuilder::createEmpty();
 
         foreach ($nodes as $name => $node) {
+            if ($node->rule?->excluded === true) {
+                continue;
+            }
+
             $builder->setOffsetValueType(
                 new ConstantStringType($name),
                 $this->resolveValidatedNode($node),
@@ -57,6 +61,10 @@ final class RuleTreeTypeResolver
 
     private function resolveRawNode(RuleTreeNode $node): Type
     {
+        if ($node->rule?->possiblyExcluded === true || $node->rule?->degraded === true) {
+            return new MixedType();
+        }
+
         if ($this->hasConflictingScalarRule($node)) {
             return $this->resolveLeaf($node);
         }
@@ -115,6 +123,10 @@ final class RuleTreeTypeResolver
 
     private function resolveValidatedNode(RuleTreeNode $node): Type
     {
+        if ($node->rule?->degraded === true) {
+            return new MixedType();
+        }
+
         if ($this->hasConflictingScalarRule($node)) {
             return $this->resolveLeaf($node);
         }
@@ -140,6 +152,10 @@ final class RuleTreeTypeResolver
         }
 
         if (isset($node->children[RuleTreeNode::WILDCARD])) {
+            if ($node->children[RuleTreeNode::WILDCARD]->rule?->excluded === true) {
+                return $this->addNullable($node, ConstantArrayTypeBuilder::createEmpty()->getArray());
+            }
+
             return $this->addNullable(
                 $node,
                 $this->resolveWildcardNode($node, $this->resolveValidatedNode(...), false),
@@ -149,6 +165,10 @@ final class RuleTreeTypeResolver
         $builder = ConstantArrayTypeBuilder::createEmpty();
 
         foreach ($node->children as $segment => $child) {
+            if ($child->rule?->excluded === true) {
+                continue;
+            }
+
             $builder->setOffsetValueType(
                 new ConstantStringType($segment),
                 $this->resolveValidatedNode($child),
@@ -201,6 +221,10 @@ final class RuleTreeTypeResolver
      */
     private function isRawGuaranteedPresent(RuleTreeNode $node): bool
     {
+        if ($node->rule?->possiblyExcluded === true || $node->rule?->degraded === true) {
+            return false;
+        }
+
         if ($node->rule?->required === true && ! $node->rule->possiblyUndefined) {
             return true;
         }
@@ -221,6 +245,10 @@ final class RuleTreeTypeResolver
 
     private function isValidatedGuaranteedPresent(RuleTreeNode $node): bool
     {
+        if ($node->rule?->possiblyExcluded === true || $node->rule?->degraded === true) {
+            return false;
+        }
+
         if (
             (
                 $this->hasConflictingScalarRule($node)
@@ -281,7 +309,15 @@ final class RuleTreeTypeResolver
             $alternativeTypes = [];
 
             foreach ($alternatives as $alternative) {
+                if ($alternative->excluded) {
+                    continue;
+                }
+
                 $alternativeTypes[] = $this->ruleType($alternative, true);
+            }
+
+            if ($alternativeTypes === []) {
+                continue;
             }
 
             $type = TypeCombinator::intersect($type, TypeCombinator::union(...$alternativeTypes));
@@ -320,6 +356,10 @@ final class RuleTreeTypeResolver
 
         foreach ($node->rule->allowedKeys ?? [] as $keyType) {
             $child = $node->children[(string) $keyType->getValue()] ?? null;
+
+            if ($child?->rule?->excluded === true) {
+                continue;
+            }
 
             if ($node->children !== [] && $child === null) {
                 continue;

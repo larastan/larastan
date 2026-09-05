@@ -22,6 +22,7 @@ use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\TypeUtils;
+use PHPStan\Type\VerbosityLevel;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use ReflectionMethod;
@@ -185,5 +186,23 @@ class ValidationRuleFactoryTest extends TestCase
         $this->assertSame($nullable, $validationRule->nullable);
         $this->assertSame($possiblyUndefined, $validationRule->possiblyUndefined);
         $this->assertSame($required, $validationRule->required);
+    }
+
+    public function testExclusionRulesPreserveSeparateRawAndValidatedFacts(): void
+    {
+        $excluded = ValidationRuleFactory::make('exclude|string');
+
+        $this->assertTrue($excluded->possiblyExcluded);
+        $this->assertTrue($excluded->excluded);
+
+        $possiblyExcluded = ValidationRuleFactory::make('exclude_if:kind,skip|integer');
+
+        $this->assertTrue($possiblyExcluded->possiblyExcluded);
+        $this->assertFalse($possiblyExcluded->excluded);
+        $this->assertSame('(int|numeric-string)', $possiblyExcluded->type->describe(VerbosityLevel::precise()));
+
+        $this->assertFalse(ValidationRuleFactory::make('accepted_if:kind,yes')->possiblyExcluded);
+        $this->assertTrue(ValidationRuleFactory::make('accepted_if:kind,yes')->type->equals(new MixedType(true)));
+        $this->assertTrue(ValidationRuleFactory::make('declined_if:kind,no')->type->equals(new MixedType(true)));
     }
 }

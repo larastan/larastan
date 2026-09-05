@@ -23,6 +23,9 @@ final readonly class ValidationRule
         public array|null $allowedKeys = null,
         public array $anyOfRuleGroups = [],
         public bool $rejectsNull = false,
+        public bool $possiblyExcluded = false,
+        public bool $excluded = false,
+        public bool $degraded = false,
     ) {
     }
 }
