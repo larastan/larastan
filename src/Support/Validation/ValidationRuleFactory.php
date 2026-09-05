@@ -17,8 +17,10 @@ use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\Validator;
 use PHPStan\Type\Accessory\AccessoryArrayListType;
 use PHPStan\Type\Accessory\AccessoryLowercaseStringType;
+use PHPStan\Type\Accessory\AccessoryNonEmptyStringType;
 use PHPStan\Type\Accessory\AccessoryNumericStringType;
 use PHPStan\Type\Accessory\AccessoryUppercaseStringType;
+use PHPStan\Type\Accessory\NonEmptyArrayType;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\BooleanType;
 use PHPStan\Type\Constant\ConstantBooleanType;
@@ -29,6 +31,7 @@ use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerRangeType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\MixedType;
+use PHPStan\Type\NeverType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
@@ -45,6 +48,8 @@ use function in_array;
 use function is_int;
 use function is_numeric;
 use function is_string;
+use function max;
+use function min;
 use function str_contains;
 use function str_getcsv;
 
@@ -69,8 +74,8 @@ final class ValidationRuleFactory
 
         $type     = null;
         $inValues = null;
-        $min      = null;
-        $max      = null;
+        $minimums = [];
+        $maximums = [];
 
         $constraintType  = null;
         $allowedKeys     = null;
@@ -170,16 +175,32 @@ final class ValidationRuleFactory
             }
 
             if ($rule === 'min') {
-                $min = self::intParameter($parameters, 0);
+                $minimum = self::intParameter($parameters, 0);
+
+                if ($minimum !== null) {
+                    $minimums[] = $minimum;
+                }
             }
 
             if ($rule === 'max') {
-                $max = self::intParameter($parameters, 0);
+                $maximum = self::intParameter($parameters, 0);
+
+                if ($maximum !== null) {
+                    $maximums[] = $maximum;
+                }
             }
 
-            if ($rule === 'between') {
-                $min = self::intParameter($parameters, 0);
-                $max = self::intParameter($parameters, 1);
+            if ($rule === 'between' || $rule === 'size') {
+                $minimum = self::intParameter($parameters, 0);
+                $maximum = $rule === 'size' ? $minimum : self::intParameter($parameters, 1);
+
+                if ($minimum !== null) {
+                    $minimums[] = $minimum;
+                }
+
+                if ($maximum !== null) {
+                    $maximums[] = $maximum;
+                }
             }
 
             $determinedType = self::determineType($rule, $parameters);
@@ -207,10 +228,21 @@ final class ValidationRuleFactory
             }
         }
 
-        // `min`/`max`/`between` constrain the value only for integers (for strings they
-        // constrain the length, for arrays the count).
-        if ($type?->equals(new IntegerType()) && ($min !== null || $max !== null) && ($min === null || $max === null || $min <= $max)) {
-            $type = IntegerRangeType::fromInterval($min, $max);
+        $minimum = $minimums === [] ? null : max($minimums);
+        $maximum = $maximums === [] ? null : min($maximums);
+
+        if ($type !== null && ($minimum !== null || $maximum !== null) && ($minimum === null || $maximum === null || $minimum <= $maximum)) {
+            if ((new IntegerType())->isSuperTypeOf($type)->yes()) {
+                $refinedType = TypeCombinator::intersect($type, IntegerRangeType::fromInterval($minimum, $maximum));
+
+                if (! $refinedType instanceof NeverType) {
+                    $type = $refinedType;
+                }
+            } elseif ($minimum !== null && $minimum > 0 && $type->isString()->yes()) {
+                $type = TypeCombinator::intersect($type, new AccessoryNonEmptyStringType());
+            } elseif ($minimum !== null && $minimum > 0 && $type->isArray()->yes()) {
+                $type = TypeCombinator::intersect($type, new NonEmptyArrayType());
+            }
         }
 
         $type ??= new MixedType(true);

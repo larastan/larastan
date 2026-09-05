@@ -7,7 +7,9 @@ namespace Tests\Unit\Support\Validation;
 use Illuminate\Validation\Validator;
 use Larastan\Larastan\Support\Validation\ValidationRuleFactory;
 use PHPStan\Type\Accessory\AccessoryArrayListType;
+use PHPStan\Type\Accessory\AccessoryNonEmptyStringType;
 use PHPStan\Type\Accessory\AccessoryNumericStringType;
+use PHPStan\Type\Accessory\NonEmptyArrayType;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\BooleanType;
 use PHPStan\Type\Constant\ConstantIntegerType;
@@ -29,18 +31,21 @@ class ValidationRuleFactoryTest extends TestCase
     /** @return iterable<string, array{string|string[], Type, bool, bool, bool}> */
     public static function rulesProvider(): iterable
     {
-        $string        = new StringType();
-        $mixed         = new MixedType(true);
-        $numericString = TypeCombinator::intersect(new StringType(), new AccessoryNumericStringType());
-        $array         = new ArrayType(new MixedType(), new MixedType());
-        $list          = TypeCombinator::intersect(new ArrayType(new IntegerType(), new MixedType()), new AccessoryArrayListType());
-        $looseInteger  = TypeUtils::toBenevolentUnion(TypeCombinator::union(new IntegerType(), $numericString));
-        $numeric       = TypeUtils::toBenevolentUnion(TypeCombinator::union(new FloatType(), new IntegerType(), $numericString));
-        $scalar        = TypeCombinator::union(new FloatType(), new IntegerType(), $string);
-        $strictInteger = (new ReflectionMethod(Validator::class, 'validateInteger'))->getNumberOfParameters() >= 3
+        $string         = new StringType();
+        $mixed          = new MixedType(true);
+        $numericString  = TypeCombinator::intersect(new StringType(), new AccessoryNumericStringType());
+        $array          = new ArrayType(new MixedType(), new MixedType());
+        $list           = TypeCombinator::intersect(new ArrayType(new IntegerType(), new MixedType()), new AccessoryArrayListType());
+        $nonEmptyArray  = TypeCombinator::intersect($array, new NonEmptyArrayType());
+        $nonEmptyList   = TypeCombinator::intersect($list, new NonEmptyArrayType());
+        $nonEmptyString = TypeCombinator::intersect($string, new AccessoryNonEmptyStringType());
+        $looseInteger   = TypeUtils::toBenevolentUnion(TypeCombinator::union(new IntegerType(), $numericString));
+        $numeric        = TypeUtils::toBenevolentUnion(TypeCombinator::union(new FloatType(), new IntegerType(), $numericString));
+        $scalar         = TypeCombinator::union(new FloatType(), new IntegerType(), $string);
+        $strictInteger  = (new ReflectionMethod(Validator::class, 'validateInteger'))->getNumberOfParameters() >= 3
             ? new IntegerType()
             : $looseInteger;
-        $strictBoolean = (new ReflectionMethod(Validator::class, 'validateBoolean'))->getNumberOfParameters() >= 3
+        $strictBoolean  = (new ReflectionMethod(Validator::class, 'validateBoolean'))->getNumberOfParameters() >= 3
             ? new BooleanType()
             : TypeCombinator::union(
                 new BooleanType(),
@@ -49,7 +54,7 @@ class ValidationRuleFactoryTest extends TestCase
                 new ConstantStringType('1'),
                 new ConstantStringType('0'),
             );
-        $strictNumeric = (new ReflectionMethod(Validator::class, 'validateNumeric'))->getNumberOfParameters() >= 3
+        $strictNumeric  = (new ReflectionMethod(Validator::class, 'validateNumeric'))->getNumberOfParameters() >= 3
             ? TypeCombinator::union(new FloatType(), new IntegerType())
             : $numeric;
 
@@ -107,7 +112,7 @@ class ValidationRuleFactoryTest extends TestCase
         yield 'same preserves a string type' => ['required|string|same:other', $string, false, false, true];
         yield 'unknown rule preserves a string type' => ['required|string|custom', $string, false, false, true];
         yield 'between does not establish a type' => ['required|between:1,20', $mixed, false, false, true];
-        yield 'between preserves a string type' => ['required|string|between:1,20', $string, false, false, true];
+        yield 'between refines a string type' => ['required|string|between:1,20', $nonEmptyString, false, false, true];
         yield 'between preserves a numeric type' => ['required|numeric|between:1,20', $numeric, false, false, true];
         yield 'integer with min and max' => [['sometimes', 'integer', 'min:1', 'max:20'], $looseInteger, false, true, false];
         yield 'integer with min only' => ['required|integer|min:1', $looseInteger, false, false, true];
@@ -122,10 +127,51 @@ class ValidationRuleFactoryTest extends TestCase
             false,
         ];
 
-        yield 'string min max is length not range' => ['required|string|min:1|max:20', $string, false, false, true];
+        yield 'strict integer with repeated bounds is order independent' => [
+            ['min:10', 'between:5,15', 'max:20', 'integer:strict'],
+            $strictInteger->equals(new IntegerType()) ? IntegerRangeType::fromInterval(10, 15) : $looseInteger,
+            false,
+            false,
+            false,
+        ];
+
+        yield 'strict integer size' => [
+            'size:3|integer:strict',
+            $strictInteger->equals(new IntegerType()) ? new ConstantIntegerType(3) : $looseInteger,
+            false,
+            false,
+            false,
+        ];
+
+        yield 'strict integer in values are refined by bounds' => [
+            'integer:strict|in:1,2,3|min:2',
+            $strictInteger->equals(new IntegerType())
+                ? TypeCombinator::union(new ConstantIntegerType(2), new ConstantIntegerType(3))
+                : $looseInteger,
+            false,
+            false,
+            false,
+        ];
+
+        yield 'string min max refines emptiness, not a numeric range' => ['required|string|min:1|max:20', $nonEmptyString, false, false, true];
+        yield 'string positive minimum is non-empty' => ['min:1|string', $nonEmptyString, false, false, false];
+        yield 'array positive minimum is non-empty' => ['array|min:1', $nonEmptyArray, false, false, false];
+        yield 'list positive size is non-empty' => ['size:2|list', $nonEmptyList, false, false, false];
+        yield 'size without a base type does not establish a type' => ['size:2', $mixed, false, false, false];
+        yield 'comparison without a base type does not establish a type' => ['gt:other', $mixed, false, false, false];
+        yield 'comparison preserves a proven array type' => ['array|gte:other', $array, false, false, false];
+        yield 'numeric size keeps every accepted representation' => ['numeric|size:3', $numeric, false, false, false];
         yield 'integer with non-numeric min' => ['required|integer|min:', $looseInteger, false, false, true];
         yield 'integer with negative min' => ['required|integer|min:-5|max:5', $looseInteger, false, false, true];
         yield 'integer with min greater than max' => ['required|integer|min:20|max:1', $looseInteger, false, false, true];
+        yield 'contradictory strict integer bounds preserve the base type' => [
+            'integer:strict|min:20|max:1',
+            $strictInteger,
+            false,
+            false,
+            false,
+        ];
+
         yield 'in wins over min max' => ['required|integer|in:0,1|min:0|max:1', $looseInteger, false, false, true];
     }
 
