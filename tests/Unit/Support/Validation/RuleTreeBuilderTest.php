@@ -115,6 +115,17 @@ class RuleTreeBuilderTest extends TestCase
         $this->assertSame([], $roots['users']->children);
     }
 
+    public function testUnsupportedSegmentDegradesOnlyItsNearestRepresentableParent(): void
+    {
+        $roots = RuleTreeBuilder::build([
+            'metadata.name' => ValidationRuleFactory::make('required|string'),
+            'metadata.items.0' => ValidationRuleFactory::make('string'),
+        ]);
+
+        $this->assertFalse($roots['metadata']->degraded);
+        $this->assertTrue($roots['metadata']->children['items']->degraded);
+    }
+
     public function testEscapedDotStaysFlat(): void
     {
         $roots = RuleTreeBuilder::build([
