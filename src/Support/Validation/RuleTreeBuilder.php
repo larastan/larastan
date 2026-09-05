@@ -38,15 +38,15 @@ final class RuleTreeBuilder
             $name = array_shift($segments);
             $root = $roots[$name] ??= new RuleTreeNode();
 
-            if (self::containsUnsupportedSegment($segments)) {
-                $root->degraded = true;
-
-                continue;
-            }
-
             $node = $root;
 
             foreach ($segments as $segment) {
+                if ($segment === '' || ctype_digit($segment)) {
+                    $node->degraded = true;
+
+                    continue 2;
+                }
+
                 $node->children[$segment] ??= new RuleTreeNode();
 
                 if (isset($node->children[RuleTreeNode::WILDCARD]) && count($node->children) > 1) {
@@ -60,17 +60,5 @@ final class RuleTreeBuilder
         }
 
         return $roots;
-    }
-
-    /** @param list<string> $segments */
-    private static function containsUnsupportedSegment(array $segments): bool
-    {
-        foreach ($segments as $segment) {
-            if ($segment === '' || ctype_digit($segment)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }

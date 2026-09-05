@@ -15,6 +15,7 @@ use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\TypeUtils;
 
+use function array_map;
 use function in_array;
 
 /** @internal */
@@ -24,75 +25,91 @@ final class RuleTreeTypeResolver
     {
     }
 
-    public function resolveTopLevel(RuleTreeNode $node): Type
+    /**
+     * @param array<string, RuleTreeNode> $nodes
+     *
+     * @return array<string, Type>
+     */
+    public function resolveRawProperties(array $nodes): array
     {
-        if ($node->children === [] && ! $node->degraded && $node->rule?->allowedKeys === null) {
-            $type = $this->leafType($node);
+        return array_map($this->resolveRawTopLevel(...), $nodes);
+    }
 
-            if (
-                $node->rule !== null
-                && (($node->rule->nullable && ! $node->rule->rejectsNull) || $node->rule->possiblyUndefined)
-            ) {
-                $type = TypeCombinator::addNull($type);
-            }
+    /** @param array<string, RuleTreeNode> $nodes */
+    public function resolveValidatedData(array $nodes): Type
+    {
+        $builder = ConstantArrayTypeBuilder::createEmpty();
 
-            return $type;
+        foreach ($nodes as $name => $node) {
+            $builder->setOffsetValueType(
+                new ConstantStringType($name),
+                $this->resolveValidatedNode($node),
+                ! $this->isValidatedGuaranteedPresent($node),
+            );
         }
 
-        $type = $this->resolveNode($node);
+        return $builder->getArray();
+    }
 
-        if (! $this->isGuaranteedPresent($node)) {
+    private function resolveRawTopLevel(RuleTreeNode $node): Type
+    {
+        $type = $this->resolveRawNode($node);
+
+        if (! $this->isRawGuaranteedPresent($node)) {
             $type = TypeCombinator::addNull($type);
         }
 
         return $type;
     }
 
-    private function resolveNode(RuleTreeNode $node): Type
+    private function resolveRawNode(RuleTreeNode $node): Type
     {
-        if ($node->degraded) {
-            return new ArrayType(new MixedType(), new MixedType());
+        if ($this->hasConflictingScalarRule($node)) {
+            return $this->resolveLeaf($node);
         }
 
         if ($node->rule?->allowedKeys !== null) {
-            $type = $this->allowedKeysType($node);
-        } elseif ($node->children === [] || $this->hasConflictingScalarRule($node)) {
-            $type = $this->leafType($node);
-        } elseif (isset($node->children[RuleTreeNode::WILDCARD])) {
-            // The builder degrades levels mixing wildcard and named segments, so the wildcard is the only child here.
-            $itemType = $this->resolveNode($node->children[RuleTreeNode::WILDCARD]);
-            $type     = new ArrayType(
-                $node->rule?->type === 'list' ? new IntegerType() : new MixedType(),
-                $itemType,
-            );
+            return $this->resolveRawAllowedKeys($node);
+        }
 
-            if ($node->rule?->type === 'list') {
-                $type = TypeCombinator::intersect($type, new AccessoryArrayListType());
-            }
+        if ($node->degraded) {
+            return $this->hasExplicitContainerRule($node) ? $this->resolveLeaf($node) : new MixedType();
+        }
+
+        if ($node->children === []) {
+            return $this->resolveLeaf($node);
+        }
+
+        if (
+            ! $this->hasExplicitContainerRule($node)
+            && ! $this->hasContainerAlternative($node)
+            && ! $this->hasRawGuaranteedNamedDescendant($node)
+        ) {
+            return $this->resolveLeaf($node);
+        }
+
+        if (isset($node->children[RuleTreeNode::WILDCARD])) {
+            $type = $this->resolveWildcardNode($node, $this->resolveRawNode(...), true);
         } else {
             $builder = ConstantArrayTypeBuilder::createEmpty();
 
             foreach ($node->children as $segment => $child) {
                 $builder->setOffsetValueType(
                     new ConstantStringType($segment),
-                    $this->resolveNode($child),
-                    $this->isOptionalKey($child),
+                    $this->resolveRawNode($child),
+                    ! $this->isRawGuaranteedPresent($child),
                 );
             }
 
+            $builder->makeUnsealed(new MixedType(), new MixedType());
             $type = $builder->getArray();
         }
 
-        if (
-            $node->children !== []
-            && $node->rule !== null
-            && $node->rule->anyOfRuleGroups !== []
-            && ! $this->hasConflictingScalarRule($node)
-        ) {
+        if ($node->rule !== null && $node->rule->anyOfRuleGroups !== []) {
             $ruleType = $this->leafType($node);
             $type     = TypeCombinator::intersect($type, $ruleType);
 
-            if (! $this->hasGuaranteedNamedDescendant($node)) {
+            if (! $this->hasRawGuaranteedNamedDescendant($node)) {
                 $type = TypeCombinator::union(
                     $type,
                     TypeCombinator::remove($ruleType, new ArrayType(new MixedType(), new MixedType())),
@@ -100,11 +117,53 @@ final class RuleTreeTypeResolver
             }
         }
 
-        if ($node->rule?->nullable === true && ! $node->rule->rejectsNull) {
-            $type = TypeCombinator::addNull($type);
+        return $this->addNullable($node, $type);
+    }
+
+    private function resolveValidatedNode(RuleTreeNode $node): Type
+    {
+        if ($this->hasConflictingScalarRule($node)) {
+            return $this->resolveLeaf($node);
         }
 
-        return $type;
+        if ($node->rule?->allowedKeys !== null) {
+            return $this->resolveValidatedAllowedKeys($node);
+        }
+
+        if ($this->isValidatedParentCopiedWhole($node)) {
+            return $node->degraded ? $this->resolveLeaf($node) : $this->resolveRawNode($node);
+        }
+
+        if ($node->degraded) {
+            $type = $this->hasExplicitContainerRule($node)
+                ? $this->leafType($node)
+                : new ArrayType(new MixedType(), new MixedType());
+
+            return $this->addNullable($node, $type);
+        }
+
+        if ($node->children === []) {
+            return $this->resolveLeaf($node);
+        }
+
+        if (isset($node->children[RuleTreeNode::WILDCARD])) {
+            return $this->addNullable(
+                $node,
+                $this->resolveWildcardNode($node, $this->resolveValidatedNode(...), false),
+            );
+        }
+
+        $builder = ConstantArrayTypeBuilder::createEmpty();
+
+        foreach ($node->children as $segment => $child) {
+            $builder->setOffsetValueType(
+                new ConstantStringType($segment),
+                $this->resolveValidatedNode($child),
+                ! $this->isValidatedGuaranteedPresent($child),
+            );
+        }
+
+        return $this->addNullable($node, $builder->getArray());
     }
 
     /**
@@ -121,40 +180,91 @@ final class RuleTreeTypeResolver
         return ! in_array($node->rule->type, ['array', 'list', 'mixed'], true);
     }
 
-    private function isOptionalKey(RuleTreeNode $node): bool
+    private function hasExplicitContainerRule(RuleTreeNode $node): bool
     {
-        if ($node->rule?->possiblyUndefined === true) {
-            return true;
-        }
+        return in_array($node->rule?->type, ['array', 'list'], true);
+    }
 
-        return ! $this->isGuaranteedPresent($node);
+    private function hasContainerAlternative(RuleTreeNode $node): bool
+    {
+        return $node->rule !== null
+            && $node->rule->anyOfRuleGroups !== []
+            && ! $this->leafType($node)->isArray()->no();
+    }
+
+    private function isValidatedParentCopiedWhole(RuleTreeNode $node): bool
+    {
+        return $node->rule !== null
+            && ! $this->hasExplicitContainerRule($node)
+            && ($node->children !== [] || $node->degraded);
     }
 
     /**
-     * A node is guaranteed to be present in the validated input when its own rules
+     * A node is guaranteed to be present in the raw input when its own rules
      * contain a bare `required`, or when any descendant reachable without crossing
      * a wildcard is guaranteed present: `author.name => required` fails validation
      * when `author` is absent, while `users.*.email => required` passes when
      * `users` is absent (the wildcard expands to zero rules).
      */
-    private function isGuaranteedPresent(RuleTreeNode $node): bool
+    private function isRawGuaranteedPresent(RuleTreeNode $node): bool
     {
         if ($node->rule?->required === true && ! $node->rule->possiblyUndefined) {
             return true;
         }
 
-        return $this->hasGuaranteedNamedDescendant($node);
+        return $this->hasRawGuaranteedNamedDescendant($node);
     }
 
-    private function hasGuaranteedNamedDescendant(RuleTreeNode $node): bool
+    private function hasRawGuaranteedNamedDescendant(RuleTreeNode $node): bool
     {
         foreach ($node->children as $segment => $child) {
-            if ($segment !== RuleTreeNode::WILDCARD && $this->isGuaranteedPresent($child)) {
+            if ($segment !== RuleTreeNode::WILDCARD && $this->isRawGuaranteedPresent($child)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    private function isValidatedGuaranteedPresent(RuleTreeNode $node): bool
+    {
+        if (
+            (
+                $this->hasConflictingScalarRule($node)
+                || $this->isValidatedParentCopiedWhole($node)
+                || ($node->children === [] && ! $node->degraded)
+            )
+            && $node->rule?->required === true
+            && ! $node->rule->possiblyUndefined
+        ) {
+            return true;
+        }
+
+        foreach ($node->children as $segment => $child) {
+            if ($segment !== RuleTreeNode::WILDCARD && $this->isValidatedGuaranteedPresent($child)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function resolveLeaf(RuleTreeNode $node): Type
+    {
+        return $this->addNullable($node, $this->leafType($node));
+    }
+
+    private function addNullable(RuleTreeNode $node, Type $type): Type
+    {
+        if (
+            $node->rule?->nullable === true
+            && ! $node->rule->rejectsNull
+            && ! $this->hasRawGuaranteedNamedDescendant($node)
+        ) {
+            return TypeCombinator::addNull($type);
+        }
+
+        return $type;
     }
 
     private function leafType(RuleTreeNode $node): Type
@@ -195,7 +305,7 @@ final class RuleTreeTypeResolver
         return $type;
     }
 
-    private function allowedKeysType(RuleTreeNode $node): Type
+    private function resolveRawAllowedKeys(RuleTreeNode $node): Type
     {
         $builder = ConstantArrayTypeBuilder::createEmpty();
 
@@ -205,11 +315,51 @@ final class RuleTreeTypeResolver
 
             $builder->setOffsetValueType(
                 $keyType,
-                $child === null ? new MixedType() : $this->resolveNode($child),
-                $child === null || $this->isOptionalKey($child),
+                $child === null ? new MixedType() : $this->resolveRawNode($child),
+                $child === null || ! $this->isRawGuaranteedPresent($child),
             );
         }
 
-        return $builder->getArray();
+        return $this->addNullable($node, $builder->getArray());
+    }
+
+    private function resolveValidatedAllowedKeys(RuleTreeNode $node): Type
+    {
+        $builder = ConstantArrayTypeBuilder::createEmpty();
+
+        foreach ($node->rule->allowedKeys ?? [] as $keyType) {
+            $child = $node->children[(string) $keyType->getValue()] ?? null;
+
+            if ($node->children !== [] && $child === null) {
+                continue;
+            }
+
+            $builder->setOffsetValueType(
+                $keyType,
+                $child === null ? new MixedType() : $this->resolveValidatedNode($child),
+                $child === null || ! $this->isValidatedGuaranteedPresent($child),
+            );
+        }
+
+        return $this->addNullable($node, $builder->getArray());
+    }
+
+    /** @param callable(RuleTreeNode): Type $resolveItem */
+    private function resolveWildcardNode(RuleTreeNode $node, callable $resolveItem, bool $raw): Type
+    {
+        $wildcard = $node->children[RuleTreeNode::WILDCARD];
+        $type     = new ArrayType(
+            $node->rule?->type === 'list' ? new IntegerType() : new MixedType(),
+            $resolveItem($wildcard),
+        );
+
+        if (
+            $node->rule?->type === 'list'
+            && ($raw || $this->isValidatedGuaranteedPresent($wildcard))
+        ) {
+            return TypeCombinator::intersect($type, new AccessoryArrayListType());
+        }
+
+        return $type;
     }
 }

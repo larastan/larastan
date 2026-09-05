@@ -46,6 +46,7 @@ class FooRequest extends FormRequest
 
         return [
             'name' => 'required|string',
+            'optionalName' => 'string',
             'age' => ['required', 'integer', 'min:' . $limit, $rule],
             'newsletter' => 'sometimes|accepted',
             'type' => 'required|in:date,rating',
@@ -78,6 +79,10 @@ class FooRequest extends FormRequest
             'accounts.*.id' => 'required|integer',
             'conflicted' => 'required|string',
             'conflicted.*.x' => 'integer',
+            'version' => 'required|string',
+            'version.0' => 'string',
+            'metadata.name' => 'required|string',
+            'metadata.items.0' => 'string',
             'shipping.*.origin' => 'nullable|array',
             'shipping.*.origin.zip' => 'required|string',
             'v1\.0' => 'required|string',
