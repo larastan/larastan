@@ -144,35 +144,31 @@ final class ValidationRuleFactory
                 continue;
             }
 
-            if (self::isUtility($rule)) {
-                if ($rule === 'nullable') {
-                    $nullable = true;
-                }
+            if ($rule === 'nullable') {
+                $nullable = true;
+            }
 
-                if ($rule === 'sometimes') {
-                    $possiblyUndefined = true;
-                }
+            if ($rule === 'sometimes') {
+                $possiblyUndefined = true;
+            }
 
-                // `present` guarantees the key exists just like `required`; it only
-                // additionally allows the value to be empty, which doesn't affect the type.
-                if ($rule === 'required') {
-                    $rejectsNull = true;
-                    $required    = true;
-                }
+            // `present` guarantees the key exists just like `required`; it only
+            // additionally allows the value to be empty, which doesn't affect the type.
+            if ($rule === 'required') {
+                $rejectsNull = true;
+                $required    = true;
+            }
 
-                if ($rule === 'present') {
-                    $required = true;
-                }
+            if ($rule === 'present') {
+                $required = true;
+            }
 
-                if ($rule === 'min') {
-                    $min = self::intParameter($parameters, 0);
-                }
+            if ($rule === 'min') {
+                $min = self::intParameter($parameters, 0);
+            }
 
-                if ($rule === 'max') {
-                    $max = self::intParameter($parameters, 0);
-                }
-
-                continue;
+            if ($rule === 'max') {
+                $max = self::intParameter($parameters, 0);
             }
 
             if ($rule === 'between') {
@@ -226,7 +222,6 @@ final class ValidationRuleFactory
         }
 
         return new ValidationRule(
-            implode('|', $rules),
             $type,
             $nullable,
             $possiblyUndefined,
@@ -436,50 +431,6 @@ final class ValidationRuleFactory
         return count($values) === 1
             ? new ConstantStringType((string) $values[0])
             : null;
-    }
-
-    private static function isUtility(string $rule): bool
-    {
-        return in_array($rule, [
-            'anyOf',
-            'bail',
-            'exclude',
-            'exclude_if',
-            'exclude_unless',
-            'exclude_with',
-            'exclude_without',
-            'filled',
-            'max',
-            'min',
-            'missing',
-            'missing_if',
-            'missing_unless',
-            'missing_with',
-            'missing_with_all',
-            'nullable',
-            'present',
-            'present_if',
-            'present_unless',
-            'present_with',
-            'present_with_all',
-            'prohibited',
-            'prohibited_if',
-            'prohibited_if_accepted',
-            'prohibited_if_declined',
-            'prohibited_unless',
-            'prohibits',
-            'required',
-            'required_if',
-            'required_if_accepted',
-            'required_if_declined',
-            'required_unless',
-            'required_with',
-            'required_with_all',
-            'required_without',
-            'required_without_all',
-            'required_array_keys',
-            'sometimes',
-        ], true);
     }
 
     /** @param list<int|string> $parameters */

@@ -143,17 +143,7 @@ final class RuleTreeTypeResolver
             return true;
         }
 
-        foreach ($node->children as $segment => $child) {
-            if ($segment === RuleTreeNode::WILDCARD) {
-                continue;
-            }
-
-            if ($this->isGuaranteedPresent($child)) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->hasGuaranteedNamedDescendant($node);
     }
 
     private function hasGuaranteedNamedDescendant(RuleTreeNode $node): bool
