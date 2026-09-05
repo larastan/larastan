@@ -8,6 +8,7 @@ use App\Http\Requests\FooRequest;
 use App\Http\Requests\RequestPriority;
 use App\Http\Requests\RequestStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 use function PHPStan\Testing\assertType;
 
@@ -34,7 +35,44 @@ class VariableRulesRequest extends FormRequest
     }
 }
 
-function test(FormRequest $request, FooRequest $fooRequest, VariableRulesRequest $variableRulesRequest): void
+class ConditionalRulesRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        $condition = config('app.rule.condition');
+
+        return [
+            'possiblyExcluded' => 'exclude_if:kind,skip|integer',
+            'conditionallyAccepted' => 'accepted_if:kind,accept',
+            'conditionallyDeclined' => 'declined_if:kind,decline',
+            'whenValue' => ['required', Rule::when($condition, 'array', 'string')],
+            'unlessValue' => [
+                'required',
+                Rule::unless($condition, static fn (): string => 'array', static fn (): string => 'string'),
+            ],
+            'exactWhenValue' => [
+                'required',
+                Rule::when(defaultRules: 'array', rules: 'string', condition: true),
+            ],
+            'conditionallyExcluded' => ['required', Rule::when($condition, 'exclude', 'string')],
+            'alwaysRequired' => [Rule::requiredIf(true), 'string'],
+            'alwaysRequiredUnless' => [Rule::requiredUnless(false), 'string'],
+            'maybeRequired' => [Rule::requiredIf(static fn (): bool => true), 'string'],
+            'neverExcluded' => ['required', Rule::excludeIf(false), 'string'],
+            'neverExcludedUnless' => ['required', Rule::excludeUnless(true), 'string'],
+            'maybeExcluded' => ['required', Rule::excludeIf(static fn (): bool => false), 'string'],
+            'alwaysExcluded' => ['required', Rule::excludeIf(true), 'string'],
+            'alwaysExcludedUnless' => ['required', Rule::excludeUnless(false), 'string'],
+        ];
+    }
+}
+
+function test(
+    FormRequest $request,
+    FooRequest $fooRequest,
+    VariableRulesRequest $variableRulesRequest,
+    ConditionalRulesRequest $conditionalRulesRequest,
+): void
 {
     assertType('Illuminate\Support\ValidatedInput', $request->safe());
     assertType('array{key: mixed}', $request->safe(['key']));
@@ -76,6 +114,21 @@ function test(FormRequest $request, FooRequest $fooRequest, VariableRulesRequest
     assertType('(int|numeric-string)', $variableRulesRequest->quantity);
     assertType('(int|numeric-string)', $variableRulesRequest->maximum);
     assertType('(int|numeric-string)', $variableRulesRequest->global);
+    assertType('mixed', $conditionalRulesRequest->possiblyExcluded);
+    assertType('mixed', $conditionalRulesRequest->conditionallyAccepted);
+    assertType('mixed', $conditionalRulesRequest->conditionallyDeclined);
+    assertType('array|string', $conditionalRulesRequest->whenValue);
+    assertType('array|string', $conditionalRulesRequest->unlessValue);
+    assertType('string', $conditionalRulesRequest->exactWhenValue);
+    assertType('mixed', $conditionalRulesRequest->conditionallyExcluded);
+    assertType('string', $conditionalRulesRequest->alwaysRequired);
+    assertType('string', $conditionalRulesRequest->alwaysRequiredUnless);
+    assertType('string|null', $conditionalRulesRequest->maybeRequired);
+    assertType('string', $conditionalRulesRequest->neverExcluded);
+    assertType('string', $conditionalRulesRequest->neverExcludedUnless);
+    assertType('mixed', $conditionalRulesRequest->maybeExcluded);
+    assertType('mixed', $conditionalRulesRequest->alwaysExcluded);
+    assertType('mixed', $conditionalRulesRequest->alwaysExcludedUnless);
     assertType("'draft'|'published'", $fooRequest->state);
     assertType("'draft'|'published'", $fooRequest->status);
     assertType("'draft'|'published'", $fooRequest->stringStatus);

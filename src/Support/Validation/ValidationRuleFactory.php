@@ -45,6 +45,7 @@ use function explode;
 use function filter_var;
 use function implode;
 use function in_array;
+use function is_bool;
 use function is_int;
 use function is_numeric;
 use function is_string;
@@ -64,6 +65,8 @@ final class ValidationRuleFactory
 
     private const STRING_RULE = 'Illuminate\\Validation\\Rules\\StringRule';
 
+    private const CONDITIONAL_RULES = 'Illuminate\\Validation\\ConditionalRules';
+
     /** @param string|array<string|Type> $rules */
     public static function make(string|array $rules): ValidationRule
     {
@@ -71,6 +74,9 @@ final class ValidationRuleFactory
         $nullable          = false;
         $required          = false;
         $rejectsNull       = false;
+        $possiblyExcluded  = false;
+        $excluded          = false;
+        $degraded          = false;
 
         $type     = null;
         $inValues = null;
@@ -88,7 +94,33 @@ final class ValidationRuleFactory
         $ruleObjects = array_filter($rules, static fn ($rule) => ! is_string($rule));
 
         foreach ($ruleObjects as $rule) {
-            if ((new ObjectType(self::ANY_OF))->isSuperTypeOf($rule)->yes()) {
+            if ((new ObjectType(self::CONDITIONAL_RULES))->isSuperTypeOf($rule)->yes()) {
+                $alternatives = self::conditionalAlternatives($rule);
+
+                if ($alternatives === null) {
+                    $possiblyExcluded = true;
+                    $degraded         = true;
+
+                    continue;
+                }
+
+                $anyOfRuleGroups[] = $alternatives;
+                $allRequired       = true;
+                $allExcluded       = true;
+
+                foreach ($alternatives as $alternative) {
+                    $allRequired       = $allRequired
+                        && $alternative->required
+                        && ! $alternative->possiblyUndefined
+                        && ! $alternative->possiblyExcluded;
+                    $allExcluded       = $allExcluded && $alternative->excluded;
+                    $possiblyUndefined = $possiblyUndefined || $alternative->possiblyUndefined;
+                    $possiblyExcluded  = $possiblyExcluded || $alternative->possiblyExcluded;
+                }
+
+                $required = $required || $allRequired;
+                $excluded = $excluded || $allExcluded;
+            } elseif ((new ObjectType(self::ANY_OF))->isSuperTypeOf($rule)->yes()) {
                 $alternatives = self::anyOfAlternatives($rule->getTemplateType(self::ANY_OF, 'TRules'));
 
                 if ($alternatives !== null) {
@@ -136,6 +168,18 @@ final class ValidationRuleFactory
                 $type = new ObjectType(UploadedFile::class);
             } elseif ((new ObjectType(Password::class))->isSuperTypeOf($rule)->yes()) {
                 $type = new StringType();
+            } elseif ((new ObjectType('Illuminate\\Validation\\Rules\\RequiredIf'))->isSuperTypeOf($rule)->yes()) {
+                $required = $required || self::conditionalObjectApplies($rule, 'Illuminate\\Validation\\Rules\\RequiredIf') === true;
+            } elseif ((new ObjectType('Illuminate\\Validation\\Rules\\RequiredUnless'))->isSuperTypeOf($rule)->yes()) {
+                $required = $required || self::conditionalObjectApplies($rule, 'Illuminate\\Validation\\Rules\\RequiredUnless', true) === true;
+            } elseif ((new ObjectType('Illuminate\\Validation\\Rules\\ExcludeIf'))->isSuperTypeOf($rule)->yes()) {
+                $applies          = self::conditionalObjectApplies($rule, 'Illuminate\\Validation\\Rules\\ExcludeIf');
+                $possiblyExcluded = $possiblyExcluded || $applies !== false;
+                $excluded         = $excluded || $applies === true;
+            } elseif ((new ObjectType('Illuminate\\Validation\\Rules\\ExcludeUnless'))->isSuperTypeOf($rule)->yes()) {
+                $applies          = self::conditionalObjectApplies($rule, 'Illuminate\\Validation\\Rules\\ExcludeUnless', true);
+                $possiblyExcluded = $possiblyExcluded || $applies !== false;
+                $excluded         = $excluded || $applies === true;
             }
         }
 
@@ -157,6 +201,15 @@ final class ValidationRuleFactory
 
             if ($rule === 'nullable') {
                 $nullable = true;
+            }
+
+            if ($rule === 'exclude') {
+                $possiblyExcluded = true;
+                $excluded         = true;
+            }
+
+            if (in_array($rule, ['exclude_if', 'exclude_unless', 'exclude_with', 'exclude_without'], true)) {
+                $possiblyExcluded = true;
             }
 
             if ($rule === 'sometimes') {
@@ -272,7 +325,57 @@ final class ValidationRuleFactory
             $allowedKeys,
             $anyOfRuleGroups,
             $rejectsNull,
+            $possiblyExcluded,
+            $excluded,
+            $degraded,
         );
+    }
+
+    /** @return list<ValidationRule>|null */
+    private static function conditionalAlternatives(Type $rule): array|null
+    {
+        $condition = self::constantBoolean($rule->getTemplateType(self::CONDITIONAL_RULES, 'TCondition'));
+        $types     = match ($condition) {
+            true => [$rule->getTemplateType(self::CONDITIONAL_RULES, 'TRules')],
+            false => [$rule->getTemplateType(self::CONDITIONAL_RULES, 'TDefaultRules')],
+            null => [
+                $rule->getTemplateType(self::CONDITIONAL_RULES, 'TRules'),
+                $rule->getTemplateType(self::CONDITIONAL_RULES, 'TDefaultRules'),
+            ],
+        };
+
+        $alternatives = [];
+
+        foreach ($types as $type) {
+            $alternative = self::fromType($type);
+
+            if ($alternative === null) {
+                return null;
+            }
+
+            $alternatives[] = $alternative;
+        }
+
+        return $alternatives;
+    }
+
+    /** @param class-string $class */
+    private static function conditionalObjectApplies(Type $rule, string $class, bool $unless = false): bool|null
+    {
+        $condition = self::constantBoolean($rule->getTemplateType($class, 'TCondition'));
+
+        return $condition === null || ! $unless ? $condition : ! $condition;
+    }
+
+    private static function constantBoolean(Type $type): bool|null
+    {
+        if ($type->isNull()->yes()) {
+            return false;
+        }
+
+        $values = $type->getConstantScalarValues();
+
+        return count($values) === 1 && is_bool($values[0]) ? $values[0] : null;
     }
 
     /** @return list<ValidationRule>|null */

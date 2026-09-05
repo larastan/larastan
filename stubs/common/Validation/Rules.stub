@@ -2,6 +2,26 @@
 
 namespace Illuminate\Validation\Rules;
 
+/** @template TCondition = mixed */
+class ExcludeIf
+{
+}
+
+/** @template TCondition = mixed */
+class ExcludeUnless
+{
+}
+
+/** @template TCondition = mixed */
+class RequiredIf
+{
+}
+
+/** @template TCondition = mixed */
+class RequiredUnless
+{
+}
+
 /**
  * @template-covariant TKeys of array = array
  */
@@ -59,6 +79,15 @@ class Numeric
 }
 
 namespace Illuminate\Validation;
+
+/**
+ * @template TCondition = mixed
+ * @template TRules = mixed
+ * @template TDefaultRules = mixed
+ */
+class ConditionalRules
+{
+}
 
 class Rule
 {

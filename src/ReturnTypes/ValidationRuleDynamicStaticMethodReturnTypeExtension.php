@@ -23,6 +23,7 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 
 use function in_array;
+use function ucfirst;
 
 /** @internal */
 final class ValidationRuleDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
@@ -31,6 +32,8 @@ final class ValidationRuleDynamicStaticMethodReturnTypeExtension implements Dyna
 
     private const ARRAY_KEYS = 'Illuminate\\Validation\\Rules\\ArrayKeys';
 
+    private const CONDITIONAL_RULES = 'Illuminate\\Validation\\ConditionalRules';
+
     public function getClass(): string
     {
         return Rule::class;
@@ -38,7 +41,18 @@ final class ValidationRuleDynamicStaticMethodReturnTypeExtension implements Dyna
 
     public function isStaticMethodSupported(MethodReflection $methodReflection): bool
     {
-        return in_array($methodReflection->getName(), ['anyOf', 'array', 'arrayKeys', 'in'], true);
+        return in_array($methodReflection->getName(), [
+            'anyOf',
+            'array',
+            'arrayKeys',
+            'excludeIf',
+            'excludeUnless',
+            'in',
+            'requiredIf',
+            'requiredUnless',
+            'unless',
+            'when',
+        ], true);
     }
 
     public function getTypeFromStaticMethodCall(
@@ -46,12 +60,71 @@ final class ValidationRuleDynamicStaticMethodReturnTypeExtension implements Dyna
         StaticCall $methodCall,
         Scope $scope,
     ): Type {
-        return match ($methodReflection->getName()) {
+        $method = $methodReflection->getName();
+
+        return match ($method) {
             'anyOf' => new GenericObjectType(self::ANY_OF, [$this->anyOfArgumentType($methodCall->getArgs(), $scope)]),
             'array' => new GenericObjectType(ArrayRule::class, [$this->arrayArgumentType($methodCall->getArgs(), $scope)]),
             'arrayKeys' => new GenericObjectType(self::ARRAY_KEYS, [$this->arrayArgumentType($methodCall->getArgs(), $scope)]),
+            'when', 'unless' => $this->conditionalRulesType($methodCall->getArgs(), $scope, $method === 'unless'),
+            'excludeIf', 'excludeUnless', 'requiredIf', 'requiredUnless' => new GenericObjectType(
+                'Illuminate\\Validation\\Rules\\' . ucfirst($method),
+                [$this->argumentType($methodCall->getArgs(), $scope, 0, 'callback')],
+            ),
             default => new GenericObjectType(In::class, [$this->arrayArgumentType($methodCall->getArgs(), $scope)]),
         };
+    }
+
+    /** @param array<Arg> $args */
+    private function conditionalRulesType(array $args, Scope $scope, bool $unless): Type
+    {
+        $condition    = $this->argumentType($args, $scope, 0, 'condition');
+        $rules        = $this->ruleArgumentType($args, $scope, 1, 'rules');
+        $defaultRules = $this->ruleArgumentType($args, $scope, 2, 'defaultRules', true);
+
+        return new GenericObjectType(self::CONDITIONAL_RULES, [
+            $condition,
+            $unless ? $defaultRules : $rules,
+            $unless ? $rules : $defaultRules,
+        ]);
+    }
+
+    /** @param array<Arg> $args */
+    private function argumentType(array $args, Scope $scope, int $index, string $name): Type
+    {
+        $argument = $this->argument($args, $index, $name);
+
+        return $argument === null || $argument->unpack
+            ? new MixedType()
+            : $scope->getType($argument->value);
+    }
+
+    /** @param array<Arg> $args */
+    private function ruleArgumentType(array $args, Scope $scope, int $index, string $name, bool $default = false): Type
+    {
+        $argument = $this->argument($args, $index, $name);
+
+        if ($argument === null) {
+            return $default ? ConstantArrayTypeBuilder::createEmpty()->getArray() : new MixedType();
+        }
+
+        $type = $argument->unpack ? new MixedType() : $scope->getType($argument->value);
+
+        return $type->isCallable()->yes()
+            ? $type->getCallableParametersAcceptors($scope)[0]->getReturnType()
+            : $type;
+    }
+
+    /** @param array<Arg> $args */
+    private function argument(array $args, int $index, string $name): Arg|null
+    {
+        foreach ($args as $argument) {
+            if ($argument->name?->toString() === $name) {
+                return $argument;
+            }
+        }
+
+        return $args[$index] ?? null;
     }
 
     /** @param array<Arg> $args */
