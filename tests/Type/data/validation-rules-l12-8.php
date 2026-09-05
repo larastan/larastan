@@ -63,6 +63,10 @@ final class AnyOfRequest extends FormRequest
             'nestedShape' => ['required', Rule::anyOf([
                 ['type' => ['required', 'string']],
             ])],
+            'contextualModifiers' => ['required', Rule::anyOf([
+                ['max:4', 'integer:strict', 'min:2'],
+                ['array', 'min:1'],
+            ])],
         ];
     }
 }
@@ -78,7 +82,7 @@ function test(AnyOfRequest $request): void
     assertType('Illuminate\\Validation\\Rules\\AnyOf<array>', Rule::anyOf(...$unpacked));
 
     assertType('int|string', $request->scalar);
-    assertType("'*'|array", $request->literalOrArray);
+    assertType("'*'|non-empty-array", $request->literalOrArray);
     assertType('(int|numeric-string)', $request->outerInteger);
     assertType("'known'|numeric-string", $request->outerString);
     assertType('mixed', $request->unknownAlternative);
@@ -95,4 +99,5 @@ function test(AnyOfRequest $request): void
     assertType("array<'known'|'new'>|string", $request->arrayIn);
     assertType("list<'known'|'new'>|string", $request->listRuleIn);
     assertType('mixed', $request->nestedShape);
+    assertType('non-empty-array|int<2, 4>', $request->contextualModifiers);
 }

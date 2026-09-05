@@ -14,7 +14,7 @@ final class StringRuleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'lowercase' => ['required', Rule::string()->lowercase()->max(20)],
+            'lowercase' => ['required', Rule::string()->lowercase()->min(1)->max(20)],
             'uppercase' => ['required', Rule::string()->uppercase()],
             'alpha' => ['required', Rule::string()->alpha(ascii: true)],
         ];
@@ -25,12 +25,12 @@ function test(StringRuleRequest $request): void
 {
     assertType('Illuminate\\Validation\\Rules\\StringRule<string>', Rule::string());
     assertType(
-        'Illuminate\\Validation\\Rules\\StringRule<lowercase-string>',
-        Rule::string()->lowercase()->max(20),
+        'Illuminate\\Validation\\Rules\\StringRule<lowercase-string&non-empty-string>',
+        Rule::string()->lowercase()->min(1)->max(20),
     );
     assertType('Illuminate\\Validation\\Rules\\StringRule<uppercase-string>', Rule::string()->uppercase());
 
-    assertType('lowercase-string', $request->lowercase);
+    assertType('lowercase-string&non-empty-string', $request->lowercase);
     assertType('uppercase-string', $request->uppercase);
     assertType('string', $request->alpha);
 }
