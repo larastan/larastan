@@ -69,6 +69,8 @@ conditionalTags:
         phpstan.broker.dynamicStaticMethodReturnTypeExtension: %checkFormRequestTypes%
     Larastan\Larastan\ReturnTypes\ValidationRuleBuilderDynamicMethodReturnTypeExtension:
         phpstan.broker.dynamicMethodReturnTypeExtension: %checkFormRequestTypes%
+    Larastan\Larastan\ReturnTypes\FormRequestSafeDynamicMethodReturnTypeExtension:
+        phpstan.broker.dynamicMethodReturnTypeExtension: %checkFormRequestTypes%
     Larastan\Larastan\Rules\NoEnvCallsOutsideOfConfigRule:
         phpstan.rules.rule: %noEnvCallsOutsideOfConfig%
     Larastan\Larastan\Rules\NoModelMakeRule:
@@ -730,8 +732,6 @@ services:
 
     -
         class: Larastan\Larastan\ReturnTypes\FormRequestSafeDynamicMethodReturnTypeExtension
-        tags:
-            - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
         class: Larastan\Larastan\ReturnTypes\EloquentCollectionMapDynamicReturnTypeExtension

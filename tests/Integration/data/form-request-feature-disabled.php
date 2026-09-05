@@ -11,6 +11,8 @@ use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\In;
 use Illuminate\Validation\Rules\Numeric;
 
+use function PHPStan\Testing\assertType;
+
 class DisabledRequest extends FormRequest
 {
     /** @return array<string, mixed> */
@@ -31,5 +33,9 @@ function acceptsRules(
 
 function test(DisabledRequest $request): void
 {
+    assertType('mixed', $request->validated());
+    assertType('Illuminate\\Support\\ValidatedInput', $request->safe());
+    assertType('array<string, mixed>', $request->safe(['name']));
+
     $request->name = 1;
 }

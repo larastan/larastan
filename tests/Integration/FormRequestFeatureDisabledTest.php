@@ -30,6 +30,8 @@ class FormRequestFeatureDisabledTest extends PHPStanTestCase
 
         $stubFiles           = self::getContainer()->getByType(LarastanStubFilesExtension::class)->getFiles();
         $featureStubSuffixes = [
+            '/Foundation/Http/FormRequest.stub',
+            '/Support/ValidatedInput.stub',
             '/Validation/AnyOf.stub',
             '/Validation/ArrayKeys.stub',
             '/Validation/Rules.stub',
