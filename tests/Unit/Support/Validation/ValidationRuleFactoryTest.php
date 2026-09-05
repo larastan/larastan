@@ -60,10 +60,10 @@ class ValidationRuleFactoryTest extends TestCase
         yield 'starts with' => ['required|starts_with:4', 'float|int|string', false, false, true];
         yield 'date format' => ['required|date_format:H:i', 'float|int|string', false, false, true];
         yield 'regex' => [['required', 'regex:/^[0-9]+$/'], 'float|int|string', false, false, true];
-        yield 'email' => ['required|email', 'string|Stringable', false, false, true];
-        yield 'IP address' => ['required|ip', 'string|Stringable', false, false, true];
-        yield 'MAC address' => ['required|mac_address', 'string|Stringable', false, false, true];
-        yield 'JSON' => ['required|json', 'bool|float|int|string|Stringable', false, false, true];
+        yield 'email' => ['required|email', 'string', false, false, true];
+        yield 'IP address' => ['required|ip', 'string', false, false, true];
+        yield 'MAC address' => ['required|mac_address', 'string', false, false, true];
+        yield 'JSON' => ['required|json', 'bool|float|int|string', false, false, true];
         yield 'strict boolean' => ['required|boolean:strict', $strictBoolean, false, false, true];
         yield 'no type rule' => ['required', 'mixed', false, false, true];
         yield 'same does not establish a type' => ['required|same:other', 'mixed', false, false, true];

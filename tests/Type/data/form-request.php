@@ -57,7 +57,7 @@ function test(FormRequest $request, FooRequest $fooRequest, VariableRulesRequest
     assertType('array<int|numeric-string|null>|null', $fooRequest->scores);
     assertType('array<mixed>|null', $fooRequest->properties);
     assertType('list<mixed>|null', $fooRequest->listProperties);
-    assertType('array<array{email: string|Stringable, age?: (int|numeric-string), addresses?: array<array{city: string}>, address?: array{city: string}}>|null', $fooRequest->users);
+    assertType('array<array{email: string, age?: (int|numeric-string), addresses?: array<array{city: string}>, address?: array{city: string}}>|null', $fooRequest->users);
     assertType('array<array{name: string}>', $fooRequest->guests);
     assertType('array<array{id: (int|numeric-string)}>|null', $fooRequest->accounts);
     assertType('string', $fooRequest->conflicted);
@@ -90,8 +90,15 @@ function test(FormRequest $request, FooRequest $fooRequest, VariableRulesRequest
     assertType("''|numeric-string", $fooRequest->primitiveState);
     assertType("'Admin'", $fooRequest->objectState);
     assertType('string', $fooRequest->escapedState);
-    assertType('mixed', $fooRequest->untypedState);
+    assertType("'draft'|'published'", $fooRequest->untypedState);
     assertType('string', $fooRequest->uncertainState);
+    assertType("array<'draft'|'published'>", $fooRequest->arrayIn);
+    assertType("list<'draft'|'published'>", $fooRequest->listIn);
+    assertType("array<'draft'|'published'>", $fooRequest->arrayRuleIn);
+    assertType("list<'draft'|'published'>", $fooRequest->listRuleIn);
+    assertType('array', $fooRequest->numericArrayIn);
+    assertType('array', $fooRequest->unknownArrayIn);
+    assertType("array<'LIT'|'NYC'>", $fooRequest->airports);
     assertType('array{name: string, count?: mixed}', $fooRequest->payload);
     assertType('array{draft: string, published?: mixed}', $fooRequest->arrayablePayload);
     assertType('array{name?: mixed}|null', $fooRequest->sometimesPayload);
