@@ -2,4 +2,5 @@
 
 namespace Illuminate\Support;
 
+/** @template TData of array = array<string, mixed> */
 class ValidatedInput {}

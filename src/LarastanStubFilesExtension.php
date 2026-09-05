@@ -16,6 +16,8 @@ use function version_compare;
 final class LarastanStubFilesExtension implements StubFilesExtension
 {
     private const FORM_REQUEST_TYPE_STUBS = [
+        'Foundation/Http/FormRequest.stub' => true,
+        'Support/ValidatedInput.stub' => true,
         'Validation/AnyOf.stub' => true,
         'Validation/ArrayKeys.stub' => true,
         'Validation/Rules.stub' => true,

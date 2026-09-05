@@ -67,16 +67,63 @@ class ConditionalRulesRequest extends FormRequest
     }
 }
 
+class SafeReturnRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'name' => 'required|string',
+            'nickname' => 'string',
+            'profile.email' => 'required|string',
+            'profile.age' => 'integer',
+            'excluded' => 'exclude',
+            'unknown' => 'required',
+        ];
+    }
+}
+
+class OverriddenSafeRequest extends SafeReturnRequest
+{
+    /** @return array{custom: string} */
+    public function safe(?array $keys = null): array
+    {
+        return ['custom' => 'value'];
+    }
+}
+
 function test(
     FormRequest $request,
     FooRequest $fooRequest,
     VariableRulesRequest $variableRulesRequest,
     ConditionalRulesRequest $conditionalRulesRequest,
+    SafeReturnRequest $safeReturnRequest,
+    OverriddenSafeRequest $overriddenSafeRequest,
 ): void
 {
     assertType('Illuminate\Support\ValidatedInput', $request->safe());
-    assertType('array{key: mixed}', $request->safe(['key']));
+    assertType('array<string, mixed>', $request->safe(['key']));
     assertType('array<string, mixed>', $request->validated());
+
+    assertType(
+        'Illuminate\\Support\\ValidatedInput<array{name: string, nickname?: string, profile: array{email: string, age?: (int|numeric-string)}, unknown: mixed}>',
+        $safeReturnRequest->safe(),
+    );
+    assertType('array{name: string, nickname?: string}', $safeReturnRequest->safe(['name', 'nickname']));
+    assertType('array{profile: array{email: string}}', $safeReturnRequest->safe(['profile.email']));
+    assertType(
+        'array{profile?: array{age?: (int|numeric-string)}}',
+        $safeReturnRequest->safe(['profile.age']),
+    );
+    assertType(
+        'array{profile: array{email: string, age?: (int|numeric-string)}}',
+        $safeReturnRequest->safe(['profile.email', 'profile.age']),
+    );
+    assertType('array{}', $safeReturnRequest->safe(['missing']));
+    assertType('array<string, mixed>', $safeReturnRequest->safe(['unknown.child']));
+    assertType('array', $safeReturnRequest->safe()->all());
+    assertType('mixed', $safeReturnRequest->safe()->input('name'));
+    assertType('mixed', $safeReturnRequest->safe()['name']);
+    assertType('array{custom: string}', $overriddenSafeRequest->safe());
 
     assertType('string', $fooRequest->name);
     assertType('string|null', $fooRequest->optionalName);
