@@ -9,7 +9,9 @@ use Larastan\Larastan\Support\Validation\RuleTreeTypeResolver;
 use Larastan\Larastan\Support\Validation\ValidationRule;
 use Larastan\Larastan\Support\Validation\ValidationRuleFactory;
 use PHPStan\Testing\PHPStanTestCase;
+use PHPStan\Type\ArrayType;
 use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\MixedType;
 use PHPStan\Type\VerbosityLevel;
 use PHPUnit\Framework\Attributes\PreserveGlobalState;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
@@ -44,7 +46,7 @@ class RuleTreeTypeResolverTest extends PHPStanTestCase
             'profile' => ValidationRuleFactory::make('nullable|array'),
             'profile.name' => ValidationRuleFactory::make('required|string'),
             'payload' => new ValidationRule(
-                type: 'array',
+                type: new ArrayType(new MixedType(), new MixedType()),
                 required: true,
                 allowedKeys: [new ConstantStringType('name'), new ConstantStringType('count')],
             ),

@@ -22,9 +22,11 @@ use PHPStan\Analyser\ScopeFactory;
 use PHPStan\Parser\Parser;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\TypeUtils;
 
 use function array_filter;
 use function array_key_exists;
@@ -323,12 +325,17 @@ final class FormRequestRuleExtractor
             ? null
             : TypeCombinator::union($left->constraintType, $right->constraintType);
 
+        $type = TypeCombinator::union($left->type, $right->type);
+
+        if ($left->type instanceof BenevolentUnionType || $right->type instanceof BenevolentUnionType) {
+            $type = TypeUtils::toBenevolentUnion($type);
+        }
+
         return new ValidationRule(
-            $left->type === $right->type ? $left->type : '(' . $left->type . ')|(' . $right->type . ')',
+            $type,
             $left->nullable || $right->nullable,
             $left->possiblyUndefined || $right->possiblyUndefined,
             $left->required && $right->required,
-            $left->benevolent || $right->benevolent,
             $constraintType,
             $left->allowedKeys,
             $left->anyOfRuleGroups,

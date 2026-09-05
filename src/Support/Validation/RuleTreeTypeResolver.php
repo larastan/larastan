@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Support\Validation;
 
-use PHPStan\PhpDoc\TypeStringResolver;
 use PHPStan\Type\Accessory\AccessoryArrayListType;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\Constant\ConstantArrayTypeBuilder;
@@ -13,18 +12,12 @@ use PHPStan\Type\IntegerType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\TypeUtils;
 
 use function array_map;
-use function in_array;
 
 /** @internal */
 final class RuleTreeTypeResolver
 {
-    public function __construct(private TypeStringResolver $stringResolver)
-    {
-    }
-
     /**
      * @param array<string, RuleTreeNode> $nodes
      *
@@ -177,12 +170,12 @@ final class RuleTreeTypeResolver
             return false;
         }
 
-        return ! in_array($node->rule->type, ['array', 'list', 'mixed'], true);
+        return ! $node->rule->type->isArray()->yes() && ! $node->rule->type->equals(new MixedType());
     }
 
     private function hasExplicitContainerRule(RuleTreeNode $node): bool
     {
-        return in_array($node->rule?->type, ['array', 'list'], true);
+        return $node->rule?->type->isArray()->yes() ?? false;
     }
 
     private function hasContainerAlternative(RuleTreeNode $node): bool
@@ -278,9 +271,7 @@ final class RuleTreeTypeResolver
 
     private function ruleType(ValidationRule $rule, bool $includeNullable = false): Type
     {
-        $type = $this->stringResolver->resolve($rule->type);
-
-        $type = $rule->benevolent ? TypeUtils::toBenevolentUnion($type) : $type;
+        $type = $rule->type;
 
         if ($rule->constraintType !== null) {
             $type = TypeCombinator::intersect($type, $rule->constraintType);
@@ -349,12 +340,12 @@ final class RuleTreeTypeResolver
     {
         $wildcard = $node->children[RuleTreeNode::WILDCARD];
         $type     = new ArrayType(
-            $node->rule?->type === 'list' ? new IntegerType() : new MixedType(),
+            $node->rule?->type->isList()->yes() ? new IntegerType() : new MixedType(),
             $resolveItem($wildcard),
         );
 
         if (
-            $node->rule?->type === 'list'
+            $node->rule?->type->isList()->yes()
             && ($raw || $this->isValidatedGuaranteedPresent($wildcard))
         ) {
             return TypeCombinator::intersect($type, new AccessoryArrayListType());

@@ -16,19 +16,27 @@ use Illuminate\Validation\Rules\Numeric;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\Validator;
 use PHPStan\Type\Accessory\AccessoryArrayListType;
+use PHPStan\Type\Accessory\AccessoryLowercaseStringType;
 use PHPStan\Type\Accessory\AccessoryNumericStringType;
+use PHPStan\Type\Accessory\AccessoryUppercaseStringType;
 use PHPStan\Type\ArrayType;
+use PHPStan\Type\BooleanType;
+use PHPStan\Type\Constant\ConstantBooleanType;
+use PHPStan\Type\Constant\ConstantFloatType;
 use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\FloatType;
+use PHPStan\Type\IntegerRangeType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\TypeUtils;
 use ReflectionMethod;
 
 use function array_filter;
-use function array_unique;
 use function count;
 use function explode;
 use function filter_var;
@@ -39,7 +47,6 @@ use function is_numeric;
 use function is_string;
 use function str_contains;
 use function str_getcsv;
-use function str_replace;
 
 use const FILTER_VALIDATE_INT;
 
@@ -52,20 +59,15 @@ final class ValidationRuleFactory
 
     private const STRING_RULE = 'Illuminate\\Validation\\Rules\\StringRule';
 
-    private const LOOSE_INTEGER_TYPE = 'int|numeric-string';
-
-    private const NUMERIC_TYPE = 'float|int|numeric-string';
-
     /** @param string|array<string|Type> $rules */
     public static function make(string|array $rules): ValidationRule
     {
         $possiblyUndefined = false;
         $nullable          = false;
         $required          = false;
-        $benevolent        = false;
         $rejectsNull       = false;
 
-        $type     = '';
+        $type     = null;
         $inValues = null;
         $min      = null;
         $max      = null;
@@ -88,22 +90,22 @@ final class ValidationRuleFactory
                     $anyOfRuleGroups[] = $alternatives;
                 }
             } elseif ((new ObjectType(self::ARRAY_KEYS))->isSuperTypeOf($rule)->yes()) {
-                $type        = 'array';
+                $type        = self::arrayType();
                 $allowedKeys = self::constantArrayKeys($rule->getTemplateType(self::ARRAY_KEYS, 'TKeys'));
             } elseif ((new ObjectType(ArrayRule::class))->isSuperTypeOf($rule)->yes()) {
-                $type        = 'array';
+                $type        = self::arrayType();
                 $allowedKeys = self::constantArrayKeys($rule->getTemplateType(ArrayRule::class, 'TKeys'));
             } elseif ((new ObjectType('Illuminate\\Validation\\Rules\\Contains'))->isSuperTypeOf($rule)->yes()) {
-                $type = 'array';
+                $type = self::arrayType();
             } elseif ((new ObjectType('Illuminate\\Validation\\Rules\\DoesntContain'))->isSuperTypeOf($rule)->yes()) {
-                $type = 'array';
+                $type = self::arrayType();
             } elseif ((new ObjectType(Date::class))->isSuperTypeOf($rule)->yes()) {
                 $dateType       = $rule->getTemplateType(Date::class, 'TValue');
                 $constraintType = $constraintType === null
                     ? $dateType
                     : TypeCombinator::intersect($constraintType, $dateType);
             } elseif ((new ObjectType(Email::class))->isSuperTypeOf($rule)->yes()) {
-                $type = 'string';
+                $type = new StringType();
             } elseif ((new ObjectType(Enum::class))->isSuperTypeOf($rule)->yes()) {
                 $enumType = self::enumType($rule->getTemplateType(Enum::class, 'TEnum'));
 
@@ -118,17 +120,17 @@ final class ValidationRuleFactory
                     ? $numericType
                     : TypeCombinator::intersect($constraintType, $numericType);
             } elseif ((new ObjectType(self::STRING_RULE))->isSuperTypeOf($rule)->yes()) {
-                $type           = 'string';
+                $type           = new StringType();
                 $stringType     = $rule->getTemplateType(self::STRING_RULE, 'TValue');
                 $constraintType = $constraintType === null
                     ? $stringType
                     : TypeCombinator::intersect($constraintType, $stringType);
             } elseif ((new ObjectType(Dimensions::class))->isSuperTypeOf($rule)->yes()) {
-                $type = UploadedFile::class;
+                $type = new ObjectType(UploadedFile::class);
             } elseif ((new ObjectType(FileRule::class))->isSuperTypeOf($rule)->yes()) {
-                $type = UploadedFile::class;
+                $type = new ObjectType(UploadedFile::class);
             } elseif ((new ObjectType(Password::class))->isSuperTypeOf($rule)->yes()) {
-                $type = 'string';
+                $type = new StringType();
             }
         }
 
@@ -186,17 +188,13 @@ final class ValidationRuleFactory
                 continue;
             }
 
-            $type = $type === '' || $type === $determinedType
+            $type = $type === null
                 ? $determinedType
-                : '(' . $type . ')&(' . $determinedType . ')';
-
-            $benevolent = $benevolent
-                || $determinedType === self::NUMERIC_TYPE
-                || $determinedType === self::LOOSE_INTEGER_TYPE;
+                : TypeCombinator::intersect($type, $determinedType);
         }
 
         if ($inValues !== null) {
-            if (in_array($type, ['array', 'list'], true)) {
+            if ($type?->isArray()->yes()) {
                 $inType = self::inParameterType($inValues, $type);
 
                 if ($inType !== null) {
@@ -205,19 +203,17 @@ final class ValidationRuleFactory
                         : TypeCombinator::intersect($constraintType, $inType);
                 }
             } else {
-                $type = self::determineInType($inValues, $type);
+                $type = self::determineInType($inValues, $type ?? new MixedType());
             }
         }
 
         // `min`/`max`/`between` constrain the value only for integers (for strings they
         // constrain the length, for arrays the count).
-        if ($type === 'int' && ($min !== null || $max !== null) && ($min === null || $max === null || $min <= $max)) {
-            $type = 'int<' . ($min ?? 'min') . ', ' . ($max ?? 'max') . '>';
+        if ($type?->equals(new IntegerType()) && ($min !== null || $max !== null) && ($min === null || $max === null || $min <= $max)) {
+            $type = IntegerRangeType::fromInterval($min, $max);
         }
 
-        if ($type === '') {
-            $type = 'mixed';
-        }
+        $type ??= new MixedType(true);
 
         foreach ($ruleObjects as $rule) {
             if (! (new ObjectType(In::class))->isSuperTypeOf($rule)->yes()) {
@@ -240,7 +236,6 @@ final class ValidationRuleFactory
             $nullable,
             $possiblyUndefined,
             $required,
-            $benevolent,
             $constraintType,
             $allowedKeys,
             $anyOfRuleGroups,
@@ -387,13 +382,13 @@ final class ValidationRuleFactory
         return TypeCombinator::union(...$types);
     }
 
-    private static function inType(Type $valuesType, string $baseType): Type|null
+    private static function inType(Type $valuesType, Type $baseType): Type|null
     {
-        if (! in_array($baseType, ['array', 'list', 'mixed', 'string', 'lowercase-string', 'uppercase-string'], true)) {
+        if (! $baseType->isArray()->yes() && ! $baseType->isString()->yes() && ! $baseType->equals(new MixedType())) {
             return null;
         }
 
-        $multipleRepresentations = in_array($baseType, ['array', 'list', 'mixed'], true);
+        $multipleRepresentations = $baseType->isArray()->yes() || $baseType->equals(new MixedType());
         $constantArrays          = $valuesType->getConstantArrays();
 
         if (count($constantArrays) !== 1) {
@@ -430,7 +425,7 @@ final class ValidationRuleFactory
     }
 
     /** @param list<string> $values */
-    private static function inParameterType(array $values, string $baseType): Type|null
+    private static function inParameterType(array $values, Type $baseType): Type|null
     {
         $types = [];
 
@@ -449,14 +444,14 @@ final class ValidationRuleFactory
         return self::applyInType(TypeCombinator::union(...$types), $baseType);
     }
 
-    private static function applyInType(Type $type, string $baseType): Type
+    private static function applyInType(Type $type, Type $baseType): Type
     {
-        if ($baseType === 'array') {
-            return new ArrayType(new MixedType(), $type);
+        if ($baseType->isList()->yes()) {
+            return TypeCombinator::intersect(new ArrayType(new IntegerType(), $type), new AccessoryArrayListType());
         }
 
-        if ($baseType === 'list') {
-            return TypeCombinator::intersect(new ArrayType(new IntegerType(), $type), new AccessoryArrayListType());
+        if ($baseType->isArray()->yes()) {
+            return new ArrayType(new MixedType(), $type);
         }
 
         return $type;
@@ -490,29 +485,53 @@ final class ValidationRuleFactory
     }
 
     /** @param list<int|string> $parameters */
-    private static function determineType(string $rule, array $parameters = []): string|null
+    private static function determineType(string $rule, array $parameters = []): Type|null
     {
         return match ($rule) {
-            'array', 'list' => $rule,
-            'lowercase' => 'lowercase-string',
-            'uppercase' => 'uppercase-string',
-            'active_url', 'alpha', 'ascii', 'hex_color', 'string', 'url', 'ulid', 'uuid' => 'string',
+            'array' => self::arrayType(),
+            'list' => TypeCombinator::intersect(
+                new ArrayType(new IntegerType(), new MixedType()),
+                new AccessoryArrayListType(),
+            ),
+            'lowercase' => TypeCombinator::intersect(new StringType(), new AccessoryLowercaseStringType()),
+            'uppercase' => TypeCombinator::intersect(new StringType(), new AccessoryUppercaseStringType()),
+            'active_url', 'alpha', 'ascii', 'hex_color', 'string', 'url', 'ulid', 'uuid' => new StringType(),
             'alpha_dash', 'alpha_num', 'doesnt_end_with', 'doesnt_start_with', 'ends_with', 'not_regex',
-            'date_format', 'regex', 'starts_with' => 'float|int|string',
-            'email', 'ip', 'mac_address' => 'string',
-            'json' => 'bool|float|int|string',
-            'accepted' => "'yes'|'on'|1|'1'|true|'true'",
-            'declined' => "'no'|'off'|0|'0'|false|'false'",
+            'date_format', 'regex', 'starts_with' => TypeCombinator::union(new FloatType(), new IntegerType(), new StringType()),
+            'email', 'ip', 'mac_address' => new StringType(),
+            'json' => TypeCombinator::union(new BooleanType(), new FloatType(), new IntegerType(), new StringType()),
+            'accepted' => TypeCombinator::union(
+                new ConstantStringType('yes'),
+                new ConstantStringType('on'),
+                new ConstantIntegerType(1),
+                new ConstantStringType('1'),
+                new ConstantBooleanType(true),
+                new ConstantStringType('true'),
+            ),
+            'declined' => TypeCombinator::union(
+                new ConstantStringType('no'),
+                new ConstantStringType('off'),
+                new ConstantIntegerType(0),
+                new ConstantStringType('0'),
+                new ConstantBooleanType(false),
+                new ConstantStringType('false'),
+            ),
             'boolean' => in_array('strict', $parameters, true) && self::supportsStrictRule('validateBoolean')
-                ? 'bool'
-                : "true|false|1|0|'1'|'0'",
+                ? new BooleanType()
+                : TypeCombinator::union(
+                    new BooleanType(),
+                    new ConstantIntegerType(1),
+                    new ConstantIntegerType(0),
+                    new ConstantStringType('1'),
+                    new ConstantStringType('0'),
+                ),
             'numeric' => in_array('strict', $parameters, true) && self::supportsStrictRule('validateNumeric')
-                ? 'float|int'
-                : self::NUMERIC_TYPE,
-            'decimal', 'digits', 'digits_between', 'max_digits', 'min_digits', 'multiple_of' => self::NUMERIC_TYPE,
+                ? TypeCombinator::union(new FloatType(), new IntegerType())
+                : self::numericType(),
+            'decimal', 'digits', 'digits_between', 'max_digits', 'min_digits', 'multiple_of' => self::numericType(),
             'integer' => in_array('strict', $parameters, true) && self::supportsStrictRule('validateInteger')
-                ? 'int'
-                : self::LOOSE_INTEGER_TYPE,
+                ? new IntegerType()
+                : self::looseIntegerType(),
             default => null,
         };
     }
@@ -526,23 +545,50 @@ final class ValidationRuleFactory
     }
 
     /** @param list<string> $values */
-    private static function determineInType(array $values, string $baseType): string
+    private static function determineInType(array $values, Type $baseType): Type
     {
-        if ($baseType === self::LOOSE_INTEGER_TYPE) {
+        if ($baseType->equals(self::looseIntegerType())) {
             return $baseType;
         }
 
-        $literals = [];
+        $types = [];
 
         foreach ($values as $value) {
-            if ($baseType === 'int' && is_numeric($value)) {
-                $literals[] = $value;
+            if ($baseType->equals(new IntegerType()) && is_numeric($value)) {
+                $integer = filter_var($value, FILTER_VALIDATE_INT);
+                $types[] = $integer === false
+                    ? new ConstantFloatType((float) $value)
+                    : new ConstantIntegerType($integer);
             } else {
-                $literals[] = "'" . str_replace("'", "\\'", $value) . "'";
+                $types[] = new ConstantStringType($value);
             }
         }
 
-        return implode('|', array_unique($literals));
+        return TypeCombinator::union(...$types);
+    }
+
+    private static function arrayType(): Type
+    {
+        return new ArrayType(new MixedType(), new MixedType());
+    }
+
+    private static function looseIntegerType(): Type
+    {
+        return TypeUtils::toBenevolentUnion(TypeCombinator::union(new IntegerType(), self::numericStringType()));
+    }
+
+    private static function numericType(): Type
+    {
+        return TypeUtils::toBenevolentUnion(TypeCombinator::union(
+            new FloatType(),
+            new IntegerType(),
+            self::numericStringType(),
+        ));
+    }
+
+    private static function numericStringType(): Type
+    {
+        return TypeCombinator::intersect(new StringType(), new AccessoryNumericStringType());
     }
 
     private static function supportsStrictRule(string $method): bool
