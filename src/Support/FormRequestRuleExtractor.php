@@ -233,7 +233,7 @@ final class FormRequestRuleExtractor
             }
 
             // Keep unknown rules as null so they still override earlier entries for the same key.
-            $rules[$propertyName] = self::extractRule($scope->getType($item->value));
+            $rules[$propertyName] = ValidationRuleFactory::fromType($scope->getType($item->value));
         }
 
         return array_reverse(array_filter($rules), true);
@@ -261,7 +261,7 @@ final class FormRequestRuleExtractor
                 continue;
             }
 
-            $rule = self::extractRule($array->getValueTypes()[$index]);
+            $rule = ValidationRuleFactory::fromType($array->getValueTypes()[$index]);
 
             if ($rule === null) {
                 continue;
@@ -334,53 +334,6 @@ final class FormRequestRuleExtractor
             $left->anyOfRuleGroups,
             $left->rejectsNull && $right->rejectsNull,
         );
-    }
-
-    private static function extractRule(Type $type): ValidationRule|null
-    {
-        $rules = self::extractConstantRules($type);
-
-        return $rules === null ? null : ValidationRuleFactory::make($rules);
-    }
-
-    /** @return string|list<string|Type>|null */
-    private static function extractConstantRules(Type $type): string|array|null
-    {
-        $rule = self::extractConstantString($type);
-
-        if ($rule !== null) {
-            return $rule;
-        }
-
-        if ($type->isObject()->yes()) {
-            return [$type];
-        }
-
-        $constantArrays = $type->getConstantArrays();
-
-        if (count($constantArrays) !== 1) {
-            return null;
-        }
-
-        $rules = [];
-
-        foreach ($constantArrays[0]->getValueTypes() as $valueType) {
-            $rule = self::extractConstantString($valueType);
-
-            if ($rule === null) {
-                if ($valueType->isObject()->yes()) {
-                    $rules[] = $valueType;
-
-                    continue;
-                }
-
-                return [];
-            }
-
-            $rules[] = $rule;
-        }
-
-        return $rules;
     }
 
     private static function extractConstantString(Type $type): string|null

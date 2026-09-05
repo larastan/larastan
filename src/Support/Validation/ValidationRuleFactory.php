@@ -262,7 +262,7 @@ final class ValidationRuleFactory
         $alternatives = [];
 
         foreach ($constantArrays[0]->getValueTypes() as $alternativeType) {
-            $alternative = self::anyOfAlternative($alternativeType);
+            $alternative = self::fromType($alternativeType, requireList: true);
 
             if ($alternative === null) {
                 return null;
@@ -274,7 +274,7 @@ final class ValidationRuleFactory
         return $alternatives === [] ? null : $alternatives;
     }
 
-    private static function anyOfAlternative(Type $type): ValidationRule|null
+    public static function fromType(Type $type, bool $requireList = false): ValidationRule|null
     {
         $strings = $type->getConstantStrings();
 
@@ -288,7 +288,7 @@ final class ValidationRuleFactory
 
         $constantArrays = $type->getConstantArrays();
 
-        if (count($constantArrays) !== 1 || ! $constantArrays[0]->isList()->yes()) {
+        if (count($constantArrays) !== 1 || ($requireList && ! $constantArrays[0]->isList()->yes())) {
             return null;
         }
 
