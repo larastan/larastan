@@ -138,22 +138,7 @@ final class FormRequestRuleExtractor
             },
         );
 
-        if ($returns === []) {
-            return null;
-        }
-
-        /** @var list<array<string, ValidationRule>> $supportedReturns */
-        $supportedReturns = [];
-
-        foreach ($returns as $return) {
-            if ($return === null) {
-                return null;
-            }
-
-            $supportedReturns[] = $return;
-        }
-
-        return self::mergeReturns($supportedReturns);
+        return self::mergeReturns($returns);
     }
 
     /**
@@ -227,25 +212,12 @@ final class FormRequestRuleExtractor
             return self::extractConstantArrays($scope->getType($return->expr));
         }
 
-        $rules    = [];
-        $seenKeys = [];
+        $rules = [];
 
         foreach (array_reverse($return->expr->items) as $item) {
             if ($item->unpack) {
                 $unpackedRules = self::extractConstantArrays($scope->getType($item->value));
-
-                if ($unpackedRules === null) {
-                    continue;
-                }
-
-                foreach (array_reverse($unpackedRules, true) as $key => $rule) {
-                    if (array_key_exists($key, $seenKeys)) {
-                        continue;
-                    }
-
-                    $rules[$key]    = $rule;
-                    $seenKeys[$key] = true;
-                }
+                $rules        += array_reverse($unpackedRules ?? [], true);
 
                 continue;
             }
@@ -256,38 +228,21 @@ final class FormRequestRuleExtractor
 
             $propertyName = self::extractConstantString($scope->getType($item->key));
 
-            if ($propertyName === null) {
+            if ($propertyName === null || array_key_exists($propertyName, $rules)) {
                 continue;
             }
 
-            if (array_key_exists($propertyName, $seenKeys)) {
-                continue;
-            }
-
-            $seenKeys[$propertyName] = true;
-
-            $rule = self::extractRule($scope->getType($item->value));
-
-            if ($rule === null) {
-                continue;
-            }
-
-            $rules[$propertyName] = $rule;
+            // Keep unknown rules as null so they still override earlier entries for the same key.
+            $rules[$propertyName] = self::extractRule($scope->getType($item->value));
         }
 
-        return array_reverse($rules, true);
+        return array_reverse(array_filter($rules), true);
     }
 
     /** @return array<string, ValidationRule>|null */
     private static function extractConstantArrays(Type $type): array|null
     {
-        $constantArrays = $type->getConstantArrays();
-
-        if ($constantArrays === []) {
-            return null;
-        }
-
-        return self::mergeReturns(array_map(self::extractConstantArray(...), $constantArrays));
+        return self::mergeReturns(array_map(self::extractConstantArray(...), $type->getConstantArrays()));
     }
 
     /** @return array<string, ValidationRule> */
@@ -319,15 +274,23 @@ final class FormRequestRuleExtractor
     }
 
     /**
-     * @param list<array<string, ValidationRule>> $returns
+     * @param list<array<string, ValidationRule>|null> $returns
      *
-     * @return array<string, ValidationRule>
+     * @return array<string, ValidationRule>|null
      */
-    private static function mergeReturns(array $returns): array
+    private static function mergeReturns(array $returns): array|null
     {
-        $merged = array_shift($returns) ?? [];
+        $merged = array_shift($returns);
+
+        if ($merged === null) {
+            return null;
+        }
 
         foreach ($returns as $rules) {
+            if ($rules === null) {
+                return null;
+            }
+
             foreach ($merged as $key => $rule) {
                 if (! array_key_exists($key, $rules)) {
                     unset($merged[$key]);
@@ -361,7 +324,6 @@ final class FormRequestRuleExtractor
             : TypeCombinator::union($left->constraintType, $right->constraintType);
 
         return new ValidationRule(
-            $left->rule === $right->rule ? $left->rule : '',
             $left->type === $right->type ? $left->type : '(' . $left->type . ')|(' . $right->type . ')',
             $left->nullable || $right->nullable,
             $left->possiblyUndefined || $right->possiblyUndefined,
