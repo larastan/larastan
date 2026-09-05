@@ -81,6 +81,8 @@ parametersSchema:
 conditionalTags:
     Larastan\Larastan\Properties\FormRequestExtension:
         phpstan.broker.propertiesClassReflectionExtension: %checkFormRequestTypes%
+    Larastan\Larastan\Properties\FormRequestPropertyTypeExtension:
+        phpstan.broker.expressionTypeResolverExtension: %checkFormRequestTypes%
     Larastan\Larastan\ReturnTypes\ValidationRuleDynamicStaticMethodReturnTypeExtension:
         phpstan.broker.dynamicStaticMethodReturnTypeExtension: %checkFormRequestTypes%
     Larastan\Larastan\ReturnTypes\ValidationRuleBuilderDynamicMethodReturnTypeExtension:
@@ -217,6 +219,9 @@ services:
 
     -
         class: Larastan\Larastan\Properties\FormRequestExtension
+
+    -
+        class: Larastan\Larastan\Properties\FormRequestPropertyTypeExtension
 
     -
         class: Larastan\Larastan\ReturnTypes\ValidationRuleDynamicStaticMethodReturnTypeExtension

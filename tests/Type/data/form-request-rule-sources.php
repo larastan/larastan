@@ -13,7 +13,38 @@ class ExactRulesRequest extends FormRequest
 {
     public function rules(): array
     {
+        assertType('mixed', $this->exact);
+
         return ['exact' => 'required|string'];
+    }
+
+    public function authorize(): bool
+    {
+        assertType('mixed', $this->exact);
+
+        return true;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        assertType('mixed', $this->exact);
+
+        if (is_string($this->exact)) {
+            assertType('string', $this->exact);
+        }
+
+        (function (): void {
+            assertType('mixed', $this->exact);
+        })();
+    }
+
+    protected function passedValidation(): void
+    {
+        assertType('string', $this->exact);
+
+        (function (): void {
+            assertType('string', $this->exact);
+        })();
     }
 
     public function unrelated(): array
@@ -26,6 +57,17 @@ class ExactRulesRequest extends FormRequest
         assertType('string', $this->exact);
 
         return $this->exact;
+    }
+}
+
+/** @property int $exact */
+class AnnotatedRulesRequest extends ExactRulesRequest
+{
+    public function authorize(): bool
+    {
+        assertType('int', $this->exact);
+
+        return true;
     }
 }
 
