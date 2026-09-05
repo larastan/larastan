@@ -142,16 +142,23 @@ function test(
     assertType('mixed', $fooRequest->tags);
     assertType('mixed', $fooRequest->scores);
     assertType('array<mixed>|null', $fooRequest->properties);
-    assertType('list<mixed>|null', $fooRequest->listProperties);
+    assertType('list<string>|null', $fooRequest->listProperties);
     assertType('mixed', $fooRequest->users);
     assertType('array<array{name: string, ...}>', $fooRequest->guests);
     assertType('array<array{id: (int|numeric-string), ...}>|null', $fooRequest->accounts);
+    assertType('array{recursive: array{recursive: string, ...}, ...}', $fooRequest->recursive);
+    assertType(
+        'array<array{members: array<array{name: string, ...}>, ...}>',
+        $fooRequest->nestedGroups,
+    );
+    assertType('array{name: string, ...}', $fooRequest->copied);
+    assertType('array{name: string, ...}', $fooRequest->nullableProfile);
     assertType('string', $fooRequest->conflicted);
     assertType('string', $fooRequest->version);
     assertType('array{name: string, items?: mixed, ...}', $fooRequest->metadata);
     assertType('mixed', $fooRequest->shipping);
     assertType('string', $fooRequest->{'v1.0'});
-    assertType('mixed', $fooRequest->flags);
+    assertType('array', $fooRequest->flags);
     assertType('mixed', $fooRequest->{'author.name'});
     assertType('int|numeric-string|null', $fooRequest->limit);
     assertType('array{fragment: string|null, domain?: mixed, path: string|null, port?: mixed, ...}', $fooRequest->url);
