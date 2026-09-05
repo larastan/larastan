@@ -6,6 +6,7 @@ namespace Larastan\Larastan\Properties;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Larastan\Larastan\Reflection\FormRequestPropertyReflection;
+use Larastan\Larastan\Reflection\ReflectionHelper;
 use Larastan\Larastan\Support\FormRequestHelper;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
@@ -21,6 +22,10 @@ class FormRequestExtension implements PropertiesClassReflectionExtension
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
     {
         if (! $classReflection->isSubclassOfClass($this->reflectionProvider->getClass(FormRequest::class))) {
+            return false;
+        }
+
+        if (ReflectionHelper::hasPropertyTag($classReflection, $propertyName)) {
             return false;
         }
 
