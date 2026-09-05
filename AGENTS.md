@@ -146,6 +146,9 @@ composer test:types
 composer test:unit
 ```
 
+Once required checks pass, repeat or broaden verification only for subsequent
+changes, failures, or unresolved concerns.
+
 For compatibility-sensitive changes, use the relevant workflow or script in
 `.github/workflows/` or `tests/laravel-test.sh` rather than inventing a local
 matrix. Run the affected E2E project when a change reaches external Laravel
