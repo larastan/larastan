@@ -44,8 +44,11 @@ Check sibling extensions for the full set of files a change requires.
   before replacing it.
 - Establish framework semantics from upstream tests or a focused runtime probe
   before encoding them as PHPStan types.
-- Prefer the smallest existing extension point that fixes the root cause. Avoid
-  speculative helpers, generic machinery, and broad refactors.
+- Before creating an extension, check whether PHPDoc in stubs, including
+  generics, conditional return types, and assertions, can express the behavior
+  clearly and accurately. Prefer stubs when they can; otherwise use the smallest
+  dedicated extension point that fixes the root cause. Avoid speculative
+  helpers, generic machinery, and broad refactors.
 - Keep unrelated discoveries out of the current change; report or fix them
   separately.
 - If a test describes correct runtime behavior, fix Larastan's implementation,
@@ -73,9 +76,10 @@ Check sibling extensions for the full set of files a change requires.
   runtime-, container-, or resolution-dependent discovery, cache the found
   reflection under the same stable key for `get*()`; deterministic extensions
   may reconstruct it.
-- When an extension API permits it, return `null` when the extension does not
-  own or cannot refine the expression. Use `ErrorType` only for a genuinely
-  invalid expression, following the nearest sibling.
+- For dynamic return type extensions, return `null` when the extension cannot
+  refine the call. For other extension types, follow their documented fallback
+  semantics. Use `ErrorType` only for a genuinely invalid expression, following
+  the nearest sibling.
 - PHPStan extension code that resolves services from the booted Laravel
   application should use the existing `HasContainer` mechanism. Its `resolve()`
   method deliberately returns `null` when the application cannot resolve a
@@ -95,10 +99,9 @@ Check sibling extensions for the full set of files a change requires.
 
 ## PHPStan type handling
 
-- When asking a semantic question about a `Type`, prefer its query methods,
-  `isSuperTypeOf()`, or `accepts()` over checking its concrete class. Use
-  `instanceof` only for representation-specific behavior the `Type` API does
-  not expose.
+- When identifying a type, prefer its query methods or `isSuperTypeOf()`. Use
+  `accepts()` for assignment or argument compatibility. Use `instanceof` only
+  for representation-specific behavior the `Type` API does not expose.
 - Build unions and intersections with `TypeCombinator`.
 - Handle all three `TrinaryLogic` outcomes deliberately: yes, no, and maybe.
 - For classes from the analysed project, inject `ReflectionProvider` and use
