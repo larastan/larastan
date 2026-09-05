@@ -15,11 +15,10 @@ final readonly class ValidationRule
      * @param list<list<ValidationRule>>                        $anyOfRuleGroups
      */
     public function __construct(
-        public string $type,
+        public Type $type,
         public bool $nullable = false,
         public bool $possiblyUndefined = false,
         public bool $required = false,
-        public bool $benevolent = false,
         public Type|null $constraintType = null,
         public array|null $allowedKeys = null,
         public array $anyOfRuleGroups = [],

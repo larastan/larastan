@@ -7,6 +7,7 @@ namespace Tests\Unit\Support\Validation;
 use Larastan\Larastan\Support\Validation\RuleTreeBuilder;
 use Larastan\Larastan\Support\Validation\RuleTreeNode;
 use Larastan\Larastan\Support\Validation\ValidationRuleFactory;
+use PHPStan\Type\VerbosityLevel;
 use PHPUnit\Framework\TestCase;
 
 use function array_keys;
@@ -21,9 +22,9 @@ class RuleTreeBuilderTest extends TestCase
         ]);
 
         $this->assertSame(['name', 'age'], array_keys($roots));
-        $this->assertSame('string', $roots['name']->rule?->type);
+        $this->assertSame('string', $roots['name']->rule?->type->describe(VerbosityLevel::precise()));
         $this->assertSame([], $roots['name']->children);
-        $this->assertSame('int|numeric-string', $roots['age']->rule?->type);
+        $this->assertSame('(int|numeric-string)', $roots['age']->rule?->type->describe(VerbosityLevel::precise()));
         $this->assertFalse($roots['name']->degraded);
     }
 
@@ -37,7 +38,7 @@ class RuleTreeBuilderTest extends TestCase
         $this->assertSame(['author'], array_keys($roots));
         $this->assertNull($roots['author']->rule);
         $this->assertSame(['name', 'surname'], array_keys($roots['author']->children));
-        $this->assertSame('string', $roots['author']->children['name']->rule?->type);
+        $this->assertSame('string', $roots['author']->children['name']->rule?->type->describe(VerbosityLevel::precise()));
         $this->assertTrue($roots['author']->children['surname']->rule?->nullable);
     }
 
@@ -52,7 +53,7 @@ class RuleTreeBuilderTest extends TestCase
 
         $element = $users->children[RuleTreeNode::WILDCARD];
         $this->assertNull($element->rule);
-        $this->assertSame('string', $element->children['email']->rule?->type);
+        $this->assertSame('string', $element->children['email']->rule?->type->describe(VerbosityLevel::precise()));
     }
 
     public function testMultiWildcardChain(): void
@@ -67,7 +68,7 @@ class RuleTreeBuilderTest extends TestCase
             ->children[RuleTreeNode::WILDCARD]
             ->children['city'];
 
-        $this->assertSame('string', $city->rule?->type);
+        $this->assertSame('string', $city->rule?->type->describe(VerbosityLevel::precise()));
         $this->assertTrue($city->rule?->required);
     }
 
@@ -78,7 +79,10 @@ class RuleTreeBuilderTest extends TestCase
         ]);
 
         $this->assertNull($roots['tags']->rule);
-        $this->assertSame('string', $roots['tags']->children[RuleTreeNode::WILDCARD]->rule?->type);
+        $this->assertSame(
+            'string',
+            $roots['tags']->children[RuleTreeNode::WILDCARD]->rule?->type->describe(VerbosityLevel::precise()),
+        );
     }
 
     public function testParentAndNestedRulesOnSameNode(): void
@@ -89,7 +93,7 @@ class RuleTreeBuilderTest extends TestCase
         ]);
 
         $users = $roots['users'];
-        $this->assertSame('array', $users->rule?->type);
+        $this->assertSame('array', $users->rule?->type->describe(VerbosityLevel::precise()));
         $this->assertTrue($users->rule?->required);
         $this->assertArrayHasKey(RuleTreeNode::WILDCARD, $users->children);
     }
@@ -101,7 +105,7 @@ class RuleTreeBuilderTest extends TestCase
         ]);
 
         $leaf = $roots['a']->children['a']->children['a'];
-        $this->assertSame('string', $leaf->rule?->type);
+        $this->assertSame('string', $leaf->rule?->type->describe(VerbosityLevel::precise()));
         $this->assertSame([], $leaf->children);
     }
 
@@ -133,7 +137,7 @@ class RuleTreeBuilderTest extends TestCase
         ]);
 
         $this->assertSame(['v1.0'], array_keys($roots));
-        $this->assertSame('string', $roots['v1.0']->rule?->type);
+        $this->assertSame('string', $roots['v1.0']->rule?->type->describe(VerbosityLevel::precise()));
         $this->assertSame([], $roots['v1.0']->children);
     }
 
