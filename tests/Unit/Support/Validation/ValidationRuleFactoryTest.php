@@ -188,6 +188,27 @@ class ValidationRuleFactoryTest extends TestCase
         $this->assertSame($required, $validationRule->required);
     }
 
+    public function testListBoundsAndInValuesAreIndependentOfRuleOrder(): void
+    {
+        $expectedType       = TypeCombinator::intersect(
+            new ArrayType(new IntegerType(), new MixedType()),
+            new AccessoryArrayListType(),
+            new NonEmptyArrayType(),
+        );
+        $expectedConstraint = TypeCombinator::intersect(
+            new ArrayType(new IntegerType(), TypeCombinator::union(new ConstantStringType('known'), new ConstantStringType('new'))),
+            new AccessoryArrayListType(),
+        );
+
+        foreach (['min:1|in:known,new|list', 'list|in:known,new|min:1'] as $rules) {
+            $validationRule = ValidationRuleFactory::make($rules);
+
+            $this->assertTrue($expectedType->equals($validationRule->type));
+            $this->assertNotNull($validationRule->constraintType);
+            $this->assertTrue($expectedConstraint->equals($validationRule->constraintType));
+        }
+    }
+
     public function testExclusionRulesPreserveSeparateRawAndValidatedFacts(): void
     {
         $excluded = ValidationRuleFactory::make('exclude|string');
