@@ -277,7 +277,7 @@ function testRuleSources(
     assertType('mixed', $parentComposition->composed);
     assertType('(int|numeric-string)', $exactPhpDocDirect->age);
     assertType('string', $exactPhpDocDirect->name);
-    assertType('string|Stringable', $exactPhpDocSpread->email);
+    assertType('string', $exactPhpDocSpread->email);
     assertType('mixed', $broadPhpDocDirect->anything);
     assertType('mixed', $broadPhpDocSpread->broadOnly);
     assertType('string', $broadPhpDocSpread->stable);

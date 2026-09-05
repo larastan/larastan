@@ -15,9 +15,13 @@ use Illuminate\Validation\Rules\In;
 use Illuminate\Validation\Rules\Numeric;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\Validator;
+use PHPStan\Type\Accessory\AccessoryArrayListType;
 use PHPStan\Type\Accessory\AccessoryNumericStringType;
+use PHPStan\Type\ArrayType;
 use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\IntegerType;
+use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
@@ -99,7 +103,7 @@ final class ValidationRuleFactory
                     ? $dateType
                     : TypeCombinator::intersect($constraintType, $dateType);
             } elseif ((new ObjectType(Email::class))->isSuperTypeOf($rule)->yes()) {
-                $type = 'string|Stringable';
+                $type = 'string';
             } elseif ((new ObjectType(Enum::class))->isSuperTypeOf($rule)->yes()) {
                 $enumType = self::enumType($rule->getTemplateType(Enum::class, 'TEnum'));
 
@@ -192,7 +196,17 @@ final class ValidationRuleFactory
         }
 
         if ($inValues !== null) {
-            $type = self::determineInType($inValues, $type);
+            if (in_array($type, ['array', 'list'], true)) {
+                $inType = self::inParameterType($inValues, $type);
+
+                if ($inType !== null) {
+                    $constraintType = $constraintType === null
+                        ? $inType
+                        : TypeCombinator::intersect($constraintType, $inType);
+                }
+            } else {
+                $type = self::determineInType($inValues, $type);
+            }
         }
 
         // `min`/`max`/`between` constrain the value only for integers (for strings they
@@ -375,11 +389,12 @@ final class ValidationRuleFactory
 
     private static function inType(Type $valuesType, string $baseType): Type|null
     {
-        if ($baseType !== 'string' && $baseType !== 'lowercase-string' && $baseType !== 'uppercase-string') {
+        if (! in_array($baseType, ['array', 'list', 'mixed', 'string', 'lowercase-string', 'uppercase-string'], true)) {
             return null;
         }
 
-        $constantArrays = $valuesType->getConstantArrays();
+        $multipleRepresentations = in_array($baseType, ['array', 'list', 'mixed'], true);
+        $constantArrays          = $valuesType->getConstantArrays();
 
         if (count($constantArrays) !== 1) {
             return null;
@@ -394,6 +409,10 @@ final class ValidationRuleFactory
                 return null;
             }
 
+            if ($multipleRepresentations && ($value->getValue() === '' || is_numeric($value->getValue()))) {
+                return null;
+            }
+
             if (str_contains($value->getValue(), '\\') || str_contains($value->getValue(), '"')) {
                 return null;
             }
@@ -403,7 +422,44 @@ final class ValidationRuleFactory
                 : $value;
         }
 
-        return $types === [] ? null : TypeCombinator::union(...$types);
+        if ($types === []) {
+            return null;
+        }
+
+        return self::applyInType(TypeCombinator::union(...$types), $baseType);
+    }
+
+    /** @param list<string> $values */
+    private static function inParameterType(array $values, string $baseType): Type|null
+    {
+        $types = [];
+
+        foreach ($values as $value) {
+            if ($value === '' || is_numeric($value)) {
+                return null;
+            }
+
+            $types[] = new ConstantStringType($value);
+        }
+
+        if ($types === []) {
+            return null;
+        }
+
+        return self::applyInType(TypeCombinator::union(...$types), $baseType);
+    }
+
+    private static function applyInType(Type $type, string $baseType): Type
+    {
+        if ($baseType === 'array') {
+            return new ArrayType(new MixedType(), $type);
+        }
+
+        if ($baseType === 'list') {
+            return TypeCombinator::intersect(new ArrayType(new IntegerType(), $type), new AccessoryArrayListType());
+        }
+
+        return $type;
     }
 
     private static function constantRuleString(Type $type): ConstantStringType|null
@@ -443,8 +499,8 @@ final class ValidationRuleFactory
             'active_url', 'alpha', 'ascii', 'hex_color', 'string', 'url', 'ulid', 'uuid' => 'string',
             'alpha_dash', 'alpha_num', 'doesnt_end_with', 'doesnt_start_with', 'ends_with', 'not_regex',
             'date_format', 'regex', 'starts_with' => 'float|int|string',
-            'email', 'ip', 'mac_address' => 'string|Stringable',
-            'json' => 'bool|float|int|string|Stringable',
+            'email', 'ip', 'mac_address' => 'string',
+            'json' => 'bool|float|int|string',
             'accepted' => "'yes'|'on'|1|'1'|true|'true'",
             'declined' => "'no'|'off'|0|'0'|false|'false'",
             'boolean' => in_array('strict', $parameters, true) && self::supportsStrictRule('validateBoolean')

@@ -52,6 +52,14 @@ final class AnyOfRequest extends FormRequest
             'dynamic' => ['required', Rule::anyOf($this->dynamicAlternatives)],
             'collectionOrString' => ['required', Rule::anyOf(['string', 'array'])],
             'collectionOrString.*' => ['integer'],
+            'arrayIn' => ['required', Rule::anyOf([
+                ['array', 'in:known,new'],
+                'string',
+            ])],
+            'listRuleIn' => ['required', Rule::anyOf([
+                ['list', Rule::in(['known', 'new'])],
+                'string',
+            ])],
             'nestedShape' => ['required', Rule::anyOf([
                 ['type' => ['required', 'string']],
             ])],
@@ -84,5 +92,7 @@ function test(AnyOfRequest $request): void
     assertType('mixed', $request->directAnyOf);
     assertType('mixed', $request->dynamic);
     assertType('array<(int|numeric-string)>|string', $request->collectionOrString);
+    assertType("array<'known'|'new'>|string", $request->arrayIn);
+    assertType("list<'known'|'new'>|string", $request->listRuleIn);
     assertType('mixed', $request->nestedShape);
 }

@@ -107,7 +107,7 @@ function test(mixed $mixed, array|string $arrayOrString, AdditionalRulesRequest 
 
     assertType('DateTimeInterface|float|int|string', $request->dateValue);
     assertType('float|int|string', $request->formattedDate);
-    assertType('string|Stringable', $request->emailValue);
+    assertType('string', $request->emailValue);
     assertType('Illuminate\\Http\\UploadedFile', $request->dimensionsValue);
     assertType('Illuminate\\Http\\UploadedFile', $request->fileValue);
     assertType('Illuminate\\Http\\UploadedFile', $request->imageValue);
