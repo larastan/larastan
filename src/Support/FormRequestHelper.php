@@ -10,6 +10,7 @@ use Larastan\Larastan\Support\Validation\RuleTreeNode;
 use Larastan\Larastan\Support\Validation\RuleTreeTypeResolver;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
 
 use function array_key_exists;
 
@@ -62,7 +63,33 @@ final class FormRequestHelper
         return $this->rawProperties[$className][$propertyName];
     }
 
-    public function getValidatedDataType(ClassReflection $classReflection): Type|null
+    public function getValidatedDataType(Type $formRequestType): Type|null
+    {
+        $classReflections = $formRequestType->getObjectClassReflections();
+        $types            = [];
+
+        if ($classReflections === []) {
+            return null;
+        }
+
+        foreach ($classReflections as $classReflection) {
+            if (! $classReflection->is(FormRequest::class)) {
+                return null;
+            }
+
+            $type = $this->getValidatedDataTypeForClass($classReflection);
+
+            if ($type === null) {
+                return null;
+            }
+
+            $types[] = $type;
+        }
+
+        return TypeCombinator::union(...$types);
+    }
+
+    private function getValidatedDataTypeForClass(ClassReflection $classReflection): Type|null
     {
         /** @var class-string<FormRequest> $className */
         $className = $classReflection->getName();

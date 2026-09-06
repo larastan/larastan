@@ -30,6 +30,8 @@ function acceptsIn(In $rule): void
 
 function test(EnabledRequest $request): void
 {
+    assertType('array{name: string}', $request->validated());
+    assertType('string', $request->validated('name'));
     assertType('Illuminate\\Support\\ValidatedInput<array{name: string}>', $request->safe());
     assertType('array{name: string}', $request->safe(['name']));
 
