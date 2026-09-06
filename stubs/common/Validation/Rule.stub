@@ -1,0 +1,29 @@
+<?php
+
+namespace Illuminate\Validation;
+
+class Rule
+{
+    /**
+     * @param \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<array-key, mixed>|null $keys
+     * @return \Illuminate\Validation\Rules\ArrayRule
+     */
+    public static function array($keys = null);
+
+    /**
+     * @template TEnum of \UnitEnum
+     * @param class-string<TEnum> $type
+     * @return \Illuminate\Validation\Rules\Enum<class-string<TEnum>>
+     */
+    public static function enum($type);
+
+    /**
+     * @return \Illuminate\Validation\Rules\Date<\DateTimeInterface|float|int|string>
+     */
+    public static function date();
+
+    /**
+     * @return \Illuminate\Validation\Rules\Numeric<__benevolent<float|int|numeric-string>>
+     */
+    public static function numeric();
+}
