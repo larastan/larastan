@@ -22,7 +22,7 @@ final class AppMakeHelper
 {
     use HasContainer;
 
-    public function resolveTypeFromCall(FuncCall|MethodCall|StaticCall $call, Scope $scope): Type
+    public function resolveTypeFromCall(FuncCall|MethodCall|StaticCall $call, Scope $scope): ?Type
     {
         $args = $call->getArgs();
         if (count($args) === 0) {
@@ -58,6 +58,6 @@ final class AppMakeHelper
             return TypeCombinator::union(...$types);
         }
 
-        return new MixedType();
+        return null;
     }
 }
