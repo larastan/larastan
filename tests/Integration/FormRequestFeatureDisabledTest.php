@@ -30,10 +30,10 @@ class FormRequestFeatureDisabledTest extends PHPStanTestCase
 
         $stubFiles           = self::getContainer()->getByType(LarastanStubFilesExtension::class)->getFiles();
         $featureStubSuffixes = [
-            '/Foundation/Http/FormRequest.stub',
-            '/Support/ValidatedInput.stub',
+            '/Support/GenericValidatedInput.stub',
             '/Validation/AnyOf.stub',
             '/Validation/ArrayKeys.stub',
+            '/Validation/Rule.stub',
             '/Validation/Rules.stub',
             '/Validation/StringRule.stub',
         ];
@@ -51,6 +51,10 @@ class FormRequestFeatureDisabledTest extends PHPStanTestCase
         );
 
         $this->assertSame([], $loadedFeatureStubs);
+        $this->assertCount(1, array_filter(
+            $stubFiles,
+            static fn (string $stubFile): bool => str_ends_with($stubFile, '/Support/ValidatedInput.stub'),
+        ));
     }
 
     /** @return string[] */

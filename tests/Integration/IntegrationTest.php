@@ -11,10 +11,6 @@ use PHPStan\Testing\PHPStanTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Throwable;
 
-use function count;
-use function implode;
-use function sprintf;
-
 class IntegrationTest extends PHPStanTestCase
 {
     /** @return iterable<array{0: string, 1?: array<int, array<int, string>>}> */
@@ -66,7 +62,6 @@ class IntegrationTest extends PHPStanTestCase
                 17 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::where() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
                 19 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::where() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
                 20 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::where() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
-                24 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::where() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, string given.'],
                 25 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::orWhere() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
                 26 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::orWhere() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
                 27 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::orWhere() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, array{foo: \'foo\'} given.'],
@@ -83,7 +78,6 @@ class IntegrationTest extends PHPStanTestCase
             [
                 11 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::update() expects array<model property of static(ModelPropertyModel\ModelPropertyOnModel), mixed>, array<string, string> given.'],
                 18 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::update() expects array<model property of App\Account|model property of App\User, mixed>, array<string, string> given.'],
-                25 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::update() expects array<model property of App\Account|App\User, mixed>, array<string, string> given.'],
                 49 => ['Parameter #1 $property of method ModelPropertyModel\ModelPropertyCustomMethods::foo() expects model property of App\User, string given.'],
                 68 => ['Parameter #1 $property of method ModelPropertyModel\ModelPropertyCustomMethodsInNormalClass::foo() expects model property of App\User, string given.'],
                 94 => ['Parameter #1 $userModelProperty of function ModelPropertyModel\acceptsUserProperty expects model property of App\User, model property of App\Account given.'],
@@ -152,10 +146,6 @@ class IntegrationTest extends PHPStanTestCase
         if ($expectedErrors === null) {
             $this->assertNoErrors($errors);
         } else {
-            if (count($expectedErrors) > 0) {
-                $this->assertNotEmpty($errors);
-            }
-
             $this->assertSameErrorMessages($file, $expectedErrors, $errors);
         }
     }
@@ -195,20 +185,13 @@ class IntegrationTest extends PHPStanTestCase
      */
     private function assertSameErrorMessages(string $file, array $expectedErrors, array $errors): void
     {
-        foreach ($errors as $error) {
-            $errorLine = $error->getLine() ?? 0;
+        $actualErrors = [];
 
-            $this->assertArrayHasKey(
-                $errorLine,
-                $expectedErrors,
-                sprintf('File %s has unexpected error "%s" at line %d.', $file, $error->getMessage(), $errorLine),
-            );
-            $this->assertContains(
-                $error->getMessage(),
-                $expectedErrors[$errorLine],
-                sprintf("File %s has unexpected error \"%s\" at line %d.\n\nExpected \"%s\"", $file, $error->getMessage(), $errorLine, implode("\n\t", $expectedErrors[$errorLine])),
-            );
+        foreach ($errors as $error) {
+            $actualErrors[$error->getLine() ?? 0][] = $error->getMessage();
         }
+
+        $this->assertSame($expectedErrors, $actualErrors, $file);
     }
 
     /** @return string[] */

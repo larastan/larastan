@@ -33,7 +33,7 @@ function acceptsRules(
 
 function test(DisabledRequest $request): void
 {
-    assertType('mixed', $request->validated());
+    assertType('array<string, mixed>', $request->validated());
     assertType('mixed', $request->validated('name'));
     assertType('Illuminate\\Support\\ValidatedInput', $request->safe());
     assertType('array<string, mixed>', $request->safe(['name']));

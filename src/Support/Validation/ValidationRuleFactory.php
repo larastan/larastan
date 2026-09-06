@@ -40,6 +40,7 @@ use PHPStan\Type\TypeUtils;
 use ReflectionMethod;
 
 use function array_filter;
+use function class_exists;
 use function count;
 use function explode;
 use function filter_var;
@@ -220,7 +221,7 @@ final class ValidationRuleFactory
                     $degraded          = $degraded || $conditionalRule->degraded;
                     break;
                 case self::isObjectRule($rule, self::ANY_OF):
-                    $alternatives = self::anyOfAlternatives($rule->getTemplateType(self::ANY_OF, 'TRules'));
+                    $alternatives = self::anyOfAlternatives(self::objectRuleTemplateType($rule, self::ANY_OF, 'TRules'));
 
                     if ($alternatives !== null) {
                         $anyOfRuleGroups[] = $alternatives;
@@ -229,7 +230,7 @@ final class ValidationRuleFactory
                     break;
                 case self::isObjectRule($rule, self::ARRAY_KEYS):
                     $type        = self::arrayType();
-                    $allowedKeys = self::constantArrayKeys($rule->getTemplateType(self::ARRAY_KEYS, 'TKeys'));
+                    $allowedKeys = self::constantArrayKeys(self::objectRuleTemplateType($rule, self::ARRAY_KEYS, 'TKeys'));
                     break;
                 case self::isObjectRule($rule, ArrayRule::class):
                     $type        = self::arrayType();
@@ -258,7 +259,10 @@ final class ValidationRuleFactory
                     break;
                 case self::isObjectRule($rule, self::STRING_RULE):
                     $type           = new StringType();
-                    $constraintType = self::intersectConstraint($constraintType, $rule->getTemplateType(self::STRING_RULE, 'TValue'));
+                    $constraintType = self::intersectConstraint(
+                        $constraintType,
+                        self::objectRuleTemplateType($rule, self::STRING_RULE, 'TValue'),
+                    );
                     break;
                 case self::isObjectRule($rule, Dimensions::class):
                 case self::isObjectRule($rule, FileRule::class):
@@ -331,10 +335,14 @@ final class ValidationRuleFactory
         );
     }
 
-    /** @param class-string $class */
     private static function isObjectRule(Type $rule, string $class): bool
     {
-        return (new ObjectType($class))->isSuperTypeOf($rule)->yes();
+        return class_exists($class) && (new ObjectType($class))->isSuperTypeOf($rule)->yes();
+    }
+
+    private static function objectRuleTemplateType(Type $rule, string $class, string $template): Type
+    {
+        return class_exists($class) ? $rule->getTemplateType($class, $template) : new MixedType();
     }
 
     /** @param array<Type> $rules */
@@ -407,13 +415,13 @@ final class ValidationRuleFactory
     /** @return list<ValidationRule>|null */
     private static function conditionalAlternatives(Type $rule): array|null
     {
-        $condition = self::constantBoolean($rule->getTemplateType(self::CONDITIONAL_RULES, 'TCondition'));
+        $condition = self::constantBoolean(self::objectRuleTemplateType($rule, self::CONDITIONAL_RULES, 'TCondition'));
         $types     = match ($condition) {
-            true => [$rule->getTemplateType(self::CONDITIONAL_RULES, 'TRules')],
-            false => [$rule->getTemplateType(self::CONDITIONAL_RULES, 'TDefaultRules')],
+            true => [self::objectRuleTemplateType($rule, self::CONDITIONAL_RULES, 'TRules')],
+            false => [self::objectRuleTemplateType($rule, self::CONDITIONAL_RULES, 'TDefaultRules')],
             null => [
-                $rule->getTemplateType(self::CONDITIONAL_RULES, 'TRules'),
-                $rule->getTemplateType(self::CONDITIONAL_RULES, 'TDefaultRules'),
+                self::objectRuleTemplateType($rule, self::CONDITIONAL_RULES, 'TRules'),
+                self::objectRuleTemplateType($rule, self::CONDITIONAL_RULES, 'TDefaultRules'),
             ],
         };
 
@@ -432,10 +440,9 @@ final class ValidationRuleFactory
         return $alternatives;
     }
 
-    /** @param class-string $class */
     private static function conditionalObjectApplies(Type $rule, string $class, bool $unless = false): bool|null
     {
-        $condition = self::constantBoolean($rule->getTemplateType($class, 'TCondition'));
+        $condition = self::constantBoolean(self::objectRuleTemplateType($rule, $class, 'TCondition'));
 
         return $condition === null || ! $unless ? $condition : ! $condition;
     }

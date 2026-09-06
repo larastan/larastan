@@ -16,10 +16,10 @@ use function version_compare;
 final class LarastanStubFilesExtension implements StubFilesExtension
 {
     private const FORM_REQUEST_TYPE_STUBS = [
-        'Foundation/Http/FormRequest.stub' => true,
-        'Support/ValidatedInput.stub' => true,
+        'Support/GenericValidatedInput.stub' => true,
         'Validation/AnyOf.stub' => true,
         'Validation/ArrayKeys.stub' => true,
+        'Validation/Rule.stub' => true,
         'Validation/Rules.stub' => true,
         'Validation/StringRule.stub' => true,
     ];
@@ -48,6 +48,10 @@ final class LarastanStubFilesExtension implements StubFilesExtension
             $relativePath = $stubFile->getRelativePathname();
 
             if (! $this->checkFormRequestTypes && isset(self::FORM_REQUEST_TYPE_STUBS[$relativePath])) {
+                continue;
+            }
+
+            if ($this->checkFormRequestTypes && $relativePath === 'Support/ValidatedInput.stub') {
                 continue;
             }
 
