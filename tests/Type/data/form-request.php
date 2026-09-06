@@ -91,6 +91,16 @@ class OverriddenSafeRequest extends SafeReturnRequest
     }
 }
 
+class OverriddenValidatedRequest extends SafeReturnRequest
+{
+    /** @return array{custom: string} */
+    public function validated($key = null, $default = null): array
+    {
+        return ['custom' => 'value'];
+    }
+}
+
+/** @param 'name'|'nickname' $validatedKey */
 function test(
     FormRequest $request,
     FooRequest $fooRequest,
@@ -98,6 +108,8 @@ function test(
     ConditionalRulesRequest $conditionalRulesRequest,
     SafeReturnRequest $safeReturnRequest,
     OverriddenSafeRequest $overriddenSafeRequest,
+    OverriddenValidatedRequest $overriddenValidatedRequest,
+    string $validatedKey,
 ): void
 {
     assertType('Illuminate\Support\ValidatedInput', $request->safe());
@@ -124,6 +136,27 @@ function test(
     assertType('mixed', $safeReturnRequest->safe()->input('name'));
     assertType('mixed', $safeReturnRequest->safe()['name']);
     assertType('array{custom: string}', $overriddenSafeRequest->safe());
+
+    assertType(
+        'array{name: string, nickname?: string, profile: array{email: string, age?: (int|numeric-string)}, unknown: mixed}',
+        $safeReturnRequest->validated(),
+    );
+    assertType(
+        'array{name: string, nickname?: string, profile: array{email: string, age?: (int|numeric-string)}, unknown: mixed}',
+        $safeReturnRequest->validated(null),
+    );
+    assertType('string', $safeReturnRequest->validated('name'));
+    assertType('string|null', $safeReturnRequest->validated('nickname'));
+    assertType('0|string', $safeReturnRequest->validated('nickname', 0));
+    assertType('0|string', $safeReturnRequest->validated(default: 0, key: 'nickname'));
+    assertType('string', $safeReturnRequest->validated('name', 0));
+    assertType('string', $safeReturnRequest->validated('profile.email'));
+    assertType('int|numeric-string|null', $safeReturnRequest->validated('profile.age'));
+    assertType("'fallback'", $safeReturnRequest->validated('missing', static fn (): string => 'fallback'));
+    assertType("'fallback'", $safeReturnRequest->validated(0, 'fallback'));
+    assertType('mixed', $safeReturnRequest->validated('unknown.child'));
+    assertType('mixed', $safeReturnRequest->validated($validatedKey));
+    assertType('array{custom: string}', $overriddenValidatedRequest->validated());
 
     assertType('string', $fooRequest->name);
     assertType('string|null', $fooRequest->optionalName);

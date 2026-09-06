@@ -47,7 +47,7 @@ final class FormRequestSafeDynamicMethodReturnTypeExtension implements DynamicMe
             return null;
         }
 
-        $validatedDataType = $this->getValidatedDataType($methodCall, $scope);
+        $validatedDataType = $this->formRequestHelper->getValidatedDataType($scope->getType($methodCall->var));
 
         if ($validatedDataType === null) {
             return null;
@@ -80,32 +80,6 @@ final class FormRequestSafeDynamicMethodReturnTypeExtension implements DynamicMe
         }
 
         return $this->select($validatedDataType, $paths);
-    }
-
-    private function getValidatedDataType(MethodCall $methodCall, Scope $scope): Type|null
-    {
-        $classReflections = $scope->getType($methodCall->var)->getObjectClassReflections();
-        $types            = [];
-
-        if ($classReflections === []) {
-            return null;
-        }
-
-        foreach ($classReflections as $classReflection) {
-            if (! $classReflection->is(FormRequest::class)) {
-                return null;
-            }
-
-            $type = $this->formRequestHelper->getValidatedDataType($classReflection);
-
-            if ($type === null) {
-                return null;
-            }
-
-            $types[] = $type;
-        }
-
-        return TypeCombinator::union(...$types);
     }
 
     /** @param list<list<string>> $paths */
