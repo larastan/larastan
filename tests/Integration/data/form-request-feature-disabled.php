@@ -36,7 +36,7 @@ function test(DisabledRequest $request): void
     assertType('array<string, mixed>', $request->validated());
     assertType('mixed', $request->validated('name'));
     assertType('Illuminate\\Support\\ValidatedInput', $request->safe());
-    assertType('array<string, mixed>', $request->safe(['name']));
+    assertType('array{name: mixed}', $request->safe(['name']));
 
     $request->name = 1;
 }

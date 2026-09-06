@@ -24,7 +24,7 @@ final class LarastanStubFilesExtension implements StubFilesExtension
         'Validation/StringRule.stub' => true,
     ];
 
-    public function __construct(private bool $checkFormRequestTypes)
+    public function __construct(private bool $checkFormRequestTypes = false)
     {
     }
 
