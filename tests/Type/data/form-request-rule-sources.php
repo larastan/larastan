@@ -279,6 +279,17 @@ class LoopBuiltRulesRequest extends FormRequest
     }
 }
 
+class IntegerKeyRulesRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            0 => 'required|string',
+            '1' => 'required|integer',
+        ];
+    }
+}
+
 function testRuleSources(
     ExactRulesRequest $exact,
     InheritedRulesRequest $inherited,
@@ -295,6 +306,7 @@ function testRuleSources(
     CollectionSelectionRequest $collectionSelection,
     ComputedRulesRequest $computed,
     LoopBuiltRulesRequest $loopBuilt,
+    IntegerKeyRulesRequest $integerKeys,
 ): void {
     assertType('string', $exact->exact);
     assertType('mixed', $exact->unrelated);
@@ -302,9 +314,13 @@ function testRuleSources(
     assertType('(int|numeric-string)', $trait->fromTrait);
 
     assertType('string', $unpacked->constant);
-    assertType('string', $unpacked->overwritten);
+    assertType('mixed', $unpacked->overwritten);
     assertType('(int|numeric-string)', $unpacked->stable);
     assertType('mixed', $unpacked->dynamicOnly);
+    assertType(
+        'array{constant: string, stable: (int|numeric-string), ...}',
+        $unpacked->validated(),
+    );
 
     assertType('string', $multiple->shared);
     assertType('(int|string)', $multiple->different);
@@ -331,5 +347,16 @@ function testRuleSources(
     assertType('mixed', $computed->ternary);
     assertType('mixed', $computed->coalesce);
     assertType('(int|numeric-string)', $computed->stableComputedSibling);
+    assertType(
+        'array{constantKey: string, dynamicConcatenation?: mixed, ternary?: mixed, coalesce?: mixed, stableComputedSibling: (int|numeric-string), ...}',
+        $computed->validated(),
+    );
     assertType('mixed', $loopBuilt->anything);
+
+    assertType('array{shared: string, different: (int|string), ...}', $multiple->validated());
+
+    assertType('mixed', $integerKeys->{'0'});
+    assertType('mixed', $integerKeys->{'1'});
+    assertType('array', $integerKeys->validated());
+    assertType('mixed', $integerKeys->validated(0));
 }

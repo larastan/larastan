@@ -29,7 +29,7 @@ final class RuleTreeTypeResolver
     }
 
     /** @param array<string, RuleTreeNode> $nodes */
-    public function resolveValidatedData(array $nodes): Type
+    public function resolveValidatedData(array $nodes, bool $unsealed): Type
     {
         $builder = ConstantArrayTypeBuilder::createEmpty();
 
@@ -43,6 +43,10 @@ final class RuleTreeTypeResolver
                 $this->resolveValidatedNode($node),
                 ! $this->isValidatedGuaranteedPresent($node),
             );
+        }
+
+        if ($unsealed) {
+            $builder->makeUnsealed(new MixedType(), new MixedType());
         }
 
         return $builder->getArray();
