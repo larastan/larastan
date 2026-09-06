@@ -72,6 +72,11 @@ final class AdditionalRulesRequest extends FormRequest
             'comparisonValue' => 'required|gt:other',
             'comparisonArrayValue' => 'required|array|gte:other',
             'numericSizeValue' => 'required|numeric|size:3',
+            'jsonIntegerValue' => 'required|integer',
+            'numericIntegerValue' => ['required', Rule::numeric()->integer()],
+            'numericRawIntegerValue' => 'required|integer|numeric',
+            'stringIntegerValue' => 'required|integer|string',
+            'numericDigitsValue' => ['required', Rule::numeric()->digits(1)],
             'integerMinimumValue' => 'required|integer|min:1',
             'integerBetweenValue' => 'required|integer|between:1,20',
             'malformedMinimumValue' => 'required|integer|min:',
@@ -87,6 +92,7 @@ final class AdditionalRulesRequest extends FormRequest
             'mixedNumericInValue' => 'required|in:1',
             'mixedEmptyInValue' => 'present|in:""',
             'stringNumericInValue' => 'required|string|in:1,2',
+            'stringMixedInValue' => 'required|string|in:1,draft',
             'textInValue' => 'required|in:date,rating',
             'acceptedValue' => 'accepted',
             'declinedValue' => 'declined',
@@ -131,11 +137,11 @@ function test(mixed $mixed, array|string $arrayOrString, AdditionalRulesRequest 
     assertType('Illuminate\\Validation\\Rules\\Enum<class-string<ValidationRules\\UnitEnumeration>>', Rule::enum(UnitEnumeration::class));
 
     assertType('Illuminate\\Validation\\Rules\\Numeric<(float|int|numeric-string)>', Rule::numeric());
-    assertType('Illuminate\\Validation\\Rules\\Numeric<(int|numeric-string)>', Rule::numeric()->digits(3));
-    assertType('Illuminate\\Validation\\Rules\\Numeric<(int|numeric-string)>', Rule::numeric()->digitsBetween(1, 3));
-    assertType('Illuminate\\Validation\\Rules\\Numeric<(int|numeric-string)>', Rule::numeric()->exactly(3));
+    assertType('Illuminate\\Validation\\Rules\\Numeric<(float|int|numeric-string)>', Rule::numeric()->digits(3));
+    assertType('Illuminate\\Validation\\Rules\\Numeric<(float|int|numeric-string)>', Rule::numeric()->digitsBetween(1, 3));
+    assertType('Illuminate\\Validation\\Rules\\Numeric<(float|int|numeric-string)>', Rule::numeric()->exactly(3));
     assertType(
-        'Illuminate\\Validation\\Rules\\Numeric<(int|numeric-string)>',
+        'Illuminate\\Validation\\Rules\\Numeric<(float|int|numeric-string)>',
         Rule::numeric()
             ->integer()
             ->between(1, 10)
@@ -197,12 +203,17 @@ function test(mixed $mixed, array|string $arrayOrString, AdditionalRulesRequest 
     assertType('mixed', $request->comparisonValue);
     assertType('array', $request->comparisonArrayValue);
     assertType('(float|int|numeric-string)', $request->numericSizeValue);
-    assertType('(int|numeric-string)', $request->integerMinimumValue);
-    assertType('(int|numeric-string)', $request->integerBetweenValue);
-    assertType('(int|numeric-string)', $request->malformedMinimumValue);
-    assertType('(int|numeric-string)', $request->negativeMinimumValue);
-    assertType('(int|numeric-string)', $request->invalidBoundsValue);
-    assertType('(int|numeric-string)', $request->boundedInValue);
+    assertType('(float|int|numeric-string|true)', $request->jsonIntegerValue);
+    assertType('(float|int|numeric-string)', $request->numericIntegerValue);
+    assertType('(float|int|numeric-string)', $request->numericRawIntegerValue);
+    assertType('numeric-string', $request->stringIntegerValue);
+    assertType('(float|int|numeric-string)', $request->numericDigitsValue);
+    assertType('(float|int|numeric-string|true)', $request->integerMinimumValue);
+    assertType('(float|int|numeric-string|true)', $request->integerBetweenValue);
+    assertType('(float|int|numeric-string|true)', $request->malformedMinimumValue);
+    assertType('(float|int|numeric-string|true)', $request->negativeMinimumValue);
+    assertType('(float|int|numeric-string|true)', $request->invalidBoundsValue);
+    assertType('(float|int|numeric-string|true)', $request->boundedInValue);
     assertType("non-empty-list<'known'|'new'>", $request->listBoundsFirst);
     assertType("non-empty-list<'known'|'new'>", $request->listBoundsLast);
     assertType("'baz'|'foo,bar'", $request->quotedInValue);
@@ -211,7 +222,6 @@ function test(mixed $mixed, array|string $arrayOrString, AdditionalRulesRequest 
     assertType("0|1|'0'|'1'|bool", $request->booleanInValue);
     assertType('mixed', $request->mixedNumericInValue);
     assertType('mixed', $request->mixedEmptyInValue);
-    assertType("'1'|'2'", $request->stringNumericInValue);
     assertType("'date'|'rating'", $request->textInValue);
     assertType(
         "array{numericInValue: (float|int|numeric-string), booleanInValue: 0|1|'0'|'1'|bool, mixedNumericInValue: mixed}",

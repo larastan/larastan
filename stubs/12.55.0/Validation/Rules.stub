@@ -56,24 +56,24 @@ class In
 class Numeric
 {
     /**
-     * @return self<__benevolent<int|numeric-string>>
+     * @return self<TValue&__benevolent<float|int|numeric-string>>
      */
     public function digits(int $length);
 
     /**
-     * @return self<__benevolent<int|numeric-string>>
+     * @return self<TValue&__benevolent<float|int|numeric-string>>
      */
     public function digitsBetween(int $min, int $max);
 
     /**
-     * @return self<__benevolent<int|numeric-string>>
+     * @return self<TValue&__benevolent<float|int|numeric-string>>
      */
     public function exactly(int $value);
 
     /**
      * @template TStrict of bool = false
      * @param TStrict $strict
-     * @return (TStrict is false ? self<__benevolent<int|numeric-string>> : self<int>)
+     * @return (TStrict is false ? self<TValue&__benevolent<float|int|numeric-string>> : self<TValue&int>)
      */
     public function integer(bool $strict = false);
 }

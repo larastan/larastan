@@ -164,6 +164,136 @@ class OverwrittenSpreadRulesRequest extends FormRequest
     }
 }
 
+class UnknownAncestorRulesRequest extends FormRequest
+{
+    /** @return array<string, string> */
+    private function additionalRules(): array
+    {
+        return ['parent' => 'exclude'];
+    }
+
+    public function rules(): array
+    {
+        return [
+            ...$this->additionalRules(),
+            'parent.name' => 'required|string',
+            'stable' => 'required|string',
+            'v1\.0' => 'required|string',
+        ];
+    }
+}
+
+class UnknownAncestorKeyRequest extends FormRequest
+{
+    private function ancestor(): string
+    {
+        return 'parent';
+    }
+
+    public function rules(): array
+    {
+        return [
+            $this->ancestor() => 'exclude',
+            'parent.name' => 'required|string',
+            'stable' => 'required|string',
+        ];
+    }
+}
+
+class NumericSpreadRulesRequest extends FormRequest
+{
+    /** @return array<int, string> */
+    private function additionalRules(): array
+    {
+        return [0 => 'exclude'];
+    }
+
+    public function rules(): array
+    {
+        return [
+            'before' => 'required|string',
+            ...$this->additionalRules(),
+            'parent.name' => 'required|string',
+        ];
+    }
+}
+
+class ExplicitAncestorRulesRequest extends FormRequest
+{
+    /** @return array<string, string> */
+    private function additionalRules(): array
+    {
+        return ['parent' => 'exclude'];
+    }
+
+    public function rules(): array
+    {
+        return [
+            ...$this->additionalRules(),
+            'parent' => 'required|array',
+            'parent.name' => 'required|string',
+        ];
+    }
+}
+
+class UnrelatedSpreadRulesRequest extends FormRequest
+{
+    /** @return array<'other', string> */
+    private function additionalRules(): array
+    {
+        return ['other' => 'exclude'];
+    }
+
+    public function rules(): array
+    {
+        return [...$this->additionalRules(), 'parent.name' => 'required|string'];
+    }
+}
+
+class OptionalAncestorRulesRequest extends FormRequest
+{
+    /** @return array{parent?: 'exclude', 'parent.name': 'required|string', stable: 'required|string'} */
+    private function additionalRules(): array
+    {
+        return ['parent' => 'exclude', 'parent.name' => 'required|string', 'stable' => 'required|string'];
+    }
+
+    public function rules(): array
+    {
+        return $this->additionalRules();
+    }
+}
+
+class BranchAncestorRulesRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        if ($this->boolean('exclude')) {
+            return ['parent' => 'exclude', 'parent.name' => 'required|string', 'stable' => 'required|string'];
+        }
+
+        return ['parent.name' => 'required|string', 'stable' => 'required|string'];
+    }
+}
+
+class WildcardAncestorRulesRequest extends FormRequest
+{
+    /** @return array<'parent.*'|'other', string> */
+    private function additionalRules(): array
+    {
+        return ['parent.*' => 'exclude'];
+    }
+
+    public function rules(): array
+    {
+        return [
+            ...$this->additionalRules(),
+            'parent.item.name' => 'required|string',
+            'unrelated.name' => 'required|string',
+        ];
+    }
+}
+
 class RootWildcardRulesRequest extends FormRequest
 {
     public function rules(): array
@@ -274,6 +404,13 @@ class NestedReturnsRequest extends FormRequest
         {
             return ['function' => 'required|string'];
         }
+
+        $helper = new class {
+            public function rules(): array
+            {
+                return ['nestedClass' => 'required|integer'];
+            }
+        };
 
         return ['actual' => 'required|string'];
     }
@@ -429,6 +566,14 @@ function testRuleSources(
     TraitRulesRequest $trait,
     UnpackedRulesRequest $unpacked,
     OverwrittenSpreadRulesRequest $overwrittenSpread,
+    UnknownAncestorRulesRequest $unknownAncestor,
+    UnknownAncestorKeyRequest $unknownAncestorKey,
+    NumericSpreadRulesRequest $numericSpread,
+    ExplicitAncestorRulesRequest $explicitAncestor,
+    UnrelatedSpreadRulesRequest $unrelatedSpread,
+    OptionalAncestorRulesRequest $optionalAncestor,
+    BranchAncestorRulesRequest $branchAncestor,
+    WildcardAncestorRulesRequest $wildcardAncestor,
     RootWildcardRulesRequest $rootWildcard,
     RootWildcardWithSiblingRulesRequest $rootWildcardWithSibling,
     MultipleReturnsRequest $multiple,
@@ -451,20 +596,42 @@ function testRuleSources(
     assertType('string', $exact->exact);
     assertType('mixed', $exact->unrelated);
     assertType('string', $inherited->exact);
-    assertType('(int|numeric-string)', $trait->fromTrait);
+    assertType('(float|int|numeric-string|true)', $trait->fromTrait);
 
     assertType('string', $unpacked->constant);
     assertType('mixed', $unpacked->overwritten);
-    assertType('(int|numeric-string)', $unpacked->stable);
+    assertType('(float|int|numeric-string|true)', $unpacked->stable);
     assertType('mixed', $unpacked->dynamicOnly);
     assertType(
-        'array{constant: string, stable: (int|numeric-string), ...}',
+        'array{constant: string, stable: (float|int|numeric-string|true), ...}',
         $unpacked->validated(),
     );
 
     assertType('mixed', $overwrittenSpread->overwritten);
     assertType('string', $overwrittenSpread->stable);
     assertType('array{stable: string, ...}', $overwrittenSpread->validated());
+
+    assertType('mixed', $unknownAncestor->parent);
+    assertType('string', $unknownAncestor->stable);
+    assertType('string', $unknownAncestor->{'v1.0'});
+    assertType("array{stable: string, 'v1.0': string, ...}", $unknownAncestor->validated());
+    assertType('mixed', $unknownAncestorKey->parent);
+    assertType('string', $unknownAncestorKey->stable);
+    assertType('array{stable: string, ...}', $unknownAncestorKey->validated());
+    assertType('string', $numericSpread->before);
+    assertType('array{name: string, ...}', $numericSpread->parent);
+    assertType('array{before: string, parent: array{name: string}, ...}', $numericSpread->validated());
+    assertType('array{name: string, ...}', $explicitAncestor->parent);
+    assertType('array{parent: array{name: string}, ...}', $explicitAncestor->validated());
+    assertType('array{name: string, ...}', $unrelatedSpread->parent);
+    assertType('array{parent: array{name: string}, ...}', $unrelatedSpread->validated());
+    assertType('mixed', $optionalAncestor->parent);
+    assertType('array{stable: string, ...}', $optionalAncestor->validated());
+    assertType('mixed', $branchAncestor->parent);
+    assertType('array{stable: string, ...}', $branchAncestor->validated());
+    assertType('mixed', $wildcardAncestor->parent);
+    assertType('array{name: string, ...}', $wildcardAncestor->unrelated);
+    assertType('array{unrelated: array{name: string}, ...}', $wildcardAncestor->validated());
 
     assertType('mixed', $rootWildcard->{'*'});
     assertType('array', $rootWildcard->validated());
@@ -474,7 +641,7 @@ function testRuleSources(
     assertType('array', $rootWildcardWithSibling->validated());
 
     assertType('string', $multiple->shared);
-    assertType('(int|string)', $multiple->different);
+    assertType('(float|int|string|true)', $multiple->different);
     assertType('mixed', $multiple->firstOnly);
     assertType('mixed', $multiple->secondOnly);
 
@@ -488,10 +655,12 @@ function testRuleSources(
     assertType('string', $nested->actual);
     assertType('mixed', $nested->closure);
     assertType('mixed', $nested->function);
+    assertType('mixed', $nested->nestedClass);
+    assertType('array{actual: string}', $nested->validated());
 
     assertType('mixed', $parentComposition->exact);
     assertType('mixed', $parentComposition->composed);
-    assertType('(int|numeric-string)', $exactPhpDocDirect->age);
+    assertType('(float|int|numeric-string|true)', $exactPhpDocDirect->age);
     assertType('string', $exactPhpDocDirect->name);
     assertType('string', $exactPhpDocSpread->email);
     assertType('mixed', $broadPhpDocDirect->anything);
@@ -504,14 +673,14 @@ function testRuleSources(
     assertType('mixed', $computed->dynamicConcatenation);
     assertType('mixed', $computed->ternary);
     assertType('mixed', $computed->coalesce);
-    assertType('(int|numeric-string)', $computed->stableComputedSibling);
+    assertType('(float|int|numeric-string|true)', $computed->stableComputedSibling);
     assertType(
-        'array{constantKey: string, dynamicConcatenation?: mixed, ternary?: mixed, coalesce?: mixed, stableComputedSibling: (int|numeric-string), ...}',
+        'array{constantKey: string, dynamicConcatenation?: mixed, ternary?: mixed, coalesce?: mixed, stableComputedSibling: (float|int|numeric-string|true), ...}',
         $computed->validated(),
     );
     assertType('mixed', $loopBuilt->anything);
 
-    assertType('array{shared: string, different: (int|string), ...}', $multiple->validated());
+    assertType('array{shared: string, different: (float|int|string|true), ...}', $multiple->validated());
 
     assertType('mixed', $integerKeys->{'0'});
     assertType('mixed', $integerKeys->{'1'});

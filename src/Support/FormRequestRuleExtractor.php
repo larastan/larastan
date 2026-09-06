@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Support;
 
+use Illuminate\Support\Str;
 use Larastan\Larastan\Support\Validation\ValidationRule;
 use Larastan\Larastan\Support\Validation\ValidationRuleFactory;
 use PhpParser\Node;
@@ -25,6 +26,7 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\Constant\ConstantArrayType;
+use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\TypeUtils;
@@ -33,10 +35,13 @@ use function array_diff_key;
 use function array_filter;
 use function array_key_exists;
 use function array_map;
+use function array_pop;
 use function array_reverse;
 use function array_shift;
 use function array_values;
 use function count;
+use function implode;
+use function preg_split;
 
 /**
  * @internal
@@ -95,6 +100,7 @@ final class FormRequestRuleExtractor
         $trait      = $nodeFinder->findFirstInstanceOf($nodes, Trait_::class);
 
         if ($trait !== null) {
+            $traitNodes    = $nodes;
             $method        = $nodeFinder->findFirstInstanceOf($nodes, ClassMethod::class);
             $classFileName = $declaringClass->getFileName();
 
@@ -122,6 +128,25 @@ final class FormRequestRuleExtractor
                 return null;
             }
 
+            $class = $nodeFinder->findFirstInstanceOf($nodes, ClassLike::class);
+
+            if ($class === null) {
+                return null;
+            }
+
+            // Trait methods keep their lexical namespace and imports, while
+            // self/static resolve against the class using the trait.
+            $replaceTrait = static fn (Stmt $statement): Stmt => $statement === $trait ? $class : $statement;
+
+            foreach ($traitNodes as $index => $statement) {
+                if ($statement instanceof Namespace_) {
+                    $statement->stmts = array_map($replaceTrait, $statement->stmts);
+                } else {
+                    $traitNodes[$index] = $replaceTrait($statement);
+                }
+            }
+
+            $nodes    = $traitNodes;
             $fileName = $classFileName;
         }
 
@@ -138,7 +163,11 @@ final class FormRequestRuleExtractor
 
                 $function = $scope->getFunction();
 
-                if (! $function instanceof MethodReflection || $function->getName() !== $rulesMethod->getName()) {
+                if (
+                    ! $function instanceof MethodReflection
+                    || $function->getName() !== $rulesMethod->getName()
+                    || $function->getDeclaringClass()->getName() !== $rulesMethod->getDeclaringClass()->getName()
+                ) {
                     return;
                 }
 
@@ -226,11 +255,13 @@ final class FormRequestRuleExtractor
 
         foreach (array_reverse($return->expr->items) as $item) {
             if ($item->unpack) {
-                $unpackedRules = self::extractConstantArrays($scope->getType($item->value));
+                $unpackedType  = $scope->getType($item->value);
+                $unpackedRules = self::extractConstantArrays($unpackedType);
 
                 if ($unpackedRules === null) {
                     $unsealed                = true;
-                    $unknownMayOverridePrior = true;
+                    $unknownMayOverridePrior = $unknownMayOverridePrior || ! $unpackedType->getIterableKeyType()->isInteger()->yes();
+                    $rules                   = self::removeUnknownDescendants($rules, $unpackedType->getIterableKeyType());
 
                     continue;
                 }
@@ -242,6 +273,7 @@ final class FormRequestRuleExtractor
                 if ($unpackedRules['unsealed']) {
                     $unsealed                = true;
                     $unknownMayOverridePrior = true;
+                    $rules                   = self::removeUnknownDescendants($rules, $unpackedType->getIterableKeyType());
                 }
 
                 continue;
@@ -258,6 +290,7 @@ final class FormRequestRuleExtractor
 
             if ($propertyName === null) {
                 $unsealed = true;
+                $rules    = self::removeUnknownDescendants($rules, $keyType->toArrayKey());
 
                 if (! $keyType->toArrayKey()->isInteger()->yes()) {
                     $unknownMayOverridePrior = true;
@@ -315,7 +348,55 @@ final class FormRequestRuleExtractor
                 ?? ValidationRuleFactory::make([]);
         }
 
-        return ['rules' => $rules, 'unsealed' => $unsealed];
+        return [
+            'rules' => $unsealed ? self::removeUnknownDescendants($rules, $array->getIterableKeyType()) : $rules,
+            'unsealed' => $unsealed,
+        ];
+    }
+
+    /**
+     * @param array<string, ValidationRule> $rules
+     *
+     * @return array<string, ValidationRule>
+     */
+    private static function removeUnknownDescendants(array $rules, Type $unknownKeys): array
+    {
+        foreach ($rules as $key => $rule) {
+            $segments = preg_split('/(?<!\\\\)\./', $key);
+
+            if ($segments === false) {
+                continue;
+            }
+
+            array_pop($segments);
+
+            while ($segments !== []) {
+                $ancestor = implode('.', $segments);
+
+                // A later explicit ancestor rule overrides the unknown source.
+                if (! array_key_exists($ancestor, $rules)) {
+                    $mayDefineAncestor = ! $unknownKeys->isSuperTypeOf((new ConstantStringType($ancestor))->toArrayKey())->no();
+
+                    foreach ($unknownKeys->getConstantStrings() as $unknownKey) {
+                        $unknownSegments = preg_split('/(?<!\\\\)\./', $unknownKey->getValue());
+
+                        if ($unknownSegments !== false && count($unknownSegments) === count($segments) && Str::is($unknownKey->getValue(), $ancestor)) {
+                            $mayDefineAncestor = true;
+                            break;
+                        }
+                    }
+
+                    if ($mayDefineAncestor) {
+                        unset($rules[$key]);
+                        break;
+                    }
+                }
+
+                array_pop($segments);
+            }
+        }
+
+        return $rules;
     }
 
     /**
@@ -341,8 +422,15 @@ final class FormRequestRuleExtractor
                 || array_diff_key($merged['rules'], $rules['rules']) !== []
                 || array_diff_key($rules['rules'], $merged['rules']) !== [];
 
+            $uncertainKeys = [];
+
+            foreach (array_diff_key($rules['rules'], $merged['rules']) as $key => $rule) {
+                $uncertainKeys[] = new ConstantStringType($key);
+            }
+
             foreach ($merged['rules'] as $key => $rule) {
                 if (! array_key_exists($key, $rules['rules'])) {
+                    $uncertainKeys[] = new ConstantStringType($key);
                     unset($merged['rules'][$key]);
 
                     continue;
@@ -351,6 +439,7 @@ final class FormRequestRuleExtractor
                 $mergedRule = self::mergeRules($rule, $rules['rules'][$key]);
 
                 if ($mergedRule === null) {
+                    $uncertainKeys[] = new ConstantStringType($key);
                     unset($merged['rules'][$key]);
                     $merged['unsealed'] = true;
 
@@ -359,6 +448,12 @@ final class FormRequestRuleExtractor
 
                 $merged['rules'][$key] = $mergedRule;
             }
+
+            if ($uncertainKeys === []) {
+                continue;
+            }
+
+            $merged['rules'] = self::removeUnknownDescendants($merged['rules'], TypeCombinator::union(...$uncertainKeys));
         }
 
         return $merged;

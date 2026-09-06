@@ -69,7 +69,7 @@ final class ValidationRuleDynamicStaticMethodReturnTypeExtension implements Dyna
             'when', 'unless' => $this->conditionalRulesType($methodCall->getArgs(), $scope, $method === 'unless'),
             'excludeIf', 'excludeUnless', 'requiredIf', 'requiredUnless' => new GenericObjectType(
                 'Illuminate\\Validation\\Rules\\' . ucfirst($method),
-                [$this->argumentType($methodCall->getArgs(), $scope, 0, 'callback')],
+                [$this->argumentType($methodCall->getArgs(), $scope, 0)],
             ),
             default => new GenericObjectType(In::class, [$this->arrayArgumentType($methodCall->getArgs(), $scope)]),
         };
@@ -78,9 +78,9 @@ final class ValidationRuleDynamicStaticMethodReturnTypeExtension implements Dyna
     /** @param array<Arg> $args */
     private function conditionalRulesType(array $args, Scope $scope, bool $unless): Type
     {
-        $condition    = $this->argumentType($args, $scope, 0, 'condition');
-        $rules        = $this->ruleArgumentType($args, $scope, 1, 'rules');
-        $defaultRules = $this->ruleArgumentType($args, $scope, 2, 'defaultRules', true);
+        $condition    = $this->argumentType($args, $scope, 0);
+        $rules        = $this->ruleArgumentType($args, $scope, 1);
+        $defaultRules = $this->ruleArgumentType($args, $scope, 2, true);
 
         return new GenericObjectType(self::CONDITIONAL_RULES, [
             $condition,
@@ -90,9 +90,9 @@ final class ValidationRuleDynamicStaticMethodReturnTypeExtension implements Dyna
     }
 
     /** @param array<Arg> $args */
-    private function argumentType(array $args, Scope $scope, int $index, string $name): Type
+    private function argumentType(array $args, Scope $scope, int $index): Type
     {
-        $argument = $this->argument($args, $index, $name);
+        $argument = $args[$index] ?? null;
 
         return $argument === null || $argument->unpack
             ? new MixedType()
@@ -100,9 +100,9 @@ final class ValidationRuleDynamicStaticMethodReturnTypeExtension implements Dyna
     }
 
     /** @param array<Arg> $args */
-    private function ruleArgumentType(array $args, Scope $scope, int $index, string $name, bool $default = false): Type
+    private function ruleArgumentType(array $args, Scope $scope, int $index, bool $default = false): Type
     {
-        $argument = $this->argument($args, $index, $name);
+        $argument = $args[$index] ?? null;
 
         if ($argument === null) {
             return $default ? ConstantArrayTypeBuilder::createEmpty()->getArray() : new MixedType();
@@ -113,18 +113,6 @@ final class ValidationRuleDynamicStaticMethodReturnTypeExtension implements Dyna
         return $type->isCallable()->yes()
             ? $type->getCallableParametersAcceptors($scope)[0]->getReturnType()
             : $type;
-    }
-
-    /** @param array<Arg> $args */
-    private function argument(array $args, int $index, string $name): Arg|null
-    {
-        foreach ($args as $argument) {
-            if ($argument->name?->toString() === $name) {
-                return $argument;
-            }
-        }
-
-        return $args[$index] ?? null;
     }
 
     /** @param array<Arg> $args */

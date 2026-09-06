@@ -10,5 +10,5 @@ use function PHPStan\Testing\assertType;
 
 function test(): void
 {
-    assertType('Illuminate\\Validation\\Rules\\Numeric<(int|numeric-string)>', Rule::numeric()->integer());
+    assertType('Illuminate\\Validation\\Rules\\Numeric<(float|int|numeric-string)>', Rule::numeric()->integer());
 }

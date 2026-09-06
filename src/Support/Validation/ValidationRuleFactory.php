@@ -55,8 +55,10 @@ use function max;
 use function min;
 use function str_contains;
 use function str_getcsv;
+use function version_compare;
 
 use const FILTER_VALIDATE_INT;
+use const LARAVEL_VERSION;
 
 /** @internal */
 final class ValidationRuleFactory
@@ -851,7 +853,8 @@ final class ValidationRuleFactory
             return $baseType;
         }
 
-        $types = [];
+        $strictComparison = self::supportsStrictInComparison(LARAVEL_VERSION);
+        $types            = [];
 
         foreach ($values as $value) {
             if ($baseType->equals(new IntegerType())) {
@@ -864,11 +867,19 @@ final class ValidationRuleFactory
 
                 $types[] = new ConstantIntegerType($integer);
             } else {
-                $types[] = new ConstantStringType($value);
+                $types[] = ! $strictComparison && is_numeric($value)
+                    ? self::numericStringType()
+                    : new ConstantStringType($value);
             }
         }
 
         return TypeCombinator::union(...$types);
+    }
+
+    private static function supportsStrictInComparison(string $version): bool
+    {
+        return version_compare($version, '12.67.0', '>=')
+            && (version_compare($version, '13.0.0', '<') || version_compare($version, '13.26.0', '>='));
     }
 
     private static function arrayType(): Type
@@ -878,7 +889,7 @@ final class ValidationRuleFactory
 
     private static function looseIntegerType(): Type
     {
-        return TypeUtils::toBenevolentUnion(TypeCombinator::union(new IntegerType(), self::numericStringType()));
+        return TypeUtils::toBenevolentUnion(TypeCombinator::union(self::numericType(), new ConstantBooleanType(true)));
     }
 
     private static function numericType(): Type

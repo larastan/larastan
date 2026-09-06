@@ -39,6 +39,8 @@ final class StrictNumericRequest extends FormRequest
     {
         return [
             'bounded' => ['required', Rule::numeric()->integer(strict: true)->max(10)->min(2)],
+            'digits' => ['required', Rule::numeric()->integer(strict: true)->digits(2)],
+            'digitsBetween' => ['required', Rule::numeric()->integer(strict: true)->digitsBetween(1, 2)],
         ];
     }
 }
@@ -75,6 +77,10 @@ function test(
     );
     assertType('Illuminate\\Validation\\Rules\\Numeric<3>', Rule::numeric()->integer(strict: true)->exactly(3));
     assertType('int<2, 10>', $numericRequest->bounded);
-    assertType('Illuminate\\Validation\\Rules\\Numeric<(int|numeric-string)>', Rule::numeric()->integer(strict: false));
-    assertType('Illuminate\\Validation\\Rules\\Numeric<(int|numeric-string)>', Rule::numeric()->integer(strict: $strict));
+    assertType('Illuminate\\Validation\\Rules\\Numeric<int>', Rule::numeric()->integer(strict: true)->digits(2));
+    assertType('Illuminate\\Validation\\Rules\\Numeric<int>', Rule::numeric()->integer(strict: true)->digitsBetween(1, 2));
+    assertType('int', $numericRequest->digits);
+    assertType('int', $numericRequest->digitsBetween);
+    assertType('Illuminate\\Validation\\Rules\\Numeric<(float|int|numeric-string)>', Rule::numeric()->integer(strict: false));
+    assertType('Illuminate\\Validation\\Rules\\Numeric<(float|int|numeric-string)>', Rule::numeric()->integer(strict: $strict));
 }

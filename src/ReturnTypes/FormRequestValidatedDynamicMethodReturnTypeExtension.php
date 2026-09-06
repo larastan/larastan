@@ -8,10 +8,8 @@ use Closure;
 use Illuminate\Foundation\Http\FormRequest;
 use Larastan\Larastan\Support\FormRequestHelper;
 use PhpParser\Node\Expr\MethodCall;
-use PHPStan\Analyser\ArgumentsNormalizer;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\MixedType;
@@ -50,17 +48,6 @@ final class FormRequestValidatedDynamicMethodReturnTypeExtension implements Dyna
         Scope $scope,
     ): Type|null {
         if ($methodReflection->getDeclaringClass()->getName() !== FormRequest::class) {
-            return null;
-        }
-
-        $variant    = ParametersAcceptorSelector::selectFromArgs(
-            $scope,
-            $methodCall->getArgs(),
-            $methodReflection->getVariants(),
-        );
-        $methodCall = ArgumentsNormalizer::reorderMethodArguments($variant, $methodCall);
-
-        if ($methodCall === null) {
             return null;
         }
 

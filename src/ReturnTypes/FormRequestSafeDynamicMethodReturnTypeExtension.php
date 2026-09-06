@@ -182,7 +182,7 @@ final class FormRequestSafeDynamicMethodReturnTypeExtension implements DynamicMe
         $builder = ConstantArrayTypeBuilder::createEmpty();
 
         foreach ($pathsBySegment as $segment => $children) {
-            $keyType = new ConstantStringType($segment);
+            $keyType = new ConstantStringType((string) $segment);
             $hasKey  = $type->hasOffsetValueType($keyType);
 
             if ($hasKey->no()) {

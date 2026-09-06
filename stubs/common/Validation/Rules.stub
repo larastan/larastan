@@ -56,22 +56,22 @@ class In
 class Numeric
 {
     /**
-     * @return self<__benevolent<int|numeric-string>>
+     * @return self<TValue&__benevolent<float|int|numeric-string>>
      */
     public function digits(int $length);
 
     /**
-     * @return self<__benevolent<int|numeric-string>>
+     * @return self<TValue&__benevolent<float|int|numeric-string>>
      */
     public function digitsBetween(int $min, int $max);
 
     /**
-     * @return self<__benevolent<int|numeric-string>>
+     * @return self<TValue&__benevolent<float|int|numeric-string>>
      */
     public function exactly(int $value);
 
     /**
-     * @return self<__benevolent<int|numeric-string>>
+     * @return self<TValue&__benevolent<float|int|numeric-string>>
      */
     public function integer();
 }
