@@ -235,7 +235,9 @@ final class FormRequestRuleExtractor
                     continue;
                 }
 
-                $rules += array_reverse($unpackedRules['rules'], true);
+                if (! $unknownMayOverridePrior) {
+                    $rules += array_reverse($unpackedRules['rules'], true);
+                }
 
                 if ($unpackedRules['unsealed']) {
                     $unsealed                = true;
@@ -364,7 +366,7 @@ final class FormRequestRuleExtractor
 
     private static function mergeRules(ValidationRule $left, ValidationRule $right): ValidationRule|null
     {
-        if ($left->allowedKeys !== $right->allowedKeys || $left->anyOfRuleGroups !== $right->anyOfRuleGroups) {
+        if (! $left->hasSameStructure($right)) {
             return null;
         }
 
@@ -379,17 +381,20 @@ final class FormRequestRuleExtractor
         }
 
         return new ValidationRule(
-            $type,
-            $left->nullable || $right->nullable,
-            $left->possiblyUndefined || $right->possiblyUndefined,
-            $left->required && $right->required,
-            $constraintType,
-            $left->allowedKeys,
-            $left->anyOfRuleGroups,
-            $left->rejectsNull && $right->rejectsNull,
-            $left->possiblyExcluded || $right->possiblyExcluded,
-            $left->excluded && $right->excluded,
-            $left->degraded || $right->degraded,
+            type: $type,
+            nullable: $left->nullable || $right->nullable,
+            possiblyUndefined: $left->possiblyUndefined || $right->possiblyUndefined,
+            required: $left->required && $right->required,
+            constraintType: $constraintType,
+            allowedKeys: $left->allowedKeys,
+            anyOfRuleGroups: $left->anyOfRuleGroups,
+            rejectsNull: $left->rejectsNull && $right->rejectsNull,
+            possiblyExcluded: $left->possiblyExcluded || $right->possiblyExcluded,
+            excluded: $left->excluded && $right->excluded,
+            degraded: $left->degraded || $right->degraded,
+            prunesUnvalidatedKeys: $left->prunesUnvalidatedKeys === $right->prunesUnvalidatedKeys
+                ? $left->prunesUnvalidatedKeys
+                : null,
         );
     }
 

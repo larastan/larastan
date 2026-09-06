@@ -8,6 +8,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Larastan\Larastan\Support\Validation\RuleTreeBuilder;
 use Larastan\Larastan\Support\Validation\RuleTreeNode;
 use Larastan\Larastan\Support\Validation\RuleTreeTypeResolver;
+use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
@@ -63,7 +64,7 @@ final class FormRequestHelper
         return $this->rawProperties[$className][$propertyName];
     }
 
-    public function getValidatedDataType(Type $formRequestType): Type|null
+    public function getValidatedDataType(Type $formRequestType, string $methodName, Scope $scope): Type|null
     {
         $classReflections = $formRequestType->getObjectClassReflections();
         $types            = [];
@@ -73,7 +74,10 @@ final class FormRequestHelper
         }
 
         foreach ($classReflections as $classReflection) {
-            if (! $classReflection->is(FormRequest::class)) {
+            if (
+                ! $classReflection->is(FormRequest::class)
+                || $classReflection->getMethod($methodName, $scope)->getDeclaringClass()->getName() !== FormRequest::class
+            ) {
                 return null;
             }
 
@@ -129,12 +133,18 @@ final class FormRequestHelper
         try {
             $extracted = $this->ruleExtractor->extract($classReflection);
 
-            return $this->trees[$className] = $extracted === null
-                ? null
-                : [
-                    'nodes' => RuleTreeBuilder::build($extracted['rules']),
-                    'unsealed' => $extracted['unsealed'],
-                ];
+            if ($extracted === null) {
+                return $this->trees[$className] = null;
+            }
+
+            $nodes = RuleTreeBuilder::build($extracted['rules']);
+
+            // Root wildcards can exclude or otherwise change exact sibling fields.
+            if (isset($nodes[RuleTreeNode::WILDCARD])) {
+                return $this->trees[$className] = ['nodes' => [], 'unsealed' => true];
+            }
+
+            return $this->trees[$className] = ['nodes' => $nodes, 'unsealed' => $extracted['unsealed']];
         } finally {
             unset($this->resolving[$className]);
         }

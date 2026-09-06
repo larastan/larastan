@@ -8,8 +8,7 @@ use Illuminate\Validation\Rule;
 
 use function PHPStan\Testing\assertType;
 
-function test(bool $strict): void
+function test(): void
 {
-    assertType('Illuminate\\Validation\\Rules\\Numeric<(int|numeric-string)>', Rule::numeric()->integer(strict: false));
-    assertType('Illuminate\\Validation\\Rules\\Numeric<(int|numeric-string)>', Rule::numeric()->integer(strict: $strict));
+    assertType('Illuminate\\Validation\\Rules\\Numeric<(int|numeric-string)>', Rule::numeric()->integer());
 }

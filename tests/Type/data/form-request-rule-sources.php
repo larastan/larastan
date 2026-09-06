@@ -6,8 +6,13 @@ namespace FormRequestRuleSources;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 use function PHPStan\Testing\assertType;
+
+interface RequestMarker
+{
+}
 
 class ExactRulesRequest extends FormRequest
 {
@@ -29,6 +34,23 @@ class ExactRulesRequest extends FormRequest
     {
         assertType('mixed', $this->exact);
 
+        $alias = $this;
+        assertType('mixed', $alias->exact);
+
+        if (is_string($alias->exact)) {
+            assertType('string', $alias->exact);
+        }
+
+        $other = new ExactRulesRequest();
+        assertType('string', $other->exact);
+
+        if ($this instanceof RequestMarker) {
+            assertType('mixed', $this->exact);
+
+            $intersectionAlias = $this;
+            assertType('mixed', $intersectionAlias->exact);
+        }
+
         if (is_string($this->exact)) {
             assertType('string', $this->exact);
         }
@@ -36,6 +58,20 @@ class ExactRulesRequest extends FormRequest
         (function (): void {
             assertType('mixed', $this->exact);
         })();
+    }
+
+    public function isPrecognitive(): bool
+    {
+        assertType('mixed', $this->exact);
+
+        return parent::isPrecognitive();
+    }
+
+    public function filterPrecognitiveRules($rules)
+    {
+        assertType('mixed', $this->exact);
+
+        return parent::filterPrecognitiveRules($rules);
     }
 
     protected function passedValidation(): void
@@ -66,6 +102,9 @@ class AnnotatedRulesRequest extends ExactRulesRequest
     public function authorize(): bool
     {
         assertType('int', $this->exact);
+
+        $alias = $this;
+        assertType('int', $alias->exact);
 
         return true;
     }
@@ -109,6 +148,38 @@ class UnpackedRulesRequest extends FormRequest
     }
 }
 
+class OverwrittenSpreadRulesRequest extends FormRequest
+{
+    private const RULES = ['overwritten' => 'required|string'];
+
+    /** @return array<string, string> */
+    private function dynamicRules(): array
+    {
+        return ['overwritten' => 'required|integer'];
+    }
+
+    public function rules(): array
+    {
+        return [...self::RULES, ...$this->dynamicRules(), 'stable' => 'required|string'];
+    }
+}
+
+class RootWildcardRulesRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return ['*.name' => 'required|string'];
+    }
+}
+
+class RootWildcardWithSiblingRulesRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return ['payload' => 'required|array', '*' => 'exclude'];
+    }
+}
+
 class MultipleReturnsRequest extends FormRequest
 {
     public function rules(): array
@@ -126,6 +197,68 @@ class MultipleReturnsRequest extends FormRequest
             'different' => 'required|string',
             'secondOnly' => 'required|string',
         ];
+    }
+}
+
+class EquivalentArrayReturnsRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        if ($this->isMethod('POST')) {
+            return [
+                'payload' => ['required', Rule::array(['name'])],
+                'record' => ['required', Rule::array(['name'])],
+                'record.name' => 'required|string',
+            ];
+        }
+
+        return [
+            'payload' => ['required', Rule::array(['name'])],
+            'record' => ['required', Rule::array(['name'])],
+            'record.name' => 'required|string',
+        ];
+    }
+}
+
+class DifferentArrayReturnsRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        if ($this->isMethod('POST')) {
+            return ['payload' => ['required', Rule::array(['name'])]];
+        }
+
+        return ['payload' => ['required', Rule::array(['email'])]];
+    }
+}
+
+class MixedArrayPruningReturnsRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        if ($this->isMethod('POST')) {
+            return [
+                'payload' => ['required', 'array', Rule::array(['name', 'other'])],
+                'payload.name' => 'string',
+            ];
+        }
+
+        return [
+            'payload' => ['required', Rule::array(['name', 'other'])],
+            'payload.name' => 'string',
+        ];
+    }
+}
+
+class DifferentConditionalReturnsRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        if ($this->isMethod('POST')) {
+            return ['payload' => ['required', Rule::when(true, ['string', 'exclude'])]];
+        }
+
+        return ['payload' => ['required', Rule::when(true, ['string'])]];
     }
 }
 
@@ -295,7 +428,14 @@ function testRuleSources(
     InheritedRulesRequest $inherited,
     TraitRulesRequest $trait,
     UnpackedRulesRequest $unpacked,
+    OverwrittenSpreadRulesRequest $overwrittenSpread,
+    RootWildcardRulesRequest $rootWildcard,
+    RootWildcardWithSiblingRulesRequest $rootWildcardWithSibling,
     MultipleReturnsRequest $multiple,
+    EquivalentArrayReturnsRequest $equivalentArrays,
+    DifferentArrayReturnsRequest $differentArrays,
+    MixedArrayPruningReturnsRequest $mixedPruning,
+    DifferentConditionalReturnsRequest $differentConditions,
     NestedReturnsRequest $nested,
     ParentCompositionRequest $parentComposition,
     ExactPhpDocDirectRequest $exactPhpDocDirect,
@@ -322,10 +462,28 @@ function testRuleSources(
         $unpacked->validated(),
     );
 
+    assertType('mixed', $overwrittenSpread->overwritten);
+    assertType('string', $overwrittenSpread->stable);
+    assertType('array{stable: string, ...}', $overwrittenSpread->validated());
+
+    assertType('mixed', $rootWildcard->{'*'});
+    assertType('array', $rootWildcard->validated());
+    assertType('mixed', $rootWildcard->validated('0.name'));
+    assertType('array<string, mixed>', $rootWildcard->safe(['0.name']));
+    assertType('mixed', $rootWildcardWithSibling->payload);
+    assertType('array', $rootWildcardWithSibling->validated());
+
     assertType('string', $multiple->shared);
     assertType('(int|string)', $multiple->different);
     assertType('mixed', $multiple->firstOnly);
     assertType('mixed', $multiple->secondOnly);
+
+    assertType('array{payload: array{name?: mixed}, record: array{name: string}}', $equivalentArrays->validated());
+    assertType('string', $equivalentArrays->validated('record.name'));
+    assertType('array', $differentArrays->validated());
+    assertType('array{payload?: array{name?: string, other?: mixed}}', $mixedPruning->validated());
+    assertType('array{name?: string, other?: mixed}|null', $mixedPruning->validated('payload'));
+    assertType('array', $differentConditions->validated());
 
     assertType('string', $nested->actual);
     assertType('mixed', $nested->closure);

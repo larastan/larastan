@@ -71,9 +71,11 @@ class Numeric
     public function exactly(int $value);
 
     /**
-     * @return self<__benevolent<int|numeric-string>>
+     * @template TStrict of bool = false
+     * @param TStrict $strict
+     * @return (TStrict is false ? self<__benevolent<int|numeric-string>> : self<int>)
      */
-    public function integer();
+    public function integer(bool $strict = false);
 }
 
 namespace Illuminate\Validation;

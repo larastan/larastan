@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace FormRequestFeatureDisabled;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\ArrayRule;
 use Illuminate\Validation\Rules\Date;
 use Illuminate\Validation\Rules\Enum;
@@ -37,6 +38,8 @@ function test(DisabledRequest $request): void
     assertType('mixed', $request->validated('name'));
     assertType('Illuminate\\Support\\ValidatedInput', $request->safe());
     assertType('array{name: mixed}', $request->safe(['name']));
+    assertType('Illuminate\\Validation\\Rules\\In', Rule::in(['disabled']));
+    assertType('Illuminate\\Validation\\Rules\\ArrayRule', Rule::array(['name']));
 
     $request->name = 1;
 }
