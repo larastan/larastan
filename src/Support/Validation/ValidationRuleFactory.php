@@ -43,7 +43,6 @@ use ReflectionMethod;
 
 use function array_filter;
 use function array_values;
-use function class_exists;
 use function count;
 use function explode;
 use function filter_var;
@@ -352,12 +351,18 @@ final class ValidationRuleFactory
 
     private static function isObjectRule(Type $rule, string $class): bool
     {
-        return class_exists($class) && (new ObjectType($class))->isSuperTypeOf($rule)->yes();
+        $classType = new ObjectType($class);
+
+        return $classType->getClassReflection() !== null && $classType->isSuperTypeOf($rule)->yes();
     }
 
     private static function objectRuleTemplateType(Type $rule, string $class, string $template): Type
     {
-        return class_exists($class) ? $rule->getTemplateType($class, $template) : new MixedType();
+        $classReflection = (new ObjectType($class))->getClassReflection();
+
+        return $classReflection === null
+            ? new MixedType()
+            : $rule->getTemplateType($classReflection->getName(), $template);
     }
 
     /** @param array<Type> $rules */

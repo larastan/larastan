@@ -22,7 +22,6 @@ use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
-use function class_exists;
 use function count;
 use function in_array;
 use function is_int;
@@ -37,7 +36,7 @@ final class ValidationRuleBuilderDynamicMethodReturnTypeExtension implements Dyn
 
     public function getClass(): string
     {
-        return class_exists($this->className) ? $this->className : self::class;
+        return $this->className;
     }
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
