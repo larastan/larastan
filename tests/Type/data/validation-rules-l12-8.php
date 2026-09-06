@@ -25,6 +25,8 @@ final class AnyOfRequest extends FormRequest
     {
         return [
             'scalar' => ['required', Rule::anyOf(['string|max:255', 'integer'])],
+            'requiredScalar' => ['required', Rule::anyOf(['required|string', 'required|integer'])],
+            'outerArray' => ['required', 'array', Rule::anyOf(['array|in:a,b', 'string'])],
             'literalOrArray' => ['required', Rule::anyOf([
                 ['string', Rule::in(['*'])],
                 ['array', 'min:1'],
@@ -65,12 +67,34 @@ final class AnyOfRequest extends FormRequest
                 ['max:4', 'string', 'min:2'],
                 ['array', 'min:1'],
             ])],
+            'excludedAlternative' => ['required', Rule::anyOf([['exclude'], ['string']])],
+            'excludedStringAlternative' => ['required', Rule::anyOf([['exclude', 'string'], ['integer']])],
+            'conditionalExclusion' => ['required', Rule::anyOf([['exclude_if:0,123'], ['string']])],
+            'objectExclusion' => ['required', Rule::anyOf([
+                [Rule::excludeIf($this->boolean('exclude'))],
+                ['string'],
+            ])],
+            'conditionalRulesExclusion' => ['required', Rule::anyOf([
+                [Rule::when($this->boolean('exclude'), 'exclude', 'string')],
+                ['string'],
+            ])],
+            'outerStringWithExclusion' => ['required', 'string', Rule::anyOf([['exclude'], ['integer']])],
+            'outerArrayWithExclusion' => ['required', 'array', Rule::anyOf([['exclude'], ['string']])],
+            'nestedExclusion' => ['required', Rule::anyOf([['exclude'], ['string']])],
+            'nestedExclusion.*' => 'integer',
         ];
     }
 }
 
 function test(AnyOfRequest $request): void
 {
+    assertType('(array|int|string)', $request->requiredScalar);
+    assertType('array', $request->outerArray);
+
+    if (is_array($request->requiredScalar)) {
+        assertType('array', $request->requiredScalar);
+    }
+
     $unpacked = [['string', 'integer']];
 
     assertType(
@@ -79,21 +103,34 @@ function test(AnyOfRequest $request): void
     );
     assertType('Illuminate\\Validation\\Rules\\AnyOf<array>', Rule::anyOf(...$unpacked));
 
-    assertType('int|string', $request->scalar);
-    assertType("'*'|non-empty-array", $request->literalOrArray);
+    assertType('(array|int|string)', $request->scalar);
+    assertType("('*'|array)", $request->literalOrArray);
     assertType('(int|numeric-string)', $request->outerInteger);
-    assertType("'known'|numeric-string", $request->outerString);
+    assertType("('known'|numeric-string)", $request->outerString);
     assertType('mixed', $request->unknownAlternative);
-    assertType('int|string|null', $request->nullableScalar);
-    assertType('int|string', $request->nullableAlternative);
-    assertType('float|int|string', $request->formattedTime);
-    assertType("'api'|'import'|int|numeric-string", $request->enumOrInteger);
-    assertType('array|int|string', $request->nestedAnyOf);
+    assertType('array|int|string|null', $request->nullableScalar);
+    assertType('(array|int|string)', $request->nullableAlternative);
+    assertType('(array|float|int|string)', $request->formattedTime);
+    assertType("('api'|'import'|array|int|numeric-string)", $request->enumOrInteger);
+    assertType('(array|int|string)', $request->nestedAnyOf);
     assertType('mixed', $request->directAnyOf);
     assertType('mixed', $request->dynamic);
     assertType('array<(int|numeric-string)>|string', $request->collectionOrString);
-    assertType("array<'known'|'new'>|string", $request->arrayIn);
-    assertType("list<'known'|'new'>|string", $request->listRuleIn);
+    assertType('(array|string)', $request->arrayIn);
+    assertType('(array|string)', $request->listRuleIn);
     assertType('mixed', $request->nestedShape);
-    assertType('non-empty-array|non-empty-string', $request->contextualModifiers);
+    assertType('(array|non-empty-string)', $request->contextualModifiers);
+    assertType('mixed', $request->excludedAlternative);
+    assertType('mixed', $request->excludedStringAlternative);
+    assertType('mixed', $request->conditionalExclusion);
+    assertType('mixed', $request->objectExclusion);
+    assertType('mixed', $request->conditionalRulesExclusion);
+    assertType('string', $request->outerStringWithExclusion);
+    assertType('array', $request->outerArrayWithExclusion);
+    assertType('mixed', $request->nestedExclusion);
+    assertType('mixed', $request->validated('nestedExclusion'));
+    assertType(
+        'array{excludedAlternative: mixed, conditionalRulesExclusion: mixed, outerStringWithExclusion: string, outerArrayWithExclusion: array}',
+        $request->safe(['excludedAlternative', 'conditionalRulesExclusion', 'outerStringWithExclusion', 'outerArrayWithExclusion']),
+    );
 }

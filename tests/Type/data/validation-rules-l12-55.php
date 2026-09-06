@@ -47,6 +47,7 @@ function test(
     StringRuleRequest $request,
     UnlessRulesRequest $unlessRequest,
     StrictNumericRequest $numericRequest,
+    bool $strict,
 ): void
 {
     assertType('Illuminate\\Validation\\Rules\\StringRule<string>', Rule::string());
@@ -74,4 +75,6 @@ function test(
     );
     assertType('Illuminate\\Validation\\Rules\\Numeric<3>', Rule::numeric()->integer(strict: true)->exactly(3));
     assertType('int<2, 10>', $numericRequest->bounded);
+    assertType('Illuminate\\Validation\\Rules\\Numeric<(int|numeric-string)>', Rule::numeric()->integer(strict: false));
+    assertType('Illuminate\\Validation\\Rules\\Numeric<(int|numeric-string)>', Rule::numeric()->integer(strict: $strict));
 }

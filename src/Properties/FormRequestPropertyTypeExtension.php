@@ -8,13 +8,13 @@ use Illuminate\Foundation\Http\FormRequest;
 use Larastan\Larastan\Reflection\ReflectionHelper;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\PropertyFetch;
-use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Identifier;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ExpressionTypeResolverExtension;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeUtils;
 
 use function in_array;
 use function strtolower;
@@ -31,6 +31,8 @@ final class FormRequestPropertyTypeExtension implements ExpressionTypeResolverEx
         'authorize',
         'failedauthorization',
         'getvalidatorinstance',
+        'isprecognitive',
+        'filterprecognitiverules',
         'configurefromattributes',
         'validator',
         'createdefaultvalidator',
@@ -58,8 +60,6 @@ final class FormRequestPropertyTypeExtension implements ExpressionTypeResolverEx
     {
         if (
             ! $expr instanceof PropertyFetch
-            || ! $expr->var instanceof Variable
-            || $expr->var->name !== 'this'
             || ! $expr->name instanceof Identifier
             || $scope->hasExpressionType($expr)->yes()
         ) {
@@ -72,6 +72,7 @@ final class FormRequestPropertyTypeExtension implements ExpressionTypeResolverEx
             $function === null
             || ! $function->isMethodOrPropertyHook()
             || ! in_array(strtolower($function->getName()), self::UNSAFE_METHODS, true)
+            || TypeUtils::findThisType($scope->getType($expr->var)) === null
         ) {
             return null;
         }

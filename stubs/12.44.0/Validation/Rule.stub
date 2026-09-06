@@ -5,7 +5,7 @@ namespace Illuminate\Validation;
 class Rule
 {
     /**
-     * @param \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<array-key, mixed>|null $keys
+     * @param \Illuminate\Contracts\Support\Arrayable<covariant array-key, covariant mixed>|array<array-key, mixed>|null $keys
      * @return \Illuminate\Validation\Rules\ArrayRule
      */
     public static function array($keys = null);

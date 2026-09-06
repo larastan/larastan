@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\ReturnTypes;
 
+use Closure;
 use Illuminate\Foundation\Http\FormRequest;
 use Larastan\Larastan\Support\FormRequestHelper;
 use PhpParser\Node\Expr\MethodCall;
@@ -13,10 +14,13 @@ use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
+use PHPStan\Type\MixedType;
 use PHPStan\Type\NullType;
+use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\TypeTraverser;
+use PHPStan\Type\UnionType;
 
 use function array_intersect;
 use function array_map;
@@ -61,7 +65,7 @@ final class FormRequestValidatedDynamicMethodReturnTypeExtension implements Dyna
         }
 
         $args              = $methodCall->getArgs();
-        $validatedDataType = $this->formRequestHelper->getValidatedDataType($scope->getType($methodCall->var));
+        $validatedDataType = $this->formRequestHelper->getValidatedDataType($scope->getType($methodCall->var), 'validated', $scope);
 
         if ($validatedDataType === null || count($args) === 0) {
             return $validatedDataType;
@@ -85,7 +89,7 @@ final class FormRequestValidatedDynamicMethodReturnTypeExtension implements Dyna
         if (count($constantStrings) === 1) {
             $segments = explode('.', $constantStrings[0]->getValue());
 
-            if (array_intersect($segments, ['*', '{first}', '{last}']) !== []) {
+            if (array_intersect($segments, ['*', '{first}', '{last}', '\\*', '\\{first}', '\\{last}']) !== []) {
                 return null;
             }
 
@@ -125,11 +129,17 @@ final class FormRequestValidatedDynamicMethodReturnTypeExtension implements Dyna
     private function resolveDefaultType(Type $type, Scope $scope): Type
     {
         return TypeTraverser::map($type, static function (Type $type, callable $traverse) use ($scope): Type {
-            if ($type->isCallable()->yes()) {
+            if ($type instanceof UnionType) {
+                return $traverse($type);
+            }
+
+            $isClosure = (new ObjectType(Closure::class))->isSuperTypeOf($type);
+
+            if ($isClosure->yes()) {
                 return $type->getCallableParametersAcceptors($scope)[0]->getReturnType();
             }
 
-            return $traverse($type);
+            return $isClosure->maybe() ? new MixedType() : $type;
         });
     }
 }

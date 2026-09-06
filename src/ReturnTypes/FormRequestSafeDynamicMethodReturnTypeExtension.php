@@ -19,6 +19,7 @@ use PHPStan\Type\MixedType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
+use function array_intersect;
 use function array_slice;
 use function count;
 use function explode;
@@ -54,7 +55,7 @@ final class FormRequestSafeDynamicMethodReturnTypeExtension implements DynamicMe
             return null;
         }
 
-        $validatedDataType = $this->formRequestHelper->getValidatedDataType($scope->getType($methodCall->var));
+        $validatedDataType = $this->formRequestHelper->getValidatedDataType($scope->getType($methodCall->var), 'safe', $scope);
 
         if ($validatedDataType === null) {
             return null;
@@ -62,7 +63,7 @@ final class FormRequestSafeDynamicMethodReturnTypeExtension implements DynamicMe
 
         $args = $methodCall->getArgs();
 
-        if (count($args) === 0) {
+        if (count($args) === 0 || $scope->getType($args[0]->value)->isNull()->yes()) {
             return new GenericObjectType(ValidatedInput::class, [$validatedDataType]);
         }
 
@@ -87,7 +88,13 @@ final class FormRequestSafeDynamicMethodReturnTypeExtension implements DynamicMe
                 return null;
             }
 
-            $paths[] = explode('.', $constantStrings[0]->getValue());
+            $segments = explode('.', $constantStrings[0]->getValue());
+
+            if (array_intersect($segments, ['*', '{first}', '{last}', '\\*', '\\{first}', '\\{last}']) !== []) {
+                return null;
+            }
+
+            $paths[] = $segments;
         }
 
         return $this->select($validatedDataType, $paths);

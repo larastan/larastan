@@ -81,6 +81,21 @@ final class AdditionalRulesRequest extends FormRequest
             'listBoundsFirst' => 'required|min:1|in:known,new|list',
             'listBoundsLast' => 'required|list|in:known,new|min:1',
             'quotedInValue' => 'required|string|in:"foo,bar",baz',
+            'numericInValue' => 'required|numeric|in:1,2',
+            'numericObjectInValue' => ['required', 'numeric', Rule::in([1, 2])],
+            'booleanInValue' => 'required|boolean|in:0,1',
+            'mixedNumericInValue' => 'required|in:1',
+            'mixedEmptyInValue' => 'present|in:""',
+            'stringNumericInValue' => 'required|string|in:1,2',
+            'textInValue' => 'required|in:date,rating',
+            'acceptedValue' => 'accepted',
+            'declinedValue' => 'declined',
+            'nullableAcceptedValue' => 'nullable|accepted',
+            'nullableDeclinedValue' => 'declined|nullable',
+            'sometimesAcceptedValue' => 'sometimes|nullable|accepted',
+            'excludedAcceptedValue' => 'exclude_if:other,value|accepted',
+            'consents' => 'required|array',
+            'consents.terms' => 'nullable|accepted',
             'dateValue' => ['required', Rule::date()],
             'formattedDate' => ['required', Rule::date()->format('Y-m-d')],
             'emailValue' => ['required', Rule::email()],
@@ -191,4 +206,35 @@ function test(mixed $mixed, array|string $arrayOrString, AdditionalRulesRequest 
     assertType("non-empty-list<'known'|'new'>", $request->listBoundsFirst);
     assertType("non-empty-list<'known'|'new'>", $request->listBoundsLast);
     assertType("'baz'|'foo,bar'", $request->quotedInValue);
+    assertType('(float|int|numeric-string)', $request->numericInValue);
+    assertType('(float|int|numeric-string)', $request->numericObjectInValue);
+    assertType("0|1|'0'|'1'|bool", $request->booleanInValue);
+    assertType('mixed', $request->mixedNumericInValue);
+    assertType('mixed', $request->mixedEmptyInValue);
+    assertType("'1'|'2'", $request->stringNumericInValue);
+    assertType("'date'|'rating'", $request->textInValue);
+    assertType(
+        "array{numericInValue: (float|int|numeric-string), booleanInValue: 0|1|'0'|'1'|bool, mixedNumericInValue: mixed}",
+        $request->safe(['numericInValue', 'booleanInValue', 'mixedNumericInValue']),
+    );
+
+    assertType("1|'1'|'on'|'true'|'yes'|true", $request->acceptedValue);
+    assertType("0|'0'|'false'|'no'|'off'|false", $request->declinedValue);
+    assertType("1|'1'|'on'|'true'|'yes'|true", $request->nullableAcceptedValue);
+    assertType("0|'0'|'false'|'no'|'off'|false", $request->nullableDeclinedValue);
+    assertType("1|'1'|'on'|'true'|'yes'|true|null", $request->sometimesAcceptedValue);
+    assertType('mixed', $request->excludedAcceptedValue);
+    assertType(
+        "array{acceptedValue: 1|'1'|'on'|'true'|'yes'|true, declinedValue: 0|'0'|'false'|'no'|'off'|false}",
+        $request->safe(['acceptedValue', 'declinedValue']),
+    );
+    assertType(
+        "array{nullableAcceptedValue: 1|'1'|'on'|'true'|'yes'|true, nullableDeclinedValue: 0|'0'|'false'|'no'|'off'|false}",
+        $request->safe(['nullableAcceptedValue', 'nullableDeclinedValue']),
+    );
+    assertType(
+        "array{sometimesAcceptedValue?: 1|'1'|'on'|'true'|'yes'|true, excludedAcceptedValue?: 1|'1'|'on'|'true'|'yes'|true}",
+        $request->safe(['sometimesAcceptedValue', 'excludedAcceptedValue']),
+    );
+    assertType("array{terms: 1|'1'|'on'|'true'|'yes'|true}", $request->validated('consents'));
 }

@@ -11,6 +11,8 @@ use PHPStan\Testing\PHPStanTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Throwable;
 
+use function Orchestra\Testbench\laravel_version_compare;
+
 class IntegrationTest extends PHPStanTestCase
 {
     /** @return iterable<array{0: string, 1?: array<int, array<int, string>>}> */
@@ -53,6 +55,10 @@ class IntegrationTest extends PHPStanTestCase
         yield [__DIR__ . '/data/helpers.php'];
         yield [__DIR__ . '/data/facades.php'];
         yield [__DIR__ . '/data/form-request-feature-enabled.php'];
+
+        if (laravel_version_compare('12.8.0', '>=')) {
+            yield [__DIR__ . '/data/form-request-any-of.php'];
+        }
 
         yield [
             __DIR__ . '/data/model-property-builder.php',

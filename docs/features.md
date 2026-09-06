@@ -268,7 +268,12 @@ HTTP representations accepted by Laravel. Optional magic properties include
 `null`, while optional validated values use optional array keys. Raw nested
 arrays keep unvalidated keys unless an allowed-key rule seals them.
 `validated()` and `safe()` use Laravel's default behavior of pruning
-unvalidated nested keys.
+unvalidated nested keys for bare `array` and `list` rules. Allowed-key rules such
+as `array:name,email` and `Rule::array(['name', 'email'])` retain submitted allowed
+keys, including keys without child rules. Adding a separate bare `array` or
+`list` rule restores pruning. Allowed keys remain optional unless another rule
+requires them. When exclusion removes every child rule, Laravel can retain the
+remaining parent input, so the inferred shape stays open.
 
 Larastan only narrows magic properties after successful validation. They remain
 `mixed` during request setup, preparation, authorization, validator
@@ -276,15 +281,22 @@ construction, validation callbacks, and failed-validation handling. Reads in
 `passedValidation()`, ordinary FormRequest methods, and external consumers use
 the inferred type. Native properties and explicit `@property`, `@property-read`,
 or `@property-write` declarations always take precedence.
+Aliases of `$this` within the lifecycle methods follow the same rules.
 
 Larastan only refines `validated()` and `safe()` when the call resolves to
 Laravel's original FormRequest method. Application overrides keep their
 declared return type. `validated()` supports exact integer or string keys,
 including dotted strings, together with default values. `safe()` supports no
-argument or an exact array of string keys, including dotted strings. Dynamic or
-unsupported key expressions keep Laravel's existing broad return type. Methods,
-properties, and array offsets on the returned `ValidatedInput` are not refined
-further.
+argument, explicit `null`, or an exact array of string keys, including dotted
+strings. Dynamic or unsupported key expressions keep Laravel's existing broad
+return type. Methods, properties, and array offsets on the returned
+`ValidatedInput` are not refined further.
+
+A Closure default contributes its return type; other known defaults retain
+their own types. Defaults typed only as `callable` or `object` stay `mixed`,
+since they may be a Closure.
+Root wildcard rules also keep inference broad because they can affect every
+field, including otherwise exact entries.
 
 ### Rules and fallbacks
 
@@ -298,6 +310,21 @@ Laravel's existing broad type. Other exact entries can still be inferred when
 dynamic entries cannot overwrite them. Validated shapes remain unsealed when
 additional dynamic or branch-specific keys may be returned. These fallbacks do
 not produce a diagnostic.
+
+Optional entries in a PHPDoc rule list keep the affected field broad: optional
+modifiers can permit null, omit the field, or exclude its entire subtree.
+
+Integer-backed enum rules infer backing integer values and `numeric-string`;
+they do not guarantee canonical decimal strings. Enum inference follows the
+feature's practical HTTP scalar approximation and does not enumerate every
+boolean, float, or enum-object representation accepted by weak enum conversion.
+
+`Rule::anyOf()` can accept associative arrays even when its alternatives name
+only scalar rules. Its inferred type includes that array possibility. An outer
+scalar rule still constrains the result. Numeric enum and AnyOf unions are
+benevolent where possible, preserving ordinary scalar calls under PHPStan's
+default settings. `checkBenevolentUnionTypes` enables stricter argument checking
+for these unions.
 
 This feature does not support:
 
