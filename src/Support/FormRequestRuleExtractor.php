@@ -29,6 +29,7 @@ use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\TypeUtils;
 
+use function array_diff_key;
 use function array_filter;
 use function array_key_exists;
 use function array_map;
@@ -37,7 +38,11 @@ use function array_shift;
 use function array_values;
 use function count;
 
-/** @internal */
+/**
+ * @internal
+ *
+ * @phpstan-type ExtractedRules array{rules: array<string, ValidationRule>, unsealed: bool}
+ */
 final class FormRequestRuleExtractor
 {
     public function __construct(
@@ -47,7 +52,7 @@ final class FormRequestRuleExtractor
     ) {
     }
 
-    /** @return array<string, ValidationRule>|null */
+    /** @return ExtractedRules|null */
     public function extract(ClassReflection $classReflection): array|null
     {
         if (! $classReflection->hasNativeMethod('rules')) {
@@ -204,7 +209,7 @@ final class FormRequestRuleExtractor
             || $statement instanceof Stmt\Const_;
     }
 
-    /** @return array<string, ValidationRule>|null */
+    /** @return ExtractedRules|null */
     private static function extractReturn(Return_ $return, Scope $scope): array|null
     {
         if ($return->expr === null) {
@@ -215,71 +220,106 @@ final class FormRequestRuleExtractor
             return self::extractConstantArrays($scope->getType($return->expr));
         }
 
-        $rules = [];
+        $rules                   = [];
+        $unsealed                = false;
+        $unknownMayOverridePrior = false;
 
         foreach (array_reverse($return->expr->items) as $item) {
             if ($item->unpack) {
                 $unpackedRules = self::extractConstantArrays($scope->getType($item->value));
-                $rules        += array_reverse($unpackedRules ?? [], true);
+
+                if ($unpackedRules === null) {
+                    $unsealed                = true;
+                    $unknownMayOverridePrior = true;
+
+                    continue;
+                }
+
+                $rules += array_reverse($unpackedRules['rules'], true);
+
+                if ($unpackedRules['unsealed']) {
+                    $unsealed                = true;
+                    $unknownMayOverridePrior = true;
+                }
 
                 continue;
             }
 
             if ($item->key === null) {
+                $unsealed = true;
+
                 continue;
             }
 
-            $propertyName = self::extractConstantString($scope->getType($item->key));
+            $keyType      = $scope->getType($item->key);
+            $propertyName = self::extractConstantString($keyType);
 
-            if ($propertyName === null || array_key_exists($propertyName, $rules)) {
+            if ($propertyName === null) {
+                $unsealed = true;
+
+                if (! $keyType->toArrayKey()->isInteger()->yes()) {
+                    $unknownMayOverridePrior = true;
+                }
+
                 continue;
             }
 
-            // Keep unknown rules as null so they still override earlier entries for the same key.
-            $rules[$propertyName] = ValidationRuleFactory::fromType($scope->getType($item->value));
+            if (array_key_exists($propertyName, $rules) || $unknownMayOverridePrior) {
+                continue;
+            }
+
+            $rules[$propertyName] = ValidationRuleFactory::fromType($scope->getType($item->value))
+                ?? ValidationRuleFactory::make([]);
         }
 
-        return array_reverse(array_filter($rules), true);
+        return [
+            'rules' => array_reverse($rules, true),
+            'unsealed' => $unsealed,
+        ];
     }
 
-    /** @return array<string, ValidationRule>|null */
+    /** @return ExtractedRules|null */
     private static function extractConstantArrays(Type $type): array|null
     {
+        if (! $type->isConstantArray()->yes()) {
+            return null;
+        }
+
         return self::mergeReturns(array_map(self::extractConstantArray(...), $type->getConstantArrays()));
     }
 
-    /** @return array<string, ValidationRule> */
+    /** @return ExtractedRules */
     private static function extractConstantArray(ConstantArrayType $array): array
     {
-        $rules = [];
+        $rules    = [];
+        $unsealed = false;
 
         foreach ($array->getKeyTypes() as $index => $keyType) {
             if ($array->isOptionalKey($index)) {
+                $unsealed = true;
+
                 continue;
             }
 
             $propertyName = self::extractConstantString($keyType);
 
             if ($propertyName === null) {
+                $unsealed = true;
+
                 continue;
             }
 
-            $rule = ValidationRuleFactory::fromType($array->getValueTypes()[$index]);
-
-            if ($rule === null) {
-                continue;
-            }
-
-            $rules[$propertyName] = $rule;
+            $rules[$propertyName] = ValidationRuleFactory::fromType($array->getValueTypes()[$index])
+                ?? ValidationRuleFactory::make([]);
         }
 
-        return $rules;
+        return ['rules' => $rules, 'unsealed' => $unsealed];
     }
 
     /**
-     * @param list<array<string, ValidationRule>|null> $returns
+     * @param list<ExtractedRules|null> $returns
      *
-     * @return array<string, ValidationRule>|null
+     * @return ExtractedRules|null
      */
     private static function mergeReturns(array $returns): array|null
     {
@@ -294,22 +334,28 @@ final class FormRequestRuleExtractor
                 return null;
             }
 
-            foreach ($merged as $key => $rule) {
-                if (! array_key_exists($key, $rules)) {
-                    unset($merged[$key]);
+            $merged['unsealed'] = $merged['unsealed']
+                || $rules['unsealed']
+                || array_diff_key($merged['rules'], $rules['rules']) !== []
+                || array_diff_key($rules['rules'], $merged['rules']) !== [];
+
+            foreach ($merged['rules'] as $key => $rule) {
+                if (! array_key_exists($key, $rules['rules'])) {
+                    unset($merged['rules'][$key]);
 
                     continue;
                 }
 
-                $mergedRule = self::mergeRules($rule, $rules[$key]);
+                $mergedRule = self::mergeRules($rule, $rules['rules'][$key]);
 
                 if ($mergedRule === null) {
-                    unset($merged[$key]);
+                    unset($merged['rules'][$key]);
+                    $merged['unsealed'] = true;
 
                     continue;
                 }
 
-                $merged[$key] = $mergedRule;
+                $merged['rules'][$key] = $mergedRule;
             }
         }
 
@@ -351,10 +397,12 @@ final class FormRequestRuleExtractor
     {
         $constantStrings = $type->getConstantStrings();
 
-        if (count($constantStrings) !== 1) {
-            return null;
+        if (count($constantStrings) === 1 && $type->equals($constantStrings[0])) {
+            $arrayKeyStrings = $constantStrings[0]->toArrayKey()->getConstantStrings();
+
+            return count($arrayKeyStrings) === 1 ? $arrayKeyStrings[0]->getValue() : null;
         }
 
-        return $constantStrings[0]->getValue();
+        return null;
     }
 }

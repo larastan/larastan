@@ -294,8 +294,10 @@ PHPDoc array shapes can contribute rules. When there are multiple supported
 return paths, only fields present on every path are inferred. Fields that depend
 on dynamic rule assembly, loops, unresolvable helper results,
 `parent::rules()` composition, or unsupported rules stay `mixed` or keep
-Laravel's existing broad type. Other exact entries can still be inferred. These
-fallbacks do not produce a diagnostic.
+Laravel's existing broad type. Other exact entries can still be inferred when
+dynamic entries cannot overwrite them. Validated shapes remain unsealed when
+additional dynamic or branch-specific keys may be returned. These fallbacks do
+not produce a diagnostic.
 
 This feature does not support:
 

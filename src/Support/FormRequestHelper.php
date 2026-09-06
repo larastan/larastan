@@ -17,7 +17,7 @@ use function array_key_exists;
 /** @internal */
 final class FormRequestHelper
 {
-    /** @var array<class-string<FormRequest>, array<string, RuleTreeNode>|null> */
+    /** @var array<class-string<FormRequest>, array{nodes: array<string, RuleTreeNode>, unsealed: bool}|null> */
     private array $trees = [];
 
     /** @var array<class-string<FormRequest>, array<string, Type>> */
@@ -49,7 +49,7 @@ final class FormRequestHelper
 
             $this->rawProperties[$className] = $tree === null
                 ? []
-                : $this->treeTypeResolver->resolveRawProperties($tree);
+                : $this->treeTypeResolver->resolveRawProperties($tree['nodes']);
         }
 
         return array_key_exists($propertyName, $this->rawProperties[$className]);
@@ -105,13 +105,16 @@ final class FormRequestHelper
                 return null;
             }
 
-            $this->validatedData[$className] = $this->treeTypeResolver->resolveValidatedData($tree);
+            $this->validatedData[$className] = $this->treeTypeResolver->resolveValidatedData(
+                $tree['nodes'],
+                $tree['unsealed'],
+            );
         }
 
         return $this->validatedData[$className];
     }
 
-    /** @return array<string, RuleTreeNode>|null */
+    /** @return array{nodes: array<string, RuleTreeNode>, unsealed: bool}|null */
     private function getTree(ClassReflection $classReflection): array|null
     {
         /** @var class-string<FormRequest> $className */
@@ -124,9 +127,14 @@ final class FormRequestHelper
         $this->resolving[$className] = true;
 
         try {
-            $rules = $this->ruleExtractor->extract($classReflection);
+            $extracted = $this->ruleExtractor->extract($classReflection);
 
-            return $this->trees[$className] = $rules === null ? null : RuleTreeBuilder::build($rules);
+            return $this->trees[$className] = $extracted === null
+                ? null
+                : [
+                    'nodes' => RuleTreeBuilder::build($extracted['rules']),
+                    'unsealed' => $extracted['unsealed'],
+                ];
         } finally {
             unset($this->resolving[$className]);
         }
