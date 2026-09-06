@@ -126,6 +126,15 @@ class GenericModelPropertyTypeTest extends PHPStanTestCase
             GenericModelPropertyType::class,
             'model property of App\User',
         ];
+
+        yield [
+            static fn ($container) => [
+                new GenericModelPropertyType(new ObjectType(User::class), $container->getByType(ModelPropertyHelper::class)),
+                new ConstantStringType('*'),
+            ],
+            UnionType::class,
+            "'*'|model property of App\User",
+        ];
     }
 
     /** @param class-string<Type> $expectedTypeClass */
