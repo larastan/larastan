@@ -88,7 +88,7 @@ final class AnyOfRequest extends FormRequest
 
 function test(AnyOfRequest $request): void
 {
-    assertType('(array|int|string)', $request->requiredScalar);
+    assertType('(array|float|int|string|true)', $request->requiredScalar);
     assertType('array', $request->outerArray);
 
     if (is_array($request->requiredScalar)) {
@@ -103,19 +103,19 @@ function test(AnyOfRequest $request): void
     );
     assertType('Illuminate\\Validation\\Rules\\AnyOf<array>', Rule::anyOf(...$unpacked));
 
-    assertType('(array|int|string)', $request->scalar);
+    assertType('(array|float|int|string|true)', $request->scalar);
     assertType("('*'|array)", $request->literalOrArray);
-    assertType('(int|numeric-string)', $request->outerInteger);
+    assertType('(float|int|numeric-string|true)', $request->outerInteger);
     assertType("('known'|numeric-string)", $request->outerString);
     assertType('mixed', $request->unknownAlternative);
-    assertType('array|int|string|null', $request->nullableScalar);
-    assertType('(array|int|string)', $request->nullableAlternative);
+    assertType('array|float|int|string|true|null', $request->nullableScalar);
+    assertType('(array|float|int|string|true)', $request->nullableAlternative);
     assertType('(array|float|int|string)', $request->formattedTime);
-    assertType("('api'|'import'|array|int|numeric-string)", $request->enumOrInteger);
-    assertType('(array|int|string)', $request->nestedAnyOf);
+    assertType("('api'|'import'|array|float|int|numeric-string|true)", $request->enumOrInteger);
+    assertType('(array|float|int|string|true)', $request->nestedAnyOf);
     assertType('mixed', $request->directAnyOf);
     assertType('mixed', $request->dynamic);
-    assertType('array<(int|numeric-string)>|string', $request->collectionOrString);
+    assertType('array<(float|int|numeric-string|true)>|string', $request->collectionOrString);
     assertType('(array|string)', $request->arrayIn);
     assertType('(array|string)', $request->listRuleIn);
     assertType('mixed', $request->nestedShape);

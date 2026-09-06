@@ -53,8 +53,10 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/eloquent-getter-types.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/environment-helper.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/form-request.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/form-request-numeric-paths.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/form-request-exclusion.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/form-request-rule-sources.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/form-request-trait-rules.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/form-request-allowed-keys.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/form-request-ambiguous-rules.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/gate-facade.php');
@@ -83,6 +85,13 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/translate.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/translator.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/validation-rules.php');
+
+        if (laravel_version_compare('12.67.0', '>=') && (laravel_version_compare('13.0.0', '<') || laravel_version_compare('13.26.0', '>='))) {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/validation-rules-strict-in.php');
+        } else {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/validation-rules-loose-in.php');
+        }
+
         yield from self::gatherAssertTypes(__DIR__ . '/data/validator.php');
 
         if ($supportsStrictInteger) {

@@ -255,10 +255,10 @@ produce the following types:
 
 ```php
 $request->name;              // string
-$request->age;               // int|numeric-string|null
-$request->validated();       // array{name: string, age?: int|numeric-string}
-$request->validated('age');  // int|numeric-string|null
-$request->safe();            // ValidatedInput<array{name: string, age?: int|numeric-string}>
+$request->age;               // float|int|numeric-string|true|null
+$request->validated();       // array{name: string, age?: float|int|numeric-string|true}
+$request->validated('age');  // float|int|numeric-string|true|null
+$request->safe();            // ValidatedInput<array{name: string, age?: float|int|numeric-string|true}>
 $request->safe(['name']);    // array{name: string}
 ```
 
@@ -274,6 +274,11 @@ keys, including keys without child rules. Adding a separate bare `array` or
 `list` rule restores pruning. Allowed keys remain optional unless another rule
 requires them. When exclusion removes every child rule, Laravel can retain the
 remaining parent input, so the inferred shape stays open.
+
+The loose `integer` rule also accepts integer-valued JSON floats and `true`
+without converting them. Strict integer rules retain `int` precision. Numeric
+alternatives in `in:` rules retain `numeric-string` on Laravel versions that
+use loose comparison, and literal string types where comparison is strict.
 
 Larastan only narrows magic properties after successful validation. They remain
 `mixed` during request setup, preparation, authorization, validator
@@ -310,6 +315,9 @@ Laravel's existing broad type. Other exact entries can still be inferred when
 dynamic entries cannot overwrite them. Validated shapes remain unsealed when
 additional dynamic or branch-specific keys may be returned. These fallbacks do
 not produce a diagnostic.
+
+An unresolved rule source can also exclude a field through an ancestor rule.
+Affected descendants stay broad even when their own rule keys are exact.
 
 Optional entries in a PHPDoc rule list keep the affected field broad: optional
 modifiers can permit null, omit the field, or exclude its entire subtree.

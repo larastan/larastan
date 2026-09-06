@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Support\Validation;
 
+use PHPStan\Type\Constant\ConstantStringType;
+
 use function array_map;
 use function array_shift;
 use function count;
@@ -41,7 +43,7 @@ final class RuleTreeBuilder
             $node = $root;
 
             foreach ($segments as $segment) {
-                if ($segment === '' || ctype_digit($segment)) {
+                if ($segment === '' || ctype_digit($segment) || (new ConstantStringType($segment))->toArrayKey()->isInteger()->yes()) {
                     $node->degraded = true;
 
                     continue 2;
