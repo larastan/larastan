@@ -99,8 +99,10 @@ parameters:
 ## `checkFormRequestTypes`
 **default**: `false`
 
-This config parameter enables rule-derived types for FormRequest magic
-properties and the supporting generic validation rule objects.
+Enables rule-derived types for FormRequest magic properties, `validated()`, and
+`safe()`, together with the supporting generic validation rule objects. See
+[FormRequest Type Inference](features.md#formrequest-type-inference) for the
+supported behavior and fallbacks.
 
 ```neon
 parameters:

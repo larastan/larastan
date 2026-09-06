@@ -223,6 +223,101 @@ class User extends Model
 > }
 > ```
 
+## FormRequest Type Inference
+
+Set `checkFormRequestTypes` to infer types from a FormRequest's `rules()`
+method. It is disabled by default:
+
+```neon
+parameters:
+    checkFormRequestTypes: true
+```
+
+After validation succeeds, Larastan uses `rules()` as the source of truth for:
+
+- magic properties such as `$request->name`;
+- the full array and exact keyed values returned by `validated()`; and
+- the generic `ValidatedInput` or selected array returned by `safe()`.
+
+For example, these rules:
+
+```php
+public function rules(): array
+{
+    return [
+        'name' => ['required', 'string'],
+        'age' => ['sometimes', 'integer'],
+    ];
+}
+```
+
+produce the following types:
+
+```php
+$request->name;              // string
+$request->age;               // int|numeric-string|null
+$request->validated();       // array{name: string, age?: int|numeric-string}
+$request->validated('age');  // int|numeric-string|null
+$request->safe();            // ValidatedInput<array{name: string, age?: int|numeric-string}>
+$request->safe(['name']);    // array{name: string}
+```
+
+Magic properties describe the original request input after validation.
+Validation does not cast values, so rules such as `integer` retain the incoming
+HTTP representations accepted by Laravel. Optional magic properties include
+`null`, while optional validated values use optional array keys. Raw nested
+arrays keep unvalidated keys unless an allowed-key rule seals them.
+`validated()` and `safe()` use Laravel's default behavior of pruning
+unvalidated nested keys.
+
+Larastan only narrows magic properties after successful validation. They remain
+`mixed` during request setup, preparation, authorization, validator
+construction, validation callbacks, and failed-validation handling. Reads in
+`passedValidation()`, ordinary FormRequest methods, and external consumers use
+the inferred type. Native properties and explicit `@property`, `@property-read`,
+or `@property-write` declarations always take precedence.
+
+Larastan only refines `validated()` and `safe()` when the call resolves to
+Laravel's original FormRequest method. Application overrides keep their
+declared return type. `validated()` supports exact integer or string keys,
+including dotted strings, together with default values. `safe()` supports no
+argument or an exact array of string keys, including dotted strings. Dynamic or
+unsupported key expressions keep Laravel's existing broad return type. Methods,
+properties, and array offsets on the returned `ValidatedInput` are not refined
+further.
+
+### Rules and fallbacks
+
+Larastan analyses conventional `rules()` methods that it can resolve statically.
+Exact returned arrays, local variables, constant top-level spreads, and exact
+PHPDoc array shapes can contribute rules. When there are multiple supported
+return paths, only fields present on every path are inferred. Fields that depend
+on dynamic rule assembly, loops, unresolvable helper results,
+`parent::rules()` composition, or unsupported rules stay `mixed` or keep
+Laravel's existing broad type. Other exact entries can still be inferred. These
+fallbacks do not produce a diagnostic.
+
+This feature does not support:
+
+- custom `validator()`, `getValidatorInstance()`,
+  `createDefaultValidator()`, or `validationRules()` pipelines;
+- rules added or replaced in `withValidator()` or another validator hook;
+- values changed through `merge()`, `replace()`, direct input mutation, or
+  `passedValidation()`;
+- route parameters that contradict an optional rule-derived property type; or
+- applications that globally enable Laravel's
+  `includeUnvalidatedArrayKeys()` behavior.
+
+`exists` and other database-membership rules are type-neutral because Laravel
+does not cast the submitted value. Other rules must establish its type.
+Larastan models ordinary HTTP request values, so string-like input types do not
+include arbitrary `Stringable` objects injected by application code.
+
+See [`composer.json`](../composer.json) for the supported dependency versions.
+CI coverage is defined in the [GitHub Actions workflows](../.github/workflows/),
+including the [test matrix](../.github/workflows/tests.yml) and the
+[end-to-end projects](../.github/workflows/e2e-tests.yml).
+
 ## Model Properties
 
 Larastan will automatically scan your application's migrations in order to infer the database schema and therefore it is able to infer the existence of magic properties on Eloquent model classes.
@@ -254,4 +349,3 @@ Larastan boots your Laravel application during analysis. If that bootstrap fails
 and `--no-ansi` flags.
 
 ![Screenshot of a failed PHPStan analysis showcasing the custom styled error.](/docs/framework-bootstrap-error.png)
-
