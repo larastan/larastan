@@ -191,8 +191,7 @@ function test(
     assertType('array', $fooRequest->flags);
     assertType('mixed', $fooRequest->{'author.name'});
     assertType('int|numeric-string|null', $fooRequest->limit);
-    assertType('array{fragment: string|null, domain?: mixed, path: string|null, port?: mixed, ...}', $fooRequest->url);
-    assertType('mixed', $fooRequest->fallback);
+    assertType('array{fragment: string|null, domain?: mixed, port?: mixed, ...}', $fooRequest->url);
     assertType('mixed', $fooRequest->dynamicRules);
     assertType('string', $variableRulesRequest->title);
     assertType('(int|numeric-string)', $variableRulesRequest->quantity);
