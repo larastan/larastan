@@ -99,7 +99,10 @@ class OverriddenValidatedRequest extends SafeReturnRequest
     }
 }
 
-/** @param 'name'|'nickname' $validatedKey */
+/**
+ * @param 'name'|'nickname' $validatedKey
+ * @param array{0?: 'name'} $optionalSafeKeys
+ */
 function test(
     FormRequest $request,
     FooRequest $fooRequest,
@@ -109,6 +112,7 @@ function test(
     OverriddenSafeRequest $overriddenSafeRequest,
     OverriddenValidatedRequest $overriddenValidatedRequest,
     string $validatedKey,
+    array $optionalSafeKeys,
 ): void
 {
     assertType('Illuminate\Support\ValidatedInput', $request->safe());
@@ -129,6 +133,7 @@ function test(
         'array{profile: array{email: string, age?: (int|numeric-string)}}',
         $safeReturnRequest->safe(['profile.email', 'profile.age']),
     );
+    assertType('array<string, mixed>', $safeReturnRequest->safe($optionalSafeKeys));
     assertType('array{}', $safeReturnRequest->safe(['missing']));
     assertType('array<string, mixed>', $safeReturnRequest->safe(['unknown.child']));
     assertType('array', $safeReturnRequest->safe()->all());
