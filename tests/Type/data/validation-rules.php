@@ -44,6 +44,7 @@ final class AdditionalRulesRequest extends FormRequest
         return [
             'requiredNullable' => ['required', 'nullable', 'string'],
             'presentNullable' => ['present', 'nullable', 'string'],
+            'studlyNullable' => ['present', 'Nullable', 'string'],
             'conditionallyRequired' => 'required_if:other,value|string',
             'conditionallyPresent' => 'present_if:other,value|string',
             'digitsValue' => 'required|digits:2',
@@ -79,6 +80,7 @@ final class AdditionalRulesRequest extends FormRequest
             'boundedInValue' => 'required|integer|in:0,1|min:0|max:1',
             'listBoundsFirst' => 'required|min:1|in:known,new|list',
             'listBoundsLast' => 'required|list|in:known,new|min:1',
+            'quotedInValue' => 'required|string|in:"foo,bar",baz',
             'dateValue' => ['required', Rule::date()],
             'formattedDate' => ['required', Rule::date()->format('Y-m-d')],
             'emailValue' => ['required', Rule::email()],
@@ -152,6 +154,7 @@ function test(mixed $mixed, array|string $arrayOrString, AdditionalRulesRequest 
 
     assertType('string', $request->requiredNullable);
     assertType('string|null', $request->presentNullable);
+    assertType('string|null', $request->studlyNullable);
     assertType('string|null', $request->conditionallyRequired);
     assertType('string|null', $request->conditionallyPresent);
     assertType('(float|int|numeric-string)', $request->digitsValue);
@@ -187,4 +190,5 @@ function test(mixed $mixed, array|string $arrayOrString, AdditionalRulesRequest 
     assertType('(int|numeric-string)', $request->boundedInValue);
     assertType("non-empty-list<'known'|'new'>", $request->listBoundsFirst);
     assertType("non-empty-list<'known'|'new'>", $request->listBoundsLast);
+    assertType("'baz'|'foo,bar'", $request->quotedInValue);
 }
