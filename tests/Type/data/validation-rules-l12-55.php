@@ -21,7 +21,33 @@ final class StringRuleRequest extends FormRequest
     }
 }
 
-function test(StringRuleRequest $request): void
+final class UnlessRulesRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'alwaysRequired' => [Rule::requiredUnless(false), 'string'],
+            'neverExcluded' => ['required', Rule::excludeUnless(true), 'string'],
+            'alwaysExcluded' => ['required', Rule::excludeUnless(false), 'string'],
+        ];
+    }
+}
+
+final class StrictNumericRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'bounded' => ['required', Rule::numeric()->integer(strict: true)->max(10)->min(2)],
+        ];
+    }
+}
+
+function test(
+    StringRuleRequest $request,
+    UnlessRulesRequest $unlessRequest,
+    StrictNumericRequest $numericRequest,
+): void
 {
     assertType('Illuminate\\Validation\\Rules\\StringRule<string>', Rule::string());
     assertType(
@@ -33,4 +59,19 @@ function test(StringRuleRequest $request): void
     assertType('lowercase-string&non-empty-string', $request->lowercase);
     assertType('uppercase-string', $request->uppercase);
     assertType('string', $request->alpha);
+    assertType('string', $unlessRequest->alwaysRequired);
+    assertType('string', $unlessRequest->neverExcluded);
+    assertType('mixed', $unlessRequest->alwaysExcluded);
+
+    assertType('Illuminate\\Validation\\Rules\\Numeric<int<1, max>>', Rule::numeric()->integer(strict: true)->min(1));
+    assertType(
+        'Illuminate\\Validation\\Rules\\Numeric<int<2, 8>>',
+        Rule::numeric()->integer(strict: true)->min(1)->between(2, 8)->max(10),
+    );
+    assertType(
+        'Illuminate\\Validation\\Rules\\Numeric<int<2, 8>>',
+        Rule::numeric()->integer(strict: true)->between(max: 8, min: 2),
+    );
+    assertType('Illuminate\\Validation\\Rules\\Numeric<3>', Rule::numeric()->integer(strict: true)->exactly(3));
+    assertType('int<2, 10>', $numericRequest->bounded);
 }

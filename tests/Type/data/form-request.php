@@ -56,13 +56,10 @@ class ConditionalRulesRequest extends FormRequest
             ],
             'conditionallyExcluded' => ['required', Rule::when($condition, 'exclude', 'string')],
             'alwaysRequired' => [Rule::requiredIf(true), 'string'],
-            'alwaysRequiredUnless' => [Rule::requiredUnless(false), 'string'],
             'maybeRequired' => [Rule::requiredIf(static fn (): bool => true), 'string'],
             'neverExcluded' => ['required', Rule::excludeIf(false), 'string'],
-            'neverExcludedUnless' => ['required', Rule::excludeUnless(true), 'string'],
             'maybeExcluded' => ['required', Rule::excludeIf(static fn (): bool => false), 'string'],
             'alwaysExcluded' => ['required', Rule::excludeIf(true), 'string'],
-            'alwaysExcludedUnless' => ['required', Rule::excludeUnless(false), 'string'],
         ];
     }
 }
@@ -209,13 +206,10 @@ function test(
     assertType('string', $conditionalRulesRequest->exactWhenValue);
     assertType('mixed', $conditionalRulesRequest->conditionallyExcluded);
     assertType('string', $conditionalRulesRequest->alwaysRequired);
-    assertType('string', $conditionalRulesRequest->alwaysRequiredUnless);
     assertType('string|null', $conditionalRulesRequest->maybeRequired);
     assertType('string', $conditionalRulesRequest->neverExcluded);
-    assertType('string', $conditionalRulesRequest->neverExcludedUnless);
     assertType('mixed', $conditionalRulesRequest->maybeExcluded);
     assertType('mixed', $conditionalRulesRequest->alwaysExcluded);
-    assertType('mixed', $conditionalRulesRequest->alwaysExcludedUnless);
     assertType("'draft'|'published'", $fooRequest->state);
     assertType("'draft'|'published'", $fooRequest->status);
     assertType("'draft'|'published'", $fooRequest->stringStatus);

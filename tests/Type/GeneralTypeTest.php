@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Type;
 
+use Composer\InstalledVersions;
 use PHPStan\Testing\TypeInferenceTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -14,6 +15,11 @@ class GeneralTypeTest extends TypeInferenceTestCase
     /** @return iterable<mixed> */
     public static function dataFileAsserts(): iterable
     {
+        // Laravel v12.22.0 contains strict integer validation but reports its
+        // Application::VERSION as 12.21.0. Later releases report it correctly.
+        $supportsStrictInteger = laravel_version_compare('12.22.0', '>=')
+            || InstalledVersions::getPrettyVersion('laravel/framework') === 'v12.22.0';
+
         yield from self::gatherAssertTypes(__DIR__ . '/data/abort.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/abstract-manager.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/app-make.php');
@@ -76,8 +82,20 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/validation-rules.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/validator.php');
 
+        if ($supportsStrictInteger) {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/validation-rules-l12-22.php');
+        } elseif (laravel_version_compare('12.21.0', '>=')) {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/validation-rules-l12-21.php');
+        } else {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/validation-rules-before-l12-21.php');
+        }
+
         if (laravel_version_compare('12.0.0', '>=')) {
             yield from self::gatherAssertTypes(__DIR__ . '/data/validation-rules-l12.php');
+
+            if (laravel_version_compare('12.55.0', '<')) {
+                yield from self::gatherAssertTypes(__DIR__ . '/data/validation-rules-l12-before-l12-55.php');
+            }
         }
 
         if (laravel_version_compare('12.8.0', '>=')) {

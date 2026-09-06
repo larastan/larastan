@@ -42,6 +42,43 @@ final class AdditionalRulesRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'requiredNullable' => ['required', 'nullable', 'string'],
+            'presentNullable' => ['present', 'nullable', 'string'],
+            'conditionallyRequired' => 'required_if:other,value|string',
+            'conditionallyPresent' => 'present_if:other,value|string',
+            'digitsValue' => 'required|digits:2',
+            'digitsBetweenValue' => 'required|digits_between:1,2',
+            'decimalValue' => 'required|decimal:2',
+            'multipleOfValue' => 'required|multiple_of:0.5',
+            'alphaNumericValue' => 'required|alpha_num',
+            'startsWithValue' => 'required|starts_with:4',
+            'dateFormatValue' => 'required|date_format:H:i',
+            'regexValue' => ['required', 'regex:/^[0-9]+$/'],
+            'stringEmailValue' => 'required|email',
+            'ipValue' => 'required|ip',
+            'macAddressValue' => 'required|mac_address',
+            'jsonValue' => 'required|json',
+            'sameValue' => 'required|same:other',
+            'sameStringValue' => 'required|string|same:other',
+            'unknownStringValue' => 'required|string|custom',
+            'betweenValue' => 'required|between:1,20',
+            'betweenStringValue' => 'required|string|between:1,20',
+            'betweenNumericValue' => 'required|numeric|between:1,20',
+            'stringMinimumValue' => 'required|min:1|string',
+            'arrayMinimumValue' => 'required|array|min:1',
+            'listSizeValue' => 'required|size:2|list',
+            'sizeValue' => 'required|size:2',
+            'comparisonValue' => 'required|gt:other',
+            'comparisonArrayValue' => 'required|array|gte:other',
+            'numericSizeValue' => 'required|numeric|size:3',
+            'integerMinimumValue' => 'required|integer|min:1',
+            'integerBetweenValue' => 'required|integer|between:1,20',
+            'malformedMinimumValue' => 'required|integer|min:',
+            'negativeMinimumValue' => 'required|integer|min:-5|max:5',
+            'invalidBoundsValue' => 'required|integer|min:20|max:1',
+            'boundedInValue' => 'required|integer|in:0,1|min:0|max:1',
+            'listBoundsFirst' => 'required|min:1|in:known,new|list',
+            'listBoundsLast' => 'required|list|in:known,new|min:1',
             'dateValue' => ['required', Rule::date()],
             'formattedDate' => ['required', Rule::date()->format('Y-m-d')],
             'emailValue' => ['required', Rule::email()],
@@ -112,4 +149,42 @@ function test(mixed $mixed, array|string $arrayOrString, AdditionalRulesRequest 
     assertType('Illuminate\\Http\\UploadedFile', $request->fileValue);
     assertType('Illuminate\\Http\\UploadedFile', $request->imageValue);
     assertType('string', $request->passwordValue);
+
+    assertType('string', $request->requiredNullable);
+    assertType('string|null', $request->presentNullable);
+    assertType('string|null', $request->conditionallyRequired);
+    assertType('string|null', $request->conditionallyPresent);
+    assertType('(float|int|numeric-string)', $request->digitsValue);
+    assertType('(float|int|numeric-string)', $request->digitsBetweenValue);
+    assertType('(float|int|numeric-string)', $request->decimalValue);
+    assertType('(float|int|numeric-string)', $request->multipleOfValue);
+    assertType('float|int|string', $request->alphaNumericValue);
+    assertType('float|int|string', $request->startsWithValue);
+    assertType('float|int|string', $request->dateFormatValue);
+    assertType('float|int|string', $request->regexValue);
+    assertType('string', $request->stringEmailValue);
+    assertType('string', $request->ipValue);
+    assertType('string', $request->macAddressValue);
+    assertType('bool|float|int|string', $request->jsonValue);
+    assertType('mixed', $request->sameValue);
+    assertType('string', $request->sameStringValue);
+    assertType('string', $request->unknownStringValue);
+    assertType('mixed', $request->betweenValue);
+    assertType('non-empty-string', $request->betweenStringValue);
+    assertType('(float|int|numeric-string)', $request->betweenNumericValue);
+    assertType('non-empty-string', $request->stringMinimumValue);
+    assertType('non-empty-array', $request->arrayMinimumValue);
+    assertType('non-empty-list', $request->listSizeValue);
+    assertType('mixed', $request->sizeValue);
+    assertType('mixed', $request->comparisonValue);
+    assertType('array', $request->comparisonArrayValue);
+    assertType('(float|int|numeric-string)', $request->numericSizeValue);
+    assertType('(int|numeric-string)', $request->integerMinimumValue);
+    assertType('(int|numeric-string)', $request->integerBetweenValue);
+    assertType('(int|numeric-string)', $request->malformedMinimumValue);
+    assertType('(int|numeric-string)', $request->negativeMinimumValue);
+    assertType('(int|numeric-string)', $request->invalidBoundsValue);
+    assertType('(int|numeric-string)', $request->boundedInValue);
+    assertType("non-empty-list<'known'|'new'>", $request->listBoundsFirst);
+    assertType("non-empty-list<'known'|'new'>", $request->listBoundsLast);
 }
