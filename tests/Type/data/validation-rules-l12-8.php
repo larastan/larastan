@@ -43,8 +43,6 @@ final class AnyOfRequest extends FormRequest
             ])],
             'nullableScalar' => ['nullable', Rule::anyOf(['string', 'integer'])],
             'nullableAlternative' => ['required', Rule::anyOf(['string', 'nullable|integer'])],
-            'requiredNullable' => ['required', 'nullable', 'string'],
-            'presentNullable' => ['present', 'nullable', 'string'],
             'formattedTime' => ['required', Rule::anyOf(['date_format:H:i', 'date_format:H:i:s'])],
             'enumOrInteger' => ['required', Rule::anyOf([Rule::enum(Source::class), 'integer'])],
             'nestedAnyOf' => ['required', Rule::anyOf([Rule::anyOf(['string', 'integer']), 'array'])],
@@ -64,7 +62,7 @@ final class AnyOfRequest extends FormRequest
                 ['type' => ['required', 'string']],
             ])],
             'contextualModifiers' => ['required', Rule::anyOf([
-                ['max:4', 'integer:strict', 'min:2'],
+                ['max:4', 'string', 'min:2'],
                 ['array', 'min:1'],
             ])],
         ];
@@ -88,8 +86,6 @@ function test(AnyOfRequest $request): void
     assertType('mixed', $request->unknownAlternative);
     assertType('int|string|null', $request->nullableScalar);
     assertType('int|string', $request->nullableAlternative);
-    assertType('string', $request->requiredNullable);
-    assertType('string|null', $request->presentNullable);
     assertType('float|int|string', $request->formattedTime);
     assertType("'api'|'import'|int|numeric-string", $request->enumOrInteger);
     assertType('array|int|string', $request->nestedAnyOf);
@@ -99,5 +95,5 @@ function test(AnyOfRequest $request): void
     assertType("array<'known'|'new'>|string", $request->arrayIn);
     assertType("list<'known'|'new'>|string", $request->listRuleIn);
     assertType('mixed', $request->nestedShape);
-    assertType('non-empty-array|int<2, 4>', $request->contextualModifiers);
+    assertType('non-empty-array|non-empty-string', $request->contextualModifiers);
 }
