@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Support\Validation;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\ArrayRule;
 use Illuminate\Validation\Rules\Date;
 use Illuminate\Validation\Rules\Dimensions;
@@ -14,6 +15,7 @@ use Illuminate\Validation\Rules\File as FileRule;
 use Illuminate\Validation\Rules\In;
 use Illuminate\Validation\Rules\Numeric;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\ValidationRuleParser;
 use Illuminate\Validation\Validator;
 use PHPStan\Type\Accessory\AccessoryArrayListType;
 use PHPStan\Type\Accessory\AccessoryLowercaseStringType;
@@ -40,6 +42,7 @@ use PHPStan\Type\TypeUtils;
 use ReflectionMethod;
 
 use function array_filter;
+use function array_values;
 use function class_exists;
 use function count;
 use function explode;
@@ -89,7 +92,7 @@ final class ValidationRuleFactory
             constraintType: self::inObjectConstraint($ruleObjects, $stringRule->type, $stringRule->constraintType),
             allowedKeys: $objectRule->allowedKeys,
             anyOfRuleGroups: $objectRule->anyOfRuleGroups,
-            rejectsNull: $stringRule->rejectsNull,
+            rejectsNull: $stringRule->rejectsNull || $objectRule->rejectsNull,
             possiblyExcluded: $stringRule->possiblyExcluded || $objectRule->possiblyExcluded,
             excluded: $stringRule->excluded || $objectRule->excluded,
             degraded: $objectRule->degraded,
@@ -110,12 +113,12 @@ final class ValidationRuleFactory
         $maximums          = [];
 
         foreach ($rules as $rule) {
-            $parameters = [];
-
-            if (str_contains($rule, ':')) {
-                [$rule, $parameters] = explode(':', $rule, 2);
-                $parameters          = explode(',', $parameters);
-            }
+            [$rule, $parameters] = ValidationRuleParser::parse($rule);
+            $rule                = Str::snake($rule);
+            $parameters          = array_values(array_filter(
+                $parameters,
+                static fn ($parameter): bool => is_string($parameter),
+            ));
 
             switch ($rule) {
                 case 'in':
@@ -208,6 +211,7 @@ final class ValidationRuleFactory
         $possiblyExcluded  = false;
         $excluded          = false;
         $degraded          = false;
+        $rejectsNull       = false;
 
         foreach ($rules as $rule) {
             switch (true) {
@@ -219,6 +223,7 @@ final class ValidationRuleFactory
                     $possiblyExcluded  = $possiblyExcluded || $conditionalRule->possiblyExcluded;
                     $excluded          = $excluded || $conditionalRule->excluded;
                     $degraded          = $degraded || $conditionalRule->degraded;
+                    $rejectsNull       = $rejectsNull || $conditionalRule->rejectsNull;
                     break;
                 case self::isObjectRule($rule, self::ANY_OF):
                     $alternatives = self::anyOfAlternatives(self::objectRuleTemplateType($rule, self::ANY_OF, 'TRules'));
@@ -272,12 +277,18 @@ final class ValidationRuleFactory
                     $type = new StringType();
                     break;
                 case self::isObjectRule($rule, 'Illuminate\\Validation\\Rules\\RequiredIf'):
-                    $required = $required
-                        || self::conditionalObjectApplies($rule, 'Illuminate\\Validation\\Rules\\RequiredIf') === true;
+                    $applies     = self::conditionalObjectApplies($rule, 'Illuminate\\Validation\\Rules\\RequiredIf');
+                    $required    = $required || $applies === true;
+                    $rejectsNull = $rejectsNull || $applies === true;
                     break;
                 case self::isObjectRule($rule, 'Illuminate\\Validation\\Rules\\RequiredUnless'):
-                    $required = $required
-                        || self::conditionalObjectApplies($rule, 'Illuminate\\Validation\\Rules\\RequiredUnless', true) === true;
+                    $applies     = self::conditionalObjectApplies(
+                        $rule,
+                        'Illuminate\\Validation\\Rules\\RequiredUnless',
+                        true,
+                    );
+                    $required    = $required || $applies === true;
+                    $rejectsNull = $rejectsNull || $applies === true;
                     break;
                 case self::isObjectRule($rule, 'Illuminate\\Validation\\Rules\\ExcludeIf'):
                     $applies          = self::conditionalObjectApplies($rule, 'Illuminate\\Validation\\Rules\\ExcludeIf');
@@ -302,6 +313,7 @@ final class ValidationRuleFactory
             possiblyExcluded: $possiblyExcluded,
             excluded: $excluded,
             degraded: $degraded,
+            rejectsNull: $rejectsNull,
         );
     }
 
@@ -317,12 +329,14 @@ final class ValidationRuleFactory
         $excluded          = true;
         $possiblyUndefined = false;
         $possiblyExcluded  = false;
+        $rejectsNull       = true;
 
         foreach ($alternatives as $alternative) {
             $required          = $required && $alternative->required && ! $alternative->possiblyUndefined && ! $alternative->possiblyExcluded;
             $excluded          = $excluded && $alternative->excluded;
             $possiblyUndefined = $possiblyUndefined || $alternative->possiblyUndefined;
             $possiblyExcluded  = $possiblyExcluded || $alternative->possiblyExcluded;
+            $rejectsNull       = $rejectsNull && $alternative->rejectsNull;
         }
 
         return new ValidationRule(
@@ -332,6 +346,7 @@ final class ValidationRuleFactory
             anyOfRuleGroups: [$alternatives],
             possiblyExcluded: $possiblyExcluded,
             excluded: $excluded,
+            rejectsNull: $rejectsNull,
         );
     }
 
@@ -762,7 +777,7 @@ final class ValidationRuleFactory
     /** @param list<string> $values */
     private static function determineInType(array $values, Type $baseType): Type
     {
-        if ($baseType->equals(self::looseIntegerType())) {
+        if ($values === [] || $baseType->equals(self::looseIntegerType())) {
             return $baseType;
         }
 

@@ -56,6 +56,8 @@ class ConditionalRulesRequest extends FormRequest
             ],
             'conditionallyExcluded' => ['required', Rule::when($condition, 'exclude', 'string')],
             'alwaysRequired' => [Rule::requiredIf(true), 'string'],
+            'alwaysRequiredNullable' => ['nullable', Rule::requiredIf(true), 'string'],
+            'conditionalRequiredNullable' => ['nullable', Rule::when(true, 'required|string')],
             'maybeRequired' => [Rule::requiredIf(static fn (): bool => true), 'string'],
             'neverExcluded' => ['required', Rule::excludeIf(false), 'string'],
             'maybeExcluded' => ['required', Rule::excludeIf(static fn (): bool => false), 'string'],
@@ -205,6 +207,8 @@ function test(
     assertType('string', $conditionalRulesRequest->exactWhenValue);
     assertType('mixed', $conditionalRulesRequest->conditionallyExcluded);
     assertType('string', $conditionalRulesRequest->alwaysRequired);
+    assertType('string', $conditionalRulesRequest->alwaysRequiredNullable);
+    assertType('string', $conditionalRulesRequest->conditionalRequiredNullable);
     assertType('string|null', $conditionalRulesRequest->maybeRequired);
     assertType('string', $conditionalRulesRequest->neverExcluded);
     assertType('mixed', $conditionalRulesRequest->maybeExcluded);
