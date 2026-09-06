@@ -19,6 +19,7 @@ use PHPStan\Analyser\NodeScopeResolver;
 use PHPStan\Analyser\Scope;
 use PHPStan\Analyser\ScopeContext;
 use PHPStan\Analyser\ScopeFactory;
+use PHPStan\DependencyInjection\Container;
 use PHPStan\Parser\Parser;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
@@ -42,7 +43,7 @@ final class FormRequestRuleExtractor
     public function __construct(
         private Parser $parser,
         private ScopeFactory $scopeFactory,
-        private NodeScopeResolver $nodeScopeResolver,
+        private Container $container,
     ) {
     }
 
@@ -122,7 +123,7 @@ final class FormRequestRuleExtractor
         $scope   = $this->scopeFactory->create(ScopeContext::create($fileName));
         $returns = [];
 
-        $this->nodeScopeResolver->processNodes(
+        $this->container->getByType(NodeScopeResolver::class)->processNodes(
             $nodes,
             $scope,
             static function (Node $node, Scope $scope) use ($rulesMethod, &$returns): void {
