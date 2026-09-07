@@ -8,6 +8,7 @@ use Larastan\Larastan\Support\RecursiveDirectoryIterator;
 use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
 use PHPStan\Parser\ParserErrorsException;
+use PHPStan\Reflection\InitializerExprTypeResolver;
 use PHPStan\Reflection\ReflectionProvider;
 use RecursiveIteratorIterator;
 use RegexIterator;
@@ -29,6 +30,7 @@ class MigrationHelper
         private FileHelper $fileHelper,
         private bool $disableMigrationScan,
         private ReflectionProvider $reflectionProvider,
+        private InitializerExprTypeResolver $initializerExprTypeResolver,
     ) {
     }
 
@@ -43,7 +45,7 @@ class MigrationHelper
             return $tables;
         }
 
-        $schemaAggregator = new SchemaAggregator($this->reflectionProvider, $tables);
+        $schemaAggregator = new SchemaAggregator($this->reflectionProvider, $this->initializerExprTypeResolver, $tables);
         $filesArray       = $this->getMigrationFiles();
 
         if (empty($filesArray)) {
