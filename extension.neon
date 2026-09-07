@@ -750,6 +750,8 @@ services:
 
     -
         class: Larastan\Larastan\Rules\Queue\BatchableJobChecksCancellationRule
+        arguments:
+            parser: @currentPhpVersionSimpleDirectParser
 
     -
         class: Larastan\Larastan\Rules\Queue\JobDispatchedInTransactionUsesAfterCommitRule

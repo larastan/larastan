@@ -84,3 +84,63 @@ class BatchableJobWithoutCancellationCheck implements ShouldQueue
 class ConcreteBatchableJobFromAbstractBase extends AbstractBatchableJob
 {
 }
+
+abstract class AbstractBatchableJobWithMiddleware implements ShouldQueue
+{
+    use Batchable;
+
+    /** @return list<object> */
+    public function middleware(): array
+    {
+        return [new SkipIfBatchCancelled()];
+    }
+}
+
+class JobInheritingCancellationMiddleware extends AbstractBatchableJobWithMiddleware
+{
+    public function handle(): void
+    {
+    }
+}
+
+trait CancellationMiddleware
+{
+    /** @return list<object> */
+    public function middleware(): array
+    {
+        return [new SkipIfBatchCancelled()];
+    }
+}
+
+class JobUsingCancellationMiddlewareTrait implements ShouldQueue
+{
+    use Batchable;
+    use CancellationMiddleware;
+
+    public function handle(): void
+    {
+    }
+}
+
+class JobOverridingCancellationGuard extends BatchableJobBase
+{
+    public function handle(): void
+    {
+    }
+}
+
+class JobOverridingCancellationMiddleware extends BatchableJobWithSkipMiddleware
+{
+    /** @return list<object> */
+    public function middleware(): array
+    {
+        return [];
+    }
+}
+
+class JobOverridingHandleWithInheritedMiddleware extends AbstractBatchableJobWithMiddleware
+{
+    public function handle(): void
+    {
+    }
+}

@@ -20,11 +20,11 @@ class BatchedJobIsBatchableRuleTest extends RuleTestCase
     {
         $this->analyse([__DIR__ . '/data/bus-batch.php'], [
             [
-                "Job 'Tests\Rules\Queue\Data\RegularJob' is dispatched in 'Bus::batch()' but does not use the Batchable trait, so it has no '\$this->batch()' accessor and the batch cannot track it. Add 'use Illuminate\Bus\Batchable;' to the job.",
+                "Job Tests\\Rules\\Queue\\Data\\RegularJob is batched but does not use Batchable.\n    💡 Use the Illuminate\\Bus\\Batchable trait.",
                 11,
             ],
             [
-                "Job 'Tests\Rules\Queue\Data\RegularJob' is dispatched in 'Bus::batch()' but does not use the Batchable trait, so it has no '\$this->batch()' accessor and the batch cannot track it. Add 'use Illuminate\Bus\Batchable;' to the job.",
+                "Job Tests\\Rules\\Queue\\Data\\RegularJob is batched but does not use Batchable.\n    💡 Use the Illuminate\\Bus\\Batchable trait.",
                 18,
             ],
         ]);

@@ -15,6 +15,7 @@ use PhpParser\Node\Name;
 use PhpParser\NodeFinder;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\InClassNode;
+use PHPStan\Parser\Parser;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
@@ -36,12 +37,8 @@ use function sprintf;
  * (writing files, calling external APIs, charging cards) for a batch the caller
  * has already abandoned.
  *
- * To report the requirement once per hierarchy at its source, the rule fires on
- * the first concrete class in the chain that carries `Batchable`: a concrete
- * subclass whose parent already has the trait is skipped, because the guard
- * belongs on, or is inherited from, that ancestor. The guard is detected by
- * inspecting the class under analysis, so centralising the skip middleware on a
- * concrete base class satisfies the whole hierarchy.
+ * Each concrete job is checked using its effective methods, including methods
+ * inherited from parents and traits. Overridden methods do not supply a guard.
  *
  * @implements Rule<InClassNode>
  */
@@ -50,6 +47,10 @@ class BatchableJobChecksCancellationRule implements Rule
     use InspectsQueuedJobs;
 
     private const SKIP_MIDDLEWARE_SHORT_NAME = 'SkipIfBatchCancelled';
+
+    public function __construct(private Parser $parser)
+    {
+    }
 
     public function getNodeType(): string
     {
@@ -77,48 +78,52 @@ class BatchableJobChecksCancellationRule implements Rule
             return [];
         }
 
-        if ($this->concreteAncestorUsesBatchable($classReflection)) {
-            // A concrete ancestor already carries Batchable and owns the guard,
-            // so it is reported there and not again on every subclass.
-            return [];
-        }
-
-        if ($this->guardsCancellation($node)) {
+        if ($this->guardsCancellation($classReflection)) {
             return [];
         }
 
         return [
             RuleErrorBuilder::message(sprintf(
-                "Job '%s' uses the Batchable trait but never checks whether its batch has been cancelled, so it still runs its full body for an abandoned batch. Guard the work with 'if (\$this->batch()?->cancelled()) { return; }' at the start of handle(), or register the 'SkipIfBatchCancelled' middleware.",
+                'Batchable job %s does not check for batch cancellation.',
                 $classReflection->getDisplayName(),
             ))
+                ->tip('Check $this->batch()?->cancelled() or use the SkipIfBatchCancelled middleware.')
                 ->identifier('larastan.batchableJobChecksCancellation')
                 ->line($node->getStartLine())
                 ->build(),
         ];
     }
 
-    private function concreteAncestorUsesBatchable(ClassReflection $classReflection): bool
+    private function guardsCancellation(ClassReflection $classReflection): bool
     {
-        foreach ($classReflection->getParents() as $parent) {
-            if (! $parent->isAbstract() && $this->usesTrait($parent, Batchable::class)) {
-                return true;
+        $finder        = new NodeFinder();
+        $files         = [];
+        $statements    = [];
+        $batchableFile = $classReflection->getTraits(true)[Batchable::class]->getFileName();
+
+        foreach ($classReflection->getNativeReflection()->getMethods() as $method) {
+            $fileName = $method->getFileName();
+
+            // Batchable::batching() checks cancellation itself, but merely using
+            // the trait does not mean the job calls that helper.
+            if ($fileName === false || $fileName === $batchableFile) {
+                continue;
             }
+
+            $files[$fileName] ??= $this->parser->parseFile($fileName);
+            $methodNode         = $finder->findFirst(
+                $files[$fileName],
+                static fn (Node $node): bool => $node instanceof Node\Stmt\ClassMethod
+                    && $node->getStartLine() === $method->getStartLine()
+                    && $node->getEndLine() === $method->getEndLine(),
+            );
+
+            if ($methodNode === null) {
+                continue;
+            }
+
+            $statements[] = $methodNode;
         }
-
-        return false;
-    }
-
-    /**
-     * The class satisfies the requirement when its own body either calls
-     * `cancelled()` (the `$this->batch()?->cancelled()` guard in `handle()`) or
-     * references the `SkipIfBatchCancelled` middleware. Inspecting the AST of the
-     * class under analysis keeps the check local and deterministic.
-     */
-    private function guardsCancellation(InClassNode $node): bool
-    {
-        $finder     = new NodeFinder();
-        $statements = $node->getOriginalNode()->stmts;
 
         $cancelledCall = $finder->findFirst(
             $statements,

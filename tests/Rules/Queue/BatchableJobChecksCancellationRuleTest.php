@@ -20,12 +20,20 @@ class BatchableJobChecksCancellationRuleTest extends RuleTestCase
     {
         $this->analyse([__DIR__ . '/data/batchable-jobs.php'], [
             [
-                "Job 'Tests\Rules\Queue\Data\BatchableJobWithoutCancellationCheck' uses the Batchable trait but never checks whether its batch has been cancelled, so it still runs its full body for an abandoned batch. Guard the work with 'if (\$this->batch()?->cancelled()) { return; }' at the start of handle(), or register the 'SkipIfBatchCancelled' middleware.",
+                "Batchable job Tests\\Rules\\Queue\\Data\\BatchableJobWithoutCancellationCheck does not check for batch cancellation.\n    💡 Check \$this->batch()?->cancelled() or use the SkipIfBatchCancelled middleware.",
                 74,
             ],
             [
-                "Job 'Tests\Rules\Queue\Data\ConcreteBatchableJobFromAbstractBase' uses the Batchable trait but never checks whether its batch has been cancelled, so it still runs its full body for an abandoned batch. Guard the work with 'if (\$this->batch()?->cancelled()) { return; }' at the start of handle(), or register the 'SkipIfBatchCancelled' middleware.",
+                "Batchable job Tests\\Rules\\Queue\\Data\\ConcreteBatchableJobFromAbstractBase does not check for batch cancellation.\n    💡 Check \$this->batch()?->cancelled() or use the SkipIfBatchCancelled middleware.",
                 84,
+            ],
+            [
+                "Batchable job Tests\\Rules\\Queue\\Data\\JobOverridingCancellationGuard does not check for batch cancellation.\n    💡 Check \$this->batch()?->cancelled() or use the SkipIfBatchCancelled middleware.",
+                125,
+            ],
+            [
+                "Batchable job Tests\\Rules\\Queue\\Data\\JobOverridingCancellationMiddleware does not check for batch cancellation.\n    💡 Check \$this->batch()?->cancelled() or use the SkipIfBatchCancelled middleware.",
+                132,
             ],
         ]);
     }

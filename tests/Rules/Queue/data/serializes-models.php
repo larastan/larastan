@@ -83,3 +83,12 @@ class JobWithMultipleModelPropertiesWithoutSerializesModels implements ShouldQue
     {
     }
 }
+
+class JobInheritingModelProperty extends AbstractJobWithModelProperty
+{
+}
+
+class JobInheritingModelPropertyWithSerializesModels extends AbstractJobWithModelProperty
+{
+    use SerializesModels;
+}

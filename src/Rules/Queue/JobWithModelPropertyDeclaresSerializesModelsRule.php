@@ -20,7 +20,6 @@ use PHPStan\Type\TypeCombinator;
 use ReflectionProperty;
 
 use function array_map;
-use function count;
 use function implode;
 use function sprintf;
 
@@ -84,12 +83,11 @@ class JobWithModelPropertyDeclaresSerializesModelsRule implements Rule
 
         return [
             RuleErrorBuilder::message(sprintf(
-                "Job '%s' holds Eloquent model%s in public propert%s (%s) but does not use the SerializesModels trait, so each model is serialized whole onto the queue and rehydrated from a stale dispatch time snapshot. Add 'use Illuminate\Queue\SerializesModels;' to the job.",
+                'Job %s has model properties (%s) but does not use SerializesModels.',
                 $classReflection->getDisplayName(),
-                count($modelProperties) === 1 ? '' : 's',
-                count($modelProperties) === 1 ? 'y' : 'ies',
                 implode(', ', array_map(static fn (string $name): string => '$' . $name, $modelProperties)),
             ))
+                ->tip('Use the Illuminate\\Queue\\SerializesModels trait.')
                 ->identifier('larastan.jobSerializesModels')
                 ->line($node->getStartLine())
                 ->build(),
@@ -97,10 +95,9 @@ class JobWithModelPropertyDeclaresSerializesModelsRule implements Rule
     }
 
     /**
-     * Public, non static properties declared on this class whose type references
-     * an Eloquent model. Only properties declared here are considered: an
-     * inherited property is the declaring class's responsibility, so a missing
-     * trait is reported once at its source rather than again on every subclass.
+     * Public, non static properties whose type references an Eloquent model,
+     * including inherited properties. Abstract declaring classes are skipped,
+     * so the concrete job must be checked with all of its public model state.
      *
      * @return list<string>
      */
@@ -110,10 +107,6 @@ class JobWithModelPropertyDeclaresSerializesModelsRule implements Rule
 
         foreach ($classReflection->getNativeReflection()->getProperties(ReflectionProperty::IS_PUBLIC) as $property) {
             if ($property->isStatic()) {
-                continue;
-            }
-
-            if ($property->getDeclaringClass()->getName() !== $classReflection->getName()) {
                 continue;
             }
 

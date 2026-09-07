@@ -20,11 +20,11 @@ class UniqueJobDeclaresUniqueIdRuleTest extends RuleTestCase
     {
         $this->analyse([__DIR__ . '/data/unique-jobs.php'], [
             [
-                "Job 'Tests\Rules\Queue\Data\ParameterizedUniqueJobWithoutUniqueId' implements ShouldBeUnique and is parameterized but does not declare uniqueId, so every dispatch shares one lock key whatever the constructor arguments and distinct jobs are silently dropped. Add a 'uniqueId()' method derived from the distinguishing arguments, or return a constant from it for an intentionally class wide job.",
+                "Unique job Tests\\Rules\\Queue\\Data\\ParameterizedUniqueJobWithoutUniqueId has constructor parameters but does not declare uniqueId.\n    💡 Declare a uniqueId() method or a \$uniqueId property to identify distinct jobs.",
                 65,
             ],
             [
-                "Job 'Tests\Rules\Queue\Data\UniqueUntilProcessingJob' implements ShouldBeUnique and is parameterized but does not declare uniqueId, so every dispatch shares one lock key whatever the constructor arguments and distinct jobs are silently dropped. Add a 'uniqueId()' method derived from the distinguishing arguments, or return a constant from it for an intentionally class wide job.",
+                "Unique job Tests\\Rules\\Queue\\Data\\UniqueUntilProcessingJob has constructor parameters but does not declare uniqueId.\n    💡 Declare a uniqueId() method or a \$uniqueId property to identify distinct jobs.",
                 108,
             ],
         ]);

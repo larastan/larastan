@@ -73,9 +73,10 @@ class UniqueJobDeclaresUniqueIdRule implements Rule
 
         return [
             RuleErrorBuilder::message(sprintf(
-                "Job '%s' implements ShouldBeUnique and is parameterized but does not declare uniqueId, so every dispatch shares one lock key whatever the constructor arguments and distinct jobs are silently dropped. Add a 'uniqueId()' method derived from the distinguishing arguments, or return a constant from it for an intentionally class wide job.",
+                'Unique job %s has constructor parameters but does not declare uniqueId.',
                 $classReflection->getDisplayName(),
             ))
+                ->tip('Declare a uniqueId() method or a $uniqueId property to identify distinct jobs.')
                 ->identifier('larastan.uniqueJobUniqueId')
                 ->line($node->getStartLine())
                 ->build(),

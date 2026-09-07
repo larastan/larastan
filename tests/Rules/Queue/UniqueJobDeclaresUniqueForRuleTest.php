@@ -20,11 +20,11 @@ class UniqueJobDeclaresUniqueForRuleTest extends RuleTestCase
     {
         $this->analyse([__DIR__ . '/data/unique-jobs.php'], [
             [
-                "Job 'Tests\Rules\Queue\Data\UniqueJobWithoutUniqueFor' implements ShouldBeUnique but does not declare uniqueFor, so a worker that dies mid job leaks the lock and the job can never be dispatched again. Add a 'public int \$uniqueFor' property or a 'uniqueFor()' method.",
+                "Job Tests\\Rules\\Queue\\Data\\UniqueJobWithoutUniqueFor implements ShouldBeUnique but does not declare uniqueFor.\n    💡 Declare a \$uniqueFor property or a uniqueFor() method.",
                 47,
             ],
             [
-                "Job 'Tests\Rules\Queue\Data\UniqueUntilProcessingJob' implements ShouldBeUnique but does not declare uniqueFor, so a worker that dies mid job leaks the lock and the job can never be dispatched again. Add a 'public int \$uniqueFor' property or a 'uniqueFor()' method.",
+                "Job Tests\\Rules\\Queue\\Data\\UniqueUntilProcessingJob implements ShouldBeUnique but does not declare uniqueFor.\n    💡 Declare a \$uniqueFor property or a uniqueFor() method.",
                 108,
             ],
         ]);

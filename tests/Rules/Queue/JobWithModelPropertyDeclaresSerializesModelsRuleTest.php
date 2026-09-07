@@ -20,16 +20,20 @@ class JobWithModelPropertyDeclaresSerializesModelsRuleTest extends RuleTestCase
     {
         $this->analyse([__DIR__ . '/data/serializes-models.php'], [
             [
-                "Job 'Tests\Rules\Queue\Data\JobWithModelPropertyWithoutSerializesModels' holds Eloquent model in public property (\$product) but does not use the SerializesModels trait, so each model is serialized whole onto the queue and rehydrated from a stale dispatch time snapshot. Add 'use Illuminate\Queue\SerializesModels;' to the job.",
+                "Job Tests\\Rules\\Queue\\Data\\JobWithModelPropertyWithoutSerializesModels has model properties (\$product) but does not use SerializesModels.\n    💡 Use the Illuminate\\Queue\\SerializesModels trait.",
                 68,
             ],
             [
-                "Job 'Tests\Rules\Queue\Data\JobWithNullableModelPropertyWithoutSerializesModels' holds Eloquent model in public property (\$product) but does not use the SerializesModels trait, so each model is serialized whole onto the queue and rehydrated from a stale dispatch time snapshot. Add 'use Illuminate\Queue\SerializesModels;' to the job.",
+                "Job Tests\\Rules\\Queue\\Data\\JobWithNullableModelPropertyWithoutSerializesModels has model properties (\$product) but does not use SerializesModels.\n    💡 Use the Illuminate\\Queue\\SerializesModels trait.",
                 75,
             ],
             [
-                "Job 'Tests\Rules\Queue\Data\JobWithMultipleModelPropertiesWithoutSerializesModels' holds Eloquent models in public properties (\$product, \$invoice) but does not use the SerializesModels trait, so each model is serialized whole onto the queue and rehydrated from a stale dispatch time snapshot. Add 'use Illuminate\Queue\SerializesModels;' to the job.",
+                "Job Tests\\Rules\\Queue\\Data\\JobWithMultipleModelPropertiesWithoutSerializesModels has model properties (\$product, \$invoice) but does not use SerializesModels.\n    💡 Use the Illuminate\\Queue\\SerializesModels trait.",
                 80,
+            ],
+            [
+                "Job Tests\\Rules\\Queue\\Data\\JobInheritingModelProperty has model properties (\$product) but does not use SerializesModels.\n    💡 Use the Illuminate\\Queue\\SerializesModels trait.",
+                87,
             ],
         ]);
     }

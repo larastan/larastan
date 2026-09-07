@@ -20,23 +20,23 @@ class NoBatchedUniqueJobRuleTest extends RuleTestCase
     {
         $this->analyse([__DIR__ . '/data/batched-unique-jobs.php'], [
             [
-                "Job 'Tests\Rules\Queue\Data\UniqueJobWithUniqueForProperty' implements ShouldBeUnique and must not be dispatched via 'batch()'. Bulk and batch dispatch bypass the uniqueness lock, dispatch the job individually instead.",
+                "Unique job Tests\\Rules\\Queue\\Data\\UniqueJobWithUniqueForProperty is dispatched via batch().\n    💡 Dispatch unique jobs individually to preserve uniqueness.",
                 11,
             ],
             [
-                "Job 'Tests\Rules\Queue\Data\UniqueJobWithUniqueForMethod' implements ShouldBeUnique and must not be dispatched via 'bulk()'. Bulk and batch dispatch bypass the uniqueness lock, dispatch the job individually instead.",
+                "Unique job Tests\\Rules\\Queue\\Data\\UniqueJobWithUniqueForMethod is dispatched via bulk().\n    💡 Dispatch unique jobs individually to preserve uniqueness.",
                 16,
             ],
             [
-                "Job 'Tests\Rules\Queue\Data\UniqueJobWithUniqueForProperty' implements ShouldBeUnique and must not be dispatched via 'bulk()'. Bulk and batch dispatch bypass the uniqueness lock, dispatch the job individually instead.",
+                "Unique job Tests\\Rules\\Queue\\Data\\UniqueJobWithUniqueForProperty is dispatched via bulk().\n    💡 Dispatch unique jobs individually to preserve uniqueness.",
                 20,
             ],
             [
-                "Job 'Tests\Rules\Queue\Data\UniqueJobWithUniqueForProperty' implements ShouldBeUnique and must not be dispatched via 'batch()'. Bulk and batch dispatch bypass the uniqueness lock, dispatch the job individually instead.",
+                "Unique job Tests\\Rules\\Queue\\Data\\UniqueJobWithUniqueForProperty is dispatched via batch().\n    💡 Dispatch unique jobs individually to preserve uniqueness.",
                 27,
             ],
             [
-                "Job 'Tests\Rules\Queue\Data\UniqueJobWithUniqueForProperty' implements ShouldBeUnique and must not be dispatched via 'batch()'. Bulk and batch dispatch bypass the uniqueness lock, dispatch the job individually instead.",
+                "Unique job Tests\\Rules\\Queue\\Data\\UniqueJobWithUniqueForProperty is dispatched via batch().\n    💡 Dispatch unique jobs individually to preserve uniqueness.",
                 43,
             ],
         ]);

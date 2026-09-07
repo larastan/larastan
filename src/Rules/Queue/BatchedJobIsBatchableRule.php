@@ -112,9 +112,10 @@ class BatchedJobIsBatchableRule implements Rule
             $classNames = $type->getObjectClassNames();
 
             $errors[] = RuleErrorBuilder::message(sprintf(
-                "Job '%s' is dispatched in 'Bus::batch()' but does not use the Batchable trait, so it has no '\$this->batch()' accessor and the batch cannot track it. Add 'use Illuminate\Bus\Batchable;' to the job.",
+                'Job %s is batched but does not use Batchable.',
                 $classNames === [] ? 'dispatched here' : implode('|', $classNames),
             ))
+                ->tip('Use the Illuminate\\Bus\\Batchable trait.')
                 ->identifier('larastan.batchedJobIsBatchable')
                 ->line($item->value->getStartLine())
                 ->build();

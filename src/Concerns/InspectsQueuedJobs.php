@@ -19,13 +19,7 @@ trait InspectsQueuedJobs
      */
     private function usesTrait(ClassReflection $classReflection, string $traitName): bool
     {
-        foreach ($classReflection->getTraits(true) as $trait) {
-            if ($trait->getName() === $traitName) {
-                return true;
-            }
-        }
-
-        return false;
+        return isset($classReflection->getTraits(true)[$traitName]);
     }
 
     /**

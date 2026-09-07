@@ -693,7 +693,8 @@ class FetchSocialAvatar implements ShouldQueue, ShouldBeUnique
 Will result in the following error:
 
 ```
-Job 'App\Jobs\FetchSocialAvatar' implements ShouldBeUnique but does not declare uniqueFor, so a worker that dies mid job leaks the lock and the job can never be dispatched again. Add a 'public int $uniqueFor' property or a 'uniqueFor()' method.
+Job App\Jobs\FetchSocialAvatar implements ShouldBeUnique but does not declare uniqueFor.
+💡 Declare a $uniqueFor property or a uniqueFor() method.
 ```
 
 To fix the error, declare how long the lock may live:
@@ -754,7 +755,8 @@ class SyncCompany implements ShouldQueue, ShouldBeUnique
 Will result in the following error:
 
 ```
-Job 'App\Jobs\SyncCompany' implements ShouldBeUnique and is parameterized but does not declare uniqueId, so every dispatch shares one lock key whatever the constructor arguments and distinct jobs are silently dropped. Add a 'uniqueId()' method derived from the distinguishing arguments, or return a constant from it for an intentionally class wide job.
+Unique job App\Jobs\SyncCompany has constructor parameters but does not declare uniqueId.
+💡 Declare a uniqueId() method or a $uniqueId property to identify distinct jobs.
 ```
 
 To fix the error, scope the lock to the arguments that make the job distinct:
@@ -813,7 +815,8 @@ Bus::batch([
 Will result in the following error:
 
 ```
-Job 'App\Jobs\SyncCompany' implements ShouldBeUnique and must not be dispatched via 'batch()'. Bulk and batch dispatch bypass the uniqueness lock, dispatch the job individually instead.
+Unique job App\Jobs\SyncCompany is dispatched via batch().
+💡 Dispatch unique jobs individually to preserve uniqueness.
 ```
 
 ### Configuration
@@ -842,11 +845,10 @@ the job runs, keeping the payload small and the data current. A model that was d
 meantime then surfaces as a `ModelNotFoundException` instead of the job operating on stale
 data.
 
-The rule fires only for public properties, because the queue serialization boundary makes
-public state the concern; private and protected model state is the class's own business.
-Properties typed against a model (including nullable unions) count, and an inherited
-`SerializesModels` (used by the class, a parent, or another trait) satisfies the rule.
-Abstract classes are skipped.
+The rule checks public properties, including inherited properties and nullable model types.
+Protected and private properties are also serialized by PHP, but are outside this rule's scope.
+An inherited `SerializesModels` (used by the class, a parent, or another trait) satisfies the
+rule. Abstract classes are skipped; their public model properties are checked on concrete jobs.
 
 ### Examples
 
@@ -866,7 +868,8 @@ class SendInvoice implements ShouldQueue
 Will result in the following error:
 
 ```
-Job 'App\Jobs\SendInvoice' holds Eloquent model in public property ($invoice) but does not use the SerializesModels trait, so each model is serialized whole onto the queue and rehydrated from a stale dispatch time snapshot. Add 'use Illuminate\Queue\SerializesModels;' to the job.
+Job App\Jobs\SendInvoice has model properties ($invoice) but does not use SerializesModels.
+💡 Use the Illuminate\Queue\SerializesModels trait.
 ```
 
 To fix the error, let the queue store the model as a class and id reference:
@@ -922,7 +925,8 @@ Bus::batch([
 Will result in the following error:
 
 ```
-Job 'App\Jobs\RegularJob' is dispatched in 'Bus::batch()' but does not use the Batchable trait, so it has no '$this->batch()' accessor and the batch cannot track it. Add 'use Illuminate\Bus\Batchable;' to the job.
+Job App\Jobs\RegularJob is batched but does not use Batchable.
+💡 Use the Illuminate\Bus\Batchable trait.
 ```
 
 ### Configuration
@@ -949,12 +953,10 @@ it checks `cancelled()`, runs its full body. That is wasted work at best, and at
 keeps mutating state (writing files, calling external APIs, charging cards) for a batch the
 caller has already abandoned.
 
-To report the requirement once per hierarchy at its source, the rule fires on the first
-concrete class in the chain that carries `Batchable`; a concrete subclass whose parent already
-has the trait is skipped, because the guard belongs on, or is inherited from, that ancestor.
-Abstract classes are skipped. The guard is detected by inspecting the class under analysis for
-a `cancelled()` call or a `SkipIfBatchCancelled` reference, so centralising the skip middleware
-on a concrete base class satisfies the whole hierarchy.
+Every concrete job is checked using its effective methods, including methods inherited from
+parents and traits. A `cancelled()` call or a `SkipIfBatchCancelled` reference satisfies the
+check. Overriding a guarded method requires the subclass to provide its own check or middleware.
+Abstract classes are skipped.
 
 ### Examples
 
@@ -973,7 +975,8 @@ class GenerateReport implements ShouldQueue
 Will result in the following error:
 
 ```
-Job 'App\Jobs\GenerateReport' uses the Batchable trait but never checks whether its batch has been cancelled, so it still runs its full body for an abandoned batch. Guard the work with 'if ($this->batch()?->cancelled()) { return; }' at the start of handle(), or register the 'SkipIfBatchCancelled' middleware.
+Batchable job App\Jobs\GenerateReport does not check for batch cancellation.
+💡 Check $this->batch()?->cancelled() or use the SkipIfBatchCancelled middleware.
 ```
 
 To fix the error, guard the work at the start of `handle()`:
@@ -1026,8 +1029,11 @@ parameters:
 ## JobDispatchedInTransactionUsesAfterCommitRule
 
 A queued job dispatched inside a `DB::transaction(...)` closure must defer its dispatch until
-the transaction commits, either by chaining `->afterCommit()` on the dispatch, or by declaring
-`public bool $afterCommit = true;` on the job.
+the transaction commits, by chaining `->afterCommit()` on the dispatch, declaring
+`public bool $afterCommit = true;`, or implementing `ShouldQueueAfterCommit` on the job.
+The last `afterCommit()` or `beforeCommit()` call in a dispatch chain takes precedence over the
+property default. Before Laravel added support for overriding `ShouldQueueAfterCommit`, that
+contract always deferred dispatch.
 
 A queued job pushed during an open transaction can be picked up by a worker before the
 transaction commits (a fast worker racing the still open connection): it then loads rows that
@@ -1056,7 +1062,8 @@ DB::transaction(function () use ($product) {
 Will result in the following error:
 
 ```
-Job 'App\Jobs\NotifyOwner' is dispatched inside 'DB::transaction()' without '->afterCommit()', so a worker can pick it up before the transaction commits, or run it against rows a rollback threw away. Chain '->afterCommit()' on the dispatch, or declare 'public bool $afterCommit = true;' on the job.
+Job App\Jobs\NotifyOwner is dispatched inside a transaction without deferring until commit.
+💡 Call afterCommit() on the dispatch or implement ShouldQueueAfterCommit.
 ```
 
 To fix the error, defer the dispatch explicitly:

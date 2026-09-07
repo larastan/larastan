@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Rules\Queue;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
@@ -31,11 +32,12 @@ use function is_array;
 use function spl_object_id;
 use function sprintf;
 use function strtolower;
+use function version_compare;
 
 /**
  * A queued job dispatched inside a `DB::transaction(...)` closure must defer its
- * dispatch until the transaction commits, either by chaining `->afterCommit()` on
- * the dispatch, or by declaring `public bool $afterCommit = true;` on the job.
+ * dispatch until the transaction commits, by chaining `->afterCommit()` on the
+ * dispatch, declaring `$afterCommit = true`, or implementing ShouldQueueAfterCommit.
  *
  * A queued job pushed during an open transaction can be picked up by a worker
  * before the transaction commits (a fast worker racing the still open connection):
@@ -79,11 +81,16 @@ class JobDispatchedInTransactionUsesAfterCommitRule implements Rule
 
     private const AFTER_COMMIT_PROPERTY = 'afterCommit';
 
+    private const BEFORE_COMMIT_METHOD = 'beforeCommit';
+
     /** Static call class names that do not name a concrete, resolvable job class. */
     private const NON_RESOLVABLE_CLASS_NAMES = ['self', 'static', 'parent'];
 
+    private string $laravelVersion;
+
     public function __construct(private ReflectionProvider $reflectionProvider)
     {
+        $this->laravelVersion = LARAVEL_VERSION;
     }
 
     public function getNodeType(): string
@@ -124,20 +131,23 @@ class JobDispatchedInTransactionUsesAfterCommitRule implements Rule
         $errors = [];
 
         foreach ($dispatches as $dispatch) {
-            if (isset($protected[spl_object_id($dispatch)])) {
+            $afterCommit = $protected[spl_object_id($dispatch)] ?? null;
+
+            if ($afterCommit === true) {
                 continue;
             }
 
-            $job = $this->dispatchedJobNeedingAfterCommit($dispatch, $scope);
+            $job = $this->dispatchedJobNeedingAfterCommit($dispatch, $scope, $afterCommit);
 
             if ($job === null) {
                 continue;
             }
 
             $errors[] = RuleErrorBuilder::message(sprintf(
-                "Job '%s' is dispatched inside 'DB::transaction()' without '->afterCommit()', so a worker can pick it up before the transaction commits, or run it against rows a rollback threw away. Chain '->afterCommit()' on the dispatch, or declare 'public bool \$afterCommit = true;' on the job.",
+                'Job %s is dispatched inside a transaction without deferring until commit.',
                 $job->getDisplayName(),
             ))
+                ->tip('Call afterCommit() on the dispatch or implement ShouldQueueAfterCommit.')
                 ->identifier('larastan.dispatchInTransactionAfterCommit')
                 ->line($dispatch->getStartLine())
                 ->build();
@@ -179,13 +189,13 @@ class JobDispatchedInTransactionUsesAfterCommitRule implements Rule
     }
 
     /**
-     * Walk the callback body, recording every dispatch call and the object ids of
-     * those already guarded by an `->afterCommit()` in their method chain. Nested
+     * Walk the callback body, recording every dispatch call and the final
+     * afterCommit/beforeCommit setting in its method chain. Nested
      * `DB::transaction()` calls are pruned: their own dispatches are reported when
      * that inner call is analysed, so descending here would report them twice.
      *
      * @param list<Node>      $dispatches
-     * @param array<int,true> $protected
+     * @param array<int,bool> $protected
      */
     private function visit(Node $node, array &$dispatches, array &$protected): void
     {
@@ -193,11 +203,16 @@ class JobDispatchedInTransactionUsesAfterCommitRule implements Rule
             return;
         }
 
-        if ($this->isAfterCommitCall($node)) {
+        if (
+            ($node instanceof MethodCall || $node instanceof NullsafeMethodCall)
+            && $node->name instanceof Node\Identifier
+            && in_array($node->name->toString(), [self::AFTER_COMMIT_METHOD, self::BEFORE_COMMIT_METHOD], true)
+        ) {
             $guarded = $this->dispatchInReceiverChain($node);
 
             if ($guarded !== null) {
-                $protected[spl_object_id($guarded)] = true;
+                // The outermost call executes last and is visited first.
+                $protected[spl_object_id($guarded)] ??= $node->name->toString() === self::AFTER_COMMIT_METHOD;
             }
         }
 
@@ -217,13 +232,6 @@ class JobDispatchedInTransactionUsesAfterCommitRule implements Rule
                 $this->visit($child, $dispatches, $protected);
             }
         }
-    }
-
-    private function isAfterCommitCall(Node $node): bool
-    {
-        return ($node instanceof MethodCall || $node instanceof NullsafeMethodCall)
-            && $node->name instanceof Node\Identifier
-            && $node->name->toString() === self::AFTER_COMMIT_METHOD;
     }
 
     private function isDispatchCall(Node $node): bool
@@ -249,8 +257,8 @@ class JobDispatchedInTransactionUsesAfterCommitRule implements Rule
     }
 
     /**
-     * Descend a method chain ending in `->afterCommit()` and return the dispatch
-     * call it is applied to, for example the `Job::dispatch()` in
+     * Descend a method chain ending in `->afterCommit()` or `->beforeCommit()`
+     * and return the dispatch call it is applied to, for example the `Job::dispatch()` in
      * `Job::dispatch()->onQueue('x')->afterCommit()`.
      */
     private function dispatchInReceiverChain(Node $afterCommitCall): Node|null
@@ -271,15 +279,13 @@ class JobDispatchedInTransactionUsesAfterCommitRule implements Rule
     }
 
     /**
-     * Resolve the dispatched job and return its reflection when it is a queued job
-     * that does not already opt into afterCommit, that is, when the dispatch needs
-     * an explicit `->afterCommit()`. Returns null when the job cannot be resolved,
-     * is not queued, or already declares `$afterCommit = true`.
+     * Resolve the dispatched job when it needs an explicit afterCommit() call,
+     * accounting for the final setting in the dispatch chain.
      */
-    private function dispatchedJobNeedingAfterCommit(Node $dispatch, Scope $scope): ClassReflection|null
+    private function dispatchedJobNeedingAfterCommit(Node $dispatch, Scope $scope, bool|null $afterCommit): ClassReflection|null
     {
         foreach ($this->dispatchedJobReflections($dispatch, $scope) as $reflection) {
-            if ($reflection->is(ShouldQueue::class) && ! $this->declaresAfterCommit($reflection)) {
+            if ($reflection->is(ShouldQueue::class) && ! $this->declaresAfterCommit($reflection, $afterCommit)) {
                 return $reflection;
             }
         }
@@ -318,20 +324,22 @@ class JobDispatchedInTransactionUsesAfterCommitRule implements Rule
     }
 
     /**
-     * True when the job, or an ancestor, declares `$afterCommit = true`, so every
-     * dispatch of it is already deferred until after the surrounding transaction
-     * commits and no per call `->afterCommit()` is needed.
+     * Combine the dispatch chain setting, property default and after-commit
+     * contract using the installed Laravel version's precedence.
      */
-    private function declaresAfterCommit(ClassReflection $classReflection): bool
+    private function declaresAfterCommit(ClassReflection $classReflection, bool|null $afterCommit): bool
     {
         $native = $classReflection->getNativeReflection();
 
-        if (! $native->hasProperty(self::AFTER_COMMIT_PROPERTY)) {
-            return false;
+        $afterCommit ??= $native->hasProperty(self::AFTER_COMMIT_PROPERTY)
+            ? $native->getProperty(self::AFTER_COMMIT_PROPERTY)->getDefaultValue()
+            : null;
+
+        if ($classReflection->is(ShouldQueueAfterCommit::class)) {
+            // Laravel 12.22 added beforeCommit() support for this contract.
+            return version_compare($this->laravelVersion, '12.22.0', '<') || $afterCommit !== false;
         }
 
-        // getProperty() resolves an inherited property too, so a base job that
-        // sets the flag covers its subclasses.
-        return $native->getProperty(self::AFTER_COMMIT_PROPERTY)->getDefaultValue() === true;
+        return $afterCommit === true;
     }
 }

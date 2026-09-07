@@ -59,9 +59,10 @@ class UniqueJobDeclaresUniqueForRule implements Rule
 
         return [
             RuleErrorBuilder::message(sprintf(
-                "Job '%s' implements ShouldBeUnique but does not declare uniqueFor, so a worker that dies mid job leaks the lock and the job can never be dispatched again. Add a 'public int \$uniqueFor' property or a 'uniqueFor()' method.",
+                'Job %s implements ShouldBeUnique but does not declare uniqueFor.',
                 $classReflection->getDisplayName(),
             ))
+                ->tip('Declare a $uniqueFor property or a uniqueFor() method.')
                 ->identifier('larastan.uniqueJobUniqueFor')
                 ->line($node->getStartLine())
                 ->build(),

@@ -122,6 +122,7 @@ class NoBatchedUniqueJobRule implements Rule
             }
 
             $errors[] = RuleErrorBuilder::message($this->buildMessage($type, $method))
+                ->tip('Dispatch unique jobs individually to preserve uniqueness.')
                 ->identifier('larastan.noBatchedUniqueJob')
                 ->line($item->value->getStartLine())
                 ->build();
@@ -145,6 +146,7 @@ class NoBatchedUniqueJobRule implements Rule
 
         return [
             RuleErrorBuilder::message($this->buildMessage($valueType, $method))
+                ->tip('Dispatch unique jobs individually to preserve uniqueness.')
                 ->identifier('larastan.noBatchedUniqueJob')
                 ->line($node->getStartLine())
                 ->build(),
@@ -169,7 +171,7 @@ class NoBatchedUniqueJobRule implements Rule
         $classNames = $type->getObjectClassNames();
 
         return sprintf(
-            "Job '%s' implements ShouldBeUnique and must not be dispatched via '%s()'. Bulk and batch dispatch bypass the uniqueness lock, dispatch the job individually instead.",
+            'Unique job %s is dispatched via %s().',
             $classNames === [] ? 'dispatched here' : implode('|', $classNames),
             $method,
         );

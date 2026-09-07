@@ -81,3 +81,31 @@ DB::transaction(static function (): void {
 
 // Not flagged: outside any transaction.
 NotifyOwner::dispatch(1);
+
+class NotifyOwnerUsingAfterCommitContract implements \Illuminate\Contracts\Queue\ShouldQueueAfterCommit
+{
+    use Dispatchable;
+}
+
+class QueueableNotifyOwner implements ShouldQueue
+{
+    use Dispatchable;
+    use \Illuminate\Bus\Queueable;
+}
+
+class QueueableNotifyOwnerAfterCommit extends QueueableNotifyOwner
+{
+    public $afterCommit = true;
+}
+
+DB::transaction(static function (): void {
+    NotifyOwnerUsingAfterCommitContract::dispatch(1);
+    dispatch(new NotifyOwnerUsingAfterCommitContract());
+});
+
+DB::transaction(static function (): void {
+    QueueableNotifyOwner::dispatch()->afterCommit()->beforeCommit();
+    QueueableNotifyOwner::dispatch()->beforeCommit()->afterCommit();
+    QueueableNotifyOwnerAfterCommit::dispatch()->beforeCommit();
+    QueueableNotifyOwnerAfterCommit::dispatch();
+});
