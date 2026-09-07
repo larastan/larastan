@@ -8,6 +8,8 @@ use Exception;
 use Illuminate\Support\Str;
 use PhpParser;
 use PhpParser\NodeFinder;
+use PHPStan\Reflection\InitializerExprContext;
+use PHPStan\Reflection\InitializerExprTypeResolver;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ObjectType;
 use ReflectionException;
@@ -24,8 +26,11 @@ use function strtolower;
 final class SchemaAggregator
 {
     /** @param array<string, SchemaTable> $tables */
-    public function __construct(private ReflectionProvider $reflectionProvider, public array $tables = [])
-    {
+    public function __construct(
+        private ReflectionProvider $reflectionProvider,
+        private InitializerExprTypeResolver $initializerExprTypeResolver,
+        public array $tables = [],
+    ) {
     }
 
     /** @param  array<int, PhpParser\Node\Stmt> $stmts */
@@ -127,7 +132,11 @@ final class SchemaAggregator
 
             $class = $this->reflectionProvider->getClass($value->class->name);
 
-            $constantValueType = $class->getConstant($value->name->toString())->getValueType();
+            $constant          = $class->getConstant($value->name->toString());
+            $constantValueType = $this->initializerExprTypeResolver->getType(
+                $constant->getValueExpr(),
+                InitializerExprContext::fromClassReflection($constant->getDeclaringClass()),
+            );
 
             if ($constantValueType->getConstantStrings() !== []) {
                 $tableName = $constantValueType->getConstantStrings()[0]->getValue();

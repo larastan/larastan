@@ -19,6 +19,7 @@ use PHPStan\Analyser\ScopeFactory;
 use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
 use PHPStan\PhpDoc\TypeStringResolver;
+use PHPStan\Reflection\InitializerExprTypeResolver;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Testing\PHPStanTestCase;
 use PHPStan\Type\StringType;
@@ -117,6 +118,7 @@ class ModelPropertyHelperTest extends PHPStanTestCase
             $this->fileHelper,
             false,
             $this->reflectionProvider,
+            self::getContainer()->getByType(InitializerExprTypeResolver::class),
         );
 
         $squashedMigrationHelper = new SquashedMigrationHelper(
