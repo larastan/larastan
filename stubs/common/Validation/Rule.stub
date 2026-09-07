@@ -23,7 +23,7 @@ class Rule
     public static function date();
 
     /**
-     * @return \Illuminate\Validation\Rules\Numeric<__benevolent<float|int|numeric-string>>
+     * @return \Illuminate\Validation\Rules\Numeric<float|int|numeric-string>
      */
     public static function numeric();
 }

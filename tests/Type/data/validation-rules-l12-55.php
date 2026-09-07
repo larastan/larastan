@@ -81,6 +81,6 @@ function test(
     assertType('Illuminate\\Validation\\Rules\\Numeric<int>', Rule::numeric()->integer(strict: true)->digitsBetween(1, 2));
     assertType('int', $numericRequest->digits);
     assertType('int', $numericRequest->digitsBetween);
-    assertType('Illuminate\\Validation\\Rules\\Numeric<(float|int|numeric-string)>', Rule::numeric()->integer(strict: false));
-    assertType('Illuminate\\Validation\\Rules\\Numeric<(float|int|numeric-string)>', Rule::numeric()->integer(strict: $strict));
+    assertType('Illuminate\\Validation\\Rules\\Numeric<float|int|numeric-string>', Rule::numeric()->integer(strict: false));
+    assertType('Illuminate\\Validation\\Rules\\Numeric<float|int|numeric-string>', Rule::numeric()->integer(strict: $strict));
 }

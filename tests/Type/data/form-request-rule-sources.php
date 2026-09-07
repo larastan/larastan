@@ -596,14 +596,14 @@ function testRuleSources(
     assertType('non-empty-string', $exact->exact);
     assertType('mixed', $exact->unrelated);
     assertType('non-empty-string', $inherited->exact);
-    assertType('(float|int|numeric-string)', $trait->fromTrait);
+    assertType('float|int|numeric-string', $trait->fromTrait);
 
     assertType('non-empty-string', $unpacked->constant);
     assertType('mixed', $unpacked->overwritten);
-    assertType('(float|int|numeric-string)', $unpacked->stable);
+    assertType('float|int|numeric-string', $unpacked->stable);
     assertType('mixed', $unpacked->dynamicOnly);
     assertType(
-        'array{constant: non-empty-string, stable: (float|int|numeric-string), ...}',
+        'array{constant: non-empty-string, stable: float|int|numeric-string, ...}',
         $unpacked->validated(),
     );
 
@@ -641,7 +641,7 @@ function testRuleSources(
     assertType('array', $rootWildcardWithSibling->validated());
 
     assertType('non-empty-string', $multiple->shared);
-    assertType('(float|int|non-empty-string)', $multiple->different);
+    assertType('float|int|non-empty-string', $multiple->different);
     assertType('mixed', $multiple->firstOnly);
     assertType('mixed', $multiple->secondOnly);
 
@@ -660,7 +660,7 @@ function testRuleSources(
 
     assertType('mixed', $parentComposition->exact);
     assertType('mixed', $parentComposition->composed);
-    assertType('(float|int|numeric-string)', $exactPhpDocDirect->age);
+    assertType('float|int|numeric-string', $exactPhpDocDirect->age);
     assertType('non-empty-string', $exactPhpDocDirect->name);
     assertType('non-empty-string', $exactPhpDocSpread->email);
     assertType('mixed', $broadPhpDocDirect->anything);
@@ -673,14 +673,14 @@ function testRuleSources(
     assertType('mixed', $computed->dynamicConcatenation);
     assertType('mixed', $computed->ternary);
     assertType('mixed', $computed->coalesce);
-    assertType('(float|int|numeric-string)', $computed->stableComputedSibling);
+    assertType('float|int|numeric-string', $computed->stableComputedSibling);
     assertType(
-        'array{constantKey: non-empty-string, dynamicConcatenation?: mixed, ternary?: mixed, coalesce?: mixed, stableComputedSibling: (float|int|numeric-string), ...}',
+        'array{constantKey: non-empty-string, dynamicConcatenation?: mixed, ternary?: mixed, coalesce?: mixed, stableComputedSibling: float|int|numeric-string, ...}',
         $computed->validated(),
     );
     assertType('mixed', $loopBuilt->anything);
 
-    assertType('array{shared: non-empty-string, different: (float|int|non-empty-string), ...}', $multiple->validated());
+    assertType('array{shared: non-empty-string, different: float|int|non-empty-string, ...}', $multiple->validated());
 
     assertType('mixed', $integerKeys->{'0'});
     assertType('mixed', $integerKeys->{'1'});

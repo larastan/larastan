@@ -28,7 +28,7 @@ class Rule
     public static function dateTime();
 
     /**
-     * @return \Illuminate\Validation\Rules\Numeric<__benevolent<float|int|numeric-string>>
+     * @return \Illuminate\Validation\Rules\Numeric<float|int|numeric-string>
      */
     public static function numeric();
 

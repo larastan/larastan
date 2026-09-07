@@ -27,7 +27,11 @@ class EnabledRequest extends FormRequest
     /** @return array<string, mixed> */
     public function rules(): array
     {
-        return ['name' => 'required|string'];
+        return [
+            'name' => 'required|string',
+            'integer' => 'required|integer',
+            'numeric' => 'required|numeric',
+        ];
     }
 
     protected function prepareForValidation(): void
@@ -72,13 +76,20 @@ function acceptsIn(In $rule): void
 
 function test(EnabledRequest $request): void
 {
-    assertType('array{name: non-empty-string}', $request->validated());
+    assertType('array{name: non-empty-string, integer: float|int|numeric-string, numeric: float|int|numeric-string}', $request->validated());
     assertType('non-empty-string', $request->validated('name'));
-    assertType('Illuminate\\Support\\ValidatedInput<array{name: non-empty-string}>', $request->safe());
+    assertType('Illuminate\\Support\\ValidatedInput<array{name: non-empty-string, integer: float|int|numeric-string, numeric: float|int|numeric-string}>', $request->safe());
     assertType('array{name: non-empty-string}', $request->safe(['name']));
 
     acceptsString($request->name);
     acceptsString($request->validated('missing', 'time'));
     acceptsIn(Rule::in(['enabled']));
     Rule::array(new AllowedKeys());
+
+    acceptsInteger($request->integer);
+    acceptsInteger($request->validated('numeric'));
+
+    if (is_int($request->integer)) {
+        acceptsInteger($request->integer);
+    }
 }

@@ -310,6 +310,11 @@ numeric rules refine the integer branch: `integer|min:1|max:50` infers
 alternatives in `in:` rules retain `numeric-string` on Laravel versions that
 use loose comparison, and literal string types where comparison is strict.
 
+Integer and numeric validation rules, including numeric rule builders and related
+rules such as `digits` and `decimal`, infer ordinary unions. PHPStan checks every
+member of these unions when passing a value to a typed parameter; narrow or
+convert the value when the parameter accepts only one numeric representation.
+
 Larastan only narrows magic properties after successful validation. They remain
 `mixed` during request setup, preparation, authorization, validator
 construction, validation callbacks, and failed-validation handling. Reads in

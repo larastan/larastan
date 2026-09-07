@@ -370,11 +370,11 @@ final class RuleTypes
 
     private static function numericType(): Type
     {
-        return TypeUtils::toBenevolentUnion(TypeCombinator::union(
+        return TypeCombinator::union(
             new FloatType(),
             new IntegerType(),
             self::numericStringType(),
-        ));
+        );
     }
 
     private static function numericStringType(): Type

@@ -13,8 +13,8 @@ function test(StrictValidationRequest $request): void
     assertType('bool', $request->booleanValue);
     assertType('float|int', $request->numericValue);
     // Laravel 12.21 ignores the strict parameter for integer validation.
-    assertType('(float|int|numeric-string)', $request->integerValue);
-    assertType('(float|int|numeric-string)', $request->integerInValue);
+    assertType('float|int|numeric-string', $request->integerValue);
+    assertType('float|int|numeric-string', $request->integerInValue);
     assertType('float|int<1, 20>|numeric-string|null', $request->boundedInteger);
     assertType('float|int<10, 15>|numeric-string|null', $request->repeatedBounds);
     assertType('3|float|numeric-string|null', $request->exactInteger);

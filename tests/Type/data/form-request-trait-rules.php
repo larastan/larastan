@@ -85,7 +85,7 @@ namespace FormRequestTraitRules\Consumer {
         assertType('non-empty-string', $inherited->self);
         assertType('non-empty-string', $inherited->static);
         assertType('non-empty-string', $integer->validated('local'));
-        assertType('(float|int|numeric-string)', $integer->self);
-        assertType('(float|int|numeric-string)', $integer->static);
+        assertType('float|int|numeric-string', $integer->self);
+        assertType('float|int|numeric-string', $integer->static);
     }
 }

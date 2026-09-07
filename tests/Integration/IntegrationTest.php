@@ -104,7 +104,13 @@ class IntegrationTest extends PHPStanTestCase
 
         yield [__DIR__ . '/data/helpers.php'];
         yield [__DIR__ . '/data/facades.php'];
-        yield [__DIR__ . '/data/form-request-feature-enabled.php'];
+        yield [
+            __DIR__ . '/data/form-request-feature-enabled.php',
+            [
+                89 => ['Parameter #1 $value of function FormRequestFeatureEnabled\\acceptsInteger expects int, float|int|string given.'],
+                90 => ['Parameter #1 $value of function FormRequestFeatureEnabled\\acceptsInteger expects int, float|int|string given.'],
+            ],
+        ];
 
         if (laravel_version_compare('12.8.0', '>=')) {
             yield [__DIR__ . '/data/form-request-any-of.php'];

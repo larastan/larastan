@@ -105,7 +105,7 @@ function test(AnyOfRequest $request): void
 
     assertType('(array|float|int|non-empty-string)', $request->scalar);
     assertType("('*'|array)", $request->literalOrArray);
-    assertType('(float|int|numeric-string)', $request->outerInteger);
+    assertType('float|int|numeric-string', $request->outerInteger);
     assertType("('known'|numeric-string)", $request->outerString);
     assertType('mixed', $request->unknownAlternative);
     assertType('array|float|int|string|null', $request->nullableScalar);
@@ -115,7 +115,7 @@ function test(AnyOfRequest $request): void
     assertType('(array|float|int|non-empty-string)', $request->nestedAnyOf);
     assertType('mixed', $request->directAnyOf);
     assertType('mixed', $request->dynamic);
-    assertType('array<(float|int|numeric-string)>|non-empty-string', $request->collectionOrString);
+    assertType('array<float|int|numeric-string>|non-empty-string', $request->collectionOrString);
     assertType('(array|non-empty-string)', $request->arrayIn);
     assertType('(array|non-empty-string)', $request->listRuleIn);
     assertType('mixed', $request->nestedShape);
