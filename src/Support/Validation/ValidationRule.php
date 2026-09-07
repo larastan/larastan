@@ -71,6 +71,11 @@ final readonly class ValidationRule
 
         if ($this->flags->rejectsNull) {
             $type = TypeCombinator::removeNull($type);
+
+            // Keep unknown rule types mixed rather than introducing a subtracted mixed type.
+            if (! $type instanceof MixedType) {
+                $type = TypeCombinator::remove($type, new ConstantStringType(''));
+            }
         } elseif ($includeNullable && $this->flags->nullable) {
             $type = TypeCombinator::addNull($type);
         }

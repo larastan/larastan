@@ -121,17 +121,17 @@ function test(
     assertType('array<string, mixed>', $request->validated());
 
     assertType(
-        'Illuminate\\Support\\ValidatedInput<array{name: string, nickname?: string, profile: array{email: string, age?: (float|int|numeric-string|true)}, unknown: mixed}>',
+        'Illuminate\\Support\\ValidatedInput<array{name: non-empty-string, nickname?: string, profile: array{email: non-empty-string, age?: (float|int|numeric-string)}, unknown: mixed}>',
         $safeReturnRequest->safe(),
     );
-    assertType('array{name: string, nickname?: string}', $safeReturnRequest->safe(['name', 'nickname']));
-    assertType('array{profile: array{email: string}}', $safeReturnRequest->safe(['profile.email']));
+    assertType('array{name: non-empty-string, nickname?: string}', $safeReturnRequest->safe(['name', 'nickname']));
+    assertType('array{profile: array{email: non-empty-string}}', $safeReturnRequest->safe(['profile.email']));
     assertType(
-        'array{profile?: array{age?: (float|int|numeric-string|true)}}',
+        'array{profile?: array{age?: (float|int|numeric-string)}}',
         $safeReturnRequest->safe(['profile.age']),
     );
     assertType(
-        'array{profile: array{email: string, age?: (float|int|numeric-string|true)}}',
+        'array{profile: array{email: non-empty-string, age?: (float|int|numeric-string)}}',
         $safeReturnRequest->safe(['profile.email', 'profile.age']),
     );
     assertType('array<string, mixed>', $safeReturnRequest->safe($optionalSafeKeys));
@@ -143,38 +143,38 @@ function test(
     assertType('array{custom: string}', $overriddenSafeRequest->safe());
 
     assertType(
-        'array{name: string, nickname?: string, profile: array{email: string, age?: (float|int|numeric-string|true)}, unknown: mixed}',
+        'array{name: non-empty-string, nickname?: string, profile: array{email: non-empty-string, age?: (float|int|numeric-string)}, unknown: mixed}',
         $safeReturnRequest->validated(),
     );
     assertType(
-        'array{name: string, nickname?: string, profile: array{email: string, age?: (float|int|numeric-string|true)}, unknown: mixed}',
+        'array{name: non-empty-string, nickname?: string, profile: array{email: non-empty-string, age?: (float|int|numeric-string)}, unknown: mixed}',
         $safeReturnRequest->validated(null),
     );
-    assertType('string', $safeReturnRequest->validated('name'));
+    assertType('non-empty-string', $safeReturnRequest->validated('name'));
     assertType('string|null', $safeReturnRequest->validated('nickname'));
     assertType('0|string', $safeReturnRequest->validated('nickname', 0));
     assertType('0|string', $safeReturnRequest->validated(default: 0, key: 'nickname'));
-    assertType('string', $safeReturnRequest->validated('name', 0));
-    assertType('string', $safeReturnRequest->validated('profile.email'));
-    assertType('float|int|numeric-string|true|null', $safeReturnRequest->validated('profile.age'));
+    assertType('non-empty-string', $safeReturnRequest->validated('name', 0));
+    assertType('non-empty-string', $safeReturnRequest->validated('profile.email'));
+    assertType('float|int|numeric-string|null', $safeReturnRequest->validated('profile.age'));
     assertType("'fallback'", $safeReturnRequest->validated('missing', static fn (): string => 'fallback'));
     assertType("'fallback'", $safeReturnRequest->validated(0, 'fallback'));
     assertType('mixed', $safeReturnRequest->validated('unknown.child'));
     assertType('mixed', $safeReturnRequest->validated($validatedKey));
     assertType('array{custom: string}', $overriddenValidatedRequest->validated());
 
-    assertType('string', $fooRequest->name);
+    assertType('non-empty-string', $fooRequest->name);
     assertType('string|null', $fooRequest->optionalName);
     assertType('mixed', $fooRequest->age);
     assertType("1|'1'|'on'|'true'|'yes'|true|null", $fooRequest->newsletter);
     assertType("'date'|'rating'", $fooRequest->type);
-    assertType('(float|int|numeric-string|true)', $fooRequest->rating);
+    assertType('(float|int|numeric-string)', $fooRequest->rating);
     assertType("'dash'|'john-d'|null", $fooRequest->nickname);
     assertType('(float|int|numeric-string)', $fooRequest->price);
     assertType("'asc'|'desc'|null", $fooRequest->sortOrder);
     assertType('array', $fooRequest->settings);
-    assertType('array{name: string, surname?: string|null, nickname?: string, thing: mixed, ...}', $fooRequest->author);
-    assertType('array{display: array{mode: string, ...}, ...}', $fooRequest->options);
+    assertType('array{name: non-empty-string, surname?: string|null, nickname?: string, thing: mixed, ...}', $fooRequest->author);
+    assertType('array{display: array{mode: non-empty-string, ...}, ...}', $fooRequest->options);
     assertType('mixed', $fooRequest->prefs);
     assertType('mixed', $fooRequest->positions);
     assertType('mixed', $fooRequest->tags);
@@ -182,41 +182,41 @@ function test(
     assertType('array<mixed>|null', $fooRequest->properties);
     assertType('list<string>|null', $fooRequest->listProperties);
     assertType('mixed', $fooRequest->users);
-    assertType('array<array{name: string, ...}>', $fooRequest->guests);
-    assertType('array<array{id: (float|int|numeric-string|true), ...}>|null', $fooRequest->accounts);
-    assertType('array{recursive: array{recursive: string, ...}, ...}', $fooRequest->recursive);
+    assertType('array<array{name: non-empty-string, ...}>', $fooRequest->guests);
+    assertType('array<array{id: (float|int|numeric-string), ...}>|null', $fooRequest->accounts);
+    assertType('array{recursive: array{recursive: non-empty-string, ...}, ...}', $fooRequest->recursive);
     assertType(
-        'array<array{members: array<array{name: string, ...}>, ...}>',
+        'array<array{members: array<array{name: non-empty-string, ...}>, ...}>',
         $fooRequest->nestedGroups,
     );
-    assertType('array{name: string, ...}', $fooRequest->copied);
-    assertType('array{name: string, ...}', $fooRequest->nullableProfile);
-    assertType('string', $fooRequest->conflicted);
-    assertType('string', $fooRequest->version);
-    assertType('array{name: string, items?: mixed, ...}', $fooRequest->metadata);
+    assertType('array{name: non-empty-string, ...}', $fooRequest->copied);
+    assertType('array{name: non-empty-string, ...}', $fooRequest->nullableProfile);
+    assertType('non-empty-string', $fooRequest->conflicted);
+    assertType('non-empty-string', $fooRequest->version);
+    assertType('array{name: non-empty-string, items?: mixed, ...}', $fooRequest->metadata);
     assertType('mixed', $fooRequest->shipping);
-    assertType('string', $fooRequest->{'v1.0'});
+    assertType('non-empty-string', $fooRequest->{'v1.0'});
     assertType('array', $fooRequest->flags);
     assertType('mixed', $fooRequest->{'author.name'});
-    assertType('float|int<1, 20>|numeric-string|true|null', $fooRequest->limit);
+    assertType('float|int<1, 20>|numeric-string|null', $fooRequest->limit);
     assertType('array{fragment: string|null, domain?: mixed, port?: mixed, ...}', $fooRequest->url);
     assertType('mixed', $fooRequest->dynamicRules);
-    assertType('string', $variableRulesRequest->title);
-    assertType('(float|int|numeric-string|true)', $variableRulesRequest->quantity);
-    assertType('(float|int<min, 20>|numeric-string|true)', $variableRulesRequest->maximum);
-    assertType('(float|int|numeric-string|true)', $variableRulesRequest->global);
+    assertType('non-empty-string', $variableRulesRequest->title);
+    assertType('(float|int|numeric-string)', $variableRulesRequest->quantity);
+    assertType('(float|int<min, 20>|numeric-string)', $variableRulesRequest->maximum);
+    assertType('(float|int|numeric-string)', $variableRulesRequest->global);
     assertType('mixed', $conditionalRulesRequest->possiblyExcluded);
     assertType('mixed', $conditionalRulesRequest->conditionallyAccepted);
     assertType('mixed', $conditionalRulesRequest->conditionallyDeclined);
-    assertType('array|string', $conditionalRulesRequest->whenValue);
-    assertType('array|string', $conditionalRulesRequest->unlessValue);
-    assertType('string', $conditionalRulesRequest->exactWhenValue);
+    assertType('array|non-empty-string', $conditionalRulesRequest->whenValue);
+    assertType('array|non-empty-string', $conditionalRulesRequest->unlessValue);
+    assertType('non-empty-string', $conditionalRulesRequest->exactWhenValue);
     assertType('mixed', $conditionalRulesRequest->conditionallyExcluded);
-    assertType('string', $conditionalRulesRequest->alwaysRequired);
-    assertType('string', $conditionalRulesRequest->alwaysRequiredNullable);
-    assertType('string', $conditionalRulesRequest->conditionalRequiredNullable);
+    assertType('non-empty-string', $conditionalRulesRequest->alwaysRequired);
+    assertType('non-empty-string', $conditionalRulesRequest->alwaysRequiredNullable);
+    assertType('non-empty-string', $conditionalRulesRequest->conditionalRequiredNullable);
     assertType('string|null', $conditionalRulesRequest->maybeRequired);
-    assertType('string', $conditionalRulesRequest->neverExcluded);
+    assertType('non-empty-string', $conditionalRulesRequest->neverExcluded);
     assertType('mixed', $conditionalRulesRequest->maybeExcluded);
     assertType('mixed', $conditionalRulesRequest->alwaysExcluded);
     assertType("'draft'|'published'", $fooRequest->state);
@@ -233,11 +233,11 @@ function test(
         RequestPriority::from($fooRequest->priority),
     );
     assertType("'draft'|'published'", $fooRequest->arrayableState);
-    assertType("''|numeric-string", $fooRequest->primitiveState);
+    assertType("numeric-string", $fooRequest->primitiveState);
     assertType("'Admin'", $fooRequest->objectState);
-    assertType('string', $fooRequest->escapedState);
+    assertType('non-empty-string', $fooRequest->escapedState);
     assertType("'draft'|'published'", $fooRequest->untypedState);
-    assertType('string', $fooRequest->uncertainState);
+    assertType('non-empty-string', $fooRequest->uncertainState);
     assertType("array<'draft'|'published'>", $fooRequest->arrayIn);
     assertType("list<'draft'|'published'>", $fooRequest->listIn);
     assertType("array<'draft'|'published'>", $fooRequest->arrayRuleIn);
@@ -245,8 +245,8 @@ function test(
     assertType('array', $fooRequest->numericArrayIn);
     assertType('array', $fooRequest->unknownArrayIn);
     assertType("array<'LIT'|'NYC'>", $fooRequest->airports);
-    assertType('array{name: string, count?: mixed}', $fooRequest->payload);
-    assertType('array{draft: string, published?: mixed}', $fooRequest->arrayablePayload);
+    assertType('array{name: non-empty-string, count?: mixed}', $fooRequest->payload);
+    assertType('array{draft: non-empty-string, published?: mixed}', $fooRequest->arrayablePayload);
     assertType('array{name?: mixed}|null', $fooRequest->sometimesPayload);
     assertType('array{first?: mixed, last?: mixed}', $fooRequest->commaPayload);
     assertType('(float|int|numeric-string)', $fooRequest->numericValue);
@@ -322,11 +322,11 @@ function testMethodOwnership(
     assertType('array{documented: bool}', $annotatedOnly->validated());
     assertType('array{documented: bool}', $annotatedOnly->safe());
     assertType(
-        'array{name: string, nickname?: string, profile: array{email: string, age?: (float|int|numeric-string|true)}, unknown: mixed}',
+        'array{name: non-empty-string, nickname?: string, profile: array{email: non-empty-string, age?: (float|int|numeric-string)}, unknown: mixed}',
         $safeOverride->validated(),
     );
     assertType(
-        'Illuminate\\Support\\ValidatedInput<array{name: string, nickname?: string, profile: array{email: string, age?: (float|int|numeric-string|true)}, unknown: mixed}>',
+        'Illuminate\\Support\\ValidatedInput<array{name: non-empty-string, nickname?: string, profile: array{email: non-empty-string, age?: (float|int|numeric-string)}, unknown: mixed}>',
         $validatedOverride->safe(),
     );
 }
@@ -358,7 +358,7 @@ function testUncertainClosureDefaults(SafeReturnRequest $request, callable $defa
 {
     assertType('mixed', $request->validated('missing', $default));
     assertType('mixed', $request->validated('missing', $objectDefault));
-    assertType('string', $request->validated('name', $default));
+    assertType('non-empty-string', $request->validated('name', $default));
 }
 
 class SelectorApiRequest extends FormRequest
@@ -392,10 +392,10 @@ function testSafeSelectorsAndNull(
     assertType('array<string, mixed>', $request->safe(['profile.\\{last}']));
     assertType('mixed', $request->validated('profile.\\{first}'));
     assertType('mixed', $request->validated('profile.\\{last}'));
-    assertType("array{'literal{first}name': string}", $request->safe(['literal{first}name']));
-    assertType('array{profile: array{first: string}}', $request->safe(['profile.first']));
-    assertType('Illuminate\\Support\\ValidatedInput<array{name: string}>', $inherited->safe(null));
-    assertType('Illuminate\\Support\\ValidatedInput<array{name: string}>', $inherited->safe(keys: null));
-    assertType('Illuminate\\Support\\ValidatedInput<array{name: string}>', $inherited->safe($nullKeys));
+    assertType("array{'literal{first}name': non-empty-string}", $request->safe(['literal{first}name']));
+    assertType('array{profile: array{first: non-empty-string}}', $request->safe(['profile.first']));
+    assertType('Illuminate\\Support\\ValidatedInput<array{name: non-empty-string}>', $inherited->safe(null));
+    assertType('Illuminate\\Support\\ValidatedInput<array{name: non-empty-string}>', $inherited->safe(keys: null));
+    assertType('Illuminate\\Support\\ValidatedInput<array{name: non-empty-string}>', $inherited->safe($nullKeys));
     assertType('array<string, mixed>|Illuminate\\Support\\ValidatedInput', $request->safe($maybeKeys));
 }

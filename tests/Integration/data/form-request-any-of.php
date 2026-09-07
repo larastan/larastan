@@ -39,5 +39,5 @@ function test(ScalarAlternativesRequest $request): void
         acceptsArray($value);
     }
 
-    assertType('float|int|string|true', $request->conditional);
+    assertType('float|int|non-empty-string', $request->conditional);
 }

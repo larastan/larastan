@@ -279,18 +279,20 @@ public function rules(): array
 produce the following types:
 
 ```php
-$request->name;              // string
-$request->age;               // float|int|numeric-string|true|null
-$request->validated();       // array{name: string, age?: float|int|numeric-string|true}
-$request->validated('age');  // float|int|numeric-string|true|null
-$request->safe();            // ValidatedInput<array{name: string, age?: float|int|numeric-string|true}>
-$request->safe(['name']);    // array{name: string}
+$request->name;              // non-empty-string
+$request->age;               // float|int|numeric-string|null
+$request->validated();       // array{name: non-empty-string, age?: float|int|numeric-string}
+$request->validated('age');  // float|int|numeric-string|null
+$request->safe();            // ValidatedInput<array{name: non-empty-string, age?: float|int|numeric-string}>
+$request->safe(['name']);    // array{name: non-empty-string}
 ```
 
 Magic properties describe the original request input after validation.
 Validation does not cast values, so rules such as `integer` retain the incoming
-HTTP representations accepted by Laravel. Optional magic properties include
-`null`, while optional validated values use optional array keys. Raw nested
+HTTP representations accepted by Laravel. `required` refines string values to
+`non-empty-string`, including when a bound such as `max:` comes from dynamic
+configuration. `present` alone does not exclude empty strings. Optional magic
+properties include `null`, while optional validated values use optional array keys. Raw nested
 arrays keep unvalidated keys unless an allowed-key rule seals them.
 `validated()` and `safe()` use Laravel's default behavior of pruning
 unvalidated nested keys for bare `array` and `list` rules. Allowed-key rules such
@@ -300,10 +302,11 @@ keys, including keys without child rules. Adding a separate bare `array` or
 requires them. When exclusion removes every child rule, Laravel can retain the
 remaining parent input, so the inferred shape stays open.
 
-The loose `integer` rule also accepts integer-valued JSON floats and `true`
-without converting them. Known `min`, `max`, `between`, and `size` bounds on
+The loose `integer` rule accepts integer-valued JSON floats without converting
+them. Laravel also accepts `true`, which Larastan deliberately omits from integer
+inference for usability. Known `min`, `max`, `between`, and `size` bounds on
 numeric rules refine the integer branch: `integer|min:1|max:50` infers
-`float|int<1, 50>|numeric-string|true`. Strict integer rules retain `int` precision. Numeric
+`float|int<1, 50>|numeric-string`. Strict integer rules retain `int` precision. Numeric
 alternatives in `in:` rules retain `numeric-string` on Laravel versions that
 use loose comparison, and literal string types where comparison is strict.
 
@@ -345,7 +348,7 @@ not produce a diagnostic.
 
 Inline rule lists can retain known rule names when concatenation or interpolation
 makes only their parameters dynamic. For example, `['required', 'string',
-'max:' . config('limits.title')]` still infers a required `string`. Unknown
+'max:' . config('limits.title')]` still infers `non-empty-string`. Unknown
 parameters do not provide bounds, allowed values, or allowed keys, but the rule's
 type, nullability, presence, and exclusion behavior still apply. This requires
 unkeyed array entries without unpacking; prefixes hidden in variables or helper

@@ -72,10 +72,10 @@ function acceptsIn(In $rule): void
 
 function test(EnabledRequest $request): void
 {
-    assertType('array{name: string}', $request->validated());
-    assertType('string', $request->validated('name'));
-    assertType('Illuminate\\Support\\ValidatedInput<array{name: string}>', $request->safe());
-    assertType('array{name: string}', $request->safe(['name']));
+    assertType('array{name: non-empty-string}', $request->validated());
+    assertType('non-empty-string', $request->validated('name'));
+    assertType('Illuminate\\Support\\ValidatedInput<array{name: non-empty-string}>', $request->safe());
+    assertType('array{name: non-empty-string}', $request->safe(['name']));
 
     acceptsString($request->name);
     acceptsString($request->validated('missing', 'time'));

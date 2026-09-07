@@ -57,7 +57,7 @@ function test(OptionalRulesRequest $optional, EnumRequest $enum): void
 {
     assertType('mixed', $optional->value);
     assertType('mixed', $optional->payload);
-    assertType('array{value?: mixed, payload?: mixed, stable: string, conditionalNullable?: mixed}', $optional->validated());
+    assertType('array{value?: mixed, payload?: mixed, stable: non-empty-string, conditionalNullable?: mixed}', $optional->validated());
     assertType('mixed', $optional->conditionalNullable);
     assertType('mixed', $optional->validated('payload.name'));
     assertType('(1|2|numeric-string)', $enum->priority);

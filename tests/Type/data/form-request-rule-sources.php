@@ -42,7 +42,7 @@ class ExactRulesRequest extends FormRequest
         }
 
         $other = new ExactRulesRequest();
-        assertType('string', $other->exact);
+        assertType('non-empty-string', $other->exact);
 
         if ($this instanceof RequestMarker) {
             assertType('mixed', $this->exact);
@@ -76,10 +76,10 @@ class ExactRulesRequest extends FormRequest
 
     protected function passedValidation(): void
     {
-        assertType('string', $this->exact);
+        assertType('non-empty-string', $this->exact);
 
         (function (): void {
-            assertType('string', $this->exact);
+            assertType('non-empty-string', $this->exact);
         })();
     }
 
@@ -90,7 +90,7 @@ class ExactRulesRequest extends FormRequest
 
     public function toDto(): string
     {
-        assertType('string', $this->exact);
+        assertType('non-empty-string', $this->exact);
 
         return $this->exact;
     }
@@ -593,45 +593,45 @@ function testRuleSources(
     LoopBuiltRulesRequest $loopBuilt,
     IntegerKeyRulesRequest $integerKeys,
 ): void {
-    assertType('string', $exact->exact);
+    assertType('non-empty-string', $exact->exact);
     assertType('mixed', $exact->unrelated);
-    assertType('string', $inherited->exact);
-    assertType('(float|int|numeric-string|true)', $trait->fromTrait);
+    assertType('non-empty-string', $inherited->exact);
+    assertType('(float|int|numeric-string)', $trait->fromTrait);
 
-    assertType('string', $unpacked->constant);
+    assertType('non-empty-string', $unpacked->constant);
     assertType('mixed', $unpacked->overwritten);
-    assertType('(float|int|numeric-string|true)', $unpacked->stable);
+    assertType('(float|int|numeric-string)', $unpacked->stable);
     assertType('mixed', $unpacked->dynamicOnly);
     assertType(
-        'array{constant: string, stable: (float|int|numeric-string|true), ...}',
+        'array{constant: non-empty-string, stable: (float|int|numeric-string), ...}',
         $unpacked->validated(),
     );
 
     assertType('mixed', $overwrittenSpread->overwritten);
-    assertType('string', $overwrittenSpread->stable);
-    assertType('array{stable: string, ...}', $overwrittenSpread->validated());
+    assertType('non-empty-string', $overwrittenSpread->stable);
+    assertType('array{stable: non-empty-string, ...}', $overwrittenSpread->validated());
 
     assertType('mixed', $unknownAncestor->parent);
-    assertType('string', $unknownAncestor->stable);
-    assertType('string', $unknownAncestor->{'v1.0'});
-    assertType("array{stable: string, 'v1.0': string, ...}", $unknownAncestor->validated());
+    assertType('non-empty-string', $unknownAncestor->stable);
+    assertType('non-empty-string', $unknownAncestor->{'v1.0'});
+    assertType("array{stable: non-empty-string, 'v1.0': non-empty-string, ...}", $unknownAncestor->validated());
     assertType('mixed', $unknownAncestorKey->parent);
-    assertType('string', $unknownAncestorKey->stable);
-    assertType('array{stable: string, ...}', $unknownAncestorKey->validated());
-    assertType('string', $numericSpread->before);
-    assertType('array{name: string, ...}', $numericSpread->parent);
-    assertType('array{before: string, parent: array{name: string}, ...}', $numericSpread->validated());
-    assertType('array{name: string, ...}', $explicitAncestor->parent);
-    assertType('array{parent: array{name: string}, ...}', $explicitAncestor->validated());
-    assertType('array{name: string, ...}', $unrelatedSpread->parent);
-    assertType('array{parent: array{name: string}, ...}', $unrelatedSpread->validated());
+    assertType('non-empty-string', $unknownAncestorKey->stable);
+    assertType('array{stable: non-empty-string, ...}', $unknownAncestorKey->validated());
+    assertType('non-empty-string', $numericSpread->before);
+    assertType('array{name: non-empty-string, ...}', $numericSpread->parent);
+    assertType('array{before: non-empty-string, parent: array{name: non-empty-string}, ...}', $numericSpread->validated());
+    assertType('array{name: non-empty-string, ...}', $explicitAncestor->parent);
+    assertType('array{parent: array{name: non-empty-string}, ...}', $explicitAncestor->validated());
+    assertType('array{name: non-empty-string, ...}', $unrelatedSpread->parent);
+    assertType('array{parent: array{name: non-empty-string}, ...}', $unrelatedSpread->validated());
     assertType('mixed', $optionalAncestor->parent);
-    assertType('array{stable: string, ...}', $optionalAncestor->validated());
+    assertType('array{stable: non-empty-string, ...}', $optionalAncestor->validated());
     assertType('mixed', $branchAncestor->parent);
-    assertType('array{stable: string, ...}', $branchAncestor->validated());
+    assertType('array{stable: non-empty-string, ...}', $branchAncestor->validated());
     assertType('mixed', $wildcardAncestor->parent);
-    assertType('array{name: string, ...}', $wildcardAncestor->unrelated);
-    assertType('array{unrelated: array{name: string}, ...}', $wildcardAncestor->validated());
+    assertType('array{name: non-empty-string, ...}', $wildcardAncestor->unrelated);
+    assertType('array{unrelated: array{name: non-empty-string}, ...}', $wildcardAncestor->validated());
 
     assertType('mixed', $rootWildcard->{'*'});
     assertType('array', $rootWildcard->validated());
@@ -640,47 +640,47 @@ function testRuleSources(
     assertType('mixed', $rootWildcardWithSibling->payload);
     assertType('array', $rootWildcardWithSibling->validated());
 
-    assertType('string', $multiple->shared);
-    assertType('(float|int|string|true)', $multiple->different);
+    assertType('non-empty-string', $multiple->shared);
+    assertType('(float|int|non-empty-string)', $multiple->different);
     assertType('mixed', $multiple->firstOnly);
     assertType('mixed', $multiple->secondOnly);
 
-    assertType('array{payload: array{name?: mixed}, record: array{name: string}}', $equivalentArrays->validated());
-    assertType('string', $equivalentArrays->validated('record.name'));
+    assertType('array{payload: array{name?: mixed}, record: array{name: non-empty-string}}', $equivalentArrays->validated());
+    assertType('non-empty-string', $equivalentArrays->validated('record.name'));
     assertType('array', $differentArrays->validated());
     assertType('array{payload?: array{name?: string, other?: mixed}}', $mixedPruning->validated());
     assertType('array{name?: string, other?: mixed}|null', $mixedPruning->validated('payload'));
     assertType('array', $differentConditions->validated());
 
-    assertType('string', $nested->actual);
+    assertType('non-empty-string', $nested->actual);
     assertType('mixed', $nested->closure);
     assertType('mixed', $nested->function);
     assertType('mixed', $nested->nestedClass);
-    assertType('array{actual: string}', $nested->validated());
+    assertType('array{actual: non-empty-string}', $nested->validated());
 
     assertType('mixed', $parentComposition->exact);
     assertType('mixed', $parentComposition->composed);
-    assertType('(float|int|numeric-string|true)', $exactPhpDocDirect->age);
-    assertType('string', $exactPhpDocDirect->name);
-    assertType('string', $exactPhpDocSpread->email);
+    assertType('(float|int|numeric-string)', $exactPhpDocDirect->age);
+    assertType('non-empty-string', $exactPhpDocDirect->name);
+    assertType('non-empty-string', $exactPhpDocSpread->email);
     assertType('mixed', $broadPhpDocDirect->anything);
     assertType('mixed', $broadPhpDocSpread->broadOnly);
-    assertType('string', $broadPhpDocSpread->stable);
+    assertType('non-empty-string', $broadPhpDocSpread->stable);
     assertType('mixed', $staticRegistry->registry);
     assertType('mixed', $collectionSelection->selected);
 
-    assertType('string', $computed->constantKey);
+    assertType('non-empty-string', $computed->constantKey);
     assertType('mixed', $computed->dynamicConcatenation);
     assertType('mixed', $computed->ternary);
     assertType('mixed', $computed->coalesce);
-    assertType('(float|int|numeric-string|true)', $computed->stableComputedSibling);
+    assertType('(float|int|numeric-string)', $computed->stableComputedSibling);
     assertType(
-        'array{constantKey: string, dynamicConcatenation?: mixed, ternary?: mixed, coalesce?: mixed, stableComputedSibling: (float|int|numeric-string|true), ...}',
+        'array{constantKey: non-empty-string, dynamicConcatenation?: mixed, ternary?: mixed, coalesce?: mixed, stableComputedSibling: (float|int|numeric-string), ...}',
         $computed->validated(),
     );
     assertType('mixed', $loopBuilt->anything);
 
-    assertType('array{shared: string, different: (float|int|string|true), ...}', $multiple->validated());
+    assertType('array{shared: non-empty-string, different: (float|int|non-empty-string), ...}', $multiple->validated());
 
     assertType('mixed', $integerKeys->{'0'});
     assertType('mixed', $integerKeys->{'1'});

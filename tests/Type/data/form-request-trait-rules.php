@@ -73,19 +73,19 @@ namespace FormRequestTraitRules\Consumer {
 
     function test(StringRequest $string, IntegerRequest $integer, InheritedRequest $inherited): void
     {
-        assertType('string', $string->local);
-        assertType('string', $string->imported);
-        assertType('string', $string->function);
+        assertType('non-empty-string', $string->local);
+        assertType('non-empty-string', $string->imported);
+        assertType('non-empty-string', $string->function);
         assertType("'first'|'second'", $string->choice);
-        assertType('string', $string->self);
-        assertType('string', $string->static);
+        assertType('non-empty-string', $string->self);
+        assertType('non-empty-string', $string->static);
         assertType("'FormRequestTraitRules\\\\Declaration'", $string->namespace);
-        assertType('string', $string->validated('local'));
-        assertType('string', $inherited->validated('local'));
-        assertType('string', $inherited->self);
-        assertType('string', $inherited->static);
-        assertType('string', $integer->validated('local'));
-        assertType('(float|int|numeric-string|true)', $integer->self);
-        assertType('(float|int|numeric-string|true)', $integer->static);
+        assertType('non-empty-string', $string->validated('local'));
+        assertType('non-empty-string', $inherited->validated('local'));
+        assertType('non-empty-string', $inherited->self);
+        assertType('non-empty-string', $inherited->static);
+        assertType('non-empty-string', $integer->validated('local'));
+        assertType('(float|int|numeric-string)', $integer->self);
+        assertType('(float|int|numeric-string)', $integer->static);
     }
 }

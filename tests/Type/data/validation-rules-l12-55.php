@@ -60,10 +60,10 @@ function test(
     assertType('Illuminate\\Validation\\Rules\\StringRule<uppercase-string>', Rule::string()->uppercase());
 
     assertType('lowercase-string&non-empty-string', $request->lowercase);
-    assertType('uppercase-string', $request->uppercase);
-    assertType('string', $request->alpha);
-    assertType('string', $unlessRequest->alwaysRequired);
-    assertType('string', $unlessRequest->neverExcluded);
+    assertType('non-empty-string&uppercase-string', $request->uppercase);
+    assertType('non-empty-string', $request->alpha);
+    assertType('non-empty-string', $unlessRequest->alwaysRequired);
+    assertType('non-empty-string', $unlessRequest->neverExcluded);
     assertType('mixed', $unlessRequest->alwaysExcluded);
 
     assertType('Illuminate\\Validation\\Rules\\Numeric<int<1, max>>', Rule::numeric()->integer(strict: true)->min(1));

@@ -98,9 +98,10 @@ final class RuleTypes
                 ? TypeCombinator::union(new FloatType(), new IntegerType())
                 : self::numericType(),
             'decimal', 'digits', 'digits_between', 'max_digits', 'min_digits', 'multiple_of' => self::numericType(),
+            // ponytail: omit accepted true values for usability; restore them for exhaustive runtime coverage.
             'integer' => in_array('strict', $parameters, true) && self::supportsStrictRule('validateInteger')
                 ? new IntegerType()
-                : self::looseIntegerType(),
+                : self::numericType(),
             default => null,
         };
     }
@@ -374,11 +375,6 @@ final class RuleTypes
             new IntegerType(),
             self::numericStringType(),
         ));
-    }
-
-    private static function looseIntegerType(): Type
-    {
-        return TypeUtils::toBenevolentUnion(TypeCombinator::union(self::numericType(), new ConstantBooleanType(true)));
     }
 
     private static function numericStringType(): Type

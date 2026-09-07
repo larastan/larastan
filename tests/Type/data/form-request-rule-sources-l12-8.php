@@ -35,6 +35,6 @@ class DifferentAnyOfReturnsRequest extends FormRequest
 
 function testEquivalentRules(EquivalentAnyOfReturnsRequest $equivalent, DifferentAnyOfReturnsRequest $different): void
 {
-    assertType('array{payload: (0|1|array|bool|string)}', $equivalent->validated());
+    assertType('array{payload: (0|1|array|bool|non-empty-string)}', $equivalent->validated());
     assertType('array', $different->validated());
 }

@@ -35,9 +35,9 @@ function test(ArrayKeysRequest $request): void
         "Illuminate\\Validation\\Rules\\ArrayKeys<array{'name', 'email'}>",
         Rule::arrayKeys(['name', 'email']),
     );
-    assertType('array{name: string, email?: mixed}', $request->payload);
-    assertType('array{name: string, email?: mixed}', $request->validated('payload'));
-    assertType('array{name: string, email?: mixed}', $request->validated('stringPayload'));
+    assertType('array{name: non-empty-string, email?: mixed}', $request->payload);
+    assertType('array{name: non-empty-string, email?: mixed}', $request->validated('payload'));
+    assertType('array{name: non-empty-string, email?: mixed}', $request->validated('stringPayload'));
     assertType('array{name?: string, email?: mixed}', $request->validated('optionalChild'));
     assertType('array{name?: string}|null', $request->validated('pruned'));
     assertType('array{0?: mixed, 1?: mixed}', $request->validated('numeric'));
