@@ -50,6 +50,7 @@ final class AdditionalRulesRequest extends FormRequest
             'digitsValue' => 'required|digits:2',
             'digitsBetweenValue' => 'required|digits_between:1,2',
             'decimalValue' => 'required|decimal:2',
+            'decimalMaximumValue' => 'required|decimal:0|max:2',
             'multipleOfValue' => 'required|multiple_of:0.5',
             'alphaNumericValue' => 'required|alpha_num',
             'startsWithValue' => 'required|starts_with:4',
@@ -78,11 +79,17 @@ final class AdditionalRulesRequest extends FormRequest
             'stringIntegerValue' => 'required|integer|string',
             'numericDigitsValue' => ['required', Rule::numeric()->digits(1)],
             'integerMinimumValue' => 'required|integer|min:1',
+            'integerMaximumValue' => 'required|integer|max:50',
+            'integerLimitValue' => 'required|integer|min:1|max:50',
             'integerBetweenValue' => 'required|integer|between:1,20',
+            'integerRepeatedBoundsValue' => 'required|min:10|between:5,15|max:20|integer',
+            'integerSizeValue' => 'required|integer|size:3',
             'malformedMinimumValue' => 'required|integer|min:',
             'negativeMinimumValue' => 'required|integer|min:-5|max:5',
             'invalidBoundsValue' => 'required|integer|min:20|max:1',
             'boundedInValue' => 'required|integer|in:0,1|min:0|max:1',
+            'regexLengthValue' => ['required', 'regex:/^[0-9]+$/', 'max:2'],
+            'digitsLengthValue' => 'required|digits:2|max:2',
             'listBoundsFirst' => 'required|min:1|in:known,new|list',
             'listBoundsLast' => 'required|list|in:known,new|min:1',
             'quotedInValue' => 'required|string|in:"foo,bar",baz',
@@ -181,6 +188,7 @@ function test(mixed $mixed, array|string $arrayOrString, AdditionalRulesRequest 
     assertType('(float|int|numeric-string)', $request->digitsValue);
     assertType('(float|int|numeric-string)', $request->digitsBetweenValue);
     assertType('(float|int|numeric-string)', $request->decimalValue);
+    assertType('(float|int<min, 2>|numeric-string)', $request->decimalMaximumValue);
     assertType('(float|int|numeric-string)', $request->multipleOfValue);
     assertType('float|int|string', $request->alphaNumericValue);
     assertType('float|int|string', $request->startsWithValue);
@@ -195,25 +203,31 @@ function test(mixed $mixed, array|string $arrayOrString, AdditionalRulesRequest 
     assertType('string', $request->unknownStringValue);
     assertType('mixed', $request->betweenValue);
     assertType('non-empty-string', $request->betweenStringValue);
-    assertType('(float|int|numeric-string)', $request->betweenNumericValue);
+    assertType('(float|int<1, 20>|numeric-string)', $request->betweenNumericValue);
     assertType('non-empty-string', $request->stringMinimumValue);
     assertType('non-empty-array', $request->arrayMinimumValue);
     assertType('non-empty-list', $request->listSizeValue);
     assertType('mixed', $request->sizeValue);
     assertType('mixed', $request->comparisonValue);
     assertType('array', $request->comparisonArrayValue);
-    assertType('(float|int|numeric-string)', $request->numericSizeValue);
+    assertType('(3|float|numeric-string)', $request->numericSizeValue);
     assertType('(float|int|numeric-string|true)', $request->jsonIntegerValue);
     assertType('(float|int|numeric-string)', $request->numericIntegerValue);
     assertType('(float|int|numeric-string)', $request->numericRawIntegerValue);
     assertType('numeric-string', $request->stringIntegerValue);
     assertType('(float|int|numeric-string)', $request->numericDigitsValue);
-    assertType('(float|int|numeric-string|true)', $request->integerMinimumValue);
-    assertType('(float|int|numeric-string|true)', $request->integerBetweenValue);
+    assertType('(float|int<1, max>|numeric-string|true)', $request->integerMinimumValue);
+    assertType('(float|int<min, 50>|numeric-string|true)', $request->integerMaximumValue);
+    assertType('(float|int<1, 50>|numeric-string|true)', $request->integerLimitValue);
+    assertType('(float|int<1, 20>|numeric-string|true)', $request->integerBetweenValue);
+    assertType('(float|int<10, 15>|numeric-string|true)', $request->integerRepeatedBoundsValue);
+    assertType('(3|float|numeric-string|true)', $request->integerSizeValue);
     assertType('(float|int|numeric-string|true)', $request->malformedMinimumValue);
-    assertType('(float|int|numeric-string|true)', $request->negativeMinimumValue);
+    assertType('(float|int<-5, 5>|numeric-string|true)', $request->negativeMinimumValue);
     assertType('(float|int|numeric-string|true)', $request->invalidBoundsValue);
-    assertType('(float|int|numeric-string|true)', $request->boundedInValue);
+    assertType('(float|int<0, 1>|numeric-string|true)', $request->boundedInValue);
+    assertType('float|int|string', $request->regexLengthValue);
+    assertType('(float|int|numeric-string)', $request->digitsLengthValue);
     assertType("non-empty-list<'known'|'new'>", $request->listBoundsFirst);
     assertType("non-empty-list<'known'|'new'>", $request->listBoundsLast);
     assertType("'baz'|'foo,bar'", $request->quotedInValue);

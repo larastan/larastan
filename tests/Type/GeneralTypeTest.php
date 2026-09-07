@@ -54,6 +54,7 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/eloquent-getter-types.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/environment-helper.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/form-request.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/form-request-dynamic-parameters.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/form-request-numeric-paths.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/form-request-exclusion.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/form-request-rule-sources.php');

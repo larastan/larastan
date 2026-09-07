@@ -301,7 +301,9 @@ requires them. When exclusion removes every child rule, Laravel can retain the
 remaining parent input, so the inferred shape stays open.
 
 The loose `integer` rule also accepts integer-valued JSON floats and `true`
-without converting them. Strict integer rules retain `int` precision. Numeric
+without converting them. Known `min`, `max`, `between`, and `size` bounds on
+numeric rules refine the integer branch: `integer|min:1|max:50` infers
+`float|int<1, 50>|numeric-string|true`. Strict integer rules retain `int` precision. Numeric
 alternatives in `in:` rules retain `numeric-string` on Laravel versions that
 use loose comparison, and literal string types where comparison is strict.
 
@@ -340,6 +342,14 @@ Laravel's existing broad type. Other exact entries can still be inferred when
 dynamic entries cannot overwrite them. Validated shapes remain unsealed when
 additional dynamic or branch-specific keys may be returned. These fallbacks do
 not produce a diagnostic.
+
+Inline rule lists can retain known rule names when concatenation or interpolation
+makes only their parameters dynamic. For example, `['required', 'string',
+'max:' . config('limits.title')]` still infers a required `string`. Unknown
+parameters do not provide bounds, allowed values, or allowed keys, but the rule's
+type, nullability, presence, and exclusion behavior still apply. This requires
+unkeyed array entries without unpacking; prefixes hidden in variables or helper
+results and unresolved pipe-delimited rule strings keep the existing fallback.
 
 An unresolved rule source can also exclude a field through an ancestor rule.
 Affected descendants stay broad even when their own rule keys are exact.

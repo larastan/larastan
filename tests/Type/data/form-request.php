@@ -198,12 +198,12 @@ function test(
     assertType('string', $fooRequest->{'v1.0'});
     assertType('array', $fooRequest->flags);
     assertType('mixed', $fooRequest->{'author.name'});
-    assertType('float|int|numeric-string|true|null', $fooRequest->limit);
+    assertType('float|int<1, 20>|numeric-string|true|null', $fooRequest->limit);
     assertType('array{fragment: string|null, domain?: mixed, port?: mixed, ...}', $fooRequest->url);
     assertType('mixed', $fooRequest->dynamicRules);
     assertType('string', $variableRulesRequest->title);
     assertType('(float|int|numeric-string|true)', $variableRulesRequest->quantity);
-    assertType('(float|int|numeric-string|true)', $variableRulesRequest->maximum);
+    assertType('(float|int<min, 20>|numeric-string|true)', $variableRulesRequest->maximum);
     assertType('(float|int|numeric-string|true)', $variableRulesRequest->global);
     assertType('mixed', $conditionalRulesRequest->possiblyExcluded);
     assertType('mixed', $conditionalRulesRequest->conditionallyAccepted);
