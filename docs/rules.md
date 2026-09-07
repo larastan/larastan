@@ -663,3 +663,427 @@ This rule is disabled by default. To enable, add the following to your `phpstan.
 parameters:
     checkConfigTypes: true
 ```
+
+## UniqueJobDeclaresUniqueForRule
+
+Every job implementing `Illuminate\Contracts\Queue\ShouldBeUnique` (including
+`ShouldBeUniqueUntilProcessing`, which extends it) must declare `uniqueFor`, either as a
+property (`public int $uniqueFor = 3600;`) or a method (`public function uniqueFor(): int`).
+
+Without `uniqueFor` the uniqueness lock is held until the job finishes processing. If a
+worker dies mid job (OOM, deploy, fatal) the lock is never released and the job can never be
+dispatched again until the cache key is cleared by hand. `uniqueFor` bounds the lock so a
+stuck job self heals after the timeout.
+
+Abstract classes are skipped. They aren't dispatched directly, and a concrete subclass
+supplies (or inherits) `uniqueFor`.
+
+### Examples
+
+```php
+class FetchSocialAvatar implements ShouldQueue, ShouldBeUnique
+{
+    public function uniqueId(): string
+    {
+        return (string) $this->userId;
+    }
+}
+```
+
+Will result in the following error:
+
+```
+Job 'App\Jobs\FetchSocialAvatar' implements ShouldBeUnique but does not declare uniqueFor, so a worker that dies mid job leaks the lock and the job can never be dispatched again. Add a 'public int $uniqueFor' property or a 'uniqueFor()' method.
+```
+
+To fix the error, declare how long the lock may live:
+
+```php
+class FetchSocialAvatar implements ShouldQueue, ShouldBeUnique
+{
+    public int $uniqueFor = 3600;
+
+    public function uniqueId(): string
+    {
+        return (string) $this->userId;
+    }
+}
+```
+
+### Configuration
+
+This rule is disabled by default.
+To enable, add the following to your `phpstan.neon` file:
+
+```neon
+parameters:
+    checkUniqueJobUniqueFor: true
+```
+
+## UniqueJobDeclaresUniqueIdRule
+
+A **parameterized** `ShouldBeUnique` job, meaning one whose constructor takes arguments,
+must declare `uniqueId`: a method (`public function uniqueId(): string`) or a property
+(`public $uniqueId`).
+
+Laravel builds the lock key as `laravel_unique_job:<class>:<uniqueId>` and falls back to an
+empty `uniqueId` when neither is declared (`Illuminate\Bus\UniqueLock::getKey`). For a
+parameterized job the empty key collapses *every* dispatch into one unique job regardless of
+its arguments, so legitimately distinct jobs (per company, per product, ...) are silently
+dropped at dispatch with no error. That lost work failure is harder to spot than a leaked
+lock.
+
+The rule fires only when the constructor has at least one parameter: a parameterless job is
+a legitimate singleton whose class name only key is correct. A job that is intentionally
+class wide satisfies the rule by declaring `uniqueId()` returning a constant, which makes
+that intent explicit. Abstract classes are skipped.
+
+### Examples
+
+```php
+class SyncCompany implements ShouldQueue, ShouldBeUnique
+{
+    public int $uniqueFor = 3600;
+
+    public function __construct(public int $companyId)
+    {
+    }
+}
+```
+
+Will result in the following error:
+
+```
+Job 'App\Jobs\SyncCompany' implements ShouldBeUnique and is parameterized but does not declare uniqueId, so every dispatch shares one lock key whatever the constructor arguments and distinct jobs are silently dropped. Add a 'uniqueId()' method derived from the distinguishing arguments, or return a constant from it for an intentionally class wide job.
+```
+
+To fix the error, scope the lock to the arguments that make the job distinct:
+
+```php
+class SyncCompany implements ShouldQueue, ShouldBeUnique
+{
+    public int $uniqueFor = 3600;
+
+    public function __construct(public int $companyId)
+    {
+    }
+
+    public function uniqueId(): string
+    {
+        return (string) $this->companyId;
+    }
+}
+```
+
+### Configuration
+
+This rule is disabled by default.
+To enable, add the following to your `phpstan.neon` file:
+
+```neon
+parameters:
+    checkUniqueJobUniqueId: true
+```
+
+## NoBatchedUniqueJobRule
+
+A `ShouldBeUnique` job must not be dispatched through the bulk or batch entry points:
+`Bus::batch([...])`, `Bus::bulk([...])` or the equivalent `Queue::bulk([...])`. Both bypass
+the per job uniqueness guarantee:
+
+- `Queue::bulk()` and `Bus::bulk()` push raw payloads straight onto the queue, skipping the
+  dispatcher path that acquires the unique lock, so duplicates are queued and
+  `ShouldBeUnique` silently does nothing.
+- Batching a unique job means a duplicate is dropped at dispatch, but the batch's job count
+  is computed up front, so the batch's progress and `then`/`finally` callbacks never
+  reconcile and the batch can hang as pending.
+
+Dispatch unique jobs individually (`Foo::dispatch(...)`). The rule recurses into nested
+arrays (chains within a batch) and reports each offending job.
+
+### Examples
+
+```php
+Bus::batch([
+    new SyncCompany(1),
+    new RegularJob(),
+]);
+```
+
+Will result in the following error:
+
+```
+Job 'App\Jobs\SyncCompany' implements ShouldBeUnique and must not be dispatched via 'batch()'. Bulk and batch dispatch bypass the uniqueness lock, dispatch the job individually instead.
+```
+
+### Configuration
+
+This rule is disabled by default.
+To enable, add the following to your `phpstan.neon` file:
+
+```neon
+parameters:
+    noBatchedUniqueJob: true
+```
+
+## JobWithModelPropertyDeclaresSerializesModelsRule
+
+A queued job (one implementing `Illuminate\Contracts\Queue\ShouldQueue`) that holds an
+Eloquent model in a **public** property must use the `Illuminate\Queue\SerializesModels`
+trait.
+
+A queued job is serialized to the queue store at dispatch and unserialized in the worker.
+Without `SerializesModels` an Eloquent model property is serialized whole: the full attribute
+set, loaded relations and casts go onto the wire, bloating the payload, and the job runs
+against a frozen snapshot taken at dispatch time, so any change made between dispatch and
+execution is silently lost. `SerializesModels` instead stores just the class name and primary
+key (plus the loaded relation names) and re-resolves the model fresh from the database when
+the job runs, keeping the payload small and the data current. A model that was deleted in the
+meantime then surfaces as a `ModelNotFoundException` instead of the job operating on stale
+data.
+
+The rule fires only for public properties, because the queue serialization boundary makes
+public state the concern; private and protected model state is the class's own business.
+Properties typed against a model (including nullable unions) count, and an inherited
+`SerializesModels` (used by the class, a parent, or another trait) satisfies the rule.
+Abstract classes are skipped.
+
+### Examples
+
+```php
+class SendInvoice implements ShouldQueue
+{
+    public function __construct(public Invoice $invoice)
+    {
+    }
+
+    public function handle(): void
+    {
+    }
+}
+```
+
+Will result in the following error:
+
+```
+Job 'App\Jobs\SendInvoice' holds Eloquent model in public property ($invoice) but does not use the SerializesModels trait, so each model is serialized whole onto the queue and rehydrated from a stale dispatch time snapshot. Add 'use Illuminate\Queue\SerializesModels;' to the job.
+```
+
+To fix the error, let the queue store the model as a class and id reference:
+
+```php
+class SendInvoice implements ShouldQueue
+{
+    use SerializesModels;
+
+    public function __construct(public Invoice $invoice)
+    {
+    }
+
+    public function handle(): void
+    {
+    }
+}
+```
+
+### Configuration
+
+This rule is disabled by default.
+To enable, add the following to your `phpstan.neon` file:
+
+```neon
+parameters:
+    checkJobSerializesModels: true
+```
+
+## BatchedJobIsBatchableRule
+
+Every job dispatched through `Bus::batch([...])` must use the `Illuminate\Bus\Batchable`
+trait. The batch wires each job back to its parent batch so the job can read progress and
+short circuit (`$this->batch()->cancelled()`), and so the batch can reconcile its job count
+and fire `then`/`catch`/`finally`. All of that lives in `Batchable`. A job added to a batch
+without it has no `batch()` method, so `$this->batch()` is a fatal call to an undefined method
+the moment the job touches it. The framework does not validate this at dispatch, so the
+breakage only surfaces in the worker.
+
+The rule inspects the array literal passed to `Bus::batch()` and flags every element that is
+a queued job but does not use `Batchable`, recursing into nested arrays (chains within a
+batch).
+
+### Examples
+
+```php
+Bus::batch([
+    new BatchableJob(),
+    new RegularJob(),
+]);
+```
+
+Will result in the following error:
+
+```
+Job 'App\Jobs\RegularJob' is dispatched in 'Bus::batch()' but does not use the Batchable trait, so it has no '$this->batch()' accessor and the batch cannot track it. Add 'use Illuminate\Bus\Batchable;' to the job.
+```
+
+### Configuration
+
+This rule is disabled by default.
+To enable, add the following to your `phpstan.neon` file:
+
+```neon
+parameters:
+    checkBatchedJobIsBatchable: true
+```
+
+## BatchableJobChecksCancellationRule
+
+A queued job that uses the `Illuminate\Bus\Batchable` trait must respect early batch
+cancellation, either by checking `$this->batch()?->cancelled()` at the start of `handle()`, or
+by registering the `Illuminate\Queue\Middleware\SkipIfBatchCancelled` middleware from
+`middleware()`.
+
+Cancelling a batch (`$batch->cancel()`, or the automatic cancel on first failure when the
+batch is not `allowFailures`) only stops *future* dispatches from running their body. Laravel
+does not forcibly kill jobs already on the queue: each queued job still wakes up and, unless
+it checks `cancelled()`, runs its full body. That is wasted work at best, and at worst it
+keeps mutating state (writing files, calling external APIs, charging cards) for a batch the
+caller has already abandoned.
+
+To report the requirement once per hierarchy at its source, the rule fires on the first
+concrete class in the chain that carries `Batchable`; a concrete subclass whose parent already
+has the trait is skipped, because the guard belongs on, or is inherited from, that ancestor.
+Abstract classes are skipped. The guard is detected by inspecting the class under analysis for
+a `cancelled()` call or a `SkipIfBatchCancelled` reference, so centralising the skip middleware
+on a concrete base class satisfies the whole hierarchy.
+
+### Examples
+
+```php
+class GenerateReport implements ShouldQueue
+{
+    use Batchable;
+
+    public function handle(): void
+    {
+        // ... heavy work ...
+    }
+}
+```
+
+Will result in the following error:
+
+```
+Job 'App\Jobs\GenerateReport' uses the Batchable trait but never checks whether its batch has been cancelled, so it still runs its full body for an abandoned batch. Guard the work with 'if ($this->batch()?->cancelled()) { return; }' at the start of handle(), or register the 'SkipIfBatchCancelled' middleware.
+```
+
+To fix the error, guard the work at the start of `handle()`:
+
+```php
+class GenerateReport implements ShouldQueue
+{
+    use Batchable;
+
+    public function handle(): void
+    {
+        if ($this->batch()?->cancelled()) {
+            return;
+        }
+
+        // ... heavy work ...
+    }
+}
+```
+
+Or let the skip middleware short circuit cancelled batches:
+
+```php
+class GenerateReport implements ShouldQueue
+{
+    use Batchable;
+
+    public function middleware(): array
+    {
+        return [new SkipIfBatchCancelled()];
+    }
+
+    public function handle(): void
+    {
+        // ... heavy work ...
+    }
+}
+```
+
+### Configuration
+
+This rule is disabled by default.
+To enable, add the following to your `phpstan.neon` file:
+
+```neon
+parameters:
+    checkBatchableJobChecksCancellation: true
+```
+
+## JobDispatchedInTransactionUsesAfterCommitRule
+
+A queued job dispatched inside a `DB::transaction(...)` closure must defer its dispatch until
+the transaction commits, either by chaining `->afterCommit()` on the dispatch, or by declaring
+`public bool $afterCommit = true;` on the job.
+
+A queued job pushed during an open transaction can be picked up by a worker before the
+transaction commits (a fast worker racing the still open connection): it then loads rows that
+aren't visible yet and fails, or operates on half written state. If the transaction rolls back,
+the job still runs against data that never existed. `afterCommit` holds the dispatch until the
+outermost transaction commits and drops it entirely on rollback.
+
+Only the `DB::transaction(Closure)` and arrow function form is inspected, since the manual
+`beginTransaction()` ... `commit()` form has no closure to bound the analysis. Only the
+chainable dispatch forms are flagged: `Job::dispatch(...)` and the `dispatch(new Job)` helper.
+Synchronous dispatch (`dispatchSync`, `dispatch_sync`) and the `Bus` and `Queue` facade entry
+points are left alone, as are non queued dispatchables, which run synchronously. The rule
+assumes the default queue config: a project that enables `after_commit` globally does not need
+it.
+
+### Examples
+
+```php
+DB::transaction(function () use ($product) {
+    $product->save();
+
+    NotifyOwner::dispatch($product->id);
+});
+```
+
+Will result in the following error:
+
+```
+Job 'App\Jobs\NotifyOwner' is dispatched inside 'DB::transaction()' without '->afterCommit()', so a worker can pick it up before the transaction commits, or run it against rows a rollback threw away. Chain '->afterCommit()' on the dispatch, or declare 'public bool $afterCommit = true;' on the job.
+```
+
+To fix the error, defer the dispatch explicitly:
+
+```php
+DB::transaction(function () use ($product) {
+    $product->save();
+
+    NotifyOwner::dispatch($product->id)->afterCommit();
+});
+```
+
+Or opt the job in for every dispatch:
+
+```php
+class NotifyOwner implements ShouldQueue
+{
+    public bool $afterCommit = true;
+}
+```
+
+### Configuration
+
+This rule is disabled by default.
+To enable, add the following to your `phpstan.neon` file:
+
+```neon
+parameters:
+    checkDispatchInTransactionAfterCommit: true
+```
