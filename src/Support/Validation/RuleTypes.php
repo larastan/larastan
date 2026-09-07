@@ -66,7 +66,8 @@ final class RuleTypes
             'uppercase' => TypeCombinator::intersect(new StringType(), new AccessoryUppercaseStringType()),
             'active_url', 'alpha', 'ascii', 'hex_color', 'string', 'url', 'ulid', 'uuid' => new StringType(),
             'alpha_dash', 'alpha_num', 'doesnt_end_with', 'doesnt_start_with', 'ends_with', 'not_regex',
-            'date_format', 'regex', 'starts_with' => TypeCombinator::union(new FloatType(), new IntegerType(), new StringType()),
+            'regex', 'starts_with' => TypeCombinator::union(new FloatType(), new IntegerType(), new StringType()),
+            'date', 'date_format' => new StringType(),
             'email', 'ip', 'mac_address' => new StringType(),
             'json' => TypeCombinator::union(new BooleanType(), new FloatType(), new IntegerType(), new StringType()),
             'accepted' => TypeCombinator::union(

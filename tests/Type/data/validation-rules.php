@@ -56,6 +56,9 @@ final class AdditionalRulesRequest extends FormRequest
             'alphaNumericValue' => 'required|alpha_num',
             'startsWithValue' => 'required|starts_with:4',
             'dateFormatValue' => 'required|date_format:H:i',
+            'targetDate' => ['sometimes', 'nullable', 'date', 'date_format:Y-m-d'],
+            'plainDate' => ['sometimes', 'nullable', 'date'],
+            'numericDate' => 'required|date|date_format:Ymd',
             'regexValue' => ['required', 'regex:/^[0-9]+$/'],
             'stringEmailValue' => 'required|email',
             'ipValue' => 'required|ip',
@@ -167,14 +170,14 @@ function test(mixed $mixed, array|string $arrayOrString, AdditionalRulesRequest 
             ->same('confirmation'),
     );
 
-    assertType('Illuminate\\Validation\\Rules\\Date<DateTimeInterface|float|int|string>', Rule::date());
+    assertType('Illuminate\\Validation\\Rules\\Date<string>', Rule::date());
     assertType(
-        'Illuminate\\Validation\\Rules\\Date<float|int|string>',
+        'Illuminate\\Validation\\Rules\\Date<string>',
         Rule::date()->format('Y-m-d')->beforeToday(),
     );
 
-    assertType('DateTimeInterface|float|int|non-empty-string', $request->dateValue);
-    assertType('float|int|non-empty-string', $request->formattedDate);
+    assertType('non-empty-string', $request->dateValue);
+    assertType('non-empty-string', $request->formattedDate);
     assertType('non-empty-string', $request->emailValue);
     assertType('Illuminate\\Http\\UploadedFile', $request->dimensionsValue);
     assertType('Illuminate\\Http\\UploadedFile', $request->fileValue);
@@ -194,7 +197,11 @@ function test(mixed $mixed, array|string $arrayOrString, AdditionalRulesRequest 
     assertType('float|int|numeric-string', $request->multipleOfValue);
     assertType('float|int|non-empty-string', $request->alphaNumericValue);
     assertType('float|int|non-empty-string', $request->startsWithValue);
-    assertType('float|int|non-empty-string', $request->dateFormatValue);
+    assertType('non-empty-string', $request->dateFormatValue);
+    assertType('string|null', $request->targetDate);
+    assertType('string|null', $request->validated('targetDate'));
+    assertType('string|null', $request->plainDate);
+    assertType('non-empty-string', $request->numericDate);
     assertType('float|int|non-empty-string', $request->regexValue);
     assertType('non-empty-string', $request->stringEmailValue);
     assertType('non-empty-string', $request->ipValue);

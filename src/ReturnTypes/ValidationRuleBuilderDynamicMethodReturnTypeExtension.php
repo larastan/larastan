@@ -14,7 +14,6 @@ use PHPStan\Type\Accessory\AccessoryLowercaseStringType;
 use PHPStan\Type\Accessory\AccessoryNonEmptyStringType;
 use PHPStan\Type\Accessory\AccessoryUppercaseStringType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
-use PHPStan\Type\FloatType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntegerRangeType;
 use PHPStan\Type\IntegerType;
@@ -67,10 +66,7 @@ final class ValidationRuleBuilderDynamicMethodReturnTypeExtension implements Dyn
         );
 
         $valueType = match ($this->className) {
-            Date::class => TypeCombinator::intersect(
-                $valueType,
-                TypeCombinator::union(new FloatType(), new IntegerType(), new StringType()),
-            ),
+            Date::class => TypeCombinator::intersect($valueType, new StringType()),
             Numeric::class => $this->refineInteger($valueType, $methodReflection->getName(), $methodCall, $scope),
             default => $this->refineString($valueType, $methodReflection->getName(), $methodCall, $scope),
         };

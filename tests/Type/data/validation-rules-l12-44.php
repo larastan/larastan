@@ -10,5 +10,5 @@ use function PHPStan\Testing\assertType;
 
 function test(): void
 {
-    assertType('Illuminate\\Validation\\Rules\\Date<float|int|string>', Rule::dateTime());
+    assertType('Illuminate\\Validation\\Rules\\Date<string>', Rule::dateTime());
 }

@@ -30,7 +30,7 @@ class ArrayRule
 }
 
 /**
- * @template-covariant TValue = \DateTimeInterface|float|int|string
+ * @template-covariant TValue = string
  */
 class Date
 {

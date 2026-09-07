@@ -110,7 +110,7 @@ function test(AnyOfRequest $request): void
     assertType('mixed', $request->unknownAlternative);
     assertType('array|float|int|string|null', $request->nullableScalar);
     assertType('(array|float|int|non-empty-string)', $request->nullableAlternative);
-    assertType('(array|float|int|non-empty-string)', $request->formattedTime);
+    assertType('(array|non-empty-string)', $request->formattedTime);
     assertType("('api'|'import'|array|float|int|numeric-string)", $request->enumOrInteger);
     assertType('(array|float|int|non-empty-string)', $request->nestedAnyOf);
     assertType('mixed', $request->directAnyOf);

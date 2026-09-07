@@ -18,12 +18,12 @@ class Rule
     public static function enum($type);
 
     /**
-     * @return \Illuminate\Validation\Rules\Date<\DateTimeInterface|float|int|string>
+     * @return \Illuminate\Validation\Rules\Date<string>
      */
     public static function date();
 
     /**
-     * @return \Illuminate\Validation\Rules\Date<float|int|string>
+     * @return \Illuminate\Validation\Rules\Date<string>
      */
     public static function dateTime();
 

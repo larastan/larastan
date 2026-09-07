@@ -315,6 +315,12 @@ rules such as `digits` and `decimal`, infer ordinary unions. PHPStan checks ever
 member of these unions when passing a value to a typed parameter; narrow or
 convert the value when the parameter accepts only one numeric representation.
 
+`date` and `date_format` infer `string` without inspecting the format. Date rule
+builders use the same approximation, even though Laravel can also accept numeric
+values for some formats or `DateTimeInterface` objects for the `date` rule.
+`required` narrows these strings to `non-empty-string`; optional or nullable
+properties include `null`.
+
 Larastan only narrows magic properties after successful validation. They remain
 `mixed` during request setup, preparation, authorization, validator
 construction, validation callbacks, and failed-validation handling. Reads in

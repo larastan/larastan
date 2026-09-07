@@ -63,6 +63,7 @@ final class DynamicParametersRequest extends FormRequest
             'interpolatedName' => ['required', "{$ruleName}:{$parameter}"],
             'email' => ['required', 'email:' . $parameter],
             'boundedEmail' => ['required', 'email', 'max:' . config('app.validation.email.max_length')],
+            'formattedDate' => ['required', 'date_format:' . $parameter],
             'decimal' => ['required', 'decimal:' . $parameter],
             'pattern' => ['required', "regex:{$parameter}"],
             'choice' => ['required', 'string', 'in:' . $parameter],
@@ -107,6 +108,7 @@ function testDynamicParameters(WorkRequest $work, DynamicParametersRequest $requ
     assertType('non-empty-string', $request->email);
     assertType('non-empty-string', $request->boundedEmail);
     assertType('non-empty-string', $request->validated('boundedEmail'));
+    assertType('non-empty-string', $request->formattedDate);
     assertType('float|int|numeric-string', $request->decimal);
     assertType('float|int|non-empty-string', $request->pattern);
     assertType('non-empty-string', $request->choice);
