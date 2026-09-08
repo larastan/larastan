@@ -593,6 +593,9 @@ services:
         class: Larastan\Larastan\Support\FormRequestHelper
 
     -
+        class: Larastan\Larastan\Support\FormRequestLifecycle
+
+    -
         class: Larastan\Larastan\Rules\FormRequestUnknownValidatedKeyRule
         arguments:
             checkUnionTypes: %checkUnionTypes%
