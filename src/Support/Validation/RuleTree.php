@@ -197,10 +197,13 @@ final class RuleTree
 
         $shape = new ArrayType($isList ? new IntegerType() : new MixedType(), $element->type($view));
 
-        // Elements that validated() leaves out punch holes into the list.
-        return $isList && ($view === self::INPUT || $element->isPresent(validated: true))
-            ? TypeCombinator::intersect($shape, new AccessoryArrayListType())
-            : $shape;
+        // Elements are left out, punching holes into the list, when excluded or when nothing validated is assembled below them.
+        $flags      = $element->rule?->flags;
+        $contiguous = $view === self::INPUT
+            || ($flags?->possiblyExcluded !== true && $flags?->degraded !== true
+                && ($element->copiesInput(certainly: true) || $element->hasPresentChild(validated: true)));
+
+        return $isList && $contiguous ? TypeCombinator::intersect($shape, new AccessoryArrayListType()) : $shape;
     }
 
     /** The type the node's own rule guarantees, ignoring nested rules. */

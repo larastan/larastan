@@ -103,6 +103,7 @@ function test(
     assertType('mixed', $fooRequest->scores);
     assertType('array<mixed>|null', $fooRequest->properties);
     assertType('list<string>|null', $fooRequest->listProperties);
+    assertType('list<string>|null', $fooRequest->validated('listProperties'));
     assertType('mixed', $fooRequest->users);
     assertType('array<array{name: non-empty-string, ...}>', $fooRequest->guests);
     assertType('array<array{id: float|int|numeric-string, ...}>|null', $fooRequest->accounts);
