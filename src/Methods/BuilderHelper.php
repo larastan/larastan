@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use Larastan\Larastan\Reflection\AnnotationScopeMethodParameterReflection;
 use Larastan\Larastan\Reflection\DynamicWhereParameterReflection;
 use Larastan\Larastan\Reflection\EloquentBuilderMethodReflection;
@@ -283,12 +284,17 @@ class BuilderHelper
 
     /**
      * @throws MissingMethodFromReflectionException
-     * @throws ShouldNotHappenException
+     * @throws InvalidArgumentException
      */
     public function determineBuilderName(string $modelClassName): string
     {
         $modelReflection = $this->reflectionProvider->getClass($modelClassName);
-        $method          = $modelReflection->getNativeMethod('newEloquentBuilder');
+
+        if (! $modelReflection->is(Model::class)) {
+            throw new InvalidArgumentException($modelClassName . ' is not a Model.');
+        }
+
+        $method = $modelReflection->getNativeMethod('newEloquentBuilder');
 
         if ($method->getDeclaringClass()->getName() === Model::class) {
             $attrs = $modelReflection->getNativeReflection()->getAttributes('Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder'); //@phpstan-ignore argument.type (Attribute class might not exist)
@@ -315,5 +321,18 @@ class BuilderHelper
         }
 
         return $returnType->describe(VerbosityLevel::value());
+    }
+
+    public function determineBuilderClass(string $modelClassName): Type|null
+    {
+        try {
+            $builderClassName = $this->determineBuilderName($modelClassName);
+        } catch (InvalidArgumentException) {
+            return null;
+        } catch (MissingMethodFromReflectionException) {
+            $builderClassName = EloquentBuilder::class;
+        }
+
+        return $this->getBuilderType($builderClassName, new ObjectType($modelClassName));
     }
 }
