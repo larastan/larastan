@@ -1,0 +1,4 @@
+includes:
+    - form-request-rules-enabled.neon
+parameters:
+    checkUnionTypes: false

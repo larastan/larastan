@@ -258,6 +258,10 @@ parameters:
     checkFormRequestTypes: true
 ```
 
+The same flag also enables [FormRequest diagnostics](rules.md#formrequest-diagnostics)
+for unknown validated keys, premature validated-data access, and simple
+validation-rule pairs.
+
 After validation succeeds, Larastan uses `rules()` as the source of truth for:
 
 - magic properties such as `$request->name`;

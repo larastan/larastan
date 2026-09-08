@@ -79,6 +79,12 @@ parametersSchema:
     checkDispatchInTransactionAfterCommit: bool()
 
 conditionalTags:
+    Larastan\Larastan\Rules\FormRequestUnknownValidatedKeyRule:
+        phpstan.rules.rule: %checkFormRequestTypes%
+    Larastan\Larastan\Rules\FormRequestPrematureValidatedAccessRule:
+        phpstan.rules.rule: %checkFormRequestTypes%
+    Larastan\Larastan\Rules\FormRequestValidationRulePairsRule:
+        phpstan.rules.rule: %checkFormRequestTypes%
     Larastan\Larastan\Properties\FormRequestExtension:
         phpstan.broker.propertiesClassReflectionExtension: %checkFormRequestTypes%
     Larastan\Larastan\Properties\FormRequestPropertyTypeExtension:
@@ -585,6 +591,17 @@ services:
 
     -
         class: Larastan\Larastan\Support\FormRequestHelper
+
+    -
+        class: Larastan\Larastan\Rules\FormRequestUnknownValidatedKeyRule
+        arguments:
+            checkUnionTypes: %checkUnionTypes%
+
+    -
+        class: Larastan\Larastan\Rules\FormRequestPrematureValidatedAccessRule
+
+    -
+        class: Larastan\Larastan\Rules\FormRequestValidationRulePairsRule
 
     -
         class: Larastan\Larastan\Support\Validation\RuleTreeTypeResolver

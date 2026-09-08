@@ -107,8 +107,25 @@ class IntegrationTest extends PHPStanTestCase
         yield [
             __DIR__ . '/data/form-request-feature-enabled.php',
             [
+                85 => ["Key 'missing' does not exist in validated data of FormRequestFeatureEnabled\\EnabledRequest."],
                 89 => ['Parameter #1 $value of function FormRequestFeatureEnabled\\acceptsInteger expects int, float|int|string given.'],
                 90 => ['Parameter #1 $value of function FormRequestFeatureEnabled\\acceptsInteger expects int, float|int|string given.'],
+            ],
+        ];
+
+        yield [
+            __DIR__ . '/data/form-request-rules.php',
+            [
+                12 => [
+                    "Field 'advisory' has a 'nullable' rule but does not accept null.",
+                    "Field 'impossible' has conflicting validation rules 'required' and 'missing'.",
+                ],
+                21 => [
+                    "Key 'emali' does not exist in validated data of FormRequestRuleIntegration\\StoreRequest.",
+                    'Method FormRequestRuleIntegration\StoreRequest::validated() should not be called in prepareForValidation().',
+                ],
+                23 => ['Method FormRequestRuleIntegration\StoreRequest::validated() should not be called in prepareForValidation().'],
+                38 => ["Key 'email' does not exist in validated data of FormRequestRuleIntegration\\UpdateRequest."],
             ],
         ];
 

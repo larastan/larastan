@@ -69,6 +69,9 @@ Check sibling extensions for the full set of files a change requires.
 - New diagnostic identifiers use the `larastan.` prefix and dotted camelCase
   segments, such as `larastan.console.undefinedArgument`.
   `rules.modelAppends` is a legacy outlier; do not copy it.
+- Match existing Larastan and PHPStan diagnostic style: short, direct statements
+  identifying the problem. Put explanations, remediation, and union context in
+  tips; never claim more than the rule proves.
 - Document user-visible rules in `docs/rules.md`, custom types in
   `docs/custom-types.md`, and other features in `docs/features.md`.
 - Reflection extensions that implement `hasMethod()`/`getMethod()` or
