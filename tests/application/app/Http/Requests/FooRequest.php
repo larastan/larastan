@@ -38,6 +38,7 @@ class FooRequest extends FormRequest
 {
     public function rules(): array
     {
+        $condition = config('app.rule.condition');
         $limit = config('app.rule.limit');
         $rule = config('app.rule.rule');
         $mixedValue = config('app.rule.value');
@@ -131,6 +132,27 @@ class FooRequest extends FormRequest
             'integerValue' => ['required', $numericRule],
             'extension' => ['sometimes', 'nullable', 'string', 'max:4', 'alpha_num'],
             'reversedExtension' => ['sometimes', 'nullable', 'alpha_num', 'max:4', 'string'],
+            'stringPriority' => ['required', 'string', Rule::enum(RequestPriority::class)],
+            'possiblyExcluded' => 'exclude_if:kind,skip|integer',
+            'conditionallyAccepted' => 'accepted_if:kind,accept',
+            'conditionallyDeclined' => 'declined_if:kind,decline',
+            'whenValue' => ['required', Rule::when($condition, 'array', 'string')],
+            'unlessValue' => [
+                'required',
+                Rule::unless($condition, static fn (): string => 'array', static fn (): string => 'string'),
+            ],
+            'exactWhenValue' => [
+                'required',
+                Rule::when(defaultRules: 'array', rules: 'string', condition: true),
+            ],
+            'conditionallyExcluded' => ['required', Rule::when($condition, 'exclude', 'string')],
+            'alwaysRequired' => [Rule::requiredIf(true), 'string'],
+            'alwaysRequiredNullable' => ['nullable', Rule::requiredIf(true), 'string'],
+            'conditionalRequiredNullable' => ['nullable', Rule::when(true, 'required|string')],
+            'maybeRequired' => [Rule::requiredIf(static fn (): bool => true), 'string'],
+            'neverExcluded' => ['required', Rule::excludeIf(false), 'string'],
+            'maybeExcluded' => ['required', Rule::excludeIf(static fn (): bool => false), 'string'],
+            'alwaysExcluded' => ['required', Rule::excludeIf(true), 'string'],
         ];
     }
 

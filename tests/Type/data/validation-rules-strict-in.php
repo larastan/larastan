@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ValidationRulesStrictIn;
 
-use ValidationRules\AdditionalRulesRequest;
+use App\Http\Requests\AdditionalRulesRequest;
 
 use function PHPStan\Testing\assertType;
 

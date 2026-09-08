@@ -4,27 +4,11 @@ declare(strict_types=1);
 
 namespace FormRequestNumericPaths;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\SelectorRequest;
 
 use function PHPStan\Testing\assertType;
 
-class NamedFieldRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        return ['name' => 'required|string'];
-    }
-}
-
-class NumericArrayKeysRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        return ['numeric' => 'required|array:0,1'];
-    }
-}
-
-function testNumericSelectors(NamedFieldRequest $request): void
+function testNumericSelectors(SelectorRequest $request): void
 {
     assertType('array{}', $request->safe(['0']));
     assertType('array{}', $request->safe(['-1']));
@@ -34,28 +18,13 @@ function testNumericSelectors(NamedFieldRequest $request): void
     assertType('42', $request->validated('-1', 42));
 }
 
-function testNumericArrayKeys(NumericArrayKeysRequest $request): void
+function testNumericArrayKeys(SelectorRequest $request): void
 {
     assertType('array{numeric?: array{0?: mixed}}', $request->safe(['numeric.0']));
     assertType('array{}', $request->safe(['numeric.-1']));
 }
 
-class NumericSegmentsRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        return [
-            'negative.-1.name' => 'required|string',
-            'zero.0.name' => 'required|string',
-            'leadingZero.01.name' => 'required|string',
-            'stringPlus.+1.name' => 'required|string',
-            'stringNegativeZero.-0.name' => 'required|string',
-            'stringNegativeLeadingZero.-01.name' => 'required|string',
-        ];
-    }
-}
-
-function testNumericSegments(NumericSegmentsRequest $request): void
+function testNumericSegments(SelectorRequest $request): void
 {
     assertType('mixed', $request->negative);
     assertType('mixed', $request->zero);

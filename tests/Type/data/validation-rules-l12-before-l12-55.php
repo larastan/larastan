@@ -4,22 +4,12 @@ declare(strict_types=1);
 
 namespace ValidationRulesLaravel12Before12_55;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\AdditionalRulesRequest;
 use Illuminate\Validation\Rule;
 
 use function PHPStan\Testing\assertType;
 
-final class StrictNumericRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        return [
-            'bounded' => ['required', Rule::numeric()->integer()->max(10)->min(2)],
-        ];
-    }
-}
-
-function test(StrictNumericRequest $request): void
+function test(AdditionalRulesRequest $request): void
 {
     assertType(
         'Illuminate\\Validation\\Rules\\Numeric<float|int|numeric-string>',
@@ -37,5 +27,5 @@ function test(StrictNumericRequest $request): void
         'Illuminate\\Validation\\Rules\\Numeric<float|int|numeric-string>',
         Rule::numeric()->integer()->exactly(3),
     );
-    assertType('float|int|numeric-string', $request->bounded);
+    assertType('float|int|numeric-string', $request->boundedNumericInteger);
 }

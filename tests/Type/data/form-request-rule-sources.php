@@ -4,587 +4,49 @@ declare(strict_types=1);
 
 namespace FormRequestRuleSources;
 
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use App\Http\Requests\BroadPhpDocDirectRequest;
+use App\Http\Requests\BroadPhpDocSpreadRequest;
+use App\Http\Requests\CollectionSelectionRequest;
+use App\Http\Requests\ComputedRulesRequest;
+use App\Http\Requests\DifferentArrayReturnsRequest;
+use App\Http\Requests\DifferentConditionalReturnsRequest;
+use App\Http\Requests\ExactPhpDocDirectRequest;
+use App\Http\Requests\IntegerKeyRulesRequest;
+use App\Http\Requests\LoopBuiltRulesRequest;
+use App\Http\Requests\MultipleReturnsRequest;
+use App\Http\Requests\NestedReturnsRequest;
+use App\Http\Requests\NumericSpreadRulesRequest;
+use App\Http\Requests\OptionalAncestorRulesRequest;
+use App\Http\Requests\RootWildcardRulesRequest;
+use App\Http\Requests\RootWildcardWithSiblingRulesRequest;
+use App\Http\Requests\StaticRegistryRequest;
+use App\Http\Requests\TraitRules\IntegerRequest;
+use App\Http\Requests\UnknownAncestorKeyRequest;
+use App\Http\Requests\UnpackedRulesRequest;
+use App\Http\Requests\WildcardAncestorRulesRequest;
+use FormRequestLifecycle\ExactRulesRequest;
+use FormRequestLifecycle\InheritedRulesRequest;
+use FormRequestLifecycle\ParentCompositionRequest;
 
 use function PHPStan\Testing\assertType;
-
-interface RequestMarker
-{
-}
-
-class ExactRulesRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        assertType('mixed', $this->exact);
-
-        return ['exact' => 'required|string'];
-    }
-
-    public function authorize(): bool
-    {
-        assertType('mixed', $this->exact);
-
-        return true;
-    }
-
-    protected function prepareForValidation(): void
-    {
-        assertType('mixed', $this->exact);
-
-        $alias = $this;
-        assertType('mixed', $alias->exact);
-
-        if (is_string($alias->exact)) {
-            assertType('string', $alias->exact);
-        }
-
-        $other = new ExactRulesRequest();
-        assertType('non-empty-string', $other->exact);
-
-        if ($this instanceof RequestMarker) {
-            assertType('mixed', $this->exact);
-
-            $intersectionAlias = $this;
-            assertType('mixed', $intersectionAlias->exact);
-        }
-
-        if (is_string($this->exact)) {
-            assertType('string', $this->exact);
-        }
-
-        (function (): void {
-            assertType('mixed', $this->exact);
-        })();
-    }
-
-    public function isPrecognitive(): bool
-    {
-        assertType('mixed', $this->exact);
-
-        return parent::isPrecognitive();
-    }
-
-    public function filterPrecognitiveRules($rules)
-    {
-        assertType('mixed', $this->exact);
-
-        return parent::filterPrecognitiveRules($rules);
-    }
-
-    protected function passedValidation(): void
-    {
-        assertType('non-empty-string', $this->exact);
-
-        (function (): void {
-            assertType('non-empty-string', $this->exact);
-        })();
-    }
-
-    public function unrelated(): array
-    {
-        return ['unrelated' => 'required|integer'];
-    }
-
-    public function toDto(): string
-    {
-        assertType('non-empty-string', $this->exact);
-
-        return $this->exact;
-    }
-}
-
-/** @property int $exact */
-class AnnotatedRulesRequest extends ExactRulesRequest
-{
-    public function authorize(): bool
-    {
-        assertType('int', $this->exact);
-
-        $alias = $this;
-        assertType('int', $alias->exact);
-
-        return true;
-    }
-}
-
-class InheritedRulesRequest extends ExactRulesRequest
-{
-}
-
-trait ProvidesRules
-{
-    public function rules(): array
-    {
-        return ['fromTrait' => 'required|integer'];
-    }
-}
-
-class TraitRulesRequest extends FormRequest
-{
-    use ProvidesRules;
-}
-
-class UnpackedRulesRequest extends FormRequest
-{
-    private const RULES = ['constant' => 'required|string'];
-
-    /** @return array<string, string> */
-    private function dynamicRules(): array
-    {
-        return ['dynamicOnly' => 'required|string'];
-    }
-
-    public function rules(): array
-    {
-        return [
-            'overwritten' => 'required|string',
-            ...$this->dynamicRules(),
-            ...self::RULES,
-            'stable' => 'required|integer',
-        ];
-    }
-}
-
-class OverwrittenSpreadRulesRequest extends FormRequest
-{
-    private const RULES = ['overwritten' => 'required|string'];
-
-    /** @return array<string, string> */
-    private function dynamicRules(): array
-    {
-        return ['overwritten' => 'required|integer'];
-    }
-
-    public function rules(): array
-    {
-        return [...self::RULES, ...$this->dynamicRules(), 'stable' => 'required|string'];
-    }
-}
-
-class UnknownAncestorRulesRequest extends FormRequest
-{
-    /** @return array<string, string> */
-    private function additionalRules(): array
-    {
-        return ['parent' => 'exclude'];
-    }
-
-    public function rules(): array
-    {
-        return [
-            ...$this->additionalRules(),
-            'parent.name' => 'required|string',
-            'stable' => 'required|string',
-            'v1\.0' => 'required|string',
-        ];
-    }
-}
-
-class UnknownAncestorKeyRequest extends FormRequest
-{
-    private function ancestor(): string
-    {
-        return 'parent';
-    }
-
-    public function rules(): array
-    {
-        return [
-            $this->ancestor() => 'exclude',
-            'parent.name' => 'required|string',
-            'stable' => 'required|string',
-        ];
-    }
-}
-
-class NumericSpreadRulesRequest extends FormRequest
-{
-    /** @return array<int, string> */
-    private function additionalRules(): array
-    {
-        return [0 => 'exclude'];
-    }
-
-    public function rules(): array
-    {
-        return [
-            'before' => 'required|string',
-            ...$this->additionalRules(),
-            'parent.name' => 'required|string',
-        ];
-    }
-}
-
-class ExplicitAncestorRulesRequest extends FormRequest
-{
-    /** @return array<string, string> */
-    private function additionalRules(): array
-    {
-        return ['parent' => 'exclude'];
-    }
-
-    public function rules(): array
-    {
-        return [
-            ...$this->additionalRules(),
-            'parent' => 'required|array',
-            'parent.name' => 'required|string',
-        ];
-    }
-}
-
-class UnrelatedSpreadRulesRequest extends FormRequest
-{
-    /** @return array<'other', string> */
-    private function additionalRules(): array
-    {
-        return ['other' => 'exclude'];
-    }
-
-    public function rules(): array
-    {
-        return [...$this->additionalRules(), 'parent.name' => 'required|string'];
-    }
-}
-
-class OptionalAncestorRulesRequest extends FormRequest
-{
-    /** @return array{parent?: 'exclude', 'parent.name': 'required|string', stable: 'required|string'} */
-    private function additionalRules(): array
-    {
-        return ['parent' => 'exclude', 'parent.name' => 'required|string', 'stable' => 'required|string'];
-    }
-
-    public function rules(): array
-    {
-        return $this->additionalRules();
-    }
-}
-
-class BranchAncestorRulesRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        if ($this->boolean('exclude')) {
-            return ['parent' => 'exclude', 'parent.name' => 'required|string', 'stable' => 'required|string'];
-        }
-
-        return ['parent.name' => 'required|string', 'stable' => 'required|string'];
-    }
-}
-
-class WildcardAncestorRulesRequest extends FormRequest
-{
-    /** @return array<'parent.*'|'other', string> */
-    private function additionalRules(): array
-    {
-        return ['parent.*' => 'exclude'];
-    }
-
-    public function rules(): array
-    {
-        return [
-            ...$this->additionalRules(),
-            'parent.item.name' => 'required|string',
-            'unrelated.name' => 'required|string',
-        ];
-    }
-}
-
-class RootWildcardRulesRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        return ['*.name' => 'required|string'];
-    }
-}
-
-class RootWildcardWithSiblingRulesRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        return ['payload' => 'required|array', '*' => 'exclude'];
-    }
-}
-
-class MultipleReturnsRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        if ($this->isMethod('POST')) {
-            return [
-                'shared' => 'required|string',
-                'different' => 'required|integer',
-                'firstOnly' => 'required|string',
-            ];
-        }
-
-        return [
-            'shared' => ['required', 'string'],
-            'different' => 'required|string',
-            'secondOnly' => 'required|string',
-        ];
-    }
-}
-
-class EquivalentArrayReturnsRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        if ($this->isMethod('POST')) {
-            return [
-                'payload' => ['required', Rule::array(['name'])],
-                'record' => ['required', Rule::array(['name'])],
-                'record.name' => 'required|string',
-            ];
-        }
-
-        return [
-            'payload' => ['required', Rule::array(['name'])],
-            'record' => ['required', Rule::array(['name'])],
-            'record.name' => 'required|string',
-        ];
-    }
-}
-
-class DifferentArrayReturnsRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        if ($this->isMethod('POST')) {
-            return ['payload' => ['required', Rule::array(['name'])]];
-        }
-
-        return ['payload' => ['required', Rule::array(['email'])]];
-    }
-}
-
-class MixedArrayPruningReturnsRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        if ($this->isMethod('POST')) {
-            return [
-                'payload' => ['required', 'array', Rule::array(['name', 'other'])],
-                'payload.name' => 'string',
-            ];
-        }
-
-        return [
-            'payload' => ['required', Rule::array(['name', 'other'])],
-            'payload.name' => 'string',
-        ];
-    }
-}
-
-class DifferentConditionalReturnsRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        if ($this->isMethod('POST')) {
-            return ['payload' => ['required', Rule::when(true, ['string', 'exclude'])]];
-        }
-
-        return ['payload' => ['required', Rule::when(true, ['string'])]];
-    }
-}
-
-class NestedReturnsRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        $closure = static function (): array {
-            return ['closure' => 'required|string'];
-        };
-
-        function nestedFormRequestRules(): array
-        {
-            return ['function' => 'required|string'];
-        }
-
-        $helper = new class {
-            public function rules(): array
-            {
-                return ['nestedClass' => 'required|integer'];
-            }
-        };
-
-        return ['actual' => 'required|string'];
-    }
-}
-
-class ParentCompositionRequest extends ExactRulesRequest
-{
-    public function rules(): array
-    {
-        return parent::rules() + ['composed' => 'required|string'];
-    }
-}
-
-class RuleRegistryModel extends Model
-{
-    /** @return array{age: array{'integer', 'required'}, name: 'required|string'} */
-    public static function exactValidationRules(): array
-    {
-        return [
-            'age' => ['integer', 'required'],
-            'name' => 'required|string',
-        ];
-    }
-
-    /** @return array<string, string> */
-    public static function validationRules(): array
-    {
-        return ['registry' => 'required|string'];
-    }
-}
-
-class ExactPhpDocDirectRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        return RuleRegistryModel::exactValidationRules();
-    }
-}
-
-class ExactPhpDocSpreadRequest extends FormRequest
-{
-    /** @return array{email: array{'required', 'email'}} */
-    private function commonRules(): array
-    {
-        return ['email' => ['required', 'email']];
-    }
-
-    public function rules(): array
-    {
-        return [...$this->commonRules()];
-    }
-}
-
-class BroadPhpDocDirectRequest extends FormRequest
-{
-    /** @return array<mixed> */
-    private function broadRules(): array
-    {
-        return [];
-    }
-
-    public function rules(): array
-    {
-        return $this->broadRules();
-    }
-}
-
-class BroadPhpDocSpreadRequest extends FormRequest
-{
-    /** @return array<string, mixed> */
-    private function commonRules(): array
-    {
-        return ['broadOnly' => 'required|string'];
-    }
-
-    public function rules(): array
-    {
-        return [
-            ...$this->commonRules(),
-            'stable' => 'required|string',
-        ];
-    }
-}
-
-class StaticRegistryRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        return RuleRegistryModel::validationRules();
-    }
-}
-
-class CollectionSelectionRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        return collect([
-            'selected' => 'required|string',
-            'discarded' => 'required|integer',
-        ])->only(['selected'])->all();
-    }
-}
-
-class ComputedRulesRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        $constantKey = 'constantKey';
-        $dynamicKey  = $this->method();
-        $dynamicRule = 'required|' . $this->string('rule');
-        $ternaryRule = $this->isMethod('POST') ? 'required|string' : 'required|integer';
-        $coalesceRule = $this->input('rule') ?? 'required|string';
-
-        return [
-            $dynamicKey => 'required|string',
-            $constantKey => 'required|string',
-            'dynamicConcatenation' => $dynamicRule,
-            'ternary' => $ternaryRule,
-            'coalesce' => $coalesceRule,
-            'stableComputedSibling' => 'required|integer',
-        ];
-    }
-}
-
-class LoopBuiltRulesRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        $rules = [];
-
-        foreach ($this->array('fields') as $field) {
-            $rules[$field] = 'required|string';
-        }
-
-        return $rules;
-    }
-}
-
-class IntegerKeyRulesRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        return [
-            0 => 'required|string',
-            '1' => 'required|integer',
-        ];
-    }
-}
 
 function testRuleSources(
     ExactRulesRequest $exact,
     InheritedRulesRequest $inherited,
-    TraitRulesRequest $trait,
+    IntegerRequest $trait,
     UnpackedRulesRequest $unpacked,
-    OverwrittenSpreadRulesRequest $overwrittenSpread,
-    UnknownAncestorRulesRequest $unknownAncestor,
     UnknownAncestorKeyRequest $unknownAncestorKey,
     NumericSpreadRulesRequest $numericSpread,
-    ExplicitAncestorRulesRequest $explicitAncestor,
-    UnrelatedSpreadRulesRequest $unrelatedSpread,
     OptionalAncestorRulesRequest $optionalAncestor,
-    BranchAncestorRulesRequest $branchAncestor,
     WildcardAncestorRulesRequest $wildcardAncestor,
     RootWildcardRulesRequest $rootWildcard,
     RootWildcardWithSiblingRulesRequest $rootWildcardWithSibling,
     MultipleReturnsRequest $multiple,
-    EquivalentArrayReturnsRequest $equivalentArrays,
     DifferentArrayReturnsRequest $differentArrays,
-    MixedArrayPruningReturnsRequest $mixedPruning,
     DifferentConditionalReturnsRequest $differentConditions,
     NestedReturnsRequest $nested,
     ParentCompositionRequest $parentComposition,
     ExactPhpDocDirectRequest $exactPhpDocDirect,
-    ExactPhpDocSpreadRequest $exactPhpDocSpread,
     BroadPhpDocDirectRequest $broadPhpDocDirect,
     BroadPhpDocSpreadRequest $broadPhpDocSpread,
     StaticRegistryRequest $staticRegistry,
@@ -603,32 +65,25 @@ function testRuleSources(
     assertType('float|int|numeric-string', $unpacked->stable);
     assertType('mixed', $unpacked->dynamicOnly);
     assertType(
-        'array{constant: non-empty-string, stable: float|int|numeric-string, ...}',
+        "array{constant: non-empty-string, stable: float|int|numeric-string, stableString: non-empty-string, explicitParent: array{name: non-empty-string}, 'v1.0': non-empty-string, ...}",
         $unpacked->validated(),
     );
 
-    assertType('mixed', $overwrittenSpread->overwritten);
-    assertType('non-empty-string', $overwrittenSpread->stable);
-    assertType('array{stable: non-empty-string, ...}', $overwrittenSpread->validated());
+    assertType('mixed', $unpacked->spreadOverwritten);
+    assertType('non-empty-string', $unpacked->stableString);
 
-    assertType('mixed', $unknownAncestor->parent);
-    assertType('non-empty-string', $unknownAncestor->stable);
-    assertType('non-empty-string', $unknownAncestor->{'v1.0'});
-    assertType("array{stable: non-empty-string, 'v1.0': non-empty-string, ...}", $unknownAncestor->validated());
+    assertType('mixed', $unpacked->parent);
+    assertType('non-empty-string', $unpacked->{'v1.0'});
     assertType('mixed', $unknownAncestorKey->parent);
     assertType('non-empty-string', $unknownAncestorKey->stable);
     assertType('array{stable: non-empty-string, ...}', $unknownAncestorKey->validated());
     assertType('non-empty-string', $numericSpread->before);
     assertType('array{name: non-empty-string, ...}', $numericSpread->parent);
-    assertType('array{before: non-empty-string, parent: array{name: non-empty-string}, ...}', $numericSpread->validated());
-    assertType('array{name: non-empty-string, ...}', $explicitAncestor->parent);
-    assertType('array{parent: array{name: non-empty-string}, ...}', $explicitAncestor->validated());
-    assertType('array{name: non-empty-string, ...}', $unrelatedSpread->parent);
-    assertType('array{parent: array{name: non-empty-string}, ...}', $unrelatedSpread->validated());
+    assertType('array{before: non-empty-string, parent: array{name: non-empty-string}, email: non-empty-string, ...}', $numericSpread->validated());
+    assertType('array{name: non-empty-string, ...}', $unpacked->explicitParent);
     assertType('mixed', $optionalAncestor->parent);
     assertType('array{stable: non-empty-string, ...}', $optionalAncestor->validated());
-    assertType('mixed', $branchAncestor->parent);
-    assertType('array{stable: non-empty-string, ...}', $branchAncestor->validated());
+    assertType('mixed', $multiple->parent);
     assertType('mixed', $wildcardAncestor->parent);
     assertType('array{name: non-empty-string, ...}', $wildcardAncestor->unrelated);
     assertType('array{unrelated: array{name: non-empty-string}, ...}', $wildcardAncestor->validated());
@@ -645,11 +100,9 @@ function testRuleSources(
     assertType('mixed', $multiple->firstOnly);
     assertType('mixed', $multiple->secondOnly);
 
-    assertType('array{payload: array{name?: mixed}, record: array{name: non-empty-string}}', $equivalentArrays->validated());
-    assertType('non-empty-string', $equivalentArrays->validated('record.name'));
+    assertType('non-empty-string', $multiple->validated('record.name'));
     assertType('array', $differentArrays->validated());
-    assertType('array{payload?: array{name?: string, other?: mixed}}', $mixedPruning->validated());
-    assertType('array{name?: string, other?: mixed}|null', $mixedPruning->validated('payload'));
+    assertType('array{name?: string, other?: mixed}|null', $multiple->validated('pruned'));
     assertType('array', $differentConditions->validated());
 
     assertType('non-empty-string', $nested->actual);
@@ -662,7 +115,7 @@ function testRuleSources(
     assertType('mixed', $parentComposition->composed);
     assertType('float|int|numeric-string', $exactPhpDocDirect->age);
     assertType('non-empty-string', $exactPhpDocDirect->name);
-    assertType('non-empty-string', $exactPhpDocSpread->email);
+    assertType('non-empty-string', $numericSpread->email);
     assertType('mixed', $broadPhpDocDirect->anything);
     assertType('mixed', $broadPhpDocSpread->broadOnly);
     assertType('non-empty-string', $broadPhpDocSpread->stable);
@@ -680,7 +133,7 @@ function testRuleSources(
     );
     assertType('mixed', $loopBuilt->anything);
 
-    assertType('array{shared: non-empty-string, different: float|int|non-empty-string, ...}', $multiple->validated());
+    assertType('array{shared: non-empty-string, different: float|int|non-empty-string, payload: array{name?: mixed}, record: array{name: non-empty-string}, pruned?: array{name?: string, other?: mixed}, ...}', $multiple->validated());
 
     assertType('mixed', $integerKeys->{'0'});
     assertType('mixed', $integerKeys->{'1'});

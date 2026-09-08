@@ -5,124 +5,13 @@ declare(strict_types=1);
 namespace ValidationRules;
 
 use App\Casts\BackedEnumeration;
-use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Foundation\Http\FormRequest;
+use App\Casts\UnitEnumeration;
+use App\Http\Requests\AdditionalRulesRequest;
+use App\ValueObjects\RuleValues;
+use App\ValueObjects\StringableValue;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Rules\Password;
-use Stringable;
 
 use function PHPStan\Testing\assertType;
-
-enum UnitEnumeration
-{
-    case Foo;
-    case Bar;
-}
-
-final class StringableValue implements Stringable
-{
-    public function __toString(): string
-    {
-        return 'foo';
-    }
-}
-
-/** @implements Arrayable<int, int|string> */
-final class RuleValues implements Arrayable
-{
-    /** @return array{1, 'foo'} */
-    public function toArray(): array
-    {
-        return [1, 'foo'];
-    }
-}
-
-final class AdditionalRulesRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        return [
-            'requiredNullable' => ['required', 'nullable', 'string'],
-            'requiredZero' => ['required', 'string', 'in:0'],
-            'presentNullable' => ['present', 'nullable', 'string'],
-            'studlyNullable' => ['present', 'Nullable', 'string'],
-            'conditionallyRequired' => 'required_if:other,value|string',
-            'conditionallyPresent' => 'present_if:other,value|string',
-            'digitsValue' => 'required|digits:2',
-            'digitsBetweenValue' => 'required|digits_between:1,2',
-            'decimalValue' => 'required|decimal:2',
-            'decimalMaximumValue' => 'required|decimal:0|max:2',
-            'multipleOfValue' => 'required|multiple_of:0.5',
-            'alphaNumericValue' => 'required|alpha_num',
-            'startsWithValue' => 'required|starts_with:4',
-            'dateFormatValue' => 'required|date_format:H:i',
-            'targetDate' => ['sometimes', 'nullable', 'date', 'date_format:Y-m-d'],
-            'plainDate' => ['sometimes', 'nullable', 'date'],
-            'numericDate' => 'required|date|date_format:Ymd',
-            'regexValue' => ['required', 'regex:/^[0-9]+$/'],
-            'stringEmailValue' => 'required|email',
-            'ipValue' => 'required|ip',
-            'macAddressValue' => 'required|mac_address',
-            'jsonValue' => 'required|json',
-            'sameValue' => 'required|same:other',
-            'sameStringValue' => 'required|string|same:other',
-            'unknownStringValue' => 'required|string|custom',
-            'betweenValue' => 'required|between:1,20',
-            'betweenStringValue' => 'required|string|between:1,20',
-            'betweenNumericValue' => 'required|numeric|between:1,20',
-            'stringMinimumValue' => 'required|min:1|string',
-            'arrayMinimumValue' => 'required|array|min:1',
-            'listSizeValue' => 'required|size:2|list',
-            'sizeValue' => 'required|size:2',
-            'comparisonValue' => 'required|gt:other',
-            'comparisonArrayValue' => 'required|array|gte:other',
-            'numericSizeValue' => 'required|numeric|size:3',
-            'jsonIntegerValue' => 'required|integer',
-            'numericIntegerValue' => ['required', Rule::numeric()->integer()],
-            'numericRawIntegerValue' => 'required|integer|numeric',
-            'stringIntegerValue' => 'required|integer|string',
-            'numericDigitsValue' => ['required', Rule::numeric()->digits(1)],
-            'integerMinimumValue' => 'required|integer|min:1',
-            'integerMaximumValue' => 'required|integer|max:50',
-            'integerLimitValue' => 'required|integer|min:1|max:50',
-            'integerBetweenValue' => 'required|integer|between:1,20',
-            'integerRepeatedBoundsValue' => 'required|min:10|between:5,15|max:20|integer',
-            'integerSizeValue' => 'required|integer|size:3',
-            'malformedMinimumValue' => 'required|integer|min:',
-            'negativeMinimumValue' => 'required|integer|min:-5|max:5',
-            'invalidBoundsValue' => 'required|integer|min:20|max:1',
-            'boundedInValue' => 'required|integer|in:0,1|min:0|max:1',
-            'regexLengthValue' => ['required', 'regex:/^[0-9]+$/', 'max:2'],
-            'digitsLengthValue' => 'required|digits:2|max:2',
-            'listBoundsFirst' => 'required|min:1|in:known,new|list',
-            'listBoundsLast' => 'required|list|in:known,new|min:1',
-            'quotedInValue' => 'required|string|in:"foo,bar",baz',
-            'numericInValue' => 'required|numeric|in:1,2',
-            'numericObjectInValue' => ['required', 'numeric', Rule::in([1, 2])],
-            'booleanInValue' => 'required|boolean|in:0,1',
-            'mixedNumericInValue' => 'required|in:1',
-            'mixedEmptyInValue' => 'present|in:""',
-            'stringNumericInValue' => 'required|string|in:1,2',
-            'stringMixedInValue' => 'required|string|in:1,draft',
-            'textInValue' => 'required|in:date,rating',
-            'acceptedValue' => 'accepted',
-            'declinedValue' => 'declined',
-            'nullableAcceptedValue' => 'nullable|accepted',
-            'nullableDeclinedValue' => 'declined|nullable',
-            'sometimesAcceptedValue' => 'sometimes|nullable|accepted',
-            'excludedAcceptedValue' => 'exclude_if:other,value|accepted',
-            'consents' => 'required|array',
-            'consents.terms' => 'nullable|accepted',
-            'dateValue' => ['required', Rule::date()],
-            'formattedDate' => ['required', Rule::date()->format('Y-m-d')],
-            'emailValue' => ['required', Rule::email()],
-            'dimensionsValue' => ['required', Rule::dimensions()->maxWidth(1920)],
-            'fileValue' => ['required', Rule::file()],
-            'imageValue' => ['required', Rule::imageFile()],
-            'passwordValue' => ['required', Password::min(8)->letters()->numbers()],
-        ];
-    }
-}
 
 /** @param array{'draft'}|'published' $arrayOrString */
 function test(mixed $mixed, array|string $arrayOrString, AdditionalRulesRequest $request): void
@@ -132,9 +21,9 @@ function test(mixed $mixed, array|string $arrayOrString, AdditionalRulesRequest 
 
     assertType("Illuminate\\Validation\\Rules\\In<array{1, 1.5, true, false, null, 'foo'}>", Rule::in([1, 1.5, true, false, null, 'foo']));
     assertType("Illuminate\\Validation\\Rules\\ArrayRule<array{1, 1.5, true, false, null, 'foo'}>", Rule::array([1, 1.5, true, false, null, 'foo']));
-    assertType('Illuminate\\Validation\\Rules\\In<array{ValidationRules\\UnitEnumeration::Foo, ValidationRules\\StringableValue}>', Rule::in([UnitEnumeration::Foo, new StringableValue()]));
-    assertType('Illuminate\\Validation\\Rules\\ArrayRule<array{ValidationRules\\UnitEnumeration::Foo, ValidationRules\\StringableValue}>', Rule::array([UnitEnumeration::Foo, new StringableValue()]));
-    assertType('Illuminate\\Validation\\Rules\\In<array{ValidationRules\\UnitEnumeration::Foo}>', Rule::in(UnitEnumeration::Foo));
+    assertType('Illuminate\\Validation\\Rules\\In<array{App\\Casts\\UnitEnumeration::Foo, App\\ValueObjects\\StringableValue}>', Rule::in([UnitEnumeration::Foo, new StringableValue()]));
+    assertType('Illuminate\\Validation\\Rules\\ArrayRule<array{App\\Casts\\UnitEnumeration::Foo, App\\ValueObjects\\StringableValue}>', Rule::array([UnitEnumeration::Foo, new StringableValue()]));
+    assertType('Illuminate\\Validation\\Rules\\In<array{App\\Casts\\UnitEnumeration::Foo}>', Rule::in(UnitEnumeration::Foo));
     assertType('Illuminate\\Validation\\Rules\\In<array{1, mixed}>', Rule::in([1, $mixed]));
     assertType('Illuminate\\Validation\\Rules\\ArrayRule<array{1, mixed}>', Rule::array([1, $mixed]));
     assertType('Illuminate\\Validation\\Rules\\In<array>', Rule::in($arrayOrString));
@@ -145,7 +34,7 @@ function test(mixed $mixed, array|string $arrayOrString, AdditionalRulesRequest 
     assertType('Illuminate\\Validation\\Rules\\ArrayRule<array{}>', Rule::array());
 
     assertType('Illuminate\\Validation\\Rules\\Enum<class-string<App\\Casts\\BackedEnumeration>>', Rule::enum(BackedEnumeration::class));
-    assertType('Illuminate\\Validation\\Rules\\Enum<class-string<ValidationRules\\UnitEnumeration>>', Rule::enum(UnitEnumeration::class));
+    assertType('Illuminate\\Validation\\Rules\\Enum<class-string<App\\Casts\\UnitEnumeration>>', Rule::enum(UnitEnumeration::class));
 
     assertType('Illuminate\\Validation\\Rules\\Numeric<float|int|numeric-string>', Rule::numeric());
     assertType('Illuminate\\Validation\\Rules\\Numeric<float|int|numeric-string>', Rule::numeric()->digits(3));

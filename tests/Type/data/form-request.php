@@ -4,101 +4,24 @@ declare(strict_types=1);
 
 namespace FormRequest;
 
+use App\Http\Requests\AInheritedApiRequest;
+use App\Http\Requests\AOverriddenApiRequest;
 use App\Http\Requests\FooRequest;
+use App\Http\Requests\OverriddenSafeRequest;
+use App\Http\Requests\OverriddenValidatedRequest;
 use App\Http\Requests\RequestPriority;
 use App\Http\Requests\RequestStatus;
+use App\Http\Requests\SafeReturnRequest;
+use App\Http\Requests\SelectorRequest;
+use App\Http\Requests\VariableRulesRequest;
+use App\Http\Requests\ZAnnotatedApiRequest;
+use App\Http\Requests\ZInheritedApiRequest;
+use App\Http\Requests\ZOverriddenApiRequest;
+use App\ValueObjects\InvokableDefault;
 use Closure;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 use function PHPStan\Testing\assertType;
-
-const GLOBAL_RULE = 'integer';
-
-class VariableRulesRequest extends FormRequest
-{
-    private const MAX = 20;
-
-    private const RULE = 'string';
-
-    public function rules(): array
-    {
-        $localRule = 'integer';
-
-        $rules = [
-            'title' => 'required|' . self::RULE,
-            'quantity' => ['required', $localRule],
-            'maximum' => ['required', 'integer', 'max:' . self::MAX],
-            'global' => 'required|' . GLOBAL_RULE,
-        ];
-
-        return $rules;
-    }
-}
-
-class ConditionalRulesRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        $condition = config('app.rule.condition');
-
-        return [
-            'possiblyExcluded' => 'exclude_if:kind,skip|integer',
-            'conditionallyAccepted' => 'accepted_if:kind,accept',
-            'conditionallyDeclined' => 'declined_if:kind,decline',
-            'whenValue' => ['required', Rule::when($condition, 'array', 'string')],
-            'unlessValue' => [
-                'required',
-                Rule::unless($condition, static fn (): string => 'array', static fn (): string => 'string'),
-            ],
-            'exactWhenValue' => [
-                'required',
-                Rule::when(defaultRules: 'array', rules: 'string', condition: true),
-            ],
-            'conditionallyExcluded' => ['required', Rule::when($condition, 'exclude', 'string')],
-            'alwaysRequired' => [Rule::requiredIf(true), 'string'],
-            'alwaysRequiredNullable' => ['nullable', Rule::requiredIf(true), 'string'],
-            'conditionalRequiredNullable' => ['nullable', Rule::when(true, 'required|string')],
-            'maybeRequired' => [Rule::requiredIf(static fn (): bool => true), 'string'],
-            'neverExcluded' => ['required', Rule::excludeIf(false), 'string'],
-            'maybeExcluded' => ['required', Rule::excludeIf(static fn (): bool => false), 'string'],
-            'alwaysExcluded' => ['required', Rule::excludeIf(true), 'string'],
-        ];
-    }
-}
-
-class SafeReturnRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        return [
-            'name' => 'required|string',
-            'nickname' => 'string',
-            'profile.email' => 'required|string',
-            'profile.age' => 'integer',
-            'excluded' => 'exclude',
-            'unknown' => 'required',
-        ];
-    }
-}
-
-class OverriddenSafeRequest extends SafeReturnRequest
-{
-    /** @return array{custom: string} */
-    public function safe(?array $keys = null): array
-    {
-        return ['custom' => 'value'];
-    }
-}
-
-class OverriddenValidatedRequest extends SafeReturnRequest
-{
-    /** @return array{custom: string} */
-    public function validated($key = null, $default = null): array
-    {
-        return ['custom' => 'value'];
-    }
-}
 
 /**
  * @param 'name'|'nickname' $validatedKey
@@ -108,7 +31,6 @@ function test(
     FormRequest $request,
     FooRequest $fooRequest,
     VariableRulesRequest $variableRulesRequest,
-    ConditionalRulesRequest $conditionalRulesRequest,
     SafeReturnRequest $safeReturnRequest,
     OverriddenSafeRequest $overriddenSafeRequest,
     OverriddenValidatedRequest $overriddenValidatedRequest,
@@ -205,20 +127,20 @@ function test(
     assertType('float|int|numeric-string', $variableRulesRequest->quantity);
     assertType('float|int<min, 20>|numeric-string', $variableRulesRequest->maximum);
     assertType('float|int|numeric-string', $variableRulesRequest->global);
-    assertType('mixed', $conditionalRulesRequest->possiblyExcluded);
-    assertType('mixed', $conditionalRulesRequest->conditionallyAccepted);
-    assertType('mixed', $conditionalRulesRequest->conditionallyDeclined);
-    assertType('array|non-empty-string', $conditionalRulesRequest->whenValue);
-    assertType('array|non-empty-string', $conditionalRulesRequest->unlessValue);
-    assertType('non-empty-string', $conditionalRulesRequest->exactWhenValue);
-    assertType('mixed', $conditionalRulesRequest->conditionallyExcluded);
-    assertType('non-empty-string', $conditionalRulesRequest->alwaysRequired);
-    assertType('non-empty-string', $conditionalRulesRequest->alwaysRequiredNullable);
-    assertType('non-empty-string', $conditionalRulesRequest->conditionalRequiredNullable);
-    assertType('string|null', $conditionalRulesRequest->maybeRequired);
-    assertType('non-empty-string', $conditionalRulesRequest->neverExcluded);
-    assertType('mixed', $conditionalRulesRequest->maybeExcluded);
-    assertType('mixed', $conditionalRulesRequest->alwaysExcluded);
+    assertType('mixed', $fooRequest->possiblyExcluded);
+    assertType('mixed', $fooRequest->conditionallyAccepted);
+    assertType('mixed', $fooRequest->conditionallyDeclined);
+    assertType('array|non-empty-string', $fooRequest->whenValue);
+    assertType('array|non-empty-string', $fooRequest->unlessValue);
+    assertType('non-empty-string', $fooRequest->exactWhenValue);
+    assertType('mixed', $fooRequest->conditionallyExcluded);
+    assertType('non-empty-string', $fooRequest->alwaysRequired);
+    assertType('non-empty-string', $fooRequest->alwaysRequiredNullable);
+    assertType('non-empty-string', $fooRequest->conditionalRequiredNullable);
+    assertType('string|null', $fooRequest->maybeRequired);
+    assertType('non-empty-string', $fooRequest->neverExcluded);
+    assertType('mixed', $fooRequest->maybeExcluded);
+    assertType('mixed', $fooRequest->alwaysExcluded);
     assertType("'draft'|'published'", $fooRequest->state);
     assertType("'draft'|'published'", $fooRequest->status);
     assertType("'draft'|'published'", $fooRequest->stringStatus);
@@ -255,55 +177,6 @@ function test(
     assertType('string|null', $fooRequest->reversedExtension);
 }
 
-class AInheritedApiRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        return ['name' => 'required|string'];
-    }
-}
-
-class ZOverriddenApiRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        return ['wrong' => 'required|integer'];
-    }
-
-    /** @return array{custom: bool} */
-    public function validated($key = null, $default = null): array
-    {
-        return ['custom' => true];
-    }
-
-    /** @return array{custom: bool} */
-    public function safe(?array $keys = null): array
-    {
-        return ['custom' => true];
-    }
-}
-
-// Renaming the subclasses reverses PHPStan's normalized union order.
-class AOverriddenApiRequest extends ZOverriddenApiRequest
-{
-}
-
-class ZInheritedApiRequest extends AInheritedApiRequest
-{
-}
-
-/**
- * @method array{documented: bool} validated($key = null, $default = null)
- * @method array{documented: bool} safe(?array $keys = null)
- */
-class ZAnnotatedApiRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        return ['wrong' => 'required|integer'];
-    }
-}
-
 function testMethodOwnership(
     AInheritedApiRequest|ZOverriddenApiRequest $inheritedFirst,
     AOverriddenApiRequest|ZInheritedApiRequest $overriddenFirst,
@@ -331,26 +204,18 @@ function testMethodOwnership(
     );
 }
 
-class InvokableDefault
-{
-    public function __invoke(): int
-    {
-        return 42;
-    }
-}
-
 /** @param (Closure(): 'fallback')|'time'|InvokableDefault $default */
 function testValidatedDefaults(SafeReturnRequest $request, Closure|string|InvokableDefault $default): void
 {
     assertType('string', $request->validated('nickname', 'time'));
     assertType("'time'", $request->validated('missing', 'time'));
-    assertType('FormRequest\\InvokableDefault', $request->validated('missing', new InvokableDefault()));
-    assertType("array{FormRequest\\InvokableDefault, '__invoke'}", $request->validated('missing', [new InvokableDefault(), '__invoke']));
+    assertType('App\\ValueObjects\\InvokableDefault', $request->validated('missing', new InvokableDefault()));
+    assertType("array{App\\ValueObjects\\InvokableDefault, '__invoke'}", $request->validated('missing', [new InvokableDefault(), '__invoke']));
     assertType('array{callback: static-Closure(): 42}', $request->validated('missing', ['callback' => static fn (): int => 42]));
     assertType('42', $request->validated('missing', static fn (): int => 42));
     assertType('int', $request->validated('missing', (new InvokableDefault())(...)));
     assertType('static-Closure(): 42', $request->validated('missing', static fn (): Closure => static fn (): int => 42));
-    assertType("'fallback'|'time'|FormRequest\\InvokableDefault", $request->validated('missing', $default));
+    assertType("'fallback'|'time'|App\\ValueObjects\\InvokableDefault", $request->validated('missing', $default));
 }
 
 /** @param callable(): int $default */
@@ -361,23 +226,9 @@ function testUncertainClosureDefaults(SafeReturnRequest $request, callable $defa
     assertType('non-empty-string', $request->validated('name', $default));
 }
 
-class SelectorApiRequest extends FormRequest
-{
-    public function rules(): array
-    {
-        return [
-            'profile.first' => 'required|string',
-            'profile.last' => 'required|string',
-            'literal{first}name' => 'required|string',
-            'profile.{first}' => 'required|string',
-            'profile.{last}' => 'required|string',
-        ];
-    }
-}
-
 /** @param list<string>|null $maybeKeys */
 function testSafeSelectorsAndNull(
-    SelectorApiRequest $request,
+    SelectorRequest $request,
     AInheritedApiRequest $inherited,
     null $nullKeys,
     array|null $maybeKeys,
