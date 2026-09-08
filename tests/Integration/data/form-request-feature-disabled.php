@@ -38,6 +38,10 @@ function test(DisabledRequest $request): void
     assertType('mixed', $request->validated('name'));
     assertType('Illuminate\\Support\\ValidatedInput', $request->safe());
     assertType('array{name: mixed}', $request->safe(['name']));
+    assertType('mixed', $request->input('name'));
+    assertType('int', $request->integer('name'));
+    assertType('bool', $request->boolean('name'));
+    assertType('mixed', $request->safe()->input('name'));
     assertType('Illuminate\\Validation\\Rules\\In', Rule::in(['disabled']));
     assertType('Illuminate\\Validation\\Rules\\ArrayRule', Rule::array(['name']));
 

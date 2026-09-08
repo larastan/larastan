@@ -113,6 +113,12 @@ final class RuleTree
         return $this->keyedShape(self::VALIDATED);
     }
 
+    /** The request input as one array, with absent-capable attributes as optional keys. */
+    public function inputData(): Type
+    {
+        return $this->keyedShape(self::INPUT);
+    }
+
     private function type(string $view): Type
     {
         $rule = $this->rule;

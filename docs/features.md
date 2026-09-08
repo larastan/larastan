@@ -265,8 +265,10 @@ validation-rule pairs.
 After validation succeeds, Larastan uses `rules()` as the source of truth for:
 
 - magic properties such as `$request->name`;
+- the values returned by `input()`, `integer()`, and `boolean()`;
 - the full array and exact keyed values returned by `validated()`; and
-- the generic `ValidatedInput` or selected array returned by `safe()`.
+- the generic `ValidatedInput` or selected array returned by `safe()`, together
+  with its own `input()`, `integer()`, and `boolean()` methods.
 
 For example, these rules:
 
@@ -283,12 +285,15 @@ public function rules(): array
 produce the following types:
 
 ```php
-$request->name;              // non-empty-string
-$request->age;               // float|int|numeric-string|null
-$request->validated();       // array{name: non-empty-string, age?: float|int|numeric-string}
-$request->validated('age');  // float|int|numeric-string|null
-$request->safe();            // ValidatedInput<array{name: non-empty-string, age?: float|int|numeric-string}>
-$request->safe(['name']);    // array{name: non-empty-string}
+$request->name;                    // non-empty-string
+$request->age;                     // float|int|numeric-string|null
+$request->input('age');            // float|int|numeric-string|null
+$request->integer('age');          // int
+$request->validated();             // array{name: non-empty-string, age?: float|int|numeric-string}
+$request->validated('age');        // float|int|numeric-string|null
+$request->safe();                  // ValidatedInput<array{name: non-empty-string, age?: float|int|numeric-string}>
+$request->safe(['name']);          // array{name: non-empty-string}
+$request->safe()->input('name');   // non-empty-string
 ```
 
 Magic properties describe the original request input after validation.
@@ -339,8 +344,20 @@ declared return type. `validated()` supports exact integer or string keys,
 including dotted strings, together with default values. `safe()` supports no
 argument, explicit `null`, or an exact array of string keys, including dotted
 strings. Dynamic or unsupported key expressions keep Laravel's existing broad
-return type. Methods, properties, and array offsets on the returned
-`ValidatedInput` are not refined further.
+return type. Other methods, properties, and array offsets on the returned
+`ValidatedInput` are not refined.
+
+`input()`, `integer()`, and `boolean()` follow the same rules as magic
+properties on the request and as `validated()` on a `ValidatedInput`. They
+support exact keys, including dotted strings, plus default values. `input()`
+without a key returns the whole input array. `integer()` applies the `(int)`
+cast, so `integer|between:1,5` infers `int<1, 5>` and an absent optional field
+contributes the cast default. `boolean()` follows `filter_var()`: a field with
+an unconditional `accepted` rule infers `true`, `declined` infers `false`, and
+`boolean` stays `bool`. Because uploaded files are not part of `input()`,
+fields that may hold an uploaded file keep Laravel's declared return type on
+the request. As with magic properties, these calls stay unrefined on `$this`
+before validation runs.
 
 A Closure default contributes its return type; other known defaults retain
 their own types. Defaults typed only as `callable` or `object` stay `mixed`,

@@ -60,7 +60,7 @@ function test(
     assertType('array{}', $safeReturnRequest->safe(['missing']));
     assertType('array<string, mixed>', $safeReturnRequest->safe(['unknown.child']));
     assertType('array', $safeReturnRequest->safe()->all());
-    assertType('mixed', $safeReturnRequest->safe()->input('name'));
+    assertType('non-empty-string', $safeReturnRequest->safe()->input('name'));
     assertType('mixed', $safeReturnRequest->safe()['name']);
     assertType('array{custom: string}', $overriddenSafeRequest->safe());
 

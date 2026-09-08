@@ -28,9 +28,13 @@ class ExactRulesRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         assertType('mixed', $this->exact);
+        assertType('mixed', $this->input('exact'));
+        assertType('int', $this->integer('exact'));
+        assertType('bool', $this->boolean('exact'));
 
         $alias = $this;
         assertType('mixed', $alias->exact);
+        assertType('mixed', $alias->input('exact'));
 
         if (is_string($alias->exact)) {
             assertType('string', $alias->exact);
@@ -52,6 +56,7 @@ class ExactRulesRequest extends FormRequest
 
         (function (): void {
             assertType('mixed', $this->exact);
+            assertType('mixed', $this->input('exact'));
         })();
     }
 
@@ -72,9 +77,12 @@ class ExactRulesRequest extends FormRequest
     protected function passedValidation(): void
     {
         assertType('non-empty-string', $this->exact);
+        assertType('non-empty-string', $this->input('exact'));
+        assertType('bool', $this->boolean('exact'));
 
         (function (): void {
             assertType('non-empty-string', $this->exact);
+            assertType('non-empty-string', $this->input('exact'));
         })();
     }
 
@@ -86,6 +94,7 @@ class ExactRulesRequest extends FormRequest
     public function toDto(): string
     {
         assertType('non-empty-string', $this->exact);
+        assertType('non-empty-string', $this->input('exact'));
 
         return $this->exact;
     }

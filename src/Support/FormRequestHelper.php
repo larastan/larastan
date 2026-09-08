@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Support;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Request;
 use Larastan\Larastan\Support\Validation\RuleTree;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
@@ -24,6 +25,9 @@ final class FormRequestHelper
 
     /** @var array<class-string<FormRequest>, Type> */
     private array $validatedData = [];
+
+    /** @var array<class-string<FormRequest>, Type> */
+    private array $inputData = [];
 
     /** @var array<class-string<FormRequest>, true> */
     private array $resolving = [];
@@ -85,6 +89,40 @@ final class FormRequestHelper
         return TypeCombinator::union(...$types);
     }
 
+    /**
+     * The request input of each class the receiver may be, when $methodName is Laravel's own accessor on all of them.
+     *
+     * @return list<Type>|null
+     */
+    public function getInputDataTypes(Type $formRequestType, string $methodName, Scope $scope): array|null
+    {
+        $classReflections = $formRequestType->getObjectClassReflections();
+        $types            = [];
+
+        if ($classReflections === []) {
+            return null;
+        }
+
+        foreach ($classReflections as $classReflection) {
+            if (
+                ! $classReflection->is(FormRequest::class)
+                || $classReflection->getMethod($methodName, $scope)->getDeclaringClass()->getName() !== Request::class
+            ) {
+                return null;
+            }
+
+            $type = $this->getInputDataTypeForClass($classReflection);
+
+            if ($type === null) {
+                return null;
+            }
+
+            $types[] = $type;
+        }
+
+        return $types;
+    }
+
     private function getValidatedDataTypeForClass(ClassReflection $classReflection): Type|null
     {
         /** @var class-string<FormRequest> $className */
@@ -105,6 +143,28 @@ final class FormRequestHelper
         }
 
         return $this->validatedData[$className];
+    }
+
+    private function getInputDataTypeForClass(ClassReflection $classReflection): Type|null
+    {
+        /** @var class-string<FormRequest> $className */
+        $className = $classReflection->getName();
+
+        if (array_key_exists($className, $this->resolving)) {
+            return null;
+        }
+
+        if (! array_key_exists($className, $this->inputData)) {
+            $tree = $this->getTree($classReflection);
+
+            if ($tree === null) {
+                return null;
+            }
+
+            $this->inputData[$className] = $tree->inputData();
+        }
+
+        return $this->inputData[$className];
     }
 
     private function getTree(ClassReflection $classReflection): RuleTree|null
