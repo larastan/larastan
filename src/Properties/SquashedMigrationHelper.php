@@ -75,6 +75,7 @@ final class SquashedMigrationHelper
                 }
 
                 $table = new SchemaTable($definition->name);
+
                 foreach ($definition->columns as $column) {
                     $table->setColumn(new SchemaColumn(
                         $column->name,

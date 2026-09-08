@@ -84,6 +84,7 @@ final class EloquentBuilderExtension implements DynamicMethodReturnTypeExtension
         $templateTypeMap = $methodReflection->getDeclaringClass()->getActiveTemplateTypeMap();
 
         $modelType = $templateTypeMap->getType('TModel');
+
         if ($modelType === null) {
             return null;
         }

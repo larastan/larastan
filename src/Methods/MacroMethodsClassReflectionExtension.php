@@ -88,6 +88,7 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
                     if (str_contains($macroDefinition, '::')) {
                         $macroDefinition = explode('::', $macroDefinition, 2);
                         $macroClassName  = $macroDefinition[0];
+
                         if (! $this->reflectionProvider->hasClass($macroClassName) || ! $this->reflectionProvider->getClass($macroClassName)->hasNativeMethod($macroDefinition[1])) {
                             throw new ShouldNotHappenException('Class ' . $macroClassName . ' does not exist');
                         }

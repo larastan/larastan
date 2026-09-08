@@ -86,6 +86,7 @@ class CollectionFilterRejectDynamicReturnTypeExtension implements DynamicMethodR
 
         if ($callbackArg instanceof Closure && count($callbackArg->stmts) === 1 && count($callbackArg->params) > 0) {
             $statement = $callbackArg->stmts[0];
+
             if ($statement instanceof Return_ && $statement->expr !== null) {
                 $var  = $callbackArg->params[0]->var;
                 $expr = $statement->expr;

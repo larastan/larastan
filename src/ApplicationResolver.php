@@ -61,6 +61,7 @@ final class ApplicationResolver
     {
         /** @var non-empty-string $workingPath */
         $workingPath = getcwd();
+
         if (! defined('TESTBENCH_WORKING_PATH')) {
             define('TESTBENCH_WORKING_PATH', $workingPath);
         }

@@ -160,6 +160,7 @@ final class ConfigParser
                     }
 
                     $itemKey = (string) $item->key->value;
+
                     if ($itemKey !== $configKeyPart) {
                         continue;
                     }

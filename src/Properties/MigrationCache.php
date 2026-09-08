@@ -64,17 +64,20 @@ final class MigrationCache
         $cachePath   = $this->getCachePath($fingerprint);
 
         $cached = file_exists($cachePath) ? $this->readFromCache($cachePath) : null;
+
         if ($cached !== null) {
             return $cached;
         }
 
         $lockHandle = $this->acquireExclusiveLock();
+
         if ($lockHandle === false) {
             return $callback();
         }
 
         try {
             $cached = file_exists($cachePath) ? $this->readFromCache($cachePath) : null;
+
             if ($cached !== null) {
                 return $cached;
             }

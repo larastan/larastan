@@ -27,25 +27,31 @@ final class IamcalSqlParser implements SqlParser
         }
 
         $tables = [];
+
         foreach ($tableDefinitions as $definition) {
             $tableName = $definition['name'] ?? null;
+
             if (! is_string($tableName)) {
                 continue;
             }
 
             $fields = $definition['fields'] ?? null;
+
             if (! is_array($fields)) {
                 continue;
             }
 
             $columns = [];
+
             foreach ($fields as $field) {
                 $fieldName = $field['name'] ?? null;
+
                 if (! is_string($fieldName)) {
                     continue;
                 }
 
                 $fieldType = $field['type'] ?? null;
+
                 if (! is_string($fieldType)) {
                     continue;
                 }

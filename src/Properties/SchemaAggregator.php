@@ -245,11 +245,13 @@ final class SchemaAggregator
                 }
 
                 $columnName = Str::snake(class_basename($modelClass)) . '_id';
+
                 if ($secondArg instanceof PhpParser\Node\Scalar\String_) {
                     $columnName = $secondArg->value;
                 }
 
                 $type = $this->getModelReferenceType($modelClass);
+
                 if ($unsigned && ($type === null || $type === 'int')) {
                     $type = 'non-negative-int';
                 }
@@ -306,6 +308,7 @@ final class SchemaAggregator
                     'ipAddress' => 'ip_address',
                     'macAddress' => 'mac_address',
                 ];
+
                 if (! array_key_exists($firstMethodCall->name->name, $defaultsMap)) {
                     continue;
                 }
@@ -411,6 +414,7 @@ final class SchemaAggregator
     private function getModelReferenceType(string $modelClass): string|null
     {
         $classReflection = $this->reflectionProvider->getClass($modelClass);
+
         try {
             $modelInstance = ModelHelper::newInstanceWithoutConstructor($classReflection);
         } catch (ReflectionException) {

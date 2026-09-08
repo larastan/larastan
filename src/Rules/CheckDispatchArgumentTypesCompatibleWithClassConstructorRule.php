@@ -91,6 +91,7 @@ class CheckDispatchArgumentTypesCompatibleWithClassConstructorRule implements Ru
             }
 
             $firstArgType = $scope->getType($node->getArgs()[0]->value);
+
             if (! $firstArgType->isBoolean()->yes()) {
                 return []; // Handled by other rules
             }

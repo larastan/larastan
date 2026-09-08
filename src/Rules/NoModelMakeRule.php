@@ -71,6 +71,7 @@ class NoModelMakeRule implements Rule
     protected function isCalledOnModel(StaticCall $call, Scope $scope): bool
     {
         $class = $call->class;
+
         if ($class instanceof FullyQualified) {
             $type = new ObjectType($class->toString());
         } elseif ($class instanceof Expr) {

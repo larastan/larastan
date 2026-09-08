@@ -46,6 +46,7 @@ class GenericEloquentCollectionTypeNodeResolverExtension implements TypeNodeReso
 
         $arrayTypeNode      = null;
         $identifierTypeNode = null;
+
         foreach ($typeNode->types as $innerTypeNode) {
             if ($innerTypeNode instanceof ArrayTypeNode) {
                 $arrayTypeNode = $innerTypeNode;
@@ -64,11 +65,13 @@ class GenericEloquentCollectionTypeNodeResolverExtension implements TypeNodeReso
         }
 
         $identifierTypeName = $nameScope->resolveStringName($identifierTypeNode->name);
+
         if ($identifierTypeName !== Collection::class) {
             return null;
         }
 
         $innerArrayTypeNode = $arrayTypeNode->type;
+
         if (! $innerArrayTypeNode instanceof IdentifierTypeNode) {
             return null;
         }

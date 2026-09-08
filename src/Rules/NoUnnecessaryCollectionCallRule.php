@@ -188,6 +188,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
             // 'contains' can also be called with Model instances or keys as its first argument
             /** @var Arg[] $args */
             $args = $node->args;
+
             if (count($args) === 1 && ! ($args[0]->value instanceof Node\FunctionLike)) {
                 return [$this->formatError($name->toString())];
             }
@@ -207,6 +208,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
     {
         /** @var Arg[] $args */
         $args = $node->args;
+
         if (count($args) === 0 || ! ($args[0]->value instanceof Node\Scalar\String_)) {
             return false;
         }
@@ -227,8 +229,10 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
         if ((new ObjectType(stdClass::class))->isSuperTypeOf($iterableType)->yes()) {
             $previousCall = $node->var;
+
             if ($previousCall instanceof MethodCall) {
                 $queryBuilderType = $scope->getType($previousCall->var);
+
                 if ((new ObjectType(QueryBuilder::class))->isSuperTypeOf($queryBuilderType)->yes()) {
                     // We encountered a DB query such as DB::table(..)->get()->max('id')
                     // We assume max('id') could have been retrieved without calling get().
@@ -272,6 +276,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
 
         if ($call instanceof Node\Expr\StaticCall) {
             $class = $call->class;
+
             if ($class instanceof Node\Name) {
                 $modelClassName = $class->toCodeString();
 

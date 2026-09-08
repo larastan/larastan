@@ -69,6 +69,7 @@ final class UnusedViewsRule implements Rule
         $unusedViews = array_unique(array_diff($allViews, $usedViews));
 
         $errors = [];
+
         foreach ($unusedViews as $file) {
             $path = $finder->find($file);
 

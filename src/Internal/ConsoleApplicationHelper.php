@@ -77,6 +77,7 @@ final class ConsoleApplicationHelper
             try {
                 $options = $command->getDefinition()->getOptions();
                 $builder = ConstantArrayTypeBuilder::createEmpty();
+
                 foreach ($options as $name => $option) {
                     $argumentType = $this->getOptionType($scope, $option);
                     $builder->setOffsetValueType(new ConstantStringType($name), $argumentType);

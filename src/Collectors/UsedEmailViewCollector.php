@@ -44,6 +44,7 @@ final class UsedEmailViewCollector implements Collector
         $class = $node->var;
 
         $type = $scope->getType($class);
+
         if (
             ! (new ObjectType(Mailable::class))->isSuperTypeOf($type)->yes()
             && ! (new ObjectType(MailMessage::class))->isSuperTypeOf($type)->yes()

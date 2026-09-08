@@ -123,6 +123,7 @@ class RecursiveDirectoryIteratorTest extends TestCase
         $iterator = new RecursiveDirectoryIterator($this->directory);
 
         $children = null;
+
         for ($iterator->rewind(); $iterator->valid(); $iterator->next()) {
             if (! $iterator->hasChildren()) {
                 continue;

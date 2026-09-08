@@ -175,6 +175,7 @@ class BuilderHelper
             if ($reflection->hasNativeMethod($methodName)) {
                 $methodReflection  = $reflection->getNativeMethod($methodName);
                 $hasScopeAttribute = false;
+
                 foreach ($methodReflection->getAttributes() as $attribute) {
                     // using string instead of class constant to avoid failing on older Laravel versions
                     if ($attribute->getName() === 'Illuminate\Database\Eloquent\Attributes\Scope') {
@@ -208,6 +209,7 @@ class BuilderHelper
                 $methodTag = $reflection->getMethodTags()[$scopeName];
 
                 $parameters = [];
+
                 foreach ($methodTag->getParameters() as $parameterName => $parameterTag) {
                     $parameters[] = new AnnotationScopeMethodParameterReflection(
                         $parameterName,

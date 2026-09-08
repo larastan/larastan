@@ -28,6 +28,7 @@ class MigrationCacheTest extends TestCase
     protected function setUp(): void
     {
         $this->cacheDir = sys_get_temp_dir() . '/larastan_tests_' . uniqid();
+
         if (! is_dir($this->cacheDir)) {
             mkdir($this->cacheDir);
         }

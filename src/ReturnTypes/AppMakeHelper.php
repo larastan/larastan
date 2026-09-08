@@ -25,6 +25,7 @@ final class AppMakeHelper
     public function resolveTypeFromCall(FuncCall|MethodCall|StaticCall $call, Scope $scope): Type
     {
         $args = $call->getArgs();
+
         if (count($args) === 0) {
             return new ErrorType();
         }
@@ -35,6 +36,7 @@ final class AppMakeHelper
 
         if (count($constantStrings) > 0) {
             $types = [];
+
             foreach ($constantStrings as $constantString) {
                 try {
                     /** @var object|null $resolved */

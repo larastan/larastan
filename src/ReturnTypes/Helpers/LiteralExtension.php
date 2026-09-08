@@ -43,8 +43,10 @@ class LiteralExtension implements DynamicFunctionReturnTypeExtension
                 if ($args[0]->unpack === true) {
                     if ($argType instanceof UnionType) {
                         $subTypes = [];
+
                         foreach ($argType->getTypes() as $innerType) {
                             $constantArrays = $innerType->getConstantArrays();
+
                             if ($constantArrays) {
                                 $subTypes[] = $this->getTypeFromConstantArray($constantArrays[0]);
                             } else {
@@ -71,6 +73,7 @@ class LiteralExtension implements DynamicFunctionReturnTypeExtension
         }
 
         $properties = [];
+
         foreach ($args as $index => $argExpression) {
             $nameOfParam = $argExpression->getAttributes()['originalArg']->name->name ?? null;
 

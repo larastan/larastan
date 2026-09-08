@@ -25,6 +25,14 @@
       <exclude name="SlevomatCodingStandard.PHP.RequireExplicitAssertion"/>
     </rule>
 
+    <rule ref="SlevomatCodingStandard.ControlStructures.BlockControlStructureSpacing.IncorrectLinesCountBeforeControlStructure">
+        <severity>5</severity>
+    </rule>
+
+    <rule ref="SlevomatCodingStandard.ControlStructures.BlockControlStructureSpacing.IncorrectLinesCountBeforeFirstControlStructure">
+        <severity>5</severity>
+    </rule>
+
     <rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
       <exclude-pattern>tests/*</exclude-pattern>
     </rule>
@@ -60,4 +68,3 @@
         </properties>
     </rule>
 </ruleset>
-
