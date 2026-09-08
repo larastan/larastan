@@ -95,12 +95,6 @@ final readonly class ValidationRule
         return ! $this->type->isArray()->yes() && ! $this->type->equals(new MixedType());
     }
 
-    /** One of the rule's alternatives still permits an array value. */
-    public function mayBeContainer(): bool
-    {
-        return $this->anyOfRuleGroups !== [] && ! $this->resolveType()->isArray()->no();
-    }
-
     public function equals(self $other): bool
     {
         return $this->type->equals($other->type)

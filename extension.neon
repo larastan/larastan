@@ -604,9 +604,6 @@ services:
         class: Larastan\Larastan\Rules\FormRequestValidationRulePairsRule
 
     -
-        class: Larastan\Larastan\Support\Validation\RuleTreeTypeResolver
-
-    -
         class: Larastan\Larastan\Properties\MigrationCache
         arguments:
             cacheDirectory: %tmpDir%

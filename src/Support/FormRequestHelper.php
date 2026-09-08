@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Support;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Larastan\Larastan\Support\Validation\RuleTreeBuilder;
-use Larastan\Larastan\Support\Validation\RuleTreeTypeResolver;
+use Larastan\Larastan\Support\Validation\RuleTree;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\Type;
@@ -14,11 +13,7 @@ use PHPStan\Type\TypeCombinator;
 
 use function array_key_exists;
 
-/**
- * @internal
- *
- * @phpstan-import-type RuleTree from RuleTreeBuilder
- */
+/** @internal */
 final class FormRequestHelper
 {
     /** @var array<class-string<FormRequest>, RuleTree|null> */
@@ -33,10 +28,8 @@ final class FormRequestHelper
     /** @var array<class-string<FormRequest>, true> */
     private array $resolving = [];
 
-    public function __construct(
-        private RuleTreeTypeResolver $treeTypeResolver,
-        private FormRequestRuleExtractor $ruleExtractor,
-    ) {
+    public function __construct(private FormRequestRuleExtractor $ruleExtractor)
+    {
     }
 
     public function hasProperty(ClassReflection $classReflection, string $propertyName): bool
@@ -49,11 +42,7 @@ final class FormRequestHelper
                 return false;
             }
 
-            $tree = $this->getTree($classReflection);
-
-            $this->rawProperties[$className] = $tree === null
-                ? []
-                : $this->treeTypeResolver->resolveRawProperties($tree['nodes']);
+            $this->rawProperties[$className] = $this->getTree($classReflection)?->inputProperties() ?? [];
         }
 
         return array_key_exists($propertyName, $this->rawProperties[$className]);
@@ -112,17 +101,13 @@ final class FormRequestHelper
                 return null;
             }
 
-            $this->validatedData[$className] = $this->treeTypeResolver->resolveValidatedData(
-                $tree['nodes'],
-                $tree['unsealed'],
-            );
+            $this->validatedData[$className] = $tree->validatedData();
         }
 
         return $this->validatedData[$className];
     }
 
-    /** @return RuleTree|null */
-    private function getTree(ClassReflection $classReflection): array|null
+    private function getTree(ClassReflection $classReflection): RuleTree|null
     {
         /** @var class-string<FormRequest> $className */
         $className = $classReflection->getName();

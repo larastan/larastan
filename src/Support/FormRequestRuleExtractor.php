@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Support;
 
+use Larastan\Larastan\Support\Validation\RuleTree;
 use Larastan\Larastan\Support\Validation\RuleTreeBuilder;
 use Larastan\Larastan\Support\Validation\ValidationRule;
 use Larastan\Larastan\Support\Validation\ValidationRuleFactory;
@@ -36,11 +37,7 @@ use function count;
 use function explode;
 use function str_contains;
 
-/**
- * @internal
- *
- * @phpstan-import-type RuleTree from RuleTreeBuilder
- */
+/** @internal */
 final class FormRequestRuleExtractor
 {
     public function __construct(
@@ -50,8 +47,7 @@ final class FormRequestRuleExtractor
     ) {
     }
 
-    /** @return RuleTree|null */
-    public function extract(ClassReflection $classReflection): array|null
+    public function extract(ClassReflection $classReflection): RuleTree|null
     {
         if (! $classReflection->hasNativeMethod('rules')) {
             return null;
@@ -120,14 +116,13 @@ final class FormRequestRuleExtractor
 
         $builder = new RuleTreeBuilder();
 
-        // The builder sees later writes first, including values unpacked from another array.
-        foreach (array_reverse($expression->items) as $item) {
+        foreach ($expression->items as $item) {
             if ($item->unpack) {
-                $builder->unpack($scope->getType($item->value));
+                $builder->spread($scope->getType($item->value));
             } elseif ($item->key === null) {
                 $builder->append();
             } else {
-                $builder->add($scope->getType($item->key), static fn (): ValidationRule => self::readRule($item->value, $scope));
+                $builder->declare($scope->getType($item->key), self::readRule($item->value, $scope));
             }
         }
 
