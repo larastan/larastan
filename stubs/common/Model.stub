@@ -4,8 +4,9 @@ namespace Illuminate\Database\Eloquent;
 
 /**
  * @implements \ArrayAccess<string, mixed>
+ * @implements \Illuminate\Contracts\Support\Arrayable<string, mixed>
  */
-abstract class Model implements \JsonSerializable, \ArrayAccess
+abstract class Model implements \ArrayAccess, \Illuminate\Contracts\Support\Arrayable, \JsonSerializable
 {
     /**
      * @var array<string, mixed>
@@ -71,6 +72,13 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
      * @return \Illuminate\Database\Eloquent\Builder<static>
      */
     public static function with($relations);
+
+    /**
+     * Convert the model instance to an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray();
 }
 
 /**
