@@ -21,9 +21,29 @@ class AbstractModel extends Model
         assertType('static(Model\AbstractModel)', static::query()->create());
         return static::query()->create();
     }
+
+    public function newQueryKeepsStatic(): void
+    {
+        assertType('Illuminate\Database\Eloquent\Builder<static(Model\AbstractModel)>', $this->newQuery());
+        assertType('Illuminate\Database\Eloquent\Builder<static(Model\AbstractModel)>', $this->newModelQuery());
+        assertType('Illuminate\Database\Eloquent\Builder<static(Model\AbstractModel)>', $this->newQueryWithoutRelationships());
+        assertType('Illuminate\Database\Eloquent\Builder<static(Model\AbstractModel)>', $this->newQueryWithoutScopes());
+        assertType('Illuminate\Database\Eloquent\Builder<static(Model\AbstractModel)>', $this->newQueryWithoutScope('foo'));
+        assertType('Illuminate\Database\Eloquent\Builder<static(Model\AbstractModel)>', $this->newQueryForRestoration([1]));
+    }
 }
 
 class Child extends AbstractModel {}
+
+final class FinalModel extends Model
+{
+    public function newQueryOnFinalModel(): void
+    {
+        // `static` and the class name are the same type here, so the plain object type stays.
+        assertType('Illuminate\Database\Eloquent\Builder<Model\FinalModel>', $this->newQuery());
+        assertType('Illuminate\Database\Eloquent\Builder<Model\FinalModel>', $this->newModelQuery());
+    }
+}
 
 class Foo
 {
