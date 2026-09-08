@@ -7,26 +7,23 @@ namespace Larastan\Larastan\ReturnTypes;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Str;
-use InvalidArgumentException;
 use Larastan\Larastan\Methods\BuilderHelper;
 use Larastan\Larastan\Support\CollectionHelper;
+use Larastan\Larastan\Types\BuilderOf\BuilderOfType;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
+use PHPStan\Type\NeverType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\ThisType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
-use function array_intersect;
-use function count;
 use function in_array;
 
 /** @internal */
@@ -70,51 +67,20 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
 
         $returnType = ParametersAcceptorSelector::selectFromArgs($scope, $methodCall->getArgs(), $method->getVariants())->getReturnType();
 
-        if (count(array_intersect([EloquentBuilder::class, QueryBuilder::class, Collection::class], $returnType->getReferencedClasses())) === 0) {
+        if ($returnType instanceof NeverType) {
             return null;
         }
 
-        if (count(array_intersect([EloquentBuilder::class], $returnType->getReferencedClasses())) > 0) {
-            if ($methodCall->class instanceof Name) {
-                $type = $scope->resolveTypeByName($methodCall->class);
+        if ((new ObjectType(EloquentBuilder::class))->isSuperTypeOf($returnType)->yes()) {
+            $modelType = $methodCall->class instanceof Name
+                ? $scope->resolveTypeByName($methodCall->class)
+                : $scope->getType($methodCall->class)->getObjectTypeOrClassStringObjectType();
 
-                if (! (new ObjectType(Model::class))->isSuperTypeOf($type)->yes()) {
-                    return null;
-                }
-
-                return $this->builderHelper->getBuilderType(
-                    $this->builderHelper->determineBuilderName($scope->resolveName($methodCall->class)),
-                    $type instanceof ThisType ? $type->getStaticObjectType() : $type,
-                );
+            if (! (new ObjectType(Model::class))->isSuperTypeOf($modelType)->yes()) {
+                return null;
             }
 
-            $type = $scope->getType($methodCall->class);
-
-            if ($type->isClassString()->yes()) {
-                $type = $type->getClassStringObjectType();
-            }
-
-            $classNames = $type->getObjectClassNames();
-
-            $types = [];
-
-            foreach ($classNames as $className) {
-                if (! $this->reflectionProvider->hasClass($className)) {
-                    continue;
-                }
-
-                try {
-                    $types[] = $this->builderHelper->getBuilderType(
-                        $this->builderHelper->determineBuilderName($className),
-                        new ObjectType($className),
-                    );
-                } catch (MissingMethodFromReflectionException | InvalidArgumentException) {
-                }
-            }
-
-            if ($types !== []) {
-                return TypeCombinator::union(...$types);
-            }
+            return new BuilderOfType($modelType instanceof ThisType ? $modelType->getStaticObjectType() : $modelType, $this->builderHelper);
         }
 
         if (in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
@@ -135,6 +101,6 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
             }
         }
 
-        return $returnType;
+        return null;
     }
 }

@@ -323,7 +323,7 @@ class BuilderHelper
         return $returnType->describe(VerbosityLevel::value());
     }
 
-    public function determineBuilderClass(string $modelClassName): Type|null
+    public function determineBuilderClass(string $modelClassName, Type $modelType): Type|null
     {
         try {
             $builderClassName = $this->determineBuilderName($modelClassName);
@@ -333,6 +333,6 @@ class BuilderHelper
             $builderClassName = EloquentBuilder::class;
         }
 
-        return $this->getBuilderType($builderClassName, new ObjectType($modelClassName));
+        return $this->getBuilderType($builderClassName, $modelType);
     }
 }

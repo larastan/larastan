@@ -14,6 +14,13 @@ use Illuminate\Support\Collection as BaseCollection;
 class Collection extends BaseCollection implements QueueableCollection
 {
     /**
+     * Get the Eloquent query builder from the collection.
+     *
+     * @return builder-of<TModel>
+     */
+    public function toQuery();
+
+    /**
      * Find a model in the collection by key.
      *
      * @template TFindDefault

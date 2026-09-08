@@ -43,6 +43,13 @@ abstract class Relation
     public function getRelationExistenceQuery(Builder $query, Builder $parentQuery, $columns = ['*']);
 
     /**
+     * Get the query builder that will contain the relationship constraints.
+     *
+     * @return builder-of<TRelatedModel>
+     */
+    protected function getRelationQuery();
+
+    /**
      * Get the underlying query for the relation.
      *
      * @return builder-of<TRelatedModel>

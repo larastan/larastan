@@ -30,14 +30,16 @@ class BuilderOfType implements CompoundType, LateResolvableType
     {
         $results = [];
 
-        foreach ($this->type->getObjectClassNames() as $className) {
-            $builderType = $this->builderHelper->determineBuilderClass($className);
+        foreach (TypeUtils::flattenTypes($this->type) as $modelType) {
+            foreach ($modelType->getObjectClassNames() as $className) {
+                $builderType = $this->builderHelper->determineBuilderClass($className, $modelType);
 
-            if ($builderType === null) {
-                continue;
+                if ($builderType === null) {
+                    continue;
+                }
+
+                $results[] = $builderType;
             }
-
-            $results[] = $builderType;
         }
 
         return TypeCombinator::union(...$results);

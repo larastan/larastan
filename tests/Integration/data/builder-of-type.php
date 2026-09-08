@@ -90,3 +90,28 @@ function testGenericBuilderHandler(GenericTest $generic): void
     $generic->acceptsAccountBuilder($accountBuilder);
     $generic->acceptsTeamBuilder($teamBuilder);
 }
+
+class StaticBuilderQueries extends \Illuminate\Database\Eloquent\Model
+{
+    /** @return builder-of<static> */
+    public function builder(): Builder
+    {
+        return $this->newQuery();
+    }
+
+    /** @return Builder<static> */
+    public function queryKeepingStatic(): Builder
+    {
+        return $this->builder();
+    }
+}
+
+/**
+ * @template TModel of \Illuminate\Database\Eloquent\Model
+ * @param TModel $model
+ * @return builder-of<TModel>
+ */
+function queryFromModel($model): Builder
+{
+    return $model->newQuery();
+}

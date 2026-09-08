@@ -132,3 +132,17 @@ function test(): void
     assertType('App\AccountCollection<int, App\Account>', (new User)->accounts->filterByActive());
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', (new User)->children->where('active', true));
 }
+
+/**
+ * @param \Illuminate\Database\Eloquent\Collection<int, \App\Post> $posts
+ * @param \Illuminate\Database\Eloquent\Collection<int, \App\Team> $teams
+ * @param \Illuminate\Database\Eloquent\Collection<int, User> $users
+ * @param \Illuminate\Database\Eloquent\Collection<int, \App\Post|\App\Team> $union
+ */
+function testToQuery($posts, $teams, $users, $union): void
+{
+    assertType('App\PostBuilder<App\Post>', $posts->toQuery());
+    assertType('App\ChildTeamBuilder', $teams->toQuery());
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $users->toQuery());
+    assertType('App\ChildTeamBuilder|App\PostBuilder<App\Post>', $union->toQuery());
+}

@@ -13,6 +13,14 @@ namespace Illuminate\Database\Eloquent\Relations;
 abstract class HasOneOrManyThrough extends Relation
 {
     /**
+     * Prepare the query builder for query execution.
+     *
+     * @param array<mixed> $columns
+     * @return builder-of<TRelatedModel>
+     */
+    protected function prepareQueryBuilder($columns = ['*']);
+
+    /**
      * Get a paginator for the "select" statement.
      *
      * @param  int|null  $perPage

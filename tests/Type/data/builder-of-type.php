@@ -35,3 +35,86 @@ function genericMethod(string $class): Builder
 {
     return $class::query();
 }
+
+class ModelWithStaticBuilder extends Model
+{
+    /** @return builder-of<static> */
+    public function builder(): Builder
+    {
+        return $this->newQuery();
+    }
+
+    /** @return builder-of<$this> */
+    public function instanceBuilder(): Builder
+    {
+        return $this->newEloquentBuilder($this->newBaseQueryBuilder())->setModel($this);
+    }
+
+    public function testStaticBuilder(): void
+    {
+        assertType('Illuminate\Database\Eloquent\Builder<static(BuilderOfType\ModelWithStaticBuilder)>', $this->builder());
+        assertType('Illuminate\Database\Eloquent\Builder<$this(BuilderOfType\ModelWithStaticBuilder)>', $this->instanceBuilder());
+    }
+}
+
+class ChildModelWithStaticBuilder extends ModelWithStaticBuilder {}
+
+function testStaticBuilderOutsideClass(ModelWithStaticBuilder $model, ChildModelWithStaticBuilder $child): void
+{
+    assertType('Illuminate\Database\Eloquent\Builder<BuilderOfType\ModelWithStaticBuilder>', $model->builder());
+    assertType('Illuminate\Database\Eloquent\Builder<BuilderOfType\ChildModelWithStaticBuilder>', $child->builder());
+}
+
+/** @template TValue */
+class GenericModel extends Model {}
+
+/**
+ * @param builder-of<GenericModel<string>> $generic
+ * @param builder-of<GenericModel<string>|\App\Team> $union
+ * @param builder-of<\App\User&object{extra: string}> $intersection
+ * @param builder-of<\App\User>|null $nullable
+ */
+function testModelTypes($generic, $union, $intersection, $nullable): void
+{
+    assertType('Illuminate\Database\Eloquent\Builder<BuilderOfType\GenericModel<string>>', $generic);
+    assertType('App\ChildTeamBuilder|Illuminate\Database\Eloquent\Builder<BuilderOfType\GenericModel<string>>', $union);
+    assertType('Illuminate\Database\Eloquent\Builder<App\User&object{extra: string}>', $intersection);
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>|null', $nullable);
+}
+
+class PostWithBuilderMethod extends \App\Post
+{
+    /** @return builder-of<static> */
+    public function builder(): Builder
+    {
+        return $this->newQuery();
+    }
+
+    public function testCustomBuilder(): void
+    {
+        assertType('App\PostBuilder<static(BuilderOfType\PostWithBuilderMethod)>', $this->builder());
+    }
+}
+
+final class FinalPostWithBuilderMethod extends PostWithBuilderMethod {}
+
+/** @param GenericModel<string> $generic */
+function testInheritedAndGenericBuilders(FinalPostWithBuilderMethod $post, GenericModel $generic): void
+{
+    assertType('App\PostBuilder<BuilderOfType\FinalPostWithBuilderMethod>', $post->builder());
+    assertType('Illuminate\Database\Eloquent\Builder<BuilderOfType\GenericModel<string>>', $generic->newQuery());
+    assertType('Illuminate\Database\Eloquent\Builder<BuilderOfType\GenericModel<string>>', $generic::query());
+}
+
+class ModelWithNeverQuery extends Model
+{
+    public static function query(): never
+    {
+        throw new \LogicException();
+    }
+}
+
+function testNeverQuery(): void
+{
+    assertType('never', ModelWithNeverQuery::query());
+}

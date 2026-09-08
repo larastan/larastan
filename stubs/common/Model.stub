@@ -64,11 +64,38 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
      */
     public function update(array $attributes = [], array $options = []);
 
+    /** @return builder-of<static> */
+    public static function query();
+
+    /** @return builder-of<static> */
+    public function newQuery();
+
+    /** @return builder-of<static> */
+    public function newModelQuery();
+
+    /** @return builder-of<static> */
+    public function newQueryWithoutRelationships();
+
+    /** @return builder-of<static> */
+    public function newQueryWithoutScopes();
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Scope|string $scope
+     * @return builder-of<static>
+     */
+    public function newQueryWithoutScope($scope);
+
+    /**
+     * @param array<mixed>|int|string $ids
+     * @return builder-of<static>
+     */
+    public function newQueryForRestoration($ids);
+
     /**
      * Begin querying a model with eager loading.
      *
      * @param  string|array<int|string, (\Closure)|string|array<int|string, string>>  $relations
-     * @return \Illuminate\Database\Eloquent\Builder<static>
+     * @return builder-of<static>
      */
     public static function with($relations);
 }

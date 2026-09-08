@@ -135,6 +135,10 @@ function publishPosts(Builder $postQuery): void
 
 **Template Support:**
 
+The `builder-of` type preserves `static`, `$this`, generic model arguments, and intersections. For a union of models, it produces a union of their builder types.
+
+Larastan uses it for model query methods, `Collection::toQuery()`, and relation query builders, so these methods retain custom builders.
+
 The `builder-of` type also works with generic templates:
 
 ```php

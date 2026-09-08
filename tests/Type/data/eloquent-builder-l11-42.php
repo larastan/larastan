@@ -220,13 +220,13 @@ function test(
     assertType('App\PostBuilder<App\Post>', $post->newQueryWithoutScope('foo'));
     assertType('App\PostBuilder<App\Post>', $post->newQueryForRestoration([1]));
 
-    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $userAndAuth->newQuery());
-    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $userAndAuth->newModelQuery());
-    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $userAndAuth->newQueryWithoutRelationships());
-    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $userAndAuth->newQueryWithoutScopes());
-    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $userAndAuth->newQueryWithoutScope('foo'));
-    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $userAndAuth->newQueryForRestoration([1]));
-    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $userAndAuth::query());
+    assertType('Illuminate\Database\Eloquent\Builder<App\User&EloquentBuilder\OnlyUsers>', $userAndAuth->newQuery());
+    assertType('Illuminate\Database\Eloquent\Builder<App\User&EloquentBuilder\OnlyUsers>', $userAndAuth->newModelQuery());
+    assertType('Illuminate\Database\Eloquent\Builder<App\User&EloquentBuilder\OnlyUsers>', $userAndAuth->newQueryWithoutRelationships());
+    assertType('Illuminate\Database\Eloquent\Builder<App\User&EloquentBuilder\OnlyUsers>', $userAndAuth->newQueryWithoutScopes());
+    assertType('Illuminate\Database\Eloquent\Builder<App\User&EloquentBuilder\OnlyUsers>', $userAndAuth->newQueryWithoutScope('foo'));
+    assertType('Illuminate\Database\Eloquent\Builder<App\User&EloquentBuilder\OnlyUsers>', $userAndAuth->newQueryForRestoration([1]));
+    assertType('Illuminate\Database\Eloquent\Builder<App\User&EloquentBuilder\OnlyUsers>', $userAndAuth::query());
 
     assertType('Illuminate\Support\LazyCollection<int, App\User>', User::query()->lazy());
     assertType('Illuminate\Support\LazyCollection<int, App\User>', User::query()->lazyById());
