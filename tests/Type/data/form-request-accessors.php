@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace FormRequestAccessors;
 
 use App\Http\Requests\AccessorRequest;
+use App\Http\Requests\AdditionalRulesRequest;
 use App\Http\Requests\FooRequest;
 use App\Http\Requests\OverriddenInputRequest;
 use App\Http\Requests\SafeReturnRequest;
@@ -47,7 +48,7 @@ function testInput(AccessorRequest $request, SafeReturnRequest $safeReturnReques
     assertType('mixed', $request->input());
 }
 
-function testInteger(AccessorRequest $request, FooRequest $fooRequest, string $key): void
+function testInteger(AccessorRequest $request, FooRequest $fooRequest, AdditionalRulesRequest $additionalRulesRequest, string $key): void
 {
     assertType('int<1, 5>', $request->integer('count'));
     assertType('int<1, 5>', $request->integer('count', 9));
@@ -67,6 +68,10 @@ function testInteger(AccessorRequest $request, FooRequest $fooRequest, string $k
     assertType('int<0, 20>', $fooRequest->integer('limit', null));
     assertType('1|2', $fooRequest->integer('priority'));
     assertType('int', $fooRequest->integer('rating'));
+    assertType('int<6, max>', $additionalRulesRequest->integer('integerGreaterThanValue'));
+    assertType('int<5, max>', $additionalRulesRequest->integer('numericGreaterThanValue'));
+    assertType('int<min, -5>', $additionalRulesRequest->integer('numericLessThanValue'));
+    assertType('int<5, 10>', $additionalRulesRequest->integer('integerComparisonBoundsValue'));
 }
 
 function testBoolean(AccessorRequest $request, FooRequest $fooRequest, string $key): void

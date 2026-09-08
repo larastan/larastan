@@ -313,9 +313,11 @@ remaining parent input, so the inferred shape stays open.
 
 The loose `integer` rule accepts integer-valued JSON floats without converting
 them. Laravel also accepts `true`, which Larastan deliberately omits from integer
-inference for usability. Known `min`, `max`, `between`, and `size` bounds on
-numeric rules refine the integer branch: `integer|min:1|max:50` infers
-`float|int<1, 50>|numeric-string`. Strict integer rules retain `int` precision. Numeric
+inference for usability. Known `min`, `max`, `between`, `size`, `gt`, `gte`,
+`lt`, and `lte` bounds on numeric rules refine the integer branch:
+`integer|min:1|max:50` infers `float|int<1, 50>|numeric-string`. Without an
+`integer` rule, `gt` and `lt` keep the boundary value itself, because a
+non-integer value beyond it still truncates to it. Strict integer rules retain `int` precision. Numeric
 alternatives in `in:` rules retain `numeric-string` on Laravel versions that
 use loose comparison, and literal string types where comparison is strict.
 

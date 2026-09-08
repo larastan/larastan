@@ -119,6 +119,13 @@ function test(mixed $mixed, array|string $arrayOrString, AdditionalRulesRequest 
     assertType('float|int<1, 50>|numeric-string', $request->integerLimitValue);
     assertType('float|int<1, 20>|numeric-string', $request->integerBetweenValue);
     assertType('float|int<10, 15>|numeric-string', $request->integerRepeatedBoundsValue);
+    assertType('float|int<6, max>|numeric-string', $request->integerGreaterThanValue);
+    assertType('float|int<min, 4>|numeric-string', $request->integerLessThanValue);
+    assertType('float|int<5, 10>|numeric-string', $request->integerComparisonBoundsValue);
+    assertType('float|int<5, max>|numeric-string', $request->numericGreaterThanValue);
+    assertType('float|int<min, -5>|numeric-string', $request->numericLessThanValue);
+    assertType('float|int|numeric-string', $request->fieldComparisonValue);
+    assertType('non-empty-string', $request->stringComparisonValue);
     assertType('3|float|numeric-string', $request->integerSizeValue);
     assertType('float|int|numeric-string', $request->malformedMinimumValue);
     assertType('float|int<-5, 5>|numeric-string', $request->negativeMinimumValue);

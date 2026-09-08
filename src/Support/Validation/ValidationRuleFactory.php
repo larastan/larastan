@@ -30,6 +30,8 @@ use function is_string;
 use function str_getcsv;
 
 use const FILTER_VALIDATE_INT;
+use const PHP_INT_MAX;
+use const PHP_INT_MIN;
 
 /** @internal */
 final class ValidationRuleFactory
@@ -41,16 +43,18 @@ final class ValidationRuleFactory
     /** @param string|array<string|Type|array{string, null}> $rules */
     public static function make(string|array $rules): ValidationRule
     {
-        $rules      = is_string($rules) ? explode('|', $rules) : $rules;
-        $objects    = array_filter($rules, static fn ($rule) => $rule instanceof Type);
-        $objectRule = self::fromObjectRules($objects);
-        $type       = $objectRule->type;
-        $constraint = $objectRule->constraintType;
-        $keys       = $objectRule->allowedKeys;
-        $names      = [];
-        $minimums   = [];
-        $maximums   = [];
-        $inValues   = null;
+        $rules             = is_string($rules) ? explode('|', $rules) : $rules;
+        $objects           = array_filter($rules, static fn ($rule) => $rule instanceof Type);
+        $objectRule        = self::fromObjectRules($objects);
+        $type              = $objectRule->type;
+        $constraint        = $objectRule->constraintType;
+        $keys              = $objectRule->allowedKeys;
+        $names             = [];
+        $minimums          = [];
+        $maximums          = [];
+        $exclusiveMinimums = [];
+        $exclusiveMaximums = [];
+        $inValues          = null;
 
         foreach ($rules as $rawRule) {
             if ($rawRule instanceof Type || $rawRule === '') {
@@ -70,12 +74,20 @@ final class ValidationRuleFactory
                 $keys = RuleTypes::arrayKeyTypes($parameters);
             }
 
-            if (in_array($name, ['min', 'between', 'size'], true)) {
+            if (in_array($name, ['min', 'between', 'size', 'gte'], true)) {
                 $minimums[] = self::intParameter($parameters, 0);
             }
 
-            if (in_array($name, ['max', 'between', 'size'], true)) {
+            if (in_array($name, ['max', 'between', 'size', 'lte'], true)) {
                 $maximums[] = self::intParameter($parameters, $name === 'between' ? 1 : 0);
+            }
+
+            if ($name === 'gt') {
+                $exclusiveMinimums[] = self::intParameter($parameters, 0);
+            }
+
+            if ($name === 'lt') {
+                $exclusiveMaximums[] = self::intParameter($parameters, 0);
             }
 
             $determinedType = RuleTypes::determineType($name, $parameters ?? []);
@@ -98,6 +110,17 @@ final class ValidationRuleFactory
             } else {
                 $type = RuleTypes::determineInType($inValues, $type);
             }
+        }
+
+        // gt and lt exclude the boundary itself, but a non-integer value beyond it can still truncate to it when cast.
+        $step = isset($names['integer']) ? 1 : 0;
+
+        foreach ($exclusiveMinimums as $bound) {
+            $minimums[] = $bound === null || $bound === PHP_INT_MAX ? null : $bound + $step;
+        }
+
+        foreach ($exclusiveMaximums as $bound) {
+            $maximums[] = $bound === null || $bound === PHP_INT_MIN ? null : $bound - $step;
         }
 
         $type = RuleTypes::applyBounds($type, $minimums, $maximums, isset($names['integer']) || isset($names['numeric']) || isset($names['decimal']));
