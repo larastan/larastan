@@ -31,19 +31,7 @@ final class RuleTreeTypeResolver
     /** @param array<string, RuleTreeNode> $nodes */
     public function resolveValidatedData(array $nodes, bool $unsealed): Type
     {
-        $builder = ConstantArrayTypeBuilder::createEmpty();
-
-        foreach ($nodes as $name => $node) {
-            if ($node->rule?->flags->excluded === true) {
-                continue;
-            }
-
-            $builder->setOffsetValueType(
-                new ConstantStringType($name),
-                $this->resolveValidatedNode($node),
-                ! $this->isValidatedGuaranteedPresent($node),
-            );
-        }
+        $builder = $this->resolveNamedNodes($nodes, raw: false);
 
         if ($unsealed) {
             $builder->makeUnsealed(new MixedType(), new MixedType());
@@ -56,7 +44,7 @@ final class RuleTreeTypeResolver
     {
         $type = $this->resolveRawNode($node);
 
-        if (! $this->isRawGuaranteedPresent($node)) {
+        if (! $this->isGuaranteedPresent($node, raw: true)) {
             $type = TypeCombinator::addNull($type);
         }
 
@@ -69,16 +57,17 @@ final class RuleTreeTypeResolver
             return new MixedType();
         }
 
-        if ($this->hasConflictingScalarRule($node)) {
+        // A scalar parent cannot validate as an array, so conflicting nested rules cannot refine it.
+        if ($node->rule?->isScalarOnly() === true) {
             return $this->resolveLeaf($node);
         }
 
         if ($node->rule?->allowedKeys !== null) {
-            return $this->resolveRawAllowedKeys($node);
+            return $this->resolveAllowedKeys($node, raw: true);
         }
 
         if ($node->degraded) {
-            return $this->hasExplicitContainerRule($node) ? $this->resolveLeaf($node) : new MixedType();
+            return $node->rule?->isContainer() === true ? $this->resolveLeaf($node) : new MixedType();
         }
 
         if ($node->children === []) {
@@ -86,35 +75,22 @@ final class RuleTreeTypeResolver
         }
 
         if (
-            ! $this->hasExplicitContainerRule($node)
-            && ! $this->hasContainerAlternative($node)
-            && ! $this->hasRawGuaranteedNamedDescendant($node)
+            $node->rule?->isContainer() !== true
+            && $node->rule?->mayBeContainer() !== true
+            && ! $this->hasGuaranteedNamedDescendant($node, raw: true)
         ) {
             return $this->resolveLeaf($node);
         }
 
-        if (isset($node->children[RuleTreeNode::WILDCARD])) {
-            $type = $this->resolveWildcardNode($node, $this->resolveRawNode(...), true);
-        } else {
-            $builder = ConstantArrayTypeBuilder::createEmpty();
-
-            foreach ($node->children as $segment => $child) {
-                $builder->setOffsetValueType(
-                    new ConstantStringType($segment),
-                    $this->resolveRawNode($child),
-                    ! $this->isRawGuaranteedPresent($child),
-                );
-            }
-
-            $builder->makeUnsealed(new MixedType(), new MixedType());
-            $type = $builder->getArray();
-        }
+        $type = isset($node->children[RuleTreeNode::WILDCARD])
+            ? $this->resolveWildcardNode($node, raw: true)
+            : $this->resolveNamedNodes($node->children, raw: true)->getArray();
 
         if ($node->rule !== null && $node->rule->anyOfRuleGroups !== []) {
-            $ruleType = $this->leafType($node);
+            $ruleType = $node->rule->resolveType();
             $type     = TypeCombinator::intersect($type, $ruleType);
 
-            if (! $this->hasRawGuaranteedNamedDescendant($node)) {
+            if (! $this->hasGuaranteedNamedDescendant($node, raw: true)) {
                 $type = TypeCombinator::union(
                     $type,
                     TypeCombinator::remove($ruleType, new ArrayType(new MixedType(), new MixedType())),
@@ -131,27 +107,27 @@ final class RuleTreeTypeResolver
             return new MixedType();
         }
 
-        if ($this->hasConflictingScalarRule($node)) {
+        if ($node->rule?->isScalarOnly() === true) {
             return $this->resolveLeaf($node);
         }
 
         // A parameterized array rule copies the parent unless a separate bare
         // array/list rule prunes it. Excluding every child can also restore copying.
         $mayBeCopiedWhole = $mayBeCopiedWhole
-            || ($this->hasExplicitContainerRule($node)
-                && ($node->rule?->flags->prunesUnvalidatedKeys !== true || $this->canExcludeAllDescendantRules($node, true)));
+            || ($node->rule?->isContainer() === true
+                && ($node->rule->flags->prunesUnvalidatedKeys !== true || $this->canExcludeAllDescendantRules($node, true)));
 
         if ($node->rule?->allowedKeys !== null) {
-            return $this->resolveValidatedAllowedKeys($node, $mayBeCopiedWhole);
+            return $this->resolveAllowedKeys($node, raw: false, mayBeCopiedWhole: $mayBeCopiedWhole);
         }
 
-        if ($this->isValidatedParentCopiedWhole($node) && ! $this->hasExplicitContainerRule($node)) {
+        if ($this->isValidatedParentCopiedWhole($node) && $node->rule?->isContainer() !== true) {
             return $node->degraded ? $this->resolveLeaf($node) : $this->resolveRawNode($node);
         }
 
         if ($node->degraded) {
-            $type = $this->hasExplicitContainerRule($node)
-                ? $this->leafType($node)
+            $type = $node->rule?->isContainer() === true
+                ? $node->rule->resolveType()
                 : new ArrayType(new MixedType(), new MixedType());
 
             return $this->addNullable($node, $type);
@@ -161,40 +137,39 @@ final class RuleTreeTypeResolver
             return $this->resolveLeaf($node);
         }
 
-        if ($mayBeCopiedWhole && $node->rule === null && ! $this->hasRawGuaranteedNamedDescendant($node)) {
+        if ($mayBeCopiedWhole && $node->rule === null && ! $this->hasGuaranteedNamedDescendant($node, raw: true)) {
             return new MixedType();
         }
 
-        if (isset($node->children[RuleTreeNode::WILDCARD])) {
-            if ($node->children[RuleTreeNode::WILDCARD]->rule?->flags->excluded === true) {
-                return $this->addNullable($node, ConstantArrayTypeBuilder::createEmpty()->getArray());
-            }
+        $type = isset($node->children[RuleTreeNode::WILDCARD])
+            ? $this->resolveWildcardNode($node, raw: false, mayBeCopiedWhole: $mayBeCopiedWhole)
+            : $this->resolveNamedNodes($node->children, raw: false, mayBeCopiedWhole: $mayBeCopiedWhole)->getArray();
 
-            return $this->addNullable(
-                $node,
-                $this->resolveWildcardNode($node, fn (RuleTreeNode $child): Type => $this->resolveValidatedNode($child, $mayBeCopiedWhole), false),
-            );
-        }
+        return $this->addNullable($node, $type);
+    }
 
+    /** @param array<string, RuleTreeNode> $nodes */
+    private function resolveNamedNodes(array $nodes, bool $raw, bool $mayBeCopiedWhole = false): ConstantArrayTypeBuilder
+    {
         $builder = ConstantArrayTypeBuilder::createEmpty();
 
-        foreach ($node->children as $segment => $child) {
-            if ($child->rule?->flags->excluded === true) {
+        foreach ($nodes as $segment => $child) {
+            if (! $raw && $child->rule?->flags->excluded === true) {
                 continue;
             }
 
             $builder->setOffsetValueType(
                 new ConstantStringType($segment),
-                $this->resolveValidatedNode($child, $mayBeCopiedWhole),
-                ! $this->isValidatedGuaranteedPresent($child),
+                $raw ? $this->resolveRawNode($child) : $this->resolveValidatedNode($child, $mayBeCopiedWhole),
+                ! $this->isGuaranteedPresent($child, $raw),
             );
         }
 
-        if ($mayBeCopiedWhole) {
+        if ($raw || $mayBeCopiedWhole) {
             $builder->makeUnsealed(new MixedType(), new MixedType());
         }
 
-        return $this->addNullable($node, $builder->getArray());
+        return $builder;
     }
 
     private function canExcludeAllDescendantRules(RuleTreeNode $node, bool $conditional): bool
@@ -218,88 +193,48 @@ final class RuleTreeTypeResolver
         return true;
     }
 
-    /**
-     * A scalar rule on a node that also has nested rules ('users' => 'string' +
-     * 'users.*.x') means an array value can never pass validation — the scalar
-     * type wins and the nested rules are discarded.
-     */
-    private function hasConflictingScalarRule(RuleTreeNode $node): bool
-    {
-        return $node->rule?->isScalarOnly() ?? false;
-    }
-
-    private function hasExplicitContainerRule(RuleTreeNode $node): bool
-    {
-        return $node->rule?->isContainer() ?? false;
-    }
-
-    private function hasContainerAlternative(RuleTreeNode $node): bool
-    {
-        return $node->rule?->mayBeContainer() ?? false;
-    }
-
     private function isValidatedParentCopiedWhole(RuleTreeNode $node): bool
     {
         return $node->rule !== null
             && (
-                ! $this->hasExplicitContainerRule($node)
+                ! $node->rule->isContainer()
                 || $node->rule->flags->prunesUnvalidatedKeys === false
             )
             && ($node->children !== [] || $node->degraded);
     }
 
     /**
-     * A node is guaranteed to be present in the raw input when its own rules
-     * contain a bare `required`, or when any descendant reachable without crossing
-     * a wildcard is guaranteed present: `author.name => required` fails validation
-     * when `author` is absent, while `users.*.email => required` passes when
-     * `users` is absent (the wildcard expands to zero rules).
+     * Required named descendants force their ancestors to exist, unlike wildcards
+     * which can expand to zero rules. In validated output, a required parent only
+     * guarantees its own presence when it survives pruning or is copied whole.
      */
-    private function isRawGuaranteedPresent(RuleTreeNode $node): bool
-    {
-        if ($node->rule?->flags->possiblyExcluded === true || $node->rule?->flags->degraded === true) {
-            return false;
-        }
-
-        if ($node->rule?->flags->required === true && ! $node->rule->flags->possiblyUndefined) {
-            return true;
-        }
-
-        return $this->hasRawGuaranteedNamedDescendant($node);
-    }
-
-    private function hasRawGuaranteedNamedDescendant(RuleTreeNode $node): bool
-    {
-        foreach ($node->children as $segment => $child) {
-            if ($segment !== RuleTreeNode::WILDCARD && $this->isRawGuaranteedPresent($child)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private function isValidatedGuaranteedPresent(RuleTreeNode $node): bool
+    private function isGuaranteedPresent(RuleTreeNode $node, bool $raw): bool
     {
         if ($node->rule?->flags->possiblyExcluded === true || $node->rule?->flags->degraded === true) {
             return false;
         }
 
         if (
-            (
-                $this->hasConflictingScalarRule($node)
+            $node->rule?->flags->required === true
+            && ! $node->rule->flags->possiblyUndefined
+            && (
+                $raw
+                || $node->rule->isScalarOnly()
                 || $this->isValidatedParentCopiedWhole($node)
-                || ($this->hasExplicitContainerRule($node) && $this->canExcludeAllDescendantRules($node, false))
+                || ($node->rule->isContainer() && $this->canExcludeAllDescendantRules($node, false))
                 || ($node->children === [] && ! $node->degraded)
             )
-            && $node->rule?->flags->required === true
-            && ! $node->rule->flags->possiblyUndefined
         ) {
             return true;
         }
 
+        return $this->hasGuaranteedNamedDescendant($node, $raw);
+    }
+
+    private function hasGuaranteedNamedDescendant(RuleTreeNode $node, bool $raw): bool
+    {
         foreach ($node->children as $segment => $child) {
-            if ($segment !== RuleTreeNode::WILDCARD && $this->isValidatedGuaranteedPresent($child)) {
+            if ($segment !== RuleTreeNode::WILDCARD && $this->isGuaranteedPresent($child, $raw)) {
                 return true;
             }
         }
@@ -309,7 +244,7 @@ final class RuleTreeTypeResolver
 
     private function resolveLeaf(RuleTreeNode $node): Type
     {
-        return $this->addNullable($node, $this->leafType($node));
+        return $this->addNullable($node, $node->rule?->resolveType() ?? new MixedType());
     }
 
     private function addNullable(RuleTreeNode $node, Type $type): Type
@@ -317,7 +252,7 @@ final class RuleTreeTypeResolver
         if (
             $node->rule?->flags->nullable === true
             && ! $node->rule->flags->rejectsNull
-            && ! $this->hasRawGuaranteedNamedDescendant($node)
+            && ! $this->hasGuaranteedNamedDescendant($node, raw: true)
         ) {
             return TypeCombinator::addNull($type);
         }
@@ -325,67 +260,54 @@ final class RuleTreeTypeResolver
         return $type;
     }
 
-    private function leafType(RuleTreeNode $node): Type
-    {
-        return $node->rule?->resolveType() ?? new MixedType();
-    }
-
-    private function resolveRawAllowedKeys(RuleTreeNode $node): Type
-    {
-        $builder = ConstantArrayTypeBuilder::createEmpty();
-
-        foreach ($node->rule->allowedKeys ?? [] as $keyType) {
-            $key   = (string) $keyType->getValue();
-            $child = $node->children[$key] ?? null;
-
-            $builder->setOffsetValueType(
-                $keyType,
-                $child === null ? new MixedType() : $this->resolveRawNode($child),
-                $child === null || ! $this->isRawGuaranteedPresent($child),
-            );
-        }
-
-        return $this->addNullable($node, $builder->getArray());
-    }
-
-    private function resolveValidatedAllowedKeys(RuleTreeNode $node, bool $mayBeCopiedWhole): Type
+    private function resolveAllowedKeys(RuleTreeNode $node, bool $raw, bool $mayBeCopiedWhole = false): Type
     {
         $builder     = ConstantArrayTypeBuilder::createEmpty();
-        $copiedWhole = $this->isValidatedParentCopiedWhole($node);
+        $rawPresence = $raw || $this->isValidatedParentCopiedWhole($node);
 
         foreach ($node->rule->allowedKeys ?? [] as $keyType) {
             $child = $node->children[(string) $keyType->getValue()] ?? null;
 
-            if ($child?->rule?->flags->excluded === true) {
+            if (! $raw && $child?->rule?->flags->excluded === true) {
                 continue;
             }
 
-            if (! $mayBeCopiedWhole && $node->children !== [] && $child === null) {
+            if (! $raw && ! $mayBeCopiedWhole && $node->children !== [] && $child === null) {
                 continue;
+            }
+
+            $type = new MixedType();
+
+            if ($child !== null) {
+                $type = $raw ? $this->resolveRawNode($child) : $this->resolveValidatedNode($child, $mayBeCopiedWhole);
             }
 
             $builder->setOffsetValueType(
                 $keyType,
-                $child === null ? new MixedType() : $this->resolveValidatedNode($child, $mayBeCopiedWhole),
-                $child === null || ! ($copiedWhole ? $this->isRawGuaranteedPresent($child) : $this->isValidatedGuaranteedPresent($child)),
+                $type,
+                $child === null || ! $this->isGuaranteedPresent($child, $rawPresence),
             );
         }
 
         return $this->addNullable($node, $builder->getArray());
     }
 
-    /** @param callable(RuleTreeNode): Type $resolveItem */
-    private function resolveWildcardNode(RuleTreeNode $node, callable $resolveItem, bool $raw): Type
+    private function resolveWildcardNode(RuleTreeNode $node, bool $raw, bool $mayBeCopiedWhole = false): Type
     {
         $wildcard = $node->children[RuleTreeNode::WILDCARD];
-        $type     = new ArrayType(
+
+        if (! $raw && $wildcard->rule?->flags->excluded === true) {
+            return ConstantArrayTypeBuilder::createEmpty()->getArray();
+        }
+
+        $type = new ArrayType(
             $node->rule?->type->isList()->yes() ? new IntegerType() : new MixedType(),
-            $resolveItem($wildcard),
+            $raw ? $this->resolveRawNode($wildcard) : $this->resolveValidatedNode($wildcard, $mayBeCopiedWhole),
         );
 
         if (
             $node->rule?->type->isList()->yes()
-            && ($raw || $this->isValidatedGuaranteedPresent($wildcard))
+            && ($raw || $this->isGuaranteedPresent($wildcard, raw: false))
         ) {
             return TypeCombinator::intersect($type, new AccessoryArrayListType());
         }

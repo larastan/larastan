@@ -6,7 +6,6 @@ namespace Larastan\Larastan\Support;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Larastan\Larastan\Support\Validation\RuleTreeBuilder;
-use Larastan\Larastan\Support\Validation\RuleTreeNode;
 use Larastan\Larastan\Support\Validation\RuleTreeTypeResolver;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
@@ -15,10 +14,14 @@ use PHPStan\Type\TypeCombinator;
 
 use function array_key_exists;
 
-/** @internal */
+/**
+ * @internal
+ *
+ * @phpstan-import-type RuleTree from RuleTreeBuilder
+ */
 final class FormRequestHelper
 {
-    /** @var array<class-string<FormRequest>, array{nodes: array<string, RuleTreeNode>, unsealed: bool}|null> */
+    /** @var array<class-string<FormRequest>, RuleTree|null> */
     private array $trees = [];
 
     /** @var array<class-string<FormRequest>, array<string, Type>> */
@@ -118,7 +121,7 @@ final class FormRequestHelper
         return $this->validatedData[$className];
     }
 
-    /** @return array{nodes: array<string, RuleTreeNode>, unsealed: bool}|null */
+    /** @return RuleTree|null */
     private function getTree(ClassReflection $classReflection): array|null
     {
         /** @var class-string<FormRequest> $className */
@@ -131,20 +134,7 @@ final class FormRequestHelper
         $this->resolving[$className] = true;
 
         try {
-            $extracted = $this->ruleExtractor->extract($classReflection);
-
-            if ($extracted === null) {
-                return $this->trees[$className] = null;
-            }
-
-            $nodes = RuleTreeBuilder::build($extracted['rules']);
-
-            // Root wildcards can exclude or otherwise change exact sibling fields.
-            if (isset($nodes[RuleTreeNode::WILDCARD])) {
-                return $this->trees[$className] = ['nodes' => [], 'unsealed' => true];
-            }
-
-            return $this->trees[$className] = ['nodes' => $nodes, 'unsealed' => $extracted['unsealed']];
+            return $this->trees[$className] = $this->ruleExtractor->extract($classReflection);
         } finally {
             unset($this->resolving[$className]);
         }

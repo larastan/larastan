@@ -6,15 +6,7 @@ namespace Larastan\Larastan\Support\Validation;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rules\ArrayRule;
-use Illuminate\Validation\Rules\Date;
-use Illuminate\Validation\Rules\Dimensions;
-use Illuminate\Validation\Rules\Email;
-use Illuminate\Validation\Rules\Enum;
-use Illuminate\Validation\Rules\File as FileRule;
-use Illuminate\Validation\Rules\In;
-use Illuminate\Validation\Rules\Numeric;
-use Illuminate\Validation\Rules\Password;
+use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationRuleParser;
 use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\Constant\ConstantStringType;
@@ -34,7 +26,6 @@ use function filter_var;
 use function implode;
 use function in_array;
 use function is_array;
-use function is_bool;
 use function is_string;
 use function str_getcsv;
 
@@ -43,120 +34,51 @@ use const FILTER_VALIDATE_INT;
 /** @internal */
 final class ValidationRuleFactory
 {
-    private const ANY_OF = 'Illuminate\\Validation\\Rules\\AnyOf';
-
-    private const STRING_RULE = 'Illuminate\\Validation\\Rules\\StringRule';
-
+    private const ANY_OF            = 'Illuminate\\Validation\\Rules\\AnyOf';
+    private const STRING_RULE       = 'Illuminate\\Validation\\Rules\\StringRule';
     private const CONDITIONAL_RULES = 'Illuminate\\Validation\\ConditionalRules';
 
     /** @param string|array<string|Type|array{string, null}> $rules */
     public static function make(string|array $rules): ValidationRule
     {
-        if (is_string($rules)) {
-            $rules = explode('|', $rules);
-        }
+        $rules      = is_string($rules) ? explode('|', $rules) : $rules;
+        $objects    = array_filter($rules, static fn ($rule) => $rule instanceof Type);
+        $objectRule = self::fromObjectRules($objects);
+        $type       = $objectRule->type;
+        $constraint = $objectRule->constraintType;
+        $keys       = $objectRule->allowedKeys;
+        $names      = [];
+        $minimums   = [];
+        $maximums   = [];
+        $inValues   = null;
 
-        $ruleObjects = array_filter($rules, static fn ($rule) => $rule instanceof Type);
-        $objectRule  = self::fromObjectRules($ruleObjects);
-
-        $ruleStrings = array_filter($rules, static fn ($rule) => (is_string($rule) && $rule !== '') || is_array($rule));
-        $stringRule  = self::fromStringRules($ruleStrings, $objectRule->type, $objectRule->constraintType);
-
-        return new ValidationRule(
-            type: $stringRule->type,
-            constraintType: self::inObjectConstraint($ruleObjects, $stringRule->type, $stringRule->constraintType),
-            allowedKeys: $stringRule->allowedKeys ?? $objectRule->allowedKeys,
-            anyOfRuleGroups: $objectRule->anyOfRuleGroups,
-            flags: $stringRule->flags->both($objectRule->flags),
-        );
-    }
-
-    /** @param array<string|array{string, null}> $rules */
-    private static function fromStringRules(array $rules, Type $type, Type|null $constraintType): ValidationRule
-    {
-        $possiblyUndefined     = false;
-        $nullable              = false;
-        $required              = false;
-        $rejectsNull           = false;
-        $possiblyExcluded      = false;
-        $excluded              = false;
-        $inValues              = null;
-        $minimums              = [];
-        $maximums              = [];
-        $hasNumericRule        = false;
-        $allowedKeys           = null;
-        $prunesUnvalidatedKeys = false;
-
-        foreach ($rules as $rule) {
-            $prunesUnvalidatedKeys = $prunesUnvalidatedKeys || $rule === 'array' || $rule === 'list';
-            $unknownParameters     = is_array($rule);
-            [$rule, $parameters]   = ValidationRuleParser::parse($rule);
-            $parameters            = $unknownParameters
-                ? null
-                : array_values(array_filter(
-                    $parameters,
-                    static fn ($parameter): bool => is_string($parameter),
-                ));
-            $rule                  = Str::snake($rule);
-            $hasNumericRule        = $hasNumericRule || in_array($rule, ['integer', 'numeric', 'decimal'], true);
-
-            switch ($rule) {
-                case 'array':
-                case 'array_keys':
-                    if ($parameters !== null && $parameters !== [] && ($rule === 'array' || class_exists(RuleTypes::ARRAY_KEYS))) {
-                        $allowedKeys = RuleTypes::arrayKeyTypes($parameters);
-                    }
-
-                    break;
-                case 'in':
-                    $inValues = $parameters ?? $inValues;
-                    break;
-                case 'nullable':
-                    $nullable = true;
-                    break;
-                case 'exclude':
-                    $possiblyExcluded = true;
-                    $excluded         = true;
-                    break;
-                case 'exclude_if':
-                case 'exclude_unless':
-                case 'exclude_with':
-                case 'exclude_without':
-                    $possiblyExcluded = true;
-                    break;
-                case 'sometimes':
-                    $possiblyUndefined = true;
-                    break;
-                // `present` guarantees the key exists just like `required`; it only
-                // additionally allows the value to be empty, which doesn't affect the type.
-                case 'required':
-                case 'accepted':
-                case 'declined':
-                    $rejectsNull = true;
-                    $required    = true;
-                    break;
-                case 'present':
-                    $required = true;
-                    break;
-                case 'min':
-                    $minimums[] = self::intParameter($parameters ?? [], 0);
-                    break;
-                case 'max':
-                    $maximums[] = self::intParameter($parameters ?? [], 0);
-                    break;
-                case 'between':
-                    $minimums[] = self::intParameter($parameters ?? [], 0);
-                    $maximums[] = self::intParameter($parameters ?? [], 1);
-                    break;
-                case 'size':
-                    $size       = self::intParameter($parameters ?? [], 0);
-                    $minimums[] = $size;
-                    $maximums[] = $size;
-                    break;
+        foreach ($rules as $rawRule) {
+            if ($rawRule instanceof Type || $rawRule === '') {
+                continue;
             }
 
-            $determinedType = RuleTypes::determineType($rule, $parameters ?? []);
+            [$name, $parameters] = ValidationRuleParser::parse($rawRule);
+            $name                = Str::snake($name);
+            $names[$name]        = true;
+            $parameters          = is_array($rawRule) ? null : array_values(array_filter($parameters, is_string(...)));
 
+            if ($name === 'in') {
+                $inValues = $parameters ?? $inValues;
+            }
+
+            if ($parameters !== null && $parameters !== [] && ($name === 'array' || ($name === 'array_keys' && class_exists(RuleTypes::ARRAY_KEYS)))) {
+                $keys = RuleTypes::arrayKeyTypes($parameters);
+            }
+
+            if (in_array($name, ['min', 'between', 'size'], true)) {
+                $minimums[] = self::intParameter($parameters, 0);
+            }
+
+            if (in_array($name, ['max', 'between', 'size'], true)) {
+                $maximums[] = self::intParameter($parameters, $name === 'between' ? 1 : 0);
+            }
+
+            $determinedType = RuleTypes::determineType($name, $parameters ?? []);
             if ($determinedType === null) {
                 continue;
             }
@@ -164,67 +86,79 @@ final class ValidationRuleFactory
             $type = TypeCombinator::intersect($type, $determinedType);
         }
 
+        // Membership needs the base type; object In rules additionally see the bounds.
         if ($inValues !== null) {
             if ($type->isArray()->yes()) {
                 $inType = RuleTypes::inParameterType($inValues, $type);
-
                 if ($inType !== null) {
-                    $constraintType = RuleTypes::intersectConstraint($constraintType, $inType);
+                    $constraint = RuleTypes::intersectConstraint($constraint, $inType);
                 }
             } else {
                 $type = RuleTypes::determineInType($inValues, $type);
             }
         }
 
+        $type = RuleTypes::applyBounds($type, $minimums, $maximums, isset($names['integer']) || isset($names['numeric']) || isset($names['decimal']));
+        foreach ($objects as $rule) {
+            if (! self::isObjectRule($rule, Rules\In::class)) {
+                continue;
+            }
+
+            $inType = RuleTypes::inType($rule->getTemplateType(Rules\In::class, 'TValues'), $type);
+            if ($inType === null) {
+                continue;
+            }
+
+            $constraint = RuleTypes::intersectConstraint($constraint, $inType);
+        }
+
+        $rejectsNull = isset($names['required']) || isset($names['accepted']) || isset($names['declined']);
+
         return new ValidationRule(
-            type: RuleTypes::applyBounds($type, $minimums, $maximums, $hasNumericRule),
-            constraintType: $constraintType,
-            allowedKeys: $allowedKeys,
-            flags: new RuleFlags(
-                nullable: $nullable,
-                possiblyUndefined: $possiblyUndefined,
-                required: $required,
+            type: $type,
+            constraintType: $constraint,
+            allowedKeys: $keys,
+            anyOfRuleGroups: $objectRule->anyOfRuleGroups,
+            flags: $objectRule->flags->both(new RuleFlags(
+                nullable: isset($names['nullable']),
+                possiblyUndefined: isset($names['sometimes']),
+                required: $rejectsNull || isset($names['present']),
                 rejectsNull: $rejectsNull,
-                possiblyExcluded: $possiblyExcluded,
-                excluded: $excluded,
-                prunesUnvalidatedKeys: $prunesUnvalidatedKeys,
-            ),
+                possiblyExcluded: isset($names['exclude']) || isset($names['exclude_if']) || isset($names['exclude_unless'])
+                    || isset($names['exclude_with']) || isset($names['exclude_without']),
+                excluded: isset($names['exclude']),
+                // Laravel distinguishes bare rules from parameterized or normalized spellings.
+                prunesUnvalidatedKeys: in_array('array', $rules, true) || in_array('list', $rules, true),
+            )),
         );
     }
 
     /** @param array<Type> $rules */
     private static function fromObjectRules(array $rules): ValidationRule
     {
-        $type            = new MixedType(true);
-        $constraintType  = null;
-        $allowedKeys     = null;
-        $anyOfRuleGroups = [];
-        $flags           = new RuleFlags();
+        $type       = new MixedType(true);
+        $constraint = null;
+        $keys       = null;
+        $groups     = [];
+        $flags      = new RuleFlags();
 
         foreach ($rules as $rule) {
             switch (true) {
                 case self::isObjectRule($rule, self::CONDITIONAL_RULES):
-                    $conditionalRule = self::fromConditionalRule($rule);
-                    $anyOfRuleGroups = [...$anyOfRuleGroups, ...$conditionalRule->anyOfRuleGroups];
-                    $flags           = $flags->both($conditionalRule->flags);
-                    break;
                 case self::isObjectRule($rule, self::ANY_OF):
-                    $alternatives = self::anyOfAlternatives(self::objectRuleTemplateType($rule, self::ANY_OF, 'TRules'));
-
-                    if ($alternatives !== null) {
-                        $anyOfRuleGroups[] = ['rules' => $alternatives, 'anyOf' => true];
-                    }
-
+                    $alternatives = self::alternatives($rule, ! self::isObjectRule($rule, self::CONDITIONAL_RULES));
+                    $groups       = [...$groups, ...$alternatives->anyOfRuleGroups];
+                    $flags        = $flags->both($alternatives->flags);
                     break;
                 case self::isObjectRule($rule, RuleTypes::ARRAY_KEYS):
-                    $type        = RuleTypes::arrayType();
-                    $allowedKeys = self::constantArrayKeys(self::objectRuleTemplateType($rule, RuleTypes::ARRAY_KEYS, 'TKeys'));
+                    $type = RuleTypes::arrayType();
+                    $keys = self::constantArrayKeys(self::template($rule, RuleTypes::ARRAY_KEYS, 'TKeys'));
                     break;
-                case self::isObjectRule($rule, ArrayRule::class):
-                    $keysType    = $rule->getTemplateType(ArrayRule::class, 'TKeys');
-                    $type        = RuleTypes::arrayType();
-                    $allowedKeys = self::constantArrayKeys($keysType);
-                    $flags       = $flags->both(new RuleFlags(
+                case self::isObjectRule($rule, Rules\ArrayRule::class):
+                    $keysType = $rule->getTemplateType(Rules\ArrayRule::class, 'TKeys');
+                    $type     = RuleTypes::arrayType();
+                    $keys     = self::constantArrayKeys($keysType);
+                    $flags    = $flags->both(new RuleFlags(
                         prunesUnvalidatedKeys: $keysType->isNull()->yes() || ($keysType->isArray()->yes() && $keysType->isIterableAtLeastOnce()->no())
                             ? true
                             : ($keysType->isArray()->yes() && $keysType->isIterableAtLeastOnce()->yes() ? false : null),
@@ -234,209 +168,99 @@ final class ValidationRuleFactory
                 case self::isObjectRule($rule, 'Illuminate\\Validation\\Rules\\DoesntContain'):
                     $type = RuleTypes::arrayType();
                     break;
-                case self::isObjectRule($rule, Date::class):
-                    $constraintType = RuleTypes::intersectConstraint($constraintType, $rule->getTemplateType(Date::class, 'TValue'));
+                case self::isObjectRule($rule, Rules\Date::class):
+                    $constraint = RuleTypes::intersectConstraint($constraint, $rule->getTemplateType(Rules\Date::class, 'TValue'));
                     break;
-                case self::isObjectRule($rule, Email::class):
+                case self::isObjectRule($rule, Rules\Email::class):
                     $type = new StringType();
                     break;
-                case self::isObjectRule($rule, Enum::class):
-                    $enumType = RuleTypes::enumType($rule->getTemplateType(Enum::class, 'TEnum'));
-
+                case self::isObjectRule($rule, Rules\Enum::class):
+                    $enumType = RuleTypes::enumType($rule->getTemplateType(Rules\Enum::class, 'TEnum'));
                     if ($enumType !== null) {
-                        $constraintType = RuleTypes::intersectConstraint($constraintType, $enumType);
+                        $constraint = RuleTypes::intersectConstraint($constraint, $enumType);
                     }
 
                     break;
-                case self::isObjectRule($rule, Numeric::class):
-                    $constraintType = RuleTypes::intersectConstraint($constraintType, $rule->getTemplateType(Numeric::class, 'TValue'));
+                case self::isObjectRule($rule, Rules\Numeric::class):
+                    $constraint = RuleTypes::intersectConstraint($constraint, $rule->getTemplateType(Rules\Numeric::class, 'TValue'));
                     break;
                 case self::isObjectRule($rule, self::STRING_RULE):
-                    $type           = new StringType();
-                    $constraintType = RuleTypes::intersectConstraint(
-                        $constraintType,
-                        self::objectRuleTemplateType($rule, self::STRING_RULE, 'TValue'),
-                    );
+                    $type       = new StringType();
+                    $constraint = RuleTypes::intersectConstraint($constraint, self::template($rule, self::STRING_RULE, 'TValue'));
                     break;
-                case self::isObjectRule($rule, Dimensions::class):
-                case self::isObjectRule($rule, FileRule::class):
+                case self::isObjectRule($rule, Rules\Dimensions::class):
+                case self::isObjectRule($rule, Rules\File::class):
                     $type = new ObjectType(UploadedFile::class);
                     break;
-                case self::isObjectRule($rule, Password::class):
+                case self::isObjectRule($rule, Rules\Password::class):
                     $type = new StringType();
                     break;
-                case self::isObjectRule($rule, 'Illuminate\\Validation\\Rules\\RequiredIf'):
-                    $applies = self::conditionalObjectApplies($rule, 'Illuminate\\Validation\\Rules\\RequiredIf');
-                    $flags   = $flags->both(new RuleFlags(required: $applies === true, rejectsNull: $applies === true));
-                    break;
-                case self::isObjectRule($rule, 'Illuminate\\Validation\\Rules\\RequiredUnless'):
-                    $applies = self::conditionalObjectApplies(
-                        $rule,
-                        'Illuminate\\Validation\\Rules\\RequiredUnless',
-                        true,
-                    );
-                    $flags   = $flags->both(new RuleFlags(required: $applies === true, rejectsNull: $applies === true));
-                    break;
-                case self::isObjectRule($rule, 'Illuminate\\Validation\\Rules\\ExcludeIf'):
-                    $applies = self::conditionalObjectApplies($rule, 'Illuminate\\Validation\\Rules\\ExcludeIf');
-                    $flags   = $flags->both(new RuleFlags(possiblyExcluded: $applies !== false, excluded: $applies === true));
-                    break;
-                case self::isObjectRule($rule, 'Illuminate\\Validation\\Rules\\ExcludeUnless'):
-                    $applies = self::conditionalObjectApplies($rule, 'Illuminate\\Validation\\Rules\\ExcludeUnless', true);
-                    $flags   = $flags->both(new RuleFlags(possiblyExcluded: $applies !== false, excluded: $applies === true));
-                    break;
+                default:
+                    foreach (['RequiredIf', 'RequiredUnless', 'ExcludeIf', 'ExcludeUnless'] as $modifier) {
+                        $class = 'Illuminate\\Validation\\Rules\\' . $modifier;
+                        if (! self::isObjectRule($rule, $class)) {
+                            continue;
+                        }
+
+                        $condition = self::constantBoolean(self::template($rule, $class, 'TCondition'));
+                        $unless    = in_array($modifier, ['RequiredUnless', 'ExcludeUnless'], true);
+                        $required  = in_array($modifier, ['RequiredIf', 'RequiredUnless'], true);
+                        $applies   = $condition === null || ! $unless ? $condition : ! $condition;
+                        $flags     = $flags->both(new RuleFlags(
+                            required: $required && $applies === true,
+                            rejectsNull: $required && $applies === true,
+                            possiblyExcluded: ! $required && $applies !== false,
+                            excluded: ! $required && $applies === true,
+                        ));
+                        break;
+                    }
             }
         }
 
-        return new ValidationRule(
-            type: $type,
-            constraintType: $constraintType,
-            allowedKeys: $allowedKeys,
-            anyOfRuleGroups: $anyOfRuleGroups,
-            flags: $flags,
-        );
+        return new ValidationRule($type, $constraint, $keys, $groups, $flags);
     }
 
-    private static function fromConditionalRule(Type $rule): ValidationRule
+    private static function alternatives(Type $rule, bool $anyOf): ValidationRule
     {
-        $alternatives = self::conditionalAlternatives($rule);
+        $class = $anyOf ? self::ANY_OF : self::CONDITIONAL_RULES;
+        $types = [self::template($rule, $class, 'TRules')];
+        if ($anyOf) {
+            $arrays = $types[0]->getConstantArrays();
+            $types  = count($arrays) === 1 && $arrays[0]->isList()->yes() ? $arrays[0]->getValueTypes() : [];
+        } else {
+            $condition = self::constantBoolean(self::template($rule, $class, 'TCondition'));
+            $types     = match ($condition) {
+                true => $types,
+                false => [self::template($rule, $class, 'TDefaultRules')],
+                null => [...$types, self::template($rule, $class, 'TDefaultRules')],
+            };
+        }
 
-        if ($alternatives === null) {
-            return self::degradedRule();
+        $alternatives = [];
+        foreach ($types as $type) {
+            $alternative = self::fromType($type, requireList: $anyOf);
+            // AnyOf exclusion affects a temporary validator, not the original value.
+            if ($alternative === null || ($anyOf && $alternative->flags->possiblyExcluded)) {
+                return $anyOf ? self::make([]) : self::degradedRule();
+            }
+
+            $alternatives[] = $alternative;
         }
 
         return new ValidationRule(
             type: new MixedType(true),
-            anyOfRuleGroups: [['rules' => $alternatives, 'anyOf' => false]],
-            flags: RuleFlags::fromAlternatives(array_map(
+            anyOfRuleGroups: $alternatives === [] ? [] : [['rules' => $alternatives, 'anyOf' => $anyOf]],
+            flags: $anyOf ? new RuleFlags() : RuleFlags::fromAlternatives(array_map(
                 static fn (ValidationRule $alternative): RuleFlags => $alternative->flags,
                 $alternatives,
             )),
         );
     }
 
-    /** A rule whose modifiers could not be resolved, so it may permit or exclude anything. */
-    private static function degradedRule(): ValidationRule
-    {
-        return new ValidationRule(
-            new MixedType(true),
-            flags: new RuleFlags(possiblyExcluded: true, degraded: true, prunesUnvalidatedKeys: null),
-        );
-    }
-
-    private static function isObjectRule(Type $rule, string $class): bool
-    {
-        $classType = new ObjectType($class);
-
-        return $classType->getClassReflection() !== null && $classType->isSuperTypeOf($rule)->yes();
-    }
-
-    private static function objectRuleTemplateType(Type $rule, string $class, string $template): Type
-    {
-        $classReflection = (new ObjectType($class))->getClassReflection();
-
-        return $classReflection === null
-            ? new MixedType()
-            : $rule->getTemplateType($classReflection->getName(), $template);
-    }
-
-    /** @param array<Type> $rules */
-    private static function inObjectConstraint(array $rules, Type $type, Type|null $constraintType): Type|null
-    {
-        foreach ($rules as $rule) {
-            if (! self::isObjectRule($rule, In::class)) {
-                continue;
-            }
-
-            $inType = RuleTypes::inType($rule->getTemplateType(In::class, 'TValues'), $type);
-
-            if ($inType === null) {
-                continue;
-            }
-
-            $constraintType = RuleTypes::intersectConstraint($constraintType, $inType);
-        }
-
-        return $constraintType;
-    }
-
-    /** @return non-empty-list<ValidationRule>|null */
-    private static function conditionalAlternatives(Type $rule): array|null
-    {
-        $condition = self::constantBoolean(self::objectRuleTemplateType($rule, self::CONDITIONAL_RULES, 'TCondition'));
-        $types     = match ($condition) {
-            true => [self::objectRuleTemplateType($rule, self::CONDITIONAL_RULES, 'TRules')],
-            false => [self::objectRuleTemplateType($rule, self::CONDITIONAL_RULES, 'TDefaultRules')],
-            null => [
-                self::objectRuleTemplateType($rule, self::CONDITIONAL_RULES, 'TRules'),
-                self::objectRuleTemplateType($rule, self::CONDITIONAL_RULES, 'TDefaultRules'),
-            ],
-        };
-
-        $alternatives = [];
-
-        foreach ($types as $type) {
-            $alternative = self::fromType($type);
-
-            if ($alternative === null) {
-                return null;
-            }
-
-            $alternatives[] = $alternative;
-        }
-
-        return $alternatives;
-    }
-
-    private static function conditionalObjectApplies(Type $rule, string $class, bool $unless = false): bool|null
-    {
-        $condition = self::constantBoolean(self::objectRuleTemplateType($rule, $class, 'TCondition'));
-
-        return $condition === null || ! $unless ? $condition : ! $condition;
-    }
-
-    private static function constantBoolean(Type $type): bool|null
-    {
-        if ($type->isNull()->yes()) {
-            return false;
-        }
-
-        $values = $type->getConstantScalarValues();
-
-        return count($values) === 1 && is_bool($values[0]) ? $values[0] : null;
-    }
-
-    /** @return list<ValidationRule>|null */
-    private static function anyOfAlternatives(Type $type): array|null
-    {
-        $constantArrays = $type->getConstantArrays();
-
-        if (count($constantArrays) !== 1 || ! $constantArrays[0]->isList()->yes()) {
-            return null;
-        }
-
-        $alternatives = [];
-
-        foreach ($constantArrays[0]->getValueTypes() as $alternativeType) {
-            $alternative = self::fromType($alternativeType, requireList: true);
-
-            // Exclusion only affects AnyOf's temporary validator, so an excluded
-            // alternative cannot be discarded when constraining the original value.
-            if ($alternative === null || $alternative->flags->possiblyExcluded) {
-                return null;
-            }
-
-            $alternatives[] = $alternative;
-        }
-
-        return $alternatives === [] ? null : $alternatives;
-    }
-
     /** @param array<int, string> $parameterizedRules Rule names with unresolved parameters, indexed by their position in the list. */
     public static function fromType(Type $type, bool $requireList = false, array $parameterizedRules = []): ValidationRule|null
     {
         $strings = $type->getConstantStrings();
-
         if (count($strings) === 1) {
             return self::make($strings[0]->getValue());
         }
@@ -445,22 +269,19 @@ final class ValidationRuleFactory
             return self::make([$type]);
         }
 
-        $constantArrays = $type->getConstantArrays();
-
-        if (count($constantArrays) !== 1 || ($requireList && ! $constantArrays[0]->isList()->yes())) {
+        $arrays = $type->getConstantArrays();
+        if (count($arrays) !== 1 || ($requireList && ! $arrays[0]->isList()->yes())) {
             return null;
         }
 
-        if ($constantArrays[0]->getOptionalKeys() !== []) {
+        if ($arrays[0]->getOptionalKeys() !== []) {
             // Optional modifiers can permit null, omit a value, or exclude its subtree.
             return self::degradedRule();
         }
 
         $rules = [];
-
-        foreach ($constantArrays[0]->getValueTypes() as $index => $ruleType) {
+        foreach ($arrays[0]->getValueTypes() as $index => $ruleType) {
             $strings = $ruleType->getConstantStrings();
-
             if (count($strings) === 1) {
                 $rules[] = $strings[0]->getValue();
             } elseif ($ruleType->isObject()->yes()) {
@@ -475,32 +296,57 @@ final class ValidationRuleFactory
         return self::make($rules);
     }
 
+    private static function degradedRule(): ValidationRule
+    {
+        return new ValidationRule(new MixedType(true), flags: new RuleFlags(possiblyExcluded: true, degraded: true, prunesUnvalidatedKeys: null));
+    }
+
+    private static function isObjectRule(Type $rule, string $class): bool
+    {
+        $classType = new ObjectType($class);
+
+        return $classType->getClassReflection() !== null && $classType->isSuperTypeOf($rule)->yes();
+    }
+
+    private static function template(Type $rule, string $class, string $template): Type
+    {
+        $reflection = (new ObjectType($class))->getClassReflection();
+
+        return $reflection === null ? new MixedType() : $rule->getTemplateType($reflection->getName(), $template);
+    }
+
+    private static function constantBoolean(Type $type): bool|null
+    {
+        return $type->isNull()->yes() ? false : match ($type->getConstantScalarValues()) {
+            [true] => true,
+            [false] => false,
+            default => null,
+        };
+    }
+
     /** @return list<ConstantIntegerType|ConstantStringType>|null */
     private static function constantArrayKeys(Type $type): array|null
     {
-        $constantArrays = $type->getConstantArrays();
-
-        if (count($constantArrays) !== 1 || $constantArrays[0]->getValueTypes() === []) {
+        $arrays = $type->getConstantArrays();
+        if (count($arrays) !== 1 || $arrays[0]->getValueTypes() === []) {
             return null;
         }
 
-        $serializedKeys = [];
-
-        foreach ($constantArrays[0]->getValueTypes() as $valueType) {
+        $keys = [];
+        foreach ($arrays[0]->getValueTypes() as $valueType) {
             $value = RuleTypes::constantRuleString($valueType);
-
             if ($value === null) {
                 return null;
             }
 
-            $serializedKeys[] = $value->getValue();
+            $keys[] = $value->getValue();
         }
 
-        return RuleTypes::arrayKeyTypes(str_getcsv(implode(',', $serializedKeys), escape: '\\'));
+        return RuleTypes::arrayKeyTypes(str_getcsv(implode(',', $keys), escape: '\\'));
     }
 
-    /** @param list<int|string> $parameters */
-    private static function intParameter(array $parameters, int $index): int|null
+    /** @param list<string>|null $parameters */
+    private static function intParameter(array|null $parameters, int $index): int|null
     {
         $value = filter_var($parameters[$index] ?? null, FILTER_VALIDATE_INT);
 
