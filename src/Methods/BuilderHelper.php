@@ -329,26 +329,10 @@ class BuilderHelper
             $builderClassName = $this->determineBuilderName($modelClassName);
         } catch (InvalidArgumentException) {
             return null;
+        } catch (MissingMethodFromReflectionException) {
+            $builderClassName = EloquentBuilder::class;
         }
 
-        $builderReflection = $this->reflectionProvider->getClass($builderClassName);
-
-        if ($builderReflection->isGeneric()) {
-            $typeMap = $builderReflection->getActiveTemplateTypeMap();
-
-            // Specifies only model (TModel parameter)
-            if (($typeMap->count() === 1) && $typeMap->hasType('TModel')) {
-                return new GenericObjectType($builderClassName, [new ObjectType($modelClassName)]);
-            }
-
-            // If it has other generic parameters, we still try to add the model as the first parameter
-            // This handles cases where builders might have additional template parameters
-            if ($typeMap->count() >= 1) {
-                return new GenericObjectType($builderClassName, [new ObjectType($modelClassName)]);
-            }
-        }
-
-        // Not generic. So return the type as is
-        return new ObjectType($builderClassName);
+        return $this->getBuilderType($builderClassName, new ObjectType($modelClassName));
     }
 }

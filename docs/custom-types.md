@@ -121,11 +121,11 @@ use Illuminate\Database\Eloquent\Builder;
  */
 function getActiveUsers(): Builder
 {
-    return User::where('active', true)->query();
+    return User::query()->where('active', true);
 }
 
 /**
- * @phpstan-param builder-of<Post> $posts
+ * @phpstan-param builder-of<Post> $postQuery
  */
 function publishPosts(Builder $postQuery): void
 {

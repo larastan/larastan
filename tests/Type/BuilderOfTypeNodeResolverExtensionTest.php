@@ -6,6 +6,7 @@ namespace Tests\Type;
 
 use Larastan\Larastan\Types\BuilderOf\BuilderOfTypeNodeResolverExtension;
 use PHPStan\Analyser\NameScope;
+use PHPStan\PhpDoc\TypeNodeResolver;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use PHPStan\Testing\PHPStanTestCase;
@@ -23,6 +24,8 @@ class BuilderOfTypeNodeResolverExtensionTest extends PHPStanTestCase
         parent::setUp();
 
         $this->extension = static::getContainer()->getByType(BuilderOfTypeNodeResolverExtension::class);
+
+        $this->extension->setTypeNodeResolver(static::getContainer()->getByType(TypeNodeResolver::class));
 
         $this->nameScope = new NameScope(null, []);
     }
@@ -87,7 +90,7 @@ class BuilderOfTypeNodeResolverExtensionTest extends PHPStanTestCase
         $this->assertNull($result);
     }
 
-    /** @dataProvider validModelTypesProvider */
+    #[DataProvider('validModelTypesProvider')]
     public function testBuilderOfWithValidModelTypes(string $modelClass, string $expectedDescription): void
     {
         $typeNode = new GenericTypeNode(
