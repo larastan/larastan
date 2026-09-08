@@ -26,12 +26,12 @@ function testNumericArrayKeys(SelectorRequest $request): void
 
 function testNumericSegments(SelectorRequest $request): void
 {
-    assertType('mixed', $request->negative);
-    assertType('mixed', $request->zero);
-    assertType('mixed', $request->leadingZero);
-    assertType('array|null', $request->validated('negative'));
-    assertType('array|null', $request->validated('zero'));
-    assertType('array|null', $request->validated('leadingZero'));
+    assertType('array{-1: array{name: non-empty-string, ...}, ...}', $request->negative);
+    assertType('array{array{name: non-empty-string, ...}, ...}', $request->zero);
+    assertType("array{'01': array{name: non-empty-string, ...}, ...}", $request->leadingZero);
+    assertType('array{-1: array{name: non-empty-string}}', $request->validated('negative'));
+    assertType('array{array{name: non-empty-string}}', $request->validated('zero'));
+    assertType("array{'01': array{name: non-empty-string}}", $request->validated('leadingZero'));
     assertType("array{'+1': array{name: non-empty-string}}", $request->validated('stringPlus'));
     assertType("array{'-0': array{name: non-empty-string}}", $request->validated('stringNegativeZero'));
     assertType("array{'-01': array{name: non-empty-string}}", $request->validated('stringNegativeLeadingZero'));

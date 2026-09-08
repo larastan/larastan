@@ -19,7 +19,6 @@ use function array_keys;
 use function array_map;
 use function array_shift;
 use function count;
-use function ctype_digit;
 use function preg_split;
 use function str_replace;
 
@@ -54,7 +53,7 @@ final class RuleTree
     /** @var array<string, self> */
     public array $children = [];
 
-    /** Rules exist below this node at paths the tree cannot represent: numeric indexes, or a wildcard next to a name. */
+    /** A wildcard and a named attribute share this level, so the shape below cannot be told apart. */
     public bool $degraded = false;
 
     /** Rules may exist for attributes the tree does not know. */
@@ -74,13 +73,6 @@ final class RuleTree
             $node     = $root->children[array_shift($segments)] ??= new self();
 
             foreach ($segments as $segment) {
-                // Numeric segments, including zero-padded ones, address positions the tree does not model.
-                if (ctype_digit($segment) || (new ConstantStringType($segment))->toArrayKey()->isInteger()->yes()) {
-                    $node->degraded = true;
-
-                    continue 2;
-                }
-
                 $node->children[$segment] ??= new self();
 
                 if (isset($node->children[self::WILDCARD]) && count($node->children) > 1) {
@@ -138,7 +130,7 @@ final class RuleTree
             $view = $this->copiesInput(certainly: true) ? self::COPIED : self::MAYBE_COPIED;
         }
 
-        if ($rule?->allowedKeys === null && $this->children === [] && ! $this->degraded) {
+        if ($rule?->allowedKeys === null && $this->children === []) {
             return $this->leaf();
         }
 
@@ -277,10 +269,6 @@ final class RuleTree
     /** Whether an exclude rule removes every nested rule from the validator, or may do so unless $certainly. */
     private function nestedRulesExcluded(bool $certainly): bool
     {
-        if ($this->degraded) {
-            return false;
-        }
-
         foreach ($this->children as $child) {
             $flags = $child->rule?->flags;
 
