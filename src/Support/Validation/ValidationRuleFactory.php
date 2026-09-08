@@ -79,6 +79,7 @@ final class ValidationRuleFactory
             }
 
             $determinedType = RuleTypes::determineType($name, $parameters ?? []);
+
             if ($determinedType === null) {
                 continue;
             }
@@ -90,6 +91,7 @@ final class ValidationRuleFactory
         if ($inValues !== null) {
             if ($type->isArray()->yes()) {
                 $inType = RuleTypes::inParameterType($inValues, $type);
+
                 if ($inType !== null) {
                     $constraint = RuleTypes::intersectConstraint($constraint, $inType);
                 }
@@ -99,12 +101,14 @@ final class ValidationRuleFactory
         }
 
         $type = RuleTypes::applyBounds($type, $minimums, $maximums, isset($names['integer']) || isset($names['numeric']) || isset($names['decimal']));
+
         foreach ($objects as $rule) {
             if (! self::isObjectRule($rule, Rules\In::class)) {
                 continue;
             }
 
             $inType = RuleTypes::inType($rule->getTemplateType(Rules\In::class, 'TValues'), $type);
+
             if ($inType === null) {
                 continue;
             }
@@ -176,6 +180,7 @@ final class ValidationRuleFactory
                     break;
                 case self::isObjectRule($rule, Rules\Enum::class):
                     $enumType = RuleTypes::enumType($rule->getTemplateType(Rules\Enum::class, 'TEnum'));
+
                     if ($enumType !== null) {
                         $constraint = RuleTypes::intersectConstraint($constraint, $enumType);
                     }
@@ -195,9 +200,11 @@ final class ValidationRuleFactory
                 case self::isObjectRule($rule, Rules\Password::class):
                     $type = new StringType();
                     break;
+
                 default:
                     foreach (['RequiredIf', 'RequiredUnless', 'ExcludeIf', 'ExcludeUnless'] as $modifier) {
                         $class = 'Illuminate\\Validation\\Rules\\' . $modifier;
+
                         if (! self::isObjectRule($rule, $class)) {
                             continue;
                         }
@@ -224,6 +231,7 @@ final class ValidationRuleFactory
     {
         $class = $anyOf ? self::ANY_OF : self::CONDITIONAL_RULES;
         $types = [self::template($rule, $class, 'TRules')];
+
         if ($anyOf) {
             $arrays = $types[0]->getConstantArrays();
             $types  = count($arrays) === 1 && $arrays[0]->isList()->yes() ? $arrays[0]->getValueTypes() : [];
@@ -237,8 +245,10 @@ final class ValidationRuleFactory
         }
 
         $alternatives = [];
+
         foreach ($types as $type) {
             $alternative = self::fromType($type, requireList: $anyOf);
+
             // AnyOf exclusion affects a temporary validator, not the original value.
             if ($alternative === null || ($anyOf && $alternative->flags->possiblyExcluded)) {
                 return $anyOf ? self::make([]) : self::degradedRule();
@@ -261,6 +271,7 @@ final class ValidationRuleFactory
     public static function fromType(Type $type, bool $requireList = false, array $parameterizedRules = []): ValidationRule|null
     {
         $strings = $type->getConstantStrings();
+
         if (count($strings) === 1) {
             return self::make($strings[0]->getValue());
         }
@@ -270,6 +281,7 @@ final class ValidationRuleFactory
         }
 
         $arrays = $type->getConstantArrays();
+
         if (count($arrays) !== 1 || ($requireList && ! $arrays[0]->isList()->yes())) {
             return null;
         }
@@ -280,8 +292,10 @@ final class ValidationRuleFactory
         }
 
         $rules = [];
+
         foreach ($arrays[0]->getValueTypes() as $index => $ruleType) {
             $strings = $ruleType->getConstantStrings();
+
             if (count($strings) === 1) {
                 $rules[] = $strings[0]->getValue();
             } elseif ($ruleType->isObject()->yes()) {
@@ -328,13 +342,16 @@ final class ValidationRuleFactory
     private static function constantArrayKeys(Type $type): array|null
     {
         $arrays = $type->getConstantArrays();
+
         if (count($arrays) !== 1 || $arrays[0]->getValueTypes() === []) {
             return null;
         }
 
         $keys = [];
+
         foreach ($arrays[0]->getValueTypes() as $valueType) {
             $value = RuleTypes::constantRuleString($valueType);
+
             if ($value === null) {
                 return null;
             }
