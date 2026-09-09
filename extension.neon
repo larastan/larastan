@@ -499,6 +499,12 @@ services:
             - phpstan.phpDoc.typeNodeResolverExtension
 
     -
+        class: Larastan\Larastan\ClosureTypes\RelationshipQueryCallbackExtension
+        tags:
+            - phpstan.methodParameterClosureTypeExtension
+            - phpstan.staticMethodParameterClosureTypeExtension
+
+    -
         class: Larastan\Larastan\Types\BuilderOf\BuilderOfTypeNodeResolverExtension
         tags:
             - phpstan.phpDoc.typeNodeResolverExtension

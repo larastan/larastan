@@ -169,3 +169,34 @@ class ModelRepository
 }
 ```
 
+**Relationship Builders:**
+
+An optional second argument selects a relationship on the first model:
+
+```php
+/** @param builder-of<User, 'accounts'> $query */
+function filterAccounts(Builder $query): void
+{
+    $query->where('active', true);
+}
+```
+
+If `User::accounts()` relates to `Account`, this resolves to `builder-of<Account>`, including any custom builder. Dotted paths such as `builder-of<User, 'posts.comments'>` resolve to the final related model's builder. Relationship methods must have a reflected return type that is an Eloquent `Relation`; Larastan uses its declared related-model type, including generic and polymorphic model types.
+
+Both model unions and relationship-name unions are supported. For example, `builder-of<User, 'posts'|'accounts'>` produces a union of the related builders. Alternatives that cannot resolve the complete path are discarded. If none resolve, the type falls back to `builder-of<User>`. A known relationship whose related-model type is only `Model` resolves to `Builder<Model>`.
+
+The second argument must be a string type. Literal names must be quoted. Relationship names, dotted paths, and eager-loading column syntax such as `'posts:id'` are supported; the column suffix does not affect the builder type. A nonconstant string falls back to the first model's builder.
+
+The relationship argument can also be a template bounded by `string`:
+
+```php
+/**
+ * @template TModel of \Illuminate\Database\Eloquent\Model
+ * @template TRelation of string
+ * @param class-string<TModel> $modelClass
+ * @param TRelation $relationship
+ * @return builder-of<TModel, TRelation>
+ */
+```
+
+Once the template resolves to a constant string or a union of constant strings, Larastan resolves the relationships. While it remains unresolved, the type falls back to `builder-of<TModel>`.

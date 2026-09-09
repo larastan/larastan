@@ -45,12 +45,14 @@ function test(Builder $builder, User $user, string $union): void
     User::query()->createQuietly(['id' => 1]);
 }
 
-//// Currently, there is no way to change the type of `$query` inside the callback.
-//// So until we have a way to do that, we will ignore errors for `Builder<Model>`
-//// @see https://github.com/phpstan/phpstan/discussions/6850
-//\App\User::query()->whereHas('accounts', function (\Illuminate\Database\Eloquent\Builder $query) {
-//    $query->where('foo', 'bar');
-//});
+User::query()->whereHas('accounts', function (Builder $query) {
+    $query->where('active', 1);
+    $query->where('foo', 'bar');
+});
+
+User::orWhereHas('accounts', function (Builder $query) {
+    $query->where('foo', 5);
+});
 
 function getKey(): string
 {

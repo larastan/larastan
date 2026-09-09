@@ -11,6 +11,272 @@ namespace Illuminate\Database\Eloquent;
 class Builder
 {
     /**
+     * @template TRelation of string
+     * @template TRelatedModel of Model
+     *
+     * @param TRelation|\Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, *, *> $relation
+     * @param string $operator
+     * @param \Illuminate\Contracts\Database\Query\Expression|int $count
+     * @param string $boolean
+     * @param (\Closure(($relation is string ? builder-of<TModel, TRelation> : builder-of<TRelatedModel>)): mixed)|null $callback
+     * @return $this
+     *
+     * @throws \RuntimeException
+     */
+    public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', ?\Closure $callback = null);
+
+    /**
+     * @template TRelation of string
+     * @template TRelatedModel of Model
+     *
+     * @param TRelation|\Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, *, *> $relation
+     * @param string $boolean
+     * @param (\Closure(($relation is string ? builder-of<TModel, TRelation> : builder-of<TRelatedModel>)): mixed)|null $callback
+     * @return $this
+     */
+    public function doesntHave($relation, $boolean = 'and', ?\Closure $callback = null);
+
+    /**
+     * @template TRelation of string
+     * @template TRelatedModel of Model
+     *
+     * @param TRelation|\Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, *, *> $relation
+     * @param (\Closure(($relation is string ? builder-of<TModel, TRelation> : builder-of<TRelatedModel>)): mixed)|null $callback
+     * @param string $operator
+     * @param \Illuminate\Contracts\Database\Query\Expression|int $count
+     * @return $this
+     */
+    public function whereHas($relation, ?\Closure $callback = null, $operator = '>=', $count = 1);
+
+    /**
+     * @template TRelation of string
+     * @template TRelatedModel of Model
+     *
+     * @param TRelation|\Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, *, *> $relation
+     * @param (\Closure(($relation is string ? builder-of<TModel, TRelation> : builder-of<TRelatedModel>)): mixed)|null $callback
+     * @param string $operator
+     * @param \Illuminate\Contracts\Database\Query\Expression|int $count
+     * @return $this
+     */
+    public function orWhereHas($relation, ?\Closure $callback = null, $operator = '>=', $count = 1);
+
+    /**
+     * @template TRelation of string
+     * @template TRelatedModel of Model
+     *
+     * @param TRelation|\Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, *, *> $relation
+     * @param (\Closure(($relation is string ? builder-of<TModel, TRelation> : builder-of<TRelatedModel>)): mixed)|null $callback
+     * @return $this
+     */
+    public function whereDoesntHave($relation, ?\Closure $callback = null);
+
+    /**
+     * @template TRelation of string
+     * @template TRelatedModel of Model
+     *
+     * @param TRelation|\Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, *, *> $relation
+     * @param (\Closure(($relation is string ? builder-of<TModel, TRelation> : builder-of<TRelatedModel>)): mixed)|null $callback
+     * @return $this
+     */
+    public function orWhereDoesntHave($relation, ?\Closure $callback = null);
+
+    /**
+     * @template TMorphModel of Model
+     * @template TType of string
+     *
+     * @param string|\Illuminate\Database\Eloquent\Relations\MorphTo<*, *> $relation
+     * @param class-string<TMorphModel>|TType|array<int, class-string<TMorphModel>|TType> $types
+     * @param string $operator
+     * @param \Illuminate\Contracts\Database\Query\Expression|int $count
+     * @param string $boolean
+     * @param (\Closure(builder-of<TMorphModel>, string): mixed)|null $callback
+     * @return $this
+     */
+    public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', ?\Closure $callback = null);
+
+    /**
+     * @template TMorphModel of Model
+     * @template TType of string
+     *
+     * @param string|\Illuminate\Database\Eloquent\Relations\MorphTo<*, *> $relation
+     * @param class-string<TMorphModel>|TType|array<int, class-string<TMorphModel>|TType> $types
+     * @param string $boolean
+     * @param (\Closure(builder-of<TMorphModel>, string): mixed)|null $callback
+     * @return $this
+     */
+    public function doesntHaveMorph($relation, $types, $boolean = 'and', ?\Closure $callback = null);
+
+    /**
+     * @template TMorphModel of Model
+     * @template TType of string
+     *
+     * @param string|\Illuminate\Database\Eloquent\Relations\MorphTo<*, *> $relation
+     * @param class-string<TMorphModel>|TType|array<int, class-string<TMorphModel>|TType> $types
+     * @param (\Closure(builder-of<TMorphModel>, string): mixed)|null $callback
+     * @param string $operator
+     * @param \Illuminate\Contracts\Database\Query\Expression|int $count
+     * @return $this
+     */
+    public function whereHasMorph($relation, $types, ?\Closure $callback = null, $operator = '>=', $count = 1);
+
+    /**
+     * @template TMorphModel of Model
+     * @template TType of string
+     *
+     * @param string|\Illuminate\Database\Eloquent\Relations\MorphTo<*, *> $relation
+     * @param class-string<TMorphModel>|TType|array<int, class-string<TMorphModel>|TType> $types
+     * @param (\Closure(builder-of<TMorphModel>, string): mixed)|null $callback
+     * @param string $operator
+     * @param \Illuminate\Contracts\Database\Query\Expression|int $count
+     * @return $this
+     */
+    public function orWhereHasMorph($relation, $types, ?\Closure $callback = null, $operator = '>=', $count = 1);
+
+    /**
+     * @template TMorphModel of Model
+     * @template TType of string
+     *
+     * @param string|\Illuminate\Database\Eloquent\Relations\MorphTo<*, *> $relation
+     * @param class-string<TMorphModel>|TType|array<int, class-string<TMorphModel>|TType> $types
+     * @param (\Closure(builder-of<TMorphModel>, string): mixed)|null $callback
+     * @return $this
+     */
+    public function whereDoesntHaveMorph($relation, $types, ?\Closure $callback = null);
+
+    /**
+     * @template TMorphModel of Model
+     * @template TType of string
+     *
+     * @param string|\Illuminate\Database\Eloquent\Relations\MorphTo<*, *> $relation
+     * @param class-string<TMorphModel>|TType|array<int, class-string<TMorphModel>|TType> $types
+     * @param (\Closure(builder-of<TMorphModel>, string): mixed)|null $callback
+     * @return $this
+     */
+    public function orWhereDoesntHaveMorph($relation, $types, ?\Closure $callback = null);
+
+    /**
+     * @template TRelation of string
+     * @template TRelatedModel of Model
+     *
+     * @param TRelation|\Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, *, *> $relation
+     * @param (\Closure(($relation is string ? builder-of<TModel, TRelation> : builder-of<TRelatedModel>)): mixed)|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @return $this
+     */
+    public function whereRelation($relation, $column, $operator = null, $value = null);
+
+    /**
+     * @template TRelation of string
+     * @template TRelatedModel of Model
+     *
+     * @param TRelation|\Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, *, *> $relation
+     * @param (\Closure(($relation is string ? builder-of<TModel, TRelation> : builder-of<TRelatedModel>)): mixed)|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @return $this
+     */
+    public function orWhereRelation($relation, $column, $operator = null, $value = null);
+
+    /**
+     * @template TRelation of string
+     * @template TRelatedModel of Model
+     *
+     * @param TRelation|\Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, *, *> $relation
+     * @param (\Closure(($relation is string ? builder-of<TModel, TRelation> : builder-of<TRelatedModel>)): mixed)|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @return $this
+     */
+    public function whereDoesntHaveRelation($relation, $column, $operator = null, $value = null);
+
+    /**
+     * @template TRelation of string
+     * @template TRelatedModel of Model
+     *
+     * @param TRelation|\Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, *, *> $relation
+     * @param (\Closure(($relation is string ? builder-of<TModel, TRelation> : builder-of<TRelatedModel>)): mixed)|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @return $this
+     */
+    public function orWhereDoesntHaveRelation($relation, $column, $operator = null, $value = null);
+
+    /**
+     * @template TMorphModel of Model
+     * @template TType of string
+     *
+     * @param string|\Illuminate\Database\Eloquent\Relations\MorphTo<*, *> $relation
+     * @param class-string<TMorphModel>|TType|array<int, class-string<TMorphModel>|TType> $types
+     * @param (\Closure(builder-of<TMorphModel>): mixed)|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @return $this
+     */
+    public function whereMorphRelation($relation, $types, $column, $operator = null, $value = null);
+
+    /**
+     * @template TMorphModel of Model
+     * @template TType of string
+     *
+     * @param string|\Illuminate\Database\Eloquent\Relations\MorphTo<*, *> $relation
+     * @param class-string<TMorphModel>|TType|array<int, class-string<TMorphModel>|TType> $types
+     * @param (\Closure(builder-of<TMorphModel>): mixed)|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @return $this
+     */
+    public function orWhereMorphRelation($relation, $types, $column, $operator = null, $value = null);
+
+    /**
+     * @template TMorphModel of Model
+     * @template TType of string
+     *
+     * @param string|\Illuminate\Database\Eloquent\Relations\MorphTo<*, *> $relation
+     * @param class-string<TMorphModel>|TType|array<int, class-string<TMorphModel>|TType> $types
+     * @param (\Closure(builder-of<TMorphModel>): mixed)|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @return $this
+     */
+    public function whereMorphDoesntHaveRelation($relation, $types, $column, $operator = null, $value = null);
+
+    /**
+     * @template TMorphModel of Model
+     * @template TType of string
+     *
+     * @param string|\Illuminate\Database\Eloquent\Relations\MorphTo<*, *> $relation
+     * @param class-string<TMorphModel>|TType|array<int, class-string<TMorphModel>|TType> $types
+     * @param (\Closure(builder-of<TMorphModel>): mixed)|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @return $this
+     */
+    public function orWhereMorphDoesntHaveRelation($relation, $types, $column, $operator = null, $value = null);
+
+    /**
+     * @template TRelation of string
+     *
+     * @param TRelation $relation
+     * @param (\Closure(($relation is literal-string ? builder-of<TModel, TRelation> : Builder<*>)|\Illuminate\Database\Eloquent\Relations\Relation<*, *, *>): mixed)|null $callback
+     * @param string $operator
+     * @param \Illuminate\Contracts\Database\Query\Expression|int $count
+     * @return $this
+     */
+    public function withWhereHas($relation, ?\Closure $callback = null, $operator = '>=', $count = 1);
+
+    /**
+     * @template TRelation of string
+     *
+     * @param TRelation $relation
+     * @param (\Closure(($relation is literal-string ? builder-of<TModel, TRelation> : Builder<*>)|\Illuminate\Database\Eloquent\Relations\Relation<*, *, *>): mixed)|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @return $this
+     */
+    public function withWhereRelation($relation, $column, $operator = null, $value = null);
+
+    /**
      * Create and return an un-saved model instance.
      *
      * @phpstan-param array<model-property<TModel>, mixed> $attributes
@@ -384,17 +650,6 @@ class Builder
       * @throws \InvalidArgumentException
       */
      public function lazyByIdDesc($chunkSize = 1000, $column = null, $alias = null);
-
-    /**
-     * Add a basic where clause to a relationship query.
-     *
-     * @param  \Illuminate\Database\Eloquent\Relations\Relation<*, *, *>|string  $relation
-     * @param  \Closure|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
-     * @param  mixed  $operator
-     * @param  mixed  $value
-     * @return static
-     */
-    public function whereRelation($relation, $column, $operator = null, $value = null);
 
     /**
      * Gets the result of a query in chunks.

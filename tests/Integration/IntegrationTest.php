@@ -28,6 +28,22 @@ class IntegrationTest extends PHPStanTestCase
         yield [__DIR__ . '/data/test-case-extension.php', [34 => ['Call to function method_exists() with $this(TestTestCase) and \'partialMock\' will always evaluate to true.']]];
         yield [__DIR__ . '/data/model-builder.php'];
         yield [
+            __DIR__ . '/data/relationship-query-callbacks.php',
+            [
+                69 => ['Parameter #3 $callback of static method Illuminate\Database\Eloquent\Builder<App\Comment>::whereHasMorph() expects (Closure(App\PostBuilder<App\Post>, string): mixed)|null, Closure(int): void given.'],
+                70 => ['Parameter #3 $callback of static method Illuminate\Database\Eloquent\Builder<App\Comment>::whereHasMorph() expects (Closure(App\PostBuilder<App\Post>, string): mixed)|null, Closure(Illuminate\Database\Eloquent\Builder, int): void given.'],
+                71 => ['Parameter #3 $callback of static method Illuminate\Database\Eloquent\Builder<App\Comment>::whereHasMorph() expects (Closure(Illuminate\Database\Eloquent\Builder<App\User>, string): mixed)|null, Closure(App\PostBuilder): void given.'],
+                91 => ['Parameter #2 $callback of static method Illuminate\Database\Eloquent\Builder<App\User>::withWhereHas() expects (Closure(Illuminate\Database\Eloquent\Builder<App\Account>|Illuminate\Database\Eloquent\Relations\Relation<*, *, *>): mixed)|null, Closure(Illuminate\Database\Eloquent\Builder): void given.'],
+                92 => ['Parameter #2 $callback of method Illuminate\Database\Eloquent\Builder<App\User>::withWhereHas() expects (Closure(Illuminate\Database\Eloquent\Builder<App\Account>|Illuminate\Database\Eloquent\Relations\Relation<*, *, *>): mixed)|null, Closure(Illuminate\Database\Eloquent\Relations\Relation): void given.'],
+                126 => ['Parameter #2 $column of static method Illuminate\Database\Eloquent\Builder<App\User>::whereRelation() expects array<mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\Account>): mixed)|Illuminate\Contracts\Database\Query\Expression|string, Closure(App\PostBuilder): void given.'],
+                127 => ['Parameter #3 $column of static method Illuminate\Database\Eloquent\Builder<App\Comment>::whereMorphRelation() expects array<mixed>|(Closure(App\PostBuilder<App\Post>): mixed)|Illuminate\Contracts\Database\Query\Expression|string, Closure(int): void given.'],
+                128 => ['Parameter #3 $column of static method Illuminate\Database\Eloquent\Builder<App\Comment>::whereMorphRelation() expects array<mixed>|(Closure(App\PostBuilder<App\Post>): mixed)|Illuminate\Contracts\Database\Query\Expression|string, Closure(App\PostBuilder, string): void given.'],
+                129 => ['Parameter #2 $column of static method Illuminate\Database\Eloquent\Builder<App\User>::withWhereRelation() expects array<mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\Account>|Illuminate\Database\Eloquent\Relations\Relation<*, *, *>): mixed)|Illuminate\Contracts\Database\Query\Expression|string, Closure(Illuminate\Database\Eloquent\Builder): void given.'],
+                130 => ['Parameter #2 $callback of method Illuminate\Database\Eloquent\Builder<App\User>::with() expects (Closure(Illuminate\Database\Eloquent\Relations\Relation<*, *, *>): mixed)|string|null, Closure(Illuminate\Database\Eloquent\Builder): void given.'],
+            ],
+        ];
+
+        yield [
             __DIR__ . '/data/model-properties.php',
             [
                 32 => ['Property App\User::$unsigned_integer (int<0, max>) does not accept -5.'],
@@ -99,6 +115,8 @@ class IntegrationTest extends PHPStanTestCase
                 36 => ['Parameter #1 $columns of method Illuminate\Database\Eloquent\Builder<App\User>::first() expects \'*\'|array<int, \'*\'|Illuminate\Contracts\Database\Query\Expression|model property of App\User>|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
                 39 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\User>::where() expects array<int|model property of App\User, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): Illuminate\Database\Eloquent\Builder<App\User>)|(Closure(Illuminate\Database\Eloquent\Builder<App\User>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'roles.foo\' given.'],
                 44 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Builder<App\User>::createQuietly() expects array<model property of App\User, mixed>, array<string, string> given.'],
+                50 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\Account>::where() expects array<int|model property of App\Account, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\Account>): Illuminate\Database\Eloquent\Builder<App\Account>)|(Closure(Illuminate\Database\Eloquent\Builder<App\Account>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\Account, \'foo\' given.'],
+                54 => ['Parameter #1 $column of method Illuminate\Database\Eloquent\Builder<App\Account>::where() expects array<int|model property of App\Account, mixed>|(Closure(Illuminate\Database\Eloquent\Builder<App\Account>): Illuminate\Database\Eloquent\Builder<App\Account>)|(Closure(Illuminate\Database\Eloquent\Builder<App\Account>): void)|Illuminate\Contracts\Database\Query\Expression|model property of App\Account, \'foo\' given.'],
             ],
         ];
 

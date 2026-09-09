@@ -272,6 +272,34 @@ public function posts(): HasMany
 }
 ```
 
+Relationship query callbacks infer the related model's builder, including custom builders:
+
+```php
+User::whereHas('posts.comments', function (Builder $query) {
+    // $query: Builder<Comment>
+});
+
+Post::whereRelation('user', function (Builder $query) {
+    // $query: UserBuilder (from the custom builder example above)
+});
+
+Comment::whereHasMorph('commentable', [Post::class, User::class], function (Builder $query, $type) {
+    // $query: Builder<Post>|UserBuilder
+    // $type: string
+});
+
+User::withWhereHas('posts', function (Builder|Relation $query) {
+    // $query: Builder<Post>|HasMany<Post, User>
+});
+
+User::query()->with('posts', function (Relation $query) {
+    // $query: HasMany<Post, User>
+});
+```
+
+> [!NOTE]
+> Callbacks inside `with([...])` and similar relationship arrays do not receive these inferred types.
+
 ## Bootstrap Error Reporting (since 3.9.0)
 
 Larastan boots your Laravel application during analysis. If that bootstrap fails, Larastan can print a
