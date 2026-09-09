@@ -16,13 +16,32 @@ use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Type;
 
 use function in_array;
+use function strtolower;
 
-/** Narrows input(), integer(), and boolean() on a FormRequest to its validation rules. */
+/** Narrows the input accessors of a FormRequest, such as input() and integer(), to its validation rules. */
 final class FormRequestInputDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
+    private const METHODS = [
+        'all',
+        'array',
+        'boolean',
+        'collect',
+        'enum',
+        'enums',
+        'except',
+        'exists',
+        'float',
+        'has',
+        'input',
+        'integer',
+        'missing',
+        'only',
+    ];
+
     public function __construct(
         private FormRequestHelper $formRequestHelper,
         private FormRequestLifecycle $lifecycle,
+        private DataAccessorHelper $dataAccessorHelper,
     ) {
     }
 
@@ -33,7 +52,7 @@ final class FormRequestInputDynamicMethodReturnTypeExtension implements DynamicM
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-        return in_array($methodReflection->getName(), ['input', 'integer', 'boolean'], true);
+        return in_array(strtolower($methodReflection->getName()), self::METHODS, true);
     }
 
     public function getTypeFromMethodCall(
@@ -58,6 +77,6 @@ final class FormRequestInputDynamicMethodReturnTypeExtension implements DynamicM
         }
 
         // input() reads the request body and query string, so uploaded files are not among its values.
-        return DataAccessorHelper::resolveAccessor($methodReflection->getName(), $dataTypes, $methodCall->getArgs(), $scope, true);
+        return $this->dataAccessorHelper->resolveAccessor($methodReflection->getName(), $dataTypes, $methodCall->getArgs(), $scope, true);
     }
 }

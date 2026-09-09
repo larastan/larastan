@@ -600,6 +600,9 @@ services:
         class: Larastan\Larastan\Support\FormRequestLifecycle
 
     -
+        class: Larastan\Larastan\Support\DataAccessorHelper
+
+    -
         class: Larastan\Larastan\Rules\FormRequestUnknownValidatedKeyRule
         arguments:
             checkUnionTypes: %checkUnionTypes%

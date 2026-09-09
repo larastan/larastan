@@ -59,7 +59,10 @@ function test(
     assertType('array<string, mixed>', $safeReturnRequest->safe($optionalSafeKeys));
     assertType('array{}', $safeReturnRequest->safe(['missing']));
     assertType('array<string, mixed>', $safeReturnRequest->safe(['unknown.child']));
-    assertType('array', $safeReturnRequest->safe()->all());
+    assertType(
+        'array{name: non-empty-string, nickname?: string, profile: array{email: non-empty-string, age?: float|int|numeric-string}, unknown: mixed}',
+        $safeReturnRequest->safe()->all(),
+    );
     assertType('non-empty-string', $safeReturnRequest->safe()->input('name'));
     assertType('mixed', $safeReturnRequest->safe()['name']);
     assertType('array{custom: string}', $overriddenSafeRequest->safe());

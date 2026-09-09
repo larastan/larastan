@@ -265,10 +265,12 @@ validation-rule pairs.
 After validation succeeds, Larastan uses `rules()` as the source of truth for:
 
 - magic properties such as `$request->name`;
-- the values returned by `input()`, `integer()`, and `boolean()`;
+- the input accessors `all()`, `input()`, `only()`, `except()`, `has()`,
+  `exists()`, `missing()`, `integer()`, `float()`, `boolean()`, `enum()`,
+  `enums()`, `array()`, and `collect()`;
 - the full array and exact keyed values returned by `validated()`; and
 - the generic `ValidatedInput` or selected array returned by `safe()`, together
-  with its own `input()`, `integer()`, and `boolean()` methods.
+  with the same accessors on the `ValidatedInput`.
 
 For example, these rules:
 
@@ -349,17 +351,23 @@ strings. Dynamic or unsupported key expressions keep Laravel's existing broad
 return type. Other methods, properties, and array offsets on the returned
 `ValidatedInput` are not refined.
 
-`input()`, `integer()`, and `boolean()` follow the same rules as magic
-properties on the request and as `validated()` on a `ValidatedInput`. They
-support exact keys, including dotted strings, plus default values. `input()`
-without a key returns the whole input array. `integer()` applies the `(int)`
-cast, so `integer|between:1,5` infers `int<1, 5>` and an absent optional field
-contributes the cast default. `boolean()` follows `filter_var()`: a field with
-an unconditional `accepted` rule infers `true`, `declined` infers `false`, and
-`boolean` stays `bool`. Because uploaded files are not part of `input()`,
-fields that may hold an uploaded file keep Laravel's declared return type on
-the request. As with magic properties, these calls stay unrefined on `$this`
-before validation runs.
+The input accessors follow the same rules as magic properties on the request
+and as `validated()` on a `ValidatedInput`. Keyed accessors support exact keys,
+including dotted strings, plus default values; `only()`, `except()`, and
+`has()` accept an exact array of keys or variadic strings. `all()` and
+`input()` without a key return the whole array. `except()` removes top-level
+keys only. `integer()` and `float()` apply their casts, so
+`integer|between:1,5` infers `int<1, 5>` from `integer()` and an absent
+optional field contributes the cast default. `boolean()` follows
+`filter_var()`: a field with an unconditional `accepted` rule infers `true`,
+`declined` infers `false`, and `boolean` stays `bool`. `enum()` and `enums()`
+resolve the cases whose backing values the rules admit, falling back to the
+default for unfilled or unmatched values. Because uploaded files are not part of
+`input()`, fields that may hold an uploaded file keep Laravel's declared
+return type on the single-value accessors of the request; `all()`, `only()`,
+and `except()` include them. `string()`, `date()`, `clamp()`, and the other
+accessors keep their declared types. As with magic properties, these calls
+stay unrefined on `$this` before validation runs.
 
 A Closure default contributes its return type; other known defaults retain
 their own types. Defaults typed only as `callable` or `object` stay `mixed`,

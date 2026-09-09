@@ -13,10 +13,32 @@ use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\Type;
 
 use function in_array;
+use function strtolower;
 
-/** Narrows input(), integer(), and boolean() on a ValidatedInput to the validated array shape it carries. */
+/** Narrows the accessors of a ValidatedInput, such as input() and integer(), to the validated array shape it carries. */
 final class ValidatedInputDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
+    private const METHODS = [
+        'all',
+        'array',
+        'boolean',
+        'collect',
+        'enum',
+        'enums',
+        'except',
+        'exists',
+        'float',
+        'has',
+        'input',
+        'integer',
+        'missing',
+        'only',
+    ];
+
+    public function __construct(private DataAccessorHelper $dataAccessorHelper)
+    {
+    }
+
     public function getClass(): string
     {
         return ValidatedInput::class;
@@ -24,7 +46,7 @@ final class ValidatedInputDynamicMethodReturnTypeExtension implements DynamicMet
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-        return in_array($methodReflection->getName(), ['input', 'integer', 'boolean'], true);
+        return in_array(strtolower($methodReflection->getName()), self::METHODS, true);
     }
 
     public function getTypeFromMethodCall(
@@ -42,7 +64,7 @@ final class ValidatedInputDynamicMethodReturnTypeExtension implements DynamicMet
             return null;
         }
 
-        return DataAccessorHelper::resolveAccessor(
+        return $this->dataAccessorHelper->resolveAccessor(
             $methodReflection->getName(),
             $dataType->getConstantArrays(),
             $methodCall->getArgs(),
