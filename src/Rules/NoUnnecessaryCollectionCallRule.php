@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use Larastan\Larastan\Properties\ModelPropertyExtension;
+use Larastan\Larastan\Properties\ModelPropertyHelper;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
@@ -95,7 +95,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
      */
     public function __construct(
         protected ReflectionProvider $reflectionProvider,
-        protected ModelPropertyExtension $propertyExtension,
+        protected ModelPropertyHelper $modelPropertyHelper,
         array $onlyMethods,
         array $excludeMethods,
     ) {
@@ -222,7 +222,11 @@ class NoUnnecessaryCollectionCallRule implements Rule
             /** @var String_ $firstArg */
             $firstArg = $args[0]->value;
 
-            return $this->propertyExtension->hasProperty($modelReflection, $firstArg->value);
+            return $this->modelPropertyHelper->hasDatabaseProperty(
+                $modelReflection,
+                $firstArg->value,
+                excludePropertyTags: false,
+            );
         }
 
         $iterableType = $scope->getType($node->var)->getIterableValueType();
@@ -255,7 +259,11 @@ class NoUnnecessaryCollectionCallRule implements Rule
             /** @var String_ $firstArg */
             $firstArg = $args[0]->value;
 
-            return $this->propertyExtension->hasProperty($modelReflection, $firstArg->value);
+            return $this->modelPropertyHelper->hasDatabaseProperty(
+                $modelReflection,
+                $firstArg->value,
+                excludePropertyTags: false,
+            );
         }
 
         return false;
