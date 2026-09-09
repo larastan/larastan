@@ -34,7 +34,7 @@ function test(
     RoleUser $roleUser,
     ModelWithCasts $modelWithCasts
 ): void {
-    assertType('*ERROR*', $user->newStyleAttribute); // Doesn't have generic type, so we treat as it doesnt exist
+    assertType('mixed', $user->newStyleAttribute); // No explicit generic types, so the property type is mixed
     assertType('int', $user->stringButInt);
     assertType('string', $user->email);
     assertType('array', $user->allowed_ips);
