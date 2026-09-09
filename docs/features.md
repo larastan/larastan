@@ -37,6 +37,23 @@ protected function isTrue(): Attribute
 }
 ```
 
+## Model serialization
+
+Given a `posts` table with an integer `id`, string `title`, and nullable `published_at`:
+
+```php
+class Post extends Model
+{
+    protected $casts = ['published_at' => 'datetime'];
+}
+
+$post = new Post();
+
+// Both infer array{id?: int, title?: string, published_at?: string|null, ...<string, mixed>}
+$post->toArray();
+$post->attributesToArray();
+```
+
 ## Custom Model Builders
 
 Custom builders offer a better static analysis experience than using model scopes, and they help slim down the model class.
@@ -254,4 +271,3 @@ Larastan boots your Laravel application during analysis. If that bootstrap fails
 and `--no-ansi` flags.
 
 ![Screenshot of a failed PHPStan analysis showcasing the custom styled error.](/docs/framework-bootstrap-error.png)
-

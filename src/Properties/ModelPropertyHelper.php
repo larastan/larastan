@@ -20,6 +20,7 @@ use PHPStan\Type\TypeCombinator;
 use ReflectionException;
 
 use function array_key_exists;
+use function array_keys;
 use function array_map;
 use function count;
 use function in_array;
@@ -89,6 +90,22 @@ class ModelPropertyHelper
         }
 
         return array_key_exists($propertyName, $this->tables[$tableName]->columns);
+    }
+
+    /** @return list<string> */
+    public function getDatabasePropertyNames(ClassReflection $classReflection): array
+    {
+        if (! $this->migrationsLoaded()) {
+            $this->loadMigrations();
+        }
+
+        try {
+            $model = ModelHelper::newInstanceWithoutConstructor($classReflection);
+        } catch (ReflectionException) {
+            return [];
+        }
+
+        return array_keys($this->tables[$model->getTable()]->columns ?? []);
     }
 
     public function getDatabaseProperty(ClassReflection $classReflection, string $propertyName): ModelProperty

@@ -235,6 +235,11 @@ services:
         tags:
             - phpstan.broker.propertiesClassReflectionExtension
     -
+        class: Larastan\Larastan\ReturnTypes\ModelSerializationDynamicMethodReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
         class: Larastan\Larastan\ReturnTypes\ModelOnlyDynamicMethodReturnTypeExtension
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
