@@ -12,6 +12,7 @@ parameters:
     checkOctaneCompatibility: false
     noEnvCallsOutsideOfConfig: true
     noModelMake: true
+    noImplicitQueryBuilderCall: false
     noUnnecessaryCollectionCall: true
     noUnnecessaryCollectionCallOnly: []
     noUnnecessaryCollectionCallExcept: []
@@ -45,6 +46,7 @@ parametersSchema:
     checkOctaneCompatibility: bool()
     noEnvCallsOutsideOfConfig: bool()
     noModelMake: bool()
+    noImplicitQueryBuilderCall: bool()
     noUnnecessaryCollectionCall: bool()
     noUnnecessaryCollectionCallOnly: listOf(string())
     noUnnecessaryCollectionCallExcept: listOf(string())
@@ -79,6 +81,8 @@ conditionalTags:
         phpstan.rules.rule: %noEnvCallsOutsideOfConfig%
     Larastan\Larastan\Rules\NoModelMakeRule:
         phpstan.rules.rule: %noModelMake%
+    Larastan\Larastan\Rules\NoImplicitQueryBuilderCallRule:
+        phpstan.rules.rule: %noImplicitQueryBuilderCall%
     Larastan\Larastan\Rules\NoUnnecessaryCollectionCallRule:
         phpstan.rules.rule: %noUnnecessaryCollectionCall%
     Larastan\Larastan\Rules\NoUnnecessaryEnumerableToArrayCallsRule:
@@ -439,6 +443,9 @@ services:
 
     -
         class: Larastan\Larastan\Rules\NoModelMakeRule
+
+    -
+        class: Larastan\Larastan\Rules\NoImplicitQueryBuilderCallRule
 
     -
         class: Larastan\Larastan\Rules\NoUnnecessaryCollectionCallRule

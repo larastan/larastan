@@ -31,6 +31,56 @@ parameters:
     noModelMake: false
 ```
 
+## NoImplicitQueryBuilderCall
+
+Reports static and instance calls on Eloquent models that Laravel forwards to a
+query builder or local scope. Use an explicit builder entry point to make these
+queries visible at the call site.
+
+### Examples
+
+```php
+User::where('active', true)->get();
+$user->active()->get();
+```
+
+For `App\User::where()`, the rule reports:
+
+```text
+Call to static method App\User::where() is forwarded to the query builder.
+    💡 Use App\User::query()->where() instead.
+```
+
+Use `query()` for static calls and `newQuery()` for instance calls:
+
+```php
+User::query()->where('active', true)->get();
+$user->newQuery()->active()->get();
+```
+
+The rule supports automatic fixes, including null-safe instance calls.
+
+The rule covers Eloquent and query builder methods, custom builders, dynamic
+`where*` methods recognized by Larastan, legacy `scopeActive()` methods invoked
+as `active()`, and inaccessible methods marked with `#[Scope]`.
+
+Real model methods, including `all()`, `with()`, `save()`, and user-defined or
+inherited methods with builder method names, are excluded. Accessible scope
+methods called directly with a builder are also excluded, including public
+attribute scopes. Undefined methods remain PHPStan's responsibility. Receivers
+with multiple possible model classes or a model-or-builder union are skipped.
+
+### Configuration
+
+This rule is disabled by default. To enable it in `phpstan.neon`:
+
+```neon
+parameters:
+    noImplicitQueryBuilderCall: true
+```
+
+Error identifier: `larastan.noImplicitQueryBuilderCall`.
+
 ## NoUnnecessaryCollectionCall
 
 Checks for method calls on instances of `Illuminate\Support\Collection` and their

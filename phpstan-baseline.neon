@@ -81,6 +81,12 @@ parameters:
 		-
 			rawMessage: 'Call to internal method PHPStan\Rules\RuleErrorBuilder::fixNode() from outside its root namespace PHPStan.'
 			identifier: method.internal
+			count: 1
+			path: src/Rules/NoImplicitQueryBuilderCallRule.php
+
+		-
+			rawMessage: 'Call to internal method PHPStan\Rules\RuleErrorBuilder::fixNode() from outside its root namespace PHPStan.'
+			identifier: method.internal
 			count: 2
 			path: src/Rules/NoPublicModelScopeAndAccessorRule.php
 
@@ -185,4 +191,3 @@ parameters:
 			identifier: phpstanApi.trait
 			count: 1
 			path: src/Types/CollectionOf/CollectionOfType.php
-
