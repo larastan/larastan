@@ -600,7 +600,7 @@ services:
         class: Larastan\Larastan\Support\FormRequestLifecycle
 
     -
-        class: Larastan\Larastan\Support\DataAccessorHelper
+        class: Larastan\Larastan\Support\DataAccessorTypeResolver
 
     -
         class: Larastan\Larastan\Rules\FormRequestUnknownValidatedKeyRule

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Larastan\Larastan\ReturnTypes;
 
 use Illuminate\Support\ValidatedInput;
-use Larastan\Larastan\Support\DataAccessorHelper;
+use Larastan\Larastan\Support\DataAccessorTypeResolver;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
@@ -35,7 +35,7 @@ final class ValidatedInputDynamicMethodReturnTypeExtension implements DynamicMet
         'only',
     ];
 
-    public function __construct(private DataAccessorHelper $dataAccessorHelper)
+    public function __construct(private DataAccessorTypeResolver $dataAccessorTypeResolver)
     {
     }
 
@@ -64,7 +64,7 @@ final class ValidatedInputDynamicMethodReturnTypeExtension implements DynamicMet
             return null;
         }
 
-        return $this->dataAccessorHelper->resolveAccessor(
+        return $this->dataAccessorTypeResolver->resolveAccessor(
             $methodReflection->getName(),
             $dataType->getConstantArrays(),
             $methodCall->getArgs(),

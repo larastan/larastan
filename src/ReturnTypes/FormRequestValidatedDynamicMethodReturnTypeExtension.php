@@ -5,22 +5,20 @@ declare(strict_types=1);
 namespace Larastan\Larastan\ReturnTypes;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Larastan\Larastan\Support\DataAccessorHelper;
+use Larastan\Larastan\Support\DataAccessorTypeResolver;
 use Larastan\Larastan\Support\FormRequestHelper;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
-use PHPStan\Type\NullType;
 use PHPStan\Type\Type;
-use PHPStan\Type\TypeCombinator;
-
-use function count;
 
 final class FormRequestValidatedDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
-    public function __construct(private FormRequestHelper $formRequestHelper)
-    {
+    public function __construct(
+        private FormRequestHelper $formRequestHelper,
+        private DataAccessorTypeResolver $dataAccessorTypeResolver,
+    ) {
     }
 
     public function getClass(): string
@@ -42,31 +40,14 @@ final class FormRequestValidatedDynamicMethodReturnTypeExtension implements Dyna
             return null;
         }
 
-        $args              = $methodCall->getArgs();
         $validatedDataType = $this->formRequestHelper->getValidatedDataType($scope->getType($methodCall->var), 'validated', $scope);
 
-        if ($validatedDataType === null || count($args) === 0) {
-            return $validatedDataType;
-        }
-
-        $keyType = $scope->getType($args[0]->value);
-
-        if ($keyType->isNull()->yes()) {
-            return $validatedDataType;
-        }
-
-        $segments = DataAccessorHelper::parseKey($keyType);
-
-        if ($segments === null) {
-            return null;
-        }
-
-        $defaultType = count($args) > 1
-            ? DataAccessorHelper::resolveDefaultType($scope->getType($args[1]->value), $scope)
-            : new NullType();
-
-        [$selectedType, $fallsBack] = DataAccessorHelper::select($validatedDataType, $segments);
-
-        return $fallsBack ? TypeCombinator::union($selectedType, $defaultType) : $selectedType;
+        return $validatedDataType === null ? null : $this->dataAccessorTypeResolver->resolveAccessor(
+            'input',
+            [$validatedDataType],
+            $methodCall->getArgs(),
+            $scope,
+            false,
+        );
     }
 }

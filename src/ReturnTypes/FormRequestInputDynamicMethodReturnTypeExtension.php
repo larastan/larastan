@@ -6,7 +6,7 @@ namespace Larastan\Larastan\ReturnTypes;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
-use Larastan\Larastan\Support\DataAccessorHelper;
+use Larastan\Larastan\Support\DataAccessorTypeResolver;
 use Larastan\Larastan\Support\FormRequestHelper;
 use Larastan\Larastan\Support\FormRequestLifecycle;
 use PhpParser\Node\Expr\MethodCall;
@@ -41,7 +41,7 @@ final class FormRequestInputDynamicMethodReturnTypeExtension implements DynamicM
     public function __construct(
         private FormRequestHelper $formRequestHelper,
         private FormRequestLifecycle $lifecycle,
-        private DataAccessorHelper $dataAccessorHelper,
+        private DataAccessorTypeResolver $dataAccessorTypeResolver,
     ) {
     }
 
@@ -77,6 +77,6 @@ final class FormRequestInputDynamicMethodReturnTypeExtension implements DynamicM
         }
 
         // input() reads the request body and query string, so uploaded files are not among its values.
-        return $this->dataAccessorHelper->resolveAccessor($methodReflection->getName(), $dataTypes, $methodCall->getArgs(), $scope, true);
+        return $this->dataAccessorTypeResolver->resolveAccessor($methodReflection->getName(), $dataTypes, $methodCall->getArgs(), $scope, true);
     }
 }

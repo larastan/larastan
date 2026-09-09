@@ -6,7 +6,7 @@ namespace Larastan\Larastan\ReturnTypes;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\ValidatedInput;
-use Larastan\Larastan\Support\DataAccessorHelper;
+use Larastan\Larastan\Support\DataAccessorTypeResolver;
 use Larastan\Larastan\Support\FormRequestHelper;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
@@ -17,9 +17,7 @@ use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\Type;
 
-use function array_intersect;
 use function count;
-use function explode;
 
 final class FormRequestSafeDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
@@ -66,35 +64,13 @@ final class FormRequestSafeDynamicMethodReturnTypeExtension implements DynamicMe
 
         $argType = $scope->getType($args[0]->value);
 
-        $constantArrays = $argType->getConstantArrays();
-
-        if (! $argType->isConstantArray()->yes() || count($constantArrays) !== 1) {
+        if (! $argType->isConstantArray()->yes()) {
             return null;
         }
 
-        $paths = [];
+        $paths = DataAccessorTypeResolver::parsePaths([$argType]);
 
-        foreach ($constantArrays[0]->getValueTypes() as $index => $keyType) {
-            if ($constantArrays[0]->isOptionalKey($index)) {
-                return null;
-            }
-
-            $constantStrings = $keyType->getConstantStrings();
-
-            if (count($constantStrings) !== 1) {
-                return null;
-            }
-
-            $segments = explode('.', $constantStrings[0]->getValue());
-
-            if (array_intersect($segments, ['*', '{first}', '{last}', '\\*', '\\{first}', '\\{last}']) !== []) {
-                return null;
-            }
-
-            $paths[] = $segments;
-        }
-
-        return DataAccessorHelper::selectPaths($validatedDataType, $paths);
+        return $paths === null ? null : DataAccessorTypeResolver::selectPaths($validatedDataType, $paths);
     }
 
     private function getLegacyType(MethodCall $methodCall, Scope $scope): Type|null
