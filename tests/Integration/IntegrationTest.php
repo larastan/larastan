@@ -24,6 +24,15 @@ class IntegrationTest extends PHPStanTestCase
 
         yield [__DIR__ . '/data/bug-2074.php'];
         yield [__DIR__ . '/data/bug-2431.php'];
+
+        yield 'bug-2545' => [
+            __DIR__ . '/data/bug-2545.php',
+            [
+                7 => ['Class Bug2545\CalendarEvent implements unknown interface Bug2545\MissingInterface.'],
+                11 => ['Access to an undefined property Bug2545\CalendarEvent::$id.'],
+            ],
+        ];
+
         yield [__DIR__ . '/data/bug-final_model_query.php'];
         yield [__DIR__ . '/data/test-case-extension.php', [34 => ['Call to function method_exists() with $this(TestTestCase) and \'partialMock\' will always evaluate to true.']]];
         yield [__DIR__ . '/data/model-builder.php'];

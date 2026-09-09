@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Properties;
 
+use Error;
 use Illuminate\Database\Eloquent\Model;
 use PHPStan\Reflection\ClassReflection;
 use ReflectionException;
@@ -29,8 +30,12 @@ final class ModelHelper
             return self::$instances[$className];
         }
 
-        /** @var Model $model */
-        $model = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
+        try {
+            /** @var Model $model */
+            $model = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
+        } catch (Error $error) {
+            throw new ReflectionException($error->getMessage(), 0, $error);
+        }
 
         foreach (['initializeHasTimestamps', 'initializeModelAttributes'] as $initializer) {
             if (! method_exists(Model::class, $initializer)) {
