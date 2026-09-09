@@ -1,0 +1,16 @@
+<?php
+
+namespace Illuminate\Mail\Mailables;
+
+class Content
+{
+    /**
+     * @param  view-string|null  $view
+     * @param  view-string|null  $html
+     * @param  view-string|null  $text
+     * @param  view-string|null  $markdown
+     * @param  array<string, mixed>  $with
+     * @param  string|null  $htmlString
+     */
+    public function __construct(?string $view = null, ?string $html = null, ?string $text = null, $markdown = null, array $with = [], ?string $htmlString = null);
+}

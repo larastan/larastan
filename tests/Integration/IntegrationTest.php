@@ -39,6 +39,31 @@ class IntegrationTest extends PHPStanTestCase
         yield [__DIR__ . '/data/blade-view.php'];
 
         yield [
+            __DIR__ . '/data/view-string-content.php',
+            [
+                10 => ['Parameter $view of class Illuminate\Mail\Mailables\Content constructor expects view-string|null, string given.'],
+                11 => ['Parameter $html of class Illuminate\Mail\Mailables\Content constructor expects view-string|null, string given.'],
+                12 => ['Parameter $text of class Illuminate\Mail\Mailables\Content constructor expects view-string|null, string given.'],
+                13 => ['Parameter $markdown of class Illuminate\Mail\Mailables\Content constructor expects view-string|null, string given.'],
+                14 => [
+                    'Parameter #1 $view of class Illuminate\Mail\Mailables\Content constructor expects view-string|null, string given.',
+                    'Parameter #2 $html of class Illuminate\Mail\Mailables\Content constructor expects view-string|null, string given.',
+                    'Parameter #3 $text of class Illuminate\Mail\Mailables\Content constructor expects view-string|null, string given.',
+                    'Parameter #4 $markdown of class Illuminate\Mail\Mailables\Content constructor expects view-string|null, string given.',
+                ],
+                15 => ['Parameter $view of class Illuminate\Mail\Mailables\Content constructor expects view-string|null, string given.'],
+                28 => [
+                    'Parameter $html of class Illuminate\Mail\Mailables\Content constructor expects view-string|null, string|null given.',
+                    'Parameter $markdown of class Illuminate\Mail\Mailables\Content constructor expects view-string|null, string|null given.',
+                    'Parameter $text of class Illuminate\Mail\Mailables\Content constructor expects view-string|null, string|null given.',
+                    'Parameter $view of class Illuminate\Mail\Mailables\Content constructor expects view-string|null, string|null given.',
+                ],
+                29 => ['Parameter $view of class Illuminate\Mail\Mailables\Content constructor expects view-string|null, string given.'],
+                30 => ['Parameter $text of class Illuminate\Mail\Mailables\Content constructor expects view-string|null, string given.'],
+            ],
+        ];
+
+        yield [
             __DIR__ . '/data/view-string-signatures.php',
             [
                 17 => ['Parameter #1 $view of method Illuminate\Contracts\View\Factory::make() expects view-string, string given.'],
