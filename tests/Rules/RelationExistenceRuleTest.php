@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Rules;
 
 use Larastan\Larastan\Rules\ModelRuleHelper;
+use Larastan\Larastan\Rules\RelationExistenceHelper;
 use Larastan\Larastan\Rules\RelationExistenceRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
@@ -14,7 +15,7 @@ class RelationExistenceRuleTest extends RuleTestCase
 {
     protected function getRule(): Rule
     {
-        return new RelationExistenceRule(new ModelRuleHelper());
+        return new RelationExistenceRule(new RelationExistenceHelper(new ModelRuleHelper()));
     }
 
     public function testRule(): void
@@ -181,6 +182,10 @@ class RelationExistenceRuleTest extends RuleTestCase
                 48,
             ],
             [
+                'Relation \'foo\' is not found in App\User model.',
+                49,
+            ],
+            [
                 'Relation \'foo\' is not found in App\Account model.',
                 49,
             ],
@@ -228,6 +233,63 @@ class RelationExistenceRuleTest extends RuleTestCase
                 'Relation \'foo\' is not found in App\Transaction model.',
                 64,
             ],
+        ]);
+    }
+
+    public function testLoading(): void
+    {
+        $this->analyse([__DIR__ . '/data/relation-existence-loading.php'], [
+            ["Relation 'missing' is not found in App\\User model.", 14],
+            ["Relation 'missing' is not found in App\\Account model.", 15],
+            ["Relation 'missing' is not found in App\\User model.", 16],
+            ["Relation 'missing' is not found in App\\Account model.", 17],
+            ["Relation 'missing' is not found in App\\User model.", 18],
+            ["Relation 'missing' is not found in App\\User model.", 19],
+            ["Relation 'missing' is not found in App\\User model.", 20],
+            ["Relation 'missing' is not found in App\\User model.", 21],
+            ["Relation 'missing' is not found in App\\User model.", 22],
+            ["Relation 'missing' is not found in App\\User model.", 23],
+            ["Relation 'missing' is not found in App\\User model.", 24],
+            ["Relation 'missing' is not found in App\\User model.", 25],
+            ["Relation 'missing' is not found in App\\User model.", 26],
+            ["Relation 'missing' is not found in App\\User model.", 27],
+            ["Relation 'missing' is not found in App\\User model.", 28],
+            ["Relation 'missing' is not found in App\\User model.", 29],
+            ["Relation 'missing' is not found in App\\Account model.", 30],
+            ["Relation 'missing' is not found in App\\User model.", 31],
+            ["Relation 'missing' is not found in App\\User model.", 32],
+            ["Relation 'missing' is not found in App\\User model.", 33],
+            ["Relation 'missing' is not found in App\\User model.", 34],
+            ["Relation 'missing' is not found in App\\User model.", 35],
+            ["Relation 'accounts.transactions' is not found in App\\User model.", 36],
+            ["Relation 'accounts  as  total' is not found in App\\User model.", 37],
+            ["Relation 'accounts as total' is not found in App\\User model.", 38],
+            ["Relation 'missing' is not found in App\\User model.", 64],
+            ["Relation 'missing' is not found in App\\User model.", 65],
+            ["Relation 'missing' is not found in App\\User model.", 66],
+            ["Relation 'missing' is not found in App\\User model.", 67],
+            ["Relation 'missing' is not found in App\\User model.", 68],
+            ["Relation 'missing' is not found in App\\User model.", 69],
+            ["Relation 'missing' is not found in App\\User model.", 70],
+            ["Relation 'missing' is not found in App\\User model.", 71],
+            ["Relation 'missing' is not found in App\\User model.", 72],
+            ["Relation 'missing' is not found in App\\User model.", 73],
+            ["Relation 'missing' is not found in App\\User model.", 74],
+            ["Relation 'missing' is not found in App\\User model.", 75],
+            ["Relation 'missing' is not found in App\\User model.", 76],
+            ["Relation 'missing' is not found in App\\User model.", 77],
+            ["Relation 'missing' is not found in App\\User model.", 78],
+            ["Relation 'missing' is not found in App\\User model.", 79],
+            ["Relation 'missing' is not found in App\\User model.", 80],
+            ["Relation 'missing' is not found in App\\User model.", 81],
+            ["Relation 'missing' is not found in App\\User model.", 82],
+            ["Relation 'missing' is not found in App\\User model.", 83],
+            ["Relation 'missing' is not found in App\\User model.", 84],
+            ["Relation 'missing' is not found in App\\User model.", 85],
+            ["Relation 'missing' is not found in App\\User model.", 86],
+            ["Relation 'save' is not found in App\\User model.", 87],
+            ["Relation 'missing' is not found in App\\User model.", 112],
+            ["Relation 'missing' is not found in App\\Comment model.", 119],
         ]);
     }
 

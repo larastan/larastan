@@ -547,6 +547,14 @@ services:
             checkProperties: %checkModelProperties%
 
     -
+        class: Larastan\Larastan\Rules\ModelRelationDefaultsRule
+        tags:
+            - phpstan.rules.rule
+
+    -
+        class: Larastan\Larastan\Rules\RelationExistenceHelper
+
+    -
         class: Larastan\Larastan\Rules\RelationExistenceRule
         tags:
             - phpstan.rules.rule

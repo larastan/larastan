@@ -208,18 +208,19 @@ Will result in the following error:
 
 ## RelationExistenceRule
 
-This rule will check if the given relations to some Eloquent builder methods exists. It also supports nested relations.
+This rule checks relation names on Eloquent models, builders, and relations. It also checks `load*` calls on Eloquent collections and model `$with` and `$withCount` defaults.
 
-Supported Eloquent builder methods are:
-- `has`
-- `orHas`
-- `doesntHave`
-- `orDoesntHave`
-- `whereHas`
-- `withWhereHas`
-- `orWhereHas`
-- `whereDoesntHave`
-- `orWhereDoesntHave`
+Supported methods are:
+
+- `has`, `orHas`, `doesntHave`, `orDoesntHave`, and their `*Morph` variants
+- `whereHas`, `orWhereHas`, `whereDoesntHave`, `orWhereDoesntHave`, and their `*Morph` variants
+- `whereRelation`, `orWhereRelation`, `whereDoesntHaveRelation`, `orWhereDoesntHaveRelation`, and their `*MorphRelation` / `*MorphDoesntHaveRelation` variants
+- `withWhereHas`, `withWhereRelation`, `with`, `withOnly`, `load`, and `loadMissing`
+- `withAggregate`, `withCount`, `withMax`, `withMin`, `withSum`, `withAvg`, `withExists`, and the corresponding `load*` methods
+
+Eager loading supports dotted paths, constraint arrays, nested arrays, and column selectors such as `accounts.transactions:id`. Aggregate methods and `$withCount` accept aliases such as `accounts as total`; dotted aggregate relation names are not supported by Laravel.
+
+Inherited defaults are checked against each concrete model, so a child can provide a relation named in an abstract parent's defaults. Defaults are read statically, without constructing models. Dynamic names and related model types that cannot be resolved are skipped.
 
 This rule is not optional.
 
