@@ -201,10 +201,10 @@ function test(
     assertType('App\User', User::with(['accounts'])->findOrNew(1));
     assertType('Illuminate\Database\Eloquent\Model|null', (new CustomBuilder(User::query()->getQuery()))->with('email')->find(1));
 
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::with(['accounts'])->find([1, 2, 3]));
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::with(['accounts'])->findOrNew([1, 2, 3]));
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::hydrate([]));
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::fromQuery('SELECT * FROM users'));
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', User::with(['accounts'])->find([1, 2, 3]));
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', User::with(['accounts'])->findOrNew([1, 2, 3]));
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', User::hydrate([]));
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', User::fromQuery('SELECT * FROM users'));
 
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $userBuilder->whereNotNull('test'));
 
@@ -325,17 +325,17 @@ function test(
     assertType('Illuminate\Pagination\LengthAwarePaginator<int, App\User>', User::query()->paginate());
     assertType('array<int, App\User>', User::query()->paginate()->items());
 
-    User::chunk(1000, fn ($collection) => assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection));
+    User::chunk(1000, fn ($collection) => assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', $collection));
     Role::chunk(1000, fn ($collection) => assertType('App\RoleCollection<int, App\Role>', $collection));
-    User::chunkById(1000, fn ($collection) => assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection));
+    User::chunkById(1000, fn ($collection) => assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', $collection));
     Role::chunkById(1000, fn ($collection) => assertType('App\RoleCollection<int, App\Role>', $collection));
     assertType('Illuminate\Support\Collection<int, string>', User::chunkMap(function ($model) {
         assertType('App\User', $model);
 
         return $model->name;
     }, 1000));
-    $userBuilder->chunk(1000, fn ($collection) => assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection));
-    $userBuilder->chunkById(1000, fn ($collection) => assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection));
+    $userBuilder->chunk(1000, fn ($collection) => assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', $collection));
+    $userBuilder->chunkById(1000, fn ($collection) => assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', $collection));
     assertType('Illuminate\Support\Collection<int, string>', $userBuilder->chunkMap(function ($model) {
         assertType('App\User', $model);
 

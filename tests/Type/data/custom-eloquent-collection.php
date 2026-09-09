@@ -12,63 +12,63 @@ use function PHPStan\Testing\assertType;
 
 function test(): void
 {
-    assertType('App\AccountCollection<int, App\Account>', Account::query()->fromQuery('select * from accounts'));
+    assertType('App\AccountCollection<(int|string), App\Account>', Account::query()->fromQuery('select * from accounts'));
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::query()->fromQuery('select * from accounts'));
     assertType('App\NonGenericCollection', ModelWithNonGenericCollection::query()->fromQuery('select * from accounts'));
     assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', ModelWithOnlyValueGenericCollection::query()->fromQuery('select * from accounts'));
 
-    assertType('App\AccountCollection<int, App\Account>', Account::fromQuery('select * from accounts'));
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::fromQuery('select * from accounts'));
+    assertType('App\AccountCollection<(int|string), App\Account>', Account::fromQuery('select * from accounts'));
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', User::fromQuery('select * from accounts'));
     assertType('App\NonGenericCollection', ModelWithNonGenericCollection::fromQuery('select * from accounts'));
     assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', ModelWithOnlyValueGenericCollection::fromQuery('select * from accounts'));
 
-    assertType('App\AccountCollection<int, App\Account>', Account::query()->hydrate([['active' => 1], ['active' => 0]]));
+    assertType('App\AccountCollection<(int|string), App\Account>', Account::query()->hydrate([['active' => 1], ['active' => 0]]));
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::query()->hydrate([['active' => 1], ['active' => 0]]));
     assertType('App\NonGenericCollection', ModelWithNonGenericCollection::query()->hydrate([['active' => 1], ['active' => 0]]));
     assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', ModelWithOnlyValueGenericCollection::query()->hydrate([['active' => 1], ['active' => 0]]));
 
-    assertType('App\AccountCollection<int, App\Account>', Account::hydrate([['active' => 1], ['active' => 0]]));
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::hydrate([['active' => 1], ['active' => 0]]));
+    assertType('App\AccountCollection<(int|string), App\Account>', Account::hydrate([['active' => 1], ['active' => 0]]));
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', User::hydrate([['active' => 1], ['active' => 0]]));
     assertType('App\NonGenericCollection', ModelWithNonGenericCollection::hydrate([['active' => 1], ['active' => 0]]));
     assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', ModelWithOnlyValueGenericCollection::hydrate([['active' => 1], ['active' => 0]]));
 
-    assertType('App\AccountCollection<int, App\Account>', Account::query()->find([1, 2]));
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::query()->find([1, 2]));
+    assertType('App\AccountCollection<(int|string), App\Account>', Account::query()->find([1, 2]));
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', User::query()->find([1, 2]));
     assertType('App\NonGenericCollection', ModelWithNonGenericCollection::query()->find([1, 2]));
     assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', ModelWithOnlyValueGenericCollection::query()->find([1, 2]));
 
-    assertType('App\AccountCollection<int, App\Account>', Account::find([1, 2]));
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::find([1, 2]));
+    assertType('App\AccountCollection<(int|string), App\Account>', Account::find([1, 2]));
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', User::find([1, 2]));
     assertType('App\NonGenericCollection', ModelWithNonGenericCollection::find([1, 2]));
     assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', ModelWithOnlyValueGenericCollection::find([1, 2]));
 
-    assertType('App\AccountCollection<int, App\Account>', Account::query()->findMany([1, 2]));
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::query()->findMany([1, 2]));
+    assertType('App\AccountCollection<(int|string), App\Account>', Account::query()->findMany([1, 2]));
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', User::query()->findMany([1, 2]));
     assertType('App\NonGenericCollection', ModelWithNonGenericCollection::query()->findMany([1, 2]));
     assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', ModelWithOnlyValueGenericCollection::query()->findMany([1, 2]));
 
-    assertType('App\AccountCollection<int, App\Account>', Account::findMany([1, 2]));
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::findMany([1, 2]));
+    assertType('App\AccountCollection<(int|string), App\Account>', Account::findMany([1, 2]));
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', User::findMany([1, 2]));
     assertType('App\NonGenericCollection', ModelWithNonGenericCollection::findMany([1, 2]));
     assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', ModelWithOnlyValueGenericCollection::findMany([1, 2]));
 
-    assertType('App\AccountCollection<int, App\Account>', Account::query()->findOrFail([1, 2]));
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::query()->findOrFail([1, 2]));
+    assertType('App\AccountCollection<(int|string), App\Account>', Account::query()->findOrFail([1, 2]));
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', User::query()->findOrFail([1, 2]));
     assertType('App\NonGenericCollection', ModelWithNonGenericCollection::query()->findOrFail([1, 2]));
     assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', ModelWithOnlyValueGenericCollection::query()->findOrFail([1, 2]));
 
-    assertType('App\AccountCollection<int, App\Account>', Account::findOrFail([1, 2]));
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::findOrFail([1, 2]));
+    assertType('App\AccountCollection<(int|string), App\Account>', Account::findOrFail([1, 2]));
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', User::findOrFail([1, 2]));
     assertType('App\NonGenericCollection', ModelWithNonGenericCollection::findOrFail([1, 2]));
     assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', ModelWithOnlyValueGenericCollection::findOrFail([1, 2]));
 
-    assertType('App\AccountCollection<int, App\Account>', Account::query()->get());
+    assertType('App\AccountCollection<(int|string), App\Account>', Account::query()->get());
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::query()->get());
     assertType('App\NonGenericCollection', ModelWithNonGenericCollection::query()->get());
     assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', ModelWithOnlyValueGenericCollection::query()->get());
 
-    assertType('App\AccountCollection<int, App\Account>', Account::get());
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::get());
+    assertType('App\AccountCollection<(int|string), App\Account>', Account::get());
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', User::get());
     assertType('App\NonGenericCollection', ModelWithNonGenericCollection::get());
     assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', ModelWithOnlyValueGenericCollection::get());
 
@@ -77,7 +77,7 @@ function test(): void
     assertType('App\NonGenericCollection', ModelWithNonGenericCollection::all());
     assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', ModelWithOnlyValueGenericCollection::all());
 
-    assertType('App\AccountCollection<int, App\Account>', (new User)->accounts()->get());
+    assertType('App\AccountCollection<(int|string), App\Account>', (new User)->accounts()->get());
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', (new User)->children()->get());
     assertType('App\NonGenericCollection', (new User)->modelsWithNonGenericCollection()->get());
     assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', (new User)->modelsWithOnlyValueGenericCollection()->get());
@@ -92,7 +92,7 @@ function test(): void
     assertType('App\NonGenericCollection', (new User)->modelsWithNonGenericCollection()->createMany([]));
     assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', (new User)->modelsWithOnlyValueGenericCollection()->createMany([]));
 
-    assertType('App\AccountCollection<int, App\Account>', (new User)->accounts()->active()->get());
+    assertType('App\AccountCollection<(int|string), App\Account>', (new User)->accounts()->active()->get());
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', (new User)->children()->active()->get());
 
     assertType('App\AccountCollection<int, App\Account>', (new User)->accounts);
@@ -120,13 +120,13 @@ function test(): void
     assertType('App\Transaction', (new User)->transactions()->findOrFail(1));
     assertType('App\TransactionCollection<int, App\Transaction>', (new User)->transactions()->findMany([1, 2]));
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', (new Role)->users()->findMany([1, 2]));
-    assertType('App\AccountCollection<int, App\Account>', (new Group)->accounts()->find([1, 2]));
+    assertType('App\AccountCollection<(int|string), App\Account>', (new Group)->accounts()->find([1, 2]));
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', (new User)->children()->find([1, 2]));
     assertType('App\Account|null', (new Group)->accounts()->find(1));
-    assertType('App\AccountCollection<int, App\Account>', (new Group)->accounts()->findOrFail([1, 2]));
+    assertType('App\AccountCollection<(int|string), App\Account>', (new Group)->accounts()->findOrFail([1, 2]));
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', (new User)->children()->findOrFail([1, 2]));
     assertType('App\Account', (new Group)->accounts()->findOrFail(1));
-    assertType('App\AccountCollection<int, App\Account>', (new Group)->accounts()->findMany([1, 2]));
+    assertType('App\AccountCollection<(int|string), App\Account>', (new Group)->accounts()->findMany([1, 2]));
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', (new User)->children()->findMany([1, 2]));
     assertType('App\AccountCollection<int, App\Account>', (new User)->accounts->where('active', true));
     assertType('App\AccountCollection<int, App\Account>', (new User)->accounts->filterByActive());

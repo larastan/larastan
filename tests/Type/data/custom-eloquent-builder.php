@@ -23,10 +23,10 @@ function test(FooModel $foo, NonGenericBuilder $nonGenericBuilder, ModelWithNonG
     assertType('CustomEloquentBuilder\ModelWithCustomBuilder|null', ModelWithCustomBuilder::whereEmail(['bar'])->type('foo')->first());
     assertType('int<0, max>', $foo->customModels()->count());
     assertType('bool', $foo->customModels()->exists());
-    assertType('Illuminate\Database\Eloquent\Collection<int, CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::get());
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::get());
     assertType('CustomEloquentBuilder\ModelWithCustomBuilder', ModelWithCustomBuilder::firstOrFail());
     assertType('CustomEloquentBuilder\ModelWithCustomBuilder', ModelWithCustomBuilder::findOrFail(1));
-    assertType('Illuminate\Database\Eloquent\Collection<int, CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::findOrFail([1, 2, 3]));
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::findOrFail([1, 2, 3]));
     assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->has('users'));
     assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->orHas('users'));
     assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->doesntHave('users'));
@@ -59,7 +59,7 @@ function test(FooModel $foo, NonGenericBuilder $nonGenericBuilder, ModelWithNonG
     assertType('CustomEloquentBuilder\ChildNonGenericBuilder', $nonGenericModel->newQuery());
     assertType('CustomEloquentBuilder\ChildNonGenericBuilder', ModelWithNonGenericBuilder::withTrashed());
     assertType('Illuminate\Database\Eloquent\Relations\HasMany<CustomEloquentBuilder\ModelWithNonGenericBuilder, CustomEloquentBuilder\FooModel>', $foo->nonGenericModels()->wherePublishable());
-    assertType('Illuminate\Database\Eloquent\Collection<int, CustomEloquentBuilder\ModelWithNonGenericBuilder>', ModelWithNonGenericBuilder::get());
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), CustomEloquentBuilder\ModelWithNonGenericBuilder>', ModelWithNonGenericBuilder::get());
 
     assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->whereNotIn('id', [1]));
     assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::whereNotIn('id', [1]));

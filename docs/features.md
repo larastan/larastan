@@ -240,6 +240,14 @@ class User extends Model
 > }
 > ```
 
+`getCollection()` on length-aware, simple, and cursor paginators resolves to the model's
+custom collection. Non-model items resolve to a Support collection. `setCollection()` updates
+the paginator's inferred key and value types.
+
+This inference follows the item type: manually supplying a Support collection of models still
+infers the model's Eloquent collection. It does not track changes to the collection class separately
+from the item type.
+
 ## Model Properties
 
 Larastan will automatically scan your application's migrations in order to infer the database schema and therefore it is able to infer the existence of magic properties on Eloquent model classes.

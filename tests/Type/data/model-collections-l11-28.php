@@ -10,6 +10,9 @@ use function PHPStan\Testing\assertType;
 function test(): void
 {
     assertType('ModelCollectionsL1128\UserCollection', User::all());
+    assertType('ModelCollectionsL1128\UserCollection', User::query()->paginate()->getCollection());
+    assertType('ModelCollectionsL1128\UserCollection', User::query()->simplePaginate()->getCollection());
+    assertType('ModelCollectionsL1128\UserCollection', User::query()->cursorPaginate()->getCollection());
     assertType('ModelCollectionsL1128\UserCollection', User::query()->where('id', '>', 1)->get());
 }
 

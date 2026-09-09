@@ -6,10 +6,16 @@ namespace Tests\Type;
 
 use Larastan\Larastan\Types\CollectionOf\CollectionOfTypeNodeResolverExtension;
 use PHPStan\Analyser\NameScope;
+use PHPStan\PhpDoc\TypeNodeResolver;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use PHPStan\Testing\PHPStanTestCase;
+use PHPStan\Type\BenevolentUnionType;
+use PHPStan\Type\Generic\GenericObjectType;
+use PHPStan\Type\IntegerType;
 use PHPStan\Type\LateResolvableType;
+use PHPStan\Type\ObjectType;
+use PHPStan\Type\StringType;
 use PHPStan\Type\VerbosityLevel;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -23,6 +29,8 @@ class CollectionOfTypeNodeResolverExtensionTest extends PHPStanTestCase
         parent::setUp();
 
         $this->extension = static::getContainer()->getByType(CollectionOfTypeNodeResolverExtension::class);
+
+        $this->extension->setTypeNodeResolver(static::getContainer()->getByType(TypeNodeResolver::class));
 
         $this->nameScope = new NameScope(null, []);
     }
@@ -102,17 +110,37 @@ class CollectionOfTypeNodeResolverExtensionTest extends PHPStanTestCase
         $this->assertStringContainsString($expectedDescription, $result->resolve()->describe(VerbosityLevel::value()));
     }
 
+    public function testCollectionKeysAreCompatibleWithIntegerAndStringKeys(): void
+    {
+        $typeNode = new GenericTypeNode(
+            new IdentifierTypeNode('collection-of'),
+            [new IdentifierTypeNode('App\Account')],
+        );
+
+        $collection = $this->extension->resolve($typeNode, $this->nameScope);
+
+        $this->assertNotNull($collection);
+        $this->assertInstanceOf(BenevolentUnionType::class, $collection->getIterableKeyType());
+
+        foreach ([new IntegerType(), new StringType()] as $keyType) {
+            $typedCollection = new GenericObjectType('App\AccountCollection', [$keyType, new ObjectType('App\Account')]);
+
+            $this->assertTrue($typedCollection->accepts($collection, true)->yes());
+            $this->assertTrue($collection->accepts($typedCollection, true)->yes());
+        }
+    }
+
     /** @return array<string, array{string, string}> */
     public static function validModelTypesProvider(): array
     {
         return [
             'User model with standard collection' => [
                 'App\User',
-                'Collection<int, App\User>',
+                'Collection<(int|string), App\User>',
             ],
             'Post model with standard collection' => [
                 'App\Post',
-                'Collection<int, App\Post>',
+                'Collection<(int|string), App\Post>',
             ],
             'Transaction model with custom collection' => [
                 'App\Transaction',

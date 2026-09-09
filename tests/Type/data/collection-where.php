@@ -49,9 +49,9 @@ function test(User $user, SupportCollection $users, SupportCollection $mixedColl
     );
 
     $accounts = $user->accounts()->active()->get();
-    assertType('App\AccountCollection<int, App\Account>', $accounts);
+    assertType('App\AccountCollection<(int|string), App\Account>', $accounts);
 
-    assertType('App\AccountCollection<int, App\Account>', $accounts->where(function ($account) {
+    assertType('App\AccountCollection<(int|string), App\Account>', $accounts->where(function ($account) {
         return \CollectionStubs\dummyFilter($account);
     }));
 

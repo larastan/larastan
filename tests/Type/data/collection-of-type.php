@@ -13,12 +13,12 @@ use function PHPStan\Testing\assertType;
  */
 function test($param, Collection $param2, Collection $union): void
 {
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $param);
-    assertType('App\RoleCollection<int, App\Role>', $param2);
-    assertType('App\RoleCollection<int, App\Role>|Illuminate\Database\Eloquent\Collection<int, App\User>', $union);
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', $param);
+    assertType('App\RoleCollection<(int|string), App\Role>', $param2);
+    assertType('App\RoleCollection<(int|string), App\Role>|Illuminate\Database\Eloquent\Collection<(int|string), App\User>', $union);
 
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', genericMethod(\App\User::class));
-    assertType('App\RoleCollection<int, App\Role>', genericMethod(\App\Role::class));
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', genericMethod(\App\User::class));
+    assertType('App\RoleCollection<(int|string), App\Role>', genericMethod(\App\Role::class));
 }
 
 /**

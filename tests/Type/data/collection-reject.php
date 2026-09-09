@@ -48,9 +48,9 @@ function test(User $user, SupportCollection $users): void
     );
 
     $accounts = $user->accounts()->active()->get();
-    assertType('App\AccountCollection<int, App\Account>', $accounts);
+    assertType('App\AccountCollection<(int|string), App\Account>', $accounts);
 
-    assertType('App\AccountCollection<int, App\Account>', $accounts->reject(function ($account) {
+    assertType('App\AccountCollection<(int|string), App\Account>', $accounts->reject(function ($account) {
         return \CollectionStubs\dummyReject($account);
     }));
 

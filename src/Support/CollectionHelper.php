@@ -99,7 +99,7 @@ final class CollectionHelper
         }
     }
 
-    public function determineCollectionClass(string $modelClassName): Type
+    public function determineCollectionClass(string $modelClassName, Type|null $modelType = null, Type|null $keyType = null): Type
     {
         $collectionClassName  = $this->determineCollectionClassName($modelClassName);
         $collectionReflection = $this->reflectionProvider->getClass($collectionClassName);
@@ -109,12 +109,12 @@ final class CollectionHelper
 
             // Specifies key and value
             if ($typeMap->count() === 2) {
-                return new GenericObjectType($collectionClassName, [new IntegerType(), new ObjectType($modelClassName)]);
+                return new GenericObjectType($collectionClassName, [$keyType ?? new IntegerType(), $modelType ?? new ObjectType($modelClassName)]);
             }
 
             // Specifies only value
             if (($typeMap->count() === 1) && $typeMap->hasType('TModel')) {
-                return new GenericObjectType($collectionClassName, [new ObjectType($modelClassName)]);
+                return new GenericObjectType($collectionClassName, [$modelType ?? new ObjectType($modelClassName)]);
             }
         }
 

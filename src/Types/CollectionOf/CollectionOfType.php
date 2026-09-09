@@ -4,13 +4,18 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Types\CollectionOf;
 
+use Illuminate\Database\Eloquent\Model;
 use Larastan\Larastan\Support\CollectionHelper;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
+use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\CompoundType;
 use PHPStan\Type\Generic\TemplateTypeVariance;
+use PHPStan\Type\IntegerType;
 use PHPStan\Type\LateResolvableType;
+use PHPStan\Type\ObjectType;
+use PHPStan\Type\StringType;
 use PHPStan\Type\Traits\LateResolvableTypeTrait;
 use PHPStan\Type\Traits\NonGeneralizableTypeTrait;
 use PHPStan\Type\Type;
@@ -31,8 +36,18 @@ class CollectionOfType implements CompoundType, LateResolvableType
     {
         $results = [];
 
-        foreach ($this->type->getObjectClassNames() as $className) {
-            $results[] = $this->collectionHelper->determineCollectionClass($className);
+        foreach (TypeUtils::flattenTypes($this->type) as $modelType) {
+            foreach ($modelType->getObjectClassNames() as $className) {
+                if (! (new ObjectType(Model::class))->isSuperTypeOf(new ObjectType($className))->yes()) {
+                    continue;
+                }
+
+                $results[] = $this->collectionHelper->determineCollectionClass(
+                    $className,
+                    $modelType,
+                    new BenevolentUnionType([new IntegerType(), new StringType()]),
+                );
+            }
         }
 
         return TypeCombinator::union(...$results);

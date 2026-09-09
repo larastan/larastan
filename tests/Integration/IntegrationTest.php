@@ -123,9 +123,9 @@ class IntegrationTest extends PHPStanTestCase
         yield [
             __DIR__ . '/data/collection-of-type.php',
             [
-                36 => ['Parameter #1 $accounts of method CollectionOfType\CollectionOfTypeTest::acceptsAccountCollection() expects App\AccountCollection<int, App\Account>, Illuminate\Database\Eloquent\Collection<int, App\User> given.'],
-                39 => ['Parameter #1 $users of method CollectionOfType\CollectionOfTypeTest::acceptsUserCollection() expects Illuminate\Database\Eloquent\Collection<int, App\User>, App\AccountCollection<int, App\Account> given.'],
-                69 => ['Parameter #1 $collection of method CollectionOfType\GenericTest::acceptsAccountCollection() expects App\AccountCollection<(int|string), App\Account>, Illuminate\Database\Eloquent\Collection<int, App\User> given.'],
+                36 => ['Parameter #1 $accounts of method CollectionOfType\CollectionOfTypeTest::acceptsAccountCollection() expects App\AccountCollection<(int|string), App\Account>, Illuminate\Database\Eloquent\Collection<int, App\User> given.'],
+                39 => ['Parameter #1 $users of method CollectionOfType\CollectionOfTypeTest::acceptsUserCollection() expects Illuminate\Database\Eloquent\Collection<(int|string), App\User>, App\AccountCollection<int, App\Account> given.'],
+                69 => ['Parameter #1 $collection of method CollectionOfType\GenericTest::acceptsAccountCollection() expects App\AccountCollection<(int|string), App\Account>, Illuminate\Database\Eloquent\Collection<(int|string), App\User> given.'],
             ],
         ];
 

@@ -106,18 +106,18 @@ function test(
     assertType('Illuminate\Database\Eloquent\Model|null', $model::find(1));
     assertType('Illuminate\Database\Eloquent\Model|null', $modelClass::find(1));
     assertType('App\Post|App\User|null', $userOrPostClass::find(1));
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\Post>|Illuminate\Database\Eloquent\Collection<int, App\User>', $userOrPostClass::find([1, 2, 3]));
-    assertType('App\AccountCollection<int, App\Account>|Illuminate\Database\Eloquent\Collection<int, App\User>', $userOrAccountClass::find([1, 2, 3]));
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\Post>|Illuminate\Database\Eloquent\Collection<(int|string), App\User>', $userOrPostClass::find([1, 2, 3]));
+    assertType('App\AccountCollection<(int|string), App\Account>|Illuminate\Database\Eloquent\Collection<(int|string), App\User>', $userOrAccountClass::find([1, 2, 3]));
     assertType('App\AccountCollection<int, App\Account>|Illuminate\Database\Eloquent\Collection<int, App\User>', $userOrAccountClass::all());
 
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::find([1, 2, 3]));
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::findMany([1, 2, 3]));
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', User::find([1, 2, 3]));
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', User::findMany([1, 2, 3]));
     assertType('App\User', User::findOrFail(1));
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::findOrFail([1, 2, 3]));
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::findOrFail([1, 2, 3])->makeHidden('foo'));
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', User::findOrFail([1, 2, 3]));
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', User::findOrFail([1, 2, 3])->makeHidden('foo'));
     assertType('App\User|null', User::findOrFail([1, 2, 3])->makeHidden('foo')->first());
 
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::find((array) $requestData['user_ids']));
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', User::find((array) $requestData['user_ids']));
     assertType('App\User|null', User::find((int) '1'));
     assertType('App\User', $user->make([]));
     assertType('Illuminate\Database\Query\Builder', User::getQuery());
@@ -142,7 +142,7 @@ function test(
     assertType('App\User', User::create([]));
     assertType('App\User', User::forceCreate([]));
 
-    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::findOrNew([]));
+    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', User::findOrNew([]));
     assertType('App\User', User::firstOrNew([]));
     assertType('App\User', User::updateOrCreate([]));
     assertType('App\User', User::firstOrCreate([]));

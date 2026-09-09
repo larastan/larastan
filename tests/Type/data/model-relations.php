@@ -45,13 +45,13 @@ function test(
     );
     assertType('Illuminate\Database\Eloquent\Relations\MorphMany<App\Address, App\User>', $appUser->address()->where('name', 'bar'));
     assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account, App\User>', $appUser->accounts()->active());
-    assertType('App\RoleCollection<int, App\Role>', $appUser->roles()->get());
+    assertType('App\RoleCollection<(int|string), App\Role>', $appUser->roles()->get());
     /** @var Group $group */
     $group = $appUser->group;
 
     $appUser->__children = $appUser->children;
 
-    assertType('App\AccountCollection<int, App\Account>', $group->accounts()->where('active', 1)->get());
+    assertType('App\AccountCollection<(int|string), App\Account>', $group->accounts()->where('active', 1)->get());
     assertType('App\Account', $appUser->accounts()->make());
     assertType('App\RoleCollection<int, App\Role>', $appUser->roles()->find([1]));
     assertType('App\RoleCollection<int, App\Role>', $appUser->roles()->findMany([1, 2, 3]));

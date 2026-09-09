@@ -22,13 +22,13 @@ public function renderView(string $view): View
     return view($view);
 }
 ```
-Now, whenever you call `renderView`, Larastan will try to check whether 
+Now, whenever you call `renderView`, Larastan will try to check whether
 the given string is a valid blade view.
 
 
 If the string is not an existing blade view, the following error will be displayed by Larastan.
 ```
-Parameter #1 $view of method TestClass::renderView() expects view-string, string given.  
+Parameter #1 $view of method TestClass::renderView() expects view-string, string given.
 ```
 
 When working with packages, all vendor-prefixed paths like `acme::example` may fail. As packages don't contain a Laravel app, the default skeleton from `orchestra/testbench` is used. This instance doesn't know about the package so views are not registered. Create a `testbench.yaml` file to [register](https://packages.tools/testbench#package-service-providers) your service provider to solve this issue.
@@ -51,7 +51,7 @@ The `collection-of<Model>` type resolves to the appropriate collection class for
 
 Larastan automatically determines the correct collection type:
 - If the model has a custom collection (via `newCollection()` method or `CollectedBy` attribute), it resolves to that collection
-- Otherwise, it resolves to `Illuminate\Database\Eloquent\Collection<int, Model>`
+- Otherwise, it resolves to `Illuminate\Database\Eloquent\Collection<(int|string), Model>`
 
 **Example:**
 
@@ -77,8 +77,11 @@ function publishPosts(Collection $posts): void
 }
 ```
 
-If `User` has a custom `UserCollection`, `collection-of<User>` will resolve to `UserCollection<int, User>`. 
-If `Post` uses the standard Eloquent collection, `collection-of<Post>` will resolve to `Illuminate\Database\Eloquent\Collection<int, Post>`.
+If `User` has a custom `UserCollection`, `collection-of<User>` will resolve to `UserCollection<(int|string), User>`.
+If `Post` uses the standard Eloquent collection, `collection-of<Post>` will resolve to `Illuminate\Database\Eloquent\Collection<(int|string), Post>`.
+
+Generic collection keys use a benevolent `int|string` union, allowing compatibility with integer
+and string keys. Collections with fixed key or model types retain their declared types.
 
 **Template Support:**
 
