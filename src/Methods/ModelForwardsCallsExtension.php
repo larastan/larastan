@@ -75,7 +75,7 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
 
         $builderName = $this->builderHelper->determineBuilderName($classReflection->getName());
 
-        if (in_array($methodName, ['increment', 'decrement'], true)) {
+        if (in_array($methodName, ['increment', 'decrement', 'incrementQuietly', 'decrementQuietly'], true)) {
             $methodReflection = $classReflection->getNativeMethod($methodName);
 
             return new class ($classReflection, $methodName, $methodReflection) implements MethodReflection
