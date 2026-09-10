@@ -464,7 +464,7 @@ class Builder
     /**
      * Add a basic where clause to the query.
      *
-     * @param  (\Closure(static): void)|(\Closure(static): static)|model-property<TModel>|array<int|model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @param  (\Closure(($operator is null ? static : \Illuminate\Database\Query\Builder)): mixed)|model-property<TModel>|array<int|model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
@@ -475,7 +475,9 @@ class Builder
     /**
      * Add an "or where" clause to the query.
      *
-     * @param  (\Closure(static): void)|(\Closure(static): static)|model-property<TModel>|array<int|model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * ponytail: Callback typing stays permissive until signatures can distinguish argument counts.
+     *
+     * @param  (\Closure(__benevolent<static|\Illuminate\Database\Query\Builder>): mixed)|model-property<TModel>|array<int|model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @return $this
@@ -485,7 +487,7 @@ class Builder
     /**
      * Add a basic where clause to the query, and return the first result.
      *
-     * @param  (\Closure(static): void)|(\Closure(static): static)|model-property<TModel>|array<int|model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @param  (\Closure(($operator is null ? static : \Illuminate\Database\Query\Builder)): mixed)|model-property<TModel>|array<int|model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
@@ -496,7 +498,7 @@ class Builder
     /**
      * Add a basic "where not" clause to the query.
      *
-     * @param  (\Closure(static): void)|(\Closure(static): static)|model-property<TModel>|array<int|model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @param  (\Closure(($operator is null ? static : \Illuminate\Database\Query\Builder)): mixed)|model-property<TModel>|array<int|model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @param  string  $boolean
@@ -507,7 +509,7 @@ class Builder
     /**
      * Add an "or where not" clause to the query.
      *
-     * @param  (\Closure(static): void)|(\Closure(static): static)|model-property<TModel>|array<int|model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @param  (\Closure(($operator is null ? static : \Illuminate\Database\Query\Builder)): mixed)|model-property<TModel>|array<int|model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
      * @param  mixed  $operator
      * @param  mixed  $value
      * @return $this
