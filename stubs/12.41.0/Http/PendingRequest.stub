@@ -46,7 +46,7 @@ namespace Illuminate\Http\Client
          * Issue a POST request to the given URL.
          *
          * @param  string  $url
-         * @param  array<string, mixed>|list<array{name: scalar, contents: scalar}>|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>  $data
+         * @param  array<string, mixed>|list<array{name: scalar, contents: scalar}>|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>|object|null  $data
          * @return (TAsync is true ? \Illuminate\Http\Client\Promises\LazyPromise : \Illuminate\Http\Client\Response)
          */
         public function post(string $url, $data = []);
@@ -55,7 +55,7 @@ namespace Illuminate\Http\Client
          * Issue a PATCH request to the given URL.
          *
          * @param  string  $url
-         * @param  array<string, mixed>|list<array{name: scalar, contents: scalar}>|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>  $data
+         * @param  array<string, mixed>|list<array{name: scalar, contents: scalar}>|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>|object|null  $data
          * @return (TAsync is true ? \Illuminate\Http\Client\Promises\LazyPromise : \Illuminate\Http\Client\Response)
          */
         public function patch(string $url, $data = []);
@@ -64,7 +64,7 @@ namespace Illuminate\Http\Client
          * Issue a PUT request to the given URL.
          *
          * @param  string  $url
-         * @param  array<string, mixed>|list<array{name: scalar, contents: scalar}>|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>  $data
+         * @param  array<string, mixed>|list<array{name: scalar, contents: scalar}>|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>|object|null  $data
          * @return (TAsync is true ? \Illuminate\Http\Client\Promises\LazyPromise : \Illuminate\Http\Client\Response)
          */
         public function put(string $url, $data = []);
@@ -73,7 +73,7 @@ namespace Illuminate\Http\Client
          * Issue a DELETE request to the given URL.
          *
          * @param  string  $url
-         * @param  array<string, mixed>|list<array{name: scalar, contents: scalar}>|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>  $data
+         * @param  array<string, mixed>|list<array{name: scalar, contents: scalar}>|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>|object|null  $data
          * @return (TAsync is true ? \Illuminate\Http\Client\Promises\LazyPromise : \Illuminate\Http\Client\Response)
          */
         public function delete(string $url, $data = []);
