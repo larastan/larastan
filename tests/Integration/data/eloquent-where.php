@@ -16,7 +16,7 @@ function callbacks(User $user): void
         $query->selectRaw('COUNT(*)')->from('posts');
     }, '=', 2);
 
-    $subquery = static fn (QueryBuilder $query) => $query->selectRaw('COUNT(*)')->from('posts');
+    $subquery = fn (QueryBuilder $query) => $query->selectRaw('COUNT(*)')->from('posts');
     $nested = static fn (EloquentBuilder $query) => $query->whereKey(1);
 
     User::where($subquery, 2);
@@ -50,5 +50,5 @@ function callbacks(User $user): void
     User::query()->firstWhere($nested, '=', 2);
     User::query()->whereNot($nested, '=', 2);
     User::query()->orWhereNot($nested, '=', 2);
-    User::query()->orWhere(static function (int $query): void {});
+    User::query()->orWhere(function (int $query): void {});
 }
