@@ -17,8 +17,12 @@ use PHPStan\Rules\RuleErrorBuilder;
 use function config_path;
 use function count;
 use function glob;
+use function is_array;
 use function is_dir;
+use function is_string;
 use function str_starts_with;
+use function strlen;
+use function substr;
 
 /**
  * Catches `env()` calls outside of the config directory.
@@ -32,6 +36,10 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
     /** @var list<string> */
     private array $configDirectories = [];
 
+    private string|null $editorTmpFile;
+
+    private string|null $editorInsteadOfFile;
+
     /** @param  list<non-empty-string> $configDirectories */
     public function __construct(array $configDirectories, private FileHelper $fileHelper)
     {
@@ -39,11 +47,12 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
             foreach ($configDirectories as $directory) {
                 $this->configDirectories[] = $this->fileHelper->normalizePath($directory);
             }
-
-            return;
+        } else {
+            $this->configDirectories = [config_path()]; // @phpstan-ignore-line
         }
 
-        $this->configDirectories = [config_path()]; // @phpstan-ignore-line
+        $this->editorTmpFile       = $this->resolveCliPath('tmp-file');
+        $this->editorInsteadOfFile = $this->resolveCliPath('instead-of');
     }
 
     public function getNodeType(): string
@@ -64,7 +73,13 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
             return [];
         }
 
-        if (! $this->isCalledOutsideOfConfig($node, $scope)) {
+        $file = $this->resolveAnalysedFile($scope->getFile());
+
+        if ($file === null) {
+            return [];
+        }
+
+        if (! $this->isCalledOutsideOfConfig($file)) {
             return [];
         }
 
@@ -77,7 +92,7 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
         ];
     }
 
-    protected function isCalledOutsideOfConfig(FuncCall $call, Scope $scope): bool
+    protected function isCalledOutsideOfConfig(string $file): bool
     {
         foreach ($this->configDirectories as $configDirectoryGlob) {
             foreach ((glob($configDirectoryGlob) ?: []) as $configDirectory) {
@@ -87,12 +102,73 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
                     continue;
                 }
 
-                if (str_starts_with($scope->getFile(), $absolutePath)) {
+                if (str_starts_with($file, $absolutePath)) {
                     return false;
                 }
             }
         }
 
         return true;
+    }
+
+    /**
+     * In editor mode (--tmp-file/--instead-of) PHPStan analyses a buffer file but reports
+     * errors against the original path. The rewrite happens post-analysis, so `$scope->getFile()`
+     * still points at the buffer here. Swap it to --instead-of so the config-dir check works;
+     * if --instead-of is missing, return null to suppress the rule for this file.
+     */
+    private function resolveAnalysedFile(string $scopeFile): string|null
+    {
+        if ($this->editorTmpFile === null) {
+            return $scopeFile;
+        }
+
+        if ($this->fileHelper->normalizePath($scopeFile) !== $this->editorTmpFile) {
+            return $scopeFile;
+        }
+
+        return $this->editorInsteadOfFile;
+    }
+
+    private function resolveCliPath(string $option): string|null
+    {
+        $value = $this->extractCliOption($option);
+
+        if ($value === null) {
+            return null;
+        }
+
+        return $this->fileHelper->normalizePath($this->fileHelper->absolutizePath($value));
+    }
+
+    private function extractCliOption(string $name): string|null
+    {
+        $argv = $_SERVER['argv'] ?? null;
+
+        if (! is_array($argv)) {
+            return null;
+        }
+
+        $flag   = '--' . $name;
+        $prefix = $flag . '=';
+        $count  = count($argv);
+
+        for ($i = 0; $i < $count; $i++) {
+            $arg = $argv[$i];
+
+            if (! is_string($arg)) {
+                continue;
+            }
+
+            if ($arg === $flag && isset($argv[$i + 1]) && is_string($argv[$i + 1])) {
+                return $argv[$i + 1];
+            }
+
+            if (str_starts_with($arg, $prefix)) {
+                return substr($arg, strlen($prefix));
+            }
+        }
+
+        return null;
     }
 }
