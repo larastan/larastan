@@ -112,6 +112,8 @@ function test(
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->getEager());
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->get());
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $users->getQuery());
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $users->getRelationExistenceCountQuery(User::query(), Post::query()));
+    assertType('App\PostBuilder<App\Post>', $appUser->posts()->getRelationExistenceCountQuery(Post::query(), User::query()));
     assertType('App\User', $users->make());
     assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\Account>|Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\User>', $union->group());
     assertType("Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Post, App\Account, Illuminate\Database\Eloquent\Relations\Pivot, 'pivot'>|Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Post, App\User, Illuminate\Database\Eloquent\Relations\Pivot, 'pivot'>", $union->posts());
@@ -336,6 +338,11 @@ class CustomBuilderBelongsToMany extends \Illuminate\Database\Eloquent\Relations
     {
         assertType('App\ChildTeamBuilder', $this->prepareQueryBuilder());
         assertType('App\ChildTeamBuilder', $this->getRelationQuery());
+        assertType('App\ChildTeamBuilder', $this->getRelationExistenceCountQuery(\App\Team::query(), User::query()));
+
+        $this->firstWhere(function ($query) {
+            assertType('App\ChildTeamBuilder', $query);
+        });
     }
 }
 
@@ -347,4 +354,27 @@ class CustomBuilderHasManyThrough extends \Illuminate\Database\Eloquent\Relation
         assertType('App\PostBuilder<App\Post>', $this->prepareQueryBuilder());
         assertType('App\PostBuilder<App\Post>', $this->getRelationQuery());
     }
+}
+
+function firstWhereCallbacks(User $user, string|null $operator): void
+{
+    assertType('(App\Post&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot})|null', $user->posts()->firstWhere(function ($query) {
+        assertType('App\PostBuilder<App\Post>', $query);
+    }));
+
+    $user->roles()->firstWhere(function ($query) {
+        assertType('Illuminate\Database\Eloquent\Builder<App\Role>', $query);
+    });
+
+    $user->posts()->firstWhere(function ($query) {
+        assertType('Illuminate\Database\Query\Builder', $query);
+    }, '=', 2);
+
+    $user->posts()->firstWhere(value: 2, column: function ($query) {
+        assertType('App\PostBuilder<App\Post>', $query);
+    }, operator: null);
+
+    $user->posts()->firstWhere(function ($query) {
+        assertType('App\PostBuilder<App\Post>|Illuminate\Database\Query\Builder', $query);
+    }, $operator, 2);
 }

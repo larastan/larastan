@@ -31,6 +31,15 @@ abstract class Relation
     public function sole($columns = ['*']);
 
     /**
+     * Add the constraints for a relationship count query.
+     *
+     * @param  builder-of<TRelatedModel>  $query
+     * @param  builder-of<TDeclaringModel>  $parentQuery
+     * @return builder-of<TRelatedModel>
+     */
+    public function getRelationExistenceCountQuery(Builder $query, Builder $parentQuery);
+
+    /**
      * Add the constraints for an internal relationship existence query.
      *
      * Essentially, these queries compare on column names like whereColumn.
