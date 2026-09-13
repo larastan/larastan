@@ -42,7 +42,7 @@ function serialization(
     InheritedAttributeSerializationModel $inherited,
     ReplacedAttributeSerializationModel $replaced,
 ): void {
-    assertType('array{id?: int, label?: string, ...<string, mixed>}', $model->attributesToArray());
-    assertType('array{id?: int, label?: string, ...<string, mixed>}', $inherited->toArray());
-    assertType('array{id?: int, name?: string, ...<string, mixed>}', $replaced->attributesToArray());
+    assertType('array{id?: int<0, max>, label?: string, ...<string, mixed>}', $model->attributesToArray());
+    assertType('array{id?: int<0, max>, label?: string, ...<string, mixed>}', $inherited->toArray());
+    assertType('array{id?: int<0, max>, name?: string, ...<string, mixed>}', $replaced->attributesToArray());
 }

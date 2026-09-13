@@ -24,8 +24,8 @@ class SerializationModel extends Model
 
 function serialization(SerializationModel $model): void
 {
-    assertType('array{id?: int, name?: string, email_verified_at?: string|null, label?: string, ...<string, mixed>}', $model->attributesToArray());
-    assertType('array{id?: int, name?: string, email_verified_at?: string|null, label?: string, ...<string, mixed>}', $model->toArray());
+    assertType('array{id?: int<0, max>, name?: string, email_verified_at?: string|null, label?: string, ...<string, mixed>}', $model->attributesToArray());
+    assertType('array{id?: int<0, max>, name?: string, email_verified_at?: string|null, label?: string, ...<string, mixed>}', $model->toArray());
     assertType('mixed', $model->attributesToArray()['posts_count']);
 }
 
@@ -143,7 +143,7 @@ function boundaries(
     OverriddenDateModel $dateOverride,
     Model $base,
 ): void {
-    assertType('array{id?: int, email_verified_at?: string|null, ...<string, mixed>}', $hidden->attributesToArray());
+    assertType('array{id?: int<0, max>, email_verified_at?: string|null, ...<string, mixed>}', $hidden->attributesToArray());
     assertType('mixed', $hidden->attributesToArray()['name']);
     assertType('bool', $accessor->attributesToArray()['name']);
     assertType("'active'|'inactive'", $casts->attributesToArray()['backed_enum']);
@@ -156,12 +156,12 @@ function boundaries(
     assertType('array{custom: true}', $override->attributesToArray());
     assertType('array<mixed>', $override->toArray());
     assertType('array{custom: true}', $toArrayOverride->toArray());
-    assertType('array{id?: int, name?: string, email_verified_at?: string|null, label?: string, ...<string, mixed>}', $toArrayOverride->attributesToArray());
+    assertType('array{id?: int<0, max>, name?: string, email_verified_at?: string|null, label?: string, ...<string, mixed>}', $toArrayOverride->attributesToArray());
     assertType('array{year: int}|null', $dateOverride->attributesToArray()['email_verified_at']);
     assertType('array<mixed>', $base->toArray());
 
     $partial = SerializationModel::query()->select('id')->firstOrFail();
-    assertType('array{id?: int, name?: string, email_verified_at?: string|null, label?: string, ...<string, mixed>}', $partial->toArray());
+    assertType('array{id?: int<0, max>, name?: string, email_verified_at?: string|null, label?: string, ...<string, mixed>}', $partial->toArray());
 
     if (isset($partial->toArray()['name'])) {
         assertType('string', $partial->toArray()['name']);
@@ -245,7 +245,7 @@ class GenericSerialization
     /** @param TModel $model */
     public function serialize(Model $model): void
     {
-        assertType('array{id?: int, name?: string, email_verified_at?: string|null, label?: string, ...<string, mixed>}', $model->attributesToArray());
+        assertType('array{id?: int<0, max>, name?: string, email_verified_at?: string|null, label?: string, ...<string, mixed>}', $model->attributesToArray());
     }
 }
 
@@ -259,9 +259,9 @@ function additionalBoundaries(
     assertType('array{serialized: true}', $custom->attributesToArray()['name']);
     assertType('array{value: int}', $arrayable->attributesToArray()['value']);
     assertType('array<string, array{value: int}|string>', $arrayable->attributesToArray()['values']);
-    assertType('array{id?: int, name?: string, email_verified_at?: string|null, label?: string, ...<string, mixed>}', $intersection->attributesToArray());
+    assertType('array{id?: int<0, max>, name?: string, email_verified_at?: string|null, label?: string, ...<string, mixed>}', $intersection->attributesToArray());
     assertType('bool|string', $union->attributesToArray()['name']);
-    assertType('array{id?: int, name?: string, email_verified_at?: string|null, label?: string, ...<string, mixed>}|null', $nullable?->attributesToArray());
+    assertType('array{id?: int<0, max>, name?: string, email_verified_at?: string|null, label?: string, ...<string, mixed>}|null', $nullable?->attributesToArray());
 }
 
 class CustomCastAccessorSerializationModel extends CustomCastSerializationModel

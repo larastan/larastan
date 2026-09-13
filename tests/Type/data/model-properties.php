@@ -72,7 +72,7 @@ function test(
     // CastsAttributes
     assertType('App\ValueObjects\Favorites', $user->favorites);
 
-    assertType('int', $user->id);
+    assertType('int<0, max>', $user->id);
     assertType('bool', $user->blocked);
     assertType('Carbon\Carbon|null', $user->created_at);
     assertType('array', $user->meta);

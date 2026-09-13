@@ -78,7 +78,9 @@ class HigherOrderCollectionProxyHelper
                 $methodOrPropertyReturnType,
             ),
             'max', 'min' => $methodOrPropertyReturnType,
-            'sum' => $methodOrPropertyReturnType->accepts(new Type\IntegerType(), true)->yes() ? new Type\IntegerType() : new Type\ErrorType(),
+            'sum' => $methodOrPropertyReturnType->isInteger()->yes() || $methodOrPropertyReturnType->accepts($integerType, true)->yes()
+                ? $integerType
+                : new Type\ErrorType(),
             default => new Type\ErrorType(),
         };
     }

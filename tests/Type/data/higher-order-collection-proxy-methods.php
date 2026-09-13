@@ -67,18 +67,19 @@ function test(
     assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $users->groupBy->email);
     assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', $users->keyBy->email);
     assertType('Illuminate\Support\Collection<(int|string), string>', $users->map->email);
-    assertType('Illuminate\Support\Collection<(int|string), int>', $users->map->id);
+    assertType('Illuminate\Support\Collection<(int|string), int<0, max>>', $users->map->id);
     assertType('Illuminate\Support\Collection<(int|string), int<0, max>>', $users->groupBy('status')->map->count());
     assertType('Illuminate\Support\Collection<(int|string), Carbon\Carbon|null>', $users->map->created_at);
     assertType('string', $users->max->email);
-    assertType('int', $users->max->id);
+    assertType('int<0, max>', $users->max->id);
     assertType('string', $users->min->email);
-    assertType('int', $users->min->id);
+    assertType('int<0, max>', $users->min->id);
     assertType('Illuminate\Database\Eloquent\Collection<int, Illuminate\Database\Eloquent\Collection<int, App\User>>', $users->partition->email);
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->reject->email);
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->skipUntil->email);
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->skipWhile->email);
     assertType('int', $users->sum->id);
+    assertType('int', $users->sum->unsigned_integer);
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->takeUntil->email);
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $users->takeWhile->email);
 
