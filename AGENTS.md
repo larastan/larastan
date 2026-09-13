@@ -13,6 +13,10 @@ implementation and follow its complete pattern before adding a new one.
 Do not copy version numbers or CI matrices into documentation. Link to their
 source instead so guidance does not drift.
 
+When using an unfamiliar PHPStan API, check its implementation and tests against
+the installed dependency. A separate `phpstan-src` checkout or the online API
+reference may be newer than the version Larastan supports.
+
 ## Where a change belongs
 
 ### For source code
@@ -38,7 +42,13 @@ Check sibling extensions for the full set of files a change requires.
 
 ## Before changing behavior
 
-- Reproduce a bug with the smallest test that fails before the fix.
+- Reproduce a bug with the smallest test that fails before the fix. Start from
+  the reported reproducer and preserve the syntax that triggers the failure;
+  once it fails for the right reason, keep that code stable while fixing it.
+- To inspect inference, use `\PHPStan\dumpType($expr)` or
+  `\PHPStan\debugScope()` in a temporary reproducer analysed with the relevant
+  Larastan configuration. Use PHPStan's `--debug` flag to see the file being
+  analysed; add `-vvv` when investigating hangs.
 - When existing behavior looks deliberate or version-dependent, inspect git
   history and the relevant Laravel and PHPStan source, tests, PRs, or issues
   before replacing it.
@@ -56,9 +66,30 @@ Check sibling extensions for the full set of files a change requires.
 - Keep inferred types both sound and useful on realistic Laravel code. Do not
   broaden a type merely to satisfy a test or narrow it merely to hide errors.
 - Do not silence new failures with the baseline or ignore rules.
+- For performance regressions, identify and fix the algorithmic cause while
+  preserving inference precision. Iteration, recursion, or collection-size
+  caps are safety nets, not substitutes for fixing the expensive operation.
 
 ## Extension wiring and contracts
 
+- Choose the hook for the information being changed: dynamic return type
+  extensions refine the call's result; type-specifying extensions narrow other
+  expressions after assertions or in conditional branches; parameter closure
+  extensions supply callback parameter types or the callback's `$this` type.
+  Rules report diagnostics and should not mutate analysis scope.
+- In type-specifying extensions, handle `TypeSpecifierContext` explicitly for
+  the supported truthy, falsey, or standalone assertion contexts. Obtain
+  `TypeSpecifier` through `TypeSpecifierAwareExtension` to avoid a circular
+  constructor dependency. Consult the
+  [type-specifying extension guide](https://phpstan.org/developing-extensions/type-specifying-extensions)
+  when adding narrowing behavior.
+- For cross-file diagnostics, return data from collectors and consume it in a
+  rule for `CollectedDataNode`. Analysis can run in separate worker processes;
+  mutable service state cannot aggregate findings across all files.
+- Prefer PHPStan APIs marked `@api`; unmarked internals can change in minor
+  releases. Respect `@api-do-not-implement` on interfaces. Inject PHPStan
+  services rather than constructing internal implementations whose
+  constructors are outside the compatibility promise.
 - Register extensions in `extension.neon` with the tag required by their
   PHPStan interface. For feature-gated tags or explicit `active` arguments,
   follow the nearest existing registration pattern.
@@ -99,14 +130,107 @@ Check sibling extensions for the full set of files a change requires.
 
 ## PHPStan type handling
 
+### Queries and transformations
+
 - When identifying a type, prefer its query methods or `isSuperTypeOf()`. Use
   `accepts()` for assignment or argument compatibility. Use `instanceof` only
-  for representation-specific behavior the `Type` API does not expose.
+  for representation-specific behavior the `Type` API does not expose:
+  concrete-class checks miss unions and intersections with accessory types.
+- Check the `Type` API for existing operations such as `getConstantStrings()`,
+  `getConstantArrays()`, and `getObjectClassReflections()` before adding manual
+  dispatch over concrete type classes.
+- Use `equals()` for type equality. Reserve `describe()` for human-readable
+  output; compare, sort, and transform the underlying types or constant values
+  instead of their rendered descriptions.
 - Build unions and intersections with `TypeCombinator`.
 - Handle all three `TrinaryLogic` outcomes deliberately: yes, no, and maybe.
+  `! $result->no()` includes maybe; it is not equivalent to `$result->yes()`.
+- Use `TypeTraverser::map()` for nested transformations. The callback controls
+  recursion: `return $traverse($type)` visits children, while `return $type`
+  stops at that node. Limit traversal to unions/intersections when transforming
+  only top-level alternatives; descending into generic arguments or callable
+  signatures can change unrelated types.
+- Build array shapes with `ConstantArrayTypeBuilder::createEmpty()`,
+  `setOffsetValueType($key, $value, $optional)`, and `getArray()`. Preserve
+  optional keys when transforming shapes; optional and nullable are different.
+  For general iterables, query `getIterableKeyType()`/`getIterableValueType()`.
+
+### Generics and class identity
+
+- Preserve generic bindings by working with the receiver's `Type` or
+  `getObjectClassReflections()`. Looking up its class name again through
+  `ReflectionProvider` loses that receiver's concrete type arguments.
+- Read a known ancestor's template through
+  `$type->getTemplateType(Ancestor::class, 'TModel')`, or obtain the ancestor
+  reflection with `getAncestorWithClassName()` and use its active template map.
+  `getActiveTemplateTypeMap()` contains substitutions when available;
+  `getTemplateTypeMap()` describes the declared templates. Handle missing
+  ancestors/templates using the extension's fallback.
+- When constructing `GenericObjectType`, follow the target class's declared
+  template order and preserve any relevant call-site variance. Keep unresolved
+  templates and `StaticType`/`ThisType` semantics until the operation actually
+  requires resolving them; replacing them with bounds or plain `ObjectType`
+  loses relationships needed at the call site.
+- `getObjectClassNames()` identifies the direct object types;
+  `getReferencedClasses()` also includes classes nested inside generic arguments
+  and callable signatures. Use the former to identify a receiver.
+
+## PHPStan scope, reflection, and calls
+
+- Use the public `Scope` interface in extensions. `getType($expr)` includes
+  PHPDoc information; use `getNativeType($expr)` when the behavior specifically
+  concerns native types. `MutatingScope` is PHPStan's internal implementation.
 - For classes from the analysed project, inject `ReflectionProvider` and use
   `hasClass()`/`getClass()` instead of `class_exists()`. Runtime dependency
   checks for Larastan's own dependencies may use `class_exists()`.
+- On a `Type`, establish `hasMethod($name)->yes()` before `getMethod()`;
+  corresponding `ClassReflection` queries return booleans. Pass the actual
+  `$scope` when member access depends on the caller. Use `OutOfClassScope` only
+  when intentionally modelling access from outside a class.
+- `ClassReflection::getMethod()` includes methods supplied by extensions;
+  `getNativeMethod()` looks for a real declared/inherited method. Choose
+  deliberately, especially inside reflection extensions where querying the
+  same virtual member can recursively re-enter the extension.
+- Keep property read and write types distinct: use `getReadableType()` for
+  reads and `getWritableType()` for assignments. Laravel accessors and mutators
+  can expose different types.
+- When caching a reflection that depends on generic bindings, include
+  `ClassReflection::getCacheKey()` rather than only the class name, plus the
+  member and any other inputs that affect the result.
+- For a concrete call, select its signature with
+  `ParametersAcceptorSelector::selectFromArgs($scope, $args, $variants, $namedVariants)`.
+  Supply `getNamedArgumentsVariants()` when exposed by the reflection.
+  `getVariants()[0]` bypasses overload selection and call-site template inference;
+  reserve it for inspecting a known single declaration. See the
+  [reflection guide](https://phpstan.org/developing-extensions/reflection).
+- Raw call arguments in rules may be named or unpacked. Before indexing by
+  parameter position, use the selected signature with `ArgumentsNormalizer`
+  and handle its `null` result. PHPStan already normalizes calls passed to
+  dynamic return type extensions; check the calling contract before adding
+  another normalization step. Still handle missing arguments and unpacking.
+- For arbitrary callables, establish `isCallable()->yes()` and use
+  `getCallableParametersAcceptors($scope)`. A callable can be a closure, string,
+  array, or invokable object; select its signature using the actual arguments.
+
+## Custom PHPDoc resolution and types
+
+- Reuse resolved PHPDoc information from reflection. When parsing a custom
+  type node, resolve its children through `TypeNodeResolver` with the original
+  `NameScope`, preserving imports, aliases, and template names. Return `null`
+  for syntax the extension does not own; resolving the same outer node again
+  would re-enter the extension.
+- Obtain `TypeNodeResolver` via `TypeNodeResolverAwareExtension` setter
+  injection; constructor injection creates a circular dependency.
+- When a custom type's result depends on unresolved templates, follow the
+  `LateResolvableType`/`LateResolvableTypeTrait` pattern in
+  `src/Types/CollectionOf/` and `src/Types/RelationOf/`. Preserve the operands
+  until substitution makes the result resolvable. Consult the
+  [custom PHPDoc type guide](https://phpstan.org/developing-extensions/custom-phpdoc-types).
+- For custom types containing other types, keep `equals()`, `traverse()`,
+  `traverseSimultaneously()`, `getReferencedClasses()`,
+  `getReferencedTemplateTypes()`, and `toPhpDocNode()` consistent with every
+  stored operand. Otherwise template substitution or dependency tracking can
+  miss part of the type even when `describe()` looks correct.
 
 ## Test fixtures and expectations
 
@@ -137,6 +261,15 @@ Check sibling extensions for the full set of files a change requires.
 - E2E projects are pinned in `.github/workflows/e2e-tests.yml` and run in CI.
   When one fails, review every added or removed entry in its regenerated
   baseline artifact as a user-visible behavior change.
+
+## Writing PHPDocs
+
+- Document non-obvious contracts and the role of key abstractions. Keep prose
+  concise and focused on information absent from the method name and type tags.
+- Preserve `@api`, `@phpstan-assert`, and tags that express information beyond
+  native PHP types, such as generics, array shapes, and conditional types.
+- Keep type tags on their own lines; avoid descriptions that merely restate
+  them or explain ordinary PHP semantics.
 
 ## Verification
 
