@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Collectors;
 
 use Illuminate\Contracts\Mail\Mailer as MailerContract;
-use Illuminate\Mail\PendingMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\View\ViewName;
 use PhpParser\Node;
@@ -58,20 +57,21 @@ final class UsedEmailSendViewCollector implements Collector
         } else {
             $type = $scope->getType($node->var);
 
-            if (
-                ! (new ObjectType(MailerContract::class))->isSuperTypeOf($type)->yes()
-                && ! (new ObjectType(PendingMail::class))->isSuperTypeOf($type)->yes()
-            ) {
+            if (! (new ObjectType(MailerContract::class))->isSuperTypeOf($type)->yes()) {
                 return null;
             }
         }
 
-        $template = $node->getArgs()[0]->value;
+        foreach ($node->getArgs() as $index => $arg) {
+            if ($arg->name !== null ? $arg->name->name !== 'view' : $index !== 0) {
+                continue;
+            }
 
-        if (! $template instanceof Node\Scalar\String_) {
-            return null;
+            return ! $arg->unpack && $arg->value instanceof Node\Scalar\String_
+                ? ViewName::normalize($arg->value->value)
+                : null;
         }
 
-        return ViewName::normalize($template->value);
+        return null;
     }
 }

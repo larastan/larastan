@@ -43,6 +43,8 @@ class FooMailable extends Mailable
 
     public function bar(): self
     {
+        $this->html('unused');
+
         return $this->view('emails.mailable.view');
     }
 
@@ -74,15 +76,16 @@ class FooMailMessage extends MailMessage
 
 function mailFacadeSend(): void
 {
-    Mail::send('emails.mail-send.send-static');
+    Mail::send(data: [], view: 'emails.mail-send.send-static');
 
     Mail::to('mail@example.com')
-        ->send('emails.mail-send.send');
+        ->send(new FooMailable());
 }
 
 function mailerContractSend(MailerContract $mailer): void
 {
-    $mailer->send('emails.mail-send.mailer');
+    $mailer->send(data: [], view: 'emails.mail-send.mailer');
+    $mailer->send('emails.mail-send.send');
 }
 
 function viewHelper(): View

@@ -77,7 +77,7 @@ final class UnusedViewsRule implements Rule
         foreach ($unusedViews as $file) {
             $path = $finder->find($file);
 
-            $errors[] = RuleErrorBuilder::message('The "' . $file . '" view is not used in the project.')
+            $errors[] = RuleErrorBuilder::message('This view is not used in the project.')
                 ->file($path)
                 ->line(0)
                 ->identifier('larastan.unusedViews')
