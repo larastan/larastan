@@ -172,7 +172,7 @@ function test(
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->concat([new User()]));
     assertType('App\TransactionCollection<int, App\Transaction|App\User>', $customEloquentCollection->concat([new User()]));
     assertType('App\UserCollection', $secondCustomEloquentCollection->concat([new User()]));
-    assertType('Illuminate\Support\Collection<string, App\User|int>', $items->concat([new User()]));
+    assertType('Illuminate\Support\Collection<int|string, App\User|int>', $items->concat([new User()]));
 
      ////////////////////////////
      // EnumeratesValues Trait //
