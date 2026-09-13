@@ -50,8 +50,8 @@ jobs:
         uses: "actions/cache@v6"
         with:
           path: "${{ env.COMPOSER_CACHE_DIR }}"
-          key: "php-${{ matrix.php }}-composer-${{ matrix.dependencies }}-${{ hashFiles('composer.lock') }}"
-          restore-keys: "php-${{ matrix.php }}-composer-${{ matrix.dependencies }}-"
+          key: "php-${{ matrix.php }}-composer-${{ hashFiles('composer.json') }}"
+          restore-keys: "php-${{ matrix.php }}-composer-"
 
       - name: "Install dependencies from composer.json"
         run: "composer update --no-interaction --no-progress"

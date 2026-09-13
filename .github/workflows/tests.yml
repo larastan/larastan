@@ -67,10 +67,16 @@ jobs:
       - name: "Check PSR-4 mapping"
         run: "composer dump-autoload --optimize --strict-psr"
 
+      - name: "Execute static analysis"
+        run: "composer run-script test:types"
+
       - name: "Execute unit tests"
         run: "composer run-script test:unit"
 
+      # The sample application resolves its own dependencies, so the result does
+      # not depend on the lowest/highest matrix dimension.
       - name: "Run Larastan on a sample Laravel application"
+        if: "matrix.dependencies == 'highest'"
         run: |
           version="${{ matrix.laravel }}"
           version="${version%%.*}.0"

@@ -66,16 +66,15 @@ jobs:
       - name: "Install dependencies"
         run: |
           cd e2e/
-          composer install --no-scripts --no-interaction
           composer config repositories.0 '{ "type": "path", "url": "../larastan", "options": { "symlink": true } }'
           composer config minimum-stability dev
           if [ "${{ matrix.repository }}" = "monicahq/monica" ]; then
             composer remove --dev -n tomasvotruba/bladestan
           fi
           if [ "${{ matrix.force-phpstan-version }}" = "true" ]; then
-            composer require --dev --update-with-all-dependencies "larastan/larastan:*" "phpstan/phpstan:*"
+            composer require --dev --no-progress --update-with-all-dependencies "larastan/larastan:*" "phpstan/phpstan:*"
           else
-            composer require --dev --update-with-all-dependencies "larastan/larastan:*"
+            composer require --dev --no-progress --update-with-all-dependencies "larastan/larastan:*"
           fi
 
       - name: "Perform static analysis"
