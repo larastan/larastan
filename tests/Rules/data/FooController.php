@@ -4,7 +4,10 @@ namespace Tests\Rules\Data;
 
 use Illuminate\Contracts\View\View;
 use Illuminate\Mail\Mailable;
+use Illuminate\Contracts\Mail\Mailer as MailerContract;
+use Illuminate\Mail\Mailables\Content;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\View\Factory;
 
@@ -40,7 +43,21 @@ class FooMailable extends Mailable
 
     public function bar(): self
     {
+        $this->html('unused');
+
         return $this->view('emails.mailable.view');
+    }
+
+    public function content(): Content
+    {
+        $foo = new Content('emails.mailable.content.view',);
+        $bar = new Content(markdown: 'emails.mailable.content.markdown');
+
+        $foo
+            ->text('emails.mailable.content.text')
+            ->html('emails.mailable.content.html');
+
+        return $bar;
     }
 }
 
@@ -55,6 +72,20 @@ class FooMailMessage extends MailMessage
     {
         return $this->view('emails.mail-message.view');
     }
+}
+
+function mailFacadeSend(): void
+{
+    Mail::send(data: [], view: 'emails.mail-send.send-static');
+
+    Mail::to('mail@example.com')
+        ->send(new FooMailable());
+}
+
+function mailerContractSend(MailerContract $mailer): void
+{
+    $mailer->send(data: [], view: 'emails.mail-send.mailer');
+    $mailer->send('emails.mail-send.send');
 }
 
 function viewHelper(): View
@@ -80,4 +111,11 @@ function routeView(): void
 function dummyTranslationView()
 {
     return view('translations');
+}
+
+class SomeClass {
+    function someView(): void
+    {
+        view('modals/' . __FUNCTION__);
+    }
 }

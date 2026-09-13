@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Collectors;
 
+use Illuminate\View\ViewName;
 use Larastan\Larastan\Support\ViewFileHelper;
 use Larastan\Larastan\Support\ViewParser;
 use PhpParser\Node;
@@ -61,7 +62,7 @@ final class UsedViewInAnotherViewCollector
             preg_match_all(self::VIEW_NAME_REGEX, $node->value, $matches, PREG_SET_ORDER, 0);
 
             foreach ($matches as $match) {
-                $usedViews[] = $match[5];
+                $usedViews[] = ViewName::normalize($match[5]);
             }
 
             $usedViews = array_merge($usedViews, $this->componentViews($node->value));

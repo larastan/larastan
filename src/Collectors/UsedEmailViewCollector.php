@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Collectors;
 
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\View\ViewName;
 use PhpParser\Node;
@@ -19,6 +20,8 @@ use function in_array;
 /** @implements Collector<Node\Expr\MethodCall, string> */
 final class UsedEmailViewCollector implements Collector
 {
+    private const VIEW_METHOD_NAMES = ['view', 'html', 'text', 'markdown'];
+
     public function getNodeType(): string
     {
         return Node\Expr\MethodCall::class;
@@ -33,7 +36,7 @@ final class UsedEmailViewCollector implements Collector
             return null;
         }
 
-        if (! in_array($name->name, ['markdown', 'view'], true)) {
+        if (! in_array($name->name, self::VIEW_METHOD_NAMES, true)) {
             return null;
         }
 
@@ -45,9 +48,14 @@ final class UsedEmailViewCollector implements Collector
 
         $type = $scope->getType($class);
 
+        if ($name->name === 'html' && ! (new ObjectType(Content::class))->isSuperTypeOf($type)->yes()) {
+            return null;
+        }
+
         if (
             ! (new ObjectType(Mailable::class))->isSuperTypeOf($type)->yes()
             && ! (new ObjectType(MailMessage::class))->isSuperTypeOf($type)->yes()
+            && ! (new ObjectType(Content::class))->isSuperTypeOf($type)->yes()
         ) {
             return null;
         }

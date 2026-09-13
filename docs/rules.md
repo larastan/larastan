@@ -437,7 +437,9 @@ parameters:
 ### Supported View Usages
 
 - `view` helper function.
-- `$this->markdown` and `$this->view` methods in Mailables.
+- `markdown`, `view`, and `text` methods in Mailables and mail notifications.
+- `view`, `html`, `text`, and `markdown` arguments and methods on `Illuminate\Mail\Mailables\Content`.
+- Literal view names passed to `Mail::send` or `Illuminate\Contracts\Mail\Mailer::send`, including named arguments.
 - `Illuminate\View\Factory::make` method.
 - `Illuminate\Support\Facades\View::make` method.
 - `Illuminate\Support\Facades\Route::view` method.
