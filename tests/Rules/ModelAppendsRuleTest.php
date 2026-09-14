@@ -25,6 +25,11 @@ class ModelAppendsRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testLegacyAccessorWithSameNamePublicMethod(): void
+    {
+        $this->analyse([__DIR__ . '/data/ModelAppendsLegacyAccessor.php'], []);
+    }
+
     /** @return string[] */
     public static function getAdditionalConfigFiles(): array
     {
