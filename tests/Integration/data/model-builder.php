@@ -44,4 +44,6 @@ function test(User|Account $userOrAccount): void
 
     assertType('int', $userOrAccount->increment('counter'));
     assertType('int', $userOrAccount->decrement('counter'));
+    assertType('int', $userOrAccount->incrementQuietly('counter'));
+    assertType('int', $userOrAccount->decrementQuietly('counter'));
 }

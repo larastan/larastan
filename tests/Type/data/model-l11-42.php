@@ -137,6 +137,10 @@ function test(
 
     assertType('int', $user->increment('counter'));
     assertType('int', $user->decrement('counter'));
+    assertType('int', $user->incrementQuietly('counter'));
+    assertType('int', $user->decrementQuietly('counter'));
+    assertType('int', $user->incrementEach(['counter' => 1]));
+    assertType('int', $user->decrementEach(['counter' => 1]));
 
     assertType('App\User|null', User::first());
     assertType('App\User', User::make([]));

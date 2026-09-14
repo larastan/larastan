@@ -32,6 +32,17 @@ use function in_array;
 
 final class ModelForwardsCallsExtension implements MethodsClassReflectionExtension
 {
+    private const MODEL_CALL_FORWARDED_METHODS = [
+        'increment',
+        'decrement',
+        'incrementQuietly',
+        'decrementQuietly',
+        'incrementEach',
+        'decrementEach',
+        'incrementEachQuietly',
+        'decrementEachQuietly',
+    ];
+
     /** @var array<string, MethodReflection|null> */
     private array $cache = [];
 
@@ -75,7 +86,8 @@ final class ModelForwardsCallsExtension implements MethodsClassReflectionExtensi
 
         $builderName = $this->builderHelper->determineBuilderName($classReflection->getName());
 
-        if (in_array($methodName, ['increment', 'decrement'], true)) {
+        // Model::__call() dispatches these protected methods; the list must stay in sync with it.
+        if (in_array($methodName, self::MODEL_CALL_FORWARDED_METHODS, true) && $classReflection->hasNativeMethod($methodName)) {
             $methodReflection = $classReflection->getNativeMethod($methodName);
 
             return new class ($classReflection, $methodName, $methodReflection) implements MethodReflection
