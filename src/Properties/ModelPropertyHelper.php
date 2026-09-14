@@ -47,8 +47,11 @@ class ModelPropertyHelper
     /**
      * Determine if the model has a database property.
      */
-    public function hasDatabaseProperty(ClassReflection|string $classReflectionOrTable, string $propertyName): bool
-    {
+    public function hasDatabaseProperty(
+        ClassReflection|string $classReflectionOrTable,
+        string $propertyName,
+        bool $excludePropertyTags = true,
+    ): bool {
         if (! $this->migrationsLoaded()) {
             $this->loadMigrations();
         }
@@ -69,7 +72,7 @@ class ModelPropertyHelper
             return false;
         }
 
-        if (ReflectionHelper::hasPropertyTag($classReflectionOrTable, $propertyName)) {
+        if ($excludePropertyTags && ReflectionHelper::hasPropertyTag($classReflectionOrTable, $propertyName)) {
             return false;
         }
 
