@@ -31,8 +31,8 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
 
         $this->assertCount(1, $tables);
         $this->assertArrayHasKey('accounts', $tables);
-        $this->assertCount(9, $tables['accounts']->columns);
-        $this->assertSame(['id', 'name', 'active', 'description', 'notes', 'profile_text', 'enum_status', 'created_at', 'updated_at'], array_keys($tables['accounts']->columns));
+        $this->assertCount(11, $tables['accounts']->columns);
+        $this->assertSame(['id', 'name', 'active', 'description', 'notes', 'profile_text', 'balance', 'label', 'enum_status', 'created_at', 'updated_at'], array_keys($tables['accounts']->columns));
         $this->assertSame('non-negative-int', $tables['accounts']->columns['id']->readableType);
         $this->assertSame('string', $tables['accounts']->columns['name']->readableType);
         $this->assertSame(false, $tables['accounts']->columns['name']->nullable);
@@ -45,6 +45,8 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
         $this->assertSame('string', $tables['accounts']->columns['profile_text']->readableType);
         $this->assertSame(false, $tables['accounts']->columns['profile_text']->nullable);
         $this->assertSame("'a very long string that exceeds the ConstantStringType DESCRIBE_LIMIT'|'active'|'don\'t know'|'inactive'", $tables['accounts']->columns['enum_status']->readableType);
+        $this->assertSame(true, $tables['accounts']->columns['balance']->nullable);
+        $this->assertSame(true, $tables['accounts']->columns['label']->nullable);
         $this->assertSame(false, $tables['accounts']->columns['enum_status']->nullable);
         $this->assertSame('string', $tables['accounts']->columns['created_at']->readableType);
         $this->assertSame(true, $tables['accounts']->columns['created_at']->nullable);
