@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Types\BuilderOf;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Larastan\Larastan\Methods\BuilderHelper;
 use PHPStan\Analyser\OutOfClassScope;
@@ -12,6 +13,7 @@ use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\CompoundType;
+use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\GeneralizePrecision;
 use PHPStan\Type\Generic\TemplateTypeVariance;
 use PHPStan\Type\LateResolvableType;
@@ -24,6 +26,7 @@ use PHPStan\Type\VerbosityLevel;
 
 use function array_merge;
 use function explode;
+use function in_array;
 
 class BuilderOfType implements CompoundType, LateResolvableType
 {
@@ -35,8 +38,12 @@ class BuilderOfType implements CompoundType, LateResolvableType
 
     protected function getResult(): Type
     {
-        $results     = [];
-        $relatedType = $this->resolveRelationType()?->getTemplateType(Relation::class, 'TRelatedModel') ?? $this->type;
+        $results                       = [];
+        [$relationType, $unknownModel] = $this->resolveRelations();
+
+        // A path that failed on an unknown model says nothing about the declaring model.
+        $relatedType = $relationType?->getTemplateType(Relation::class, 'TRelatedModel')
+            ?? ($unknownModel ? new ObjectType(Model::class) : $this->type);
 
         foreach (TypeUtils::flattenTypes($relatedType) as $modelType) {
             foreach ($modelType->getObjectClassNames() as $className) {
@@ -53,20 +60,40 @@ class BuilderOfType implements CompoundType, LateResolvableType
         return TypeCombinator::union(...$results);
     }
 
-    /** @internal */
-    public function resolveRelationType(): Type|null
+    private function isUnknownModel(Type $type): bool
+    {
+        $classNames = $type->getObjectClassNames();
+
+        return $classNames === [] || in_array(Model::class, $classNames, true);
+    }
+
+    /** @return ConstantStringType[] */
+    private function relationNames(): array
     {
         if (
             $this->relationType === null
             || TypeUtils::containsTemplateType($this->relationType)
             || ! $this->relationType->isConstantScalarValue()->yes()
         ) {
-            return null;
+            return [];
         }
 
-        $results = [];
+        return $this->relationType->getConstantStrings();
+    }
 
-        foreach ($this->relationType->getConstantStrings() as $relation) {
+    /** @internal */
+    public function resolveRelationType(): Type|null
+    {
+        return $this->resolveRelations()[0];
+    }
+
+    /** @return array{Type|null, bool} the relationship type, and whether a path failed on an unknown model */
+    private function resolveRelations(): array
+    {
+        $results      = [];
+        $unknownModel = false;
+
+        foreach ($this->relationNames() as $relation) {
             $relatedType = $this->type;
 
             foreach (explode('.', explode(':', $relation->getValue(), 2)[0]) as $relationName) {
@@ -88,6 +115,8 @@ class BuilderOfType implements CompoundType, LateResolvableType
                 }
 
                 if ($relations === []) {
+                    $unknownModel = $unknownModel || $this->isUnknownModel($relatedType);
+
                     continue 2;
                 }
 
@@ -98,7 +127,7 @@ class BuilderOfType implements CompoundType, LateResolvableType
             $results[] = $relationType;
         }
 
-        return $results === [] ? null : TypeCombinator::union(...$results);
+        return [$results === [] ? null : TypeCombinator::union(...$results), $unknownModel];
     }
 
     public function isResolvable(): bool
