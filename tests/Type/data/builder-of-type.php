@@ -138,6 +138,24 @@ function testRelationshipBuilders($accounts, $posts, $comments, $postColumns, $c
 }
 
 /**
+ * @param builder-of<\App\BareRelations\Owner> $owner
+ * @param builder-of<\App\BareRelations\Owner, 'items'> $items
+ * @param builder-of<\App\BareRelations\Owner, 'items.category'> $category
+ * @param builder-of<\App\BareRelations\Owner, 'items.category.labels'> $labels
+ * @param builder-of<\App\BareRelations\Owner, 'missing'> $missing
+ * @param builder-of<\App\BareRelations\Owner, string> $unknown
+ */
+function testBareRelationshipBuilders($owner, $items, $category, $labels, $missing, $unknown): void
+{
+    assertType('Illuminate\Database\Eloquent\Builder<App\BareRelations\Owner>', $owner);
+    assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $items);
+    assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $category);
+    assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $labels);
+    assertType('Illuminate\Database\Eloquent\Builder<App\BareRelations\Owner>', $missing);
+    assertType('Illuminate\Database\Eloquent\Builder<App\BareRelations\Owner>', $unknown);
+}
+
+/**
  * @param builder-of<\App\User, 'posts'|'accounts'> $relations
  * @param builder-of<\App\User, 'posts'|'missing'> $partlyMissing
  * @param builder-of<\App\User, 'posts.comments'|'posts.missing'> $nested
@@ -234,7 +252,7 @@ function testRelatedModelTypes($generic, $polymorphic, $nestedUnion, $annotation
     assertType('App\ChildTeamBuilder', $annotation);
     assertType('Illuminate\Database\Eloquent\Builder<BuilderOfType\ModelWithRelationships<string>>', $nullableRelation);
     assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $broad);
-    assertType('Illuminate\Database\Eloquent\Builder<App\Comment>', $broadNested);
+    assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $broadNested);
     assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $customRelation);
     assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $model->accountBuilder());
 }
