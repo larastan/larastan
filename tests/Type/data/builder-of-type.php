@@ -155,6 +155,48 @@ function testBareRelationshipBuilders($owner, $items, $category, $labels, $missi
     assertType('Illuminate\Database\Eloquent\Builder<App\BareRelations\Owner>', $unknown);
 }
 
+abstract class AbstractSubject extends Model
+{
+    /** @return HasMany<\App\Account, $this> */
+    public function accounts(): HasMany
+    {
+        throw new \LogicException();
+    }
+}
+
+class ModelWithAbstractRelation extends Model
+{
+    /** @return HasMany<AbstractSubject, $this> */
+    public function subjects(): HasMany
+    {
+        throw new \LogicException();
+    }
+
+    /** @return MorphTo<\App\Account|AbstractSubject, $this> */
+    public function subject(): MorphTo
+    {
+        throw new \LogicException();
+    }
+}
+
+/**
+ * @param builder-of<ModelWithAbstractRelation, 'subjects'> $subjects
+ * @param builder-of<ModelWithAbstractRelation, 'subjects.accounts'> $throughAbstract
+ * @param builder-of<ModelWithAbstractRelation, 'subjects.missing'> $missingOnAbstract
+ * @param builder-of<ModelWithAbstractRelation, 'missing'> $missingOnConcrete
+ * @param builder-of<ModelWithAbstractRelation, 'subject.transactions'> $partOfUnion
+ * @param builder-of<ModelWithAbstractRelation, 'subject.missing'> $missingOnUnion
+ */
+function testAbstractRelatedModels($subjects, $throughAbstract, $missingOnAbstract, $missingOnConcrete, $partOfUnion, $missingOnUnion): void
+{
+    assertType('Illuminate\Database\Eloquent\Builder<BuilderOfType\AbstractSubject>', $subjects);
+    assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $throughAbstract);
+    assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $missingOnAbstract);
+    assertType('Illuminate\Database\Eloquent\Builder<BuilderOfType\ModelWithAbstractRelation>', $missingOnConcrete);
+    assertType('Illuminate\Database\Eloquent\Builder<App\Transaction>', $partOfUnion);
+    assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $missingOnUnion);
+}
+
 /**
  * @param builder-of<\App\User, 'posts'|'accounts'> $relations
  * @param builder-of<\App\User, 'posts'|'missing'> $partlyMissing

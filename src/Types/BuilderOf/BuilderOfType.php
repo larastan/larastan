@@ -26,7 +26,6 @@ use PHPStan\Type\VerbosityLevel;
 
 use function array_merge;
 use function explode;
-use function in_array;
 
 class BuilderOfType implements CompoundType, LateResolvableType
 {
@@ -61,11 +60,26 @@ class BuilderOfType implements CompoundType, LateResolvableType
         return TypeCombinator::union(...$results);
     }
 
+    /**
+     * An abstract model is never the one being queried, so failing to find a relationship on it
+     * does not mean a concrete subclass lacks it. `Model` itself is the extreme case. One abstract
+     * candidate is enough to leave the failure inconclusive, as is having nothing to look at.
+     */
     private function isUnknownModel(Type $type): bool
     {
-        $classNames = $type->getObjectClassNames();
+        $reflections = $type->getObjectClassReflections();
 
-        return $classNames === [] || in_array(Model::class, $classNames, true);
+        if ($reflections === []) {
+            return true;
+        }
+
+        foreach ($reflections as $reflection) {
+            if ($reflection->isAbstract()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /** @return ConstantStringType[] */
