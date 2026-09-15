@@ -42,6 +42,7 @@ class BuilderOfType implements CompoundType, LateResolvableType
         [$relationType, $unknownModel] = $this->resolveRelations();
 
         // A path that failed on an unknown model says nothing about the declaring model.
+        // Alternatives that did resolve win outright, so an unknown one is discarded like a missing one.
         $relatedType = $relationType?->getTemplateType(Relation::class, 'TRelatedModel')
             ?? ($unknownModel ? new ObjectType(Model::class) : $this->type);
 

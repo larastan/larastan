@@ -158,16 +158,18 @@ function testBareRelationshipBuilders($owner, $items, $category, $labels, $missi
 /**
  * @param builder-of<\App\User, 'posts'|'accounts'> $relations
  * @param builder-of<\App\User, 'posts'|'missing'> $partlyMissing
+ * @param builder-of<\App\User, 'posts'|'address.addressable.missing'> $partlyUnknown
  * @param builder-of<\App\User, 'posts.comments'|'posts.missing'> $nested
  * @param builder-of<\App\User|\App\Team, 'posts'> $models
  * @param builder-of<\App\User|\App\Team, 'missing'> $missingModels
  * @param builder-of<\App\User&object{extra: string}, 'accounts'> $intersection
  * @param builder-of<\App\User, 'accounts'>|null $nullable
  */
-function testRelationshipUnions($relations, $partlyMissing, $nested, $models, $missingModels, $intersection, $nullable): void
+function testRelationshipUnions($relations, $partlyMissing, $partlyUnknown, $nested, $models, $missingModels, $intersection, $nullable): void
 {
     assertType('App\PostBuilder<App\Post>|Illuminate\Database\Eloquent\Builder<App\Account>', $relations);
     assertType('App\PostBuilder<App\Post>', $partlyMissing);
+    assertType('App\PostBuilder<App\Post>', $partlyUnknown);
     assertType('Illuminate\Database\Eloquent\Builder<App\Comment>', $nested);
     assertType('App\PostBuilder<App\Post>', $models);
     assertType('App\ChildTeamBuilder|Illuminate\Database\Eloquent\Builder<App\User>', $missingModels);
