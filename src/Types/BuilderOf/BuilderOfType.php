@@ -31,6 +31,9 @@ class BuilderOfType implements CompoundType, LateResolvableType
 {
     use LateResolvableTypeTrait;
 
+    /** @var array{Type|null, bool}|null */
+    private array|null $resolvedRelations = null;
+
     public function __construct(private Type $type, private BuilderHelper $builderHelper, private Type|null $relationType = null)
     {
     }
@@ -105,6 +108,10 @@ class BuilderOfType implements CompoundType, LateResolvableType
     /** @return array{Type|null, bool} the relationship type, and whether a path failed on an unknown model */
     private function resolveRelations(): array
     {
+        if ($this->resolvedRelations !== null) {
+            return $this->resolvedRelations;
+        }
+
         $results      = [];
         $unknownModel = false;
 
@@ -142,7 +149,7 @@ class BuilderOfType implements CompoundType, LateResolvableType
             $results[] = $relationType;
         }
 
-        return [$results === [] ? null : TypeCombinator::union(...$results), $unknownModel];
+        return $this->resolvedRelations = [$results === [] ? null : TypeCombinator::union(...$results), $unknownModel];
     }
 
     public function isResolvable(): bool
