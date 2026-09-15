@@ -65,9 +65,8 @@ class BuilderOfType implements CompoundType, LateResolvableType
     }
 
     /**
-     * An abstract model is never the one being queried, so failing to find a relationship on it
-     * does not mean a concrete subclass lacks it. `Model` itself is the extreme case. One abstract
-     * candidate is enough to leave the failure inconclusive, as is having nothing to look at.
+     * An abstract model is never the one queried, so not finding a relationship on it says nothing
+     * about a concrete subclass. `Model` is the extreme case, and one such candidate is enough.
      */
     private function isUnknownModel(Type $type): bool
     {
