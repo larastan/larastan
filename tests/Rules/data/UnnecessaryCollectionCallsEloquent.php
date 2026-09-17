@@ -103,3 +103,27 @@ class UnnecessaryCollectionCallsEloquent
         return User::pluck('id')->sum();
     }
 }
+
+/**
+ * @property int $id
+ * @property string $computed
+ */
+class DocumentedUser extends \Illuminate\Database\Eloquent\Model
+{
+    protected $table = 'users';
+}
+
+class DocumentedModelCollectionCalls
+{
+    /** @return Collection<int, mixed> */
+    public function pluckDatabaseColumn(): Collection
+    {
+        return DocumentedUser::all()->pluck('id');
+    }
+
+    /** @return Collection<int, mixed> */
+    public function pluckComputedProperty(): Collection
+    {
+        return DocumentedUser::all()->pluck('computed');
+    }
+}
