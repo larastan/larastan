@@ -300,6 +300,10 @@ User::query()->with('posts', function (Relation $query) {
 > [!NOTE]
 > Callbacks inside `with([...])` and similar relationship arrays do not receive these inferred types.
 
+A relationship without the generic annotations above only exposes the `Model` bound, so a
+dotted path cannot be walked past it. The callback then receives `Builder<Model>` and is not
+checked against any particular model, rather than being checked against the declaring one.
+
 ## Bootstrap Error Reporting (since 3.9.0)
 
 Larastan boots your Laravel application during analysis. If that bootstrap fails, Larastan can print a

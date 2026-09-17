@@ -185,6 +185,8 @@ If `User::accounts()` relates to `Account`, this resolves to `builder-of<Account
 
 Both model unions and relationship-name unions are supported. For example, `builder-of<User, 'posts'|'accounts'>` produces a union of the related builders. Alternatives that cannot resolve the complete path are discarded. If none resolve, the type falls back to `builder-of<User>`. A known relationship whose related-model type is only `Model` resolves to `Builder<Model>`.
 
+That fallback applies to names that are absent from a model Larastan knows. A path can also fail because it cannot be followed rather than because it is wrong: a relationship declared without generic annotations, such as a bare `public function posts(): HasMany`, only exposes the `Model` bound, so the next name in the path cannot be looked up. The model the rest of the path runs against is unknown, so the type is `Builder<Model>` instead of a builder of the first model.
+
 The second argument must be a string type. Literal names must be quoted. Relationship names, dotted paths, and eager-loading column syntax such as `'posts:id'` are supported; the column suffix does not affect the builder type. A nonconstant string falls back to the first model's builder.
 
 The relationship argument can also be a template bounded by `string`:

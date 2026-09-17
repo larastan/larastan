@@ -138,18 +138,80 @@ function testRelationshipBuilders($accounts, $posts, $comments, $postColumns, $c
 }
 
 /**
+ * @param builder-of<\App\BareRelations\Owner> $owner
+ * @param builder-of<\App\BareRelations\Owner, 'items'> $items
+ * @param builder-of<\App\BareRelations\Owner, 'items.category'> $category
+ * @param builder-of<\App\BareRelations\Owner, 'items.category.labels'> $labels
+ * @param builder-of<\App\BareRelations\Owner, 'missing'> $missing
+ * @param builder-of<\App\BareRelations\Owner, string> $unknown
+ */
+function testBareRelationshipBuilders($owner, $items, $category, $labels, $missing, $unknown): void
+{
+    assertType('Illuminate\Database\Eloquent\Builder<App\BareRelations\Owner>', $owner);
+    assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $items);
+    assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $category);
+    assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $labels);
+    assertType('Illuminate\Database\Eloquent\Builder<App\BareRelations\Owner>', $missing);
+    assertType('Illuminate\Database\Eloquent\Builder<App\BareRelations\Owner>', $unknown);
+}
+
+abstract class AbstractSubject extends Model
+{
+    /** @return HasMany<\App\Account, $this> */
+    public function accounts(): HasMany
+    {
+        throw new \LogicException();
+    }
+}
+
+class ModelWithAbstractRelation extends Model
+{
+    /** @return HasMany<AbstractSubject, $this> */
+    public function subjects(): HasMany
+    {
+        throw new \LogicException();
+    }
+
+    /** @return MorphTo<\App\Account|AbstractSubject, $this> */
+    public function subject(): MorphTo
+    {
+        throw new \LogicException();
+    }
+}
+
+/**
+ * @param builder-of<ModelWithAbstractRelation, 'subjects'> $subjects
+ * @param builder-of<ModelWithAbstractRelation, 'subjects.accounts'> $throughAbstract
+ * @param builder-of<ModelWithAbstractRelation, 'subjects.missing'> $missingOnAbstract
+ * @param builder-of<ModelWithAbstractRelation, 'missing'> $missingOnConcrete
+ * @param builder-of<ModelWithAbstractRelation, 'subject.transactions'> $partOfUnion
+ * @param builder-of<ModelWithAbstractRelation, 'subject.missing'> $missingOnUnion
+ */
+function testAbstractRelatedModels($subjects, $throughAbstract, $missingOnAbstract, $missingOnConcrete, $partOfUnion, $missingOnUnion): void
+{
+    assertType('Illuminate\Database\Eloquent\Builder<BuilderOfType\AbstractSubject>', $subjects);
+    assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $throughAbstract);
+    assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $missingOnAbstract);
+    assertType('Illuminate\Database\Eloquent\Builder<BuilderOfType\ModelWithAbstractRelation>', $missingOnConcrete);
+    assertType('Illuminate\Database\Eloquent\Builder<App\Transaction>', $partOfUnion);
+    assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $missingOnUnion);
+}
+
+/**
  * @param builder-of<\App\User, 'posts'|'accounts'> $relations
  * @param builder-of<\App\User, 'posts'|'missing'> $partlyMissing
+ * @param builder-of<\App\User, 'posts'|'address.addressable.missing'> $partlyUnknown
  * @param builder-of<\App\User, 'posts.comments'|'posts.missing'> $nested
  * @param builder-of<\App\User|\App\Team, 'posts'> $models
  * @param builder-of<\App\User|\App\Team, 'missing'> $missingModels
  * @param builder-of<\App\User&object{extra: string}, 'accounts'> $intersection
  * @param builder-of<\App\User, 'accounts'>|null $nullable
  */
-function testRelationshipUnions($relations, $partlyMissing, $nested, $models, $missingModels, $intersection, $nullable): void
+function testRelationshipUnions($relations, $partlyMissing, $partlyUnknown, $nested, $models, $missingModels, $intersection, $nullable): void
 {
     assertType('App\PostBuilder<App\Post>|Illuminate\Database\Eloquent\Builder<App\Account>', $relations);
     assertType('App\PostBuilder<App\Post>', $partlyMissing);
+    assertType('App\PostBuilder<App\Post>', $partlyUnknown);
     assertType('Illuminate\Database\Eloquent\Builder<App\Comment>', $nested);
     assertType('App\PostBuilder<App\Post>', $models);
     assertType('App\ChildTeamBuilder|Illuminate\Database\Eloquent\Builder<App\User>', $missingModels);
@@ -234,7 +296,7 @@ function testRelatedModelTypes($generic, $polymorphic, $nestedUnion, $annotation
     assertType('App\ChildTeamBuilder', $annotation);
     assertType('Illuminate\Database\Eloquent\Builder<BuilderOfType\ModelWithRelationships<string>>', $nullableRelation);
     assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $broad);
-    assertType('Illuminate\Database\Eloquent\Builder<App\Comment>', $broadNested);
+    assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $broadNested);
     assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $customRelation);
     assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $model->accountBuilder());
 }
