@@ -62,11 +62,17 @@ class OctaneCompatibilityRule implements Rule
             return [];
         }
 
-        if (! $args[1]->value instanceof Node\Expr\Closure) {
+        // An arrow function is not a subclass of Closure in PHP-Parser, the two
+        // are siblings under Expr, so the arrow form of the same binding has to
+        // be matched explicitly. Both carry getParams() and getStmts().
+        if (
+            ! $args[1]->value instanceof Node\Expr\Closure &&
+            ! $args[1]->value instanceof Node\Expr\ArrowFunction
+        ) {
             return [];
         }
 
-        /** @var Node\Expr\Closure $closure */
+        /** @var Node\Expr\ArrowFunction|Node\Expr\Closure $closure */
         $closure = $args[1]->value;
 
         /** @var Node\Param[] $closureParams */
@@ -132,8 +138,12 @@ class OctaneCompatibilityRule implements Rule
         return [];
     }
 
-    /** @return RuleError[] */
-    private function checkForThisAppUsage(Scope $scope, Node\Expr\Closure $closure): array
+    /**
+     * @param Node\Expr\ArrowFunction|Node\Expr\Closure $closure
+     *
+     * @return RuleError[]
+     */
+    private function checkForThisAppUsage(Scope $scope, Node\Expr $closure): array
     {
         $nodes = (new NodeFinder())->find($closure->getStmts(), static function (Node $node): bool {
             return $node instanceof Node\Expr\PropertyFetch &&
