@@ -21,6 +21,8 @@ use function count;
 
 final class CollectExtension implements DynamicFunctionReturnTypeExtension
 {
+    private Type|null $emptyCollectionType = null;
+
     public function __construct(private CollectionHelper $collectionHelper)
     {
     }
@@ -36,7 +38,7 @@ final class CollectExtension implements DynamicFunctionReturnTypeExtension
         Scope $scope,
     ): Type|null {
         if (count($functionCall->getArgs()) < 1) {
-            return new GenericObjectType(Collection::class, [new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()]);
+            return $this->emptyCollectionType ??= new GenericObjectType(Collection::class, [new BenevolentUnionType([new IntegerType(), new StringType()]), new MixedType()]);
         }
 
         $valueType = $scope->getType($functionCall->getArgs()[0]->value);

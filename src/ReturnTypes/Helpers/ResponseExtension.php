@@ -18,6 +18,10 @@ use function count;
 /** @internal */
 final class ResponseExtension implements DynamicFunctionReturnTypeExtension
 {
+    private ObjectType|null $responseFactoryType = null;
+
+    private ObjectType|null $responseType = null;
+
     public function isFunctionSupported(FunctionReflection $functionReflection): bool
     {
         return $functionReflection->getName() === 'response';
@@ -29,9 +33,9 @@ final class ResponseExtension implements DynamicFunctionReturnTypeExtension
         Scope $scope,
     ): Type {
         if (count($functionCall->getArgs()) === 0) {
-            return new ObjectType(ResponseFactory::class);
+            return $this->responseFactoryType ??= new ObjectType(ResponseFactory::class);
         }
 
-        return new ObjectType(Response::class);
+        return $this->responseType ??= new ObjectType(Response::class);
     }
 }
