@@ -23,6 +23,7 @@ use PHPStan\TrinaryLogic;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeUtils;
 use PHPStan\Type\VerbosityLevel;
 
 use function array_key_exists;
@@ -271,6 +272,31 @@ class BuilderHelper
         }
 
         return $this->dynamicWhere($methodName, $this->getBuilderType($eloquentBuilder->getName(), $modelType));
+    }
+
+    /**
+     * `@method` docblocks on a model, such as the ones laravel-ide-helper generates, widen the
+     * query builder methods to `Builder<static>|Model` and shadow the stubs. The model half of
+     * that union is not something those methods can return.
+     */
+    public function isBuilderReturnType(Type $returnType): bool
+    {
+        $eloquentBuilderType = new ObjectType(EloquentBuilder::class);
+        $modelType           = new ObjectType(Model::class);
+        $hasBuilder          = false;
+
+        foreach (TypeUtils::flattenTypes($returnType) as $type) {
+            if ($eloquentBuilderType->isSuperTypeOf($type)->yes()) {
+                $hasBuilder = true;
+                continue;
+            }
+
+            if (! $modelType->isSuperTypeOf($type)->yes()) {
+                return false;
+            }
+        }
+
+        return $hasBuilder;
     }
 
     public function getBuilderType(string $builderClassName, Type $modelType): ObjectType
