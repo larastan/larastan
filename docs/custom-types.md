@@ -88,6 +88,9 @@ If `Post` uses the standard Eloquent collection, `collection-of<Post>` will reso
 Generic collection keys use a benevolent `int|string` union, allowing compatibility with integer
 and string keys. Collections with fixed key or model types retain their declared types.
 
+Like `array<TKey, TValue>`, an optional key type can be given first: `collection-of<string, User>`
+resolves to `Illuminate\Database\Eloquent\Collection<string, User>`.
+
 **Template Support:**
 
 The `collection-of` type also works with generic templates:

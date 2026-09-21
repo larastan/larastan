@@ -83,6 +83,23 @@ class CollectionOfTypeNodeResolverExtensionTest extends PHPStanTestCase
         $this->assertNull($result);
     }
 
+    public function testCollectionOfWithKeyType(): void
+    {
+        $typeNode = new GenericTypeNode(
+            new IdentifierTypeNode('collection-of'),
+            [
+                new IdentifierTypeNode('string'),
+                new IdentifierTypeNode('\\App\\User'),
+            ],
+        );
+
+        $result = $this->extension->resolve($typeNode, $this->nameScope);
+
+        $this->assertNotNull($result);
+        $this->assertInstanceOf(LateResolvableType::class, $result);
+        $this->assertSame('Illuminate\Database\Eloquent\Collection<string, App\User>', $result->resolve()->describe(VerbosityLevel::precise()));
+    }
+
     public function testCollectionOfWithNonModelTypeReturnsErrorType(): void
     {
         $typeNode = new GenericTypeNode(

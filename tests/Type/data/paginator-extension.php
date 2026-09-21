@@ -44,17 +44,19 @@ function test(): void
 
 function paginateCollections(): void
 {
-    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', User::query()->paginate()->getCollection());
-    assertType('App\AccountCollection<(int|string), App\Account>', Account::query()->paginate()->getCollection());
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::query()->paginate()->getCollection());
+    assertType('App\AccountCollection<int, App\Account>', Account::query()->paginate()->getCollection());
     assertType('App\NonGenericCollection', ModelWithNonGenericCollection::query()->paginate()->getCollection());
     assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', ModelWithOnlyValueGenericCollection::query()->paginate()->getCollection());
     assertType('Illuminate\Support\Collection<int, stdClass>', (new LengthAwarePaginator([new \stdClass()], 1, 15))->getCollection());
 
+    assertType('array<int, App\User>', User::query()->paginate()->getCollection()->all());
+
     $paginator = User::query()->paginate();
     $paginator->setCollection(new AccountCollection(['account' => new Account()]));
-    assertType('App\AccountCollection<(int|string), App\Account>', $paginator->getCollection());
+    assertType('App\AccountCollection<string, App\Account>', $paginator->getCollection());
     assertType('Illuminate\Pagination\LengthAwarePaginator<string, App\Account>', $paginator);
-    assertType('App\AccountCollection<(int|string), App\Account>', $paginator->getCollection()->filterByActive());
+    assertType('App\AccountCollection<string, App\Account>', $paginator->getCollection()->filterByActive());
 
     $paginator->setCollection(new Collection(['name' => 'Taylor']));
     assertType('Illuminate\Support\Collection<string, string>', $paginator->getCollection());
@@ -62,17 +64,17 @@ function paginateCollections(): void
 
 function simplePaginateCollections(): void
 {
-    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', User::query()->simplePaginate()->getCollection());
-    assertType('App\AccountCollection<(int|string), App\Account>', Account::query()->simplePaginate()->getCollection());
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::query()->simplePaginate()->getCollection());
+    assertType('App\AccountCollection<int, App\Account>', Account::query()->simplePaginate()->getCollection());
     assertType('App\NonGenericCollection', ModelWithNonGenericCollection::query()->simplePaginate()->getCollection());
     assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', ModelWithOnlyValueGenericCollection::query()->simplePaginate()->getCollection());
     assertType('Illuminate\Support\Collection<int, stdClass>', (new Paginator([new \stdClass()], 15))->getCollection());
 
     $paginator = User::query()->simplePaginate();
     $paginator->setCollection(new AccountCollection(['account' => new Account()]));
-    assertType('App\AccountCollection<(int|string), App\Account>', $paginator->getCollection());
+    assertType('App\AccountCollection<string, App\Account>', $paginator->getCollection());
     assertType('Illuminate\Pagination\Paginator<string, App\Account>', $paginator);
-    assertType('App\AccountCollection<(int|string), App\Account>', $paginator->getCollection()->filterByActive());
+    assertType('App\AccountCollection<string, App\Account>', $paginator->getCollection()->filterByActive());
 
     $paginator->setCollection(new Collection(['name' => 'Taylor']));
     assertType('Illuminate\Support\Collection<string, string>', $paginator->getCollection());
@@ -80,17 +82,17 @@ function simplePaginateCollections(): void
 
 function cursorPaginateCollections(): void
 {
-    assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\User>', User::query()->cursorPaginate()->getCollection());
-    assertType('App\AccountCollection<(int|string), App\Account>', Account::query()->cursorPaginate()->getCollection());
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::query()->cursorPaginate()->getCollection());
+    assertType('App\AccountCollection<int, App\Account>', Account::query()->cursorPaginate()->getCollection());
     assertType('App\NonGenericCollection', ModelWithNonGenericCollection::query()->cursorPaginate()->getCollection());
     assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', ModelWithOnlyValueGenericCollection::query()->cursorPaginate()->getCollection());
     assertType('Illuminate\Support\Collection<int, stdClass>', (new CursorPaginator([new \stdClass()], 15))->getCollection());
 
     $paginator = User::query()->cursorPaginate();
     $paginator->setCollection(new AccountCollection(['account' => new Account()]));
-    assertType('App\AccountCollection<(int|string), App\Account>', $paginator->getCollection());
+    assertType('App\AccountCollection<string, App\Account>', $paginator->getCollection());
     assertType('Illuminate\Pagination\CursorPaginator<string, App\Account>', $paginator);
-    assertType('App\AccountCollection<(int|string), App\Account>', $paginator->getCollection()->filterByActive());
+    assertType('App\AccountCollection<string, App\Account>', $paginator->getCollection()->filterByActive());
 
     $paginator->setCollection(new Collection(['name' => 'Taylor']));
     assertType('Illuminate\Support\Collection<string, string>', $paginator->getCollection());
@@ -110,6 +112,6 @@ function collectionValueTypes(LengthAwarePaginator $arrays, Paginator $integers,
     assertType('Illuminate\Support\Collection<int, int>', $integers->getCollection());
     assertType('Illuminate\Support\Collection<string, string>', $strings->getCollection());
     assertType('App\Account|null', $nullable->getCollection()->first());
-    assertType('App\AccountCollection<(int|string), App\Account>|Illuminate\Database\Eloquent\Collection<(int|string), App\User>', $union->getCollection());
-    assertType('App\AccountCollection<(int|string), App\Account&Countable>', $intersection->getCollection());
+    assertType('App\AccountCollection<int, App\Account>|Illuminate\Database\Eloquent\Collection<int, App\User>', $union->getCollection());
+    assertType('App\AccountCollection<string, App\Account&Countable>', $intersection->getCollection());
 }

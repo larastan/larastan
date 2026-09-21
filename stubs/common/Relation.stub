@@ -15,7 +15,7 @@ abstract class Relation
      * Execute the query as a "select" statement.
      *
      * @param array<int, model-property<TRelatedModel>> $columns
-     * @return collection-of<TRelatedModel>
+     * @return collection-of<int, TRelatedModel>
      */
     public function get($columns = ['*']);
 
