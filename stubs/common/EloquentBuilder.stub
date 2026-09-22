@@ -445,6 +445,12 @@ class Builder
     public function forceCreate(array $attributes);
 
     /**
+     * @param  array<model-property<TModel>, mixed>  $attributes
+     * @phpstan-return TModel
+     */
+    public function forceCreateQuietly(array $attributes = []);
+
+    /**
      * @param  array<model-property<TModel>, mixed>  $values
      * @return int
      */
