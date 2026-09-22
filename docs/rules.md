@@ -324,6 +324,79 @@ Parameter #1 $foo of job class ExampleJob constructor expects int in ExampleJob:
 Parameter #2 $bar of job class ExampleJob constructor expects string in ExampleJob::dispatch(), int given.
 ```
 
+## CheckThrowIfArgumentTypesCompatibleWithClassConstructorRule
+
+Reports `throw_if()` and `throw_unless()` calls whose parameters do not match the
+constructor of the exception class they name. Laravel instantiates that class
+with the remaining arguments, but the relationship between the class-string and
+those arguments cannot be expressed in PHPDoc, so the call is otherwise
+unchecked.
+
+### Examples
+
+Assume the following exception:
+
+```php
+final class ExampleException extends RuntimeException
+{
+    public function __construct(
+        protected int $foo,
+        protected string $bar,
+    ) {}
+}
+```
+
+Throwing it with the following examples:
+
+```php
+throw_if($condition, ExampleException::class, 1);
+throw_if($condition, ExampleException::class, 'bar', 1);
+```
+
+will result in the following errors:
+
+```text
+Exception class ExampleException constructor invoked with 1 parameter in throw_if(), 2 required.
+Parameter #1 $foo of exception class ExampleException constructor expects int in throw_if(), string given.
+Parameter #2 $bar of exception class ExampleException constructor expects string in throw_if(), int given.
+```
+
+The exception is only constructed when the condition holds, so the condition
+narrows the arguments. Given `int|null $foo`, this is not reported, because the
+constructor can only ever receive an `int`:
+
+```php
+throw_if($foo !== null, ExampleException::class, $foo, 'bar');
+```
+
+The rule also reports parameters that never reach a constructor at all:
+
+```php
+throw_if($condition, 'Some failure happened', $foo);
+throw_if($condition, NotAnException::class, $foo);
+```
+
+```text
+Function throw_if() is called with a string that is not a class name, so a RuntimeException is thrown with that string as its message and the given parameters are ignored.
+Class NotAnException given to throw_if() does not implement Throwable.
+```
+
+Calls that pass a closure or an already instantiated exception are not checked,
+and neither are calls whose exception class is not a single known class-string.
+
+### Configuration
+
+This rule is disabled by default. To enable it in `phpstan.neon`:
+
+```neon
+parameters:
+    checkThrowIfArgumentTypes: true
+```
+
+Error identifiers: `larastan.throwIf.ignoredParameters` and
+`larastan.throwIf.notThrowable`, plus PHPStan's own argument identifiers such as
+`argument.type` for the constructor parameter checks.
+
 ## NoUselessValueFunctionCallsRule
 
 This rule will check if unnecessary calls to the `value()` function are made.
