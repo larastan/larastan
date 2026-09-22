@@ -45,13 +45,13 @@ function test(
     );
     assertType('Illuminate\Database\Eloquent\Relations\MorphMany<App\Address, App\User>', $appUser->address()->where('name', 'bar'));
     assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account, App\User>', $appUser->accounts()->active());
-    assertType('App\RoleCollection<(int|string), App\Role>', $appUser->roles()->get());
+    assertType('App\RoleCollection<int, App\Role>', $appUser->roles()->get());
     /** @var Group $group */
     $group = $appUser->group;
 
     $appUser->__children = $appUser->children;
 
-    assertType('App\AccountCollection<(int|string), App\Account>', $group->accounts()->where('active', 1)->get());
+    assertType('App\AccountCollection<int, App\Account>', $group->accounts()->where('active', 1)->get());
     assertType('App\Account', $appUser->accounts()->make());
     assertType('App\RoleCollection<int, App\Role>', $appUser->roles()->find([1]));
     assertType('App\RoleCollection<int, App\Role>', $appUser->roles()->findMany([1, 2, 3]));
@@ -377,4 +377,58 @@ function firstWhereCallbacks(User $user, string|null $operator): void
     $user->posts()->firstWhere(function ($query) {
         assertType('App\PostBuilder<App\Post>|Illuminate\Database\Query\Builder', $query);
     }, $operator, 2);
+}
+
+function chunkCallbacks(User $user): void
+{
+    $user->accounts()->chunk(10, fn ($accounts, $page) => assertType('App\AccountCollection<int, App\Account>', $accounts));
+    $user->accounts()->each(fn ($account, $key) => assertType('App\Account', $account));
+
+    $user->roles()->chunk(10, function ($roles, $page) {
+        assertType('App\RoleCollection<int, App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}>', $roles);
+        assertType('int', $page);
+    });
+    $user->roles()->chunkById(10, function ($roles, $page) {
+        assertType('App\RoleCollection<int, App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}>', $roles);
+        assertType('int', $page);
+    });
+    $user->roles()->chunkByIdDesc(10, function ($roles, $page) {
+        assertType('App\RoleCollection<int, App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}>', $roles);
+        assertType('int', $page);
+    });
+    $user->roles()->each(function ($role, $key) {
+        assertType('App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}', $role);
+        assertType('int', $key);
+    });
+    $user->roles()->eachById(function ($role, $key) {
+        assertType('App\Role&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}', $role);
+        assertType('int', $key);
+    });
+    $user->posts()->where('id', '>', 1)->chunk(10, function ($posts) {
+        assertType('Illuminate\Database\Eloquent\Collection<int, App\Post&object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}>', $posts);
+    });
+
+    $user->parts()->chunk(10, function ($parts, $page) {
+        assertType('Illuminate\Database\Eloquent\Collection<int, App\Part>', $parts);
+        assertType('int', $page);
+    });
+    $user->parts()->chunkById(10, function ($parts, $page) {
+        assertType('Illuminate\Database\Eloquent\Collection<int, App\Part>', $parts);
+        assertType('int', $page);
+    });
+    $user->parts()->chunkByIdDesc(10, function ($parts, $page) {
+        assertType('Illuminate\Database\Eloquent\Collection<int, App\Part>', $parts);
+        assertType('int', $page);
+    });
+    $user->parts()->each(function ($part, $key) {
+        assertType('App\Part', $part);
+        assertType('int', $key);
+    });
+    $user->parts()->eachById(function ($part, $key) {
+        assertType('App\Part', $part);
+        assertType('int', $key);
+    });
+    $user->car()->chunk(10, function ($cars) {
+        assertType('Illuminate\Database\Eloquent\Collection<int, App\Car>', $cars);
+    });
 }

@@ -18,7 +18,7 @@ abstract class AbstractPaginator implements \Illuminate\Contracts\Support\Htmlab
 
     /**
      * @return (TValue is \Illuminate\Database\Eloquent\Model
-     *     ? collection-of<TValue>
+     *     ? collection-of<TKey, TValue>
      *     : \Illuminate\Support\Collection<TKey, TValue>)
      */
     public function getCollection();
@@ -72,7 +72,7 @@ abstract class AbstractCursorPaginator implements \Illuminate\Contracts\Support\
 {
     /**
      * @return (TValue is \Illuminate\Database\Eloquent\Model
-     *     ? collection-of<TValue>
+     *     ? collection-of<TKey, TValue>
      *     : \Illuminate\Support\Collection<TKey, TValue>)
      */
     public function getCollection();

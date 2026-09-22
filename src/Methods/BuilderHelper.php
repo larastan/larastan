@@ -82,6 +82,9 @@ class BuilderHelper
         'ddRawSql',
     ];
 
+    /** @var array<string, string> */
+    private array $builderNameCache = [];
+
     public function __construct(
         private ReflectionProvider $reflectionProvider,
         private bool $checkProperties,
@@ -288,6 +291,10 @@ class BuilderHelper
      */
     public function determineBuilderName(string $modelClassName): string
     {
+        if (array_key_exists($modelClassName, $this->builderNameCache)) {
+            return $this->builderNameCache[$modelClassName];
+        }
+
         $modelReflection = $this->reflectionProvider->getClass($modelClassName);
 
         if (! $modelReflection->is(Model::class)) {
@@ -303,7 +310,7 @@ class BuilderHelper
                 $expr =  $attrs[0]->getArgumentsExpressions()[0];
 
                 if ($expr instanceof ClassConstFetch && $expr->class instanceof Name) {
-                    return $expr->class->toString();
+                    return $this->builderNameCache[$modelClassName] = $expr->class->toString();
                 }
             }
         }
@@ -311,16 +318,16 @@ class BuilderHelper
         $returnType = $method->getVariants()[0]->getReturnType();
 
         if (in_array(EloquentBuilder::class, $returnType->getReferencedClasses(), true)) {
-            return EloquentBuilder::class;
+            return $this->builderNameCache[$modelClassName] = EloquentBuilder::class;
         }
 
         $classNames = $returnType->getObjectClassNames();
 
         if (count($classNames) === 1) {
-            return $classNames[0];
+            return $this->builderNameCache[$modelClassName] = $classNames[0];
         }
 
-        return $returnType->describe(VerbosityLevel::value());
+        return $this->builderNameCache[$modelClassName] = $returnType->describe(VerbosityLevel::value());
     }
 
     public function determineBuilderClass(string $modelClassName, Type $modelType): Type|null

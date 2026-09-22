@@ -145,6 +145,14 @@ class IntegrationTest extends PHPStanTestCase
             ],
         ];
 
+        yield 'force-create-quietly' => [
+            __DIR__ . '/data/model-property-force-create-quietly.php',
+            [
+                5 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Builder<App\User>::forceCreateQuietly() expects array<model property of App\User, mixed>, array<string, string> given.'],
+                9 => ['Parameter #1 $attributes of static method Illuminate\Database\Eloquent\Builder<App\User>::forceCreateQuietly() expects array<model property of App\User, mixed>, array<string, string> given.'],
+            ],
+        ];
+
         yield [
             __DIR__ . '/data/model-property-model.php',
             [

@@ -228,6 +228,57 @@ class BelongsToMany extends Relation
     public function cursorPaginate($perPage = null, $columns = ['*'], $cursorName = 'cursor', $cursor = null);
 
     /**
+     * Chunk the results of the query.
+     *
+     * @param  int  $count
+     * @param  callable(collection-of<int, TRelatedModel&object{pivot: TPivotModel}>, int): mixed  $callback
+     * @return bool
+     */
+    public function chunk($count, callable $callback);
+
+    /**
+     * Chunk the results of a query by comparing numeric IDs.
+     *
+     * @param  int  $count
+     * @param  callable(collection-of<int, TRelatedModel&object{pivot: TPivotModel}>, int): mixed  $callback
+     * @param  string|null  $column
+     * @param  string|null  $alias
+     * @return bool
+     */
+    public function chunkById($count, callable $callback, $column = null, $alias = null);
+
+    /**
+     * Chunk the results of a query by comparing IDs in descending order.
+     *
+     * @param  int  $count
+     * @param  callable(collection-of<int, TRelatedModel&object{pivot: TPivotModel}>, int): mixed  $callback
+     * @param  string|null  $column
+     * @param  string|null  $alias
+     * @return bool
+     */
+    public function chunkByIdDesc($count, callable $callback, $column = null, $alias = null);
+
+    /**
+     * Execute a callback over each item while chunking by ID.
+     *
+     * @param  callable(TRelatedModel&object{pivot: TPivotModel}, int): mixed  $callback
+     * @param  int  $count
+     * @param  string|null  $column
+     * @param  string|null  $alias
+     * @return bool
+     */
+    public function eachById(callable $callback, $count = 1000, $column = null, $alias = null);
+
+    /**
+     * Execute a callback over each item while chunking.
+     *
+     * @param  callable(TRelatedModel&object{pivot: TPivotModel}, int): mixed  $callback
+     * @param  int  $count
+     * @return bool
+     */
+    public function each(callable $callback, $count = 1000);
+
+    /**
      * Query lazily, by chunks of the given size.
      *
      * @param  int  $chunkSize
