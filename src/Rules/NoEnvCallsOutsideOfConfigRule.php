@@ -33,17 +33,21 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
     private array $configDirectories = [];
 
     /** @param  list<non-empty-string> $configDirectories */
-    public function __construct(array $configDirectories, private FileHelper $fileHelper)
-    {
-        if (count($configDirectories) !== 0) {
-            foreach ($configDirectories as $directory) {
-                $this->configDirectories[] = $this->fileHelper->normalizePath($directory);
-            }
+    public function __construct(
+        array $configDirectories,
+        private FileHelper $fileHelper,
+        private string|null $singleReflectionFile = null,
+        private string|null $singleReflectionInsteadOfFile = null,
+    ) {
+        if (count($configDirectories) === 0) {
+            $this->configDirectories = [config_path()]; // @phpstan-ignore-line
 
             return;
         }
 
-        $this->configDirectories = [config_path()]; // @phpstan-ignore-line
+        foreach ($configDirectories as $directory) {
+            $this->configDirectories[] = $this->fileHelper->normalizePath($directory);
+        }
     }
 
     public function getNodeType(): string
@@ -79,6 +83,12 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
 
     protected function isCalledOutsideOfConfig(FuncCall $call, Scope $scope): bool
     {
+        $file = $this->resolveAnalysedFile($scope->getFile());
+
+        if ($file === null) {
+            return false;
+        }
+
         foreach ($this->configDirectories as $configDirectoryGlob) {
             foreach ((glob($configDirectoryGlob) ?: []) as $configDirectory) {
                 $absolutePath = $this->fileHelper->absolutizePath($configDirectory);
@@ -87,12 +97,25 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
                     continue;
                 }
 
-                if (str_starts_with($scope->getFile(), $absolutePath)) {
+                if (str_starts_with($file, $absolutePath)) {
                     return false;
                 }
             }
         }
 
         return true;
+    }
+
+    private function resolveAnalysedFile(string $scopeFile): string|null
+    {
+        if ($this->singleReflectionFile === null) {
+            return $scopeFile;
+        }
+
+        if ($this->fileHelper->normalizePath($scopeFile) !== $this->singleReflectionFile) {
+            return $scopeFile;
+        }
+
+        return $this->singleReflectionInsteadOfFile;
     }
 }
