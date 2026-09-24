@@ -153,7 +153,12 @@ class IntegrationTest extends PHPStanTestCase
             ],
         ];
 
-        yield 'model-save-options' => [__DIR__ . '/data/model-save-options.php'];
+        yield 'model-save-options' => [
+            __DIR__ . '/data/model-save-options.php',
+            [
+                5 => ['Parameter #1 $options of method Illuminate\Database\Eloquent\Model::save() expects array{touch?: bool|null}, array{touch: \'no\'} given.'],
+            ],
+        ];
 
         yield [
             __DIR__ . '/data/model-property-model.php',
