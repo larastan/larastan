@@ -153,6 +153,8 @@ class IntegrationTest extends PHPStanTestCase
             ],
         ];
 
+        yield 'model-save-options' => [__DIR__ . '/data/model-save-options.php'];
+
         yield [
             __DIR__ . '/data/model-property-model.php',
             [
