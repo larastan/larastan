@@ -186,6 +186,16 @@ class IntegrationTest extends PHPStanTestCase
             ],
         ];
 
+        yield 'relation-create-variants' => [
+            __DIR__ . '/data/model-property-relation-create-variants.php',
+            [
+                4 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::createQuietly() expects array<model property of App\Account, mixed>, array<string, string> given.'],
+                5 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::forceCreate() expects array<model property of App\Account, mixed>, array<string, string> given.'],
+                6 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::forceCreateQuietly() expects array<model property of App\Account, mixed>, array<string, string> given.'],
+                7 => ['Parameter #1 $records of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::createManyQuietly() expects iterable<array<model property of App\Account, mixed>>, array<int, array<string, string>> given.'],
+            ],
+        ];
+
         yield [
             __DIR__ . '/data/model-property-static-call.php',
             [

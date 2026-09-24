@@ -69,10 +69,34 @@ abstract class HasOneOrMany extends Relation
     public function create(array $attributes = []);
 
     /**
+     * @param array<model-property<TRelatedModel>, mixed> $attributes
+     * @return TRelatedModel
+     */
+    public function createQuietly(array $attributes = []);
+
+    /**
+     * @param array<model-property<TRelatedModel>, mixed> $attributes
+     * @return TRelatedModel
+     */
+    public function forceCreate(array $attributes = []);
+
+    /**
+     * @param array<model-property<TRelatedModel>, mixed> $attributes
+     * @return TRelatedModel
+     */
+    public function forceCreateQuietly(array $attributes = []);
+
+    /**
      * Create a Collection of new instances of the related model.
      *
      * @param  iterable<array<model-property<TRelatedModel>, mixed>>  $records
      * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function createMany(iterable $records);
+
+    /**
+     * @param  iterable<array<model-property<TRelatedModel>, mixed>>  $records
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
+     */
+    public function createManyQuietly(iterable $records);
 }
