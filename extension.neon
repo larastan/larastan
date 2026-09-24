@@ -41,6 +41,7 @@ parameters:
     checkBatchedJobIsBatchable: false
     checkBatchableJobChecksCancellation: false
     checkDispatchInTransactionAfterCommit: false
+    checkThrowIfArgumentTypes: false
 
 parametersSchema:
     checkOctaneCompatibility: bool()
@@ -75,6 +76,7 @@ parametersSchema:
     checkBatchedJobIsBatchable: bool()
     checkBatchableJobChecksCancellation: bool()
     checkDispatchInTransactionAfterCommit: bool()
+    checkThrowIfArgumentTypes: bool()
 
 conditionalTags:
     Larastan\Larastan\Rules\NoEnvCallsOutsideOfConfigRule:
@@ -111,6 +113,8 @@ conditionalTags:
         phpstan.broker.dynamicStaticMethodReturnTypeExtension: %checkConfigTypes%
     Larastan\Larastan\Rules\ConfigCollectionRule:
         phpstan.rules.rule: %checkConfigTypes%
+    Larastan\Larastan\Rules\CheckThrowIfArgumentTypesCompatibleWithClassConstructorRule:
+        phpstan.rules.rule: %checkThrowIfArgumentTypes%
     Larastan\Larastan\Rules\Queue\UniqueJobDeclaresUniqueForRule:
         phpstan.rules.rule: %checkUniqueJobUniqueFor%
     Larastan\Larastan\Rules\Queue\UniqueJobDeclaresUniqueIdRule:
@@ -584,6 +588,9 @@ services:
             dispatchableClass: Illuminate\Foundation\Events\Dispatchable
         tags:
             - phpstan.rules.rule
+
+    -
+        class: Larastan\Larastan\Rules\CheckThrowIfArgumentTypesCompatibleWithClassConstructorRule
 
     -
         class: Larastan\Larastan\Properties\Schema\MySqlDataTypeToPhpTypeConverter
