@@ -94,10 +94,29 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
     /**
      * Begin querying a model with eager loading.
      *
-     * @param  string|array<int|string, (\Closure)|string|array<int|string, string>>  $relations
+     * @template TRelation of string
+     * @param  string|array<int|TRelation, (\Closure(relation-of<static, TRelation>): mixed)|string|array<int|string, string>>  $relations
      * @return builder-of<static>
      */
     public static function with($relations);
+
+    /**
+     * Eager load relations on the model.
+     *
+     * @template TRelation of string
+     * @param  string|array<int|TRelation, (\Closure(relation-of<static, TRelation>): mixed)|string|array<int|string, string>>  $relations
+     * @return $this
+     */
+    public function load($relations);
+
+    /**
+     * Eager load relations on the model if they are not already eager loaded.
+     *
+     * @template TRelation of string
+     * @param  string|array<int|TRelation, (\Closure(relation-of<static, TRelation>): mixed)|string|array<int|string, string>>  $relations
+     * @return $this
+     */
+    public function loadMissing($relations);
 }
 
 /**

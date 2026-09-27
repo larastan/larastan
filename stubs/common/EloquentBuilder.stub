@@ -258,7 +258,7 @@ class Builder
      * @template TRelation of string
      *
      * @param TRelation $relation
-     * @param (\Closure(($relation is literal-string ? builder-of<TModel, TRelation> : Builder<*>)|\Illuminate\Database\Eloquent\Relations\Relation<*, *, *>): mixed)|null $callback
+     * @param (\Closure(($relation is literal-string ? builder-of<TModel, TRelation> : Builder<*>)|relation-of<TModel, TRelation>): mixed)|null $callback
      * @param string $operator
      * @param \Illuminate\Contracts\Database\Query\Expression|int $count
      * @return $this
@@ -269,12 +269,29 @@ class Builder
      * @template TRelation of string
      *
      * @param TRelation $relation
-     * @param (\Closure(($relation is literal-string ? builder-of<TModel, TRelation> : Builder<*>)|\Illuminate\Database\Eloquent\Relations\Relation<*, *, *>): mixed)|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression $column
+     * @param (\Closure(($relation is literal-string ? builder-of<TModel, TRelation> : Builder<*>)|relation-of<TModel, TRelation>): mixed)|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression $column
      * @param mixed $operator
      * @param mixed $value
      * @return $this
      */
     public function withWhereRelation($relation, $column, $operator = null, $value = null);
+
+    /**
+     * @template TRelation of string
+     *
+     * @param  TRelation|array<int|TRelation, (\Closure(relation-of<TModel, TRelation>): mixed)|string|array<int|string, string>>  $relations
+     * @param  (\Closure(relation-of<TModel, TRelation>): mixed)|string|null  $callback
+     * @return $this
+     */
+    public function with($relations, $callback = null);
+
+    /**
+     * @template TRelation of string
+     *
+     * @param  string|array<int|TRelation, (\Closure(relation-of<TModel, TRelation>): mixed)|string|array<int|string, string>>  $relations
+     * @return $this
+     */
+    public function withOnly($relations);
 
     /**
      * Create and return an un-saved model instance.

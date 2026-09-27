@@ -7,13 +7,11 @@ namespace Larastan\Larastan\Types\BuilderOf;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Larastan\Larastan\Methods\BuilderHelper;
-use PHPStan\Analyser\OutOfClassScope;
+use Larastan\Larastan\Types\RelationOf\RelationOfType;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
-use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\CompoundType;
-use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\GeneralizePrecision;
 use PHPStan\Type\Generic\TemplateTypeVariance;
 use PHPStan\Type\LateResolvableType;
@@ -25,7 +23,6 @@ use PHPStan\Type\TypeUtils;
 use PHPStan\Type\VerbosityLevel;
 
 use function array_merge;
-use function explode;
 
 class BuilderOfType implements CompoundType, LateResolvableType
 {
@@ -64,41 +61,6 @@ class BuilderOfType implements CompoundType, LateResolvableType
         return TypeCombinator::union(...$results);
     }
 
-    /**
-     * An abstract model is never the one queried, so not finding a relationship on it says nothing
-     * about a concrete subclass. `Model` is the extreme case, and one such candidate is enough.
-     */
-    private function isUnknownModel(Type $type): bool
-    {
-        $reflections = $type->getObjectClassReflections();
-
-        if ($reflections === []) {
-            return true;
-        }
-
-        foreach ($reflections as $reflection) {
-            if ($reflection->isAbstract()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /** @return ConstantStringType[] */
-    private function relationNames(): array
-    {
-        if (
-            $this->relationType === null
-            || TypeUtils::containsTemplateType($this->relationType)
-            || ! $this->relationType->isConstantScalarValue()->yes()
-        ) {
-            return [];
-        }
-
-        return $this->relationType->getConstantStrings();
-    }
-
     /** @internal */
     public function resolveRelationType(): Type|null
     {
@@ -110,61 +72,9 @@ class BuilderOfType implements CompoundType, LateResolvableType
     /** @return array{Type|null, bool} the relationship type, and whether a path failed on an unknown model */
     private function resolveRelations(): array
     {
-        if ($this->resolvedRelations !== null) {
-            return $this->resolvedRelations;
-        }
-
-        $results      = [];
-        $unknownModel = false;
-
-        foreach ($this->relationNames() as $relation) {
-            [$relationType, $unknown] = $this->followRelationPath($relation->getValue());
-
-            $unknownModel = $unknownModel || $unknown;
-
-            if ($relationType === null) {
-                continue;
-            }
-
-            $results[] = $relationType;
-        }
-
-        return $this->resolvedRelations = [$results === [] ? null : TypeCombinator::union(...$results), $unknownModel];
-    }
-
-    /** @return array{Type|null, bool} the relationship type, and whether the path failed on an unknown model */
-    private function followRelationPath(string $path): array
-    {
-        $relatedType  = $this->type;
-        $relationType = null;
-
-        foreach (explode('.', explode(':', $path, 2)[0]) as $relationName) {
-            $relations = [];
-
-            foreach (TypeUtils::flattenTypes($relatedType) as $modelType) {
-                if (! $modelType->hasMethod($relationName)->yes()) {
-                    continue;
-                }
-
-                $method     = $modelType->getMethod($relationName, new OutOfClassScope());
-                $returnType = ParametersAcceptorSelector::selectFromTypes([], $method->getVariants(), false)->getReturnType();
-
-                if (! (new ObjectType(Relation::class))->isSuperTypeOf($returnType)->yes()) {
-                    continue;
-                }
-
-                $relations[] = $returnType;
-            }
-
-            if ($relations === []) {
-                return [null, $this->isUnknownModel($relatedType)];
-            }
-
-            $relationType = TypeCombinator::union(...$relations);
-            $relatedType  = $relationType->getTemplateType(Relation::class, 'TRelatedModel');
-        }
-
-        return [$relationType, false];
+        return $this->resolvedRelations ??= $this->relationType === null
+            ? [null, false]
+            : (new RelationOfType($this->type, $this->relationType))->resolveRelations();
     }
 
     public function isResolvable(): bool

@@ -205,3 +205,58 @@ The relationship argument can also be a template bounded by `string`:
 ```
 
 Once the template resolves to a constant string or a union of constant strings, Larastan resolves the relationships. While it remains unresolved, the type falls back to `builder-of<TModel>`.
+
+## relation-of
+
+`relation-of<Model, Relationship>` resolves to the concrete Eloquent relationship
+type declared by a model's relationship method, including its generic arguments.
+
+```php
+/** @param relation-of<User, 'posts'> $relation */
+function constrainPosts($relation): void
+{
+    // HasMany<Post, User>, if User::posts() declares that relationship.
+    $relation->where('published', true);
+}
+```
+
+Both arguments can be templates. The model argument also supports model unions,
+intersections, and generic models. Relationship names support dotted paths and
+column selections: `relation-of<User, 'posts.comments:id,post_id'>` resolves the
+relationship returned by `Post::comments()`.
+
+Resolution describes a relationship created on a fresh model instance, as in eager
+loading. A relationship's declaring-model `$this` or `static` type is converted to
+its corresponding object type.
+
+If several relationships resolve, the result is a **benevolent union**. For example,
+`relation-of<User, 'posts'|'group'>` can resolve to a benevolent union of
+`HasMany<Post, User>` and `BelongsTo<Group, User>`. A closure expecting either member
+is accepted where this union is used as a callback parameter.
+
+Larastan uses this in `Model::with()`:
+
+```php
+User::with([
+    'posts' => function (HasMany $posts) {
+        $posts->where('published', true);
+    },
+    'group' => function (BelongsTo $group) {
+        $group->where('active', true);
+    },
+]);
+```
+
+Array keys share one template, so each untyped callback receives the same union.
+The association between individual keys and callbacks is not preserved; swapping
+these two callbacks between keys would also pass analysis.
+
+Dynamic names such as `string` fall back to `Relation<*, *, *>`. Explicitly typed
+callbacks for narrower subclasses are rejected in that case. A dynamic key in an
+otherwise literal array widens the shared key template for every callback.
+
+For constant names, alternatives that cannot resolve a complete relationship path
+are discarded. If none resolve, the type falls back to `Relation<*, *, *>`. Existing
+rules can still report missing relationships independently. Missing methods,
+non-relationship return types, and nullable relationship declarations do not
+establish a relationship type.
