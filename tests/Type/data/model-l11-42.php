@@ -156,17 +156,18 @@ function test(
     assertType('Illuminate\Database\Eloquent\Builder<App\Thread>', Thread::valid()->orWhereNot->valid());
     assertType('Illuminate\Database\Eloquent\Builder<App\Thread>', Thread::valid()->whereNot->valid());
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::with(['accounts' => function ($relation) {
+        assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account, App\User>', $relation);
+
         return $relation->where('active', true);
     }]));
-    // TODO: fix
-    // $user->with([
-    //     'accounts' => function (Relation $relation) {
-    //         assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account, App\User>', $relation->orderBy('id'));
-    //     },
-    //     'group' => function (Relation $relation) {
-    //         assertType('Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\User>', $relation->orderBy('id'));
-    //     },
-    // ]);
+    $user->with([
+        'accounts' => function ($relation) {
+            assertType('(Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\User>|Illuminate\Database\Eloquent\Relations\HasMany<App\Account, App\User>)', $relation);
+        },
+        'group' => function ($relation) {
+            assertType('(Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\User>|Illuminate\Database\Eloquent\Relations\HasMany<App\Account, App\User>)', $relation);
+        },
+    ]);
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', (new User)->withGlobalScope('test', function () {
     }));
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', (new User)->withoutGlobalScope('test'));
@@ -180,8 +181,7 @@ function test(
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->with('accounts'));
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->with('accounts')->with('group'));
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->with(['accounts' => function (Relation $relation) {
-        // TODO: fix this once we have closure parameter type changing extensions implemented
-        // assertType('Illuminate\Database\Eloquent\Relations\Relation<Illuminate\Database\Eloquent\Model>', $relation->orderBy('id'));
+        assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account, App\User>', $relation->orderBy('id'));
     }]));
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::lockForUpdate());
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::sharedLock());

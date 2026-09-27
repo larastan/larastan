@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Rules;
 
+use Closure;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use PhpParser\Node;
@@ -84,6 +85,19 @@ class RelationExistenceRule implements Rule
             return [];
         }
 
+        // Laravel does not parse a column selection such as `posts:id` when the name is paired with a callback.
+        $constrained = false;
+
+        if (in_array($method, ['with', 'withwherehas'], true)) {
+            foreach ($args as $position => $arg) {
+                if ($arg->name === null ? $position !== 1 : $arg->name->toString() !== 'callback') {
+                    continue;
+                }
+
+                $constrained = (new ObjectType(Closure::class))->isSuperTypeOf($scope->getType($arg->value))->yes();
+            }
+        }
+
         foreach ($args as $arg) {
             if ($arg->name !== null && in_array($arg->name->toString(), ['relation', 'relations'], true)) {
                 $args = [$arg];
@@ -112,7 +126,7 @@ class RelationExistenceRule implements Rule
                 continue;
             }
 
-            $errors = array_merge($errors, $this->relationExistenceHelper->check($scope->getType($arg->value), $type, $node, $scope, $aggregate));
+            $errors = array_merge($errors, $this->relationExistenceHelper->check($scope->getType($arg->value), $type, $node, $scope, $aggregate, $constrained));
         }
 
         return $errors;

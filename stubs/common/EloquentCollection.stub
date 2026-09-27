@@ -21,6 +21,24 @@ class Collection extends BaseCollection implements QueueableCollection
     public function toQuery();
 
     /**
+     * Load a set of relationships onto the collection.
+     *
+     * @template TRelation of string
+     * @param  string|array<int|TRelation, (callable(relation-of<TModel, TRelation>): mixed)|string|array<int|string, string>>  $relations
+     * @return $this
+     */
+    public function load($relations);
+
+    /**
+     * Load a set of relationships onto the collection if they are not already eager loaded.
+     *
+     * @template TRelation of string
+     * @param  string|array<int|TRelation, (callable(relation-of<TModel, TRelation>): mixed)|string|array<int|string, string>>  $relations
+     * @return $this
+     */
+    public function loadMissing($relations);
+
+    /**
      * Find a model in the collection by key.
      *
      * @template TFindDefault

@@ -188,7 +188,7 @@ function eagerRelationships(User $user, string $relation, string $unknown): void
         assertType('Illuminate\Database\Eloquent\Builder<App\Comment>|Illuminate\Database\Eloquent\Relations\MorphMany<App\Comment, App\Post>', $query);
     });
 
-    User::withWhereHas('accounts:id,user_id', function (Builder|Relation $query) {
+    User::withWhereHas('accounts', function (Builder|Relation $query) {
         assertType('Illuminate\Database\Eloquent\Builder<App\Account>|Illuminate\Database\Eloquent\Relations\HasMany<App\Account, App\User>', $query);
     });
 
@@ -262,7 +262,7 @@ function directEagerCallbacks(string $unknown): void
         assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account, App\User>', $query->orderBy('id'));
     });
 
-    User::query()->with('posts.comments:id,post_id', function (Relation $query) {
+    User::query()->with('posts.comments', function (Relation $query) {
         assertType('Illuminate\Database\Eloquent\Relations\MorphMany<App\Comment, App\Post>', $query);
     });
 
