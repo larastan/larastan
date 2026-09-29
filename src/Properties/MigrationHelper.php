@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Properties;
 
+use Larastan\Larastan\Concerns\HasContainer;
 use Larastan\Larastan\SQL\SqlParser;
 use Larastan\Larastan\Support\RecursiveDirectoryIterator;
 use PHPStan\File\FileHelper;
@@ -18,11 +19,14 @@ use SplFileInfo;
 use function count;
 use function database_path;
 use function is_dir;
+use function is_string;
 use function iterator_to_array;
 use function uasort;
 
 class MigrationHelper
 {
+    use HasContainer;
+
     public function __construct(
         private Parser $parser,
         /** @var string[] */
@@ -51,6 +55,7 @@ class MigrationHelper
             $this->initializerExprTypeResolver,
             $this->sqlParser,
             $tables,
+            $this->getDefaultConnection(),
         );
         $filesArray       = $this->getMigrationFiles();
 
@@ -71,6 +76,13 @@ class MigrationHelper
         }
 
         return $schemaAggregator->tables;
+    }
+
+    private function getDefaultConnection(): string|null
+    {
+        $connection = $this->resolve('config')?->get('database.default');
+
+        return is_string($connection) ? $connection : null;
     }
 
     /** @return SplFileInfo[] */

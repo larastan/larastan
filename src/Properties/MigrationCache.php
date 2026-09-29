@@ -39,7 +39,7 @@ final class MigrationCache
     private const CACHE_PREFIX = 'larastan_migrations_';
 
     /** Bump when the serialized shape of SchemaTable/SchemaColumn or the aggregation logic changes. */
-    private const CACHE_FORMAT_VERSION = '1';
+    private const CACHE_FORMAT_VERSION = '2';
 
     public function __construct(
         private string $cacheDirectory,
