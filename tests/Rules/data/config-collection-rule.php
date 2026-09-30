@@ -10,5 +10,6 @@ class Foo
     {
         Config::collection('test.foo');
         Config::collection('test.bar');
+        Config::collection('test.bar', 5);
     }
 }

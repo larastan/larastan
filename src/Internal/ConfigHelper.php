@@ -53,6 +53,6 @@ final class ConfigHelper
             })->generalize(GeneralizePrecision::lessSpecific());
         }
 
-        return $returnTypes + $this->configParser->getTypes($constantStrings, $scope);
+        return [...$returnTypes, ...$this->configParser->getTypes($constantStrings, $scope)];
     }
 }

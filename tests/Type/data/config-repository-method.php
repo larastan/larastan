@@ -12,4 +12,5 @@ function test(Repository $config): void
 
     assertType('array{1, 2, 3}', $config->get('test.bar'));
     assertType("'bar'", $config->get('test.foo'));
+    assertType("'bar'|int", $config->get('test.foo', 5));
 }
