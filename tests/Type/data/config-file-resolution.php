@@ -28,4 +28,11 @@ function test(): void
     // Values that Laravel merges from several files are not inferred
     assertType('mixed', config('nested'));
     assertType('mixed', config('nested.deep'));
+
+    // Config directories can be glob patterns
+    assertType("'from modules/a/config/rcmoda.php'", config('rcmoda.v'));
+    assertType("'from modules/b/config/rcmodb.php'", config('rcmodb.v'));
+
+    // A directory that exists is used as is, even if its path has glob characters
+    assertType("'from literal[1]/config/rcliteral.php'", config('rcliteral.v'));
 }

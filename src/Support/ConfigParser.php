@@ -25,6 +25,7 @@ use function array_slice;
 use function config_path;
 use function count;
 use function explode;
+use function glob;
 use function implode;
 use function is_dir;
 use function is_numeric;
@@ -75,7 +76,12 @@ final class ConfigParser
         private bool $treatPhpDocTypesAsCertain,
     ) {
         foreach ($configPaths as $configPath) {
-            $this->configPaths[] = $this->fileHelper->absolutizePath($configPath);
+            $configPath = $this->fileHelper->absolutizePath($configPath);
+
+            // An existing directory is taken literally, so glob characters in its path are not expanded
+            foreach ((is_dir($configPath) ? [$configPath] : (glob($configPath) ?: [])) as $directory) {
+                $this->configPaths[] = $directory;
+            }
         }
 
         $this->loadConfigFiles();
