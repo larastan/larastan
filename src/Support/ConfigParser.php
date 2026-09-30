@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Support;
 
+use FilesystemIterator;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\NodeFinder;
@@ -17,26 +18,43 @@ use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\FileTypeMapper;
 use PHPStan\Type\Type;
 use RecursiveIteratorIterator;
-use RegexIterator;
 use SplFileInfo;
 
 use function array_key_exists;
-use function array_shift;
+use function array_slice;
 use function config_path;
+use function count;
 use function explode;
+use function implode;
 use function is_dir;
 use function is_numeric;
-use function iterator_to_array;
 use function property_exists;
-use function str_ends_with;
+use function str_replace;
+use function strlen;
+use function substr;
+
+use const DIRECTORY_SEPARATOR;
 
 final class ConfigParser
 {
     /** @var list<string> */
     private array $configPaths = [];
 
-    /** @var array<string, SplFileInfo> */
+    /**
+     * Config file paths keyed like Laravel's config keys: `nested/stripe.php`
+     * in a config directory is keyed `nested.stripe`.
+     *
+     * @var array<string, string>
+     */
     private array $configFiles = [];
+
+    /**
+     * Key prefixes with config files below them, whose values Laravel merges
+     * from several files.
+     *
+     * @var array<string, true>
+     */
+    private array $mergedConfigKeys = [];
 
     /** @var array<string, Type> */
     private array $parsedConfigs = [];
@@ -60,7 +78,7 @@ final class ConfigParser
             $this->configPaths[] = $this->fileHelper->absolutizePath($configPath);
         }
 
-        $this->configFiles = $this->getConfigFiles();
+        $this->loadConfigFiles();
     }
 
     /**
@@ -80,26 +98,35 @@ final class ConfigParser
                 continue;
             }
 
-            $configKeyParts = explode('.', $key);
-            $configFileName = array_shift($configKeyParts);
-
-            if (array_key_exists($configFileName, $this->unparsableConfigFiles)) {
+            if (array_key_exists($key, $this->mergedConfigKeys)) {
                 return [];
             }
 
-            if (array_key_exists($configFileName, $this->parsedConfigFiles)) {
-                $cachedConfigFile = $this->parsedConfigFiles[$configFileName];
+            $configFile = $this->resolveConfigFile($key);
+
+            if ($configFile === null) {
+                return [];
+            }
+
+            [$configFileKey, $configKeyParts] = $configFile;
+
+            if (array_key_exists($configFileKey, $this->unparsableConfigFiles)) {
+                return [];
+            }
+
+            if (array_key_exists($configFileKey, $this->parsedConfigFiles)) {
+                $cachedConfigFile = $this->parsedConfigFiles[$configFileKey];
             } else {
-                $cachedConfigFile = $this->parseConfigFile($configFileName);
+                $cachedConfigFile = $this->parseConfigFile($this->configFiles[$configFileKey]);
 
                 // We could not parse the file or couldn't find the return array
                 if ($cachedConfigFile === null) {
-                    $this->unparsableConfigFiles[$configFileName] = true;
+                    $this->unparsableConfigFiles[$configFileKey] = true;
 
                     return [];
                 }
 
-                $this->parsedConfigFiles[$configFileName] = $cachedConfigFile;
+                $this->parsedConfigFiles[$configFileKey] = $cachedConfigFile;
             }
 
             // Check if we have a type from the docblock
@@ -186,52 +213,73 @@ final class ConfigParser
         return $returnTypes;
     }
 
-    /** @return array<string, SplFileInfo> */
-    private function getConfigFiles(): array
+    private function loadConfigFiles(): void
     {
-        /** @var array<string, SplFileInfo> $configFiles */
-        $configFiles = [];
+        $this->configFiles      = [];
+        $this->mergedConfigKeys = [];
 
         foreach ($this->configPaths as $configPath) {
             if (! is_dir($configPath)) {
                 continue;
             }
 
-            $configFiles += iterator_to_array(
-                new RegexIterator(
-                    new RecursiveIteratorIterator(new RecursiveDirectoryIterator($configPath)),
-                    '/\.php$/i',
-                ),
-            );
-        }
+            $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($configPath, FilesystemIterator::SKIP_DOTS));
 
-        return $configFiles;
+            /** @var SplFileInfo $file */
+            foreach ($files as $file) {
+                if ($file->getExtension() !== 'php') {
+                    continue;
+                }
+
+                $relativePath = substr($files->getSubPathname(), 0, -strlen('.php'));
+                $configKey    = str_replace(['/', DIRECTORY_SEPARATOR], '.', $relativePath);
+
+                // The first config directory that has a file for a key wins
+                $this->configFiles[$configKey] ??= $file->getPathname();
+
+                $keyParts = explode('.', $configKey);
+
+                for ($length = count($keyParts) - 1; $length > 0; $length--) {
+                    $this->mergedConfigKeys[implode('.', array_slice($keyParts, 0, $length))] = true;
+                }
+            }
+        }
     }
 
-    private function parseConfigFile(string $configFileName): Node\Stmt\Return_|null
+    /**
+     * Finds the file that holds a config key's value. Laravel sets each file
+     * under its key in load order, so the file with the longest key that is a
+     * prefix of the requested key determines its value.
+     *
+     * @return array{string, list<string>}|null the file's key and the remaining key parts
+     */
+    private function resolveConfigFile(string $key): array|null
     {
-        foreach ($this->configFiles as $configFile) {
-            if (str_ends_with($configFile->getPathname(), $configFileName . '.php')) {
-                try {
-                    $stmts = $this->parser->parseFile($configFile->getPathname());
-                } catch (ParserErrorsException) {
-                    continue;
-                }
+        $keyParts = explode('.', $key);
 
-                /** @var Node\Stmt\Return_|null $returnNode */
-                $returnNode = (new NodeFinder())->findFirstInstanceOf($stmts, Node\Stmt\Return_::class);
+        for ($length = count($keyParts); $length > 0; $length--) {
+            $configFileKey = implode('.', array_slice($keyParts, 0, $length));
 
-                if ($returnNode === null) {
-                    continue;
-                }
-
-                $this->parsedConfigFiles[$configFileName] = $returnNode;
-
-                return $returnNode;
+            if (array_key_exists($configFileKey, $this->configFiles)) {
+                return [$configFileKey, array_slice($keyParts, $length)];
             }
         }
 
         return null;
+    }
+
+    private function parseConfigFile(string $path): Node\Stmt\Return_|null
+    {
+        try {
+            $stmts = $this->parser->parseFile($path);
+        } catch (ParserErrorsException) {
+            return null;
+        }
+
+        /** @var Node\Stmt\Return_|null $returnNode */
+        $returnNode = (new NodeFinder())->findFirstInstanceOf($stmts, Node\Stmt\Return_::class);
+
+        return $returnNode;
     }
 
     /** @return list<string> */
@@ -240,7 +288,7 @@ final class ConfigParser
         // Fallback to default config path if no config paths are set
         if ($this->configFiles === []) {
             $this->configPaths = [config_path()];
-            $this->configFiles = $this->getConfigFiles();
+            $this->loadConfigFiles();
         }
 
         return $this->configPaths;
