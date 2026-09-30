@@ -133,4 +133,87 @@ PHP, $indexMethodCall));
             'embedding' => ['mixed', true],
         ], $columns);
     }
+
+    #[Test]
+    public function it_resolves_column_name_constants(): void
+    {
+        $parser     = self::getContainer()->getService('currentPhpVersionSimpleDirectParser');
+        $aggregator = new SchemaAggregator(
+            $this->createReflectionProvider(),
+            self::getContainer()->getByType(InitializerExprTypeResolver::class),
+        );
+        $statements = $parser->parseString(<<<'PHP'
+<?php
+
+namespace Tests\Unit\SchemaAggregatorConstants;
+
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateCompensationsTable
+{
+    public function up(): void
+    {
+        Schema::create('compensations', function (Blueprint $table) {
+            $table->id();
+            $table->decimal(Constants::AMOUNT, 10, 2)->nullable();
+            $table->string(Constants::MISSING);
+            $table->string(Constants::class);
+        });
+    }
+}
+PHP);
+
+        $aggregator->addStatements($statements);
+
+        self::assertSame(['id', 'amount'], array_keys($aggregator->tables['compensations']->columns));
+        self::assertSame('float', $aggregator->tables['compensations']->columns['amount']->readableType);
+        self::assertTrue($aggregator->tables['compensations']->columns['amount']->nullable);
+    }
+
+    /** @return iterable<string, array{string}> */
+    public static function enumCases(): iterable
+    {
+        yield 'pure' => ['PureStatus::Draft'];
+        yield 'backed' => ['BackedStatus::Draft'];
+    }
+
+    #[Test]
+    #[DataProvider('enumCases')]
+    public function it_skips_enum_cases_as_table_and_column_names(string $case): void
+    {
+        $parser     = self::getContainer()->getService('currentPhpVersionSimpleDirectParser');
+        $aggregator = new SchemaAggregator(
+            $this->createReflectionProvider(),
+            self::getContainer()->getByType(InitializerExprTypeResolver::class),
+        );
+        $statements = $parser->parseString(sprintf(<<<'PHP'
+<?php
+
+namespace Tests\Unit\SchemaAggregatorConstants;
+
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateStatusesTable
+{
+    public function up(): void
+    {
+        Schema::create('statuses', function (Blueprint $table) {
+            $table->id();
+            $table->string(%1$s);
+        });
+
+        Schema::create(%1$s, function (Blueprint $table) {
+            $table->id();
+        });
+    }
+}
+PHP, $case));
+
+        $aggregator->addStatements($statements);
+
+        self::assertSame(['statuses'], array_keys($aggregator->tables));
+        self::assertSame(['id'], array_keys($aggregator->tables['statuses']->columns));
+    }
 }
