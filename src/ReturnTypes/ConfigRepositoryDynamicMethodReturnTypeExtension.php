@@ -8,6 +8,7 @@ use Illuminate\Config\Repository;
 use Illuminate\Support\Collection;
 use Larastan\Larastan\Internal\ConfigHelper;
 use PhpParser\Node\Expr\MethodCall;
+use PHPStan\Analyser\DependencyEmitter;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
@@ -39,6 +40,7 @@ class ConfigRepositoryDynamicMethodReturnTypeExtension implements DynamicMethodR
         return in_array($methodReflection->getName(), ['get', 'collection'], true);
     }
 
+    /** @param Scope&DependencyEmitter $scope */
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,

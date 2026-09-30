@@ -141,6 +141,8 @@ parameters:
 
 This config parameter enables the checks for `config` helper function return type and `\Illuminate\Config\Repository::get` method return type.
 
+When a config file is created, changed or deleted, the result cache analyses the files reading its keys again.
+
 By default, Larastan assumes your config files are under `/config` directory. It uses `config_path` function from Laravel to determine this. But if you have unconventional config file structure, you can use `configDirectories` config parameter to tell Larastan where your config files are stored.
 
 ```neon
