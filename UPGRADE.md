@@ -6,6 +6,8 @@
 
 Laravel 11, Laravel 12, and PHP 8.2 are no longer supported. Upgrade your application to the Laravel and PHP versions required by [composer.json](composer.json) before upgrading Larastan. Applications that cannot upgrade can continue using Larastan 3.x.
 
+Laravel's `dev-master` branch is also supported and tested with matching Testbench and Canvas development dependencies. See the [test workflow](.github/workflows/tests.yml) for the tested combinations.
+
 ### Internal cleanup
 
 - Removed compatibility branches and obsolete tests for unsupported Laravel versions. The active version-specific stub declarations are now shared in `stubs/common/`.

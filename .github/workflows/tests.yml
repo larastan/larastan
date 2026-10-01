@@ -30,6 +30,13 @@ jobs:
         dependencies:
           - "lowest"
           - "highest"
+        include:
+          - php: "8.4"
+            laravel: "dev-master"
+            dependencies: "highest"
+          - php: "8.5"
+            laravel: "dev-master"
+            dependencies: "highest"
 
     name: "PHP${{ matrix.php }} - Laravel${{ matrix.laravel }} ${{ matrix.dependencies == 'highest' && '↑' || '↓' }}"
 
@@ -57,6 +64,10 @@ jobs:
         if: "matrix.dependencies == 'lowest'"
         run: "composer update --with='laravel/framework:${{ matrix.laravel }}' --no-interaction --no-progress --prefer-lowest"
 
+      - name: "Use Testbench 12 for Laravel development"
+        if: "matrix.laravel == 'dev-master'"
+        run: "composer require --dev orchestra/testbench-core:12.x-dev orchestra/canvas:12.x-dev --no-update --no-interaction"
+
       - name: "Install highest dependencies from composer.json"
         if: "matrix.dependencies == 'highest'"
         run: "composer update --with='laravel/framework:${{ matrix.laravel }}' --no-interaction --no-progress"
@@ -76,7 +87,9 @@ jobs:
         if: "matrix.dependencies == 'highest'"
         run: |
           version="${{ matrix.laravel }}"
-          version="${version%%.*}.0"
+          if [ "$version" != "dev-master" ]; then
+            version="${version%%.*}.0"
+          fi
           tests/laravel-test.sh "$version"
 
   tests-phpmyadmin:
