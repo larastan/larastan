@@ -39,3 +39,14 @@ LaravelJobWithoutConstructor::dispatchIf(true);
 LaravelJobWithoutConstructor::dispatchUnless(true, 'foo');
 
 LaravelJob::dispatchIf(foo: 1, bar: 'foo', boolean: true);
+LaravelJob::dispatch(foo: 'foo', bar: 1);
+LaravelJob::dispatch(bar: 'foo', foo: 1);
+LaravelJob::dispatch(...['foo', 1]);
+LaravelJob::dispatch(...[1, 'foo']);
+LaravelJob::dispatchIf(true, ...['foo', 1]);
+LaravelJob::dispatchUnless(true, ...[1, 'foo']);
+LaravelJob::dispatch(...);
+UnknownJob::dispatch();
+
+LaravelJobWithPrivateConstructor::dispatch('foo');
+LaravelJobWithPrivateConstructor::dispatch(1);

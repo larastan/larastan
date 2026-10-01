@@ -6,34 +6,30 @@ namespace Larastan\Larastan\Rules;
 
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Events\Dispatchable as EventDispatchable;
-use PhpParser\BuilderFactory;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
+use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Expr\New_;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\ArgumentsNormalizer;
+use PHPStan\Analyser\NodeCallbackInvoker;
 use PHPStan\Analyser\Scope;
+use PHPStan\Node\Expr\TypeExpr;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
-use PHPStan\Rules\FunctionCallParametersCheck;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleErrorBuilder;
-use PHPStan\TrinaryLogic;
+use PHPStan\Type\ClosureType;
 
 use function array_filter;
 use function array_values;
-use function count;
 use function in_array;
-use function sprintf;
-use function str_replace;
-use function ucfirst;
 
 /** @implements Rule<StaticCall> */
 class CheckDispatchArgumentTypesCompatibleWithClassConstructorRule implements Rule
 {
     public function __construct(
         private ReflectionProvider $reflectionProvider,
-        private FunctionCallParametersCheck $check,
         private string $dispatchableClass,
     ) {
     }
@@ -43,10 +39,14 @@ class CheckDispatchArgumentTypesCompatibleWithClassConstructorRule implements Ru
         return StaticCall::class;
     }
 
-    /** @inheritDoc */
+    /**
+     * @param Scope&NodeCallbackInvoker $scope
+     *
+     * @return array{}
+     */
     public function processNode(Node $node, Scope $scope): array
     {
-        if (! $node->name instanceof Node\Identifier) {
+        if ($node->isFirstClassCallable() || ! $node->name instanceof Node\Identifier) {
             return [];
         }
 
@@ -60,36 +60,19 @@ class CheckDispatchArgumentTypesCompatibleWithClassConstructorRule implements Ru
             return [];
         }
 
-        $jobClassReflection = $this->reflectionProvider->getClass($scope->resolveName($node->class));
+        $className = $scope->resolveName($node->class);
+
+        if (! $this->reflectionProvider->hasClass($className)) {
+            return [];
+        }
+
+        $jobClassReflection = $this->reflectionProvider->getClass($className);
 
         if (! $jobClassReflection->hasTraitUse($this->dispatchableClass)) {
             return [];
         }
 
-        $jobOrEvent = $this->dispatchableClass === Dispatchable::class ? 'job' : 'event';
-
-        if (! $jobClassReflection->hasConstructor()) {
-            $requiredArgCount = 0;
-
-            if (in_array($methodName, ['dispatchIf', 'dispatchUnless'], true)) {
-                $requiredArgCount = 1;
-            }
-
-            if (count($node->getArgs()) > $requiredArgCount) {
-                return [
-                    RuleErrorBuilder::message(sprintf(
-                        ucfirst($jobOrEvent) . ' class %s does not have a constructor and must be dispatched without any parameters.',
-                        $jobClassReflection->getDisplayName(),
-                    ))
-                        ->identifier(sprintf('larastan.%s.noConstructor', $jobOrEvent . 's'))
-                        ->build(),
-                ];
-            }
-
-            return [];
-        }
-
-        $condition = null;
+        $args = $node->getArgs();
 
         if (in_array($methodName, ['dispatchIf', 'dispatchUnless'], true)) {
             $condition = $this->conditionArgument($node, $jobClassReflection, $methodName, $scope);
@@ -97,51 +80,28 @@ class CheckDispatchArgumentTypesCompatibleWithClassConstructorRule implements Ru
             if ($condition === null || ! $scope->getType($condition->value)->isBoolean()->yes()) {
                 return []; // Handled by other rules
             }
+
+            $args = array_values(array_filter($args, static fn (Arg $arg): bool => $arg !== $condition));
         }
 
-        $constructorReflection = $jobClassReflection->getConstructor();
+        if ($jobClassReflection->hasConstructor() && ! $jobClassReflection->getConstructor()->isPublic()) {
+            // Dispatchable invokes the constructor inside the class, so check its signature without an external visibility check.
+            $constructor = $jobClassReflection->getConstructor();
+            $variant     = ParametersAcceptorSelector::selectFromArgs($scope, $args, $constructor->getVariants(), $constructor->getNamedArgumentsVariants());
+            $callable    = new ClosureType(
+                parameters: $variant->getParameters(),
+                variadic: $variant->isVariadic(),
+                templateTypeMap: $variant->getTemplateTypeMap(),
+                resolvedTemplateTypeMap: $variant->getResolvedTemplateTypeMap(),
+                acceptsNamedArguments: $constructor->acceptsNamedArguments(),
+            );
 
-        $classDisplayName = str_replace('%', '%%', $jobClassReflection->getDisplayName());
-
-        // Special case because these methods have another parameter besides the constructor arguments.
-        if ($condition !== null) {
-            $args = array_values(array_filter($node->getArgs(), static fn (Arg $arg): bool => $arg !== $condition));
-            $node = (new BuilderFactory())->staticCall($node->class, $node->name, $args);
+            $scope->invokeNodeCallback(new FuncCall(new TypeExpr($callable), $args, $node->getAttributes()));
+        } else {
+            $scope->invokeNodeCallback(new New_($node->class, $args, $node->getAttributes()));
         }
 
-        // @phpstan-ignore-next-line
-        return $this->check->check(
-            ParametersAcceptorSelector::selectFromArgs(
-                $scope,
-                $node->getArgs(),
-                $constructorReflection->getVariants(),
-            ),
-            $scope,
-            $constructorReflection->getDeclaringClass()->isBuiltin(),
-            $node,
-            'staticMethod',
-            TrinaryLogic::createYes(),
-            ucfirst($jobOrEvent) . ' class ' . $classDisplayName . ' constructor invoked with %d parameter in ' . $classDisplayName . '::' . $methodName . '(), %d required.',
-            ucfirst($jobOrEvent) . ' class ' . $classDisplayName . ' constructor invoked with %d parameters in ' . $classDisplayName . '::' . $methodName . '(), %d required.',
-            ucfirst($jobOrEvent) . ' class ' . $classDisplayName . ' constructor invoked with %d parameter in ' . $classDisplayName . '::' . $methodName . '(), at least %d required.',
-            ucfirst($jobOrEvent) . ' class ' . $classDisplayName . ' constructor invoked with %d parameters in ' . $classDisplayName . '::' . $methodName . '(), at least %d required.',
-            ucfirst($jobOrEvent) . ' class ' . $classDisplayName . ' constructor invoked with %d parameter in ' . $classDisplayName . '::' . $methodName . '(), %d-%d required.',
-            ucfirst($jobOrEvent) . ' class ' . $classDisplayName . ' constructor invoked with %d parameters in ' . $classDisplayName . '::' . $methodName . '(), %d-%d required.',
-            '%s of ' . $jobOrEvent . ' class ' . $classDisplayName . ' constructor expects %s in ' . $classDisplayName . '::' . $methodName . '(), %s given.',
-            '', // constructor does not have a return type
-            '%s of ' . $jobOrEvent . ' class ' . $classDisplayName . ' constructor is passed by reference, so it expects variables only',
-            'Unable to resolve the template type %s in instantiation of ' . $jobOrEvent . ' class ' . $classDisplayName,
-            'Missing parameter $%s in call to ' . $classDisplayName . ' constructor.',
-            'Unknown parameter $%s in call to ' . $classDisplayName . ' constructor.',
-            'Return type of call to ' . $classDisplayName . ' constructor contains unresolvable type.',
-            '',
-            '', // no named arguments
-            '',
-            '',
-            '',
-            null,
-            null, // no callee reflection for parameter closure type extensions
-        );
+        return [];
     }
 
     /** The argument that decides whether to dispatch, which is the only one not passed to the constructor. */

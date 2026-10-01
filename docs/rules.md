@@ -325,7 +325,7 @@ Error identifier: `offsetAccess.notFound`.
 
 ## CheckDispatchArgumentTypesCompatibleWithClassConstructorRule
 
-This rule will check if your job dispatch argument types are compatible with the constructor of the job class.
+This rule checks whether job and event dispatch arguments are compatible with the class constructor, using PHPStan's argument checks.
 
 ### Examples
 
@@ -355,10 +355,12 @@ ExampleJob::dispatch('bar', 1);
 will result in the following errors:
 
 ```
-Job class ExampleJob constructor invoked with 1 parameter in ExampleJob::dispatch(), 2 required.
-Parameter #1 $foo of job class ExampleJob constructor expects int in ExampleJob::dispatch(), string given.
-Parameter #2 $bar of job class ExampleJob constructor expects string in ExampleJob::dispatch(), int given.
+Class ExampleJob constructor invoked with 1 parameter, 2 required.
+Parameter #1 $foo of class ExampleJob constructor expects int, string given.
+Parameter #2 $bar of class ExampleJob constructor expects string, int given.
 ```
+
+Private and protected constructors are checked as callables because the dispatch trait can access them. Their errors use PHPStan's closure wording, such as `Parameter #1 $foo of closure expects int, string given.`
 
 ## NoUselessValueFunctionCallsRule
 

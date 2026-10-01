@@ -27,3 +27,12 @@ class LaravelJobWithoutConstructor
 {
     use Dispatchable;
 }
+
+class LaravelJobWithPrivateConstructor
+{
+    use Dispatchable;
+
+    private function __construct(string $foo)
+    {
+    }
+}

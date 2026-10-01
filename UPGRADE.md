@@ -15,6 +15,12 @@ Remove `enableMigrationCache` from your PHPStan configuration. Larastan now alwa
 - Removed compatibility branches and obsolete tests for unsupported Laravel versions. The active version-specific stub declarations are now shared in `stubs/common/`.
 - Consolidated the remaining version-specific type fixtures into the general and feature-specific fixtures, preserving their assertions.
 
+### Job and event dispatch diagnostics
+
+Dispatch argument checking now uses PHPStan's public `NodeCallbackInvoker` API instead of its internal `FunctionCallParametersCheck`. Error messages use PHPStan's constructor wording. For example, `Job class ExampleJob constructor invoked with 1 parameter in ExampleJob::dispatch(), 2 required.` becomes `Class ExampleJob constructor invoked with 1 parameter, 2 required.` Private and protected constructors remain supported; their argument errors use PHPStan's closure wording.
+
+Regenerate affected baseline entries and update message-based ignores. Errors for dispatching arguments to a class without a constructor now use `new.noConstructor` instead of `larastan.jobs.noConstructor` or `larastan.events.noConstructor`. Argument-count and argument-type errors retain the `arguments.count` and `argument.type` identifiers.
+
 ## Upgrading to `3.0` from `2.x`
 
 This is a new major release with lots of breaking changes. 
