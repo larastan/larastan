@@ -30,6 +30,7 @@ final class SchemaAggregator
         private ReflectionProvider $reflectionProvider,
         private InitializerExprTypeResolver $initializerExprTypeResolver,
         public array $tables = [],
+        private string|null $defaultConnection = null,
     ) {
     }
 
@@ -42,12 +43,45 @@ final class SchemaAggregator
         $classes = $nodeFinder->findInstanceOf($stmts, PhpParser\Node\Stmt\Class_::class);
 
         foreach ($classes as $stmt) {
-            $this->addClassStatements($stmt->stmts);
+            $this->addClassStatements($stmt->stmts, $this->getMigrationConnection($stmt));
         }
     }
 
+    /**
+     * The connection that plain Schema calls in this migration run on, null when it can't be determined.
+     */
+    private function getMigrationConnection(PhpParser\Node\Stmt\Class_ $class): string|null
+    {
+        if ($class->getMethod('getConnection') !== null) {
+            return null;
+        }
+
+        foreach ($class->getProperty('connection')->props ?? [] as $property) {
+            if ($property->name->toString() !== 'connection') {
+                continue;
+            }
+
+            if ($property->default instanceof PhpParser\Node\Scalar\String_) {
+                return $property->default->value;
+            }
+
+            if ($property->default === null || ($property->default instanceof PhpParser\Node\Expr\ConstFetch && $property->default->name->toLowerString() === 'null')) {
+                return $this->defaultConnection;
+            }
+
+            return null;
+        }
+
+        // A custom base class could set the connection, so only trust the default for plain migrations.
+        if ($class->extends !== null && $class->extends->toString() !== 'Illuminate\Database\Migrations\Migration') {
+            return null;
+        }
+
+        return $this->defaultConnection;
+    }
+
     /** @param  array<int, PhpParser\Node\Stmt> $stmts */
-    private function addClassStatements(array $stmts): void
+    private function addClassStatements(array $stmts, string|null $migrationConnection): void
     {
         foreach ($stmts as $stmt) {
             if (
@@ -58,12 +92,12 @@ final class SchemaAggregator
                 continue;
             }
 
-            $this->addUpMethodStatements($stmt->stmts);
+            $this->addUpMethodStatements($stmt->stmts, $migrationConnection);
         }
     }
 
     /** @param  PhpParser\Node\Stmt[] $stmts */
-    private function addUpMethodStatements(array $stmts): void
+    private function addUpMethodStatements(array $stmts, string|null $migrationConnection): void
     {
         $nodeFinder = new NodeFinder();
         $methods    = $nodeFinder->findInstanceOf($stmts, PhpParser\Node\Stmt\Expression::class);
@@ -77,14 +111,18 @@ final class SchemaAggregator
                 && ($stmt->expr->var->name->toString() === 'connection' || $stmt->expr->var->name->toString() === 'setConnection')
                 && ($stmt->expr->var->class->toCodeString() === '\Schema' || (new ObjectType('Illuminate\Support\Facades\Schema'))->isSuperTypeOf(new ObjectType($stmt->expr->var->class->toCodeString()))->yes())
             ) {
-                $statement = $stmt->expr;
+                $statement  = $stmt->expr;
+                $connection = isset($stmt->expr->var->args[0]) && $stmt->expr->var->getArgs()[0]->value instanceof PhpParser\Node\Scalar\String_
+                    ? $stmt->expr->var->getArgs()[0]->value->value
+                    : null;
             } elseif (
                 $stmt->expr instanceof PhpParser\Node\Expr\StaticCall
                 && $stmt->expr->class instanceof PhpParser\Node\Name
                 && $stmt->expr->name instanceof PhpParser\Node\Identifier
                 && ($stmt->expr->class->toCodeString() === '\Schema' || (new ObjectType('Illuminate\Support\Facades\Schema'))->isSuperTypeOf(new ObjectType($stmt->expr->class->toCodeString()))->yes())
             ) {
-                $statement = $stmt->expr;
+                $statement  = $stmt->expr;
+                $connection = $migrationConnection;
             } else {
                 continue;
             }
@@ -94,16 +132,27 @@ final class SchemaAggregator
             }
 
             match ($statement->name->name) {
-                'create' => $this->alterTable($statement, true),
-                'table' => $this->alterTable($statement, false),
-                'drop', 'dropIfExists' => $this->dropTable($statement),
-                'rename' => $this->renameTableThroughStaticCall($statement),
+                'create' => $this->alterTable($statement, true, $connection),
+                'table' => $this->alterTable($statement, false, $connection),
+                'drop', 'dropIfExists' => $this->dropTable($statement, $connection),
+                'rename' => $this->renameTableThroughStaticCall($statement, $connection),
                 default => null,
             };
         }
     }
 
-    private function alterTable(PhpParser\Node\Expr\StaticCall|PhpParser\Node\Expr\MethodCall $call, bool $creating): void
+    /**
+     * Whether the table is known to live on a different connection than the one the call runs on.
+     * When either side is unknown the call is applied, which is how every call was handled before connections were tracked.
+     */
+    private function isOnAnotherConnection(string $tableName, string|null $connection): bool
+    {
+        $tableConnection = $this->tables[$tableName]->connection ?? null;
+
+        return $tableConnection !== null && $connection !== null && $tableConnection !== $connection;
+    }
+
+    private function alterTable(PhpParser\Node\Expr\StaticCall|PhpParser\Node\Expr\MethodCall $call, bool $creating, string|null $connection): void
     {
         if (! isset($call->args[0])) {
             return;
@@ -148,7 +197,9 @@ final class SchemaAggregator
         }
 
         if ($creating) {
-            $this->tables[$tableName] = new SchemaTable($tableName);
+            $this->tables[$tableName] = new SchemaTable($tableName, $connection);
+        } elseif ($this->isOnAnotherConnection($tableName, $connection)) {
+            return;
         }
 
         if (
@@ -348,7 +399,7 @@ final class SchemaAggregator
         }
     }
 
-    private function dropTable(PhpParser\Node\Expr\StaticCall|PhpParser\Node\Expr\MethodCall $call): void
+    private function dropTable(PhpParser\Node\Expr\StaticCall|PhpParser\Node\Expr\MethodCall $call, string|null $connection): void
     {
         if (
             ! isset($call->args[0])
@@ -359,10 +410,14 @@ final class SchemaAggregator
 
         $tableName = $call->getArgs()[0]->value->value;
 
+        if ($this->isOnAnotherConnection($tableName, $connection)) {
+            return;
+        }
+
         unset($this->tables[$tableName]);
     }
 
-    private function renameTableThroughStaticCall(PhpParser\Node\Expr\StaticCall|PhpParser\Node\Expr\MethodCall $call): void
+    private function renameTableThroughStaticCall(PhpParser\Node\Expr\StaticCall|PhpParser\Node\Expr\MethodCall $call, string|null $connection): void
     {
         if (
             ! isset($call->args[0], $call->args[1])
@@ -374,6 +429,10 @@ final class SchemaAggregator
 
         $oldTableName = $call->getArgs()[0]->value->value;
         $newTableName = $call->getArgs()[1]->value->value;
+
+        if ($this->isOnAnotherConnection($oldTableName, $connection)) {
+            return;
+        }
 
         $this->renameTable($oldTableName, $newTableName);
     }

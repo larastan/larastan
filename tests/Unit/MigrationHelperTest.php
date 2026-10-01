@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
+use Illuminate\Config\Repository;
+use Illuminate\Container\Container;
 use Larastan\Larastan\Properties\MigrationHelper;
 use Larastan\Larastan\Properties\SchemaTable;
 use PHPStan\File\FileHelper;
@@ -210,6 +212,22 @@ class MigrationHelperTest extends PHPStanTestCase
         $tables = $migrationHelper->initializeTables();
 
         $this->assertUsersTableSchema($tables);
+    }
+
+    #[Test]
+    public function it_keeps_a_table_that_was_moved_to_another_connection_when_it_is_dropped_from_the_default_one(): void
+    {
+        $container = new Container();
+        $container->instance('config', new Repository(['database' => ['default' => 'mysql']]));
+
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migrations_moved_to_another_connection'], $this->fileHelper, false, $this->reflectionProvider, $this->initializerExprTypeResolver);
+        $migrationHelper->setContainer($container);
+
+        $tables = $migrationHelper->initializeTables();
+
+        self::assertArrayHasKey('subcontract_agreements', $tables);
+        self::assertSame('subcontract_agreements', $tables['subcontract_agreements']->connection);
+        self::assertSame(['id', 'uuid', 'version', 'status'], array_keys($tables['subcontract_agreements']->columns));
     }
 
     #[Test]
