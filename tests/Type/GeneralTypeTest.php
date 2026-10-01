@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Type;
 
+use Composer\InstalledVersions;
 use PHPStan\Testing\TypeInferenceTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -14,6 +15,11 @@ class GeneralTypeTest extends TypeInferenceTestCase
     /** @return iterable<mixed> */
     public static function dataFileAsserts(): iterable
     {
+        // Laravel v12.22.0 contains strict integer validation but reports its
+        // Application::VERSION as 12.21.0. Later releases report it correctly.
+        $supportsStrictInteger = laravel_version_compare('12.22.0', '>=')
+            || InstalledVersions::getPrettyVersion('laravel/framework') === 'v12.22.0';
+
         yield from self::gatherAssertTypes(__DIR__ . '/data/abort.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/abstract-manager.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/app-make.php');
@@ -50,6 +56,12 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/environment-helper.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/event-dispatcher.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/form-request.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/form-request-dynamic-parameters.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/form-request-lifecycle.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/form-request-rule-sources.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/form-request-ambiguous-rules.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/form-request-accessors.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/form-request-expressions.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/gate-facade.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/has-events.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/helpers.php');
@@ -79,7 +91,49 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/throw.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/translate.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/translator.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/validation-rules.php');
+
+        if (laravel_version_compare('12.67.0', '>=') && (laravel_version_compare('13.0.0', '<') || laravel_version_compare('13.26.0', '>='))) {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/validation-rules-strict-in.php');
+        } else {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/validation-rules-loose-in.php');
+        }
+
         yield from self::gatherAssertTypes(__DIR__ . '/data/validator.php');
+
+        if ($supportsStrictInteger) {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/validation-rules-l12-22.php');
+        } elseif (laravel_version_compare('12.21.0', '>=')) {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/validation-rules-l12-21.php');
+        } else {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/validation-rules-before-l12-21.php');
+        }
+
+        if (laravel_version_compare('12.0.0', '>=')) {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/validation-rules-l12.php');
+
+            if (laravel_version_compare('12.55.0', '<')) {
+                yield from self::gatherAssertTypes(__DIR__ . '/data/validation-rules-l12-before-l12-55.php');
+            }
+        }
+
+        if (laravel_version_compare('12.8.0', '>=')) {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/validation-rules-l12-8.php');
+            yield from self::gatherAssertTypes(__DIR__ . '/data/form-request-rule-sources-l12-8.php');
+        }
+
+        if (laravel_version_compare('12.44.0', '>=')) {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/validation-rules-l12-44.php');
+        }
+
+        if (laravel_version_compare('12.55.0', '>=')) {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/validation-rules-l12-55.php');
+        }
+
+        if (laravel_version_compare('13.24.0', '>=')) {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/validation-rules-l13.php');
+        }
+
         yield from self::gatherAssertTypes(__DIR__ . '/data/view-exists.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/view.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/where-relation.php');

@@ -41,6 +41,7 @@ parameters:
     checkBatchedJobIsBatchable: false
     checkBatchableJobChecksCancellation: false
     checkDispatchInTransactionAfterCommit: false
+    checkFormRequestTypes: false
 
 parametersSchema:
     checkOctaneCompatibility: bool()
@@ -75,6 +76,7 @@ parametersSchema:
     checkBatchedJobIsBatchable: bool()
     checkBatchableJobChecksCancellation: bool()
     checkDispatchInTransactionAfterCommit: bool()
+    checkFormRequestTypes: bool()
 
 conditionalTags:
     Larastan\Larastan\Rules\NoEnvCallsOutsideOfConfigRule:
@@ -111,6 +113,14 @@ conditionalTags:
         phpstan.broker.dynamicStaticMethodReturnTypeExtension: %checkConfigTypes%
     Larastan\Larastan\Rules\ConfigCollectionRule:
         phpstan.rules.rule: %checkConfigTypes%
+    Larastan\Larastan\Properties\FormRequestExtension:
+        phpstan.broker.propertiesClassReflectionExtension: %checkFormRequestTypes%
+    Larastan\Larastan\Properties\FormRequestPropertyTypeExtension:
+        phpstan.broker.expressionTypeResolverExtension: %checkFormRequestTypes%
+    Larastan\Larastan\ReturnTypes\ValidationRuleExtension:
+        phpstan.broker.dynamicStaticMethodReturnTypeExtension: %checkFormRequestTypes%
+    Larastan\Larastan\ReturnTypes\NumericRuleExtension:
+        phpstan.broker.dynamicMethodReturnTypeExtension: %checkFormRequestTypes%
     Larastan\Larastan\Rules\Queue\UniqueJobDeclaresUniqueForRule:
         phpstan.rules.rule: %checkUniqueJobUniqueFor%
     Larastan\Larastan\Rules\Queue\UniqueJobDeclaresUniqueIdRule:
@@ -590,6 +600,8 @@ services:
 
     -
         class: Larastan\Larastan\LarastanStubFilesExtension
+        arguments:
+            checkFormRequestTypes: %checkFormRequestTypes%
         tags:
             - phpstan.stubFilesExtension
 
@@ -751,9 +763,40 @@ services:
         class: Larastan\Larastan\ReturnTypes\Helpers\EnvFunctionDynamicFunctionReturnTypeExtension
 
     -
-        class: Larastan\Larastan\ReturnTypes\FormRequestSafeDynamicMethodReturnTypeExtension
+        class: Larastan\Larastan\ReturnTypes\FormRequestDataExtension
+        arguments:
+            class: Illuminate\Foundation\Http\FormRequest
+            checkFormRequestTypes: %checkFormRequestTypes%
         tags:
             - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
+        class: Larastan\Larastan\ReturnTypes\FormRequestDataExtension
+        arguments:
+            class: Illuminate\Support\ValidatedInput
+            checkFormRequestTypes: %checkFormRequestTypes%
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
+        class: Larastan\Larastan\Support\FormRequestHelper
+        arguments:
+            parser: @currentPhpVersionRichParser
+
+    -
+        class: Larastan\Larastan\Support\Validation\RuleParser
+
+    -
+        class: Larastan\Larastan\Properties\FormRequestExtension
+
+    -
+        class: Larastan\Larastan\Properties\FormRequestPropertyTypeExtension
+
+    -
+        class: Larastan\Larastan\ReturnTypes\ValidationRuleExtension
+
+    -
+        class: Larastan\Larastan\ReturnTypes\NumericRuleExtension
 
     -
         class: Larastan\Larastan\ReturnTypes\EloquentCollectionMapDynamicReturnTypeExtension

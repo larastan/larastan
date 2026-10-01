@@ -96,6 +96,22 @@ parameters:
     checkModelProperties: true
 ```
 
+## `checkFormRequestTypes`
+**default**: `false`
+
+Enables rule-derived types for FormRequest magic properties, `validated()`, and
+`safe()`, together with the supporting generic validation rule objects and all
+[FormRequest diagnostics](rules.md#formrequest-diagnostics): unknown validated
+keys, premature validated-data access, and simple validation-rule pairs. There
+are no separate switches for these diagnostics. See
+[FormRequest Type Inference](features.md#formrequest-type-inference) for the
+supported behavior and fallbacks.
+
+```neon
+parameters:
+    checkFormRequestTypes: true
+```
+
 ## `checkModelAppends`
 **default**: `true`
 

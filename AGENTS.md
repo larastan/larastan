@@ -120,6 +120,11 @@ Check sibling extensions for the full set of files a change requires.
 
 - Shared stubs live in `stubs/common/`; version-specific overrides live in the
   numbered directories.
+- Stubs that only apply while an opt-in feature is enabled live in their own
+  root with the same layout, such as `stubs/formRequest/common/` and
+  `stubs/formRequest/<version>/`. `LarastanStubFilesExtension` adds that root
+  when the feature's parameter is on, and its files replace regular stubs with
+  the same relative path.
 - Stub discovery keeps only the newest applicable file for each relative path.
   A versioned file therefore replaces the whole earlier file; it is not merged
   declaration by declaration.

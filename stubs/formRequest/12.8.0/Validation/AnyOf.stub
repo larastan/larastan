@@ -1,0 +1,6 @@
+<?php
+
+namespace Illuminate\Validation\Rules;
+
+/** @template TRules of array = array */
+class AnyOf {}
