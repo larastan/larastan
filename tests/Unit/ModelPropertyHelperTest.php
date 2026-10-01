@@ -26,6 +26,7 @@ use PHPStan\Type\StringType;
 use PHPStan\Type\TypeCombinator;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
+use SplFileInfo;
 
 use function class_exists;
 use function sys_get_temp_dir;
@@ -109,10 +110,49 @@ class ModelPropertyHelperTest extends PHPStanTestCase
         }
     }
 
-    /** @param string[] $migrationPaths */
-    private function buildModelPropertyHelper(array $migrationPaths): ModelPropertyHelper
+    #[Test]
+    public function it_loads_migrations_only_once_when_no_tables_are_found(): void
     {
-        $migrationHelper = new MigrationHelper(
+        $migrationHelper = new class (
+            $this->parser,
+            ['foobar'],
+            $this->fileHelper,
+            false,
+            $this->reflectionProvider,
+            self::getContainer()->getByType(InitializerExprTypeResolver::class),
+        ) extends MigrationHelper {
+            public int $migrationFileLookups = 0;
+
+            /** @return SplFileInfo[] */
+            public function getMigrationFiles(): array
+            {
+                $this->migrationFileLookups++;
+
+                return parent::getMigrationFiles();
+            }
+        };
+
+        $modelPropertyHelper = $this->buildModelPropertyHelper([], $migrationHelper, ['foobar']);
+
+        self::assertFalse($modelPropertyHelper->hasDatabaseProperty('users', 'email'));
+        $lookupsAfterFirstLoad = $migrationHelper->migrationFileLookups;
+
+        // An empty result still counts as loaded, so later lookups must not scan again.
+        self::assertFalse($modelPropertyHelper->hasDatabaseProperty('users', 'name'));
+        self::assertFalse($modelPropertyHelper->hasDatabaseProperty('posts', 'title'));
+        self::assertSame($lookupsAfterFirstLoad, $migrationHelper->migrationFileLookups);
+    }
+
+    /**
+     * @param string[] $migrationPaths
+     * @param string[] $schemaPaths
+     */
+    private function buildModelPropertyHelper(
+        array $migrationPaths,
+        MigrationHelper|null $migrationHelper = null,
+        array $schemaPaths = [],
+    ): ModelPropertyHelper {
+        $migrationHelper ??= new MigrationHelper(
             $this->parser,
             $migrationPaths,
             $this->fileHelper,
@@ -122,7 +162,7 @@ class ModelPropertyHelperTest extends PHPStanTestCase
         );
 
         $squashedMigrationHelper = new SquashedMigrationHelper(
-            [],
+            $schemaPaths,
             $this->fileHelper,
             new MySqlDataTypeToPhpTypeConverter(),
             self::getContainer()->getService('sqlParser'),
