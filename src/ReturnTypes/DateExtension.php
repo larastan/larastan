@@ -9,7 +9,6 @@ use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
@@ -18,7 +17,6 @@ use PHPStan\Type\TypeCombinator;
 use function get_class;
 use function in_array;
 use function now;
-use function version_compare;
 
 #[AutowiredService]
 class DateExtension implements DynamicStaticMethodReturnTypeExtension
@@ -62,15 +60,8 @@ class DateExtension implements DynamicStaticMethodReturnTypeExtension
     ): Type {
         $dateType = new ObjectType(get_class(now()));
 
-        if (in_array($methodReflection->getName(), ['getTestNow', 'make'], true)) {
+        if (in_array($methodReflection->getName(), ['getTestNow', 'make', 'createFromFormat', 'createSafe'], true)) {
             return TypeCombinator::addNull($dateType);
-        }
-
-        if (in_array($methodReflection->getName(), ['createFromFormat', 'createSafe'], true)) {
-            /** @phpstan-ignore-next-line ternary.alwaysTrue */
-            return version_compare(LARAVEL_VERSION, '12.0.0', '>=')
-                ? TypeCombinator::addNull($dateType)
-                : TypeCombinator::union($dateType, new ConstantBooleanType(false));
         }
 
         return $dateType;

@@ -17,8 +17,6 @@ use PHPStan\Type\VerbosityLevel;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 
-use function class_exists;
-
 #[CoversClass(ModelCastHelper::class)]
 class ModelCastHelperTest extends PHPStanTestCase
 {
@@ -28,10 +26,6 @@ class ModelCastHelperTest extends PHPStanTestCase
 
     public function setUp(): void
     {
-        if (! class_exists('Illuminate\Database\Eloquent\Attributes\Table')) {
-            $this->markTestSkipped('Eloquent PHP attributes require Laravel 13+.');
-        }
-
         $this->reflectionProvider = $this->createReflectionProvider();
         $this->parser             = self::getContainer()->getService('currentPhpVersionSimpleDirectParser');
     }

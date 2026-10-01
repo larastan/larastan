@@ -36,7 +36,6 @@ use function is_array;
 use function spl_object_id;
 use function sprintf;
 use function strtolower;
-use function version_compare;
 
 /**
  * A queued job dispatched inside a `DB::transaction(...)` closure must defer its
@@ -91,11 +90,8 @@ class JobDispatchedInTransactionUsesAfterCommitRule implements Rule
     /** Static call class names that do not name a concrete, resolvable job class. */
     private const NON_RESOLVABLE_CLASS_NAMES = ['self', 'static', 'parent'];
 
-    private string $laravelVersion;
-
     public function __construct(private ReflectionProvider $reflectionProvider, private CallArgumentsHelper $callArgumentsHelper)
     {
-        $this->laravelVersion = LARAVEL_VERSION;
     }
 
     public function getNodeType(): string
@@ -341,8 +337,7 @@ class JobDispatchedInTransactionUsesAfterCommitRule implements Rule
             : null;
 
         if ($classReflection->is(ShouldQueueAfterCommit::class)) {
-            // Laravel 12.22 added beforeCommit() support for this contract.
-            return version_compare($this->laravelVersion, '12.22.0', '<') || $afterCommit !== false;
+            return $afterCommit !== false;
         }
 
         return $afterCommit === true;

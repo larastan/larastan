@@ -7,9 +7,7 @@ namespace Tests\Rules\Queue;
 use Larastan\Larastan\Rules\Queue\JobDispatchedInTransactionUsesAfterCommitRule;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
-use PHPUnit\Framework\Attributes\DataProvider;
 
-use function Orchestra\Testbench\laravel_version_compare;
 use function str_replace;
 
 /** @extends RuleTestCase<JobDispatchedInTransactionUsesAfterCommitRule> */
@@ -35,30 +33,14 @@ class JobDispatchedInTransactionUsesAfterCommitRuleTest extends RuleTestCase
         ]);
     }
 
-    /** @param list<array{string, int}> $errors */
-    #[DataProvider('contractErrors')]
-    public function testAfterCommitContract(array $errors): void
-    {
-        $this->analyse([__DIR__ . '/data/transaction-aftercommit-contract.php'], $errors);
-    }
-
-    /** @return iterable<array{list<array{string, int}>}> */
-    public static function contractErrors(): iterable
+    public function testAfterCommitContract(): void
     {
         $message = "Job Tests\\Rules\\Queue\\Data\\AfterCommitContractJob is dispatched inside a transaction without deferring until commit.\n    💡 Call afterCommit() on the dispatch or implement ShouldQueueAfterCommit.";
 
-        if (laravel_version_compare('12.22.0', '<')) {
-            yield [[]];
-
-            return;
-        }
-
-        yield [
-            [
-                [$message, 25],
-                [str_replace('AfterCommitContractJob', 'BeforeCommitContractJob', $message), 27],
-            ],
-        ];
+        $this->analyse([__DIR__ . '/data/transaction-aftercommit-contract.php'], [
+            [$message, 25],
+            [str_replace('AfterCommitContractJob', 'BeforeCommitContractJob', $message), 27],
+        ]);
     }
 
     /** @return string[] */

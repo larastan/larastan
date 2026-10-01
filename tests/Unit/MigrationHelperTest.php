@@ -15,7 +15,6 @@ use PHPStan\Testing\PHPStanTestCase;
 use PHPUnit\Framework\Attributes\Test;
 
 use function array_keys;
-use function class_exists;
 
 class MigrationHelperTest extends PHPStanTestCase
 {
@@ -343,10 +342,6 @@ class MigrationHelperTest extends PHPStanTestCase
     #[Test]
     public function it_resolves_foreign_id_for_column_type_using_table_php_attribute(): void
     {
-        if (! class_exists('Illuminate\Database\Eloquent\Attributes\Table')) {
-            $this->markTestSkipped('Eloquent PHP attributes require Laravel 13+.');
-        }
-
         $migrationHelper = new MigrationHelper(
             $this->parser,
             [

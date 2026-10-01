@@ -48,10 +48,6 @@ class ModelPropertyHelperTest extends PHPStanTestCase
 
     public function setUp(): void
     {
-        if (! class_exists('Illuminate\Database\Eloquent\Attributes\Table')) {
-            $this->markTestSkipped('Eloquent PHP attributes require Laravel 13+.');
-        }
-
         $this->reflectionProvider = $this->createReflectionProvider();
         $this->parser             = self::getContainer()->getService('currentPhpVersionSimpleDirectParser');
         $this->fileHelper         = self::getContainer()->getByType(FileHelper::class);

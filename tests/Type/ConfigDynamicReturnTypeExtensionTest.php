@@ -12,7 +12,6 @@ use PHPStan\Testing\TypeInferenceTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 use function array_map;
-use function Orchestra\Testbench\laravel_version_compare;
 use function sort;
 use function sprintf;
 
@@ -24,10 +23,6 @@ class ConfigDynamicReturnTypeExtensionTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/config-helper-function.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/config-repository-method.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/config-reproduction.php');
-
-        if (! laravel_version_compare('12.20.0', '>=')) {
-            return;
-        }
 
         yield from self::gatherAssertTypes(__DIR__ . '/data/config-facade-collection-method.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/config-repository-method-l12-20.php');

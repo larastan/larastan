@@ -114,26 +114,6 @@ The builder class can also be set with the `#[UseEloquentBuilder]` attribute. On
 it is also read from the model's traits and from parent models and their traits, the nearest one first.
 When the model overrides `newEloquentBuilder()`, the return type of that method is used instead.
 
-> [!NOTE]
-> The `HasBuilder` trait was introduced in Laravel 11, if you are using an older version of Laravel you can use the following:
->
-> ```php
-> <?php
-> class User extends Model
-> {
->    public static function query(): UserBuilder
->    {
->        return parent::query();
->    }
->
->    /** @param  \Illuminate\Database\Query\Builder  $query */
->    public function newEloquentBuilder($query): UserBuilder
->    {
->        return new UserBuilder($query);
->    }
-> }
-> ```
-
 ## Model Factories
 
 Because the `Factory` class is generic, you need to specify the template type in your model factories.
@@ -162,29 +142,6 @@ class User extends Model
     protected static string $factory = UserFactory::class;
 }
 ```
-
-> [!NOTE]
-> The `HasFactory` generics was introduced in Laravel 11, if you are using an older version of Laravel you can use the following:
->
-> ```php
-> <?php
-> class User extends Model
-> {
->    /**
->     * @param  (callable(array<string, mixed>, static|null): array<string, mixed>)|array<string, mixed>|int|null  $count
->     * @param  (callable(array<string, mixed>, static|null): array<string, mixed>)|array<string, mixed>  $state
->     */
->    public static function factory($count = null, $state = []): UserFactory
->    {
->        return parent::factory();
->    }
->
->    protected static function newFactory(): UserFactory
->    {
->        return UserFactory::new();
->    }
-> }
-> ```
 
 ## Custom Model Collections
 
@@ -244,26 +201,6 @@ class User extends Model
 The collection class can also be set with the `#[CollectedBy]` attribute. As in Laravel, the
 attribute has no effect when the model overrides `newCollection()`, and on Laravel 13.4 and later
 it is also read from parent models, the nearest one first.
-
-> [!NOTE]
-> The `HasCollection` trait was introduced in Laravel 11, if you are using an older version of Laravel you can use the `newCollection` method to override the collection class:
->
-> ```php
-> <?php
-> class User extends Model
-> {
->     /**
->      * Create a new Eloquent Collection instance.
->      *
->      * @param  array<array-key, \Illuminate\Database\Eloquent\Model>  $models
->      * @return GeneralCollection<int, static>
->      */
->     public function newCollection(array $models = []): GeneralCollection
->     {
->         return new GeneralCollection($models);
->     }
-> }
-> ```
 
 `getCollection()` on length-aware, simple, and cursor paginators resolves to the model's
 custom collection. Non-model items resolve to a Support collection. `setCollection()` updates

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Methods;
 
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -71,6 +73,7 @@ class BuilderHelper
         'explain',
         'getBindings',
         'getConnection',
+        'getCountForPagination',
         'getGrammar',
         'getRawBindings',
         'implode',
@@ -105,10 +108,7 @@ class BuilderHelper
     /**
      * Methods added to the Eloquent builder's $passthru later, with the first Laravel version that has them.
      */
-    private const VERSIONED_PASSTHRU = [
-        'getCountForPagination' => '12.15.0',
-        'insertOrIgnoreReturning' => '13.30.1',
-    ];
+    private const VERSIONED_PASSTHRU = ['insertOrIgnoreReturning' => '13.30.1'];
 
     /** @return string[] */
     public function getPassthru(): array
@@ -199,8 +199,7 @@ class BuilderHelper
                 $hasScopeAttribute = false;
 
                 foreach ($methodReflection->getAttributes() as $attribute) {
-                    // using string instead of class constant to avoid failing on older Laravel versions
-                    if ($attribute->getName() === 'Illuminate\Database\Eloquent\Attributes\Scope') {
+                    if ($attribute->getName() === Scope::class) {
                         $hasScopeAttribute = true;
                         break;
                     }
@@ -392,7 +391,7 @@ class BuilderHelper
         }
 
         foreach ($classReflections as $classReflection) {
-            $attributes = $classReflection->getNativeReflection()->getAttributes('Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder'); //@phpstan-ignore argument.type (Attribute class might not exist)
+            $attributes = $classReflection->getNativeReflection()->getAttributes(UseEloquentBuilder::class);
 
             if ($attributes === []) {
                 continue;

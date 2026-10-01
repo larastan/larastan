@@ -29,7 +29,7 @@ namespace Illuminate\Http\Client
          *
          * @param  string  $url
          * @param  array<string, mixed>|list<array{name: scalar, contents: scalar}>|string|null  $query
-         * @return (TAsync is true ? \GuzzleHttp\Promise\PromiseInterface : \Illuminate\Http\Client\Response)
+         * @return (TAsync is true ? \Illuminate\Http\Client\Promises\LazyPromise : \Illuminate\Http\Client\Response)
          */
         public function get(string $url, $query = null);
 
@@ -38,7 +38,7 @@ namespace Illuminate\Http\Client
          *
          * @param  string  $url
          * @param  array<string, mixed>|list<array{name: scalar, contents: scalar}>|string|null  $query
-         * @return (TAsync is true ? \GuzzleHttp\Promise\PromiseInterface : \Illuminate\Http\Client\Response)
+         * @return (TAsync is true ? \Illuminate\Http\Client\Promises\LazyPromise : \Illuminate\Http\Client\Response)
          */
         public function head(string $url, $query = null);
 
@@ -47,7 +47,7 @@ namespace Illuminate\Http\Client
          *
          * @param  string  $url
          * @param  array<string, mixed>|list<array{name: scalar, contents: scalar}>|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>|object|null  $data
-         * @return (TAsync is true ? \GuzzleHttp\Promise\PromiseInterface : \Illuminate\Http\Client\Response)
+         * @return (TAsync is true ? \Illuminate\Http\Client\Promises\LazyPromise : \Illuminate\Http\Client\Response)
          */
         public function post(string $url, $data = []);
 
@@ -56,7 +56,7 @@ namespace Illuminate\Http\Client
          *
          * @param  string  $url
          * @param  array<string, mixed>|list<array{name: scalar, contents: scalar}>|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>|object|null  $data
-         * @return (TAsync is true ? \GuzzleHttp\Promise\PromiseInterface : \Illuminate\Http\Client\Response)
+         * @return (TAsync is true ? \Illuminate\Http\Client\Promises\LazyPromise : \Illuminate\Http\Client\Response)
          */
         public function patch(string $url, $data = []);
 
@@ -65,7 +65,7 @@ namespace Illuminate\Http\Client
          *
          * @param  string  $url
          * @param  array<string, mixed>|list<array{name: scalar, contents: scalar}>|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>|object|null  $data
-         * @return (TAsync is true ? \GuzzleHttp\Promise\PromiseInterface : \Illuminate\Http\Client\Response)
+         * @return (TAsync is true ? \Illuminate\Http\Client\Promises\LazyPromise : \Illuminate\Http\Client\Response)
          */
         public function put(string $url, $data = []);
 
@@ -74,7 +74,7 @@ namespace Illuminate\Http\Client
          *
          * @param  string  $url
          * @param  array<string, mixed>|list<array{name: scalar, contents: scalar}>|\JsonSerializable|\Illuminate\Contracts\Support\Arrayable<string, mixed>|object|null  $data
-         * @return (TAsync is true ? \GuzzleHttp\Promise\PromiseInterface : \Illuminate\Http\Client\Response)
+         * @return (TAsync is true ? \Illuminate\Http\Client\Promises\LazyPromise : \Illuminate\Http\Client\Response)
          */
         public function delete(string $url, $data = []);
 
@@ -84,7 +84,7 @@ namespace Illuminate\Http\Client
          * @param string  $method
          * @param string  $url
          * @param array<string, mixed>|list<array{name: scalar, contents: scalar}> $options
-         * @return (TAsync is true ? \GuzzleHttp\Promise\PromiseInterface : \Illuminate\Http\Client\Response)
+         * @return (TAsync is true ? \Illuminate\Http\Client\Promises\LazyPromise : \Illuminate\Http\Client\Response)
          */
         public function send(string $method, string $url, array $options = []);
     }
@@ -96,7 +96,12 @@ namespace Illuminate\Http\Client
     class Response implements \ArrayAccess, \Stringable {}
 
     /**
-     * @mixin \Illuminate\Http\Client\PendingRequest
+     * @mixin PendingRequest
      */
-    class Factory {}
+    class Factory{}
+}
+
+namespace Illuminate\Http\Client\Promises
+{
+    class LazyPromise implements \GuzzleHttp\Promise\PromiseInterface {}
 }

@@ -9,7 +9,6 @@ use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-use function Orchestra\Testbench\laravel_version_compare;
 use function str_replace;
 
 /** @extends RuleTestCase<NoImplicitQueryBuilderCallRule> */
@@ -68,21 +67,15 @@ class NoImplicitQueryBuilderCallRuleTest extends RuleTestCase
             ],
         ];
 
-        if (laravel_version_compare('12.0.0', '>=')) {
-            yield 'attribute scopes' => [
-                'no-implicit-query-builder-call-scopes.php',
-                [
-                    ["Call to static method NoImplicitQueryBuilderCallScopes\\User::active() is forwarded to the query builder.\n    💡 Use NoImplicitQueryBuilderCallScopes\\User::query()->active() instead.", 56],
-                    ["Call to method NoImplicitQueryBuilderCallScopes\\User::active() is forwarded to the query builder.\n    💡 Use newQuery()->active() instead.", 57],
-                    ["Call to static method NoImplicitQueryBuilderCallScopes\\ChildUser::active() is forwarded to the query builder.\n    💡 Use NoImplicitQueryBuilderCallScopes\\ChildUser::query()->active() instead.", 58],
-                    ["Call to method NoImplicitQueryBuilderCallScopes\\ChildUser::active() is forwarded to the query builder.\n    💡 Use newQuery()->active() instead.", 59],
-                ],
-            ];
-        }
-
-        if (! laravel_version_compare('12.19.0', '>=')) {
-            return;
-        }
+        yield 'attribute scopes' => [
+            'no-implicit-query-builder-call-scopes.php',
+            [
+                ["Call to static method NoImplicitQueryBuilderCallScopes\\User::active() is forwarded to the query builder.\n    💡 Use NoImplicitQueryBuilderCallScopes\\User::query()->active() instead.", 56],
+                ["Call to method NoImplicitQueryBuilderCallScopes\\User::active() is forwarded to the query builder.\n    💡 Use newQuery()->active() instead.", 57],
+                ["Call to static method NoImplicitQueryBuilderCallScopes\\ChildUser::active() is forwarded to the query builder.\n    💡 Use NoImplicitQueryBuilderCallScopes\\ChildUser::query()->active() instead.", 58],
+                ["Call to method NoImplicitQueryBuilderCallScopes\\ChildUser::active() is forwarded to the query builder.\n    💡 Use newQuery()->active() instead.", 59],
+            ],
+        ];
 
         yield 'builder attribute' => [
             'no-implicit-query-builder-call-custom-builder.php',

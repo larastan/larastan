@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Support;
 
+use Illuminate\Database\Eloquent\Attributes\CollectedBy;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\HasCollection;
 use Illuminate\Support\Collection;
@@ -118,7 +119,7 @@ final class CollectionHelper
             : [$modelReflection];
 
         foreach ($classReflections as $classReflection) {
-            $attributes = $classReflection->getNativeReflection()->getAttributes('Illuminate\Database\Eloquent\Attributes\CollectedBy'); //@phpstan-ignore argument.type (Attribute class might not exist)
+            $attributes = $classReflection->getNativeReflection()->getAttributes(CollectedBy::class);
             $expr       = ($attributes[0] ?? null)?->getArgumentsExpressions()[0] ?? null;
 
             if ($expr === null) {

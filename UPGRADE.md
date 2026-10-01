@@ -10,6 +10,10 @@ Laravel 11, Laravel 12, and PHP 8.2 are no longer supported. Upgrade your applic
 
 Remove `enableMigrationCache` from your PHPStan configuration. Larastan now always caches parsed migrations and schema dumps in PHPStan's temporary directory. If the cache directory is unavailable, analysis continues without caching.
 
+### Internal cleanup
+
+- Removed compatibility branches and obsolete tests for unsupported Laravel versions. The active version-specific stub declarations are now shared in `stubs/common/`.
+
 ## Upgrading to `3.0` from `2.x`
 
 This is a new major release with lots of breaking changes. 

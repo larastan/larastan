@@ -1,8 +1,0 @@
-includes:
-	- ../../e2e/phpstan.neon
-	- monicahq-monica.baseline.neon
-parameters:
-	ignoreErrors:
-		- '#^Property App\\.+ \(never\) does not accept mixed\.$#'
-	# Mute irrelevant ignored errors.
-	reportUnmatchedIgnoredErrors: false
