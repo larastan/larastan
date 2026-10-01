@@ -32,6 +32,8 @@ class ModelPropertyHelper
     /** @var array<string, SchemaTable> */
     private array $tables = [];
 
+    private bool $migrationsLoaded = false;
+
     /** @var array<string, bool> */
     private array $accessorCache = [];
 
@@ -261,11 +263,13 @@ class ModelPropertyHelper
 
     private function migrationsLoaded(): bool
     {
-        return count($this->tables) > 0;
+        return $this->migrationsLoaded;
     }
 
     private function loadMigrations(): void
     {
+        $this->migrationsLoaded = true;
+
         $migrationFiles = $this->migrationHelper->getMigrationFiles();
         $schemaFiles    = $this->squashedMigrationHelper->getSchemaFiles();
 
