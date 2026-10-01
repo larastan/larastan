@@ -2,7 +2,11 @@
 
 namespace Illuminate\Database;
 
-class Connection implements ConnectionInterface {}
+class Connection implements ConnectionInterface
+{
+    /** @return list<array{query: string, bindings: array<array-key, mixed>, time: float|null, readWriteType?: string|null}> */
+    public function getQueryLog();
+}
 
 interface ConnectionInterface {}
 
@@ -12,4 +16,3 @@ interface ConnectionResolverInterface {}
  * @mixin \Illuminate\Database\Connection
  */
 class DatabaseManager implements ConnectionResolverInterface {}
-

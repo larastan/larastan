@@ -1,0 +1,12 @@
+<?php
+
+namespace Illuminate\Support;
+
+class Reflector
+{
+    /**
+     * @param \ReflectionParameter $parameter
+     * @return list<string>
+     */
+    public static function getParameterClassNames($parameter);
+}

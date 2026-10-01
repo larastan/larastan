@@ -4,6 +4,9 @@ namespace Illuminate\Routing;
 
 class Route
 {
+    /** @return array<array-key, string> */
+    public function methods();
+
     /**
      * Get or set the middlewares attached to the route.
      *

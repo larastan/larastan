@@ -25,6 +25,16 @@ class Cache extends Facade {}
 class DB extends Facade {}
 
 /**
+ * @mixin \Illuminate\Database\Schema\Builder
+ */
+class Schema extends Facade {}
+
+/**
+ * @mixin \Illuminate\Contracts\Events\Dispatcher
+ */
+class Event extends Facade {}
+
+/**
  * @mixin \Illuminate\Queue\QueueManager
  * @mixin \Illuminate\Queue\Queue
  */
