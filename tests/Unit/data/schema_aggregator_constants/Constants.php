@@ -6,6 +6,8 @@ class Constants
 {
     public const USERS = 'users';
 
+    public const AMOUNT = 'amount';
+
     private const PREFIX = 'us';
 
     /** @var string */

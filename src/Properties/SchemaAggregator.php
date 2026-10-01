@@ -109,39 +109,7 @@ final class SchemaAggregator
             return;
         }
 
-        $value = $call->getArgs()[0]->value;
-
-        $tableName = null;
-
-        if ($value instanceof PhpParser\Node\Scalar\String_) {
-            $tableName = $value->value;
-        }
-
-        if ($value instanceof PhpParser\Node\Expr\ClassConstFetch) {
-            if (! $value->class instanceof PhpParser\Node\Name\FullyQualified) {
-                return;
-            }
-
-            if (! $value->name instanceof PhpParser\Node\Identifier) {
-                return;
-            }
-
-            if (! $this->reflectionProvider->hasClass($value->class->name)) {
-                return;
-            }
-
-            $class = $this->reflectionProvider->getClass($value->class->name);
-
-            $constant          = $class->getConstant($value->name->toString());
-            $constantValueType = $this->initializerExprTypeResolver->getType(
-                $constant->getValueExpr(),
-                InitializerExprContext::fromClassReflection($constant->getDeclaringClass()),
-            );
-
-            if ($constantValueType->getConstantStrings() !== []) {
-                $tableName = $constantValueType->getConstantStrings()[0]->getValue();
-            }
-        }
+        $tableName = $this->resolveName($call->getArgs()[0]->value);
 
         if ($tableName === null) {
             return;
@@ -261,7 +229,9 @@ final class SchemaAggregator
                 continue;
             }
 
-            if (! $firstArg instanceof PhpParser\Node\Scalar\String_) {
+            $columnName = $firstArg === null ? null : $this->resolveName($firstArg);
+
+            if ($columnName === null) {
                 if ($firstArg instanceof PhpParser\Node\Expr\Array_ && $firstMethodCall->name->name === 'dropColumn') {
                     foreach ($firstArg->items as $arrayItem) {
                         if (! $arrayItem->value instanceof PhpParser\Node\Scalar\String_) {
@@ -314,8 +284,6 @@ final class SchemaAggregator
                 }
 
                 $columnName = $defaultsMap[$firstMethodCall->name->name];
-            } else {
-                $columnName = $firstArg->value;
             }
 
             $secondArgArray = null;
@@ -346,6 +314,43 @@ final class SchemaAggregator
                 $stmt,
             );
         }
+    }
+
+    private function resolveName(PhpParser\Node\Expr $value): string|null
+    {
+        if ($value instanceof PhpParser\Node\Scalar\String_) {
+            return $value->value;
+        }
+
+        if (
+            ! $value instanceof PhpParser\Node\Expr\ClassConstFetch
+            || ! $value->class instanceof PhpParser\Node\Name\FullyQualified
+            || ! $value->name instanceof PhpParser\Node\Identifier
+            || ! $this->reflectionProvider->hasClass($value->class->name)
+        ) {
+            return null;
+        }
+
+        $class = $this->reflectionProvider->getClass($value->class->name);
+
+        if (
+            ! $class->hasConstant($value->name->toString())
+            || ($class->isEnum() && $class->hasEnumCase($value->name->toString()))
+        ) {
+            return null;
+        }
+
+        $constant          = $class->getConstant($value->name->toString());
+        $constantValueType = $this->initializerExprTypeResolver->getType(
+            $constant->getValueExpr(),
+            InitializerExprContext::fromClassReflection($constant->getDeclaringClass()),
+        );
+
+        if ($constantValueType->getConstantStrings() === []) {
+            return null;
+        }
+
+        return $constantValueType->getConstantStrings()[0]->getValue();
     }
 
     private function dropTable(PhpParser\Node\Expr\StaticCall|PhpParser\Node\Expr\MethodCall $call): void
