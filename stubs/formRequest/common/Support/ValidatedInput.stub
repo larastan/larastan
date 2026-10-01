@@ -1,0 +1,6 @@
+<?php
+
+namespace Illuminate\Support;
+
+/** @template TData of array<mixed> = array<string, mixed> */
+class ValidatedInput {}

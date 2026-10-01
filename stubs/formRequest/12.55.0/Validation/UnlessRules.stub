@@ -1,0 +1,9 @@
+<?php
+
+namespace Illuminate\Validation\Rules;
+
+/** @template TCondition = mixed */
+class RequiredUnless {}
+
+/** @template TCondition = mixed */
+class ExcludeUnless {}

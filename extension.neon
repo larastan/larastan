@@ -46,6 +46,7 @@ parameters:
     checkBatchableJobChecksCancellation: false
     checkDispatchInTransactionAfterCommit: false
     redisDriver: null
+    checkFormRequestTypes: false
 
 parametersSchema:
     checkOctaneCompatibility: bool()
@@ -82,6 +83,7 @@ parametersSchema:
     checkBatchableJobChecksCancellation: bool()
     checkDispatchInTransactionAfterCommit: bool()
     redisDriver: schema(anyOf('phpredis', 'predis'), nullable())
+    checkFormRequestTypes: bool()
 
 services:
     -
@@ -154,6 +156,22 @@ services:
             - phpstan.broker.dynamicMethodReturnTypeExtension
         arguments:
             class: "Illuminate\\Contracts\\Foundation\\Application"
+
+    -
+        class: Larastan\Larastan\ReturnTypes\FormRequestDataExtension
+        arguments:
+            class: Illuminate\Foundation\Http\FormRequest
+            checkFormRequestTypes: %checkFormRequestTypes%
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
+
+    -
+        class: Larastan\Larastan\ReturnTypes\FormRequestDataExtension
+        arguments:
+            class: Illuminate\Support\ValidatedInput
+            checkFormRequestTypes: %checkFormRequestTypes%
+        tags:
+            - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
         class: Larastan\Larastan\Rules\CheckDispatchArgumentTypesCompatibleWithClassConstructorRule

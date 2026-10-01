@@ -36,35 +36,45 @@ final class LarastanStubFilesExtension implements StubFilesExtension
     public function __construct(
         #[AutowiredParameter]
         private string|null $redisDriver,
+        #[AutowiredParameter]
+        private bool $checkFormRequestTypes = false,
     ) {
     }
 
     /** @inheritDoc */
     public function getFiles(): array
     {
-        $stubDirectories = Finder::create()->directories()->name('/^\d+/')->in(__DIR__ . '/../stubs')->depth(0);
-
-        // Include only applicable versions
-        $stubDirectories
-            ->filter(static fn (SplFileInfo $directory) => version_compare($directory->getFilename(), LARAVEL_VERSION, '<='))
-            ->sort(static fn (SplFileInfo $a, SplFileInfo $b) => version_compare($a->getFilename(), $b->getFilename()));
-
         $files = [];
+        $roots = [__DIR__ . '/../stubs'];
 
-        $stubDirs = [__DIR__ . '/../stubs/common', ...array_keys(iterator_to_array($stubDirectories))];
-
-        $stubFiles = Finder::create()->files()->name('*.stub')->in($stubDirs);
+        if ($this->checkFormRequestTypes) {
+            // Feature stubs replace the regular ones that share their relative path.
+            $roots[] = __DIR__ . '/../stubs/formRequest';
+        }
 
         $allowedRedisStubs = $this->redisStubPathsForDriver($this->resolveRedisDriver());
 
-        foreach ($stubFiles as $stubFile) {
-            $relative = $stubFile->getRelativePathname();
+        foreach ($roots as $root) {
+            $stubDirectories = Finder::create()->directories()->name('/^\d+/')->in($root)->depth(0);
 
-            if (in_array($relative, self::REDIS_STUB_PATHS, true) && ! in_array($relative, $allowedRedisStubs, true)) {
-                continue;
+            // Include only applicable versions
+            $stubDirectories
+                ->filter(static fn (SplFileInfo $directory) => version_compare($directory->getFilename(), LARAVEL_VERSION, '<='))
+                ->sort(static fn (SplFileInfo $a, SplFileInfo $b) => version_compare($a->getFilename(), $b->getFilename()));
+
+            $stubDirs = [$root . '/common', ...array_keys(iterator_to_array($stubDirectories))];
+
+            $stubFiles = Finder::create()->files()->name('*.stub')->in($stubDirs);
+
+            foreach ($stubFiles as $stubFile) {
+                $relative = $stubFile->getRelativePathname();
+
+                if (in_array($relative, self::REDIS_STUB_PATHS, true) && ! in_array($relative, $allowedRedisStubs, true)) {
+                    continue;
+                }
+
+                $files[$relative] = $stubFile->getRealPath();
             }
-
-            $files[$relative] = $stubFile->getRealPath();
         }
 
         return array_values($files);
