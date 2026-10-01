@@ -36,6 +36,7 @@ use PHPUnit\Framework\Attributes\Test;
 use SplFileInfo;
 
 use function class_exists;
+use function sys_get_temp_dir;
 
 #[CoversClass(ModelPropertyHelper::class)]
 class ModelPropertyHelperTest extends PHPStanTestCase
@@ -234,7 +235,7 @@ class ModelPropertyHelperTest extends PHPStanTestCase
             $migrationHelper,
             $squashedMigrationHelper,
             $modelCastHelper,
-            self::getContainer()->getByType(MigrationCache::class),
+            new MigrationCache(sys_get_temp_dir(), false),
             self::getContainer()->getByType(DeclarationDependencyTracker::class),
             $this->reflectionProvider,
         );

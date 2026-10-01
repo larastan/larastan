@@ -32,7 +32,7 @@ class MigrationCacheTest extends TestCase
             mkdir($this->cacheDir);
         }
 
-        $this->cache = new MigrationCache($this->cacheDir);
+        $this->cache = new MigrationCache($this->cacheDir, true);
     }
 
     protected function tearDown(): void
@@ -108,9 +108,17 @@ class MigrationCacheTest extends TestCase
         $this->assertArrayNotHasKey('users', $result);
     }
 
+    public function testDisabledCacheAlwaysExecutesCallback(): void
+    {
+        $cache = new MigrationCache($this->cacheDir, false);
+        $cache->remember([], [], static fn (): array => ['users' => new SchemaTable('users')]);
+
+        $this->assertSame([], $cache->remember([], [], static fn (): array => []));
+    }
+
     public function testUnavailableCacheDirectoryAlwaysExecutesCallback(): void
     {
-        $cache          = new MigrationCache($this->cacheDir . '/missing');
+        $cache          = new MigrationCache($this->cacheDir . '/missing', true);
         $migrationFiles = [new SplFileInfo($this->createTempFile('mig1.php'))];
 
         // First call

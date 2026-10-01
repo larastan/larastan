@@ -47,6 +47,8 @@ final class MigrationCache
     public function __construct(
         #[AutowiredParameter(ref: '%tmpDir%')]
         private string $cacheDirectory,
+        #[AutowiredParameter(ref: '%enableMigrationCache%')]
+        private bool $enabled = false,
     ) {
     }
 
@@ -59,6 +61,10 @@ final class MigrationCache
      */
     public function remember(array $migrationFiles, array $schemaFiles, callable $callback): array
     {
+        if (! $this->enabled) {
+            return $callback();
+        }
+
         $fingerprint = $this->generateFingerprint($migrationFiles, $schemaFiles);
         $cachePath   = $this->getCachePath($fingerprint);
 

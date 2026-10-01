@@ -36,6 +36,21 @@ parameters:
     disableMigrationScan: true
 ```
 
+## `enableMigrationCache`
+**default**: `true`
+
+Larastan caches parsed migrations and schema dumps between runs to speed up model property inference.
+Cache files are stored in PHPStan's temp directory and invalidated when migration or schema files change
+(based on file paths and modification times).
+
+Set this to `false` if you want to always re-scan migrations or if your temp directory is read-only.
+
+### Example
+```neon
+parameters:
+    enableMigrationCache: false
+```
+
 ## `squashedMigrationsPath`
 
 By default, Larastan will check `database/schema` directory to find schema dumps. If you have them in other locations or if you have multiple folders, you can use this config option to add them.
