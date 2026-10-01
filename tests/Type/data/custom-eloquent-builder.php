@@ -141,7 +141,7 @@ class CustomEloquentBuilder extends Builder
 
     public function wherePublished(): static
     {
-        assertType('static(CustomEloquentBuilder\CustomEloquentBuilder<TModel of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->where('status', 'published'));
+        assertType('$this(CustomEloquentBuilder\CustomEloquentBuilder<TModel of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->where('status', 'published'));
 
         return $this->where('status', 'published');
     }
@@ -149,7 +149,7 @@ class CustomEloquentBuilder extends Builder
     /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
     public function category(string $category): CustomEloquentBuilder
     {
-        assertType('static(CustomEloquentBuilder\CustomEloquentBuilder<TModel of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->where('category', $category));
+        assertType('$this(CustomEloquentBuilder\CustomEloquentBuilder<TModel of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->where('category', $category));
 
         return $this->where('category', $category);
     }
@@ -157,7 +157,7 @@ class CustomEloquentBuilder extends Builder
     /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
     public function type(string $type): CustomEloquentBuilder
     {
-        assertType('static(CustomEloquentBuilder\CustomEloquentBuilder<TModel of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->where(['type' => $type]));
+        assertType('$this(CustomEloquentBuilder\CustomEloquentBuilder<TModel of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->where(['type' => $type]));
 
         return $this->where(['type' => $type]);
     }
