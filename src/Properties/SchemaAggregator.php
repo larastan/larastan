@@ -620,16 +620,20 @@ final class SchemaAggregator
                 return;
 
             case 'dropforeign':
+            case 'dropfulltext':
             case 'dropindex':
             case 'dropprimary':
             case 'dropunique':
             case 'foreign':
+            case 'fulltext':
             case 'index':
             case 'primary':
+            case 'rawindex':
             case 'renameindex':
-            case 'spatialIndex':
+            case 'spatialindex':
             case 'unique':
             case 'dropspatialindex':
+            case 'vectorindex':
                 return;
 
             case 'dropmorphs':
