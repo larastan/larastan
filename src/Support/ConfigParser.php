@@ -8,6 +8,7 @@ use FilesystemIterator;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\NodeFinder;
+use PHPStan\Analyser\DependencyEmitter;
 use PHPStan\Analyser\Scope;
 use PHPStan\DependencyInjection\AutowiredParameter;
 use PHPStan\File\FileHelper;
@@ -66,6 +67,9 @@ final class ConfigParser
     /** @var array<string, true> */
     private array $unparsableConfigFiles = [];
 
+    /** @var array<string, list<string>> */
+    private array $configFileCandidates = [];
+
     /** @param list<non-empty-string> $configPaths */
     public function __construct(
         private FileHelper $fileHelper,
@@ -88,7 +92,8 @@ final class ConfigParser
     }
 
     /**
-     * @param ConstantStringType[] $constantStrings
+     * @param ConstantStringType[]    $constantStrings
+     * @param Scope&DependencyEmitter $scope
      *
      * @return Type[]
      */
@@ -98,6 +103,11 @@ final class ConfigParser
 
         foreach ($constantStrings as $constantString) {
             $key = $constantString->getValue();
+
+            // Every analysed file reading the key depends on the config files, parsed or served from the cache.
+            foreach ($this->getConfigFileCandidates($key) as $configFilePath) {
+                $scope->fileDependency($configFilePath);
+            }
 
             if (array_key_exists($key, $this->parsedConfigs)) {
                 $returnTypes[] = $this->parsedConfigs[$key];
@@ -272,6 +282,37 @@ final class ConfigParser
         }
 
         return null;
+    }
+
+    /**
+     * Where a file holding the config key's value can be: one path for every
+     * prefix of the key in every config directory, existing or not, so a
+     * created file that changes which one resolveConfigFile() finds is noticed.
+     *
+     * Files created below the key's own directory, which make its value a
+     * merged one, and new directories matching a glob config path are not
+     * covered: there is no fixed set of paths to watch for them.
+     *
+     * @return list<string>
+     */
+    private function getConfigFileCandidates(string $key): array
+    {
+        if (array_key_exists($key, $this->configFileCandidates)) {
+            return $this->configFileCandidates[$key];
+        }
+
+        $candidates = [];
+        $keyParts   = explode('.', $key);
+
+        for ($length = count($keyParts); $length > 0; $length--) {
+            $relativePath = implode('/', array_slice($keyParts, 0, $length)) . '.php';
+
+            foreach ($this->configPaths as $configPath) {
+                $candidates[] = $configPath . '/' . $relativePath;
+            }
+        }
+
+        return $this->configFileCandidates[$key] = $candidates;
     }
 
     private function parseConfigFile(string $path): Node\Stmt\Return_|null

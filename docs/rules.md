@@ -268,7 +268,15 @@ Supported methods are:
 - `withWhereHas`, `withWhereRelation`, `with`, `withOnly`, `load`, and `loadMissing`
 - `withAggregate`, `withCount`, `withMax`, `withMin`, `withSum`, `withAvg`, `withExists`, and the corresponding `load*` methods
 
-Eager loading supports dotted paths, constraint arrays, nested arrays, and column selectors such as `accounts.transactions:id`. Aggregate methods and `$withCount` accept aliases such as `accounts as total`; dotted aggregate relation names are not supported by Laravel.
+Eager loading supports dotted paths, constraint arrays, nested arrays, and column selectors such as `accounts.transactions:id`. Laravel does not parse a column selector on a name that is paired with a callback, so it is reported as a missing relation:
+
+```php
+User::with(['accounts:id,user_id']);                          // ok
+User::with(['accounts:id,user_id' => fn ($query) => $query]); // Relation 'accounts:id,user_id' is not found in App\User model.
+User::with(['accounts' => fn ($query) => $query->select('id', 'user_id')]); // ok
+```
+
+Aggregate methods and `$withCount` accept aliases such as `accounts as total`; dotted aggregate relation names are not supported by Laravel.
 
 Inherited defaults are checked against each concrete model, so a child can provide a relation named in an abstract parent's defaults. Defaults are read statically, without constructing models. Dynamic names and related model types that cannot be resolved are skipped.
 

@@ -106,7 +106,7 @@ function shortcutCallbacks(User $user, Comment $comment): void
 
     User::withWhereRelation('posts', fn (PostBuilder|Relation $query) => $query->whereKey(1));
     User::withWhereHas('posts', fn (PostBuilder|Relation $query) => $query->whereKey(1));
-    User::withWhereHas('posts:id', fn (PostBuilder|Relation $query) => $query->whereKey(1));
+    User::withWhereHas('posts:id');
     User::query()->with('accounts', fn (Relation $query) => $query->where('id', 1));
 
     User::whereRelation('accounts', 'id', 1);
@@ -128,4 +128,7 @@ function invalidShortcutCallbacks(): void
     Comment::whereMorphRelation('commentable', Post::class, function (PostBuilder $query, string $type) {});
     User::withWhereRelation('accounts', function (Builder $query) {});
     User::query()->with('accounts', function (Builder $query) {});
+
+    User::withWhereHas('accounts', function (Builder|\Illuminate\Database\Eloquent\Relations\HasMany $query) {});
+    User::withWhereRelation('accounts', function (Builder|\Illuminate\Database\Eloquent\Relations\HasMany $query) {});
 }

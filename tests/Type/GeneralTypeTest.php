@@ -37,6 +37,7 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/custom-eloquent-builder.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/custom-eloquent-collection.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/database-transaction.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/eager-loading-callbacks.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/collection-of-type.php');
 
         if (laravel_version_compare('12.0.0', '>=')) {
@@ -66,10 +67,12 @@ class GeneralTypeTest extends TypeInferenceTestCase
 
         yield from self::gatherAssertTypes(__DIR__ . '/data/model-relations.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/model-scopes.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/model-with-relations.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/optional-helper.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/paginator-extension.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/query-builder.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/relationship-query-callbacks.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/relation-of-type.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/request-header.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/request-object.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/route.php');

@@ -10,6 +10,7 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
+use PHPStan\Analyser\DependencyEmitter;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
@@ -31,7 +32,8 @@ final class ConfigCollectionRule implements Rule
     }
 
     /**
-     * @param StaticCall $node
+     * @param StaticCall              $node
+     * @param Scope&DependencyEmitter $scope
      *
      * @return list<IdentifierRuleError>
      */

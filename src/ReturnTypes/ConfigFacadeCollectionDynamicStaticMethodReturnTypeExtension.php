@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Larastan\Larastan\Internal\ConfigHelper;
 use PhpParser\Node\Expr\StaticCall;
+use PHPStan\Analyser\DependencyEmitter;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
@@ -38,6 +39,7 @@ class ConfigFacadeCollectionDynamicStaticMethodReturnTypeExtension implements Dy
         return $methodReflection->getName() === 'collection';
     }
 
+    /** @param Scope&DependencyEmitter $scope */
     public function getTypeFromStaticMethodCall(
         MethodReflection $methodReflection,
         StaticCall $methodCall,

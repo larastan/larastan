@@ -29,13 +29,11 @@ final class RelationExistenceHelper
     }
 
     /** @return RuleError[] */
-    public function check(Type $relations, Type $modelType, Node $node, Scope $scope, bool $aggregate = false): array
+    public function check(Type $relations, Type $modelType, Node $node, Scope $scope, bool $aggregate = false, bool $constrained = false): array
     {
         $errors = [];
 
-        foreach (array_unique($this->relationNames($relations)) as $name) {
-            $name = explode(':', $name)[0];
-
+        foreach (array_unique($this->relationNames($relations, $constrained)) as $name) {
             if ($aggregate) {
                 $alias = explode(' ', $name);
 
@@ -77,13 +75,18 @@ final class RelationExistenceHelper
         return array_values($errors);
     }
 
-    /** @return string[] */
-    private function relationNames(Type $type, string $prefix = ''): array
+    /**
+     * Laravel parses column selections such as `posts:id` only for names without a callback.
+     * A name paired with a callback is used verbatim, so it is returned unchanged.
+     *
+     * @return string[]
+     */
+    private function relationNames(Type $type, bool $constrained, string $prefix = ''): array
     {
         $names = [];
 
         foreach ($type->getConstantStrings() as $name) {
-            $names[] = $prefix . $name->getValue();
+            $names[] = $prefix . ($constrained ? $name->getValue() : explode(':', $name->getValue())[0]);
         }
 
         foreach ($type->getConstantArrays() as $array) {
@@ -92,14 +95,14 @@ final class RelationExistenceHelper
 
                 if ($key->isString()->yes()) {
                     $name    = $prefix . $key->getValue();
-                    $names[] = $name;
+                    $names[] = $value->isArray()->no() ? $name : explode(':', $name)[0];
 
                     if ($value->isArray()->yes()) {
-                        $names = array_merge($names, $this->relationNames($value, explode(':', $name)[0] . '.'));
+                        $names = array_merge($names, $this->relationNames($value, false, explode(':', $name)[0] . '.'));
                     }
                 } else {
                     foreach ($value->getConstantStrings() as $name) {
-                        $names[] = $prefix . $name->getValue();
+                        $names[] = $prefix . explode(':', $name->getValue())[0];
                     }
                 }
             }
