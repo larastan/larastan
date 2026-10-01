@@ -8,7 +8,7 @@ on:
       - 'docs/**'
     # Prevent duplicating jobs on PR-s from local branches
     branches:
-      - "3.x"
+      - "4.x"
   pull_request:
     paths-ignore:
       - "**.md"
@@ -25,15 +25,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - repository: monicahq/monica
-            ref: 6e6ec217457e946e330ba7cd3b28107f4332c7b1
-            php-version: "8.3"
-            config: monicahq-monica.neon
-            baseline: monicahq-monica
-
           - repository: canvural/larastan-strict-rules
             ref: d9a615fdab8fd4f70513fd8be1266b2d856d586d
-            php-version: "8.2"
+            php-version: "8.3"
             config: canvural-larastan-strict-rules.neon
             baseline: canvural-larastan-strict-rules
 
@@ -68,9 +62,6 @@ jobs:
           cd e2e/
           composer config repositories.0 '{ "type": "path", "url": "../larastan", "options": { "symlink": true } }'
           composer config minimum-stability dev
-          if [ "${{ matrix.repository }}" = "monicahq/monica" ]; then
-            composer remove --dev -n tomasvotruba/bladestan
-          fi
           if [ "${{ matrix.force-phpstan-version }}" = "true" ]; then
             composer require --dev --no-progress --update-with-all-dependencies "larastan/larastan:*" "phpstan/phpstan:*"
           else

@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         php: ["8.5"]
-        laravel: ["^13.0"]
+        laravel: ["^13.34"]
       fail-fast: false
 
     name: "P${{ matrix.php }} - L${{ matrix.laravel }}"

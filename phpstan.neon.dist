@@ -5,7 +5,7 @@ includes:
     - phpstan-baseline.neon
 parameters:
     level: 8
-    phpVersion: 80200
+    phpVersion: 80300
     paths:
         - src
     reportUnmatchedIgnoredErrors: false

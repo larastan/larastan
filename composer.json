@@ -11,26 +11,26 @@
         }
     ],
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "iamcal/sql-parser": "^0.7.0",
-        "illuminate/console": "^11.44.2 || ^12.4.1 || ^13",
-        "illuminate/container": "^11.44.2 || ^12.4.1 || ^13",
-        "illuminate/contracts": "^11.44.2 || ^12.4.1 || ^13",
-        "illuminate/database": "^11.44.2 || ^12.4.1 || ^13",
-        "illuminate/http": "^11.44.2 || ^12.4.1 || ^13",
-        "illuminate/pipeline": "^11.44.2 || ^12.4.1 || ^13",
-        "illuminate/support": "^11.44.2 || ^12.4.1 || ^13",
+        "illuminate/console": "^13.34",
+        "illuminate/container": "^13.34",
+        "illuminate/contracts": "^13.34",
+        "illuminate/database": "^13.34",
+        "illuminate/http": "^13.34",
+        "illuminate/pipeline": "^13.34",
+        "illuminate/support": "^13.34",
         "phpstan/phpstan": "^2.3.5"
     },
     "require-dev": {
         "doctrine/coding-standard": "^14",
         "nikic/php-parser": "^5.6",
-        "laravel/framework": "^11.44.2 || ^12.7.2 || ^13",
+        "laravel/framework": "^13.34",
         "mockery/mockery": "^1.6.12",
-        "orchestra/canvas": "^v9.2.2 || ^10.0.1 || ^11",
-        "orchestra/testbench-core": "^9.12.0 || ^10.1 || ^11",
+        "orchestra/canvas": "^11",
+        "orchestra/testbench-core": "^11",
         "phpstan/phpstan-deprecation-rules": "^2.0.1",
-        "phpunit/phpunit": "^10.5.35 || ^11.5.15 || ^12.5.8 || ^13.3.0"
+        "phpunit/phpunit": "^11.5.50 || ^12.5.8 || ^13.3.0"
     },
     "suggest": {
         "orchestra/testbench": "Using Larastan for analysing a package needs Testbench",
@@ -74,7 +74,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.0-dev"
+            "dev-4.x": "4.0.x-dev"
         },
         "phpstan": {
             "includes": [

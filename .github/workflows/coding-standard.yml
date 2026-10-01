@@ -7,7 +7,7 @@ on:
       - "docs/**"
     # Prevent duplicating jobs on PR-s from local branches
     branches:
-      - "3.x"
+      - "4.x"
   pull_request:
     paths-ignore:
       - "**.md"
@@ -25,7 +25,7 @@ jobs:
 
     strategy:
       matrix:
-        php: ["8.2"]
+        php: ["8.3"]
 
     steps:
       - name: "Checkout"

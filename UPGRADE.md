@@ -2,6 +2,10 @@
 
 ## Upgrading to `4.0` from `3.x`
 
+### Laravel and PHP requirements
+
+Laravel 11, Laravel 12, and PHP 8.2 are no longer supported. Upgrade your application to the Laravel and PHP versions required by [composer.json](composer.json) before upgrading Larastan. Applications that cannot upgrade can continue using Larastan 3.x.
+
 ### Migration caching is always enabled
 
 Remove `enableMigrationCache` from your PHPStan configuration. Larastan now always caches parsed migrations and schema dumps in PHPStan's temporary directory. If the cache directory is unavailable, analysis continues without caching.
