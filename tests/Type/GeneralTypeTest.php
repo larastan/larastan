@@ -46,14 +46,14 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/eager-loading-callbacks.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/collection-of-type.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/soft-deletes-static-builder.php');
-
-        yield from self::gatherAssertTypes(__DIR__ . '/data/date-extension-l12.php');
-
+        yield from self::gatherAssertTypes(__DIR__ . '/data/date-extension.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/eloquent-builder.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/eloquent-getter-types.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/eloquent-where.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/environment-helper.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/event-dispatcher.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/facade-fakes.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/facades.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/form-request.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/gate-facade.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/has-events.php');
@@ -62,12 +62,10 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/model-date-column-casts.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/model-factories.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/model-methods.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/model.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/model-serialization.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/model-properties-relations.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/model-properties.php');
-
-        yield from self::gatherAssertTypes(__DIR__ . '/data/model-properties-l13.php');
-        yield from self::gatherAssertTypes(__DIR__ . '/data/model-serialization-l13.php');
 
         if (laravel_version_compare('13.2.0', '>=')) {
             yield from self::gatherAssertTypes(__DIR__ . '/data/model-properties-l13-2.php');
@@ -80,6 +78,7 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/model-with-relations.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/optional-helper.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/paginator-extension.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/passthru.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/query-builder.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/relationship-query-callbacks.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/relation-of-type.php');
@@ -97,30 +96,17 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1997.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1819.php');
 
-        yield from self::gatherAssertTypes(__DIR__ . '/data/model-collections-l11-28.php');
-
         if (laravel_version_compare('13.4.0', '>=')) {
             yield from self::gatherAssertTypes(__DIR__ . '/data/model-collections-l13-4.php');
         }
-
-        yield from self::gatherAssertTypes(__DIR__ . '/data/model-l11-42.php');
-        yield from self::gatherAssertTypes(__DIR__ . '/data/eloquent-builder-l11-42.php');
-        yield from self::gatherAssertTypes(__DIR__ . '/data/model-increment-each-l13-3.php');
-        yield from self::gatherAssertTypes(__DIR__ . '/data/model-increment-each-l13-20.php');
-        yield from self::gatherAssertTypes(__DIR__ . '/data/model-scope-attribute-l12.php');
-        yield from self::gatherAssertTypes(__DIR__ . '/data/eloquent-builder-l12-19.php');
 
         if (laravel_version_compare('13.31.0', '>=')) {
             yield from self::gatherAssertTypes(__DIR__ . '/data/eloquent-builder-l13-31.php');
         }
 
-        yield from self::gatherAssertTypes(__DIR__ . '/data/passthru-l12-15.php');
-
         if (laravel_version_compare('13.30.1', '>=')) {
             yield from self::gatherAssertTypes(__DIR__ . '/data/passthru-l13-30-1.php');
         }
-
-        yield from self::gatherAssertTypes(__DIR__ . '/data/facades-l12-41.php');
 
         if (laravel_version_compare('11.42.0', '>=') && laravel_version_compare('12.0.0', '<')) {
             yield from self::gatherAssertTypes(__DIR__ . '/data/facades-l11-42.php');

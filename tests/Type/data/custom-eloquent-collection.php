@@ -8,6 +8,9 @@ use App\ModelWithNonGenericCollection;
 use App\ModelWithOnlyValueGenericCollection;
 use App\Role;
 use App\User;
+use Illuminate\Database\Eloquent\Attributes\CollectedBy;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use function PHPStan\Testing\assertType;
 
 function test(): void
@@ -154,3 +157,39 @@ function testToQuery($posts, $teams, $users, $union): void
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $users->toQuery());
     assertType('App\ChildTeamBuilder|App\PostBuilder<App\Post>', $union->toQuery());
 }
+
+function testCollectedByAttribute(): void
+{
+    assertType('CustomEloquentCollection\AttributeCollection', ModelWithCollectionAttribute::all());
+    assertType('CustomEloquentCollection\AttributeCollection', ModelWithCollectionAttribute::query()->paginate()->getCollection());
+    assertType('CustomEloquentCollection\AttributeCollection', ModelWithCollectionAttribute::query()->simplePaginate()->getCollection());
+    assertType('CustomEloquentCollection\AttributeCollection', ModelWithCollectionAttribute::query()->cursorPaginate()->getCollection());
+    assertType('CustomEloquentCollection\AttributeCollection', ModelWithCollectionAttribute::query()->where('id', '>', 1)->get());
+    assertType('CustomEloquentCollection\OverriddenAttributeCollection', ModelWithOverriddenCollectionAttribute::all());
+    assertType('CustomEloquentCollection\StringAttributeCollection', ModelWithStringCollectionAttribute::all());
+}
+
+#[CollectedBy(AttributeCollection::class)]
+class ModelWithCollectionAttribute extends Model {}
+
+#[CollectedBy(AttributeCollection::class)]
+class ModelWithOverriddenCollectionAttribute extends Model
+{
+    /** @param array<int, static> $models */
+    public function newCollection(array $models = []): OverriddenAttributeCollection
+    {
+        return new OverriddenAttributeCollection($models);
+    }
+}
+
+#[CollectedBy('CustomEloquentCollection\StringAttributeCollection')]
+class ModelWithStringCollectionAttribute extends Model {}
+
+/** @extends Collection<int, ModelWithCollectionAttribute> */
+class AttributeCollection extends Collection {}
+
+/** @extends Collection<int, ModelWithOverriddenCollectionAttribute> */
+class OverriddenAttributeCollection extends Collection {}
+
+/** @extends Collection<int, ModelWithStringCollectionAttribute> */
+class StringAttributeCollection extends Collection {}

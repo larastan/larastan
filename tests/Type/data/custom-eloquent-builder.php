@@ -3,6 +3,7 @@
 namespace CustomEloquentBuilder;
 
 use App\User;
+use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -311,4 +312,44 @@ class ModelWithCustomQueryBuilder extends Model
     {
         return new EloquentBuilderWithCustomQueryBuilder($query);
     }
+}
+
+#[UseEloquentBuilder(AttributeBuilder::class)]
+class ModelWithBuilderAttribute extends Model {}
+
+#[UseEloquentBuilder(AttributeBuilder::class)]
+class ModelWithOverriddenBuilderAttribute extends Model
+{
+    public function newEloquentBuilder($query): OverriddenAttributeBuilder
+    {
+        return new OverriddenAttributeBuilder($query);
+    }
+}
+
+#[UseEloquentBuilder('CustomEloquentBuilder\AttributeBuilder')]
+class ModelWithStringBuilderAttribute extends Model {}
+
+#[UseEloquentBuilder('\CustomEloquentBuilder\AttributeBuilder')]
+class ModelWithLeadingBackslashBuilderAttribute extends Model {}
+
+#[UseEloquentBuilder(builderClass: AttributeBuilder::class)]
+class ModelWithNamedBuilderAttribute extends Model {}
+
+#[UseEloquentBuilder('CustomEloquentBuilder\MissingBuilder')]
+class ModelWithMissingBuilderAttribute extends Model {}
+
+/** @extends Builder<ModelWithBuilderAttribute> */
+class AttributeBuilder extends Builder {}
+
+/** @extends Builder<ModelWithOverriddenBuilderAttribute> */
+class OverriddenAttributeBuilder extends Builder {}
+
+function testBuilderAttribute(): void
+{
+    assertType('CustomEloquentBuilder\AttributeBuilder', ModelWithBuilderAttribute::query());
+    assertType('CustomEloquentBuilder\OverriddenAttributeBuilder', ModelWithOverriddenBuilderAttribute::query());
+    assertType('CustomEloquentBuilder\AttributeBuilder', ModelWithStringBuilderAttribute::query());
+    assertType('CustomEloquentBuilder\AttributeBuilder', ModelWithLeadingBackslashBuilderAttribute::query());
+    assertType('CustomEloquentBuilder\AttributeBuilder', ModelWithNamedBuilderAttribute::query());
+    assertType('Illuminate\Database\Eloquent\Builder<CustomEloquentBuilder\ModelWithMissingBuilderAttribute>', ModelWithMissingBuilderAttribute::query());
 }

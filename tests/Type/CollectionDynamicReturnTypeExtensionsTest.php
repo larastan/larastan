@@ -18,10 +18,6 @@ class CollectionDynamicReturnTypeExtensionsTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/collection-key-types.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/collection-generic-static-methods.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/eloquent-collection-map.php');
-
-        yield from self::gatherAssertTypes(__DIR__ . '/data/collection-generic-static-methods-l12.php');
-
-        yield from self::gatherAssertTypes(__DIR__ . '/data/collection-stubs-l12-20.php');
     }
 
     #[DataProvider('dataFileAsserts')]

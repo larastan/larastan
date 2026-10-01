@@ -8,6 +8,7 @@ use App\Casts\BackedEnumeration;
 use App\Casts\BasicEnumeration;
 use App\Group;
 use App\GuardedModel;
+use App\MemberWithoutTimestampsTable;
 use App\Role;
 use App\RoleUser;
 use App\Team;
@@ -32,7 +33,8 @@ function test(
     Thread $thread,
     Address $address,
     RoleUser $roleUser,
-    ModelWithCasts $modelWithCasts
+    ModelWithCasts $modelWithCasts,
+    MemberWithoutTimestampsTable $memberWithoutTimestampsTable,
 ): void {
     assertType('*ERROR*', $user->newStyleAttribute); // Doesn't have generic type, so we treat as it doesnt exist
     assertType('int', $user->stringButInt);
@@ -110,6 +112,7 @@ function test(
 
     assertType('bool', $modelWithCasts->integer);
     assertType(Stringable::class, $modelWithCasts->string);
+    assertType('string|null', $memberWithoutTimestampsTable->created_at);
 }
 
 class ModelWithCasts extends Model

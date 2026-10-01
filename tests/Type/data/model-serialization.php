@@ -2,6 +2,9 @@
 
 namespace ModelSerialization;
 
+use Illuminate\Database\Eloquent\Attributes\Appends;
+use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Attributes\Visible;
 use Illuminate\Database\Eloquent\Model;
 
 use function PHPStan\Testing\assertType;
@@ -299,4 +302,42 @@ class CustomEnumSerializationModel extends SerializationModel
 function customEnumSerialization(CustomEnumSerializationModel $model): void
 {
     assertType('ModelSerialization\\SerializedStatus', $model->attributesToArray()['name']);
+}
+
+#[Appends('label', 'secret')]
+#[Hidden(['secret', 'name'])]
+#[Visible('id', 'name', 'label', 'secret')]
+class AttributeSerializationModel extends Model
+{
+    protected $table = 'users';
+
+    public function getLabelAttribute(): string
+    {
+        return 'label';
+    }
+
+    public function getSecretAttribute(): string
+    {
+        return 'secret';
+    }
+}
+
+class InheritedAttributeSerializationModel extends AttributeSerializationModel
+{
+}
+
+#[Hidden('label')]
+class ReplacedAttributeSerializationModel extends AttributeSerializationModel
+{
+    protected $hidden = ['secret'];
+}
+
+function attributeSerialization(
+    AttributeSerializationModel $model,
+    InheritedAttributeSerializationModel $inherited,
+    ReplacedAttributeSerializationModel $replaced,
+): void {
+    assertType('array{id?: int<0, max>, label?: string, ...<string, mixed>}', $model->attributesToArray());
+    assertType('array{id?: int<0, max>, label?: string, ...<string, mixed>}', $inherited->toArray());
+    assertType('array{id?: int<0, max>, name?: string, ...<string, mixed>}', $replaced->attributesToArray());
 }

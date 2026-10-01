@@ -3,6 +3,7 @@
 namespace ModelScope;
 
 use App\User;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -58,4 +59,43 @@ interface ForTimeline
      * @return Builder<Model>
      */
     public function scopeForTimeline(Builder $query): Builder;
+}
+
+/** @param Builder<Activity> $query */
+function attributeScopes(Builder $query): void
+{
+    assertType('Illuminate\Database\Eloquent\Builder<ModelScope\Activity>', Activity::completed());
+    assertType('Illuminate\Database\Eloquent\Builder<ModelScope\Activity>', $query->completed());
+    assertType('ModelScope\Activity', $query->completed(false)->firstOrFail());
+    assertType('Illuminate\Database\Eloquent\Builder<ModelScope\Activity>', Activity::withVoidReturn());
+    assertType('Illuminate\Database\Eloquent\Builder<ModelScope\Activity>', $query->withVoidReturn());
+    assertType('ModelScope\Activity', $query->withVoidReturn()->firstOrFail());
+    assertType('*ERROR*', $query->notAScope());
+}
+
+class Activity extends Model
+{
+    /**
+     * @param Builder<static> $query
+     * @return Builder<static>
+     */
+    #[Scope]
+    protected function completed(Builder $query, bool $completed = true): Builder
+    {
+        return $query->where('completed', $completed);
+    }
+
+    /** @param Builder<static> $query */
+    #[Scope]
+    protected function withVoidReturn(Builder $query): void
+    {
+        $query->where('whyuse', 'void');
+    }
+
+    /** @param Builder<static> $query */
+    #[Scope]
+    public function notAScope(Builder $query): void
+    {
+        $query->where('whyuse', 'void');
+    }
 }

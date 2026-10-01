@@ -37,6 +37,9 @@ function test(
     assertType('App\User|false', $collection->find(1, false));
 
     assertType('Illuminate\Support\Collection<(int|string), mixed>', $collection->pluck('id'));
+    assertType('Illuminate\Support\Collection<(int|string), non-falsy-string>', User::get()->pluck(fn (User $user) => "$user->id - $user->email", 'id'));
+    assertType('Illuminate\Support\Collection<string, mixed>', User::get()->pluck('id', fn (User $user) => "$user->id - $user->email"));
+    assertType('Illuminate\Support\Collection<string, string>', User::get()->pluck(fn (User $user) => $user->email, fn (User $user) => "$user->id - $user->email"));
 
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::all()->mapInto(User::class));
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', $collection->flatMap(function (User $user, int $id): array {

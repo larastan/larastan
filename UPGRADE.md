@@ -13,6 +13,7 @@ Remove `enableMigrationCache` from your PHPStan configuration. Larastan now alwa
 ### Internal cleanup
 
 - Removed compatibility branches and obsolete tests for unsupported Laravel versions. The active version-specific stub declarations are now shared in `stubs/common/`.
+- Consolidated the remaining version-specific type fixtures into the general and feature-specific fixtures, preserving their assertions.
 
 ## Upgrading to `3.0` from `2.x`
 

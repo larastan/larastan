@@ -1,6 +1,6 @@
 <?php
 
-namespace FacadesL1241;
+namespace FacadeTypes;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;

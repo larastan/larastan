@@ -25,7 +25,6 @@ class ConfigDynamicReturnTypeExtensionTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/config-reproduction.php');
 
         yield from self::gatherAssertTypes(__DIR__ . '/data/config-facade-collection-method.php');
-        yield from self::gatherAssertTypes(__DIR__ . '/data/config-repository-method-l12-20.php');
     }
 
     #[DataProvider('dataFileAsserts')]
