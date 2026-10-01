@@ -277,6 +277,8 @@ from the item type.
 
 Larastan will automatically scan your application's migrations in order to infer the database schema and therefore it is able to infer the existence of magic properties on Eloquent model classes.
 
+Parsed migrations and schema dumps are cached in PHPStan's temporary directory between runs. The cache is invalidated when file paths or modification times change. If the cache directory is unavailable, Larastan scans the files without caching.
+
 Various parameters can be set to [configure this behavior](custom-config-parameters.md#databasemigrationspath).
 
 String literals passed to `DB::statement()` and `DB::unprepared()` are read with the same SQL parsers used for schema dumps. `CREATE TABLE` statements those parsers understand are added to the schema. A table the schema builder already recorded is left as-is. Other SQL is left unchanged.

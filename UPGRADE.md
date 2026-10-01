@@ -1,5 +1,11 @@
 # Upgrade Guide
 
+## Upgrading to `4.0` from `3.x`
+
+### Migration caching is always enabled
+
+Remove `enableMigrationCache` from your PHPStan configuration. Larastan now always caches parsed migrations and schema dumps in PHPStan's temporary directory. If the cache directory is unavailable, analysis continues without caching.
+
 ## Upgrading to `3.0` from `2.x`
 
 This is a new major release with lots of breaking changes. 

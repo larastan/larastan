@@ -37,7 +37,6 @@ parameters:
     checkAuthCallsWhenInRequestScope: false
     parseModelCastsMethod: false
     pivotTypesInCollections: false
-    enableMigrationCache: true
     checkUniqueJobUniqueFor: false
     checkUniqueJobUniqueId: false
     noBatchedUniqueJob: false
@@ -73,7 +72,6 @@ parametersSchema:
     checkAuthCallsWhenInRequestScope: bool()
     parseModelCastsMethod: bool()
     pivotTypesInCollections: bool()
-    enableMigrationCache: bool()
     checkUniqueJobUniqueFor: bool()
     checkUniqueJobUniqueId: bool()
     noBatchedUniqueJob: bool()

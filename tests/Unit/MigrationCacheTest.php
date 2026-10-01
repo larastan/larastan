@@ -32,7 +32,7 @@ class MigrationCacheTest extends TestCase
             mkdir($this->cacheDir);
         }
 
-        $this->cache = new MigrationCache($this->cacheDir, true); // enabled = true
+        $this->cache = new MigrationCache($this->cacheDir);
     }
 
     protected function tearDown(): void
@@ -108,9 +108,9 @@ class MigrationCacheTest extends TestCase
         $this->assertArrayNotHasKey('users', $result);
     }
 
-    public function testDisabledCacheAlwaysExecutesCallback(): void
+    public function testUnavailableCacheDirectoryAlwaysExecutesCallback(): void
     {
-        $cache          = new MigrationCache($this->cacheDir, false); // enabled = false
+        $cache          = new MigrationCache($this->cacheDir . '/missing');
         $migrationFiles = [new SplFileInfo($this->createTempFile('mig1.php'))];
 
         // First call
@@ -126,7 +126,7 @@ class MigrationCacheTest extends TestCase
             return ['users' => new SchemaTable('users')];
         });
 
-        $this->assertTrue($called, 'Callback should be called when cache is disabled');
+        $this->assertTrue($called, 'Callback should be called when the cache directory is unavailable');
     }
 
     public function testOldCacheFilesAreCleanedUp(): void
