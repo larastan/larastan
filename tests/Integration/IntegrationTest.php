@@ -88,6 +88,18 @@ class IntegrationTest extends PHPStanTestCase
             ],
         ];
 
+        yield 'arrayable' => [
+            __DIR__ . '/data/arrayable.php',
+            [
+                15 => ['Parameter #1 $value of function ArrayableIntegration\\integers expects Illuminate\\Contracts\\Support\\Arrayable<array<string, int>>, Illuminate\\Contracts\\Support\\Arrayable<array<string, string>> given.'],
+                19 => [
+                    'Generic type Illuminate\\Contracts\\Support\\Arrayable<stdClass, int> in PHPDoc tag @param for parameter $value specifies 2 template types, but interface Illuminate\\Contracts\\Support\\Arrayable supports only 1: TReturn (0-1 required)',
+                    'Type stdClass in generic type Illuminate\\Contracts\\Support\\Arrayable<stdClass, int> in PHPDoc tag @param for parameter $value is not subtype of template type TReturn of array = array<mixed> of interface Illuminate\\Contracts\\Support\\Arrayable.',
+                ],
+                24 => ['Call-site variance of contravariant array<string, int> in generic type Illuminate\\Contracts\\Support\\Arrayable<contravariant array<string, int>> in PHPDoc tag @param for parameter $value is in conflict with covariant template type TReturn of array = array<mixed> of interface Illuminate\\Contracts\\Support\\Arrayable.'],
+            ],
+        ];
+
         yield 'eloquent-where' => [
             __DIR__ . '/data/eloquent-where.php',
             [

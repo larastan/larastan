@@ -2,6 +2,24 @@
 
 All features that are specific to Laravel applications are listed here.
 
+## Arrayable templates
+
+Larastan accepts both `Arrayable<TKey, TValue>` and `Arrayable<TReturn>` on supported
+Laravel versions. The legacy form resolves to `Arrayable<array<TKey, TValue>>`.
+The single-template form also preserves array shapes and lists:
+
+```php
+/** @param \Illuminate\Contracts\Support\Arrayable<array{score: int, label?: string}> $value */
+function scores(\Illuminate\Contracts\Support\Arrayable $value): array
+{
+    return $value->toArray(); // array{score: int, label?: string}
+}
+```
+
+Both forms use Laravel 14's covariant array-return contract. Collections retain
+their broader `toArray()` result because they convert nested `Arrayable` values;
+paginator arrays include pagination metadata as well as their items.
+
 ## Laravel 9 Attributes
 
 In order for [Laravel 9 Attributes](https://laravel.com/docs/9.x/eloquent-mutators#accessors-and-mutators) to be recognized as model properties, they must be `protected` methods annotated with the `Attribute` Generic Types.

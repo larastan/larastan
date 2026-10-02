@@ -13,6 +13,10 @@ Laravel's `dev-master` branch is also supported and tested with matching Testben
 - Removed compatibility branches and obsolete tests for unsupported Laravel versions. The active version-specific stub declarations are now shared in `stubs/common/`.
 - Consolidated the remaining version-specific type fixtures into the general and feature-specific fixtures, preserving their assertions.
 
+### Arrayable templates
+
+Both `Arrayable<TKey, TValue>` and `Arrayable<TReturn>` are supported on all supported Laravel versions. Legacy annotations are normalized to `Arrayable<array<TKey, TValue>>`, using Laravel 14's covariant array-return contract. Diagnostics therefore display the single-template form. Array shapes and lists retain their structure in `toArray()` results.
+
 ### Job and event dispatch diagnostics
 
 Dispatch argument checking now uses PHPStan's public `NodeCallbackInvoker` API instead of its internal `FunctionCallParametersCheck`. Error messages use PHPStan's constructor wording. For example, `Job class ExampleJob constructor invoked with 1 parameter in ExampleJob::dispatch(), 2 required.` becomes `Class ExampleJob constructor invoked with 1 parameter, 2 required.` Private and protected constructors remain supported; their argument errors use PHPStan's closure wording.

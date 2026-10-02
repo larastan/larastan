@@ -40,7 +40,7 @@ abstract class AbstractPaginator implements \Illuminate\Contracts\Support\Htmlab
  *
  * @implements \ArrayAccess<TKey, TValue>
  * @implements \IteratorAggregate<TKey, TValue>
- * @implements \Illuminate\Contracts\Support\Arrayable<TKey, TValue>
+ * @implements \Illuminate\Contracts\Support\Arrayable<array<array-key, mixed>>
  * @implements \Illuminate\Contracts\Pagination\Paginator<TKey, TValue>
  *
  * @extends AbstractPaginator<TKey, TValue>
@@ -54,7 +54,7 @@ class Paginator extends AbstractPaginator implements \Illuminate\Contracts\Suppo
  *
  * @implements \ArrayAccess<TKey, TValue>
  * @implements \IteratorAggregate<TKey, TValue>
- * @implements \Illuminate\Contracts\Support\Arrayable<TKey, TValue>
+ * @implements \Illuminate\Contracts\Support\Arrayable<array<array-key, mixed>>
  * @implements \Illuminate\Contracts\Pagination\LengthAwarePaginator<TKey, TValue>
  *
  * @extends AbstractPaginator<TKey, TValue>
@@ -100,7 +100,7 @@ abstract class AbstractCursorPaginator implements \Illuminate\Contracts\Support\
  *
  * @implements \ArrayAccess<TKey, TValue>
  * @implements \IteratorAggregate<TKey, TValue>
- * @implements \Illuminate\Contracts\Support\Arrayable<TKey, TValue>
+ * @implements \Illuminate\Contracts\Support\Arrayable<array<array-key, mixed>>
  * @implements \Illuminate\Contracts\Pagination\CursorPaginator<TKey, TValue>
  *
  * @extends AbstractCursorPaginator<TKey, TValue>

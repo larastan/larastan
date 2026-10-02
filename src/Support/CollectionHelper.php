@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Support;
 
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Attributes\CollectedBy;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\HasCollection;
@@ -67,6 +68,10 @@ final class CollectionHelper
             ) {
                 return $this->getTypeFromIterator($classReflections[0]);
             }
+        }
+
+        if ((new ObjectType(Arrayable::class))->isSuperTypeOf($type)->yes()) {
+            return null;
         }
 
         if (! $type->isArray()->yes()) {
