@@ -17,6 +17,10 @@ Laravel's `dev-master` branch is also supported and tested with matching Testben
 
 Both `Arrayable<TKey, TValue>` and `Arrayable<TReturn>` are supported on all supported Laravel versions. Legacy annotations are normalized to `Arrayable<array<TKey, TValue>>`, using Laravel 14's covariant array-return contract. Diagnostics therefore display the single-template form. Array shapes and lists retain their structure in `toArray()` results.
 
+### Translation helper
+
+`trans()` and `trans(null)` now return the translator type declared by the installed Laravel version: the translation contract on Laravel 13 and the concrete translator on Laravel's development branch. Calls with a nullable key now include the translator in their return type; calls with a string key retain their existing `array|string` behavior.
+
 ### Job and event dispatch diagnostics
 
 Dispatch argument checking now uses PHPStan's public `NodeCallbackInvoker` API instead of its internal `FunctionCallParametersCheck`. Error messages use PHPStan's constructor wording. For example, `Job class ExampleJob constructor invoked with 1 parameter in ExampleJob::dispatch(), 2 required.` becomes `Class ExampleJob constructor invoked with 1 parameter, 2 required.` Private and protected constructors remain supported; their argument errors use PHPStan's closure wording.

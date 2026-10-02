@@ -8,8 +8,9 @@ use function PHPStan\Testing\assertType;
 
 function test(): void
 {
-    assertType('Illuminate\Contracts\Translation\Translator', trans());
     assertType('(array|string)', trans('foo'));
+    assertType('(array|string)', trans(key: 'foo'));
+    assertType('(array|string)', trans(...['foo', [], 'en']));
     assertType('(array|string)', trans('Hi :name', ['name' => 'Niek']));
 
     assertType('null', __());

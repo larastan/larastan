@@ -4,20 +4,18 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\ReturnTypes;
 
-use Illuminate\Contracts\Translation\Translator;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\FunctionReflection;
+use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
 use PHPStan\Type\MixedType;
-use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
-
-use function count;
+use PHPStan\Type\TypeCombinator;
 
 /** @internal */
 #[AutowiredService]
@@ -32,14 +30,23 @@ final class TransHelperReturnTypeExtension implements DynamicFunctionReturnTypeE
         FunctionReflection $functionReflection,
         FuncCall $functionCall,
         Scope $scope,
-    ): Type {
-        if (count($functionCall->args) === 0) {
-            return new ObjectType(Translator::class);
-        }
-
-        return new BenevolentUnionType([
+    ): Type|null {
+        $translationType = new BenevolentUnionType([
             new ArrayType(new MixedType(), new MixedType()),
             new StringType(),
         ]);
+
+        $keyType = ParametersAcceptorSelector::selectFromArgs($scope, $functionCall->getArgs(), $functionReflection->getVariants(), $functionReflection->getNamedArgumentsVariants())
+            ->getResolvedTemplateTypeMap()->getType('TKey');
+
+        if ($keyType === null) {
+            return null;
+        }
+
+        if ($keyType->isNull()->yes()) {
+            return TypeCombinator::remove($functionReflection->getVariants()[0]->getNativeReturnType(), $translationType);
+        }
+
+        return $keyType->isNull()->no() ? $translationType : null;
     }
 }

@@ -6,8 +6,10 @@ namespace Type;
 
 use PHPStan\Testing\TypeInferenceTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use ReflectionFunction;
 
 use function Orchestra\Testbench\laravel_version_compare;
+use function str_contains;
 
 class GeneralTypeTest extends TypeInferenceTestCase
 {
@@ -88,6 +90,14 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/tappable.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/throw.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/translate.php');
+
+        // Laravel master still reports version 13 while using the concrete translator return type.
+        if (str_contains((string) (new ReflectionFunction('trans'))->getReturnType(), 'Illuminate\\Translation\\Translator')) {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/translate-concrete.php');
+        } else {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/translate-contract.php');
+        }
+
         yield from self::gatherAssertTypes(__DIR__ . '/data/translator.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/validator.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/view-exists.php');

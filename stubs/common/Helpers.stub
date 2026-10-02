@@ -135,10 +135,12 @@ function view($view = null, $data = [], $mergeData = []) {}
 /**
  * Translate the given message.
  *
- * @param  string|null  $key
+ * @template TKey of string|null
+ *
+ * @param  TKey  $key
  * @param  array<string, (\Closure(string): string)|scalar|null>  $replace
  * @param  string|null  $locale
- * @return ($key is null ? \Illuminate\Contracts\Translation\Translator : mixed)
+ * @return \Illuminate\Contracts\Translation\Translator|array<mixed>|string
  */
 function trans($key = null, $replace = [], $locale = null) {}
 
