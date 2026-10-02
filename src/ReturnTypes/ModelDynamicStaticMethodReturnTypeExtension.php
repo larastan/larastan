@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\ReturnTypes;
 
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -71,7 +70,7 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
             return null;
         }
 
-        if ((new ObjectType(EloquentBuilder::class))->isSuperTypeOf($returnType)->yes()) {
+        if ($this->builderHelper->isBuilderReturnType($returnType)) {
             $modelType = $methodCall->class instanceof Name
                 ? $scope->resolveTypeByName($methodCall->class)
                 : $scope->getType($methodCall->class)->getObjectTypeOrClassStringObjectType();
