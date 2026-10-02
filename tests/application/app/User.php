@@ -70,6 +70,7 @@ class User extends Authenticatable
         'float' => 'float',
         'double' => 'double',
         'decimal' => 'decimal',
+        'nullable_decimal' => 'decimal:2',
         'string' => 'string',
         'bool' => 'bool',
         'boolean' => 'boolean',

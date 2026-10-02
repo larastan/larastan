@@ -45,6 +45,7 @@ class CreateUsersTable extends Migration
             $table->float('float');
             $table->double('double');
             $table->decimal('decimal');
+            $table->decimal('nullable_decimal')->nullable();
             $table->string('string');
             $table->boolean('bool');
             $table->boolean('boolean');

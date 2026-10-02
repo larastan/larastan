@@ -75,6 +75,10 @@ class IntegrationTest extends PHPStanTestCase
             [
                 32 => ['Property App\User::$unsigned_integer (int<0, max>) does not accept -5.'],
                 33 => ['Property App\User::$unsigned_integer_method (int<0, max>) does not accept -5.'],
+                100 => ['Property App\User::$decimal (float|int|numeric-string) does not accept \'foo\'.'],
+                101 => ['Property App\User::$decimal (float|int|numeric-string) does not accept array{}.'],
+                110 => ['Property App\User::$nullable_decimal (float|int|numeric-string|null) does not accept \'foo\'.'],
+                111 => ['Property App\User::$nullable_decimal (float|int|numeric-string|null) does not accept array{}.'],
             ],
         ];
 
