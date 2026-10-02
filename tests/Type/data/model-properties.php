@@ -49,6 +49,7 @@ function test(
     assertType('float', $user->float);
     assertType('float', $user->double);
     assertType('numeric-string', $user->decimal);
+    assertType('numeric-string|null', $user->nullable_decimal);
     assertType('string', $user->string);
     assertType('bool', $user->bool);
     assertType('bool', $user->boolean);

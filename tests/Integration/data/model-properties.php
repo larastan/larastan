@@ -91,3 +91,22 @@ function testInboundCast(User $user): void
 {
     $user->secret = 'secret';
 }
+
+function testWriteToDecimalCast(User $user): void
+{
+    $user->decimal = '1.5';
+    $user->decimal = 1;
+    $user->decimal = 1.5;
+    $user->decimal = 'foo'; // Should raise an error
+    $user->decimal = []; // Should raise an error
+}
+
+function testWriteToNullableDecimalCast(User $user): void
+{
+    $user->nullable_decimal = '1.5';
+    $user->nullable_decimal = 1;
+    $user->nullable_decimal = 1.5;
+    $user->nullable_decimal = null;
+    $user->nullable_decimal = 'foo'; // Should raise an error
+    $user->nullable_decimal = []; // Should raise an error
+}
