@@ -17,8 +17,8 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 
-use function array_key_exists;
 use function count;
+use function is_string;
 
 class GuardDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
 {
@@ -47,28 +47,30 @@ class GuardDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethod
             return $defaultReturnType;
         }
 
-        /** @var string $defaultGuard */
-        $defaultGuard = $config->get('auth.defaults.guard');
-
         if (count($methodCall->getArgs()) === 0) {
-            /** @var array<string, mixed> $guards */
-            $guards = $config->get('auth.guards');
+            $guardName = $config->get('auth.defaults.guard');
 
-            if (! array_key_exists($defaultGuard, $guards)) {
+            if (! is_string($guardName)) {
+                return $defaultReturnType;
+            }
+        } else {
+            $argType    = $scope->getType($methodCall->getArgs()[0]->value);
+            $argStrings = $argType->getConstantStrings();
+
+            if (count($argStrings) !== 1) {
                 return $defaultReturnType;
             }
 
-            return $this->findTypeFromGuardDriver($guards[$defaultGuard]['driver']) ?? $defaultReturnType;
+            $guardName = $argStrings[0]->getValue();
         }
 
-        $argType    = $scope->getType($methodCall->getArgs()[0]->value);
-        $argStrings = $argType->getConstantStrings();
+        $driver = $config->get('auth.guards')[$guardName]['driver'] ?? null;
 
-        if (count($argStrings) !== 1) {
+        if (! is_string($driver)) {
             return $defaultReturnType;
         }
 
-        return $this->findTypeFromGuardDriver($argStrings[0]->getValue()) ?? $defaultReturnType;
+        return $this->findTypeFromGuardDriver($driver) ?? $defaultReturnType;
     }
 
     private function findTypeFromGuardDriver(string $driver): Type|null
