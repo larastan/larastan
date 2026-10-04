@@ -16,6 +16,7 @@ function test(User $user): void
     assertType('int|string|null', Auth::id());
     assertType('null', Auth::guard()->logout());
     assertType(StatefulGuard::class, Auth::guard('web'));
+    assertType(StatefulGuard::class, Auth::guard('passport'));
     assertType('App\User|null', Auth::guard('web')->user());
     assertType('App\Admin|null', Auth::guard('admin')->user());
     assertType(SessionGuard::class, Auth::guard('session'));

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\ReturnTypes;
 
-use Illuminate\Auth\RequestGuard;
 use Illuminate\Auth\TokenGuard;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\StatefulGuard;
@@ -77,7 +76,6 @@ class GuardDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethod
         return match ($driver) {
             'session' => new ObjectType('Illuminate\Auth\SessionGuard'),
             'token' => new ObjectType(TokenGuard::class),
-            'passport' => new ObjectType(RequestGuard::class),
             default => null,
         };
     }
