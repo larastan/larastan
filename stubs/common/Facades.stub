@@ -32,7 +32,7 @@ class Schema extends Facade {}
 /**
  * @mixin \Illuminate\Contracts\Events\Dispatcher
  * @method static \Illuminate\Support\Testing\Fakes\EventFake except(array<mixed>|string $eventsToDispatch)
- * @method static \Illuminate\Support\Collection<int, array<mixed>> dispatched(string $event, callable|null $callback = null)
+ * @method static \Illuminate\Support\Collection<int, array<mixed>> dispatched(string $event, callable|array<string, mixed>|null $callback = null)
  * @method static bool hasDispatched(string $event)
  * @method static array<string, list<array<mixed>>> dispatchedEvents()
  */
