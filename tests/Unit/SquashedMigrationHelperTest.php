@@ -12,6 +12,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 
 use function array_keys;
+use function database_path;
 
 #[CoversClass(SquashedMigrationHelper::class)]
 class SquashedMigrationHelperTest extends PHPStanTestCase
@@ -152,6 +153,45 @@ class SquashedMigrationHelperTest extends PHPStanTestCase
         $tables = $schemaParser->initializeTables();
 
         $this->assertSame([], $tables);
+    }
+
+    #[Test]
+    public function it_lists_the_default_schema_files_before_the_tables_are_initialized(): void
+    {
+        $schemaParser = $this->createHelper([]);
+
+        $this->assertSame([database_path('schema')], $schemaParser->getSchemaDirectories());
+        $this->assertNotSame([], $schemaParser->getSchemaFiles());
+    }
+
+    #[Test]
+    public function it_keeps_a_schema_directory_that_does_not_exist(): void
+    {
+        $fileHelper = self::getContainer()->getByType(FileHelper::class);
+
+        $this->assertSame(
+            [$fileHelper->absolutizePath(__DIR__ . '/data/schema/missing')],
+            $this->createHelper([__DIR__ . '/data/schema/missing'])->getSchemaDirectories(),
+        );
+        $this->assertSame([], $this->createHelper([__DIR__ . '/data/schema/missing'])->getSchemaFiles());
+    }
+
+    #[Test]
+    public function it_has_no_schema_directories_when_the_schema_scan_is_disabled(): void
+    {
+        $this->assertSame([], $this->createHelper([__DIR__ . '/data/schema/basic_schema'], true)->getSchemaDirectories());
+    }
+
+    /** @param string[] $schemaPaths */
+    private function createHelper(array $schemaPaths, bool $disableSchemaScan = false): SquashedMigrationHelper
+    {
+        return new SquashedMigrationHelper(
+            $schemaPaths,
+            self::getContainer()->getByType(FileHelper::class),
+            new MySqlDataTypeToPhpTypeConverter(),
+            self::getContainer()->getService('sqlParser'),
+            $disableSchemaScan,
+        );
     }
 
     /** @return string[] */

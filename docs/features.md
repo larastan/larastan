@@ -254,6 +254,8 @@ Larastan will automatically scan your application's migrations in order to infer
 
 Various parameters can be set to [configure this behavior](custom-config-parameters.md#databasemigrationspath).
 
+When a migration or a schema dump is created, changed or deleted, the result cache analyses the files using a model again.
+
 ## Model Relationships
 
 In order for Larastan to recognize Model relationships you are required to document the generic types of the relation class:

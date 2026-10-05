@@ -73,27 +73,46 @@ class MigrationHelper
         /** @var SplFileInfo[] $migrationFiles */
         $migrationFiles = [];
 
+        foreach ($this->getMigrationDirectories() as $directory) {
+            if (! is_dir($directory)) {
+                continue;
+            }
+
+            $migrationFiles += iterator_to_array(
+                new RegexIterator(
+                    new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)),
+                    '/\.php$/i',
+                ),
+            );
+        }
+
+        return $migrationFiles;
+    }
+
+    /**
+     * The directories scanned for migrations. A configured path that matches
+     * nothing is kept, so that it can be watched for being created.
+     *
+     * @return list<string>
+     */
+    public function getMigrationDirectories(): array
+    {
+        if ($this->disableMigrationScan) {
+            return [];
+        }
+
         if (count($this->databaseMigrationPath) === 0) {
             $this->databaseMigrationPath = [database_path('migrations')];
         }
 
-        foreach ($this->databaseMigrationPath as $additionalPathGlob) {
-            foreach ((glob($additionalPathGlob) ?: []) as $additionalPath) {
-                $absolutePath = $this->fileHelper->absolutizePath($additionalPath);
+        $directories = [];
 
-                if (! is_dir($absolutePath)) {
-                    continue;
-                }
-
-                $migrationFiles += iterator_to_array(
-                    new RegexIterator(
-                        new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
-                        '/\.php$/i',
-                    ),
-                );
+        foreach ($this->databaseMigrationPath as $pathGlob) {
+            foreach ((glob($pathGlob) ?: [$pathGlob]) as $path) {
+                $directories[] = $this->fileHelper->absolutizePath($path);
             }
         }
 
-        return $migrationFiles;
+        return $directories;
     }
 }

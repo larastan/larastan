@@ -15,12 +15,18 @@ use Larastan\Larastan\Properties\ModelCastHelper;
 use Larastan\Larastan\Properties\ModelPropertyHelper;
 use Larastan\Larastan\Properties\Schema\MySqlDataTypeToPhpTypeConverter;
 use Larastan\Larastan\Properties\SquashedMigrationHelper;
+use PHPStan\Analyser\DeclarationDependencyTracker;
+use PHPStan\Analyser\FileAnalyser;
+use PHPStan\Analyser\ResultCache\DirectoryResultCacheValueExtension;
 use PHPStan\Analyser\ScopeFactory;
+use PHPStan\Analyser\ValueDependencyCollector;
+use PHPStan\Collectors\Registry as CollectorRegistry;
 use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
 use PHPStan\PhpDoc\TypeStringResolver;
 use PHPStan\Reflection\InitializerExprTypeResolver;
 use PHPStan\Reflection\ReflectionProvider;
+use PHPStan\Rules\DirectRegistry as DirectRuleRegistry;
 use PHPStan\Testing\PHPStanTestCase;
 use PHPStan\Type\StringType;
 use PHPStan\Type\TypeCombinator;
@@ -143,6 +149,51 @@ class ModelPropertyHelperTest extends PHPStanTestCase
         self::assertSame($lookupsAfterFirstLoad, $migrationHelper->migrationFileLookups);
     }
 
+    #[Test]
+    public function it_tracks_the_schema_directories_for_files_using_a_model(): void
+    {
+        $container = self::getContainer();
+        $collector = $container->getByType(ValueDependencyCollector::class);
+
+        $expected = [];
+
+        foreach ($container->getByType(MigrationHelper::class)->getMigrationDirectories() as $directory) {
+            $expected[] = ValueDependencyCollector::getId(DirectoryResultCacheValueExtension::class, $collector->getDirectoryKey($directory, '*.php'));
+        }
+
+        foreach ($container->getByType(SquashedMigrationHelper::class)->getSchemaDirectories() as $directory) {
+            $expected[] = ValueDependencyCollector::getId(DirectoryResultCacheValueExtension::class, $collector->getDirectoryKey($directory, '*.sql*'));
+            $expected[] = ValueDependencyCollector::getId(DirectoryResultCacheValueExtension::class, $collector->getDirectoryKey($directory, '*.dump*'));
+        }
+
+        self::assertCount(3, $expected);
+
+        $usingModel = $this->analyseValueDependencies(__DIR__ . '/data/model-schema-dependency.php');
+
+        foreach ($expected as $id) {
+            self::assertContains($id, $usingModel);
+        }
+
+        self::assertSame([], $this->analyseValueDependencies(__DIR__ . '/data/no-model-schema-dependency.php'));
+    }
+
+    /** @return list<string> the ids of the values the analysis of the file depends on */
+    private function analyseValueDependencies(string $file): array
+    {
+        $file   = $this->fileHelper->normalizePath($file);
+        $result = self::getContainer()->getByType(FileAnalyser::class)->analyseFile(
+            $file,
+            [$file => true],
+            new DirectRuleRegistry([]),
+            new CollectorRegistry([]),
+            null,
+        );
+
+        self::assertSame([], $result->getErrors());
+
+        return $result->getValueDependencies()['dependents'][$file]['analysis'];
+    }
+
     /**
      * @param string[] $migrationPaths
      * @param string[] $schemaPaths
@@ -182,6 +233,8 @@ class ModelPropertyHelperTest extends PHPStanTestCase
             $squashedMigrationHelper,
             $modelCastHelper,
             new MigrationCache(sys_get_temp_dir(), false),
+            self::getContainer()->getByType(DeclarationDependencyTracker::class),
+            $this->reflectionProvider,
         );
     }
 

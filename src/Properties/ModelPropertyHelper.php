@@ -8,8 +8,10 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Larastan\Larastan\Reflection\ReflectionHelper;
+use PHPStan\Analyser\DeclarationDependencyTracker;
 use PHPStan\PhpDoc\TypeStringResolver;
 use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\GenericObjectType;
@@ -47,6 +49,8 @@ class ModelPropertyHelper
         private SquashedMigrationHelper $squashedMigrationHelper,
         private ModelCastHelper $modelCastHelper,
         private MigrationCache $migrationCache,
+        private DeclarationDependencyTracker $declarationDependencyTracker,
+        private ReflectionProvider $reflectionProvider,
     ) {
     }
 
@@ -270,6 +274,9 @@ class ModelPropertyHelper
     {
         $this->migrationsLoaded = true;
 
+        // Every file using a model depends on Model, so the dependency is declared once, on Model itself
+        $this->trackSchemaDependency($this->reflectionProvider->getClass(Model::class));
+
         $migrationFiles = $this->migrationHelper->getMigrationFiles();
         $schemaFiles    = $this->squashedMigrationHelper->getSchemaFiles();
 
@@ -284,6 +291,23 @@ class ModelPropertyHelper
                 return $this->migrationHelper->initializeTables($tables);
             },
         );
+    }
+
+    /**
+     * What the class declares depends on the database schema, which comes from
+     * the migrations and the schema dumps. Each file depending on the class is
+     * analysed again when one of them is created, changed or deleted.
+     */
+    public function trackSchemaDependency(ClassReflection $classReflection): void
+    {
+        foreach ($this->migrationHelper->getMigrationDirectories() as $directory) {
+            $this->declarationDependencyTracker->trackDirectoryDependency($classReflection, $directory, '*.php');
+        }
+
+        foreach ($this->squashedMigrationHelper->getSchemaDirectories() as $directory) {
+            $this->declarationDependencyTracker->trackDirectoryDependency($classReflection, $directory, '*.sql*');
+            $this->declarationDependencyTracker->trackDirectoryDependency($classReflection, $directory, '*.dump*');
+        }
     }
 
     private function hasDate(Model $modelInstance, string $propertyName): bool

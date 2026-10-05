@@ -36,14 +36,6 @@ final class SquashedMigrationHelper
     /** @return SchemaTable[] */
     public function initializeTables(): array
     {
-        if ($this->disableSchemaScan) {
-            return [];
-        }
-
-        if (empty($this->schemaPaths)) {
-            $this->schemaPaths = [database_path('schema')];
-        }
-
         $filesArray = $this->getSchemaFiles();
 
         if (empty($filesArray)) {
@@ -97,23 +89,46 @@ final class SquashedMigrationHelper
         /** @var SplFileInfo[] $schemaFiles */
         $schemaFiles = [];
 
-        foreach ($this->schemaPaths as $additionalPathGlob) {
-            foreach ((glob($additionalPathGlob) ?: []) as $additionalPath) {
-                $absolutePath = $this->fileHelper->absolutizePath($additionalPath);
-
-                if (! is_dir($absolutePath)) {
-                    continue;
-                }
-
-                $schemaFiles += iterator_to_array(
-                    new RegexIterator(
-                        new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
-                        '/\.dump|\.sql/i',
-                    ),
-                );
+        foreach ($this->getSchemaDirectories() as $directory) {
+            if (! is_dir($directory)) {
+                continue;
             }
+
+            $schemaFiles += iterator_to_array(
+                new RegexIterator(
+                    new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)),
+                    '/\.dump|\.sql/i',
+                ),
+            );
         }
 
         return $schemaFiles;
+    }
+
+    /**
+     * The directories scanned for schema dumps. A configured path that matches
+     * nothing is kept, so that it can be watched for being created.
+     *
+     * @return list<string>
+     */
+    public function getSchemaDirectories(): array
+    {
+        if ($this->disableSchemaScan) {
+            return [];
+        }
+
+        if (empty($this->schemaPaths)) {
+            $this->schemaPaths = [database_path('schema')];
+        }
+
+        $directories = [];
+
+        foreach ($this->schemaPaths as $pathGlob) {
+            foreach ((glob($pathGlob) ?: [$pathGlob]) as $path) {
+                $directories[] = $this->fileHelper->absolutizePath($path);
+            }
+        }
+
+        return $directories;
     }
 }

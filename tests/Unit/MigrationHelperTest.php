@@ -35,6 +35,23 @@ class MigrationHelperTest extends PHPStanTestCase
     }
 
     #[Test]
+    public function it_keeps_a_migration_directory_that_does_not_exist(): void
+    {
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/missing'], $this->fileHelper, false, $this->reflectionProvider, $this->initializerExprTypeResolver);
+
+        self::assertSame([$this->fileHelper->absolutizePath(__DIR__ . '/data/missing')], $migrationHelper->getMigrationDirectories());
+        self::assertSame([], $migrationHelper->getMigrationFiles());
+    }
+
+    #[Test]
+    public function it_has_no_migration_directories_when_the_migration_scan_is_disabled(): void
+    {
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/basic_migration'], $this->fileHelper, true, $this->reflectionProvider, $this->initializerExprTypeResolver);
+
+        self::assertSame([], $migrationHelper->getMigrationDirectories());
+    }
+
+    #[Test]
     public function it_will_return_empty_array_if_migrations_path_is_not_a_directory(): void
     {
         $migrationHelper = new MigrationHelper($this->parser, ['foobar'], $this->fileHelper, false, $this->reflectionProvider, $this->initializerExprTypeResolver);
