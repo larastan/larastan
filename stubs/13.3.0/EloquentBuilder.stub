@@ -1,0 +1,768 @@
+<?php
+
+namespace Illuminate\Database\Eloquent;
+
+/**
+ * @template TModel of Model
+ * @property-read static $orWhere
+ * @property-read static $whereNot
+ * @property-read static $orWhereNot
+ */
+class Builder
+{
+    /**
+     * @template TRelation of string
+     * @template TRelatedModel of Model
+     *
+     * @param TRelation|\Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, *, *> $relation
+     * @param string $operator
+     * @param \Illuminate\Contracts\Database\Query\Expression|int $count
+     * @param string $boolean
+     * @param (\Closure(($relation is string ? builder-of<TModel, TRelation> : builder-of<TRelatedModel>)): mixed)|null $callback
+     * @return $this
+     *
+     * @throws \RuntimeException
+     */
+    public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', ?\Closure $callback = null);
+
+    /**
+     * @template TRelation of string
+     * @template TRelatedModel of Model
+     *
+     * @param TRelation|\Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, *, *> $relation
+     * @param string $boolean
+     * @param (\Closure(($relation is string ? builder-of<TModel, TRelation> : builder-of<TRelatedModel>)): mixed)|null $callback
+     * @return $this
+     */
+    public function doesntHave($relation, $boolean = 'and', ?\Closure $callback = null);
+
+    /**
+     * @template TRelation of string
+     * @template TRelatedModel of Model
+     *
+     * @param TRelation|\Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, *, *> $relation
+     * @param (\Closure(($relation is string ? builder-of<TModel, TRelation> : builder-of<TRelatedModel>)): mixed)|null $callback
+     * @param string $operator
+     * @param \Illuminate\Contracts\Database\Query\Expression|int $count
+     * @return $this
+     */
+    public function whereHas($relation, ?\Closure $callback = null, $operator = '>=', $count = 1);
+
+    /**
+     * @template TRelation of string
+     * @template TRelatedModel of Model
+     *
+     * @param TRelation|\Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, *, *> $relation
+     * @param (\Closure(($relation is string ? builder-of<TModel, TRelation> : builder-of<TRelatedModel>)): mixed)|null $callback
+     * @param string $operator
+     * @param \Illuminate\Contracts\Database\Query\Expression|int $count
+     * @return $this
+     */
+    public function orWhereHas($relation, ?\Closure $callback = null, $operator = '>=', $count = 1);
+
+    /**
+     * @template TRelation of string
+     * @template TRelatedModel of Model
+     *
+     * @param TRelation|\Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, *, *> $relation
+     * @param (\Closure(($relation is string ? builder-of<TModel, TRelation> : builder-of<TRelatedModel>)): mixed)|null $callback
+     * @return $this
+     */
+    public function whereDoesntHave($relation, ?\Closure $callback = null);
+
+    /**
+     * @template TRelation of string
+     * @template TRelatedModel of Model
+     *
+     * @param TRelation|\Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, *, *> $relation
+     * @param (\Closure(($relation is string ? builder-of<TModel, TRelation> : builder-of<TRelatedModel>)): mixed)|null $callback
+     * @return $this
+     */
+    public function orWhereDoesntHave($relation, ?\Closure $callback = null);
+
+    /**
+     * @template TMorphModel of Model
+     * @template TType of string
+     *
+     * @param string|\Illuminate\Database\Eloquent\Relations\MorphTo<*, *> $relation
+     * @param class-string<TMorphModel>|TType|array<int, class-string<TMorphModel>|TType> $types
+     * @param string $operator
+     * @param \Illuminate\Contracts\Database\Query\Expression|int $count
+     * @param string $boolean
+     * @param (\Closure(builder-of<TMorphModel>, string): mixed)|null $callback
+     * @return $this
+     */
+    public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', ?\Closure $callback = null);
+
+    /**
+     * @template TMorphModel of Model
+     * @template TType of string
+     *
+     * @param string|\Illuminate\Database\Eloquent\Relations\MorphTo<*, *> $relation
+     * @param class-string<TMorphModel>|TType|array<int, class-string<TMorphModel>|TType> $types
+     * @param string $boolean
+     * @param (\Closure(builder-of<TMorphModel>, string): mixed)|null $callback
+     * @return $this
+     */
+    public function doesntHaveMorph($relation, $types, $boolean = 'and', ?\Closure $callback = null);
+
+    /**
+     * @template TMorphModel of Model
+     * @template TType of string
+     *
+     * @param string|\Illuminate\Database\Eloquent\Relations\MorphTo<*, *> $relation
+     * @param class-string<TMorphModel>|TType|array<int, class-string<TMorphModel>|TType> $types
+     * @param (\Closure(builder-of<TMorphModel>, string): mixed)|null $callback
+     * @param string $operator
+     * @param \Illuminate\Contracts\Database\Query\Expression|int $count
+     * @return $this
+     */
+    public function whereHasMorph($relation, $types, ?\Closure $callback = null, $operator = '>=', $count = 1);
+
+    /**
+     * @template TMorphModel of Model
+     * @template TType of string
+     *
+     * @param string|\Illuminate\Database\Eloquent\Relations\MorphTo<*, *> $relation
+     * @param class-string<TMorphModel>|TType|array<int, class-string<TMorphModel>|TType> $types
+     * @param (\Closure(builder-of<TMorphModel>, string): mixed)|null $callback
+     * @param string $operator
+     * @param \Illuminate\Contracts\Database\Query\Expression|int $count
+     * @return $this
+     */
+    public function orWhereHasMorph($relation, $types, ?\Closure $callback = null, $operator = '>=', $count = 1);
+
+    /**
+     * @template TMorphModel of Model
+     * @template TType of string
+     *
+     * @param string|\Illuminate\Database\Eloquent\Relations\MorphTo<*, *> $relation
+     * @param class-string<TMorphModel>|TType|array<int, class-string<TMorphModel>|TType> $types
+     * @param (\Closure(builder-of<TMorphModel>, string): mixed)|null $callback
+     * @return $this
+     */
+    public function whereDoesntHaveMorph($relation, $types, ?\Closure $callback = null);
+
+    /**
+     * @template TMorphModel of Model
+     * @template TType of string
+     *
+     * @param string|\Illuminate\Database\Eloquent\Relations\MorphTo<*, *> $relation
+     * @param class-string<TMorphModel>|TType|array<int, class-string<TMorphModel>|TType> $types
+     * @param (\Closure(builder-of<TMorphModel>, string): mixed)|null $callback
+     * @return $this
+     */
+    public function orWhereDoesntHaveMorph($relation, $types, ?\Closure $callback = null);
+
+    /**
+     * @template TRelation of string
+     * @template TRelatedModel of Model
+     *
+     * @param TRelation|\Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, *, *> $relation
+     * @param (\Closure(($relation is string ? builder-of<TModel, TRelation> : builder-of<TRelatedModel>)): mixed)|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @return $this
+     */
+    public function whereRelation($relation, $column, $operator = null, $value = null);
+
+    /**
+     * @template TRelation of string
+     * @template TRelatedModel of Model
+     *
+     * @param TRelation|\Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, *, *> $relation
+     * @param (\Closure(($relation is string ? builder-of<TModel, TRelation> : builder-of<TRelatedModel>)): mixed)|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @return $this
+     */
+    public function orWhereRelation($relation, $column, $operator = null, $value = null);
+
+    /**
+     * @template TRelation of string
+     * @template TRelatedModel of Model
+     *
+     * @param TRelation|\Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, *, *> $relation
+     * @param (\Closure(($relation is string ? builder-of<TModel, TRelation> : builder-of<TRelatedModel>)): mixed)|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @return $this
+     */
+    public function whereDoesntHaveRelation($relation, $column, $operator = null, $value = null);
+
+    /**
+     * @template TRelation of string
+     * @template TRelatedModel of Model
+     *
+     * @param TRelation|\Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, *, *> $relation
+     * @param (\Closure(($relation is string ? builder-of<TModel, TRelation> : builder-of<TRelatedModel>)): mixed)|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @return $this
+     */
+    public function orWhereDoesntHaveRelation($relation, $column, $operator = null, $value = null);
+
+    /**
+     * @template TMorphModel of Model
+     * @template TType of string
+     *
+     * @param string|\Illuminate\Database\Eloquent\Relations\MorphTo<*, *> $relation
+     * @param class-string<TMorphModel>|TType|array<int, class-string<TMorphModel>|TType> $types
+     * @param (\Closure(builder-of<TMorphModel>): mixed)|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @return $this
+     */
+    public function whereMorphRelation($relation, $types, $column, $operator = null, $value = null);
+
+    /**
+     * @template TMorphModel of Model
+     * @template TType of string
+     *
+     * @param string|\Illuminate\Database\Eloquent\Relations\MorphTo<*, *> $relation
+     * @param class-string<TMorphModel>|TType|array<int, class-string<TMorphModel>|TType> $types
+     * @param (\Closure(builder-of<TMorphModel>): mixed)|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @return $this
+     */
+    public function orWhereMorphRelation($relation, $types, $column, $operator = null, $value = null);
+
+    /**
+     * @template TMorphModel of Model
+     * @template TType of string
+     *
+     * @param string|\Illuminate\Database\Eloquent\Relations\MorphTo<*, *> $relation
+     * @param class-string<TMorphModel>|TType|array<int, class-string<TMorphModel>|TType> $types
+     * @param (\Closure(builder-of<TMorphModel>): mixed)|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @return $this
+     */
+    public function whereMorphDoesntHaveRelation($relation, $types, $column, $operator = null, $value = null);
+
+    /**
+     * @template TMorphModel of Model
+     * @template TType of string
+     *
+     * @param string|\Illuminate\Database\Eloquent\Relations\MorphTo<*, *> $relation
+     * @param class-string<TMorphModel>|TType|array<int, class-string<TMorphModel>|TType> $types
+     * @param (\Closure(builder-of<TMorphModel>): mixed)|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @return $this
+     */
+    public function orWhereMorphDoesntHaveRelation($relation, $types, $column, $operator = null, $value = null);
+
+    /**
+     * @template TRelation of string
+     *
+     * @param TRelation $relation
+     * @param (\Closure(($relation is literal-string ? builder-of<TModel, TRelation> : Builder<*>)|\Illuminate\Database\Eloquent\Relations\Relation<*, *, *>): mixed)|null $callback
+     * @param string $operator
+     * @param \Illuminate\Contracts\Database\Query\Expression|int $count
+     * @return $this
+     */
+    public function withWhereHas($relation, ?\Closure $callback = null, $operator = '>=', $count = 1);
+
+    /**
+     * @template TRelation of string
+     *
+     * @param TRelation $relation
+     * @param (\Closure(($relation is literal-string ? builder-of<TModel, TRelation> : Builder<*>)|\Illuminate\Database\Eloquent\Relations\Relation<*, *, *>): mixed)|string|array<mixed>|\Illuminate\Contracts\Database\Query\Expression $column
+     * @param mixed $operator
+     * @param mixed $value
+     * @return $this
+     */
+    public function withWhereRelation($relation, $column, $operator = null, $value = null);
+
+    /**
+     * Create and return an un-saved model instance.
+     *
+     * @phpstan-param array<model-property<TModel>, mixed> $attributes
+     * @phpstan-return TModel
+     */
+    public function make(array $attributes = []);
+
+    /**
+     * Register a new global scope.
+     *
+     * @param  string  $identifier
+     * @param  \Illuminate\Database\Eloquent\Scope|\Closure  $scope
+     * @return $this
+     */
+    public function withGlobalScope($identifier, $scope);
+
+    /**
+     * Remove a registered global scope.
+     *
+     * @param  \Illuminate\Database\Eloquent\Scope|string  $scope
+     * @return $this
+     */
+    public function withoutGlobalScope($scope);
+
+    /** @phpstan-return TModel */
+    public function getModel();
+
+    /**
+     * @phpstan-param array<model-property<TModel>, mixed> $attributes
+     * @phpstan-return TModel
+     */
+    public function create(array $attributes = []);
+
+    /**
+     * Save a new model and return the instance without raising model events.
+     *
+     * @phpstan-param array<model-property<TModel>, mixed> $attributes
+     * @phpstan-return TModel
+     */
+    public function createQuietly(array $attributes = []);
+
+    /**
+     * Create a collection of models from plain arrays.
+     *
+     * @param  array<mixed>  $items
+     * @phpstan-return collection-of<int, TModel>
+     */
+    public function hydrate(array $items);
+
+    /**
+     * Create a collection of models from a raw query.
+     *
+     * @param  string  $query
+     * @param  array<mixed>  $bindings
+     * @phpstan-return collection-of<int, TModel>
+     */
+    public function fromQuery($query, $bindings = []);
+
+    /**
+     * Find a model by its primary key.
+     *
+     * @param  mixed  $id
+     * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
+     * @phpstan-return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? collection-of<int, TModel> : TModel|null)
+     */
+    public function find($id, $columns = ['*']);
+
+    /**
+     * Find multiple models by their primary keys.
+     *
+     * @param  \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>  $ids
+     * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
+     * @phpstan-return collection-of<int, TModel>
+     */
+    public function findMany($ids, $columns = ['*']);
+
+    /**
+     * Find a model by its primary key or throw an exception.
+     *
+     * @param  mixed  $id
+     * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
+     * @phpstan-return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? collection-of<int, TModel> : TModel)
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TModel>
+     */
+    public function findOrFail($id, $columns = ['*']);
+
+    /**
+     * Find a model by its primary key or return fresh model instance.
+     *
+     * @param  mixed  $id
+     * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
+     * @phpstan-return ($id is array ? collection-of<int, TModel> : TModel)
+     */
+    public function findOrNew($id, $columns = ['*']);
+
+    /**
+     * Execute the query and get the first result.
+     *
+     * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
+     * @return TModel|null
+     */
+    public function first($columns = ['*']);
+
+    /**
+     * Get the first record matching the attributes or instantiate it.
+     *
+     * @param  array<model-property<TModel>, mixed>  $attributes
+     * @param  array<model-property<TModel>, mixed>  $values
+     * @phpstan-return TModel
+     */
+    public function firstOrNew(array $attributes = [], array $values = []);
+
+    /**
+     * Get the first record matching the attributes. If the record is not found, create it.
+     *
+     * @param  array<model-property<TModel>, mixed>  $attributes
+     * @param  array<model-property<TModel>, mixed>  $values
+     * @return TModel
+     */
+    public function firstOrCreate(array $attributes = [], array $values = []);
+
+    /**
+     * Execute the query and get the first result or throw an exception.
+     *
+     * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
+     * @phpstan-return TModel
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TModel>
+     */
+    public function firstOrFail($columns = ['*']);
+
+    /**
+     * Execute the query and get the first result or call a callback.
+     *
+     * @template TValue
+     *
+     * @param  (\Closure(): TValue)|list<model-property<TModel>|'*'>  $columns
+     * @param  (\Closure(): TValue)|null  $callback
+     * @return TModel|TValue
+     */
+    public function firstOr($columns = ['*'], ?\Closure $callback = null);
+
+    /**
+     * Attempt to create the record. If a unique constraint violation occurs, attempt to find the matching record.
+     *
+     * @param  array<model-property<TModel>, mixed>  $attributes
+     * @param  array<model-property<TModel>, mixed>  $values
+     * @return TModel
+     */
+    public function createOrFirst(array $attributes = [], array $values = []);
+
+    /**
+     * Create or update a record matching the attributes, and fill it with values.
+     *
+     * @param  array<model-property<TModel>, mixed>  $attributes
+     * @param  array<model-property<TModel>, mixed>  $values
+     * @phpstan-return TModel
+     */
+    public function updateOrCreate(array $attributes = [], array $values = []);
+
+    /**
+     * @param  array<model-property<TModel>, mixed>  $attributes
+     * @phpstan-return TModel
+     */
+    public function forceCreate(array $attributes);
+
+    /**
+     * @param  array<model-property<TModel>, mixed>  $attributes
+     * @phpstan-return TModel
+     */
+    public function forceCreateQuietly(array $attributes = []);
+
+    /**
+     * @param  array<model-property<TModel>, mixed>  $values
+     * @return int
+     */
+    public function update(array $values);
+
+    /**
+     * Execute the query and get the first result if it's the sole matching record.
+     *
+     * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
+     * @return TModel
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TModel>
+     * @throws \Illuminate\Database\MultipleRecordsFoundException
+     */
+    public function sole($columns = ['*']);
+
+    /**
+     * Add a basic where clause to the query.
+     *
+     * @param  (\Closure(($operator is null ? static : \Illuminate\Database\Query\Builder)): mixed)|model-property<TModel>|array<int|model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @param  string  $boolean
+     * @return $this
+     */
+    public function where($column, $operator = null, $value = null, $boolean = 'and');
+
+    /**
+     * Add an "or where" clause to the query.
+     *
+     * ponytail: Callback typing stays permissive until signatures can distinguish argument counts.
+     *
+     * @param  (\Closure(__benevolent<static|\Illuminate\Database\Query\Builder>): mixed)|model-property<TModel>|array<int|model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return $this
+     */
+    public function orWhere($column, $operator = null, $value = null);
+
+    /**
+     * Add a basic where clause to the query, and return the first result.
+     *
+     * @param  (\Closure(($operator is null ? static : \Illuminate\Database\Query\Builder)): mixed)|model-property<TModel>|array<int|model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @param  string  $boolean
+     * @phpstan-return TModel|null
+     */
+    public function firstWhere($column, $operator = null, $value = null, $boolean = 'and');
+
+    /**
+     * Add a basic "where not" clause to the query.
+     *
+     * @param  (\Closure(($operator is null ? static : \Illuminate\Database\Query\Builder)): mixed)|model-property<TModel>|array<int|model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @param  string  $boolean
+     * @return $this
+     */
+    public function whereNot($column, $operator = null, $value = null, $boolean = 'and');
+
+    /**
+     * Add an "or where not" clause to the query.
+     *
+     * @param  (\Closure(($operator is null ? static : \Illuminate\Database\Query\Builder)): mixed)|model-property<TModel>|array<int|model-property<TModel>, mixed>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return $this
+     */
+    public function orWhereNot($column, $operator = null, $value = null);
+
+    /**
+     * Add an "order by" clause for a timestamp to the query.
+     *
+     * @param  model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @return $this
+     */
+    public function latest($column = null);
+
+    /**
+     * Add an "order by" clause for a timestamp to the query.
+     *
+     * @param  model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @return $this
+     */
+    public function oldest($column = null);
+
+    /**
+     * Execute the query as a "select" statement.
+     *
+     * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
+     * @phpstan-return collection-of<int, TModel>
+     */
+    public function get($columns = ['*']);
+
+    /**
+     * Get a lazy collection for the given query.
+     *
+     * @phpstan-return \Illuminate\Support\LazyCollection<int, TModel>
+     */
+    public function cursor();
+
+    /**
+     * Get the hydrated models without eager loading.
+     *
+     * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
+     * @return list<TModel>
+     */
+    public function getModels($columns = ['*']);
+
+    /**
+     * Get a single column's value from the first result of a query.
+     *
+     * @param  model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @return mixed
+     */
+    public function value($column);
+
+    /**
+     * Get a single column's value from the first result of a query if it's the sole matching record.
+     *
+     * @param  model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @return mixed
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TModel>
+     * @throws \Illuminate\Database\MultipleRecordsFoundException
+     */
+    public function soleValue($column);
+
+    /**
+     * Get a single column's value from the first result of the query or throw an exception.
+     *
+     * @param  model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @return mixed
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TModel>
+     */
+    public function valueOrFail($column);
+
+    /**
+     * Paginate the given query.
+     *
+     * @param  int|null  $perPage
+     * @param  array<int, (model-property<TModel>|'*')>  $columns
+     * @param  string  $pageName
+     * @param  int|null  $page
+     * @return \Illuminate\Pagination\LengthAwarePaginator<int, TModel>
+     *
+     * @throws \InvalidArgumentException
+     */
+    public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null);
+
+    /**
+     * Paginate the given query into a simple paginator.
+     *
+     * @param  int|null  $perPage
+     * @param  array<int, (model-property<TModel>|'*')>  $columns
+     * @param  string  $pageName
+     * @param  int|null  $page
+     * @return \Illuminate\Pagination\Paginator<int, TModel>
+     */
+    public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null);
+
+    /**
+     * Paginate the given query into a cursor paginator.
+     *
+     * @param  int|null  $perPage
+     * @param  array<int, (model-property<TModel>|'*')>  $columns
+     * @param  string  $cursorName
+     * @param  \Illuminate\Pagination\Cursor|string|null  $cursor
+     * @return \Illuminate\Pagination\CursorPaginator<int, TModel>
+     */
+     public function cursorPaginate($perPage = null, $columns = ['*'], $cursorName = 'cursor', $cursor = null);
+
+     /**
+      * Query lazily, by chunks of the given size.
+      *
+      * @param  int  $chunkSize
+      * @return \Illuminate\Support\LazyCollection<int, TModel>
+      *
+      * @throws \InvalidArgumentException
+      */
+     public function lazy($chunkSize = 1000);
+
+     /**
+      * Query lazily, by chunking the results of a query by comparing IDs.
+      *
+      * @param  int  $chunkSize
+      * @param  string|null  $column
+      * @param  string|null  $alias
+      * @return \Illuminate\Support\LazyCollection<int, TModel>
+      *
+      * @throws \InvalidArgumentException
+      */
+     public function lazyById($chunkSize = 1000, $column = null, $alias = null);
+
+     /**
+      * Query lazily, by chunking the results of a query by comparing IDs in descending order.
+      *
+      * @param  int  $chunkSize
+      * @param  string|null  $column
+      * @param  string|null  $alias
+      * @return \Illuminate\Support\LazyCollection<int, TModel>
+      *
+      * @throws \InvalidArgumentException
+      */
+     public function lazyByIdDesc($chunkSize = 1000, $column = null, $alias = null);
+
+    /**
+     * Gets the result of a query in chunks.
+     *
+     * @param  int  $count
+     * @param  callable(collection-of<int, TModel>, int): mixed $callback
+     * @return bool
+     */
+    public function chunk($count, $callback);
+
+    /**
+     * Chunk the results of a query by comparing IDs.
+     *
+     * @param  int  $count
+     * @param  callable(collection-of<int, TModel>, int): mixed  $callback
+     * @param  string|null  $column
+     * @param  string|null  $alias
+     * @return bool
+     */
+    public function chunkById($count, callable $callback, $column = null, $alias = null);
+
+    /**
+     * Run a map over each item while chunking.
+     *
+     * @template TReturn
+     *
+     * @param  callable(TModel): TReturn  $callback
+     * @param  int  $count
+     * @return \Illuminate\Support\Collection<int, TReturn>
+     */
+    public function chunkMap(callable $callback, $count = 1000);
+
+    /**
+     * Get a collection with the values of a given column.
+     *
+     * @param  model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @param  string|null  $key
+     * @return \Illuminate\Support\Collection<array-key, mixed>
+     */
+    public function pluck($column, $key = null);
+
+    /**
+     * Increment a column's value by a given amount.
+     *
+     * @param  model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @param  float|int  $amount
+     * @param  array<model-property<TModel>, mixed>  $extra
+     * @return int
+     */
+    public function increment($column, $amount = 1, array $extra = []);
+
+    /**
+     * Decrement a column's value by a given amount.
+     *
+     * @param  model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @param  float|int  $amount
+     * @param  array<model-property<TModel>, mixed>  $extra
+     * @return int
+     */
+    public function decrement($column, $amount = 1, array $extra = []);
+
+    /**
+     * Increment the given column's values by the given amounts.
+     *
+     * @param  array<model-property<TModel>, float|int|numeric-string>  $columns
+     * @param  array<model-property<TModel>, mixed>  $extra
+     * @return int
+     */
+    public function incrementEach(array $columns, array $extra = []);
+
+    /**
+     * Decrement the given column's values by the given amounts.
+     *
+     * @param  array<model-property<TModel>, float|int|numeric-string>  $columns
+     * @param  array<model-property<TModel>, mixed>  $extra
+     * @return int
+     */
+    public function decrementEach(array $columns, array $extra = []);
+
+    /**
+     * Qualify the given column name by the model's table.
+     *
+     * @param  model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression  $column
+     * @return string
+     */
+    public function qualifyColumn($column);
+
+    /**
+     * Qualify the given columns with the model's table.
+     *
+     * @param  array<model-property<TModel>>|\Illuminate\Contracts\Database\Query\Expression  $columns
+     * @return array<string, mixed>
+     */
+    public function qualifyColumns($columns);
+
+}
+
+class Scope {}
+
+/**
+ * @method static \Illuminate\Database\Eloquent\Builder<static> withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static> onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static> withoutTrashed()
+ * @method static bool restore()
+ * @method static static restoreOrCreate(array<string, mixed> $attributes = [], array<string, mixed> $values = [])
+ * @method static static createOrRestore(array<string, mixed> $attributes = [], array<string, mixed> $values = [])
+ */
+trait SoftDeletes {}
