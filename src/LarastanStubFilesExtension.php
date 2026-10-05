@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan;
 
+use Illuminate\Foundation\Application;
 use PHPStan\PhpDoc\StubFilesExtension;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
 
 use function array_keys;
 use function array_values;
+use function class_exists;
 use function iterator_to_array;
 use function version_compare;
 
@@ -19,10 +21,11 @@ final class LarastanStubFilesExtension implements StubFilesExtension
     public function getFiles(): array
     {
         $stubDirectories = Finder::create()->directories()->name('/^\d+/')->in(__DIR__ . '/../stubs')->depth(0);
+        $laravelVersion  = $this->getLaravelVersion();
 
         // Include only applicable versions
         $stubDirectories
-            ->filter(static fn (SplFileInfo $directory) => version_compare($directory->getFilename(), LARAVEL_VERSION, '<='))
+            ->filter(static fn (SplFileInfo $directory) => version_compare($directory->getFilename(), $laravelVersion, '<='))
             ->sort(static fn (SplFileInfo $a, SplFileInfo $b) => version_compare($a->getFilename(), $b->getFilename()));
 
         $files = [];
@@ -36,5 +39,18 @@ final class LarastanStubFilesExtension implements StubFilesExtension
         }
 
         return array_values($files);
+    }
+
+    /**
+     * PHPStan can ask for the stub files before the bootstrap files have run,
+     * so the version cannot come from the booted application alone.
+     */
+    private function getLaravelVersion(): string
+    {
+        if (class_exists(Application::class)) {
+            return Application::VERSION;
+        }
+
+        return LARAVEL_VERSION;
     }
 }
