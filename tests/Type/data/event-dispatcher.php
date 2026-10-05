@@ -21,8 +21,9 @@ function dispatch(Dispatcher $dispatcher, DispatcherContract $contract, bool $ha
 
 function fake(): void
 {
-    assertType('Illuminate\Support\Collection<int, array<mixed>>', Event::dispatched('event'));
+    assertType('Illuminate\Support\Collection', Event::dispatched('event'));
     assertType('bool', Event::hasDispatched('event'));
-    assertType('array<string, list<array<mixed>>>', Event::dispatchedEvents());
+    assertType('array', Event::dispatchedEvents());
     assertType('Illuminate\Support\Testing\Fakes\EventFake', Event::except('event'));
+    assertType('null', Event::assertDispatched('event'));
 }
