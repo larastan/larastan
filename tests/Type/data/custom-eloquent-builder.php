@@ -72,6 +72,13 @@ function test(FooModel $foo, NonGenericBuilder $nonGenericBuilder, ModelWithNonG
     // Eloquent builder's own `toBase()` return type, instead of assuming
     // Illuminate\Database\Query\Builder.
     assertType('CustomEloquentBuilder\ModelWithCustomQueryBuilder|null', ModelWithCustomQueryBuilder::onlyOnCustomQueryBuilder()->first());
+
+    // exists() is in BuilderHelper::$passthru and is overridden on the custom query builder
+    // (not on Illuminate\Database\Query\Builder itself). Forwarding it must still return its
+    // own declared scalar return type, not fall back to assuming the Eloquent builder itself
+    // (i.e. treating it as chainable) just because it isn't declared on Laravel's native
+    // query builder.
+    assertType('bool', ModelWithCustomQueryBuilder::where('email', 'bar')->exists());
 }
 
 /** @param ChildNonGenericBuilder|ModelWithNonGenericBuilder $builder */
@@ -267,6 +274,12 @@ class CustomQueryBuilder extends \Illuminate\Database\Query\Builder
     public function onlyOnCustomQueryBuilder(): static
     {
         return $this;
+    }
+
+    /** Overridden here, like mongodb/laravel-mongodb's own Query\Builder::exists() does. */
+    public function exists(): bool
+    {
+        return true;
     }
 }
 

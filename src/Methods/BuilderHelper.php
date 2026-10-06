@@ -287,7 +287,7 @@ class BuilderHelper
      * reflection, so methods that only exist on the custom query builder (and are forwarded
      * to it via `__call`) can still be resolved.
      */
-    private function resolveQueryBuilderReflection(ClassReflection $eloquentBuilder): ClassReflection
+    public function resolveQueryBuilderReflection(ClassReflection $eloquentBuilder): ClassReflection
     {
         $methodTags = $eloquentBuilder->getMethodTags();
 

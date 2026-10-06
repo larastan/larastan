@@ -6,7 +6,6 @@ namespace Larastan\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 use Larastan\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\ClassReflection;
@@ -145,9 +144,11 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             $returnType = new ObjectType($classReflection->getName());
         }
 
+        $queryBuilderReflection = $this->builderHelper->resolveQueryBuilderReflection($classReflection);
+
         if (
-            $ref->getDeclaringClass()->getName() === QueryBuilder::class
-            && $this->reflectionProvider->getClass(QueryBuilder::class)->hasNativeMethod($methodName)
+            $ref->getDeclaringClass()->getName() === $queryBuilderReflection->getName()
+            && $queryBuilderReflection->hasNativeMethod($methodName)
         ) {
             if (! in_array($methodName, $this->builderHelper->getPassthru(), true)) {
                 return new EloquentBuilderMethodReflection(
