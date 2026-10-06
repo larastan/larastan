@@ -50,6 +50,17 @@ class Collection extends BaseCollection implements QueueableCollection
     public function find($key, $default = null);
 
     /**
+     * Determine if a key exists in the collection.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TModel|(callable(TModel, TKey): bool)|string|int  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function contains($key, $operator = null, $value = null);
+
+    /**
      * Merge the collection with the given items.
      * Integer keys are renumbered, see \Illuminate\Support\Collection::shift().
      *
@@ -57,4 +68,15 @@ class Collection extends BaseCollection implements QueueableCollection
      * @return static<(array<TKey, mixed> is array<int, mixed> ? int : TKey), TModel>
      */
     public function merge($items);
+
+    /**
+     * Partition the collection into two arrays using the given callback or key.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TModel|(callable(TModel, TKey): bool)|string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return \Illuminate\Support\Collection<int<0, 1>, static<TKey, TModel>>
+     */
+    public function partition($key, $operator = null, $value = null);
 }

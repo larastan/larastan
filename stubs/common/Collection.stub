@@ -89,6 +89,70 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
     public function keyBy($keyBy);
 
     /**
+     * Determine if an item exists in the collection.
+     * TValue is listed before the callable on purpose. With the callable first, PHPStan does
+     * not widen the value type of a usage-inferred collection to the argument and rejects it.
+     *
+     * @param  TValue|(callable(TValue, TKey): bool)|string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function contains($key, $operator = null, $value = null);
+
+    /**
+     * Determine if an item exists, using strict comparison.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TValue|(callable(TValue): bool)|array-key  $key
+     * @param  TValue|null  $value
+     * @return bool
+     */
+    public function containsStrict($key, $value = null);
+
+    /**
+     * Alias for the "contains" method.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TValue|(callable(TValue, TKey): bool)|string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function some($key, $operator = null, $value = null);
+
+    /**
+     * Determine if all items pass the given truth test.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TValue|(callable(TValue, TKey): bool)|string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function every($key, $operator = null, $value = null);
+
+    /**
+     * Partition the collection into two arrays using the given callback or key.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TValue|(callable(TValue, TKey): bool)|string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return static<int<0, 1>, static<TKey, TValue>>
+     */
+    public function partition($key, $operator = null, $value = null);
+
+    /**
+     * Create a collection of all elements that do not pass a given truth test.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TValue|bool|(callable(TValue, TKey): bool)  $callback
+     * @return static
+     */
+    public function reject($callback = true);
+
+    /**
      * Map a collection and flatten the result by a single level.
      * Integer keys are renumbered, see \Illuminate\Support\Collection::shift().
      *
@@ -248,6 +312,69 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * @return static<array-key, TCombineValue>
      */
     public function combine($values);
+
+    /**
+     * Determine if an item exists in the collection.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TValue|(callable(TValue, TKey): bool)|string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function contains($key, $operator = null, $value = null);
+
+    /**
+     * Determine if an item exists, using strict comparison.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TValue|(callable(TValue): bool)|array-key  $key
+     * @param  TValue|null  $value
+     * @return bool
+     */
+    public function containsStrict($key, $value = null);
+
+    /**
+     * Alias for the "contains" method.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TValue|(callable(TValue, TKey): bool)|string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function some($key, $operator = null, $value = null);
+
+    /**
+     * Determine if all items pass the given truth test.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TValue|(callable(TValue, TKey): bool)|string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function every($key, $operator = null, $value = null);
+
+    /**
+     * Partition the collection into two arrays using the given callback or key.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TValue|(callable(TValue, TKey): bool)|string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return static<int<0, 1>, static<TKey, TValue>>
+     */
+    public function partition($key, $operator = null, $value = null);
+
+    /**
+     * Create a collection of all elements that do not pass a given truth test.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TValue|bool|(callable(TValue, TKey): bool)  $callback
+     * @return static
+     */
+    public function reject($callback = true);
 
     /**
      * Map a collection and flatten the result by a single level.
