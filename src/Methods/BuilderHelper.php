@@ -258,7 +258,7 @@ class BuilderHelper
             }
         }
 
-        $queryBuilderReflection = $this->reflectionProvider->getClass(QueryBuilder::class);
+        $queryBuilderReflection = $this->resolveQueryBuilderReflection($eloquentBuilder);
 
         if (in_array($methodName, $this->getPassthru(), true)) {
             return $queryBuilderReflection->getNativeMethod($methodName);
@@ -274,6 +274,39 @@ class BuilderHelper
         }
 
         return $this->dynamicWhere($methodName, $this->getBuilderType($eloquentBuilder->getName(), $modelType));
+    }
+
+    /**
+     * Resolve the query builder class actually used by the given Eloquent builder.
+     *
+     * Custom Eloquent builders (e.g. from packages replacing the underlying query layer,
+     * such as mongodb/laravel-mongodb) commonly advertise this with their own
+     * `@method CustomQueryBuilder toBase()` PHPDoc tag, overriding the inherited native
+     * `toBase(): \Illuminate\Database\Query\Builder` declaration. PHPDoc `@method` tags are
+     * checked first since they take precedence over (and are invisible to) native method
+     * reflection, so methods that only exist on the custom query builder (and are forwarded
+     * to it via `__call`) can still be resolved.
+     */
+    private function resolveQueryBuilderReflection(ClassReflection $eloquentBuilder): ClassReflection
+    {
+        $methodTags = $eloquentBuilder->getMethodTags();
+
+        if (array_key_exists('toBase', $methodTags)) {
+            $classNames = $methodTags['toBase']->getReturnType()->getObjectClassNames();
+
+            if (count($classNames) === 1) {
+                return $this->reflectionProvider->getClass($classNames[0]);
+            }
+        } elseif ($eloquentBuilder->hasNativeMethod('toBase')) {
+            $returnType = $eloquentBuilder->getNativeMethod('toBase')->getVariants()[0]->getReturnType();
+            $classNames = $returnType->getObjectClassNames();
+
+            if (count($classNames) === 1) {
+                return $this->reflectionProvider->getClass($classNames[0]);
+            }
+        }
+
+        return $this->reflectionProvider->getClass(QueryBuilder::class);
     }
 
     public function getBuilderType(string $builderClassName, Type $modelType): ObjectType

@@ -66,6 +66,12 @@ function test(FooModel $foo, NonGenericBuilder $nonGenericBuilder, ModelWithNonG
     assertType('string', ModelWithCustomBuilder::query()->getColumns());
     assertType('CustomEloquentBuilder\ChildNonGenericBuilder', ModelWithNonGenericBuilder::query()->whereNotIn('id', [1]));
     assertType('int<0, max>', ModelWithCustomBuilder::query()->count());
+
+    // A method that only exists on the custom query builder returned by toBase(), forwarded
+    // via __call. Resolving this requires reading the actual query builder class off the
+    // Eloquent builder's own `toBase()` return type, instead of assuming
+    // Illuminate\Database\Query\Builder.
+    assertType('CustomEloquentBuilder\ModelWithCustomQueryBuilder|null', ModelWithCustomQueryBuilder::onlyOnCustomQueryBuilder()->first());
 }
 
 /** @param ChildNonGenericBuilder|ModelWithNonGenericBuilder $builder */
@@ -249,5 +255,40 @@ class ChildNonGenericBuilder extends NonGenericBuilder
     public function getColumns(): array
     {
         return [];
+    }
+}
+
+/**
+ * A query builder with a method that does not exist on Illuminate\Database\Query\Builder.
+ * Mirrors packages (e.g. mongodb/laravel-mongodb) that replace the query layer entirely.
+ */
+class CustomQueryBuilder extends \Illuminate\Database\Query\Builder
+{
+    public function onlyOnCustomQueryBuilder(): static
+    {
+        return $this;
+    }
+}
+
+/**
+ * @template TModel of ModelWithCustomQueryBuilder
+ *
+ * @extends Builder<TModel>
+ *
+ * @method CustomQueryBuilder toBase()
+ */
+class EloquentBuilderWithCustomQueryBuilder extends Builder
+{
+}
+
+class ModelWithCustomQueryBuilder extends Model
+{
+    /**
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @return EloquentBuilderWithCustomQueryBuilder<ModelWithCustomQueryBuilder>
+     */
+    public function newEloquentBuilder($query): EloquentBuilderWithCustomQueryBuilder
+    {
+        return new EloquentBuilderWithCustomQueryBuilder($query);
     }
 }
