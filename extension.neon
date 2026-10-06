@@ -330,6 +330,8 @@ services:
         class: Larastan\Larastan\ReturnTypes\Helpers\CollectExtension
         tags:
             - phpstan.broker.dynamicFunctionReturnTypeExtension
+        arguments:
+            inferFromUsage: %featureToggles.unresolvedTemplateArguments%
 
     -
         class: Larastan\Larastan\ReturnTypes\Helpers\NowAndTodayExtension
