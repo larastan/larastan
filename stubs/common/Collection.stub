@@ -53,6 +53,12 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      *
      * @param  int  $count
      * @return ($count is 1 ? TValue|null : static<int, TValue>)
+     *
+     * Integer keys are renumbered, so they widen to int. The conditional tests an array wrapper
+     * instead of TKey itself: a branch that mentions its own subject is narrowed by it, which
+     * would turn a benevolent (int|string) key into string.
+     *
+     * @phpstan-this-out static<(array<TKey, mixed> is array<int, mixed> ? int : TKey), TValue>
      */
     public function shift($count = 1);
 
@@ -81,6 +87,207 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      * @return static<($keyBy is string ? array-key : ($keyBy is array ? array-key : TNewKey)), TValue>
      */
     public function keyBy($keyBy);
+
+    /**
+     * Determine if an item exists in the collection.
+     * TValue is listed before the callable on purpose. With the callable first, PHPStan does
+     * not widen the value type of a usage-inferred collection to the argument and rejects it.
+     *
+     * @param  TValue|(callable(TValue, TKey): bool)|string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function contains($key, $operator = null, $value = null);
+
+    /**
+     * Determine if an item exists, using strict comparison.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TValue|(callable(TValue): bool)|array-key  $key
+     * @param  TValue|null  $value
+     * @return bool
+     */
+    public function containsStrict($key, $value = null);
+
+    /**
+     * Alias for the "contains" method.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TValue|(callable(TValue, TKey): bool)|string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function some($key, $operator = null, $value = null);
+
+    /**
+     * Determine if all items pass the given truth test.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TValue|(callable(TValue, TKey): bool)|string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function every($key, $operator = null, $value = null);
+
+    /**
+     * Partition the collection into two arrays using the given callback or key.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TValue|(callable(TValue, TKey): bool)|string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return static<int<0, 1>, static<TKey, TValue>>
+     */
+    public function partition($key, $operator = null, $value = null);
+
+    /**
+     * Create a collection of all elements that do not pass a given truth test.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TValue|bool|(callable(TValue, TKey): bool)  $callback
+     * @return static
+     */
+    public function reject($callback = true);
+
+    /**
+     * Map a collection and flatten the result by a single level.
+     * Integer keys are renumbered, see \Illuminate\Support\Collection::shift().
+     *
+     * @template TFlatMapKey of array-key
+     * @template TFlatMapValue
+     *
+     * @param  callable(TValue, TKey): (\Illuminate\Support\Collection<TFlatMapKey, TFlatMapValue>|array<TFlatMapKey, TFlatMapValue>)  $callback
+     * @return static<(array<TFlatMapKey, mixed> is array<int, mixed> ? int : TFlatMapKey), TFlatMapValue>
+     */
+    public function flatMap(callable $callback);
+
+    /**
+     * Merge the collection with the given items.
+     * Integer keys are renumbered, see \Illuminate\Support\Collection::shift().
+     *
+     * @template TMergeValue
+     *
+     * @param  \Illuminate\Contracts\Support\Arrayable<TKey, TMergeValue>|iterable<TKey, TMergeValue>  $items
+     * @return static<(array<TKey, mixed> is array<int, mixed> ? int : TKey), TValue|TMergeValue>
+     */
+    public function merge($items);
+
+    /**
+     * Recursively merge the collection with the given items.
+     * Integer keys are renumbered, see \Illuminate\Support\Collection::shift().
+     *
+     * @template TMergeRecursiveValue
+     *
+     * @param  \Illuminate\Contracts\Support\Arrayable<TKey, TMergeRecursiveValue>|iterable<TKey, TMergeRecursiveValue>  $items
+     * @return static<(array<TKey, mixed> is array<int, mixed> ? int : TKey), TValue|TMergeRecursiveValue>
+     */
+    public function mergeRecursive($items);
+
+    /**
+     * Push all of the given items onto the collection.
+     *
+     * @template TConcatKey of array-key
+     * @template TConcatValue
+     *
+     * @param  iterable<TConcatKey, TConcatValue>  $source
+     * @return static<TKey|int, TValue|TConcatValue>
+     */
+    public function concat($source);
+
+    /**
+     * Multiply the items in the collection by the multiplier.
+     *
+     * @param  int  $multiplier
+     * @return static<int, TValue>
+     */
+    public function multiply(int $multiplier);
+
+    /**
+     * Shuffle the items in the collection.
+     *
+     * @return static<int, TValue>
+     */
+    public function shuffle();
+
+    /**
+     * Split a collection into a certain number of groups.
+     * Integer keys are renumbered, see \Illuminate\Support\Collection::shift().
+     *
+     * @param  int  $numberOfGroups
+     * @return ($numberOfGroups is positive-int ? static<int, static<(array<TKey, mixed> is array<int, mixed> ? int : TKey), TValue>> : never)
+     */
+    public function split($numberOfGroups);
+
+    /**
+     * Push an item onto the beginning of the collection.
+     *
+     * @param  TValue  $value
+     * @param  TKey|null  $key
+     * @return $this
+     *
+     * @phpstan-this-out ($key is null ? static<TKey|int, TValue> : $this)
+     */
+    public function prepend($value, $key = null);
+
+    /**
+     * Push one or more items onto the end of the collection.
+     *
+     * @param  TValue  ...$values
+     * @return $this
+     *
+     * @phpstan-this-out static<TKey|int, TValue>
+     */
+    public function push(...$values);
+
+    /**
+     * Prepend one or more items to the beginning of the collection.
+     *
+     * @param  TValue  ...$values
+     * @return $this
+     *
+     * @phpstan-this-out static<TKey|int, TValue>
+     */
+    public function unshift(...$values);
+
+    /**
+     * Add an item to the collection.
+     *
+     * @param  TValue  $item
+     * @return $this
+     *
+     * @phpstan-this-out static<TKey|int, TValue>
+     */
+    public function add($item);
+
+    /**
+     * Splice a portion of the underlying collection array.
+     * Integer keys are renumbered, see \Illuminate\Support\Collection::shift().
+     *
+     * @param  int  $offset
+     * @param  int|null  $length
+     * @param  array<array-key, TValue>  $replacement
+     * @return static<(array<TKey, mixed> is array<int, mixed> ? int : TKey), TValue>
+     *
+     * @phpstan-this-out static<(array<TKey, mixed> is array<int, mixed> ? int : TKey), TValue>
+     */
+    public function splice($offset, $length = null, $replacement = []);
+
+    /**
+     * Get an item from the collection by key or add it to collection if it does not exist.
+     *
+     * @template TGetOrPutKey of array-key
+     * @template TGetOrPutValue
+     *
+     * @param  TGetOrPutKey  $key
+     * @param  TGetOrPutValue|(\Closure(): TGetOrPutValue)  $value
+     * @return TValue|TGetOrPutValue
+     *
+     * @phpstan-this-out static<TKey|TGetOrPutKey, TValue|TGetOrPutValue>
+     */
+    public function getOrPut($key, $value);
 }
 
 /**
@@ -105,4 +312,136 @@ class LazyCollection implements CanBeEscapedWhenCastToString, Enumerable
      * @return static<array-key, TCombineValue>
      */
     public function combine($values);
+
+    /**
+     * Determine if an item exists in the collection.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TValue|(callable(TValue, TKey): bool)|string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function contains($key, $operator = null, $value = null);
+
+    /**
+     * Determine if an item exists, using strict comparison.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TValue|(callable(TValue): bool)|array-key  $key
+     * @param  TValue|null  $value
+     * @return bool
+     */
+    public function containsStrict($key, $value = null);
+
+    /**
+     * Alias for the "contains" method.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TValue|(callable(TValue, TKey): bool)|string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function some($key, $operator = null, $value = null);
+
+    /**
+     * Determine if all items pass the given truth test.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TValue|(callable(TValue, TKey): bool)|string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function every($key, $operator = null, $value = null);
+
+    /**
+     * Partition the collection into two arrays using the given callback or key.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TValue|(callable(TValue, TKey): bool)|string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return static<int<0, 1>, static<TKey, TValue>>
+     */
+    public function partition($key, $operator = null, $value = null);
+
+    /**
+     * Create a collection of all elements that do not pass a given truth test.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TValue|bool|(callable(TValue, TKey): bool)  $callback
+     * @return static
+     */
+    public function reject($callback = true);
+
+    /**
+     * Map a collection and flatten the result by a single level.
+     * Integer keys are renumbered, see \Illuminate\Support\Collection::shift().
+     *
+     * @template TFlatMapKey of array-key
+     * @template TFlatMapValue
+     *
+     * @param  callable(TValue, TKey): (\Illuminate\Support\Collection<TFlatMapKey, TFlatMapValue>|array<TFlatMapKey, TFlatMapValue>)  $callback
+     * @return static<(array<TFlatMapKey, mixed> is array<int, mixed> ? int : TFlatMapKey), TFlatMapValue>
+     */
+    public function flatMap(callable $callback);
+
+    /**
+     * Merge the collection with the given items.
+     * Integer keys are renumbered, see \Illuminate\Support\Collection::shift().
+     *
+     * @template TMergeValue
+     *
+     * @param  \Illuminate\Contracts\Support\Arrayable<TKey, TMergeValue>|iterable<TKey, TMergeValue>  $items
+     * @return static<(array<TKey, mixed> is array<int, mixed> ? int : TKey), TValue|TMergeValue>
+     */
+    public function merge($items);
+
+    /**
+     * Recursively merge the collection with the given items.
+     * Integer keys are renumbered, see \Illuminate\Support\Collection::shift().
+     *
+     * @template TMergeRecursiveValue
+     *
+     * @param  \Illuminate\Contracts\Support\Arrayable<TKey, TMergeRecursiveValue>|iterable<TKey, TMergeRecursiveValue>  $items
+     * @return static<(array<TKey, mixed> is array<int, mixed> ? int : TKey), TValue|TMergeRecursiveValue>
+     */
+    public function mergeRecursive($items);
+
+    /**
+     * Push all of the given items onto the collection.
+     *
+     * @template TConcatKey of array-key
+     * @template TConcatValue
+     *
+     * @param  iterable<TConcatKey, TConcatValue>  $source
+     * @return static<TKey|int, TValue|TConcatValue>
+     */
+    public function concat($source);
+
+    /**
+     * Multiply the items in the collection by the multiplier.
+     *
+     * @param  int  $multiplier
+     * @return static<int, TValue>
+     */
+    public function multiply(int $multiplier);
+
+    /**
+     * Shuffle the items in the collection.
+     *
+     * @return static<int, TValue>
+     */
+    public function shuffle();
+
+    /**
+     * Split a collection into a certain number of groups.
+     * Integer keys are renumbered, see \Illuminate\Support\Collection::shift().
+     *
+     * @param  int  $numberOfGroups
+     * @return ($numberOfGroups is positive-int ? static<int, \Illuminate\Support\Collection<(array<TKey, mixed> is array<int, mixed> ? int : TKey), TValue>> : never)
+     */
+    public function split($numberOfGroups);
 }

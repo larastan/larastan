@@ -187,6 +187,18 @@ parameters:
 			path: src/Types/CollectionOf/CollectionOfType.php
 
 		-
+			rawMessage: Implementing PHPStan\Type\CompoundType is not covered by backward compatibility promise. The interface might change in a minor PHPStan version.
+			identifier: phpstanApi.interface
+			count: 1
+			path: src/Types/RelationOf/RelationOfType.php
+
+		-
+			rawMessage: Using PHPStan\Type\Traits\LateResolvableTypeTrait is not covered by backward compatibility promise. The trait might change in a minor PHPStan version.
+			identifier: phpstanApi.trait
+			count: 1
+			path: src/Types/RelationOf/RelationOfType.php
+
+		-
 			rawMessage: Using PHPStan\Type\Traits\NonGeneralizableTypeTrait is not covered by backward compatibility promise. The trait might change in a minor PHPStan version.
 			identifier: phpstanApi.trait
 			count: 1

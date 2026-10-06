@@ -77,7 +77,7 @@ final class ApplicationResolver
         $resolvingCallback = static function ($app): void {
             $packageManifest = $app->make(PackageManifest::class);
 
-            if (file_exists($packageManifest->manifestPath)) {
+            if ($packageManifest->manifestPath === null || file_exists($packageManifest->manifestPath)) {
                 return;
             }
 

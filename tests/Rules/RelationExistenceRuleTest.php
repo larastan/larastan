@@ -300,6 +300,28 @@ class RelationExistenceRuleTest extends RuleTestCase
         ]);
     }
 
+    public function testColumnSelection(): void
+    {
+        $this->analyse([__DIR__ . '/data/relation-existence-column-selection.php'], [
+            ["Relation 'accounts:id,user_id' is not found in App\\User model.", 18],
+            ["Relation 'accounts:id,user_id' is not found in App\\User model.", 19],
+            ["Relation 'transactions:id' is not found in App\\Account model.", 20],
+            ["Relation 'accounts:id' is not found in App\\User model.", 21],
+            ["Relation 'transactions:id' is not found in App\\Account model.", 22],
+            ["Relation 'accounts:id,user_id' is not found in App\\User model.", 23],
+            ["Relation 'accounts:id,user_id' is not found in App\\User model.", 24],
+            ["Relation 'accounts:id,user_id' is not found in App\\User model.", 25],
+            ["Relation 'accounts:id,user_id' is not found in App\\User model.", 26],
+            ["Relation 'accounts:id,user_id' is not found in App\\User model.", 27],
+            ["Relation 'accounts:id,user_id' is not found in App\\User model.", 28],
+            ["Relation 'accounts:id,user_id' is not found in App\\User model.", 29],
+            ["Relation 'transactions:id' is not found in App\\Account model.", 30],
+            ["Relation 'accounts:id,user_id' is not found in App\\User model.", 31],
+            ["Relation 'accounts:id,user_id' is not found in App\\User model.", 32],
+            ["Relation 'accounts:id' is not found in App\\User model.", 33],
+        ]);
+    }
+
     /** @return string[] */
     public static function getAdditionalConfigFiles(): array
     {

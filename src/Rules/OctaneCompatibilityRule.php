@@ -82,7 +82,7 @@ class OctaneCompatibilityRule implements Rule
         // is container, second is parameters. If no parameter
         // is given we will check for the usage of `$this->app`
         if (count($closureParams) < 1) {
-            return $this->checkForThisAppUsage($scope, $closure);
+            return $this->checkForThisAppUsage($closure);
         }
 
         // Using `$app` with `bind` is ok, so we return early
@@ -143,7 +143,7 @@ class OctaneCompatibilityRule implements Rule
      *
      * @return RuleError[]
      */
-    private function checkForThisAppUsage(Scope $scope, Node\Expr $closure): array
+    private function checkForThisAppUsage(Node\Expr $closure): array
     {
         $nodes = (new NodeFinder())->find($closure->getStmts(), static function (Node $node): bool {
             return $node instanceof Node\Expr\PropertyFetch &&

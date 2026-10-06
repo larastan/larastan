@@ -99,7 +99,7 @@ class CollectionFilterRejectDynamicReturnTypeExtension implements DynamicMethodR
             return null;
         }
 
-        if ($var !== null && $expr !== null) {
+        if ($var !== null) {
             if (! $var instanceof Variable || ! is_string($var->name)) {
                 throw new ShouldNotHappenException();
             }
