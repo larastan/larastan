@@ -48,4 +48,13 @@ class Collection extends BaseCollection implements QueueableCollection
      * @phpstan-return ($key is \Illuminate\Database\Eloquent\Model ? TModel|TFindDefault : ($key is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? static<TKey, TModel> : TModel|TFindDefault))
      */
     public function find($key, $default = null);
+
+    /**
+     * Merge the collection with the given items.
+     * Integer keys are renumbered, see \Illuminate\Support\Collection::shift().
+     *
+     * @param  iterable<array-key, TModel>  $items
+     * @return static<(array<TKey, mixed> is array<int, mixed> ? int : TKey), TModel>
+     */
+    public function merge($items);
 }
