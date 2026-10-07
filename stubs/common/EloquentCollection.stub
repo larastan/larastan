@@ -79,4 +79,25 @@ class Collection extends BaseCollection implements QueueableCollection
      * @return \Illuminate\Support\Collection<int<0, 1>, static<TKey, TModel>>
      */
     public function partition($key, $operator = null, $value = null);
+
+    /**
+     * Run a map over each of the items.
+     *
+     * @template TMapValue
+     *
+     * @param  callable(TModel, TKey): TMapValue  $callback
+     * @return (array{TMapValue} is array{\Illuminate\Database\Eloquent\Model} ? static<TKey, TMapValue&\Illuminate\Database\Eloquent\Model> : \Illuminate\Support\Collection<TKey, TMapValue>)
+     */
+    public function map(callable $callback);
+
+    /**
+     * Run an associative map over each of the items.
+     *
+     * @template TMapWithKeysKey of array-key
+     * @template TMapWithKeysValue
+     *
+     * @param  callable(TModel, TKey): array<TMapWithKeysKey, TMapWithKeysValue>  $callback
+     * @return (array{TMapWithKeysValue} is array{\Illuminate\Database\Eloquent\Model} ? static<TMapWithKeysKey, TMapWithKeysValue&\Illuminate\Database\Eloquent\Model> : \Illuminate\Support\Collection<TMapWithKeysKey, TMapWithKeysValue>)
+     */
+    public function mapWithKeys(callable $callback);
 }

@@ -25,6 +25,7 @@ class IntegrationTest extends PHPStanTestCase
         yield [__DIR__ . '/data/bug-2074.php'];
         yield [__DIR__ . '/data/bug-2426.php'];
         yield [__DIR__ . '/data/bug-2431.php'];
+        yield 'bug-2516' => [__DIR__ . '/data/bug-2516.php'];
 
         yield 'bug-2545' => [
             __DIR__ . '/data/bug-2545.php',
