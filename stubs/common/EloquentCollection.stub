@@ -21,6 +21,24 @@ class Collection extends BaseCollection implements QueueableCollection
     public function toQuery();
 
     /**
+     * Load a set of relationships onto the collection.
+     *
+     * @template TRelation of string
+     * @param  string|array<int|TRelation, (callable(relation-of<TModel, TRelation>): mixed)|string|array<int|string, string>>  $relations
+     * @return $this
+     */
+    public function load($relations);
+
+    /**
+     * Load a set of relationships onto the collection if they are not already eager loaded.
+     *
+     * @template TRelation of string
+     * @param  string|array<int|TRelation, (callable(relation-of<TModel, TRelation>): mixed)|string|array<int|string, string>>  $relations
+     * @return $this
+     */
+    public function loadMissing($relations);
+
+    /**
      * Find a model in the collection by key.
      *
      * @template TFindDefault
@@ -30,4 +48,35 @@ class Collection extends BaseCollection implements QueueableCollection
      * @phpstan-return ($key is \Illuminate\Database\Eloquent\Model ? TModel|TFindDefault : ($key is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? static<TKey, TModel> : TModel|TFindDefault))
      */
     public function find($key, $default = null);
+
+    /**
+     * Determine if a key exists in the collection.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TModel|(callable(TModel, TKey): bool)|string|int  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function contains($key, $operator = null, $value = null);
+
+    /**
+     * Merge the collection with the given items.
+     * Integer keys are renumbered, see \Illuminate\Support\Collection::shift().
+     *
+     * @param  iterable<array-key, TModel>  $items
+     * @return static<(array<TKey, mixed> is array<int, mixed> ? int : TKey), TModel>
+     */
+    public function merge($items);
+
+    /**
+     * Partition the collection into two arrays using the given callback or key.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TModel|(callable(TModel, TKey): bool)|string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return \Illuminate\Support\Collection<int<0, 1>, static<TKey, TModel>>
+     */
+    public function partition($key, $operator = null, $value = null);
 }

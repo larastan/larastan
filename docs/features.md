@@ -306,8 +306,34 @@ User::query()->with('posts', function (Relation $query) {
 });
 ```
 
-> [!NOTE]
-> Callbacks inside `with([...])` and similar relationship arrays do not receive these inferred types.
+Callbacks in relationship arrays passed to the eager-loading methods infer the
+relationship type from the array keys:
+
+```php
+User::with(['posts' => function ($query) {
+    // $query: HasMany<Post, User>
+}]);
+
+$user->load(['posts' => function ($query) {
+    // $query: HasMany<Post, User>
+}]);
+```
+
+This applies to `Model::with()`, `Builder::with()`, `Builder::withOnly()`,
+`Model::load()`, `Model::loadMissing()`, `Collection::load()` and
+`Collection::loadMissing()`, including calls forwarded to the builder from a model
+or a relation.
+
+With multiple relationship keys, each callback receives a benevolent union of the
+resolved relationship types. This allows explicitly typed callbacks for different
+relationship classes in the same array, but does not verify that each callback
+matches its own key. Dynamic string keys fall back to `Relation<*, *, *>`; a callback
+typed as a narrower subclass requires a resolvable constant key. One dynamic key
+widens the key type for the entire array.
+
+This uses [`relation-of<Model, Relationship>`](custom-types.md#relation-of). Other
+relationship-array methods, such as `withCount()`, `loadCount()` and `loadMorph()`,
+do not use this inference.
 
 A relationship without the generic annotations above only exposes the `Model` bound, so a
 dotted path cannot be walked past it. The callback then receives `Builder<Model>` and is not

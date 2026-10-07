@@ -14,6 +14,7 @@ use Larastan\Larastan\Reflection\DynamicWhereParameterReflection;
 use Larastan\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Name;
+use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
@@ -258,7 +259,7 @@ class BuilderHelper
             }
         }
 
-        $queryBuilderReflection = $this->reflectionProvider->getClass(QueryBuilder::class);
+        $queryBuilderReflection = $this->resolveQueryBuilderReflection($eloquentBuilder);
 
         if (in_array($methodName, $this->getPassthru(), true)) {
             return $queryBuilderReflection->getNativeMethod($methodName);
@@ -274,6 +275,31 @@ class BuilderHelper
         }
 
         return $this->dynamicWhere($methodName, $this->getBuilderType($eloquentBuilder->getName(), $modelType));
+    }
+
+    /**
+     * Resolve the query builder class actually used by the given Eloquent builder.
+     *
+     * Custom Eloquent builders (e.g. from packages replacing the underlying query layer,
+     * such as mongodb/laravel-mongodb) commonly advertise this with their own
+     * `@method CustomQueryBuilder toBase()` PHPDoc tag, overriding the inherited native
+     * `toBase(): \Illuminate\Database\Query\Builder` declaration. `getMethod()` already
+     * resolves `@method` tags (which take precedence over, and are invisible to, native
+     * method reflection) as well as native methods, so methods that only exist on the
+     * custom query builder (and are forwarded to it via `__call`) can still be resolved.
+     */
+    public function resolveQueryBuilderReflection(ClassReflection $eloquentBuilder): ClassReflection
+    {
+        if ($eloquentBuilder->hasMethod('toBase')) {
+            $returnType = $eloquentBuilder->getMethod('toBase', new OutOfClassScope())->getVariants()[0]->getReturnType();
+            $classNames = $returnType->getObjectClassNames();
+
+            if (count($classNames) === 1) {
+                return $this->reflectionProvider->getClass($classNames[0]);
+            }
+        }
+
+        return $this->reflectionProvider->getClass(QueryBuilder::class);
     }
 
     public function getBuilderType(string $builderClassName, Type $modelType): ObjectType
