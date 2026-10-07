@@ -1,9 +1,9 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Using nullsafe method call on non\-nullable type Filament\\Actions\\Contracts\\HasActions\. Use \-\> instead\.$#'
+			message: '#^Using nullsafe method call on non\-nullable type mixed\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
-			count: 1
+			count: 3
 			path: ../../e2e/packages/actions/src/Action.php
 
 		-
