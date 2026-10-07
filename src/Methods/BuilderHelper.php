@@ -14,6 +14,7 @@ use Larastan\Larastan\Reflection\DynamicWhereParameterReflection;
 use Larastan\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Name;
+use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
@@ -282,23 +283,15 @@ class BuilderHelper
      * Custom Eloquent builders (e.g. from packages replacing the underlying query layer,
      * such as mongodb/laravel-mongodb) commonly advertise this with their own
      * `@method CustomQueryBuilder toBase()` PHPDoc tag, overriding the inherited native
-     * `toBase(): \Illuminate\Database\Query\Builder` declaration. PHPDoc `@method` tags are
-     * checked first since they take precedence over (and are invisible to) native method
-     * reflection, so methods that only exist on the custom query builder (and are forwarded
-     * to it via `__call`) can still be resolved.
+     * `toBase(): \Illuminate\Database\Query\Builder` declaration. `getMethod()` already
+     * resolves `@method` tags (which take precedence over, and are invisible to, native
+     * method reflection) as well as native methods, so methods that only exist on the
+     * custom query builder (and are forwarded to it via `__call`) can still be resolved.
      */
     public function resolveQueryBuilderReflection(ClassReflection $eloquentBuilder): ClassReflection
     {
-        $methodTags = $eloquentBuilder->getMethodTags();
-
-        if (array_key_exists('toBase', $methodTags)) {
-            $classNames = $methodTags['toBase']->getReturnType()->getObjectClassNames();
-
-            if (count($classNames) === 1) {
-                return $this->reflectionProvider->getClass($classNames[0]);
-            }
-        } elseif ($eloquentBuilder->hasNativeMethod('toBase')) {
-            $returnType = $eloquentBuilder->getNativeMethod('toBase')->getVariants()[0]->getReturnType();
+        if ($eloquentBuilder->hasMethod('toBase')) {
+            $returnType = $eloquentBuilder->getMethod('toBase', new OutOfClassScope())->getVariants()[0]->getReturnType();
             $classNames = $returnType->getObjectClassNames();
 
             if (count($classNames) === 1) {
