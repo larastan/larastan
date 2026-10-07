@@ -147,7 +147,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
         $queryBuilderReflection = $this->builderHelper->resolveQueryBuilderReflection($classReflection);
 
         if (
-            $ref->getDeclaringClass()->getName() === $queryBuilderReflection->getName()
+            $queryBuilderReflection->is($ref->getDeclaringClass()->getName())
             && $queryBuilderReflection->hasNativeMethod($methodName)
         ) {
             if (! in_array($methodName, $this->builderHelper->getPassthru(), true)) {

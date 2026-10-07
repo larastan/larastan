@@ -79,6 +79,13 @@ function test(FooModel $foo, NonGenericBuilder $nonGenericBuilder, ModelWithNonG
     // (i.e. treating it as chainable) just because it isn't declared on Laravel's native
     // query builder.
     assertType('bool', ModelWithCustomQueryBuilder::where('email', 'bar')->exists());
+
+    // count() is also passthru, but unlike exists() it is NOT overridden on the custom query
+    // builder - it is only inherited from Illuminate\Database\Query\Builder. The declaring
+    // class comparison must account for this (the custom query builder "is" its parent),
+    // not require an exact class name match, or this would wrongly fall back to the
+    // chainable Eloquent builder type instead of the real passthru return type.
+    assertType('int<0, max>', ModelWithCustomQueryBuilder::query()->count());
 }
 
 /** @param ChildNonGenericBuilder|ModelWithNonGenericBuilder $builder */
