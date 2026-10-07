@@ -26,7 +26,7 @@ jobs:
       matrix:
         include:
           - repository: monicahq/monica
-            ref: e08e91734170b6bbd582cb578532c3948196124e
+            ref: 6e6ec217457e946e330ba7cd3b28107f4332c7b1
             php-version: "8.3"
             config: monicahq-monica.neon
             baseline: monicahq-monica
@@ -38,7 +38,7 @@ jobs:
             baseline: canvural-larastan-strict-rules
 
           - repository: filamentphp/filament
-            ref: 0b845f734eb2e59af2b702089e60bc13aa815284
+            ref: 4fb16cd2bb0446609312b1037dfe03fffc9abf70
             php-version: "8.4"
             config: filamentphp-filament.neon
             baseline: filamentphp-filament

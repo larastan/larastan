@@ -1,13 +1,13 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Method App\\Domains\\Contact\\Dav\\Web\\Backend\\CardDAV\\CardDAVBackend\:\:getDeletedObjects\(\) should return Illuminate\\Support\\Collection\<\(int\|string\), App\\Domains\\Contact\\Dav\\IDavResource\> but returns Illuminate\\Support\\Collection\<TKey of \(int\|string\), TValue\>\.$#'
+			message: '#^Method App\\Domains\\Contact\\Dav\\Web\\Backend\\CardDAV\\CardDAVBackend\:\:getDeletedObjects\(\) should return Illuminate\\Support\\Collection\<\(int\|string\), App\\Domains\\Contact\\Dav\\IDavResource\> but returns Illuminate\\Support\\Collection\<int\|TKey of \(int\|string\), TValue\>\.$#'
 			identifier: return.type
 			count: 1
 			path: ../../e2e/app/Domains/Contact/Dav/Web/Backend/CardDAV/CardDAVBackend.php
 
 		-
-			message: '#^Method App\\Domains\\Contact\\Dav\\Web\\Backend\\CardDAV\\CardDAVBackend\:\:getObjects\(\) should return Illuminate\\Support\\Collection\<\(int\|string\), App\\Domains\\Contact\\Dav\\IDavResource\> but returns Illuminate\\Support\\Collection\<TKey of \(int\|string\), TValue\>\.$#'
+			message: '#^Method App\\Domains\\Contact\\Dav\\Web\\Backend\\CardDAV\\CardDAVBackend\:\:getObjects\(\) should return Illuminate\\Support\\Collection\<\(int\|string\), App\\Domains\\Contact\\Dav\\IDavResource\> but returns Illuminate\\Support\\Collection\<int\|TKey of \(int\|string\), TValue\>\.$#'
 			identifier: return.type
 			count: 1
 			path: ../../e2e/app/Domains/Contact/Dav/Web/Backend/CardDAV/CardDAVBackend.php
@@ -17,6 +17,12 @@ parameters:
 			identifier: class.notFound
 			count: 1
 			path: ../../e2e/app/Domains/Contact/ManageContact/Web/Controllers/ContactMoveController.php
+
+		-
+			message: '#^Parameter \#1 \$value of method Illuminate\\Support\\Collection\<int,array\<string, int\<0, max\>\|string\>\>\:\:prepend\(\) expects array\{id\: int\<0, max\>, name\: string\}, array\{id\: \-1, name\: ''''\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../../e2e/app/Domains/Contact/ManageContactImportantDates/Web/ViewHelpers/ContactImportantDatesViewHelper.php
 
 		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\ContactTask, App\\Models\\Contact\>\:\:completed\(\)\.$#'
