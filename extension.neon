@@ -763,11 +763,6 @@ services:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
-        class: Larastan\Larastan\ReturnTypes\EloquentCollectionMapDynamicReturnTypeExtension
-        tags:
-            - phpstan.broker.dynamicMethodReturnTypeExtension
-
-    -
         class: Larastan\Larastan\Rules\NoAuthFacadeInRequestScopeRule
 
     -

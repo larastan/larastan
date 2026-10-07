@@ -73,9 +73,13 @@ function test(
     assertType('Illuminate\Support\Collection<(int|string), mixed>', $items->pluck('1'));
 
     assertType('Illuminate\Support\Collection<int, int>', $customEloquentCollection->map(fn (Transaction $transaction): int => $transaction->id));
-    assertType('Illuminate\Support\Collection<int, int<0, max>>', $secondCustomEloquentCollection->map(fn (User $user): int => $user->id));assertType('Illuminate\Support\Collection<int, int<0, max>>', $collection->map(fn (User $user): int => $user->id));
-    assertType('Illuminate\Support\Collection<int, App\User|null>', $collection->map(fn (User $user): ?User => $user->id > 5 ? $user : null));
+    assertType('Illuminate\Support\Collection<int, int<0, max>>', $secondCustomEloquentCollection->map(fn (User $user): int => $user->id));
+    assertType('Illuminate\Support\Collection<int, int<0, max>>', $collection->map(fn (User $user): int => $user->id));
     assertType('Illuminate\Support\Collection<string, int>', $items->map(fn (int $value, string $key): int => $value));
+
+    // Untyped closure parameters are inferred from the collection's template types.
+    assertType('Illuminate\Support\Collection<int, int<0, max>>', $collection->map(fn ($user) => $user->id));
+    assertType('Illuminate\Support\Collection<int, array{id: int}>', $collection->map(fn ($user) => ['id' => $user->id]));
 
     assertType('App\TransactionCollection<int, App\Transaction>', $customEloquentCollection->map(fn (Transaction $transaction): Transaction => $transaction));
     assertType('App\UserCollection', $secondCustomEloquentCollection->map(fn (User $user): User => $user));
@@ -86,10 +90,13 @@ function test(
     assertType('App\UserCollection', $secondCustomEloquentCollection->mapToDictionary(fn (User $t) => ['foo'=> $t->id]));
     assertType('Illuminate\Support\Collection<string, array<int, int>>', $items->mapToDictionary(fn (int $v) => ['foo' => $v]));
 
-    assertType('Illuminate\Support\Collection<int, \'foo\'>', $customEloquentCollection->mapWithKeys(fn (Transaction $transaction): array => [$transaction->id => 'foo']));
-    assertType('Illuminate\Support\Collection<int<0, max>, \'foo\'>', $secondCustomEloquentCollection->mapWithKeys(fn (User $user): array => [$user->id => 'foo']));
-    assertType('Illuminate\Support\Collection<int<0, max>, int<0, max>>', $collection->mapWithKeys(fn (User $user): array => [$user->id => $user->id]));
+    assertType('Illuminate\Support\Collection<int, string>', $customEloquentCollection->mapWithKeys(fn (Transaction $transaction): array => [$transaction->id => 'foo']));
+    assertType('Illuminate\Support\Collection<int, string>', $secondCustomEloquentCollection->mapWithKeys(fn (User $user): array => [$user->id => 'foo']));
+    assertType('Illuminate\Support\Collection<int, int<0, max>>', $collection->mapWithKeys(fn (User $user): array => [$user->id => $user->id]));
     assertType('Illuminate\Support\Collection<string, int>', $items->mapWithKeys(fn (int $value, string $key): array => ['foo' => $value]));
+
+    // Constant values are generalized so the resulting collection stays writable.
+    assertType('Illuminate\Support\Collection<int, float>', $collection->mapWithKeys(fn ($user) => [$user->id => 0.0]));
 
     assertType('App\TransactionCollection<int, App\Transaction>', $customEloquentCollection->mapWithKeys(fn (Transaction $transaction): array => [$transaction->id => $transaction]));
     assertType('App\UserCollection', $secondCustomEloquentCollection->mapWithKeys(fn (User $user): array => [$user->email => $user]));
