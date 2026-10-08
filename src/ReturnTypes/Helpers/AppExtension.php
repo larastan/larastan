@@ -33,7 +33,7 @@ class AppExtension implements DynamicFunctionReturnTypeExtension
         FunctionReflection $functionReflection,
         FuncCall $functionCall,
         Scope $scope,
-    ): Type {
+    ): ?Type {
         if (count($functionCall->getArgs()) === 0) {
             return $this->applicationType ??= new ObjectType(Application::class);
         }
