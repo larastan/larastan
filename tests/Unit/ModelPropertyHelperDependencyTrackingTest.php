@@ -79,11 +79,24 @@ class ModelPropertyHelperDependencyTrackingTest extends PHPStanTestCase
 
         // Recorded on Model, so that every file depending on any model is invalidated.
         self::assertSame([
-            [Model::class, $this->fileHelper->absolutizePath(__DIR__ . '/data/basic_migration'), '*.php'],
+            [Model::class, $this->fileHelper->absolutizePath(__DIR__ . '/data/basic_migration'), '*.[pP][hH][pP]'],
             [Model::class, $this->fileHelper->absolutizePath(__DIR__ . '/data/schema'), '*'],
             // A schema directory that does not exist yet is tracked so that creating it is noticed.
             [Model::class, $this->fileHelper->absolutizePath($missingSchemaPath), '*'],
         ], $this->dependencyTracker->tracked);
+    }
+
+    #[Test]
+    public function it_tracks_the_directories_a_glob_matches(): void
+    {
+        $modelPropertyHelper = $this->buildModelPropertyHelper([__DIR__ . '/data/basic_migr*'], []);
+
+        $modelPropertyHelper->hasDatabaseProperty('users', 'email');
+
+        self::assertSame(
+            [Model::class, $this->fileHelper->absolutizePath(__DIR__ . '/data/basic_migration'), '*.[pP][hH][pP]'],
+            $this->dependencyTracker->tracked[0],
+        );
     }
 
     #[Test]
@@ -93,7 +106,7 @@ class ModelPropertyHelperDependencyTrackingTest extends PHPStanTestCase
 
         self::assertTrue($modelPropertyHelper->hasDatabaseProperty('users', 'email'));
         self::assertContains(
-            [Model::class, $this->fileHelper->absolutizePath(__DIR__ . '/data/basic_migration'), '*.php'],
+            [Model::class, $this->fileHelper->absolutizePath(__DIR__ . '/data/basic_migration'), '*.[pP][hH][pP]'],
             $this->dependencyTracker->tracked,
         );
     }
