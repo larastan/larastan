@@ -114,4 +114,10 @@ class UnnecessaryCollectionCallsEloquent
     {
         return \App\UserWithPropertyTags::query()->get()->pluck('id');
     }
+
+    /** @phpstan-return mixed */
+    public function testStaticPluckColumnDeclaredWithPropertyTag()
+    {
+        return \App\UserWithPropertyTags::pluck('id')->sum();
+    }
 }
