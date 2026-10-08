@@ -22,6 +22,8 @@ class ModelAppendsRuleTest extends RuleTestCase
             ["Property 'non_existent' does not exist in model.", 15],
             ["Property 'email' is not a computed property, remove from \$appends.", 16],
             ["Property 'name' is not a computed property, remove from \$appends.", 17],
+            ["Property 'email' is not a computed property, remove from \$appends.", 42],
+            ["Property 'display_name' does not exist in model.", 43],
         ]);
     }
 
