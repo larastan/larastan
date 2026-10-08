@@ -67,25 +67,37 @@ class ModelPropertyHelper
             return array_key_exists($propertyName, $this->tables[$classReflectionOrTable]->columns);
         }
 
-        if (! $classReflectionOrTable->is(Model::class)) {
-            return false;
-        }
-
-        if ($classReflectionOrTable->isAbstract()) {
-            return false;
-        }
-
         if (ReflectionHelper::hasPropertyTag($classReflectionOrTable, $propertyName)) {
             return false;
         }
 
+        return $this->hasDatabaseColumn($classReflectionOrTable, $propertyName);
+    }
+
+    /**
+     * Determine if the table of the model has the column, regardless of any `@property` tag describing it.
+     */
+    public function hasDatabaseColumn(ClassReflection $classReflection, string $columnName): bool
+    {
+        if (! $this->migrationsLoaded()) {
+            $this->loadMigrations();
+        }
+
+        if (! $classReflection->is(Model::class)) {
+            return false;
+        }
+
+        if ($classReflection->isAbstract()) {
+            return false;
+        }
+
         try {
-            $modelInstance = ModelHelper::newInstanceWithoutConstructor($classReflectionOrTable);
+            $modelInstance = ModelHelper::newInstanceWithoutConstructor($classReflection);
         } catch (ReflectionException) {
             return false;
         }
 
-        if ($propertyName === $modelInstance->getKeyName()) {
+        if ($columnName === $modelInstance->getKeyName()) {
             return true;
         }
 
@@ -95,7 +107,7 @@ class ModelPropertyHelper
             return false;
         }
 
-        return array_key_exists($propertyName, $this->tables[$tableName]->columns);
+        return array_key_exists($columnName, $this->tables[$tableName]->columns);
     }
 
     /** @return list<string> */
