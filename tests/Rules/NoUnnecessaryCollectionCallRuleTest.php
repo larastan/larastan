@@ -43,6 +43,8 @@ class NoUnnecessaryCollectionCallRuleTest extends RuleTestCase
             ['Called \'containsStrict\' on Laravel collection, but could have been retrieved as a query.', 97],
             ['Called \'sum\' on Laravel collection, but could have been retrieved as a query.', 103],
             ['Called \'contains\' on Laravel collection, but could have been retrieved as a query.', 108],
+            ['Called \'pluck\' on Laravel collection, but could have been retrieved as a query.', 114],
+            ['Called \'pluck\' on Laravel collection, but could have been retrieved as a query.', 120],
         ]);
     }
 
