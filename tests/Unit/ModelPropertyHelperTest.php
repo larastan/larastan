@@ -15,6 +15,7 @@ use Larastan\Larastan\Properties\ModelCastHelper;
 use Larastan\Larastan\Properties\ModelPropertyHelper;
 use Larastan\Larastan\Properties\Schema\MySqlDataTypeToPhpTypeConverter;
 use Larastan\Larastan\Properties\SquashedMigrationHelper;
+use PHPStan\Analyser\DeclarationDependencyTracker;
 use PHPStan\Analyser\ScopeFactory;
 use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
@@ -182,6 +183,8 @@ class ModelPropertyHelperTest extends PHPStanTestCase
             $squashedMigrationHelper,
             $modelCastHelper,
             new MigrationCache(sys_get_temp_dir(), false),
+            self::getContainer()->getByType(DeclarationDependencyTracker::class),
+            $this->reflectionProvider,
         );
     }
 
