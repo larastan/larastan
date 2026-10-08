@@ -222,7 +222,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
             /** @var String_ $firstArg */
             $firstArg = $args[0]->value;
 
-            return $this->propertyExtension->hasProperty($modelReflection, $firstArg->value);
+            return $this->propertyExtension->hasDatabaseColumn($modelReflection, $firstArg->value);
         }
 
         $iterableType = $scope->getType($node->var)->getIterableValueType();
@@ -255,7 +255,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
             /** @var String_ $firstArg */
             $firstArg = $args[0]->value;
 
-            return $this->propertyExtension->hasProperty($modelReflection, $firstArg->value);
+            return $this->propertyExtension->hasDatabaseColumn($modelReflection, $firstArg->value);
         }
 
         return false;
