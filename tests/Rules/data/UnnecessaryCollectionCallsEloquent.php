@@ -107,4 +107,16 @@ class UnnecessaryCollectionCallsEloquent
     {
         return User::query()->get()->contains(value: 1, operator: '=', key: 'id');
     }
+
+    /** @return Collection<int, mixed> */
+    public function testPluckColumnDeclaredWithPropertyTag(): Collection
+    {
+        return \App\UserWithPropertyTags::all()->pluck('email');
+    }
+
+    /** @return Collection<int, mixed> */
+    public function testPluckKeyDeclaredWithPropertyTag(): Collection
+    {
+        return \App\UserWithPropertyTags::query()->get()->pluck('id');
+    }
 }
