@@ -67,6 +67,11 @@ class ModelPropertyHelper
             return array_key_exists($propertyName, $this->tables[$classReflectionOrTable]->columns);
         }
 
+        // Checked before the tag lookup, which is comparatively expensive and this runs for any class.
+        if (! $classReflectionOrTable->is(Model::class) || $classReflectionOrTable->isAbstract()) {
+            return false;
+        }
+
         if (ReflectionHelper::hasPropertyTag($classReflectionOrTable, $propertyName)) {
             return false;
         }
