@@ -25,6 +25,19 @@ final class ModelPropertyExtension implements PropertiesClassReflectionExtension
         return $this->modelPropertyHelper->hasDatabaseProperty($classReflection, $propertyName);
     }
 
+    /**
+     * Determine if the property is read straight from a column of the model's table: unlike
+     * hasProperty(), a column also described by a `@property` tag counts, an accessor does not.
+     */
+    public function isPlainDatabaseColumn(ClassReflection $classReflection, string $propertyName): bool
+    {
+        if ($this->modelPropertyHelper->hasAccessor($classReflection, $propertyName, strictGenerics: false)) {
+            return false;
+        }
+
+        return $this->modelPropertyHelper->hasDatabaseColumn($classReflection, $propertyName);
+    }
+
     public function getProperty(ClassReflection $classReflection, string $propertyName): PropertyReflection
     {
         return $this->modelPropertyHelper->getDatabaseProperty($classReflection, $propertyName);
