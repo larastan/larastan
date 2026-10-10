@@ -188,6 +188,17 @@ class IntegrationTest extends PHPStanTestCase
             ],
         ];
 
+        yield 'increment-or-create' => [
+            __DIR__ . '/data/model-property-increment-or-create.php',
+            [
+                5 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Builder<App\User>::incrementOrCreate() expects array<model property of App\User, mixed>, array<string, string> given.'],
+                7 => ['Parameter #2 $column of method Illuminate\Database\Eloquent\Builder<App\User>::incrementOrCreate() expects model property of App\User, string given.'],
+                9 => ['Parameter #5 $extra of method Illuminate\Database\Eloquent\Builder<App\User>::incrementOrCreate() expects array<model property of App\User, mixed>, array<string, string> given.'],
+                12 => ['Parameter #1 $attributes of static method Illuminate\Database\Eloquent\Builder<App\User>::incrementOrCreate() expects array<model property of App\User, mixed>, array<string, string> given.'],
+                13 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Builder<App\Account>::incrementOrCreate() expects array<model property of App\Account, mixed>, array<string, string> given.'],
+            ],
+        ];
+
         if (laravel_version_compare('13.3.0', '>=')) {
             yield 'increment-each' => [
                 __DIR__ . '/data/model-property-increment-each-l13-3.php',
