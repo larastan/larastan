@@ -254,6 +254,8 @@ Larastan will automatically scan your application's migrations in order to infer
 
 Various parameters can be set to [configure this behavior](custom-config-parameters.md#databasemigrationspath).
 
+PHPStan's result cache tracks the scanned migration and schema directories. When a migration or schema dump in those directories is added, changed, or removed, the code that depends on models is analysed again. A directory that newly matches a glob in `databaseMigrationsPath` or `squashedMigrationsPath` is picked up only after the result cache is cleared.
+
 ## Model Relationships
 
 In order for Larastan to recognize Model relationships you are required to document the generic types of the relation class:
