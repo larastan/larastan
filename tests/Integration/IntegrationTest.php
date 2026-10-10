@@ -13,6 +13,7 @@ use Throwable;
 
 use function count;
 use function implode;
+use function Orchestra\Testbench\laravel_version_compare;
 use function sprintf;
 
 class IntegrationTest extends PHPStanTestCase
@@ -186,6 +187,20 @@ class IntegrationTest extends PHPStanTestCase
                 9 => ['Parameter #1 $attributes of static method Illuminate\Database\Eloquent\Builder<App\User>::forceCreateQuietly() expects array<model property of App\User, mixed>, array<string, string> given.'],
             ],
         ];
+
+        if (laravel_version_compare('13.3.0', '>=')) {
+            yield 'increment-each' => [
+                __DIR__ . '/data/model-property-increment-each-l13-3.php',
+                [
+                    5 => ['Parameter #1 $columns of method Illuminate\Database\Eloquent\Builder<App\User>::incrementEach() expects array<model property of App\User, float|int|numeric-string>, array{foo: 1} given.'],
+                    7 => ['Parameter #2 $extra of method Illuminate\Database\Eloquent\Builder<App\User>::incrementEach() expects array<model property of App\User, mixed>, array<string, string> given.'],
+                    10 => ['Parameter #1 $columns of method Illuminate\Database\Eloquent\Builder<App\User>::decrementEach() expects array<model property of App\User, float|int|numeric-string>, array{foo: 1} given.'],
+                    12 => ['Parameter #2 $extra of method Illuminate\Database\Eloquent\Builder<App\User>::decrementEach() expects array<model property of App\User, mixed>, array<string, string> given.'],
+                    15 => ['Parameter #1 $columns of method Illuminate\Database\Eloquent\Builder<App\Account>::incrementEach() expects array<model property of App\Account, float|int|numeric-string>, array{foo: 1} given.'],
+                    16 => ['Parameter #1 $columns of method Illuminate\Database\Eloquent\Builder<App\Account>::decrementEach() expects array<model property of App\Account, float|int|numeric-string>, array{foo: 1} given.'],
+                ],
+            ];
+        }
 
         yield 'model-save-options' => [
             __DIR__ . '/data/model-save-options.php',
