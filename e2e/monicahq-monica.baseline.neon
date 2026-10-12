@@ -19,12 +19,6 @@ parameters:
 			path: ../../e2e/app/Domains/Contact/ManageContact/Web/Controllers/ContactMoveController.php
 
 		-
-			message: '#^Parameter \#1 \$value of method Illuminate\\Support\\Collection\<int,array\<string, int\<0, max\>\|string\>\>\:\:prepend\(\) expects array\{id\: int\<0, max\>, name\: string\}, array\{id\: \-1, name\: ''''\} given\.$#'
-			identifier: argument.type
-			count: 1
-			path: ../../e2e/app/Domains/Contact/ManageContactImportantDates/Web/ViewHelpers/ContactImportantDatesViewHelper.php
-
-		-
 			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\ContactTask, App\\Models\\Contact\>\:\:completed\(\)\.$#'
 			identifier: method.notFound
 			count: 2

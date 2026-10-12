@@ -18,6 +18,7 @@ class BleedingEdgeTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/bleeding-edge/collection-keys.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/bleeding-edge/collection-usage-inference.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/bleeding-edge/closure-usage-inference.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/bleeding-edge/eloquent-collection-map.php');
     }
 
     #[DataProvider('dataFileAsserts')]
