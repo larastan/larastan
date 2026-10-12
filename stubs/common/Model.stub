@@ -95,7 +95,7 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
      * Begin querying a model with eager loading.
      *
      * @template TRelation of string
-     * @param  string|array<int|TRelation, (\Closure(relation-of<static, TRelation>): mixed)|string|array<int|string, string>>  $relations
+     * @param  string|array<int|TRelation, (\Closure(relation-of<static, TRelation>): mixed)|string|array<mixed>>  $relations
      * @return builder-of<static>
      */
     public static function with($relations);
@@ -104,7 +104,7 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
      * Eager load relations on the model.
      *
      * @template TRelation of string
-     * @param  string|array<int|TRelation, (\Closure(relation-of<static, TRelation>): mixed)|string|array<int|string, string>>  $relations
+     * @param  string|array<int|TRelation, (\Closure(relation-of<static, TRelation>): mixed)|string|array<mixed>>  $relations
      * @return $this
      */
     public function load($relations);
@@ -113,7 +113,7 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
      * Eager load relations on the model if they are not already eager loaded.
      *
      * @template TRelation of string
-     * @param  string|array<int|TRelation, (\Closure(relation-of<static, TRelation>): mixed)|string|array<int|string, string>>  $relations
+     * @param  string|array<int|TRelation, (\Closure(relation-of<static, TRelation>): mixed)|string|array<mixed>>  $relations
      * @return $this
      */
     public function loadMissing($relations);

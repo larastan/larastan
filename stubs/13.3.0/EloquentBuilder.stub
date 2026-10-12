@@ -279,7 +279,7 @@ class Builder
     /**
      * @template TRelation of string
      *
-     * @param  TRelation|array<int|TRelation, (\Closure(relation-of<TModel, TRelation>): mixed)|string|array<int|string, string>>  $relations
+     * @param  TRelation|array<int|TRelation, (\Closure(relation-of<TModel, TRelation>): mixed)|string|array<mixed>>  $relations
      * @param  (\Closure(relation-of<TModel, TRelation>): mixed)|string|null  $callback
      * @return $this
      */
@@ -288,7 +288,7 @@ class Builder
     /**
      * @template TRelation of string
      *
-     * @param  string|array<int|TRelation, (\Closure(relation-of<TModel, TRelation>): mixed)|string|array<int|string, string>>  $relations
+     * @param  string|array<int|TRelation, (\Closure(relation-of<TModel, TRelation>): mixed)|string|array<mixed>>  $relations
      * @return $this
      */
     public function withOnly($relations);
