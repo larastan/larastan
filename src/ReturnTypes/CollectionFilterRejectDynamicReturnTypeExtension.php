@@ -43,7 +43,7 @@ class CollectionFilterRejectDynamicReturnTypeExtension implements DynamicMethodR
         MethodCall $methodCall,
         Scope $scope,
     ): Type|null {
-        $calledOnType = $scope->getType($methodCall->var);
+        $calledOnType = TypeCombinator::removeNull($scope->getType($methodCall->var));
 
         if ($calledOnType->getObjectClassReflections() === [] || ! $calledOnType->getObjectClassReflections()[0]->isGeneric()) {
             return null;
