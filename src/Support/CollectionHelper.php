@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Support;
 
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Enumerable;
 use Iterator;
@@ -33,9 +34,13 @@ use function array_map;
 use function array_values;
 use function count;
 use function in_array;
+use function version_compare;
 
 final class CollectionHelper
 {
+    /** Read on first use: this service is created before bootstrap.php defines LARAVEL_VERSION. */
+    private string|null $laravelVersion = null;
+
     public function __construct(private ReflectionProvider $reflectionProvider)
     {
     }
@@ -72,16 +77,30 @@ final class CollectionHelper
     public function determineCollectionClassName(string $modelClassName): string
     {
         try {
-            $modelReflection = $this->reflectionProvider->getClass($modelClassName);
+            $modelReflection  = $this->reflectionProvider->getClass($modelClassName);
+            $classReflections = [$modelReflection];
 
-            $attrs = $modelReflection->getNativeReflection()->getAttributes('Illuminate\Database\Eloquent\Attributes\CollectedBy'); //@phpstan-ignore argument.type (Attribute class might not exist)
+            // Since Laravel 13.3, the attribute is also read from the parent models when newCollection() is not overridden.
+            $this->laravelVersion ??= LARAVEL_VERSION;
 
-            if ($attrs !== []) {
+            if (version_compare($this->laravelVersion, '13.3.0', '>=') && $modelReflection->getNativeMethod('newCollection')->getDeclaringClass()->getName() === Model::class) {
+                $classReflections = [$modelReflection, ...$modelReflection->getParents()];
+            }
+
+            foreach ($classReflections as $classReflection) {
+                $attrs = $classReflection->getNativeReflection()->getAttributes('Illuminate\Database\Eloquent\Attributes\CollectedBy'); //@phpstan-ignore argument.type (Attribute class might not exist)
+
+                if ($attrs === []) {
+                    continue;
+                }
+
                 $expr =  $attrs[0]->getArgumentsExpressions()[0];
 
                 if ($expr instanceof ClassConstFetch && $expr->class instanceof Name) {
                     return $expr->class->toString();
                 }
+
+                break;
             }
 
             $newCollectionMethod = $modelReflection->getNativeMethod('newCollection');
