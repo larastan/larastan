@@ -1,0 +1,17 @@
+<?php
+
+namespace Illuminate\Support;
+
+class Arr
+{
+    /**
+     * @template TKey of array-key
+     * @template TValue
+     * @template TMapValue
+     *
+     * @param array<TKey, TValue> $array
+     * @param callable(TValue, TKey): TMapValue $callback
+     * @return array<TKey, TMapValue>
+     */
+    public static function map(array $array, callable $callback) {}
+}

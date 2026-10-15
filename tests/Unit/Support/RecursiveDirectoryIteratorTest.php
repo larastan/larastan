@@ -150,8 +150,8 @@ class RecursiveDirectoryIteratorTest extends TestCase
             $files = $this->scan(BrokenRewindDirectoryStream::SCHEME . '://root');
 
             self::assertSame([
-                BrokenRewindDirectoryStream::SCHEME . '://root/one.php',
-                BrokenRewindDirectoryStream::SCHEME . '://root/two.php',
+                BrokenRewindDirectoryStream::SCHEME . '://root' . DIRECTORY_SEPARATOR . 'one.php',
+                BrokenRewindDirectoryStream::SCHEME . '://root' . DIRECTORY_SEPARATOR . 'two.php',
             ], array_keys($files));
             self::assertSame(0, BrokenRewindDirectoryStream::$rewindCalls);
         } finally {
