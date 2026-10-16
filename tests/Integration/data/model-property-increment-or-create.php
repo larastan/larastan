@@ -10,4 +10,3 @@ User::query()->incrementOrCreate(['email' => 'taylor@example.com'], 'integer', 1
 User::query()->incrementOrCreate(['email' => 'taylor@example.com'], 'integer', 1, 1, ['name' => 'bar']);
 
 User::incrementOrCreate(['foo' => 'bar']);
-(new User())->accounts()->incrementOrCreate(['foo' => 'bar']);
