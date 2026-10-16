@@ -18,3 +18,12 @@ function dispatch(Dispatcher $dispatcher, DispatcherContract $contract, bool $ha
     assertType('array<mixed>|null', Event::dispatch('event'));
     assertType('mixed', Event::dispatch(halt: true, event: new \stdClass()));
 }
+
+function fake(): void
+{
+    assertType('Illuminate\Support\Collection', Event::dispatched('event'));
+    assertType('bool', Event::hasDispatched('event'));
+    assertType('array', Event::dispatchedEvents());
+    assertType('Illuminate\Support\Testing\Fakes\EventFake', Event::except('event'));
+    assertType('null', Event::assertDispatched('event'));
+}
