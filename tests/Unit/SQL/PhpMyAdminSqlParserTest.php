@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace Tests\Unit\SQL;
 
 use Larastan\Larastan\SQL\PhpMyAdminSqlParser;
+use Larastan\Larastan\SQL\SqlParser;
 use Larastan\Larastan\SQL\SqlParserFailure;
+use Larastan\Larastan\SQL\TableDefinition;
 use PhpMyAdmin\SqlParser\Parser;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+use function array_map;
 use function class_exists;
 
 final class PhpMyAdminSqlParserTest extends TestCase
@@ -58,5 +62,57 @@ SQL;
 
         $parser = new PhpMyAdminSqlParser();
         $parser->parseTables('NOT A VALID SQL');
+    }
+
+    /** @return iterable<string, array{string}> */
+    public static function unparsableSchemas(): iterable
+    {
+        yield 'parser error' => ['NOT A VALID SQL'];
+        yield 'lexer error' => ["CREATE TABLE `accounts` (`id` INT); SELECT 'unterminated;"];
+    }
+
+    #[DataProvider('unparsableSchemas')]
+    public function testItWrapsParserAndLexerExceptionsWithoutAFallback(string $sql): void
+    {
+        $this->expectException(SqlParserFailure::class);
+
+        (new PhpMyAdminSqlParser())->parseTables($sql);
+    }
+
+    #[DataProvider('unparsableSchemas')]
+    public function testItUsesTheFallbackForASchemaItCannotParse(string $sql): void
+    {
+        $fallback = $this->fallbackParser();
+
+        $tables = (new PhpMyAdminSqlParser($fallback))->parseTables($sql);
+
+        $this->assertSame(['from_fallback'], array_map(static fn (TableDefinition $table): string => $table->name, $tables));
+        $this->assertSame([$sql], $fallback->parsedSchemas);
+    }
+
+    public function testItDoesNotUseTheFallbackForASchemaItCanParse(): void
+    {
+        $fallback = $this->fallbackParser();
+
+        $tables = (new PhpMyAdminSqlParser($fallback))->parseTables('CREATE TABLE `accounts` (`id` INT NOT NULL);');
+
+        $this->assertSame(['accounts'], array_map(static fn (TableDefinition $table): string => $table->name, $tables));
+        $this->assertSame([], $fallback->parsedSchemas);
+    }
+
+    private function fallbackParser(): SqlParser
+    {
+        return new class implements SqlParser {
+            /** @var list<string> */
+            public array $parsedSchemas = [];
+
+            /** @inheritDoc */
+            public function parseTables(string $sql): array
+            {
+                $this->parsedSchemas[] = $sql;
+
+                return [new TableDefinition('from_fallback', [])];
+            }
+        };
     }
 }

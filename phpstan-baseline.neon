@@ -133,6 +133,12 @@ parameters:
 			path: src/SQL/PhpMyAdminSqlParser.php
 
 		-
+			rawMessage: Caught class PhpMyAdmin\SqlParser\Exceptions\LexerException not found.
+			identifier: class.notFound
+			count: 1
+			path: src/SQL/PhpMyAdminSqlParser.php
+
+		-
 			rawMessage: Caught class PhpMyAdmin\SqlParser\Exceptions\ParserException not found.
 			identifier: class.notFound
 			count: 1
