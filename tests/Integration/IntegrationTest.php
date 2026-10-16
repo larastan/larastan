@@ -108,6 +108,7 @@ class IntegrationTest extends PHPStanTestCase
                 101 => ['Property App\User::$decimal (float|int|numeric-string) does not accept array{}.'],
                 110 => ['Property App\User::$nullable_decimal (float|int|numeric-string|null) does not accept \'foo\'.'],
                 111 => ['Property App\User::$nullable_decimal (float|int|numeric-string|null) does not accept array{}.'],
+                118 => ['Property App\User::$enum_collection (iterable<App\Casts\BackedEnumeration>|null) does not accept array<int, App\Casts\BasicEnumeration>.'],
             ],
         ];
 
