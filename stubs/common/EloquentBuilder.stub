@@ -456,6 +456,18 @@ class Builder
     public function updateOrCreate(array $attributes = [], array $values = []);
 
     /**
+     * Create a record matching the attributes, or increment the existing record.
+     *
+     * @param  array<model-property<TModel>, mixed>  $attributes
+     * @param  model-property<TModel>  $column
+     * @param  float|int  $default
+     * @param  float|int  $step
+     * @param  array<model-property<TModel>, mixed>  $extra
+     * @phpstan-return TModel
+     */
+    public function incrementOrCreate(array $attributes, string $column = 'count', $default = 1, $step = 1, array $extra = []);
+
+    /**
      * @param  array<model-property<TModel>, mixed>  $attributes
      * @phpstan-return TModel
      */
