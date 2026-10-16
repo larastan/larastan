@@ -180,6 +180,20 @@ class IntegrationTest extends PHPStanTestCase
             ],
         ];
 
+        yield 'find-sole-find-or' => [
+            __DIR__ . '/data/model-property-find-sole-find-or.php',
+            [
+                6 => ['Parameter #2 $columns of method Illuminate\Database\Eloquent\Builder<App\User>::findSole() expects \'*\'|array<int, \'*\'|Illuminate\Contracts\Database\Query\Expression|model property of App\User>|Illuminate\Contracts\Database\Query\Expression|model property of App\User, array{\'foo\'} given.'],
+                7 => ['Parameter #2 $columns of method Illuminate\Database\Eloquent\Builder<App\User>::findSole() expects \'*\'|array<int, \'*\'|Illuminate\Contracts\Database\Query\Expression|model property of App\User>|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
+                11 => ['Parameter #2 $columns of static method Illuminate\Database\Eloquent\Builder<App\User>::findSole() expects \'*\'|array<int, \'*\'|Illuminate\Contracts\Database\Query\Expression|model property of App\User>|Illuminate\Contracts\Database\Query\Expression|model property of App\User, array{\'foo\'} given.'],
+                12 => ['Parameter #2 $columns of method Illuminate\Database\Eloquent\Builder<App\Account>::findSole() expects \'*\'|array<int, \'*\'|Illuminate\Contracts\Database\Query\Expression|model property of App\Account>|Illuminate\Contracts\Database\Query\Expression|model property of App\Account, array{\'foo\'} given.'],
+                14 => ['Parameter #2 $columns of method Illuminate\Database\Eloquent\Builder<App\User>::findOr() expects \'*\'|array<int, \'*\'|Illuminate\Contracts\Database\Query\Expression|model property of App\User>|(Closure(): null)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, array{\'foo\'} given.'],
+                15 => ['Parameter #2 $columns of method Illuminate\Database\Eloquent\Builder<App\User>::findOr() expects \'*\'|array<int, \'*\'|Illuminate\Contracts\Database\Query\Expression|model property of App\User>|(Closure(): null)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
+                20 => ['Parameter #2 $columns of static method Illuminate\Database\Eloquent\Builder<App\User>::findOr() expects \'*\'|array<int, \'*\'|Illuminate\Contracts\Database\Query\Expression|model property of App\User>|(Closure(): null)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, array{\'foo\'} given.'],
+                21 => ['Parameter #2 $columns of method Illuminate\Database\Eloquent\Builder<App\Account>::findOr() expects \'*\'|array<int, \'*\'|Illuminate\Contracts\Database\Query\Expression|model property of App\Account>|(Closure(): null)|Illuminate\Contracts\Database\Query\Expression|model property of App\Account, array{\'foo\'} given.'],
+            ],
+        ];
+
         yield 'force-create-quietly' => [
             __DIR__ . '/data/model-property-force-create-quietly.php',
             [

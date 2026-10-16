@@ -62,6 +62,14 @@ function test(): void
     assertType('App\NonGenericCollection', ModelWithNonGenericCollection::findOrFail([1, 2]));
     assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', ModelWithOnlyValueGenericCollection::findOrFail([1, 2]));
 
+    assertType('App\AccountCollection<int, App\Account>', Account::query()->findOr([1, 2], fn () => 42));
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::query()->findOr([1, 2], fn () => 42));
+    assertType('App\NonGenericCollection', ModelWithNonGenericCollection::query()->findOr([1, 2], fn () => 42));
+    assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', ModelWithOnlyValueGenericCollection::query()->findOr([1, 2], fn () => 42));
+
+    assertType('App\AccountCollection<int, App\Account>', Account::findOr([1, 2], fn () => 42));
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::findOr([1, 2], fn () => 42));
+
     assertType('App\AccountCollection<int, App\Account>', Account::query()->get());
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::query()->get());
     assertType('App\NonGenericCollection', ModelWithNonGenericCollection::query()->get());
