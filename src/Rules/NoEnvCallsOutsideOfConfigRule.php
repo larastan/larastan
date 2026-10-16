@@ -14,7 +14,6 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
 
-use function config_path;
 use function count;
 use function glob;
 use function is_dir;
@@ -43,7 +42,13 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
             return;
         }
 
-        $this->configDirectories = [config_path()]; // @phpstan-ignore-line
+        $path = $this->resolve('path.config');
+
+        if ($path === null) {
+            return;
+        }
+
+        $this->configDirectories = [(string) $path];
     }
 
     public function getNodeType(): string
