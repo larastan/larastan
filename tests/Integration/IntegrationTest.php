@@ -222,6 +222,22 @@ class IntegrationTest extends PHPStanTestCase
             ];
         }
 
+        yield 'upsert' => [
+            __DIR__ . '/data/model-property-upsert.php',
+            [
+                6 => ['Parameter #1 $values of method Illuminate\Database\Eloquent\Builder<App\User>::upsert() expects array<int|model property of App\User, array<model property of App\User, mixed>|bool|float|int|object|string|null>, array<string, string> given.'],
+                7 => ['Parameter #1 $values of method Illuminate\Database\Eloquent\Builder<App\User>::upsert() expects array<int|model property of App\User, array<model property of App\User, mixed>|bool|float|int|object|string|null>, array<int, array<string, string>> given.'],
+                8 => ['Parameter #2 $uniqueBy of method Illuminate\Database\Eloquent\Builder<App\User>::upsert() expects array<int, model property of App\User>|model property of App\User, string given.'],
+                9 => ['Parameter #2 $uniqueBy of method Illuminate\Database\Eloquent\Builder<App\User>::upsert() expects array<int, model property of App\User>|model property of App\User, array<int, string> given.'],
+                10 => ['Parameter #3 $update of method Illuminate\Database\Eloquent\Builder<App\User>::upsert() expects array<int|model property of App\User, mixed>|null, array<string, Illuminate\Contracts\Database\Query\Expression> given.'],
+                18 => ['Parameter #1 $values of static method Illuminate\Database\Eloquent\Builder<App\User>::upsert() expects array<int|model property of App\User, array<model property of App\User, mixed>|bool|float|int|object|string|null>, array<string, string> given.'],
+                22 => ['Parameter #1 $values of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::upsert() expects array<int|model property of App\Account, array<model property of App\Account, mixed>|bool|float|int|object|string|null>, array<string, string> given.'],
+                23 => ['Parameter #1 $values of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::upsert() expects array<int|model property of App\Account, array<model property of App\Account, mixed>|bool|float|int|object|string|null>, array<int, array<string, string>> given.'],
+                24 => ['Parameter #2 $uniqueBy of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::upsert() expects array<int, model property of App\Account>|model property of App\Account, string given.'],
+                36 => ['Parameter #1 $values of method Illuminate\Database\Eloquent\Builder<App\User>::upsert() expects array<int|model property of App\User, array<model property of App\User, mixed>|bool|float|int|object|string|null>, array<int, array<string, string>> given.'],
+            ],
+        ];
+
         if (laravel_version_compare('13.3.0', '>=')) {
             yield 'increment-each' => [
                 __DIR__ . '/data/model-property-increment-each-l13-3.php',

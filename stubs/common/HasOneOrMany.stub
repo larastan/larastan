@@ -99,4 +99,14 @@ abstract class HasOneOrMany extends Relation
      * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function createManyQuietly(iterable $records);
+
+    /**
+     * Insert new records or update the existing ones.
+     *
+     * @param  array<model-property<TRelatedModel>, scalar|object|null>|array<int, array<model-property<TRelatedModel>, mixed>>  $values
+     * @param  model-property<TRelatedModel>|array<int, model-property<TRelatedModel>>  $uniqueBy
+     * @param  array<int|model-property<TRelatedModel>, mixed>|null  $update
+     * @return int
+     */
+    public function upsert(array $values, $uniqueBy, $update = null);
 }

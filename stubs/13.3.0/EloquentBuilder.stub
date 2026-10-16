@@ -514,6 +514,16 @@ class Builder
     public function update(array $values);
 
     /**
+     * Insert new records or update the existing ones.
+     *
+     * @param  array<model-property<TModel>, scalar|object|null>|array<int, array<model-property<TModel>, mixed>>  $values
+     * @param  model-property<TModel>|array<int, model-property<TModel>>  $uniqueBy
+     * @param  array<int|model-property<TModel>, mixed>|null  $update
+     * @return int
+     */
+    public function upsert(array $values, $uniqueBy, $update = null);
+
+    /**
      * Execute the query and get the first result if it's the sole matching record.
      *
      * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
