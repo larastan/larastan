@@ -177,10 +177,16 @@ function test(
     assertType('App\User|null', User::with(['accounts'])->find(1));
     assertType('App\User', User::with(['accounts'])->findOrFail(1));
     assertType('App\User', User::with(['accounts'])->findOrNew(1));
+    assertType('App\User', User::with(['accounts'])->findSole(1));
+    assertType('App\User', User::with(['accounts'])->findSole(1, ['id', 'email']));
+    assertType('42|App\User', User::with(['accounts'])->findOr(1, fn () => 42));
+    assertType('42|App\User', User::with(['accounts'])->findOr(1, callback: fn () => 42));
+    assertType('\'x\'|App\User', User::with(['accounts'])->findOr(1, ['id', 'email'], fn () => 'x'));
     assertType('Illuminate\Database\Eloquent\Model|null', (new CustomBuilder(User::query()->getQuery()))->with('email')->find(1));
 
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::with(['accounts'])->find([1, 2, 3]));
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::with(['accounts'])->findOrNew([1, 2, 3]));
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::with(['accounts'])->findOr([1, 2, 3], fn () => 42));
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::hydrate([]));
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::fromQuery('SELECT * FROM users'));
 
