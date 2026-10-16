@@ -6,6 +6,7 @@ namespace Tests\Rules\Data;
 
 use App\Account;
 use App\User;
+use App\UserWithPropertyTags;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -16,6 +17,12 @@ class CorrectCollectionCalls
     public function staticCount(): int
     {
         return User::count();
+    }
+
+    /** @return Collection<int, mixed> */
+    public function pluckPropertyTagWithoutColumn(): Collection
+    {
+        return UserWithPropertyTags::all()->pluck('display_name');
     }
 
     public function hydrate(): ?User
