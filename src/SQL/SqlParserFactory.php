@@ -33,7 +33,7 @@ final class SqlParserFactory
         }
 
         if ($this->isPhpMyAdminParserAvailable()) {
-            $this->cachedParser = new PhpMyAdminSqlParser();
+            $this->cachedParser = new PhpMyAdminSqlParser($this->iamcalSqlParser);
         } else {
             $this->cachedParser = $this->iamcalSqlParser;
         }
