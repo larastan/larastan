@@ -202,6 +202,36 @@ class IntegrationTest extends PHPStanTestCase
             ];
         }
 
+        if (laravel_version_compare('13.35.0', '>=')) {
+            yield 'relation-increment-or-create' => [
+                __DIR__ . '/data/model-property-relation-increment-or-create-l13-35.php',
+                [
+                    5 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::incrementOrCreate() expects array<model property of App\Account, mixed>, array<string, string> given.'],
+                    7 => ['Parameter #2 $column of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::incrementOrCreate() expects model property of App\Account, string given.'],
+                    9 => ['Parameter #5 $extra of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::incrementOrCreate() expects array<model property of App\Account, mixed>, array<string, string> given.'],
+                    12 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Address,App\User,App\Address|null>::incrementOrCreate() expects array<model property of App\Address, mixed>, array<string, string> given.'],
+                    13 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Address,App\User,Illuminate\Database\Eloquent\Collection<int, App\Address>>::incrementOrCreate() expects array<model property of App\Address, mixed>, array<string, string> given.'],
+                    15 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Role,App\User,Illuminate\Database\Eloquent\Relations\Pivot,string>::incrementOrCreate() expects array<model property of App\Role, mixed>, array<string, string> given.'],
+                    17 => ['Parameter #2 $column of method Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Role,App\User,Illuminate\Database\Eloquent\Relations\Pivot,string>::incrementOrCreate() expects model property of App\Role, string given.'],
+                    18 => ['Parameter #5 $extra of method Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Role,App\User,Illuminate\Database\Eloquent\Relations\Pivot,string>::incrementOrCreate() expects array<model property of App\Role, mixed>, array<string, string> given.'],
+                ],
+            ];
+        }
+
+        if (laravel_version_compare('13.37.0', '>=')) {
+            yield 'relation-increment-or-create-through' => [
+                __DIR__ . '/data/model-property-relation-increment-or-create-l13-37.php',
+                [
+                    5 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough<App\Transaction,App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Transaction>>::incrementOrCreate() expects array<model property of App\Transaction, mixed>, array<string, string> given.'],
+                    7 => ['Parameter #2 $column of method Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough<App\Car,App\Mechanic,App\User,App\Car|null>::incrementOrCreate() expects model property of App\Car, string given.'],
+                    8 => [
+                        'Parameter #2 $column of method Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough<App\Car,App\Mechanic,App\User,App\Car|null>::incrementOrCreate() expects model property of App\Car, string given.',
+                        'Parameter #5 $extra of method Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough<App\Car,App\Mechanic,App\User,App\Car|null>::incrementOrCreate() expects array<model property of App\Car, mixed>, array<string, string> given.',
+                    ],
+                ],
+            ];
+        }
+
         yield 'model-save-options' => [
             __DIR__ . '/data/model-save-options.php',
             [
