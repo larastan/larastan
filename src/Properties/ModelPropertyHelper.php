@@ -8,8 +8,10 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Larastan\Larastan\Reflection\ReflectionHelper;
+use PHPStan\Analyser\DeclarationDependencyTracker;
 use PHPStan\PhpDoc\TypeStringResolver;
 use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\GenericObjectType;
@@ -47,6 +49,8 @@ class ModelPropertyHelper
         private SquashedMigrationHelper $squashedMigrationHelper,
         private ModelCastHelper $modelCastHelper,
         private MigrationCache $migrationCache,
+        private DeclarationDependencyTracker $dependencyTracker,
+        private ReflectionProvider $reflectionProvider,
     ) {
     }
 
@@ -270,6 +274,8 @@ class ModelPropertyHelper
     {
         $this->migrationsLoaded = true;
 
+        $this->trackMigrationDependencies();
+
         $migrationFiles = $this->migrationHelper->getMigrationFiles();
         $schemaFiles    = $this->squashedMigrationHelper->getSchemaFiles();
 
@@ -284,6 +290,29 @@ class ModelPropertyHelper
                 return $this->migrationHelper->initializeTables($tables);
             },
         );
+    }
+
+    /**
+     * Database properties come from files no analysed code references. Every model shares the
+     * same tables, so the directories are recorded once on Model: PHPStan applies an ancestor's
+     * dependencies to every file depending on a model.
+     */
+    private function trackMigrationDependencies(): void
+    {
+        if (! $this->reflectionProvider->hasClass(Model::class)) {
+            return;
+        }
+
+        $modelReflection = $this->reflectionProvider->getClass(Model::class);
+
+        foreach ($this->migrationHelper->getMigrationDirectories() as $directory) {
+            // fnmatch() is case-sensitive; MigrationHelper scans with /\.php$/i.
+            $this->dependencyTracker->trackDirectoryDependency($modelReflection, $directory, '*.[pP][hH][pP]');
+        }
+
+        foreach ($this->squashedMigrationHelper->getSchemaDirectories() as $directory) {
+            $this->dependencyTracker->trackDirectoryDependency($modelReflection, $directory);
+        }
     }
 
     private function hasDate(Model $modelInstance, string $propertyName): bool
