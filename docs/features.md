@@ -254,6 +254,15 @@ Larastan will automatically scan your application's migrations in order to infer
 
 Various parameters can be set to [configure this behavior](custom-config-parameters.md#databasemigrationspath).
 
+String literals passed to `DB::statement()` and `DB::unprepared()` are read with the same SQL parsers used for schema dumps. `CREATE TABLE` statements those parsers understand are added to the schema. A table the schema builder already recorded is left as-is. Other SQL is left unchanged.
+
+```php
+DB::statement('CREATE TABLE `reports` (`id` int unsigned NOT NULL, `title` varchar(255) NULL)');
+DB::connection('mysql')->unprepared('CREATE TABLE `logs` (`id` int NOT NULL)');
+```
+
+Only string literals are read. A variable or other expression is skipped, and a string the active parser cannot read does not change the schema.
+
 ## Model Relationships
 
 In order for Larastan to recognize Model relationships you are required to document the generic types of the relation class:

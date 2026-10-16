@@ -23,6 +23,8 @@ parameters:
 
 **Note:** If your migrations are using `if` statements to conditionally alter database structure (ex: create table only if it's not there, add column only if table exists and column does not etc...) Larastan will assume those if statements evaluate to true and will consider everything from the `if` body.
 
+**Note:** Literal `DB::statement()` and `DB::unprepared()` calls are parsed with the same SQL parsers as schema dumps. See [Model Properties](features.md#model-properties).
+
 ## `disableMigrationScan`
 **default**: `false`
 
