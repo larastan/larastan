@@ -238,6 +238,27 @@ class IntegrationTest extends PHPStanTestCase
             ],
         ];
 
+        yield 'with-attributes' => [
+            __DIR__ . '/data/model-property-with-attributes.php',
+            [
+                6 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Builder<App\User>::withAttributes() expects array<model property of App\User, mixed>|Illuminate\Contracts\Database\Query\Expression|model property of App\User, array<string, string> given.'],
+                7 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Builder<App\User>::withAttributes() expects array<model property of App\User, mixed>|Illuminate\Contracts\Database\Query\Expression|model property of App\User, string given.'],
+                14 => ['Parameter #1 $attributes of static method Illuminate\Database\Eloquent\Builder<App\User>::withAttributes() expects array<model property of App\User, mixed>|Illuminate\Contracts\Database\Query\Expression|model property of App\User, array<string, string> given.'],
+                18 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Builder<App\Account>::withAttributes() expects array<model property of App\Account, mixed>|Illuminate\Contracts\Database\Query\Expression|model property of App\Account, array<string, string> given.'],
+                19 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Builder<App\Account>::withAttributes() expects array<model property of App\Account, mixed>|Illuminate\Contracts\Database\Query\Expression|model property of App\Account, string given.'],
+            ],
+        ];
+
+        if (laravel_version_compare('12.4.0', '>=')) {
+            yield 'with-attributes-as-conditions' => [
+                __DIR__ . '/data/model-property-with-attributes-l12-4.php',
+                [
+                    5 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Builder<App\User>::withAttributes() expects array<model property of App\User, mixed>|Illuminate\Contracts\Database\Query\Expression|model property of App\User, array<string, string> given.'],
+                    6 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Builder<App\User>::withAttributes() expects array<model property of App\User, mixed>|Illuminate\Contracts\Database\Query\Expression|model property of App\User, string given.'],
+                ],
+            ];
+        }
+
         if (laravel_version_compare('13.3.0', '>=')) {
             yield 'increment-each' => [
                 __DIR__ . '/data/model-property-increment-each-l13-3.php',
