@@ -371,6 +371,43 @@ class IntegrationTest extends PHPStanTestCase
     }
 
     /**
+     * Wrong aggregate constraints must be rejected, rather than merely inferring useful types
+     * for valid callbacks. Check all expected lines: regular integration expectations only
+     * reject unexpected messages, not missing messages.
+     *
+     * @throws Throwable
+     */
+    public function testAggregateCallbacksRejectWrongQueryParameterTypes(): void
+    {
+        $errors = $this->runAnalyse(__DIR__ . '/data/aggregate-relation-callbacks.php');
+
+        $expected = [
+            28 => ['::withCount()', 'App\\PostBuilder<App\\Post>', 'HasMany'],
+            29 => ['::withCount()', 'App\\PostBuilder<App\\Post>', 'int'],
+            30 => ['::loadCount()', 'App\\PostBuilder<App\\Post>', 'HasMany'],
+            31 => ['::loadSum()', 'Illuminate\\Database\\Eloquent\\Builder<App\\Account>', 'int'],
+        ];
+
+        $seen = [];
+
+        foreach ($errors as $error) {
+            $line = $error->getLine();
+
+            $this->assertNotNull($line);
+            $this->assertArrayHasKey($line, $expected);
+            $this->assertArrayNotHasKey($line, $seen);
+
+            foreach ($expected[$line] as $fragment) {
+                $this->assertStringContainsString($fragment, $error->getMessage());
+            }
+
+            $seen[$line] = true;
+        }
+
+        $this->assertCount(count($expected), $seen);
+    }
+
+    /**
      * @param array<int, array<int, string>>|null $expectedErrors
      *
      * @throws Throwable

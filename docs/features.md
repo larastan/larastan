@@ -322,9 +322,36 @@ matches its own key. Dynamic string keys fall back to `Relation<*, *, *>`; a cal
 typed as a narrower subclass requires a resolvable constant key. One dynamic key
 widens the key type for the entire array.
 
-This uses [`relation-of<Model, Relationship>`](custom-types.md#relation-of). Other
-relationship-array methods, such as `withCount()`, `loadCount()` and `loadMorph()`,
-do not use this inference.
+This uses [`relation-of<Model, Relationship>`](custom-types.md#relation-of).
+
+Aggregate constraints on `withAggregate()`, `withCount()`, `withMax()`,
+`withMin()`, `withSum()`, `withAvg()`, `withExists()` and their
+`load*` counterparts infer the **related Eloquent builder**, including custom
+builders. Unlike ordinary eager-load callbacks, aggregate constraints receive
+a builder rather than a relationship object.
+
+```php
+User::withCount(['posts as published_posts' => function ($query) {
+    // $query: PostBuilder<Post> (when Post has a custom builder)
+}]);
+
+$user->loadSum(['accounts' => function ($query) {
+    // $query: Builder<Account>
+}], 'balance');
+```
+
+Aggregate constraint values can also be invokable objects, not just closures.
+
+Aggregate aliases in the form `relation as alias` are supported only by aggregate
+callbacks. These use [`aggregate-builder-of<Model, Relationship>`](custom-types.md#aggregate-builder-of)
+without changing normal `builder-of` inference. Dynamic relationship keys fall
+back to `Builder<*>`, never the declaring model's builder. Multiple known
+relationship keys produce a benevolent union that permits differently typed
+callbacks. For inline associative arrays with at least two distinct, statically
+known relations, a dedicated rule also checks that each typed callback accepts
+the builder of its own relation. Dynamic arrays remain conservatively unchecked. This feature types
+the constraint query, not the additional aggregate attribute on the returned model.
+`loadMorph()` is not covered by this inference.
 
 A relationship without the generic annotations above only exposes the `Model` bound, so a
 dotted path cannot be walked past it. The callback then receives `Builder<Model>` and is not

@@ -39,6 +39,75 @@ class Collection extends BaseCollection implements QueueableCollection
     public function loadMissing($relations);
 
     /**
+     * Add a relationship aggregate subquery.
+     *
+     * @template TRelation of string
+     * @param string|array<int|TRelation, (callable(aggregate-builder-of<TModel, TRelation>): mixed)|string> $relations
+     * @param \Illuminate\Contracts\Database\Query\Expression|string $column
+     * @param string|null $function
+     * @return $this
+     */
+    public function loadAggregate($relations, $column, $function = null);
+
+    /**
+     * Count related records.
+     *
+     * @template TRelation of string
+     * @param string|array<int|TRelation, (callable(aggregate-builder-of<TModel, TRelation>): mixed)|string> $relations
+     * @return $this
+     */
+    public function loadCount($relations);
+
+    /**
+     * Select the maximum related column value.
+     *
+     * @template TRelation of string
+     * @param string|array<int|TRelation, (callable(aggregate-builder-of<TModel, TRelation>): mixed)|string> $relations
+     * @param \Illuminate\Contracts\Database\Query\Expression|string $column
+     * @return $this
+     */
+    public function loadMax($relations, $column);
+
+    /**
+     * Select the minimum related column value.
+     *
+     * @template TRelation of string
+     * @param string|array<int|TRelation, (callable(aggregate-builder-of<TModel, TRelation>): mixed)|string> $relations
+     * @param \Illuminate\Contracts\Database\Query\Expression|string $column
+     * @return $this
+     */
+    public function loadMin($relations, $column);
+
+    /**
+     * Sum a related column.
+     *
+     * @template TRelation of string
+     * @param string|array<int|TRelation, (callable(aggregate-builder-of<TModel, TRelation>): mixed)|string> $relations
+     * @param \Illuminate\Contracts\Database\Query\Expression|string $column
+     * @return $this
+     */
+    public function loadSum($relations, $column);
+
+    /**
+     * Average a related column.
+     *
+     * @template TRelation of string
+     * @param string|array<int|TRelation, (callable(aggregate-builder-of<TModel, TRelation>): mixed)|string> $relations
+     * @param \Illuminate\Contracts\Database\Query\Expression|string $column
+     * @return $this
+     */
+    public function loadAvg($relations, $column);
+
+    /**
+     * Select whether related records exist.
+     *
+     * @template TRelation of string
+     * @param string|array<int|TRelation, (callable(aggregate-builder-of<TModel, TRelation>): mixed)|string> $relations
+     * @return $this
+     */
+    public function loadExists($relations);
+
+    /**
      * Find a model in the collection by key.
      *
      * @template TFindDefault

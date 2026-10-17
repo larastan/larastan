@@ -137,6 +137,41 @@ class BuilderOfTypeNodeResolverExtensionTest extends PHPStanTestCase
         $this->assertFalse($type->equals($resolver->resolve('builder-of<App\User>')));
     }
 
+    public function testAggregateBuilderTypeRequiresRelationshipName(): void
+    {
+        $typeNode = new GenericTypeNode(
+            new IdentifierTypeNode('aggregate-builder-of'),
+            [new IdentifierTypeNode('App\\User')],
+        );
+
+        $this->assertNull($this->extension->resolve($typeNode, $this->nameScope));
+    }
+
+    public function testAggregateBuilderTypeDoesNotAcceptNonStringRelationship(): void
+    {
+        $typeNode = new GenericTypeNode(
+            new IdentifierTypeNode('aggregate-builder-of'),
+            [new IdentifierTypeNode('App\\User'), new IdentifierTypeNode('int')],
+        );
+
+        $this->assertNull($this->extension->resolve($typeNode, $this->nameScope));
+    }
+
+    public function testAggregateAliasesAreOptInAndTypesSurvivePhpDocSerialization(): void
+    {
+        $resolver  = static::getContainer()->getByType(TypeStringResolver::class);
+        $aggregate = $resolver->resolve("aggregate-builder-of<App\\User, 'posts as published_posts'>");
+        $ordinary  = $resolver->resolve("builder-of<App\\User, 'posts as published_posts'>");
+
+        $this->assertInstanceOf(LateResolvableType::class, $aggregate);
+        $this->assertInstanceOf(LateResolvableType::class, $ordinary);
+        $this->assertTrue($aggregate->equals($resolver->resolve((string) $aggregate->toPhpDocNode())));
+        $this->assertFalse($aggregate->equals($ordinary));
+        $this->assertSame("aggregate-builder-of<App\\User, 'posts as published_posts'>", $aggregate->describe(VerbosityLevel::precise()));
+        $this->assertSame('App\\PostBuilder<App\\Post>', $aggregate->resolve()->describe(VerbosityLevel::precise()));
+        $this->assertSame('Illuminate\\Database\\Eloquent\\Builder<App\\User>', $ordinary->resolve()->describe(VerbosityLevel::precise()));
+    }
+
     public function testBuilderOfWithNonModelTypeReturnsNull(): void
     {
         $typeNode = new GenericTypeNode(

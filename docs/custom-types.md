@@ -206,6 +206,25 @@ The relationship argument can also be a template bounded by `string`:
 
 Once the template resolves to a constant string or a union of constant strings, Larastan resolves the relationships. While it remains unresolved, the type falls back to `builder-of<TModel>`.
 
+## aggregate-builder-of
+
+`aggregate-builder-of<Model, Relationship>` resolves an aggregate constraint's
+related Eloquent builder, including custom builders. Larastan uses it in
+`withCount()`, `withSum()`, other aggregate `with*` methods and their `load*`
+counterparts.
+
+Unlike regular `builder-of<Model, Relationship>`, this variant recognizes
+Laravel aggregate aliases such as `'posts as published_posts'`. This distinction
+ensures that aggregate-only alias syntax does not affect other query methods.
+
+If the relation name cannot be statically identified, this type conservatively
+returns `Illuminate\\Database\\Eloquent\\Builder<*>` rather than assuming
+the declaring model's builder. With several known relation names it produces a
+benevolent union, allowing different callbacks to accept distinct related
+builders. A separate rule checks key-to-callback associations in inline arrays
+with at least two statically known relation names; the shared generic template
+alone cannot establish this, just like `relation-of` in eager-loading arrays.
+
 ## relation-of
 
 `relation-of<Model, Relationship>` resolves to the concrete Eloquent relationship
