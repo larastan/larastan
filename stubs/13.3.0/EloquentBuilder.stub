@@ -294,6 +294,75 @@ class Builder
     public function withOnly($relations);
 
     /**
+     * Add a relationship aggregate subquery.
+     *
+     * @template TRelation of string
+     * @param string|array<int|TRelation, (callable(aggregate-builder-of<TModel, TRelation>): mixed)|string> $relations
+     * @param \Illuminate\Contracts\Database\Query\Expression|string $column
+     * @param string|null $function
+     * @return $this
+     */
+    public function withAggregate($relations, $column, $function = null);
+
+    /**
+     * Count related records.
+     *
+     * @template TRelation of string
+     * @param string|array<int|TRelation, (callable(aggregate-builder-of<TModel, TRelation>): mixed)|string> $relations
+     * @return $this
+     */
+    public function withCount($relations);
+
+    /**
+     * Select the maximum related column value.
+     *
+     * @template TRelation of string
+     * @param string|array<int|TRelation, (callable(aggregate-builder-of<TModel, TRelation>): mixed)|string> $relations
+     * @param \Illuminate\Contracts\Database\Query\Expression|string $column
+     * @return $this
+     */
+    public function withMax($relations, $column);
+
+    /**
+     * Select the minimum related column value.
+     *
+     * @template TRelation of string
+     * @param string|array<int|TRelation, (callable(aggregate-builder-of<TModel, TRelation>): mixed)|string> $relations
+     * @param \Illuminate\Contracts\Database\Query\Expression|string $column
+     * @return $this
+     */
+    public function withMin($relations, $column);
+
+    /**
+     * Sum a related column.
+     *
+     * @template TRelation of string
+     * @param string|array<int|TRelation, (callable(aggregate-builder-of<TModel, TRelation>): mixed)|string> $relations
+     * @param \Illuminate\Contracts\Database\Query\Expression|string $column
+     * @return $this
+     */
+    public function withSum($relations, $column);
+
+    /**
+     * Average a related column.
+     *
+     * @template TRelation of string
+     * @param string|array<int|TRelation, (callable(aggregate-builder-of<TModel, TRelation>): mixed)|string> $relations
+     * @param \Illuminate\Contracts\Database\Query\Expression|string $column
+     * @return $this
+     */
+    public function withAvg($relations, $column);
+
+    /**
+     * Select whether related records exist.
+     *
+     * @template TRelation of string
+     * @param string|array<int|TRelation, (callable(aggregate-builder-of<TModel, TRelation>): mixed)|string> $relations
+     * @return $this
+     */
+    public function withExists($relations);
+
+    /**
      * Create and return an un-saved model instance.
      *
      * @phpstan-param array<model-property<TModel>, mixed> $attributes
