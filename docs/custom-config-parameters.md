@@ -109,14 +109,33 @@ parameters:
 ```
 
 ## `parseModelCastsMethod`
-**default**: `false`
+**default**: `true`
 
-By default, Larastan only relies on the return type of the `casts()` method to infer cast definitions.
-When this option is enabled, Larastan parses the `casts()` method body and uses the returned array values
-to determine cast types.
+Larastan infers model property types from Laravel's native `casts(): array` method by default.
+Most modern Laravel models declare their casts this way, and the return type `array`
+alone does not describe the individual attributes. Ignoring the method body can
+make JSON/enum attributes appear to have the underlying database type, triggering
+incorrect errors or hiding code behind false unreachable-code diagnostics.
 
-This can improve inference when you build casts using class constants or concatenation, but it requires
-parsing the source file thus it might be slower and is disabled by default for that reason.
+Larastan uses the existing PHPStan parser only when the method's return type is
+not already a constant array shape and the model overrides Laravel's empty base
+`casts()` method. Parsed method types are reused for subclasses. Only direct array returns are inspected. Known literal string keys and values
+are inferred precisely. An unresolved value for a known key is treated as
+`mixed`, not as a stale `$casts` property definition: Laravel's trait
+initializer merges `casts()` over `$casts`. This also supports arrays with
+both static and dynamic cast entries. When the return type and source cannot establish a constant cast-key shape
+(for example computed array keys, conditional returns or delegated arrays),
+all model property cast types become `mixed` for safety. This conservatively
+handles overrides that may affect any column, but reduces precision. For
+such models, prefer a precise PHPDoc return shape when possible. Source parsing never executes the `casts()` method.
+
+To disable source parsing (for example in projects using fully annotated array
+shapes or expensive custom model declarations), set:
+
+```neon
+parameters:
+    parseModelCastsMethod: false
+```
 
 ### Example
 ```php

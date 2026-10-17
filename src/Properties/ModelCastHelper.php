@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Casts\AsStringable;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Concerns\HasUniqueStringIds;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon as IlluminateCarbon;
 use Illuminate\Support\Collection;
@@ -49,23 +50,29 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\VerbosityLevel;
 use ReflectionException;
 use stdClass;
 use Stringable;
 
-use function array_combine;
 use function array_key_exists;
-use function array_map;
-use function array_merge;
+use function array_keys;
 use function class_exists;
+use function count;
 use function explode;
+use function in_array;
+use function is_string;
 use function str_replace;
 
 class ModelCastHelper
 {
-    /** @var array<string, array<string, string>> */
+    /** @var array<string, array<string, string|Type>> */
     private array $modelCasts = [];
+
+    /** @var array<string, Type> */
+    private array $parsedCastsMethods = [];
+
+    /** @var array<string, true> */
+    private array $castsWithUnknownKeys = [];
 
     public function __construct(
         private ReflectionProvider $reflectionProvider,
@@ -75,8 +82,12 @@ class ModelCastHelper
     ) {
     }
 
-    public function getReadableType(string $cast, Type $originalType): Type
+    public function getReadableType(string|Type $cast, Type $originalType): Type
     {
+        if (! is_string($cast)) {
+            return $cast;
+        }
+
         $cast = $this->parseCast($cast);
 
         $attributeType = match ($cast) {
@@ -135,8 +146,12 @@ class ModelCastHelper
         return new MixedType();
     }
 
-    public function getWriteableType(string $cast, Type $originalType): Type
+    public function getWriteableType(string|Type $cast, Type $originalType): Type
     {
+        if (! is_string($cast)) {
+            return $cast;
+        }
+
         $cast = $this->parseCast($cast);
 
         $attributeType = match ($cast) {
@@ -227,18 +242,25 @@ class ModelCastHelper
     {
         $modelCasts = $this->getModelCasts($modelClassReflection);
 
-        return array_key_exists($propertyName, $modelCasts);
+        return isset($this->castsWithUnknownKeys[$modelClassReflection->getName()])
+            || array_key_exists($propertyName, $modelCasts);
     }
 
-    public function getCastForProperty(ClassReflection $modelClassReflection, string $propertyName): string|null
+    public function getCastForProperty(ClassReflection $modelClassReflection, string $propertyName): string|Type|null
     {
         $modelCasts = $this->getModelCasts($modelClassReflection);
+
+        // An unknown casts() key may override any schema-derived property
+        // or a previous entry from $casts. Do not claim an exact type.
+        if (isset($this->castsWithUnknownKeys[$modelClassReflection->getName()])) {
+            return new MixedType();
+        }
 
         return $modelCasts[$propertyName] ?? null;
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, string|Type>
      *
      * @throws ShouldNotHappenException
      * @throws MissingMethodFromReflectionException
@@ -267,68 +289,160 @@ class ModelCastHelper
 
         $modelCasts = $modelInstance->getCasts();
 
-        if ($this->parseModelCastsMethod) {
-            $castsMethodReturnType = $this->parseCastsMethod($modelClassReflection);
-        } else {
-            $castsMethodReturnType = $modelClassReflection->getMethod(
-                'casts',
-                new OutOfClassScope(),
-            )->getVariants()[0]->getReturnType();
+        $castsMethodReturnType = $modelClassReflection->getMethod(
+            'casts',
+            new OutOfClassScope(),
+        )->getVariants()[0]->getReturnType();
+
+        // Constant-array PHPDoc already provides the precise casts. Parse only
+        // when native `casts(): array` gives PHPStan insufficient information.
+        // Models inheriting the framework's empty casts() have nothing to parse.
+        if (
+            $this->parseModelCastsMethod
+            && ! $castsMethodReturnType->isConstantArray()->yes()
+            && $modelClassReflection->getNativeMethod('casts')->getDeclaringClass()->getName() !== Model::class
+        ) {
+            $parsed = $this->parseCastsMethod($modelClassReflection);
+
+            if ($parsed->isConstantArray()->yes()) {
+                $castsMethodReturnType = $parsed;
+            } else {
+                // When parsing cannot determine a literal array shape, casts()
+                // can supply ANY key at runtime. Keeping a column's schema
+                // type or previous $casts entry would be unsound.
+                $this->castsWithUnknownKeys[$className] = true;
+            }
         }
 
-        if ($castsMethodReturnType->isConstantArray()->yes()) {
-            $modelCasts = array_merge(
-                $modelCasts,
-                array_combine(
-                    array_map(static fn ($key) => $key->getValue(), $castsMethodReturnType->getKeyTypes()), // @phpstan-ignore-line
-                    array_map(static function (Type $value) {
-                        if ($value->isConstantValue()->yes()) {
-                            return str_replace('\\\\', '\\', (string) $value->getValue()); // @phpstan-ignore-line
-                        }
-
-                        return $value->describe(VerbosityLevel::value());
-                    }, $castsMethodReturnType->getValueTypes()), // @phpstan-ignore-line
-                ),
-            );
-        }
+        $modelCasts = $this->mergeCastsFromType($modelCasts, $castsMethodReturnType);
 
         $this->modelCasts[$className] = $modelCasts;
 
         return $modelCasts;
     }
 
+    /**
+     * Preserve exact casts and widen unresolved values for a known key.
+     * This applies equally to parsed bodies and declared PHPDoc array shapes.
+     *
+     * @param array<string, string|Type> $modelCasts
+     *
+     * @return array<string, string|Type>
+     */
+    private function mergeCastsFromType(array $modelCasts, Type $type): array
+    {
+        if (! $type->isConstantArray()->yes()) {
+            return $modelCasts;
+        }
+
+        $arrays = $type->getConstantArrays();
+
+        if ($arrays === []) {
+            return $modelCasts;
+        }
+
+        foreach ($arrays as $array) {
+            $optional = $array->getOptionalKeys();
+            $values   = $array->getValueTypes();
+
+            foreach ($array->getKeyTypes() as $index => $key) {
+                if (! $this->isLiteralString($key)) {
+                    // An unknown key can shadow any existing $casts entry.
+                    foreach (array_keys($modelCasts) as $name) {
+                        $modelCasts[$name] = new MixedType();
+                    }
+
+                    continue;
+                }
+
+                $name  = $key->getConstantStrings()[0]->getValue();
+                $value = $values[$index];
+
+                // Optional keys and alternative constant arrays can override
+                // existing $casts only on some paths; never select one branch.
+                $modelCasts[$name] = count($arrays) === 1
+                    && ! in_array($index, $optional, true)
+                    && $this->isLiteralString($value)
+                    ? str_replace('\\\\', '\\', $value->getConstantStrings()[0]->getValue())
+                    : new MixedType();
+            }
+        }
+
+        return $modelCasts;
+    }
+
+    private function isLiteralString(Type $type): bool
+    {
+        // Use PHPStan's native type API, not instanceof checks on Type.
+        return $type->isString()->yes()
+            && $type->isConstantScalarValue()->yes()
+            && count($type->getConstantStrings()) === 1;
+    }
+
     private function parseCastsMethod(ClassReflection $modelClassReflection): Type
     {
-        $castsMethod = $modelClassReflection->getNativeMethod('casts');
-        $fileName    = $castsMethod->getDeclaringClass()->getFileName();
+        $castsMethod    = $modelClassReflection->getNativeMethod('casts');
+        $declaringClass = $castsMethod->getDeclaringClass();
+        $className      = $declaringClass->getName();
 
-        if ($fileName === null) {
-            return new NullType();
+        if (isset($this->parsedCastsMethods[$className])) {
+            return $this->parsedCastsMethods[$className];
+        }
+
+        // The declaring model may import casts() from a trait. In that case
+        // the method body is in the trait's file, not the model's file.
+        // Native method reflection identifies the actual source location.
+        $nativeMethod = $declaringClass->getNativeReflection()->getMethod($castsMethod->getName());
+        $fileName     = $nativeMethod->getFileName();
+        $startLine    = $nativeMethod->getStartLine();
+        $endLine      = $nativeMethod->getEndLine();
+
+        if ($fileName === false || $startLine === false || $endLine === false) {
+            return $this->parsedCastsMethods[$className] = new NullType();
         }
 
         $stmts = $this->parser->parseFile($fileName);
 
-        $castsMethodNode = (new NodeFinder())->findFirst($stmts, static function (Node $node) use ($castsMethod): bool {
-            return $node instanceof Node\Stmt\ClassMethod && $node->name->toString() === $castsMethod->getName();
-        });
+        // A trait method can be imported as "casts" under an alias even
+        // when its source declaration uses a different method name. Match
+        // the exact reflected method span and refuse ambiguous matches.
+        $method = null;
 
-        if ($castsMethodNode === null) {
-            return new NullType();
+        foreach ((new NodeFinder())->findInstanceOf($stmts, Node\Stmt\ClassMethod::class) as $candidate) {
+            if ($candidate->getStartLine() !== $startLine || $candidate->getEndLine() !== $endLine) {
+                continue;
+            }
+
+            if ($method !== null) {
+                return $this->parsedCastsMethods[$className] = new NullType();
+            }
+
+            $method = $candidate;
         }
 
-        /** @var Node\Stmt\Return_|null $returnNode */
-        $returnNode = (new NodeFinder())->findFirstInstanceOf($castsMethodNode, Node\Stmt\Return_::class);
-
-        if ($returnNode === null) {
-            return new NullType();
+        if ($method === null) {
+            return $this->parsedCastsMethods[$className] = new NullType();
         }
 
-        if (! $returnNode->expr instanceof Array_) {
-            return new NullType();
+        // Earlier or nested returns can change the casts shape.
+        $returns = (new NodeFinder())->findInstanceOf($method->stmts ?? [], Node\Stmt\Return_::class);
+
+        if (count($returns) !== 1) {
+            return $this->parsedCastsMethods[$className] = new NullType();
         }
 
-        $scope = $this->scopeFactory->create(ScopeContext::create($fileName));
+        // Only a direct literal array return is inferred; delegated
+        // expressions retain their declared return type.
+        foreach ($method->stmts ?? [] as $bodyStatement) {
+            if ($bodyStatement instanceof Node\Stmt\Return_ && $bodyStatement->expr instanceof Array_) {
+                // self:: must resolve in the class using the trait, not in
+                // an unrelated file-level or trait-only scope.
+                $scope = $this->scopeFactory->create(ScopeContext::create($fileName))->enterClass($declaringClass);
 
-        return $scope->getType($returnNode->expr);
+                return $this->parsedCastsMethods[$className] = $scope->getType($bodyStatement->expr);
+            }
+        }
+
+        return $this->parsedCastsMethods[$className] = new NullType();
     }
 }
