@@ -81,8 +81,8 @@ class NoModelMakeRule implements Rule
                 $type = new ObjectType($type->getConstantStrings()[0]->getValue());
             }
         } else {
-            // TODO can we handle relative names, do they even occur here?
-            return false;
+            // self, static and parent are left unresolved by the name resolver
+            $type = new ObjectType($scope->resolveName($class));
         }
 
         return (new ObjectType(Model::class))
