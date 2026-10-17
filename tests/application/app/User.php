@@ -9,6 +9,8 @@ use App\Casts\Hash;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Casts\AsCollection;
+use Illuminate\Database\Eloquent\Casts\AsEnumArrayObject;
+use Illuminate\Database\Eloquent\Casts\AsEnumCollection;
 use Illuminate\Database\Eloquent\Casts\AsStringable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -58,6 +60,8 @@ class User extends Authenticatable
         'floatButRoundedDecimalString' => 'decimal:1',
         'options' => AsArrayObject::class,
         'properties' => AsCollection::class,
+        'enum_collection' => AsEnumCollection::class.':'.BackedEnumeration::class,
+        'enum_array_object' => AsEnumArrayObject::class.':'.BasicEnumeration::class,
         'castable_with_argument' => AsStringable::class.':argument',
         'favorites' => Favorites::class,
         'secret' => Hash::class.':sha256',

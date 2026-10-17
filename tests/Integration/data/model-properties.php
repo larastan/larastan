@@ -110,3 +110,10 @@ function testWriteToNullableDecimalCast(User $user): void
     $user->nullable_decimal = 'foo'; // Should raise an error
     $user->nullable_decimal = []; // Should raise an error
 }
+
+function testWriteToEnumCollectionCast(User $user, App\Casts\BackedEnumeration $backed, App\Casts\BasicEnumeration $basic): void
+{
+    $user->enum_collection = [$backed];
+    $user->enum_collection = null;
+    $user->enum_collection = [$basic]; // Should raise an error
+}

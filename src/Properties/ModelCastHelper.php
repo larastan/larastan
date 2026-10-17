@@ -33,6 +33,7 @@ use PHPStan\Parser\Parser;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ParameterReflection;
+use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Accessory\AccessoryNumericStringType;
@@ -40,6 +41,7 @@ use PHPStan\Type\ArrayType;
 use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\BooleanType;
 use PHPStan\Type\Constant\ConstantIntegerType;
+use PHPStan\Type\ConstantTypeHelper;
 use PHPStan\Type\FloatType;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\IntegerType;
@@ -60,6 +62,7 @@ use function array_map;
 use function array_merge;
 use function class_exists;
 use function explode;
+use function str_contains;
 use function str_replace;
 
 class ModelCastHelper
@@ -77,7 +80,8 @@ class ModelCastHelper
 
     public function getReadableType(string $cast, Type $originalType): Type
     {
-        $cast = $this->parseCast($cast);
+        $arguments = $this->parseCastArguments($cast);
+        $cast      = $this->parseCast($cast);
 
         $attributeType = match ($cast) {
             'int', 'integer', 'timestamp' => $originalType->isInteger()->yes() ? $originalType : new IntegerType(),
@@ -115,7 +119,11 @@ class ModelCastHelper
 
         if ($classReflection->is(Castable::class)) {
             $methodReflection = $classReflection->getNativeMethod('castUsing');
-            $castUsingReturn  = $methodReflection->getVariants()[0]->getReturnType();
+            $castUsingReturn  = ParametersAcceptorSelector::selectFromTypes(
+                [ConstantTypeHelper::getTypeFromValue($arguments)],
+                $methodReflection->getVariants(),
+                false,
+            )->getReturnType();
 
             if ($castUsingReturn->getObjectClassReflections() !== []) {
                 $classReflection = $castUsingReturn->getObjectClassReflections()[0];
@@ -137,7 +145,8 @@ class ModelCastHelper
 
     public function getWriteableType(string $cast, Type $originalType): Type
     {
-        $cast = $this->parseCast($cast);
+        $arguments = $this->parseCastArguments($cast);
+        $cast      = $this->parseCast($cast);
 
         $attributeType = match ($cast) {
             'int', 'integer', 'timestamp' => $originalType->isInteger()->yes() ? $originalType : new IntegerType(),
@@ -172,7 +181,11 @@ class ModelCastHelper
 
         if ($classReflection->is(Castable::class)) {
             $methodReflection = $classReflection->getNativeMethod('castUsing');
-            $castUsingReturn  = $methodReflection->getVariants()[0]->getReturnType();
+            $castUsingReturn  = ParametersAcceptorSelector::selectFromTypes(
+                [ConstantTypeHelper::getTypeFromValue($arguments)],
+                $methodReflection->getVariants(),
+                false,
+            )->getReturnType();
 
             if ($castUsingReturn->getObjectClassReflections() !== []) {
                 $classReflection = $castUsingReturn->getObjectClassReflections()[0];
@@ -221,6 +234,16 @@ class ModelCastHelper
         }
 
         return $cast;
+    }
+
+    /** @return list<string> */
+    private function parseCastArguments(string $cast): array
+    {
+        if (! str_contains($cast, ':')) {
+            return [];
+        }
+
+        return explode(',', explode(':', $cast, 2)[1]);
     }
 
     public function hasCastForProperty(ClassReflection $modelClassReflection, string $propertyName): bool
