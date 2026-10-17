@@ -101,6 +101,20 @@ abstract class HasOneOrMany extends Relation
     public function createManyQuietly(iterable $records);
 
     /**
+     * Create a Collection of new instances of the related model, allowing mass-assignment.
+     *
+     * @param  iterable<array<model-property<TRelatedModel>, mixed>>  $records
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
+     */
+    public function forceCreateMany(iterable $records);
+
+    /**
+     * @param  iterable<array<model-property<TRelatedModel>, mixed>>  $records
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
+     */
+    public function forceCreateManyQuietly(iterable $records);
+
+    /**
      * Insert new records or update the existing ones.
      *
      * @param  array<model-property<TRelatedModel>, scalar|object|null>|array<int, array<model-property<TRelatedModel>, mixed>>  $values
