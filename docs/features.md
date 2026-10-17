@@ -248,6 +248,30 @@ This inference follows the item type: manually supplying a Support collection of
 infers the model's Eloquent collection. It does not track changes to the collection class separately
 from the item type.
 
+## Multi-level collection grouping
+
+When `Illuminate\Support\Collection::groupBy()` receives a fixed array of two to eight
+grouping selectors, Larastan infers the number of nested group levels and
+retains the type of each item rather than falling back to `mixed`.
+
+```php
+/** @var \Illuminate\Support\Collection<int, array{region: string, city: string}> $rows */
+$groups = $rows->groupBy(['region', 'city']);
+// Collection<array-key, Collection<array-key, Collection<int, array{region: string, city: string}>>>
+```
+
+The `preserveKeys` argument controls the keys of the innermost collection.
+Eloquent collections retain the model type in the leaf collection, with
+outer groups represented by Support collections because Eloquent converts
+mapped non-model values into Support collections.
+
+Dynamic selector lists, optional array keys, one selector, more than eight
+selectors, and custom collection subclasses continue to use the existing
+Laravel/PHPStan return types. Two-element callable arrays such as
+`[Callback::class, 'method']` also keep the framework type: Laravel treats them
+as **one callback**, not two grouping levels. This avoids guessing types where
+the grouping depth or runtime collection implementation is not statically known.
+
 ## Model Properties
 
 Larastan will automatically scan your application's migrations in order to infer the database schema and therefore it is able to infer the existence of magic properties on Eloquent model classes.
