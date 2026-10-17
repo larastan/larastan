@@ -332,6 +332,18 @@ class IntegrationTest extends PHPStanTestCase
             ],
         ];
 
+        if (laravel_version_compare('12.8.0', '>=')) {
+            yield 'relation-force-create-many' => [
+                __DIR__ . '/data/model-property-force-create-many-l12-8.php',
+                [
+                    6 => ['Parameter #1 $records of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::forceCreateMany() expects iterable<array<model property of App\Account, mixed>>, array<int, array<string, string>> given.'],
+                    7 => ['Parameter #1 $records of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::forceCreateManyQuietly() expects iterable<array<model property of App\Account, mixed>>, array<int, array<string, string>> given.'],
+                    8 => ['Parameter #1 $records of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Address,App\User,Illuminate\Database\Eloquent\Collection<int, App\Address>>::forceCreateMany() expects iterable<array<model property of App\Address, mixed>>, array<int, array<string, string>> given.'],
+                    23 => ['Parameter #1 $records of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::forceCreateMany() expects iterable<array<model property of App\Account, mixed>>, array<int, array<string, string>> given.'],
+                ],
+            ];
+        }
+
         yield [
             __DIR__ . '/data/model-property-static-call.php',
             [
