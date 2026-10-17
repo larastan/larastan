@@ -148,7 +148,14 @@ final class ModelSerializationDynamicMethodReturnTypeExtension implements Dynami
             return new MixedType();
         }
 
-        $cast           = $this->casts->getCastForProperty($class, $name);
+        $cast = $this->casts->getCastForProperty($class, $name);
+
+        // An unresolved casts() entry overrides older $casts configuration.
+        // We cannot know how Laravel will serialize this attribute at runtime.
+        if ($cast instanceof Type) {
+            return new MixedType();
+        }
+
         $castClass      = explode(':', $cast ?? '')[0];
         $castReflection = $this->reflectionProvider->hasClass($castClass) ? $this->reflectionProvider->getClass($castClass) : null;
         $classCast      = $castReflection !== null && ! $castReflection->isEnum() && ! $castReflection->is(CastsInboundAttributes::class);
