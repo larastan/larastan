@@ -42,7 +42,7 @@ final class ContainerBindingCollector implements Collector
 
         $method = strtolower($node->name->name);
 
-        if (! in_array($method, ['bind', 'scoped', 'scopedif', 'singleton', 'singletonif', 'instance'], true)) {
+        if (! in_array($method, ['bind', 'bindif', 'scoped', 'scopedif', 'singleton', 'singletonif', 'instance'], true)) {
             return null;
         }
 
@@ -52,6 +52,7 @@ final class ContainerBindingCollector implements Collector
 
         $abstractArg = null;
         $concreteArg = null;
+        $sharedArg   = null;
 
         foreach ($node->getArgs() as $index => $arg) {
             if ($arg->unpack) {
@@ -64,6 +65,8 @@ final class ContainerBindingCollector implements Collector
                 $abstractArg = $arg->value;
             } elseif ($name === 'concrete' || ($name === null && $index === 1)) {
                 $concreteArg = $arg->value;
+            } elseif ($name === 'shared' || ($name === null && $index === 2)) {
+                $sharedArg = $arg->value;
             }
         }
 
@@ -81,6 +84,18 @@ final class ContainerBindingCollector implements Collector
             $concrete = null;
         } elseif ($concreteArg !== null && ! ($concreteArg instanceof Expr\ConstFetch && strtolower($concreteArg->name->toString()) === 'null')) {
             $concrete = $this->className($concreteArg, $scope);
+        }
+
+        // Laravel's bind() and bindIf() also create singletons when shared=true.
+        // An unknown bool may be either shared or transient: do not guess.
+        if ($method === 'bind' || $method === 'bindif') {
+            $values = $sharedArg === null ? [false] : $scope->getType($sharedArg)->getConstantScalarValues();
+
+            $method = match (true) {
+                $values === [true] => $method === 'bind' ? 'singleton' : 'singletonif',
+                $values === [false] => 'bind',
+                default => 'unknown',
+            };
         }
 
         return [$method, $abstract, $concrete, $node->getStartLine()];

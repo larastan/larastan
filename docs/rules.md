@@ -310,11 +310,24 @@ dynamic names, conditional branches, factories and runtime `singletonIf()`
 short-circuiting may still affect the final container state. These warnings
 are therefore potential mismatches, not a proof of final binding state.
 
+In analysed service-provider classes, literal public `$bindings` and
+`$singletons` maps are also collected, including `$singletons = [Service::class]`.
+This matches Laravel's native `Application::register()` behavior but does
+not prove that a provider is registered or executed in the final application;
+these remain *potential* static diagnostics. Computed, protected, private, or
+non-class entries are skipped without executing provider constructors.
+
 A known interface-to-concrete binding can be traversed for constructor
 dependencies. An unbound interface, an unresolvable factory, and transitive
-paths through vendor code are deliberately skipped. Native constructor
-parameters of unambiguous class type are followed for at most eight
-dependency levels / 64 visited classes. Optional dependencies are analysed
+paths through vendor code are deliberately skipped. For an unknown factory,
+the declared abstract's constructor is not inspected, because Laravel may
+instantiate an unrelated implementation. Explicitly scoped bindings remain
+request/job-scoped even when the concrete is supplied by a factory.
+Static facade registrations such as `App::singleton(...)` are not currently
+collected; this analysis recognizes instance method calls on a known container type. Native constructor
+parameters of unambiguous class type are followed breadth-first with cycle
+detection. There is no parameter-order-dependent depth or width cutoff.
+The graph remains limited to statically available application classes. Optional dependencies are analysed
 only when the required binding is statically known or when their exact
 Request base type is automatically bound by the framework.
 

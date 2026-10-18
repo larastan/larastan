@@ -10,25 +10,25 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\TypeCombinator;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 
+use function array_slice;
+use function class_exists;
 use function count;
 use function str_contains;
 use function str_replace;
+use function strcasecmp;
 
 /**
  * Conservative counterpart to .NET DI scope validation.
  *
  * Only required constructor-injected object dependencies with an
- * unambiguous class type are followed, including nullable required classes. Runtime factories, interface bindings
- * and dynamic container aliases are intentionally not guessed.
+ * unambiguous class type are followed, including nullable required classes.
+ * Runtime factories, unresolved interface bindings and dynamic container
+ * aliases are intentionally not guessed.
  *
  * @internal
  */
 final class ScopedDependencyDetector
 {
-    private const MAX_CLASSES = 64;
-
-    private const MAX_DEPTH = 8;
-
     public function __construct(private ReflectionProvider $reflectionProvider)
     {
     }
@@ -36,6 +36,73 @@ final class ScopedDependencyDetector
     public function isSingleton(ClassReflection $class): bool
     {
         return $this->hasAttribute($class, 'Illuminate\Container\Attributes\Singleton');
+    }
+
+    /**
+     * Follow the actual constructed concrete behind a singleton abstract.
+     *
+     * @param array<string, array{lifetime: 'scoped'|'singleton'|'bind'|'unknown', concrete: string|null}> $bindings
+     *
+     * @return non-empty-list<string>|null
+     */
+    public function findCaptiveDependencyForRoot(ClassReflection $root, array $bindings): array|null
+    {
+        $current = $root;
+        $path    = [$root->getName()];
+        $seen    = [$root->getName() => true];
+
+        while (true) {
+            $binding = $bindings[$current->getName()] ?? null;
+
+            if ($binding === null) {
+                break;
+            }
+
+            // An opaque factory, an instance or a conflicting registration
+            // does not establish which constructor the container will call.
+            if ($binding['lifetime'] === 'unknown' || $binding['concrete'] === null) {
+                return null;
+            }
+
+            $concrete = $binding['concrete'];
+
+            if ($concrete === $current->getName()) {
+                break;
+            }
+
+            if (
+                isset($seen[$concrete])
+                || ! $this->reflectionProvider->hasClass($concrete)
+            ) {
+                return null;
+            }
+
+            $current = $this->reflectionProvider->getClass($concrete);
+
+            if ($current->isInterface() || $current->isAbstract()) {
+                return null;
+            }
+
+            $path[]                    = $current->getName();
+            $seen[$current->getName()] = true;
+
+            // Laravel resolves distinct concretes via Container::resolve();
+            // their native scoped lifetime still applies to that dependency.
+            if ($this->isScoped($current, $bindings[$current->getName()] ?? null)) {
+                return $path;
+            }
+        }
+
+        $suffix = $this->findCaptiveDependency($current, $bindings);
+
+        if ($suffix === null) {
+            return null;
+        }
+
+        /** @var non-empty-list<string> $result */
+        $result = [...array_slice($path, 0, -1), ...$suffix];
+
+        return $result;
     }
 
     /**
@@ -62,7 +129,7 @@ final class ScopedDependencyDetector
             // The root is a singleton by definition of this validation.
             // An explicitly bound singleton may also carry #[Scoped];
             // inspect its dependencies, never report the root as captive.
-            if (count($path) >= self::MAX_DEPTH || ! $current->hasNativeMethod('__construct')) {
+            if (! $current->hasNativeMethod('__construct')) {
                 continue;
             }
 
@@ -119,6 +186,15 @@ final class ScopedDependencyDetector
                     return [...$path, $dependencyName];
                 }
 
+                // A factory or supplied instance may return a completely different
+                // implementation. Only constructor-autowired concrete classes can
+                // be followed; the abstract's constructor proves nothing here.
+                // Keep the lifetime check above: scoped() with a factory still
+                // creates a request/job-scoped service.
+                if ($binding !== null && $binding['concrete'] === null) {
+                    continue;
+                }
+
                 $target   = $dependency;
                 $nextPath = [...$path, $dependencyName];
 
@@ -157,7 +233,7 @@ final class ScopedDependencyDetector
 
                 $name = $target->getName();
 
-                if (isset($seen[$name]) || count($seen) >= self::MAX_CLASSES) {
+                if (isset($seen[$name])) {
                     continue;
                 }
 
@@ -199,8 +275,17 @@ final class ScopedDependencyDetector
 
     private function hasAttribute(ClassReflection $class, string $attribute): bool
     {
+        // Laravel 11 does not define native lifetime attribute classes.
+        // Reflection exposes unresolved source annotations anyway, but these
+        // cannot affect Container::isShared() at runtime.
+        if (! class_exists($attribute)) {
+            return false;
+        }
+
+        // Attribute names are case-insensitive in PHP. Compare resolved
+        // names exactly as Laravel's named ReflectionClass lookup does.
         foreach ($class->getNativeReflection()->getAttributes() as $reflectionAttribute) {
-            if ($reflectionAttribute->getName() === $attribute) {
+            if (strcasecmp($reflectionAttribute->getName(), $attribute) === 0) {
                 return true;
             }
         }

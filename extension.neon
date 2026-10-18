@@ -93,6 +93,8 @@ conditionalTags:
         phpstan.collector: %checkOctaneCompatibility%
     Larastan\Larastan\Rules\Octane\SingletonAttributeCollector:
         phpstan.collector: %checkOctaneCompatibility%
+    Larastan\Larastan\Rules\Octane\ServiceProviderBindingCollector:
+        phpstan.collector: %checkOctaneCompatibility%
     Larastan\Larastan\Rules\Octane\SingletonLifetimeRule:
         phpstan.rules.rule: %checkOctaneCompatibility%
     Larastan\Larastan\Rules\UnusedViewsRule:
@@ -452,6 +454,9 @@ services:
 
     -
         class: Larastan\Larastan\Rules\Octane\SingletonAttributeCollector
+
+    -
+        class: Larastan\Larastan\Rules\Octane\ServiceProviderBindingCollector
 
     -
         class: Larastan\Larastan\Rules\Octane\SingletonLifetimeRule

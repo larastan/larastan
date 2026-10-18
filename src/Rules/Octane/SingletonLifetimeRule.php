@@ -55,6 +55,21 @@ final class SingletonLifetimeRule implements Rule
             }
         }
 
+        // Laravel registers public ServiceProvider::$bindings and $singletons
+        // after register(). These constant maps are part of the native DI API.
+        foreach ($node->get(ServiceProviderBindingCollector::class) as $file => $providers) {
+            foreach ($providers as $rows) {
+                foreach ($rows as [$method, $abstract, $concrete, $line]) {
+                    $registrations[$abstract][] = [
+                        'method' => $method,
+                        'concrete' => $concrete,
+                        'file' => $file,
+                        'line' => $line,
+                    ];
+                }
+            }
+        }
+
         /** @var array<string, array{lifetime: 'scoped'|'singleton'|'bind'|'unknown', concrete: string|null}> $bindings */
         $bindings = [];
 
@@ -161,7 +176,7 @@ final class SingletonLifetimeRule implements Rule
         $name = $class->getName();
 
         if (! array_key_exists($name, $cachedPaths)) {
-            $cachedPaths[$name] = $this->detector->findCaptiveDependency($class, $bindings);
+            $cachedPaths[$name] = $this->detector->findCaptiveDependencyForRoot($class, $bindings);
         }
 
         return $cachedPaths[$name];
