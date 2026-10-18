@@ -28,7 +28,6 @@ use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\TypeTraverser;
 use PHPStan\Type\UnionType;
-use PHPStan\Type\VerbosityLevel;
 use Traversable;
 
 use function array_map;
@@ -73,7 +72,11 @@ final class CollectionHelper
         return null;
     }
 
-    public function determineCollectionClassName(string $modelClassName): string
+    /**
+     * The collection type declared by the model's `CollectedBy` attribute or by the
+     * return type of its `newCollection()` method, which can be a union or an intersection.
+     */
+    private function determineCollectionType(string $modelClassName): Type
     {
         try {
             $modelReflection     = $this->reflectionProvider->getClass($modelClassName);
@@ -86,21 +89,13 @@ final class CollectionHelper
                 $collectionClassName = $this->findCollectedByClassName($modelReflection);
 
                 if ($collectionClassName !== null) {
-                    return $collectionClassName;
+                    return new ObjectType($collectionClassName);
                 }
             }
 
-            $returnType = $newCollectionMethod->getVariants()[0]->getReturnType();
-
-            $classNames = $returnType->getObjectClassNames();
-
-            if (count($classNames) === 1) {
-                return $classNames[0];
-            }
-
-            return $returnType->describe(VerbosityLevel::value());
+            return $newCollectionMethod->getVariants()[0]->getReturnType();
         } catch (MissingMethodFromReflectionException | ShouldNotHappenException) {
-            return EloquentCollection::class;
+            return new ObjectType(EloquentCollection::class);
         }
     }
 
@@ -139,25 +134,39 @@ final class CollectionHelper
 
     public function determineCollectionClass(string $modelClassName, Type|null $modelType = null, Type|null $keyType = null): Type
     {
-        $collectionClassName  = $this->determineCollectionClassName($modelClassName);
-        $collectionReflection = $this->reflectionProvider->getClass($collectionClassName);
+        $modelType ??= new ObjectType($modelClassName);
 
-        if ($collectionReflection->isGeneric()) {
-            $typeMap = $collectionReflection->getActiveTemplateTypeMap();
-
-            // Specifies key and value
-            if ($typeMap->count() === 2) {
-                return new GenericObjectType($collectionClassName, [$keyType ?? new IntegerType(), $modelType ?? new ObjectType($modelClassName)]);
+        return TypeTraverser::map($this->determineCollectionType($modelClassName), function (Type $type, callable $traverse) use ($modelType, $keyType): Type {
+            if ($type instanceof UnionType || $type instanceof IntersectionType) {
+                return $traverse($type);
             }
 
-            // Specifies only value
-            if (($typeMap->count() === 1) && $typeMap->hasType('TModel')) {
-                return new GenericObjectType($collectionClassName, [$modelType ?? new ObjectType($modelClassName)]);
-            }
-        }
+            $classNames = $type->getObjectClassNames();
 
-        // Not generic. So return the type as is
-        return new ObjectType($collectionClassName);
+            if (count($classNames) !== 1) {
+                return $type;
+            }
+
+            $collectionClassName  = $classNames[0];
+            $collectionReflection = $this->reflectionProvider->getClass($collectionClassName);
+
+            if ($collectionReflection->isGeneric()) {
+                $typeMap = $collectionReflection->getActiveTemplateTypeMap();
+
+                // Specifies key and value
+                if ($typeMap->count() === 2) {
+                    return new GenericObjectType($collectionClassName, [$keyType ?? new IntegerType(), $modelType]);
+                }
+
+                // Specifies only value
+                if (($typeMap->count() === 1) && $typeMap->hasType('TModel')) {
+                    return new GenericObjectType($collectionClassName, [$modelType]);
+                }
+            }
+
+            // Not generic. So return the type as is
+            return new ObjectType($collectionClassName);
+        });
     }
 
     public function replaceCollectionsInType(Type $type): Type
