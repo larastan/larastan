@@ -14,15 +14,16 @@ use RecursiveIteratorIterator;
 use RegexIterator;
 use SplFileInfo;
 
-use function count;
 use function database_path;
-use function glob;
 use function is_dir;
 use function iterator_to_array;
 use function uasort;
 
 class MigrationHelper
 {
+    /** @var list<string>|null */
+    private array|null $directories = null;
+
     public function __construct(
         private Parser $parser,
         /** @var string[] */
@@ -41,10 +42,6 @@ class MigrationHelper
      */
     public function initializeTables(array $tables = []): array
     {
-        if ($this->disableMigrationScan) {
-            return $tables;
-        }
-
         $schemaAggregator = new SchemaAggregator($this->reflectionProvider, $this->initializerExprTypeResolver, $tables);
         $filesArray       = $this->getMigrationFiles();
 
@@ -67,31 +64,33 @@ class MigrationHelper
         return $schemaAggregator->tables;
     }
 
+    /** @return list<string> */
+    public function getMigrationDirectories(): array
+    {
+        if ($this->disableMigrationScan) {
+            return [];
+        }
+
+        return $this->directories ??= DirectoryResolver::resolve($this->databaseMigrationPath ?: [database_path('migrations')], $this->fileHelper);
+    }
+
     /** @return SplFileInfo[] */
     public function getMigrationFiles(): array
     {
         /** @var SplFileInfo[] $migrationFiles */
         $migrationFiles = [];
 
-        if (count($this->databaseMigrationPath) === 0) {
-            $this->databaseMigrationPath = [database_path('migrations')];
-        }
-
-        foreach ($this->databaseMigrationPath as $additionalPathGlob) {
-            foreach ((glob($additionalPathGlob) ?: []) as $additionalPath) {
-                $absolutePath = $this->fileHelper->absolutizePath($additionalPath);
-
-                if (! is_dir($absolutePath)) {
-                    continue;
-                }
-
-                $migrationFiles += iterator_to_array(
-                    new RegexIterator(
-                        new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
-                        '/\.php$/i',
-                    ),
-                );
+        foreach ($this->getMigrationDirectories() as $absolutePath) {
+            if (! is_dir($absolutePath)) {
+                continue;
             }
+
+            $migrationFiles += iterator_to_array(
+                new RegexIterator(
+                    new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
+                    '/\.php$/i',
+                ),
+            );
         }
 
         return $migrationFiles;
