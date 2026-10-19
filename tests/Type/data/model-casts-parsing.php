@@ -11,10 +11,15 @@ function test(ModelWithCasts $model): void
 {
     assertType('bool', $model->integer);
     assertType(Stringable::class, $model->string);
+    assertType('Carbon\CarbonImmutable|null', $model->created_at);
+    assertType('int|null', $model->updated_at);
+    assertType('Carbon\Carbon|null', $model->deleted_at);
 }
 
 class ModelWithCasts extends Model
 {
+    use \Illuminate\Database\Eloquent\SoftDeletes;
+
     public function foo(): int
     {
         return 5;
@@ -25,6 +30,8 @@ class ModelWithCasts extends Model
         return [
             'integer' => 'bool',
             'string' => AsStringable::class.':argument',
+            'created_at' => 'immutable_datetime',
+            'updated_at' => 'timestamp',
         ];
     }
 }
