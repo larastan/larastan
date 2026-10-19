@@ -305,7 +305,7 @@ class Builder
      * Register a new global scope.
      *
      * @param  string  $identifier
-     * @param  \Illuminate\Database\Eloquent\Scope|\Closure  $scope
+     * @param  \Illuminate\Database\Eloquent\Scope<TModel>|\Closure  $scope
      * @return $this
      */
     public function withGlobalScope($identifier, $scope);
@@ -313,7 +313,7 @@ class Builder
     /**
      * Remove a registered global scope.
      *
-     * @param  \Illuminate\Database\Eloquent\Scope|string  $scope
+     * @param  \Illuminate\Database\Eloquent\Scope<TModel>|string  $scope
      * @return $this
      */
     public function withoutGlobalScope($scope);
@@ -803,8 +803,6 @@ class Builder
     public function qualifyColumns($columns);
 
 }
-
-class Scope {}
 
 /**
  * @method static \Illuminate\Database\Eloquent\Builder<static> withTrashed(bool $withTrashed = true)

@@ -80,10 +80,17 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
     public function newQueryWithoutScopes();
 
     /**
-     * @param \Illuminate\Database\Eloquent\Scope|string $scope
+     * @param \Illuminate\Database\Eloquent\Scope<static>|string $scope
      * @return builder-of<static>
      */
     public function newQueryWithoutScope($scope);
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Scope<static>|\Closure|string $scope
+     * @param (\Illuminate\Database\Eloquent\Scope<static>|\Closure)|null $implementation
+     * @return mixed
+     */
+    public static function addGlobalScope($scope, $implementation = null);
 
     /**
      * @param array<mixed>|int|string $ids
