@@ -101,8 +101,16 @@ class GeneralTypeTest extends TypeInferenceTestCase
             yield from self::gatherAssertTypes(__DIR__ . '/data/eloquent-builder-l11-42.php');
         }
 
-        if (laravel_version_compare('13.3.0', '>=')) {
-            yield from self::gatherAssertTypes(__DIR__ . '/data/model-increment-each-l13-3.php');
+        // Laravel 13.38 corrected Model increment/decrement PHPDoc to int|false.
+        // Assert the actual upstream annotation for each installed version.
+        if (laravel_version_compare('13.38.0', '>=')) {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/model-increment-decrement-l13-38.php');
+            yield from self::gatherAssertTypes(__DIR__ . '/data/model-increment-each-l13-38.php');
+        } else {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/model-increment-decrement-pre-l13-38.php');
+            if (laravel_version_compare('13.3.0', '>=')) {
+                yield from self::gatherAssertTypes(__DIR__ . '/data/model-increment-each-l13-3.php');
+            }
         }
 
         if (laravel_version_compare('13.20.0', '>=')) {

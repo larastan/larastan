@@ -42,8 +42,7 @@ function test(User|Account $userOrAccount): void
     /** @see https://github.com/larastan/larastan/issues/1952 */
     Team::query()->where('name', 'Team A')->orderBy('name')->get();
 
-    assertType('int', $userOrAccount->increment('counter'));
-    assertType('int', $userOrAccount->decrement('counter'));
+    // Versioned increment/decrement return assertions are in Type/data/model-increment-decrement-*.php.
     assertType('int', $userOrAccount->incrementQuietly('counter'));
     assertType('int', $userOrAccount->decrementQuietly('counter'));
 }
