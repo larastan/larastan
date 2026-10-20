@@ -81,6 +81,66 @@ parameters:
 
 Error identifier: `larastan.noImplicitQueryBuilderCall`.
 
+## NoMixedRequestInputInQuery
+
+Reports request input compared with a string column in a query. On a JSON
+request, `input()`, `get()`, `post()`, `json()`, `validated()`, `safe()`,
+`request('key')` and `$request->key` return the decoded JSON value, which can be
+an integer. MySQL and MariaDB compare a string column with an integer
+numerically, so `where('token', 0)` matches every token that does not start with
+a digit. `validated()` is only as strict as the rules: `required` or
+`exists:users,email` lets an integer through, so validated input is reported as
+well.
+
+### Examples
+
+```php
+User::where('api_token', $request->input('token'))->first();
+```
+
+Will result in the following error:
+
+```text
+Mixed request input is compared with string column api_token in where(); a JSON body can send an integer, which MySQL compares with a string numerically.
+    💡 Cast it first, for example with $request->string('key')->toString(). Validated input keeps the type the client sent.
+```
+
+Cast the value first:
+
+```php
+User::where('api_token', $request->string('token')->toString())->first();
+```
+
+The rule checks the value arguments of `where()`, `orWhere()`, `whereNot()`,
+`orWhereNot()`, `firstWhere()`, `whereIn()`, `orWhereIn()`, `whereNotIn()` and
+`orWhereNotIn()`, including the values of an array passed as the first argument,
+and the first argument of `find()`, `findOrFail()`, `findOrNew()`, `findOr()`,
+`findMany()`, `findSole()`, `whereKey()` and `whereKeyNot()`. It applies to
+models, Eloquent and query builders, and relations.
+
+The column's type comes from the model's properties (migrations, `@property`
+tags and casts). An integer, float or boolean column is not reported: a JSON
+number compared with it gives a client nothing it could not get by sending the
+number as a string. `find()` and `whereKey()` use the primary key's type, so an
+incrementing key is not reported and a UUID, ULID or other string key is. A
+column the model does not know, a column name in a variable, and `DB::table()`
+queries are reported.
+
+`query()` only reads the query string, so its values are strings and it is not
+reported. The rule looks at the argument itself: request input assigned to a
+variable first, or passed through another method, is not reported.
+
+### Configuration
+
+This rule is disabled by default. To enable it in `phpstan.neon`:
+
+```neon
+parameters:
+    noMixedRequestInputInQuery: true
+```
+
+Error identifier: `larastan.noMixedRequestInputInQuery`.
+
 ## NoUnnecessaryCollectionCall
 
 Checks for method calls on instances of `Illuminate\Support\Collection` and their

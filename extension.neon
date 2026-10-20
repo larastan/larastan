@@ -13,6 +13,7 @@ parameters:
     noEnvCallsOutsideOfConfig: true
     noModelMake: true
     noImplicitQueryBuilderCall: false
+    noMixedRequestInputInQuery: false
     noUnnecessaryCollectionCall: true
     noUnnecessaryCollectionCallOnly: []
     noUnnecessaryCollectionCallExcept: []
@@ -47,6 +48,7 @@ parametersSchema:
     noEnvCallsOutsideOfConfig: bool()
     noModelMake: bool()
     noImplicitQueryBuilderCall: bool()
+    noMixedRequestInputInQuery: bool()
     noUnnecessaryCollectionCall: bool()
     noUnnecessaryCollectionCallOnly: listOf(string())
     noUnnecessaryCollectionCallExcept: listOf(string())
@@ -83,6 +85,8 @@ conditionalTags:
         phpstan.rules.rule: %noModelMake%
     Larastan\Larastan\Rules\NoImplicitQueryBuilderCallRule:
         phpstan.rules.rule: %noImplicitQueryBuilderCall%
+    Larastan\Larastan\Rules\NoMixedRequestInputInQueryRule:
+        phpstan.rules.rule: %noMixedRequestInputInQuery%
     Larastan\Larastan\Rules\NoUnnecessaryCollectionCallRule:
         phpstan.rules.rule: %noUnnecessaryCollectionCall%
     Larastan\Larastan\Rules\NoUnnecessaryEnumerableToArrayCallsRule:
@@ -448,6 +452,9 @@ services:
 
     -
         class: Larastan\Larastan\Rules\NoImplicitQueryBuilderCallRule
+
+    -
+        class: Larastan\Larastan\Rules\NoMixedRequestInputInQueryRule
 
     -
         class: Larastan\Larastan\Rules\NoUnnecessaryCollectionCallRule
