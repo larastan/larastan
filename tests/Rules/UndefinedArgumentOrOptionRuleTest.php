@@ -26,6 +26,19 @@ class UndefinedArgumentOrOptionRuleTest extends RuleTestCase
         ], []);
     }
 
+    public function testRuleWithCommandsRegisteredByTheConsoleKernel(): void
+    {
+        $this->analyse([
+            __DIR__ . '/../application/app/Console/Commands/RegisteredInKernelCommand.php',
+            __DIR__ . '/../application/app/Console/LoadedCommands/LoadedByKernelCommand.php',
+        ], [
+            ['Command "registered-in-kernel" does not have argument "undefinedArgument".', 28],
+            ['Command "registered-in-kernel" does not have option "undefinedOption".', 29],
+            ['Command "loaded-by-kernel" does not have argument "undefinedArgument".', 28],
+            ['Command "loaded-by-kernel" does not have option "undefinedOption".', 29],
+        ]);
+    }
+
     /** @return string[] */
     public static function getAdditionalConfigFiles(): array
     {
