@@ -22,6 +22,24 @@ function test(ModelWithCasts $model): void
     $model->deleted_at = \Carbon\Carbon::now();
 }
 
+function testFormattedDateCast(\App\ModelWithFormattedDateCast $model): void
+{
+    assertType(
+        'array{raw: string|null, formatted: string|null, ago: string|null}|null',
+        $model->created_at,
+    );
+
+    // The cast setter declares the array shape. created_at is also a date column, so a
+    // string assignment stays legal: Eloquent runs fromDateTime() before the class cast.
+    $model->created_at = [
+        'raw' => '2024-01-01 00:00:00',
+        'formatted' => '1st Jan 2024 0:00',
+        'ago' => '1 year ago',
+    ];
+    $model->created_at = '2024-01-01 00:00:00';
+    $model->created_at = null;
+}
+
 class ModelWithCasts extends Model
 {
     use \Illuminate\Database\Eloquent\SoftDeletes;
