@@ -159,6 +159,7 @@ class OctaneCompatibilityRule implements Rule
             }
 
             $args = $expr->getArgs();
+
             if (count($args) < 1) {
                 return false;
             }
@@ -178,6 +179,7 @@ class OctaneCompatibilityRule implements Rule
         if ($dim instanceof Node\Expr\ClassConstFetch && $dim->name instanceof Node\Identifier && $dim->name->toLowerString() === 'class') {
             if ($dim->class instanceof Node\Name) {
                 $resolved = $scope->resolveName($dim->class);
+
                 if (in_array(ltrim($resolved, '\\'), self::FORBIDDEN_SERVICES, true)) {
                     return true;
                 }
