@@ -679,9 +679,22 @@ final class SchemaAggregator
 
                 return;
 
+            case 'nullablenumericmorphs':
+                $table->setColumn(new SchemaColumn($columnName . '_type', 'string', true));
+                $table->setColumn(new SchemaColumn($columnName . '_id', 'non-negative-int', true));
+
+                return;
+
+            case 'nullableulidmorphs':
             case 'nullableuuidmorphs':
                 $table->setColumn(new SchemaColumn($columnName . '_type', 'string', true));
                 $table->setColumn(new SchemaColumn($columnName . '_id', 'string', true));
+
+                return;
+
+            case 'numericmorphs':
+                $table->setColumn(new SchemaColumn($columnName . '_type', 'string', $nullable));
+                $table->setColumn(new SchemaColumn($columnName . '_id', 'non-negative-int', $nullable));
 
                 return;
 
@@ -713,6 +726,7 @@ final class SchemaAggregator
 
                 return;
 
+            case 'ulidmorphs':
             case 'uuidmorphs':
                 $table->setColumn(new SchemaColumn($columnName . '_type', 'string', $nullable));
                 $table->setColumn(new SchemaColumn($columnName . '_id', 'string', $nullable));
