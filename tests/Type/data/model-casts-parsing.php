@@ -14,6 +14,12 @@ function test(ModelWithCasts $model): void
     assertType('Carbon\CarbonImmutable|null', $model->created_at);
     assertType('int|null', $model->updated_at);
     assertType('Carbon\Carbon|null', $model->deleted_at);
+
+    $model->created_at = '2024-01-01 00:00:00';
+    $model->created_at = \Carbon\CarbonImmutable::now();
+    $model->created_at = null;
+    $model->deleted_at = '2024-01-01 00:00:00';
+    $model->deleted_at = \Carbon\Carbon::now();
 }
 
 class ModelWithCasts extends Model

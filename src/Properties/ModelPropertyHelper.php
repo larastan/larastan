@@ -148,6 +148,10 @@ class ModelPropertyHelper
                 $cast,
                 $this->stringResolver->resolve($column->writeableType),
             );
+
+            if ($this->hasDate($modelInstance, $propertyName)) {
+                $writableType = TypeCombinator::union($writableType, new StringType());
+            }
         } elseif ($this->hasDate($modelInstance, $propertyName)) {
             $readableType = $this->modelCastHelper->getDateType();
             $writableType = TypeCombinator::union($this->modelCastHelper->getDateType(), new StringType());
