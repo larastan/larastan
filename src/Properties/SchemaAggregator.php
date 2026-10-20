@@ -244,7 +244,7 @@ final class SchemaAggregator
 
                 switch (strtolower($firstMethodCall->name->name)) {
                     case 'remembertoken':
-                        $table->setColumn(new SchemaColumn('remember_token', 'string', $nullable));
+                        $table->setColumn(new SchemaColumn('remember_token', 'string', true));
                         continue 2;
 
                     case 'dropremembertoken':
