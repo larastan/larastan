@@ -259,6 +259,11 @@ services:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
 
     -
+        class: Larastan\Larastan\ReturnTypes\ModelForwardedStaticCallDynamicStaticMethodReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicStaticMethodReturnTypeExtension
+
+    -
         class: Larastan\Larastan\ReturnTypes\AppMakeDynamicReturnTypeExtension
         tags:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
