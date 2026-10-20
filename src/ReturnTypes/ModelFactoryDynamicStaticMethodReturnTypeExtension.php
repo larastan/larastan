@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Larastan\Larastan\ReturnTypes;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Larastan\Larastan\Types\Factory\ModelFactoryType;
 use PhpParser\Node\Expr\StaticCall;
@@ -115,10 +116,17 @@ final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements Dynami
             return null;
         }
 
-        $factoryReflections = $modelReflection->getMethod('newFactory', $scope)
+        $returnType = $modelReflection->getMethod('newFactory', $scope)
             ->getVariants()[0]
-            ->getReturnType()
-            ->getObjectClassReflections();
+            ->getReturnType();
+
+        // HasFactory::newFactory() returns the TFactory generic or null, and null only when
+        // neither the $factory property nor the UseFactory attribute is set.
+        if ($this->isInheritedFromHasFactory($modelReflection)) {
+            $returnType = TypeCombinator::removeNull($returnType);
+        }
+
+        $factoryReflections = $returnType->getObjectClassReflections();
 
         if (count($factoryReflections) !== 1) {
             return null;
@@ -134,5 +142,16 @@ final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements Dynami
         }
 
         return null;
+    }
+
+    private function isInheritedFromHasFactory(ClassReflection $modelReflection): bool
+    {
+        $hasFactoryReflection = $modelReflection->getTraits(true)[HasFactory::class] ?? null;
+
+        if ($hasFactoryReflection === null) {
+            return false;
+        }
+
+        return $modelReflection->getNativeReflection()->getMethod('newFactory')->getFileName() === $hasFactoryReflection->getFileName();
     }
 }
