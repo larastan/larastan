@@ -1,0 +1,366 @@
+<?php
+
+namespace Illuminate\Database\Eloquent\Relations;
+
+use Closure;
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ * @template TPivotModel of \Illuminate\Database\Eloquent\Relations\Pivot = \Illuminate\Database\Eloquent\Relations\Pivot
+ * @template TAccessor of string = 'pivot'
+ *
+ * @extends \Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, TDeclaringModel, \Illuminate\Database\Eloquent\Collection<int, TRelatedModel&object{pivot: TPivotModel}>>
+ */
+class BelongsToMany extends Relation
+{
+    /**
+     * Prepare the query builder for query execution.
+     *
+     * @return builder-of<TRelatedModel>
+     */
+    protected function prepareQueryBuilder();
+
+    /**
+     * Specify the custom pivot model to use for the relationship.
+     *
+     * @template TNewPivotModel of \Illuminate\Database\Eloquent\Relations\Pivot
+     *
+     * @param  class-string<TNewPivotModel>  $class
+     * @return $this
+     *
+     * @phpstan-this-out static<TRelatedModel, TDeclaringModel, TNewPivotModel, TAccessor>
+     */
+    public function using($class);
+
+    /**
+     * Specify the custom pivot accessor to use for the relationship.
+     *
+     * @template TNewAccessor of string
+     *
+     * @param  TNewAccessor  $accessor
+     * @return $this
+     *
+     * @phpstan-this-out static<TRelatedModel, TDeclaringModel, TPivotModel, TNewAccessor>
+     */
+    public function as($accessor);
+
+    /**
+     * Find a related model by its primary key or return a new instance of the related model.
+     *
+     * @param  mixed  $id
+     * @param  array<int, (model-property<TRelatedModel>|'*')>|model-property<TRelatedModel>|'*'  $columns
+     * @return (
+     *     $id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>)
+     *     ? \Illuminate\Database\Eloquent\Collection<int, TRelatedModel&object{pivot: TPivotModel}>
+     *     : TRelatedModel&object{pivot: TPivotModel}
+     * )
+     */
+    public function findOrNew($id, $columns = ['*']);
+
+    /**
+     * Get the first related model record matching the attributes or instantiate it.
+     *
+     * @param  array<model-property<TRelatedModel>, mixed>  $attributes
+     * @param  array<model-property<TRelatedModel>, mixed>  $values
+     * @return TRelatedModel&object{pivot: TPivotModel}
+     */
+    public function firstOrNew(array $attributes = [], array $values = []);
+
+    /**
+     * Get the first record matching the attributes. If the record is not found, create it.
+     *
+     * @param  array<model-property<TRelatedModel>, mixed>  $attributes
+     * @param  array<model-property<TRelatedModel>, mixed>  $values
+     * @param  array<string, mixed>  $joining
+     * @param  bool  $touch
+     * @return TRelatedModel&object{pivot: TPivotModel}
+     */
+    public function firstOrCreate(array $attributes = [], array $values = [], array $joining = [], $touch = true);
+
+    /**
+     * Attempt to create the record. If a unique constraint violation occurs, attempt to find the matching record.
+     *
+     * @param  array<model-property<TRelatedModel>, mixed>  $attributes
+     * @param  array<model-property<TRelatedModel>, mixed>  $values
+     * @param  array<string, mixed>  $joining
+     * @param  bool  $touch
+     * @return TRelatedModel&object{pivot: TPivotModel}
+     */
+    public function createOrFirst(array $attributes, array $values = [], array $joining = [], $touch = true);
+
+    /**
+     * Create or update a related record matching the attributes, and fill it with values.
+     *
+     * @param  array<model-property<TRelatedModel>, mixed>  $attributes
+     * @param  array<model-property<TRelatedModel>, mixed>  $values
+     * @param  array<string, mixed>  $joining
+     * @param  bool  $touch
+     * @return TRelatedModel&object{pivot: TPivotModel}
+     */
+    public function updateOrCreate(array $attributes, array $values = [], array $joining = [], $touch = true);
+
+    /**
+     * Create a related record matching the attributes, or increment the existing record.
+     *
+     * @param  array<model-property<TRelatedModel>, mixed>  $attributes
+     * @param  model-property<TRelatedModel>  $column
+     * @param  float|int  $default
+     * @param  float|int  $step
+     * @param  array<model-property<TRelatedModel>, mixed>  $extra
+     * @return TRelatedModel&object{pivot: TPivotModel}
+     */
+    public function incrementOrCreate(array $attributes, string $column = 'count', $default = 1, $step = 1, array $extra = []);
+
+    /**
+     * Find a related model by its primary key.
+     *
+     * @param  mixed  $id
+     * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
+     * @return (
+     *     $id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>)
+     *     ? \Illuminate\Database\Eloquent\Collection<int, TRelatedModel&object{pivot: TPivotModel}>
+     *     : (TRelatedModel&object{pivot: TPivotModel})|null
+     * )
+     */
+    public function find($id, $columns = ['*']);
+
+    /**
+     * Find multiple related models by their primary keys.
+     *
+     * @param  \Illuminate\Contracts\Support\Arrayable<array-key, mixed>|int[]  $ids
+     * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel&object{pivot: TPivotModel}>
+     */
+    public function findMany($ids, $columns = ['*']);
+
+    /**
+     * Find a related model by its primary key or throw an exception.
+     *
+     * @param  mixed  $id
+     * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
+     * @return (
+     *     $id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>)
+     *     ? \Illuminate\Database\Eloquent\Collection<int, TRelatedModel&object{pivot: TPivotModel}>
+     *     : TRelatedModel&object{pivot: TPivotModel}
+     * )
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TRelatedModel>
+     */
+    public function findOrFail($id, $columns = ['*']);
+
+    /**
+     * Find a related model by its primary key or call a callback.
+     *
+     * @template TValue
+     *
+     * @param  mixed  $id
+     * @param  (\Closure(): TValue)|list<string>|string  $columns
+     * @param  (\Closure(): TValue)|null  $callback
+     * @return (
+     *     $id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>)
+     *     ? \Illuminate\Database\Eloquent\Collection<int, TRelatedModel&object{pivot: TPivotModel}>|TValue
+     *     : (TRelatedModel&object{pivot: TPivotModel})|TValue
+     * )
+     */
+    public function findOr($id, $columns = ['*'], ?Closure $callback = null);
+
+    /**
+     * Add a basic where clause to the query, and return the first result.
+     *
+     * @param  (\Closure(($operator is null ? builder-of<TRelatedModel> : \Illuminate\Database\Query\Builder)): mixed)|model-property<TRelatedModel>|array<int|model-property<TRelatedModel>, mixed> $column
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @param  string  $boolean
+     * @return (TRelatedModel&object{pivot: TPivotModel})|null
+     */
+    public function firstWhere($column, $operator = null, $value = null, $boolean = 'and');
+
+    /**
+     * Execute the query and get the first result.
+     *
+     * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
+     * @return (TRelatedModel&object{pivot: TPivotModel})|null
+     */
+    public function first($columns = ['*']);
+
+    /**
+     * Execute the query and get the first result or throw an exception.
+     *
+     * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
+     * @return TRelatedModel&object{pivot: TPivotModel}
+     *
+     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException<TRelatedModel>
+     */
+    public function firstOrFail($columns = ['*']);
+
+    /**
+     * Execute the query and get the first result or call a callback.
+     *
+     * @template TValue
+     *
+     * @param  (\Closure(): TValue)|list<string>  $columns
+     * @param  (\Closure(): TValue)|null  $callback
+     * @return (TRelatedModel&object{pivot: TPivotModel})|TValue
+     */
+    public function firstOr($columns = ['*'], ?Closure $callback = null);
+
+    /**
+     * Get a paginator for the "select" statement.
+     *
+     * @param  int|null  $perPage
+     * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
+     * @param  string  $pageName
+     * @param  int|null  $page
+     * @return \Illuminate\Pagination\LengthAwarePaginator<int, TRelatedModel&object{pivot: TPivotModel}>
+     */
+    public function paginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null);
+
+    /**
+     * Paginate the given query into a simple paginator.
+     *
+     * @param  int|null  $perPage
+     * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
+     * @param  string  $pageName
+     * @param  int|null  $page
+     * @return \Illuminate\Contracts\Pagination\Paginator<int, TRelatedModel&object{pivot: TPivotModel}>
+     */
+    public function simplePaginate($perPage = null, $columns = ['*'], $pageName = 'page', $page = null);
+
+    /**
+     * Paginate the given query into a cursor paginator.
+     *
+     * @param  int|null  $perPage
+     * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
+     * @param  string  $cursorName
+     * @param  string|null  $cursor
+     * @return \Illuminate\Contracts\Pagination\CursorPaginator<int, TRelatedModel&object{pivot: TPivotModel}>
+     */
+    public function cursorPaginate($perPage = null, $columns = ['*'], $cursorName = 'cursor', $cursor = null);
+
+    /**
+     * Chunk the results of the query.
+     *
+     * @param  int  $count
+     * @param  callable(collection-of<int, TRelatedModel&object{pivot: TPivotModel}>, int): mixed  $callback
+     * @return bool
+     */
+    public function chunk($count, callable $callback);
+
+    /**
+     * Chunk the results of a query by comparing numeric IDs.
+     *
+     * @param  int  $count
+     * @param  callable(collection-of<int, TRelatedModel&object{pivot: TPivotModel}>, int): mixed  $callback
+     * @param  string|null  $column
+     * @param  string|null  $alias
+     * @return bool
+     */
+    public function chunkById($count, callable $callback, $column = null, $alias = null);
+
+    /**
+     * Chunk the results of a query by comparing IDs in descending order.
+     *
+     * @param  int  $count
+     * @param  callable(collection-of<int, TRelatedModel&object{pivot: TPivotModel}>, int): mixed  $callback
+     * @param  string|null  $column
+     * @param  string|null  $alias
+     * @return bool
+     */
+    public function chunkByIdDesc($count, callable $callback, $column = null, $alias = null);
+
+    /**
+     * Execute a callback over each item while chunking by ID.
+     *
+     * @param  callable(TRelatedModel&object{pivot: TPivotModel}, int): mixed  $callback
+     * @param  int  $count
+     * @param  string|null  $column
+     * @param  string|null  $alias
+     * @return bool
+     */
+    public function eachById(callable $callback, $count = 1000, $column = null, $alias = null);
+
+    /**
+     * Execute a callback over each item while chunking.
+     *
+     * @param  callable(TRelatedModel&object{pivot: TPivotModel}, int): mixed  $callback
+     * @param  int  $count
+     * @return bool
+     */
+    public function each(callable $callback, $count = 1000);
+
+    /**
+     * Query lazily, by chunks of the given size.
+     *
+     * @param  int  $chunkSize
+     * @return \Illuminate\Support\LazyCollection<int, TRelatedModel&object{pivot: TPivotModel}>
+     */
+    public function lazy($chunkSize = 1000);
+
+    /**
+     * Query lazily, by chunking the results of a query by comparing IDs.
+     *
+     * @param  int  $chunkSize
+     * @param  string|null  $column
+     * @param  string|null  $alias
+     * @return \Illuminate\Support\LazyCollection<int, TRelatedModel&object{pivot: TPivotModel}>
+     */
+    public function lazyById($chunkSize = 1000, $column = null, $alias = null);
+
+    /**
+     * Query lazily, by chunking the results of a query by comparing IDs in descending order.
+     *
+     * @param  int  $chunkSize
+     * @param  string|null  $column
+     * @param  string|null  $alias
+     * @return \Illuminate\Support\LazyCollection<int, TRelatedModel&object{pivot: TPivotModel}>
+     */
+    public function lazyByIdDesc($chunkSize = 1000, $column = null, $alias = null);
+
+    /**
+     * Get a lazy collection for the given query.
+     *
+     * @return \Illuminate\Support\LazyCollection<int, TRelatedModel&object{pivot: TPivotModel}>
+     */
+    public function cursor();
+
+    /**
+     * Save a new model and attach it to the parent model.
+     *
+     * @param  TRelatedModel  $model
+     * @param  array<model-string<TPivotModel>, mixed>  $pivotAttributes
+     * @param  bool  $touch
+     * @return TRelatedModel&object{pivot: TPivotModel}
+     */
+    public function save(Model $model, array $pivotAttributes = [], $touch = true);
+
+    /**
+     * Save a new model without raising any events and attach it to the parent model.
+     *
+     * @param  TRelatedModel  $model
+     * @param  array<model-string<TPivotModel>, mixed>  $pivotAttributes
+     * @param  bool  $touch
+     * @return TRelatedModel&object{pivot: TPivotModel}
+     */
+    public function saveQuietly(Model $model, array $pivotAttributes = [], $touch = true);
+
+    /**
+     * Create a new instance of the related model.
+     *
+     * @param  array<model-property<TRelatedModel>, mixed>  $attributes
+     * @param  array<string, mixed>  $joining
+     * @param  bool  $touch
+     * @return TRelatedModel&object{pivot: TPivotModel}
+     */
+    public function create(array $attributes = [], array $joining = [], $touch = true);
+
+    /**
+     * Create an array of new instances of the related models.
+     *
+     * @param  iterable<array-key, mixed>  $records
+     * @param  array<array-key, mixed>  $joinings
+     * @return array<int, TRelatedModel&object{pivot: TPivotModel}>
+     */
+    public function createMany(iterable $records, array $joinings = []);
+}

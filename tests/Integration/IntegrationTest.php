@@ -180,11 +180,61 @@ class IntegrationTest extends PHPStanTestCase
             ],
         ];
 
+        yield 'find-sole-find-or' => [
+            __DIR__ . '/data/model-property-find-sole-find-or.php',
+            [
+                6 => ['Parameter #2 $columns of method Illuminate\Database\Eloquent\Builder<App\User>::findSole() expects \'*\'|array<int, \'*\'|Illuminate\Contracts\Database\Query\Expression|model property of App\User>|Illuminate\Contracts\Database\Query\Expression|model property of App\User, array{\'foo\'} given.'],
+                7 => ['Parameter #2 $columns of method Illuminate\Database\Eloquent\Builder<App\User>::findSole() expects \'*\'|array<int, \'*\'|Illuminate\Contracts\Database\Query\Expression|model property of App\User>|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
+                11 => ['Parameter #2 $columns of static method Illuminate\Database\Eloquent\Builder<App\User>::findSole() expects \'*\'|array<int, \'*\'|Illuminate\Contracts\Database\Query\Expression|model property of App\User>|Illuminate\Contracts\Database\Query\Expression|model property of App\User, array{\'foo\'} given.'],
+                12 => ['Parameter #2 $columns of method Illuminate\Database\Eloquent\Builder<App\Account>::findSole() expects \'*\'|array<int, \'*\'|Illuminate\Contracts\Database\Query\Expression|model property of App\Account>|Illuminate\Contracts\Database\Query\Expression|model property of App\Account, array{\'foo\'} given.'],
+                14 => ['Parameter #2 $columns of method Illuminate\Database\Eloquent\Builder<App\User>::findOr() expects \'*\'|array<int, \'*\'|Illuminate\Contracts\Database\Query\Expression|model property of App\User>|(Closure(): null)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, array{\'foo\'} given.'],
+                15 => ['Parameter #2 $columns of method Illuminate\Database\Eloquent\Builder<App\User>::findOr() expects \'*\'|array<int, \'*\'|Illuminate\Contracts\Database\Query\Expression|model property of App\User>|(Closure(): null)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, \'foo\' given.'],
+                20 => ['Parameter #2 $columns of static method Illuminate\Database\Eloquent\Builder<App\User>::findOr() expects \'*\'|array<int, \'*\'|Illuminate\Contracts\Database\Query\Expression|model property of App\User>|(Closure(): null)|Illuminate\Contracts\Database\Query\Expression|model property of App\User, array{\'foo\'} given.'],
+                21 => ['Parameter #2 $columns of method Illuminate\Database\Eloquent\Builder<App\Account>::findOr() expects \'*\'|array<int, \'*\'|Illuminate\Contracts\Database\Query\Expression|model property of App\Account>|(Closure(): null)|Illuminate\Contracts\Database\Query\Expression|model property of App\Account, array{\'foo\'} given.'],
+            ],
+        ];
+
         yield 'force-create-quietly' => [
             __DIR__ . '/data/model-property-force-create-quietly.php',
             [
                 5 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Builder<App\User>::forceCreateQuietly() expects array<model property of App\User, mixed>, array<string, string> given.'],
                 9 => ['Parameter #1 $attributes of static method Illuminate\Database\Eloquent\Builder<App\User>::forceCreateQuietly() expects array<model property of App\User, mixed>, array<string, string> given.'],
+            ],
+        ];
+
+        yield 'increment-or-create' => [
+            __DIR__ . '/data/model-property-increment-or-create.php',
+            [
+                5 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Builder<App\User>::incrementOrCreate() expects array<model property of App\User, mixed>, array<string, string> given.'],
+                7 => ['Parameter #2 $column of method Illuminate\Database\Eloquent\Builder<App\User>::incrementOrCreate() expects model property of App\User, string given.'],
+                9 => ['Parameter #5 $extra of method Illuminate\Database\Eloquent\Builder<App\User>::incrementOrCreate() expects array<model property of App\User, mixed>, array<string, string> given.'],
+                12 => ['Parameter #1 $attributes of static method Illuminate\Database\Eloquent\Builder<App\User>::incrementOrCreate() expects array<model property of App\User, mixed>, array<string, string> given.'],
+            ],
+        ];
+
+        // Laravel 13.35 declares incrementOrCreate() on the relations themselves, so the call no longer reaches the builder.
+        if (laravel_version_compare('13.35.0', '<')) {
+            yield 'increment-or-create-relation' => [
+                __DIR__ . '/data/model-property-increment-or-create-relation.php',
+                [
+                    5 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Builder<App\Account>::incrementOrCreate() expects array<model property of App\Account, mixed>, array<string, string> given.'],
+                ],
+            ];
+        }
+
+        yield 'upsert' => [
+            __DIR__ . '/data/model-property-upsert.php',
+            [
+                6 => ['Parameter #1 $values of method Illuminate\Database\Eloquent\Builder<App\User>::upsert() expects array<int|model property of App\User, array<model property of App\User, mixed>|bool|float|int|object|string|null>, array<string, string> given.'],
+                7 => ['Parameter #1 $values of method Illuminate\Database\Eloquent\Builder<App\User>::upsert() expects array<int|model property of App\User, array<model property of App\User, mixed>|bool|float|int|object|string|null>, array<int, array<string, string>> given.'],
+                8 => ['Parameter #2 $uniqueBy of method Illuminate\Database\Eloquent\Builder<App\User>::upsert() expects array<int, model property of App\User>|model property of App\User, string given.'],
+                9 => ['Parameter #2 $uniqueBy of method Illuminate\Database\Eloquent\Builder<App\User>::upsert() expects array<int, model property of App\User>|model property of App\User, array<int, string> given.'],
+                10 => ['Parameter #3 $update of method Illuminate\Database\Eloquent\Builder<App\User>::upsert() expects array<int|model property of App\User, mixed>|null, array<string, Illuminate\Contracts\Database\Query\Expression> given.'],
+                18 => ['Parameter #1 $values of static method Illuminate\Database\Eloquent\Builder<App\User>::upsert() expects array<int|model property of App\User, array<model property of App\User, mixed>|bool|float|int|object|string|null>, array<string, string> given.'],
+                22 => ['Parameter #1 $values of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::upsert() expects array<int|model property of App\Account, array<model property of App\Account, mixed>|bool|float|int|object|string|null>, array<string, string> given.'],
+                23 => ['Parameter #1 $values of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::upsert() expects array<int|model property of App\Account, array<model property of App\Account, mixed>|bool|float|int|object|string|null>, array<int, array<string, string>> given.'],
+                24 => ['Parameter #2 $uniqueBy of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::upsert() expects array<int, model property of App\Account>|model property of App\Account, string given.'],
+                36 => ['Parameter #1 $values of method Illuminate\Database\Eloquent\Builder<App\User>::upsert() expects array<int|model property of App\User, array<model property of App\User, mixed>|bool|float|int|object|string|null>, array<int, array<string, string>> given.'],
             ],
         ];
 
@@ -198,6 +248,36 @@ class IntegrationTest extends PHPStanTestCase
                     12 => ['Parameter #2 $extra of method Illuminate\Database\Eloquent\Builder<App\User>::decrementEach() expects array<model property of App\User, mixed>, array<string, string> given.'],
                     15 => ['Parameter #1 $columns of method Illuminate\Database\Eloquent\Builder<App\Account>::incrementEach() expects array<model property of App\Account, float|int|numeric-string>, array{foo: 1} given.'],
                     16 => ['Parameter #1 $columns of method Illuminate\Database\Eloquent\Builder<App\Account>::decrementEach() expects array<model property of App\Account, float|int|numeric-string>, array{foo: 1} given.'],
+                ],
+            ];
+        }
+
+        if (laravel_version_compare('13.35.0', '>=')) {
+            yield 'relation-increment-or-create' => [
+                __DIR__ . '/data/model-property-relation-increment-or-create-l13-35.php',
+                [
+                    5 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::incrementOrCreate() expects array<model property of App\Account, mixed>, array<string, string> given.'],
+                    7 => ['Parameter #2 $column of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::incrementOrCreate() expects model property of App\Account, string given.'],
+                    9 => ['Parameter #5 $extra of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Account>>::incrementOrCreate() expects array<model property of App\Account, mixed>, array<string, string> given.'],
+                    12 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Address,App\User,App\Address|null>::incrementOrCreate() expects array<model property of App\Address, mixed>, array<string, string> given.'],
+                    13 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrMany<App\Address,App\User,Illuminate\Database\Eloquent\Collection<int, App\Address>>::incrementOrCreate() expects array<model property of App\Address, mixed>, array<string, string> given.'],
+                    15 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Role,App\User,Illuminate\Database\Eloquent\Relations\Pivot,string>::incrementOrCreate() expects array<model property of App\Role, mixed>, array<string, string> given.'],
+                    17 => ['Parameter #2 $column of method Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Role,App\User,Illuminate\Database\Eloquent\Relations\Pivot,string>::incrementOrCreate() expects model property of App\Role, string given.'],
+                    18 => ['Parameter #5 $extra of method Illuminate\Database\Eloquent\Relations\BelongsToMany<App\Role,App\User,Illuminate\Database\Eloquent\Relations\Pivot,string>::incrementOrCreate() expects array<model property of App\Role, mixed>, array<string, string> given.'],
+                ],
+            ];
+        }
+
+        if (laravel_version_compare('13.37.0', '>=')) {
+            yield 'relation-increment-or-create-through' => [
+                __DIR__ . '/data/model-property-relation-increment-or-create-l13-37.php',
+                [
+                    5 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough<App\Transaction,App\Account,App\User,Illuminate\Database\Eloquent\Collection<int, App\Transaction>>::incrementOrCreate() expects array<model property of App\Transaction, mixed>, array<string, string> given.'],
+                    7 => ['Parameter #2 $column of method Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough<App\Car,App\Mechanic,App\User,App\Car|null>::incrementOrCreate() expects model property of App\Car, string given.'],
+                    8 => [
+                        'Parameter #2 $column of method Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough<App\Car,App\Mechanic,App\User,App\Car|null>::incrementOrCreate() expects model property of App\Car, string given.',
+                        'Parameter #5 $extra of method Illuminate\Database\Eloquent\Relations\HasOneOrManyThrough<App\Car,App\Mechanic,App\User,App\Car|null>::incrementOrCreate() expects array<model property of App\Car, mixed>, array<string, string> given.',
+                    ],
                 ],
             ];
         }

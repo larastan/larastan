@@ -137,6 +137,8 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/../application/app/Console/Commands/BarCommand.php');
         yield from self::gatherAssertTypes(__DIR__ . '/../application/app/Console/Commands/BazCommand.php');
         yield from self::gatherAssertTypes(__DIR__ . '/../application/app/Console/Commands/FooCommand.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/../application/app/Console/Commands/RegisteredInKernelCommand.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/../application/app/Console/LoadedCommands/LoadedByKernelCommand.php');
     }
 
     #[DataProvider('dataFileAsserts')]
