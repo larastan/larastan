@@ -8,12 +8,17 @@ use Illuminate\View\ViewName;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
+use PHPStan\Reflection\ReflectionProvider;
 
 use function count;
 
 /** @implements Collector<Node\Expr\FuncCall, string> */
 final class UsedViewFunctionCollector implements Collector
 {
+    public function __construct(private ReflectionProvider $reflectionProvider)
+    {
+    }
+
     public function getNodeType(): string
     {
         return Node\Expr\FuncCall::class;
@@ -28,13 +33,9 @@ final class UsedViewFunctionCollector implements Collector
             return null;
         }
 
-        $funcName = $scope->resolveName($funcName);
-
-        if ($funcName !== 'view') {
+        if ($this->reflectionProvider->resolveFunctionName($funcName, $scope) !== 'view') {
             return null;
         }
-
-        // TODO: maybe make sure this function is coming from Laravel
 
         if (count($node->getArgs()) < 1) {
             return null;

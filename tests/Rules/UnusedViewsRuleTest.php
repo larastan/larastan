@@ -38,7 +38,7 @@ class UnusedViewsRuleTest extends RuleTestCase
     protected function getCollectors(): array
     {
         return [
-            new UsedViewFunctionCollector(),
+            new UsedViewFunctionCollector($this->createReflectionProvider()),
             new UsedEmailViewCollector(),
             new UsedEmailAlternativeSyntaxViewCollector(),
             new UsedEmailSendViewCollector(),
@@ -54,6 +54,23 @@ class UnusedViewsRuleTest extends RuleTestCase
         // `components/alert.blade.php` view IS used, but only through the `<x-alert>` Blade component tag
         // in `index.blade.php` — so it must not be reported (regression guard for component-tag detection).
         $this->analyse([__DIR__ . '/data/FooController.php'], [
+            [
+                'This view is not used in the project.',
+                00,
+            ],
+            [
+                'This view is not used in the project.',
+                00,
+            ],
+        ]);
+    }
+
+    public function testNamespacedViewFunctionIsNotLaravelView(): void
+    {
+        $this->analyse([
+            __DIR__ . '/data/FooController.php',
+            __DIR__ . '/data/NamespacedViewFunction.php',
+        ], [
             [
                 'This view is not used in the project.',
                 00,
