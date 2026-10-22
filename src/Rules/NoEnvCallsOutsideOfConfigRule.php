@@ -32,22 +32,27 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
     /** @var list<string> */
     private array $configDirectories = [];
 
-    /** @param  list<non-empty-string> $configDirectories */
+    /**
+     * The single reflection files are PHPStan's normalized `--tmp-file` and
+     * `--instead-of` paths, which are set in editor mode.
+     *
+     * @param  list<non-empty-string> $configDirectories
+     */
     public function __construct(
         array $configDirectories,
         private FileHelper $fileHelper,
         private string|null $singleReflectionFile = null,
         private string|null $singleReflectionInsteadOfFile = null,
     ) {
-        if (count($configDirectories) === 0) {
-            $this->configDirectories = [config_path()]; // @phpstan-ignore-line
+        if (count($configDirectories) !== 0) {
+            foreach ($configDirectories as $directory) {
+                $this->configDirectories[] = $this->fileHelper->normalizePath($directory);
+            }
 
             return;
         }
 
-        foreach ($configDirectories as $directory) {
-            $this->configDirectories[] = $this->fileHelper->normalizePath($directory);
-        }
+        $this->configDirectories = [config_path()]; // @phpstan-ignore-line
     }
 
     public function getNodeType(): string
@@ -85,10 +90,6 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
     {
         $file = $this->resolveAnalysedFile($scope->getFile());
 
-        if ($file === null) {
-            return false;
-        }
-
         foreach ($this->configDirectories as $configDirectoryGlob) {
             foreach ((glob($configDirectoryGlob) ?: []) as $configDirectory) {
                 $absolutePath = $this->fileHelper->absolutizePath($configDirectory);
@@ -106,7 +107,11 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
         return true;
     }
 
-    private function resolveAnalysedFile(string $scopeFile): string|null
+    /**
+     * In editor mode PHPStan analyses the temporary file, so map it back to
+     * the file it stands in for.
+     */
+    private function resolveAnalysedFile(string $scopeFile): string
     {
         if ($this->singleReflectionFile === null) {
             return $scopeFile;
@@ -116,6 +121,6 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
             return $scopeFile;
         }
 
-        return $this->singleReflectionInsteadOfFile;
+        return $this->singleReflectionInsteadOfFile ?? $scopeFile;
     }
 }
