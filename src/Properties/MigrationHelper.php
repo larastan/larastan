@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Properties;
 
+use Larastan\Larastan\SQL\SqlParser;
 use Larastan\Larastan\Support\RecursiveDirectoryIterator;
 use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
@@ -31,6 +32,7 @@ class MigrationHelper
         private bool $disableMigrationScan,
         private ReflectionProvider $reflectionProvider,
         private InitializerExprTypeResolver $initializerExprTypeResolver,
+        private SqlParser $sqlParser,
     ) {
     }
 
@@ -45,7 +47,12 @@ class MigrationHelper
             return $tables;
         }
 
-        $schemaAggregator = new SchemaAggregator($this->reflectionProvider, $this->initializerExprTypeResolver, $tables);
+        $schemaAggregator = new SchemaAggregator(
+            $this->reflectionProvider,
+            $this->initializerExprTypeResolver,
+            $this->sqlParser,
+            $tables,
+        );
         $filesArray       = $this->getMigrationFiles();
 
         if (empty($filesArray)) {

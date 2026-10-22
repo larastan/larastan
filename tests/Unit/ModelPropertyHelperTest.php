@@ -15,6 +15,7 @@ use Larastan\Larastan\Properties\ModelCastHelper;
 use Larastan\Larastan\Properties\ModelPropertyHelper;
 use Larastan\Larastan\Properties\Schema\MySqlDataTypeToPhpTypeConverter;
 use Larastan\Larastan\Properties\SquashedMigrationHelper;
+use Larastan\Larastan\SQL\IamcalSqlParser;
 use PHPStan\Analyser\ScopeFactory;
 use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
@@ -120,6 +121,7 @@ class ModelPropertyHelperTest extends PHPStanTestCase
             false,
             $this->reflectionProvider,
             self::getContainer()->getByType(InitializerExprTypeResolver::class),
+            new IamcalSqlParser(),
         ) extends MigrationHelper {
             public int $migrationFileLookups = 0;
 
@@ -159,6 +161,7 @@ class ModelPropertyHelperTest extends PHPStanTestCase
             false,
             $this->reflectionProvider,
             self::getContainer()->getByType(InitializerExprTypeResolver::class),
+            new IamcalSqlParser(),
         );
 
         $squashedMigrationHelper = new SquashedMigrationHelper(

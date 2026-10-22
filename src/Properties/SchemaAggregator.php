@@ -6,6 +6,9 @@ namespace Larastan\Larastan\Properties;
 
 use Exception;
 use Illuminate\Support\Str;
+use Larastan\Larastan\Properties\Schema\MySqlDataTypeToPhpTypeConverter;
+use Larastan\Larastan\SQL\SqlParser;
+use Larastan\Larastan\SQL\SqlParserFailure;
 use PhpParser;
 use PhpParser\NodeFinder;
 use PHPStan\Reflection\InitializerExprContext;
@@ -18,19 +21,25 @@ use function array_key_exists;
 use function array_merge;
 use function class_basename;
 use function count;
+use function in_array;
 use function is_string;
+use function ltrim;
 use function property_exists;
 use function strtolower;
 
 /** @see https://github.com/psalm/laravel-psalm-plugin/blob/master/src/SchemaAggregator.php */
 final class SchemaAggregator
 {
+    private readonly MySqlDataTypeToPhpTypeConverter $mySqlDataTypeToPhpTypeConverter;
+
     /** @param array<string, SchemaTable> $tables */
     public function __construct(
         private ReflectionProvider $reflectionProvider,
         private InitializerExprTypeResolver $initializerExprTypeResolver,
+        private SqlParser $sqlParser,
         public array $tables = [],
     ) {
+        $this->mySqlDataTypeToPhpTypeConverter = new MySqlDataTypeToPhpTypeConverter();
     }
 
     /** @param  array<int, PhpParser\Node\Stmt> $stmts */
@@ -86,6 +95,12 @@ final class SchemaAggregator
             ) {
                 $statement = $stmt->expr;
             } else {
+                $sql = $this->literalDatabaseStatement($stmt->expr);
+
+                if ($sql !== null) {
+                    $this->applyLiteralSql($sql);
+                }
+
                 continue;
             }
 
@@ -707,6 +722,90 @@ final class SchemaAggregator
             default:
                 // We know a property exists with a name, we just don't know its type.
                 $table->setColumn(new SchemaColumn($columnName, 'mixed', $nullable));
+        }
+    }
+
+    private function literalDatabaseStatement(PhpParser\Node\Expr $expr): string|null
+    {
+        if ($expr instanceof PhpParser\Node\Expr\StaticCall) {
+            return $this->literalFromDatabaseCall($expr->class, $expr->name, $expr);
+        }
+
+        if (
+            ! $expr instanceof PhpParser\Node\Expr\MethodCall
+            || ! $expr->var instanceof PhpParser\Node\Expr\StaticCall
+        ) {
+            return null;
+        }
+
+        $connection = $expr->var;
+
+        if (
+            ! $connection->name instanceof PhpParser\Node\Identifier
+            || ! in_array(strtolower($connection->name->toString()), ['connection', 'setconnection'], true)
+        ) {
+            return null;
+        }
+
+        return $this->literalFromDatabaseCall($connection->class, $expr->name, $expr);
+    }
+
+    private function literalFromDatabaseCall(
+        PhpParser\Node $class,
+        PhpParser\Node $name,
+        PhpParser\Node\Expr\StaticCall|PhpParser\Node\Expr\MethodCall $call,
+    ): string|null {
+        if (
+            ! $class instanceof PhpParser\Node\Name
+            || ! $name instanceof PhpParser\Node\Identifier
+            || ! in_array(strtolower($name->toString()), ['statement', 'unprepared'], true)
+            || ! $this->isDatabaseFacade($class)
+            || ! isset($call->args[0])
+            || ! $call->getArgs()[0]->value instanceof PhpParser\Node\Scalar\String_
+        ) {
+            return null;
+        }
+
+        return $call->getArgs()[0]->value->value;
+    }
+
+    private function isDatabaseFacade(PhpParser\Node\Name $class): bool
+    {
+        $code = $class->toCodeString();
+
+        if ($code === '\DB' || $code === 'DB' || $code === '\Illuminate\Support\Facades\DB') {
+            return true;
+        }
+
+        return (new ObjectType('Illuminate\Support\Facades\DB'))
+            ->isSuperTypeOf(new ObjectType(ltrim($code, '\\')))
+            ->yes();
+    }
+
+    private function applyLiteralSql(string $sql): void
+    {
+        try {
+            $definitions = $this->sqlParser->parseTables($sql);
+        } catch (SqlParserFailure) {
+            return;
+        }
+
+        foreach ($definitions as $definition) {
+            if (array_key_exists($definition->name, $this->tables)) {
+                continue;
+            }
+
+            $table = new SchemaTable($definition->name);
+
+            foreach ($definition->columns as $column) {
+                $table->setColumn(new SchemaColumn(
+                    $column->name,
+                    $this->mySqlDataTypeToPhpTypeConverter->convert($column->type, $column->typeOptions, $column->values),
+                    $column->nullable,
+                ));
+            }
+
+            $this->tables[$definition->name] = $table;
         }
     }
 }

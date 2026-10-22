@@ -525,6 +525,7 @@ services:
             disableMigrationScan: %disableMigrationScan%
             parser: @migrationsParser
             reflectionProvider: @reflectionProvider
+            sqlParser: @sqlParser
 
     iamcalSqlParser:
         class: Larastan\Larastan\SQL\IamcalSqlParser
