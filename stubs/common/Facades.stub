@@ -38,6 +38,7 @@ class Event extends Facade {}
 /**
  * @mixin \Illuminate\Queue\QueueManager
  * @mixin \Illuminate\Queue\Queue
+ * @mixin \Illuminate\Support\Testing\Fakes\QueueFake
  */
 class Queue extends Facade {}
 

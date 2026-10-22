@@ -1,0 +1,5 @@
+<?php
+
+namespace Illuminate\Support\Testing\Fakes;
+
+class QueueFake extends \Illuminate\Queue\QueueManager implements Fake, \Illuminate\Contracts\Queue\Queue {}

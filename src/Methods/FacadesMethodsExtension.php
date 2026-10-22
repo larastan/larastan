@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Methods;
 
 use Illuminate\Support\Facades\Facade;
-use Illuminate\Support\Str;
 use Larastan\Larastan\Internal\RecursionGuard;
 use Larastan\Larastan\Reflection\ReflectionHelper;
 use Larastan\Larastan\Reflection\StaticMethodReflection;
@@ -17,10 +16,6 @@ use Throwable;
 
 use function array_key_exists;
 use function assert;
-use function class_exists;
-use function sprintf;
-use function strrpos;
-use function substr;
 
 /** @internal */
 final class FacadesMethodsExtension implements MethodsClassReflectionExtension
@@ -75,23 +70,6 @@ final class FacadesMethodsExtension implements MethodsClassReflectionExtension
                 }
             }
 
-            if (Str::startsWith($methodName, 'assert')) {
-                $fakeFacadeClass = $this->getFake($facadeClass);
-
-                if ($this->reflectionProvider->hasClass($fakeFacadeClass)) {
-                    assert(class_exists($fakeFacadeClass));
-                    $fakeReflection = $this->reflectionProvider->getClass($fakeFacadeClass);
-
-                    if ($fakeReflection->hasNativeMethod($methodName)) {
-                        $this->cache[$key] = new StaticMethodReflection(
-                            $fakeReflection->getNativeMethod($methodName),
-                        );
-
-                        return true;
-                    }
-                }
-            }
-
             return false;
         });
 
@@ -126,12 +104,5 @@ final class FacadesMethodsExtension implements MethodsClassReflectionExtension
         assert($method !== false);
 
         return $method;
-    }
-
-    private function getFake(string $facade): string
-    {
-        $shortClassName = substr($facade, strrpos($facade, '\\') + 1);
-
-        return sprintf('\\Illuminate\\Support\\Testing\\Fakes\\%sFake', $shortClassName);
     }
 }
