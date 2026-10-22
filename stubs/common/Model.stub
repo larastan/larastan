@@ -64,6 +64,30 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
      */
     public function update(array $attributes = [], array $options = []);
 
+    /**
+     * Increment a column's value by a given amount.
+     *
+     * Returns false when an "updating" listener cancels the update.
+     *
+     * @param  string  $column
+     * @param  float|int  $amount
+     * @param  array<string, mixed>  $extra
+     * @return int|false
+     */
+    protected function increment($column, $amount = 1, array $extra = []);
+
+    /**
+     * Decrement a column's value by a given amount.
+     *
+     * Returns false when an "updating" listener cancels the update.
+     *
+     * @param  string  $column
+     * @param  float|int  $amount
+     * @param  array<string, mixed>  $extra
+     * @return int|false
+     */
+    protected function decrement($column, $amount = 1, array $extra = []);
+
     /** @return builder-of<static> */
     public static function query();
 

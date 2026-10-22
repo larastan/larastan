@@ -115,8 +115,8 @@ function test(
         return $query->where('active', true);
     }));
 
-    assertType('int', $user->increment('counter'));
-    assertType('int', $user->decrement('counter'));
+    assertType('int|false', $user->increment('counter'));
+    assertType('int|false', $user->decrement('counter'));
     assertType('int', $user->incrementQuietly('counter'));
     assertType('int', $user->decrementQuietly('counter'));
 

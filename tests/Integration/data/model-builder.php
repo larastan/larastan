@@ -42,8 +42,8 @@ function test(User|Account $userOrAccount): void
     /** @see https://github.com/larastan/larastan/issues/1952 */
     Team::query()->where('name', 'Team A')->orderBy('name')->get();
 
-    assertType('int', $userOrAccount->increment('counter'));
-    assertType('int', $userOrAccount->decrement('counter'));
+    assertType('int|false', $userOrAccount->increment('counter'));
+    assertType('int|false', $userOrAccount->decrement('counter'));
     assertType('int', $userOrAccount->incrementQuietly('counter'));
     assertType('int', $userOrAccount->decrementQuietly('counter'));
 }
