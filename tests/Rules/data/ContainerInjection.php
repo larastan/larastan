@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Http\Request;
 
 class FooServiceProvider extends \Illuminate\Support\ServiceProvider
 {
@@ -138,5 +139,24 @@ class AdvancedInjectionServiceProvider extends \Illuminate\Support\ServiceProvid
         $this->app->singleton(Service::class, function ($app) {
             return new Service($app->make('cache'));
         });
+    }
+}
+
+// The cases from issue #2597 as reported: arrow functions and an imported
+// Request class.
+class ArrowFunctionInjectionServiceProvider extends \Illuminate\Support\ServiceProvider
+{
+    public function register()
+    {
+        $this->app->singleton(MultiArgService::class, fn ($app) => new MultiArgService('foo', $app['request']));
+        $this->app->singleton(Service::class, fn ($app) => new Service($app->make('request')));
+        $this->app->singleton(Service::class, fn ($app) => new Service($app->make(Request::class)));
+        $this->app->singleton(Service::class, fn ($app) => new Service($app[Request::class]));
+        $this->app->singleton(MultiArgService::class, fn ($app) => new MultiArgService(name: 'foo', dependency: $app['config']));
+        $this->app->singleton(Service::class, fn ($app) => new Service($app->make(\Illuminate\Config\Repository::class)));
+
+        // This is fine: a value read from the config, not the repository itself
+        $this->app->singleton(Service::class, fn ($app) => new Service($app['config']['app.name']));
+        $this->app->singleton(Service::class, fn ($app) => new Service($app->make('config')->get('app.name')));
     }
 }
