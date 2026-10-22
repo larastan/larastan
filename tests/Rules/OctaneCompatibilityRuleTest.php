@@ -31,6 +31,14 @@ class OctaneCompatibilityRuleTest extends RuleTestCase
             ['Consider using bind method instead or pass a closure.', 64, 'See: https://laravel.com/docs/octane#dependency-injection-and-octane'],
             ['Consider using bind method instead or pass a closure.', 69, 'See: https://laravel.com/docs/octane#dependency-injection-and-octane'],
             ['Consider using bind method instead or pass a closure.', 71, 'See: https://laravel.com/docs/octane#dependency-injection-and-octane'],
+            // Non-first arguments, make(), get(), makeWith(), and class-string references
+            ['Consider using bind method instead or pass a closure.', 104, 'See: https://laravel.com/docs/octane#dependency-injection-and-octane'],
+            ['Consider using bind method instead or pass a closure.', 109, 'See: https://laravel.com/docs/octane#dependency-injection-and-octane'],
+            ['Consider using bind method instead or pass a closure.', 114, 'See: https://laravel.com/docs/octane#dependency-injection-and-octane'],
+            ['Consider using bind method instead or pass a closure.', 119, 'See: https://laravel.com/docs/octane#dependency-injection-and-octane'],
+            ['Consider using bind method instead or pass a closure.', 124, 'See: https://laravel.com/docs/octane#dependency-injection-and-octane'],
+            ['Consider using bind method instead or pass a closure.', 129, 'See: https://laravel.com/docs/octane#dependency-injection-and-octane'],
+            ['Consider using bind method instead or pass a closure.', 134, 'See: https://laravel.com/docs/octane#dependency-injection-and-octane'],
         ]);
     }
 

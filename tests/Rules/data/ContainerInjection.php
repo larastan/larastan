@@ -87,3 +87,56 @@ class Service
         $this->application = $application;
     }
 }
+
+class MultiArgService
+{
+    public function __construct(string $name, $dependency)
+    {
+    }
+}
+
+class AdvancedInjectionServiceProvider extends \Illuminate\Support\ServiceProvider
+{
+    public function register()
+    {
+        // Non-first constructor argument: $app
+        $this->app->singleton(MultiArgService::class, function ($app) {
+            return new MultiArgService('foo', $app);
+        });
+
+        // Non-first constructor argument: $app['request']
+        $this->app->singleton(MultiArgService::class, function ($app) {
+            return new MultiArgService('foo', $app['request']);
+        });
+
+        // $app->make('request')
+        $this->app->singleton(Service::class, function ($app) {
+            return new Service($app->make('request'));
+        });
+
+        // $app->get('config')
+        $this->app->singleton(Service::class, function ($app) {
+            return new Service($app->get('config'));
+        });
+
+        // $app->makeWith(Request::class)
+        $this->app->singleton(Service::class, function ($app) {
+            return new Service($app->makeWith(\Illuminate\Http\Request::class, []));
+        });
+
+        // $app[Request::class]
+        $this->app->singleton(Service::class, function ($app) {
+            return new Service($app[\Illuminate\Http\Request::class]);
+        });
+
+        // $app->make(\Illuminate\Contracts\Config\Repository::class)
+        $this->app->singleton(Service::class, function ($app) {
+            return new Service($app->make(\Illuminate\Contracts\Config\Repository::class));
+        });
+
+        // Non-forbidden make is fine
+        $this->app->singleton(Service::class, function ($app) {
+            return new Service($app->make('cache'));
+        });
+    }
+}
