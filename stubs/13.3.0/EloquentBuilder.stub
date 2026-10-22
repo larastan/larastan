@@ -590,6 +590,18 @@ class Builder
     public function orWhereNot($column, $operator = null, $value = null);
 
     /**
+     * Specify attributes that should be added to any new models created by this builder.
+     *
+     * The given key / value pairs will also be added as where conditions to the query.
+     *
+     * @param  \Illuminate\Contracts\Database\Query\Expression|array<model-property<TModel>, mixed>|model-property<TModel>  $attributes
+     * @param  mixed  $value
+     * @param  bool  $asConditions
+     * @return $this
+     */
+    public function withAttributes($attributes, $value = null, $asConditions = true);
+
+    /**
      * Add an "order by" clause for a timestamp to the query.
      *
      * @param  model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression  $column
