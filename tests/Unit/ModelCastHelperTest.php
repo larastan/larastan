@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
+use App\Casts\BackedEnumeration;
 use App\MemberWithCustomKey;
+use Illuminate\Database\Eloquent\Casts\AsEnumCollection;
 use Larastan\Larastan\Properties\ModelCastHelper;
 use PHPStan\Analyser\ScopeFactory;
 use PHPStan\Parser\Parser;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Testing\PHPStanTestCase;
+use PHPStan\Type\MixedType;
+use PHPStan\Type\VerbosityLevel;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 
@@ -49,6 +53,21 @@ class ModelCastHelperTest extends PHPStanTestCase
         // and the cast for 'uuid' is never registered.
         self::assertSame('string', $modelCastHelper->getCastForProperty($classReflection, 'uuid'));
         self::assertNull($modelCastHelper->getCastForProperty($classReflection, 'id'));
+    }
+
+    #[Test]
+    public function it_resolves_the_enum_class_when_writing_an_enum_collection_cast(): void
+    {
+        $modelCastHelper = new ModelCastHelper(
+            $this->reflectionProvider,
+            $this->parser,
+            false,
+            self::getContainer()->getByType(ScopeFactory::class),
+        );
+
+        $writeableType = $modelCastHelper->getWriteableType(AsEnumCollection::class . ':' . BackedEnumeration::class, new MixedType());
+
+        self::assertSame('iterable<App\Casts\BackedEnumeration>|null', $writeableType->describe(VerbosityLevel::precise()));
     }
 
     /** @return string[] */

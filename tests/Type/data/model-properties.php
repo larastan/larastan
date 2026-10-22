@@ -88,6 +88,9 @@ function test(
     assertType('(Illuminate\Support\Collection<(int|string), mixed>|null)', $user->properties);
     assertType('int<0, max>', count($user->properties));
     assertType('mixed', $user->properties->first());
+    assertType('Illuminate\Support\Collection<(int|string), App\Casts\BackedEnumeration>|null', $user->enum_collection);
+    assertType('App\Casts\BackedEnumeration|null', $user->enum_collection?->first());
+    assertType('Illuminate\Database\Eloquent\Casts\ArrayObject<(int|string), App\Casts\BasicEnumeration>|null', $user->enum_array_object);
     assertType('non-falsy-string|null', $user->deleted_at?->format('d/m/Y'));
     assertType('int<0, max>', $address->user_id);
     assertType('int<0, max>', $address->custom_foreign_id_for_name);
