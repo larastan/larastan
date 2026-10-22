@@ -220,6 +220,10 @@ class User extends Model
 }
 ```
 
+The collection class can also be set with the `#[CollectedBy]` attribute. As in Laravel, the
+attribute has no effect when the model overrides `newCollection()`, and on Laravel 13.4 and later
+it is also read from parent models, the nearest one first.
+
 > [!NOTE]
 > The `HasCollection` trait was introduced in Laravel 11, if you are using an older version of Laravel you can use the `newCollection` method to override the collection class:
 >

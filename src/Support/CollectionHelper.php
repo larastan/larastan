@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Support;
 
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Database\Eloquent\HasCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Enumerable;
 use Iterator;
 use IteratorAggregate;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Name;
+use PhpParser\Node\Scalar\String_;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ReflectionProvider;
@@ -33,6 +35,8 @@ use function array_map;
 use function array_values;
 use function count;
 use function in_array;
+use function ltrim;
+use function version_compare;
 
 final class CollectionHelper
 {
@@ -72,20 +76,21 @@ final class CollectionHelper
     public function determineCollectionClassName(string $modelClassName): string
     {
         try {
-            $modelReflection = $this->reflectionProvider->getClass($modelClassName);
+            $modelReflection     = $this->reflectionProvider->getClass($modelClassName);
+            $newCollectionMethod = $modelReflection->getNativeMethod('newCollection');
 
-            $attrs = $modelReflection->getNativeReflection()->getAttributes('Illuminate\Database\Eloquent\Attributes\CollectedBy'); //@phpstan-ignore argument.type (Attribute class might not exist)
+            // The attribute is read by HasCollection::newCollection(), so it has no effect when that method is overridden.
+            $newCollectionFileName = $newCollectionMethod->getDeclaringClass()->getNativeReflection()->getMethod('newCollection')->getFileName();
 
-            if ($attrs !== []) {
-                $expr =  $attrs[0]->getArgumentsExpressions()[0];
+            if ($newCollectionFileName === $this->reflectionProvider->getClass(HasCollection::class)->getFileName()) {
+                $collectionClassName = $this->findCollectedByClassName($modelReflection);
 
-                if ($expr instanceof ClassConstFetch && $expr->class instanceof Name) {
-                    return $expr->class->toString();
+                if ($collectionClassName !== null) {
+                    return $collectionClassName;
                 }
             }
 
-            $newCollectionMethod = $modelReflection->getNativeMethod('newCollection');
-            $returnType          = $newCollectionMethod->getVariants()[0]->getReturnType();
+            $returnType = $newCollectionMethod->getVariants()[0]->getReturnType();
 
             $classNames = $returnType->getObjectClassNames();
 
@@ -97,6 +102,39 @@ final class CollectionHelper
         } catch (MissingMethodFromReflectionException | ShouldNotHappenException) {
             return EloquentCollection::class;
         }
+    }
+
+    /**
+     * Mirrors HasCollection::resolveCollectionFromAttribute(), which only reads a positional argument.
+     * Since Laravel 13.4, the parent classes are searched too, nearest first.
+     */
+    private function findCollectedByClassName(ClassReflection $modelReflection): string|null
+    {
+        // @phpstan-ignore ternary.alwaysTrue, ternary.alwaysFalse
+        $classReflections = version_compare(LARAVEL_VERSION, '13.4.0', '>=')
+            ? [$modelReflection, ...$modelReflection->getParents()]
+            : [$modelReflection];
+
+        foreach ($classReflections as $classReflection) {
+            $attributes = $classReflection->getNativeReflection()->getAttributes('Illuminate\Database\Eloquent\Attributes\CollectedBy'); //@phpstan-ignore argument.type (Attribute class might not exist)
+            $expr       = ($attributes[0] ?? null)?->getArgumentsExpressions()[0] ?? null;
+
+            if ($expr === null) {
+                continue;
+            }
+
+            if ($expr instanceof ClassConstFetch && $expr->class instanceof Name) {
+                return $expr->class->toString();
+            }
+
+            if ($expr instanceof String_) {
+                return ltrim($expr->value, '\\');
+            }
+
+            return null;
+        }
+
+        return null;
     }
 
     public function determineCollectionClass(string $modelClassName, Type|null $modelType = null, Type|null $keyType = null): Type
