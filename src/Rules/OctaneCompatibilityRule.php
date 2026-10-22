@@ -23,6 +23,14 @@ use function ltrim;
 /** @implements Rule<MethodCall> */
 class OctaneCompatibilityRule implements Rule
 {
+    private const FORBIDDEN_SERVICES = [
+        'request',
+        'config',
+        'Illuminate\Http\Request',
+        'Illuminate\Contracts\Config\Repository',
+        'Illuminate\Config\Repository',
+    ];
+
     public function getNodeType(): string
     {
         return MethodCall::class;
@@ -123,14 +131,6 @@ class OctaneCompatibilityRule implements Rule
         return [];
     }
 
-    private const FORBIDDEN_SERVICES = [
-        'request',
-        'config',
-        'Illuminate\Http\Request',
-        'Illuminate\Contracts\Config\Repository',
-        'Illuminate\Config\Repository',
-    ];
-
     private function isForbiddenInjection(Node\Expr $expr, string $containerParameterName, Scope $scope): bool
     {
         if ($expr instanceof Node\Expr\Variable && $expr->name === $containerParameterName) {
@@ -172,20 +172,6 @@ class OctaneCompatibilityRule implements Rule
 
     private function isForbiddenServiceKey(Node\Expr $dim, Scope $scope): bool
     {
-        if ($dim instanceof Node\Scalar\String_) {
-            return in_array($dim->value, self::FORBIDDEN_SERVICES, true);
-        }
-
-        if ($dim instanceof Node\Expr\ClassConstFetch && $dim->name instanceof Node\Identifier && $dim->name->toLowerString() === 'class') {
-            if ($dim->class instanceof Node\Name) {
-                $resolved = $scope->resolveName($dim->class);
-
-                if (in_array(ltrim($resolved, '\\'), self::FORBIDDEN_SERVICES, true)) {
-                    return true;
-                }
-            }
-        }
-
         foreach ($scope->getType($dim)->getConstantStrings() as $constantString) {
             if (in_array(ltrim($constantString->getValue(), '\\'), self::FORBIDDEN_SERVICES, true)) {
                 return true;
