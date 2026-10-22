@@ -23,6 +23,7 @@ use PHPStan\Type\IntegerType;
 use PHPStan\Type\IntersectionType;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\StaticType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
@@ -139,6 +140,11 @@ final class CollectionHelper
         return TypeTraverser::map($this->determineCollectionType($modelClassName), function (Type $type, callable $traverse) use ($modelType, $keyType): Type {
             if ($type instanceof UnionType || $type instanceof IntersectionType) {
                 return $traverse($type);
+            }
+
+            // Members that are not collections keep their declared type arguments.
+            if (! (new ObjectType(Enumerable::class))->isSuperTypeOf($type)->yes()) {
+                return TypeTraverser::map($type, static fn (Type $type, callable $traverse): Type => $type instanceof StaticType ? $modelType : $traverse($type));
             }
 
             $classNames = $type->getObjectClassNames();

@@ -34,6 +34,25 @@ class FlatCollection extends Collection
 {
 }
 
+/**
+ * @template TNode of Model
+ * @template TLabel of \Stringable
+ */
+interface Labelled
+{
+}
+
+/**
+ * @template TKey of array-key
+ * @template TModel of Model
+ *
+ * @extends Collection<TKey, TModel>
+ * @implements Labelled<TModel, \Stringable>
+ */
+class LabelledCollection extends Collection implements Labelled
+{
+}
+
 class Category extends Model
 {
     /**
@@ -64,6 +83,18 @@ class Tag extends Model
     }
 }
 
+class Node extends Model
+{
+    /**
+     * @param  array<int, static>  $models
+     * @return Collection<int, static>&Labelled<static, \Stringable>
+     */
+    public function newCollection(array $models = []): Collection&Labelled
+    {
+        return new LabelledCollection($models);
+    }
+}
+
 function test(Category $category): void
 {
     assertType('Bug2057\TreeLikeCollection<Bug2057\Category>&Illuminate\Database\Eloquent\Collection<int, Bug2057\Category>', Category::all());
@@ -73,4 +104,7 @@ function test(Category $category): void
 
     assertType('Bug2057\FlatCollection<int, Bug2057\Tag>|Bug2057\TreeCollection<int, Bug2057\Tag>', Tag::all());
     assertType('Bug2057\FlatCollection<int, Bug2057\Tag>|Bug2057\TreeCollection<int, Bug2057\Tag>', Tag::query()->get());
+
+    assertType('Bug2057\Labelled<Bug2057\Node, Stringable>&Illuminate\Database\Eloquent\Collection<int, Bug2057\Node>', Node::all());
+    assertType('Bug2057\Labelled<Bug2057\Node, Stringable>&Illuminate\Database\Eloquent\Collection<int, Bug2057\Node>', Node::query()->get());
 }
