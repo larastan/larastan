@@ -326,6 +326,16 @@ class IntegrationTest extends PHPStanTestCase
             ],
         ];
 
+        yield 'fill' => [
+            __DIR__ . '/data/model-property-fill.php',
+            [
+                10 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::fill() expects array<model property of App\User, mixed>, array<string, string> given.'],
+                11 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::forceFill() expects array<model property of App\User, mixed>, array<string, string> given.'],
+                29 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::fill() expects array<model property of static(ModelPropertyFill\FillOnModel), mixed>, array<string, string> given.'],
+                30 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::forceFill() expects array<model property of static(ModelPropertyFill\FillOnModel), mixed>, array<string, string> given.'],
+            ],
+        ];
+
         yield [
             __DIR__ . '/data/model-property-model-factory.php',
             [
