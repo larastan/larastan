@@ -5,6 +5,7 @@ namespace ModelFactories;
 use App\Post;
 use App\User;
 
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Factories\Sequence;
@@ -88,6 +89,12 @@ function test(?int $foo): void {
 
     assertType('Database\Factories\UserFactory', User::factory()->trashed());
     assertType('*ERROR*', Post::factory()->trashed());
+
+    assertType('ModelFactories\TagFactory', Tag::factory());
+    assertType('ModelFactories\Tag', Tag::factory()->create());
+    assertType('ModelFactories\VideoFactory', Video::factory());
+    assertType('ModelFactories\Video', Video::factory()->create());
+    assertType('*ERROR*', Image::factory());
 }
 
 class Comment extends Model
@@ -109,6 +116,65 @@ class Comment extends Model
 /** @extends Factory<Comment> */
 class CommentFactory extends Factory
 {
+    public function definition(): array
+    {
+        return [];
+    }
+}
+
+class Tag extends Model
+{
+    /** @use HasFactory<TagFactory> */
+    use HasFactory;
+
+    protected static string $factory = TagFactory::class;
+}
+
+/** @extends Factory<Tag> */
+class TagFactory extends Factory
+{
+    protected $model = Tag::class;
+
+    public function definition(): array
+    {
+        return [];
+    }
+}
+
+#[UseFactory(VideoFactory::class)]
+class Video extends Model
+{
+    /** @use HasFactory<VideoFactory> */
+    use HasFactory;
+}
+
+/** @extends Factory<Video> */
+class VideoFactory extends Factory
+{
+    protected $model = Video::class;
+
+    public function definition(): array
+    {
+        return [];
+    }
+}
+
+class Image extends Model
+{
+    /** @use HasFactory<ImageFactory> */
+    use HasFactory;
+
+    protected static function newFactory(): ImageFactory|null
+    {
+        return null;
+    }
+}
+
+/** @extends Factory<Image> */
+class ImageFactory extends Factory
+{
+    protected $model = Image::class;
+
     public function definition(): array
     {
         return [];
