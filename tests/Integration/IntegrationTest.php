@@ -48,6 +48,15 @@ class IntegrationTest extends PHPStanTestCase
         yield [__DIR__ . '/data/bug-final_model_query.php'];
         yield [__DIR__ . '/data/test-case-extension.php', [34 => ['Call to function method_exists() with $this(TestTestCase) and \'partialMock\' will always evaluate to true.']]];
         yield [__DIR__ . '/data/model-builder.php'];
+
+        yield 'eloquent-builder-paginate' => [
+            __DIR__ . '/data/eloquent-builder-paginate.php',
+            [
+                34 => ['Parameter #1 $perPage of method Illuminate\Database\Eloquent\Builder<App\User>::paginate() expects (Closure(int): (int|null))|int|null, Closure(string): 15 given.'],
+                35 => ['Parameter #1 $perPage of method Illuminate\Database\Eloquent\Builder<App\User>::paginate() expects (Closure(int): (int|null))|int|null, Closure(int): \'15\' given.'],
+            ],
+        ];
+
         yield [__DIR__ . '/data/custom-builder-return-this.php'];
         yield 'framework-docblock-types' => [__DIR__ . '/data/framework-docblock-types.php'];
 
