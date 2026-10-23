@@ -92,9 +92,11 @@ function test(?int $foo): void {
 
     assertType('ModelFactories\TagFactory', Tag::factory());
     assertType('ModelFactories\Tag', Tag::factory()->create());
+    assertType('Illuminate\Database\Eloquent\Collection<int, ModelFactories\Tag>', Tag::factory(3)->create());
+    assertType('ModelFactories\TagFactory', SpecialTag::factory());
     assertType('ModelFactories\VideoFactory', Video::factory());
     assertType('ModelFactories\Video', Video::factory()->create());
-    assertType('*ERROR*', Image::factory());
+    assertType('ModelFactories\ImageFactory', Image::factory());
 }
 
 class Comment extends Model
@@ -128,6 +130,10 @@ class Tag extends Model
     use HasFactory;
 
     protected static string $factory = TagFactory::class;
+}
+
+class SpecialTag extends Tag
+{
 }
 
 /** @extends Factory<Tag> */

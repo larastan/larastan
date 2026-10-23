@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Larastan\Larastan\ReturnTypes;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Larastan\Larastan\Types\Factory\ModelFactoryType;
 use PhpParser\Node\Expr\StaticCall;
@@ -92,10 +91,14 @@ final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements Dynami
         ClassReflection $modelReflection,
         Scope $scope,
     ): ClassReflection|null {
-        $factoryReflection = $this->getFactoryFromNewFactoryMethod($modelReflection, $scope);
+        // An override of newFactory() is the most specific declaration. When the model does not
+        // override it, factory() returns the HasFactory TFactory generic.
+        foreach (['newFactory', 'factory'] as $methodName) {
+            $factoryReflection = $this->getFactoryFromMethodReturnType($modelReflection, $methodName, $scope);
 
-        if ($factoryReflection !== null) {
-            return $factoryReflection;
+            if ($factoryReflection !== null) {
+                return $factoryReflection;
+            }
         }
 
         /** @phpstan-ignore argument.type (guaranteed to be model class-string) */
@@ -108,25 +111,19 @@ final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements Dynami
         return null;
     }
 
-    private function getFactoryFromNewFactoryMethod(
+    private function getFactoryFromMethodReturnType(
         ClassReflection $modelReflection,
+        string $methodName,
         Scope $scope,
     ): ClassReflection|null {
-        if (! $modelReflection->hasMethod('newFactory')) {
+        if (! $modelReflection->hasMethod($methodName)) {
             return null;
         }
 
-        $returnType = $modelReflection->getMethod('newFactory', $scope)
+        $factoryReflections = $modelReflection->getMethod($methodName, $scope)
             ->getVariants()[0]
-            ->getReturnType();
-
-        // HasFactory::newFactory() returns the TFactory generic or null, and null only when
-        // neither the $factory property nor the UseFactory attribute is set.
-        if ($this->isInheritedFromHasFactory($modelReflection)) {
-            $returnType = TypeCombinator::removeNull($returnType);
-        }
-
-        $factoryReflections = $returnType->getObjectClassReflections();
+            ->getReturnType()
+            ->getObjectClassReflections();
 
         if (count($factoryReflections) !== 1) {
             return null;
@@ -142,16 +139,5 @@ final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements Dynami
         }
 
         return null;
-    }
-
-    private function isInheritedFromHasFactory(ClassReflection $modelReflection): bool
-    {
-        $hasFactoryReflection = $modelReflection->getTraits(true)[HasFactory::class] ?? null;
-
-        if ($hasFactoryReflection === null) {
-            return false;
-        }
-
-        return $modelReflection->getNativeReflection()->getMethod('newFactory')->getFileName() === $hasFactoryReflection->getFileName();
     }
 }
