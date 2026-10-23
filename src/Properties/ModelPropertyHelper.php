@@ -138,7 +138,13 @@ class ModelPropertyHelper
         $column = $this->tables[$tableName]->columns[$propertyName];
 
         if ($this->hasDate($modelInstance, $propertyName)) {
-            $readableType = $this->modelCastHelper->getDateType();
+            $cast = $this->modelCastHelper->getCastForProperty($classReflection, $propertyName);
+
+            $readableType = $cast !== null
+                ? $this->modelCastHelper->getReadableType($cast, $this->stringResolver->resolve($column->readableType))
+                : $this->modelCastHelper->getDateType();
+            // Eloquent runs fromDateTime() on date columns before applying any cast,
+            // so the cast's setter type does not apply to assignments.
             $writableType = TypeCombinator::union($this->modelCastHelper->getDateType(), new StringType());
         } else {
             $cast = $this->modelCastHelper->getCastForProperty($classReflection, $propertyName);

@@ -38,6 +38,13 @@ class IntegrationTest extends PHPStanTestCase
 
         yield 'bug-2582' => [__DIR__ . '/data/bug-2582.php'];
 
+        yield 'bug-1744' => [
+            __DIR__ . '/data/bug-1744.php',
+            [
+                13 => ['Property App\ModelWithDateColumnCasts::$created_at (Carbon\Carbon|string|null) does not accept array<string, string|null>.'],
+            ],
+        ];
+
         yield [__DIR__ . '/data/bug-final_model_query.php'];
         yield [__DIR__ . '/data/test-case-extension.php', [34 => ['Call to function method_exists() with $this(TestTestCase) and \'partialMock\' will always evaluate to true.']]];
         yield [__DIR__ . '/data/model-builder.php'];
