@@ -11,9 +11,11 @@ use Illuminate\Support\Str;
 use Larastan\Larastan\Methods\BuilderHelper;
 use Larastan\Larastan\Support\CollectionHelper;
 use Larastan\Larastan\Types\BuilderOf\BuilderOfType;
+use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
+use PHPStan\Node\Expr\TypeExpr;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
@@ -23,7 +25,9 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\ThisType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
+use PHPStan\Type\TypeUtils;
 
+use function count;
 use function in_array;
 
 /** @internal */
@@ -43,18 +47,7 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
 
     public function isStaticMethodSupported(MethodReflection $methodReflection): bool
     {
-        $name = $methodReflection->getName();
-
-        if ($name === '__construct') {
-            return false;
-        }
-
-        // Another extension handles this case
-        if (Str::startsWith($name, 'find')) {
-            return false;
-        }
-
-        return $this->reflectionProvider->getClass(Model::class)->hasNativeMethod($name);
+        return $this->isForwardedToBuilder($methodReflection) || $this->isNativeModelMethod($methodReflection->getName());
     }
 
     public function getTypeFromStaticMethodCall(
@@ -62,6 +55,18 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
         StaticCall $methodCall,
         Scope $scope,
     ): Type|null {
+        $forwardedType = $this->isForwardedToBuilder($methodReflection)
+            ? $this->getTypeFromForwardedBuilderCall($methodCall, $scope)
+            : null;
+
+        if ($forwardedType !== null) {
+            return $forwardedType;
+        }
+
+        if (! $this->isNativeModelMethod($methodReflection->getName())) {
+            return null;
+        }
+
         $method = $methodReflection->getDeclaringClass()
             ->getMethod($methodReflection->getName(), $scope);
 
@@ -100,5 +105,62 @@ final class ModelDynamicStaticMethodReturnTypeExtension implements DynamicStatic
         }
 
         return null;
+    }
+
+    /** Model::__callStatic() forwards the call to the Eloquent builder. */
+    private function isForwardedToBuilder(MethodReflection $methodReflection): bool
+    {
+        return $methodReflection->getDeclaringClass()->is(EloquentBuilder::class);
+    }
+
+    private function isNativeModelMethod(string $name): bool
+    {
+        if ($name === '__construct') {
+            return false;
+        }
+
+        // Another extension handles this case
+        if (Str::startsWith($name, 'find')) {
+            return false;
+        }
+
+        return $this->reflectionProvider->getClass(Model::class)->hasNativeMethod($name);
+    }
+
+    /**
+     * Resolves a forwarded call on a builder of the called model type, so `$class::findOrFail()`
+     * on a `class-string<T>` keeps T.
+     */
+    private function getTypeFromForwardedBuilderCall(StaticCall $methodCall, Scope $scope): Type|null
+    {
+        if ($methodCall->class instanceof Name || $methodCall->isFirstClassCallable()) {
+            return null;
+        }
+
+        $modelType = $scope->getType($methodCall->class)->getObjectTypeOrClassStringObjectType();
+
+        // A concrete model class already resolves through ModelForwardsCallsExtension,
+        // a template type is replaced by its bound there.
+        if (! TypeUtils::containsTemplateType($modelType)) {
+            return null;
+        }
+
+        $modelClassNames = $modelType->getObjectClassNames();
+
+        if (count($modelClassNames) !== 1) {
+            return null;
+        }
+
+        $builderType = $this->builderHelper->determineBuilderClass($modelClassNames[0], $modelType);
+
+        if ($builderType === null) {
+            return null;
+        }
+
+        return $scope->getType(new MethodCall(
+            new TypeExpr($builderType),
+            $methodCall->name,
+            $methodCall->getArgs(),
+        ));
     }
 }
