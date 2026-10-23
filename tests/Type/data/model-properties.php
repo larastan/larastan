@@ -37,6 +37,7 @@ function test(
     assertType('*ERROR*', $user->newStyleAttribute); // Doesn't have generic type, so we treat as it doesnt exist
     assertType('int', $user->stringButInt);
     assertType('string', $user->email);
+    assertType('string|null', $user->remember_token);
     assertType('array', $user->allowed_ips);
     assertType('numeric-string', $user->floatButRoundedDecimalString);
     assertType('int<0, max>', $user->unsigned_integer);
