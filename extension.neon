@@ -89,6 +89,14 @@ conditionalTags:
         phpstan.rules.rule: %noUnnecessaryEnumerableToArrayCalls%
     Larastan\Larastan\Rules\OctaneCompatibilityRule:
         phpstan.rules.rule: %checkOctaneCompatibility%
+    Larastan\Larastan\Rules\Octane\ContainerBindingCollector:
+        phpstan.collector: %checkOctaneCompatibility%
+    Larastan\Larastan\Rules\Octane\SingletonAttributeCollector:
+        phpstan.collector: %checkOctaneCompatibility%
+    Larastan\Larastan\Rules\Octane\ServiceProviderBindingCollector:
+        phpstan.collector: %checkOctaneCompatibility%
+    Larastan\Larastan\Rules\Octane\SingletonLifetimeRule:
+        phpstan.rules.rule: %checkOctaneCompatibility%
     Larastan\Larastan\Rules\UnusedViewsRule:
         phpstan.rules.rule: %checkUnusedViews%
     Larastan\Larastan\Rules\NoMissingTranslationsRule:
@@ -437,6 +445,21 @@ services:
 
     -
         class: Larastan\Larastan\Rules\OctaneCompatibilityRule
+
+    -
+        class: Larastan\Larastan\Rules\Octane\ScopedDependencyDetector
+
+    -
+        class: Larastan\Larastan\Rules\Octane\ContainerBindingCollector
+
+    -
+        class: Larastan\Larastan\Rules\Octane\SingletonAttributeCollector
+
+    -
+        class: Larastan\Larastan\Rules\Octane\ServiceProviderBindingCollector
+
+    -
+        class: Larastan\Larastan\Rules\Octane\SingletonLifetimeRule
 
     -
         class: Larastan\Larastan\Rules\NoEnvCallsOutsideOfConfigRule
