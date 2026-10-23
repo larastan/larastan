@@ -269,6 +269,21 @@ class IntegrationTest extends PHPStanTestCase
             ];
         }
 
+        if (laravel_version_compare('12.6.0', '>=')) {
+            yield 'fill-and-insert' => [
+                __DIR__ . '/data/model-property-fill-and-insert-l12-6.php',
+                [
+                    5 => ['Parameter #1 $values of method Illuminate\Database\Eloquent\Builder<App\User>::fillAndInsert() expects array<int, array<model property of App\User, mixed>>, array<int, array<string, string>> given.'],
+                    6 => ['Parameter #1 $values of method Illuminate\Database\Eloquent\Builder<App\User>::fillAndInsertOrIgnore() expects array<int, array<model property of App\User, mixed>>, array<int, array<string, string>> given.'],
+                    7 => ['Parameter #1 $values of method Illuminate\Database\Eloquent\Builder<App\User>::fillAndInsertGetId() expects array<model property of App\User, mixed>, array<string, string> given.'],
+                    8 => ['Parameter #1 $values of method Illuminate\Database\Eloquent\Builder<App\User>::fillForInsert() expects array<int, array<model property of App\User, mixed>>, array<int, array<string, string>> given.'],
+                    16 => ['Parameter #1 $values of static method Illuminate\Database\Eloquent\Builder<App\User>::fillAndInsert() expects array<int, array<model property of App\User, mixed>>, array<int, array<string, string>> given.'],
+                    29 => ['Parameter #1 $values of method Illuminate\Database\Eloquent\Builder<App\User>::fillAndInsert() expects array<int, array<model property of App\User, mixed>>, array<int, array<string, string>> given.'],
+                    34 => ['Parameter #1 $values of method Illuminate\Database\Eloquent\Builder<App\Account>::fillAndInsert() expects array<int, array<model property of App\Account, mixed>>, array<int, array<string, string>> given.'],
+                ],
+            ];
+        }
+
         if (laravel_version_compare('13.3.0', '>=')) {
             yield 'increment-each' => [
                 __DIR__ . '/data/model-property-increment-each-l13-3.php',
