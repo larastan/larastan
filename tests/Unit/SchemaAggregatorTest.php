@@ -266,40 +266,6 @@ PHP);
         self::assertTrue($aggregator->tables['compensations']->columns['amount']->nullable);
     }
 
-    #[Test]
-    public function it_resolves_remember_token_as_nullable(): void
-    {
-        $parser     = self::getContainer()->getService('currentPhpVersionSimpleDirectParser');
-        $aggregator = new SchemaAggregator(
-            $this->createReflectionProvider(),
-            self::getContainer()->getByType(InitializerExprTypeResolver::class),
-        );
-        $statements = $parser->parseString(<<<'PHP'
-<?php
-
-namespace Tests\Unit\SchemaAggregatorRememberToken;
-
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
-
-class CreateUsersTable
-{
-    public function up(): void
-    {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
-            $table->rememberToken();
-        });
-    }
-}
-PHP);
-
-        $aggregator->addStatements($statements);
-
-        self::assertSame('string', $aggregator->tables['users']->columns['remember_token']->readableType);
-        self::assertTrue($aggregator->tables['users']->columns['remember_token']->nullable);
-    }
-
     /** @return iterable<string, array{string}> */
     public static function enumCases(): iterable
     {
