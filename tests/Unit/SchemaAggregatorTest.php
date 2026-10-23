@@ -266,6 +266,63 @@ PHP);
         self::assertTrue($aggregator->tables['compensations']->columns['amount']->nullable);
     }
 
+    #[Test]
+    public function it_reads_columns_from_morph_methods(): void
+    {
+        $parser     = self::getContainer()->getService('currentPhpVersionSimpleDirectParser');
+        $aggregator = new SchemaAggregator(
+            $this->createReflectionProvider(),
+            self::getContainer()->getByType(InitializerExprTypeResolver::class),
+            new IamcalSqlParser(),
+        );
+        $statements = $parser->parseString(<<<'PHP'
+<?php
+
+namespace Tests\Unit\SchemaAggregatorMorphs;
+
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateAttachmentsTable
+{
+    public function up(): void
+    {
+        Schema::create('attachments', function (Blueprint $table) {
+            $table->numericMorphs('numeric');
+            $table->nullableNumericMorphs('nullable_numeric');
+            $table->uuidMorphs('uuid');
+            $table->nullableUuidMorphs('nullable_uuid');
+            $table->ulidMorphs('ulid');
+            $table->nullableUlidMorphs('nullable_ulid');
+        });
+    }
+}
+PHP);
+
+        $aggregator->addStatements($statements);
+
+        $columns = [];
+
+        foreach ($aggregator->tables['attachments']->columns as $name => $column) {
+            $columns[$name] = [$column->readableType, $column->nullable];
+        }
+
+        self::assertSame([
+            'numeric_type' => ['string', false],
+            'numeric_id' => ['non-negative-int', false],
+            'nullable_numeric_type' => ['string', true],
+            'nullable_numeric_id' => ['non-negative-int', true],
+            'uuid_type' => ['string', false],
+            'uuid_id' => ['string', false],
+            'nullable_uuid_type' => ['string', true],
+            'nullable_uuid_id' => ['string', true],
+            'ulid_type' => ['string', false],
+            'ulid_id' => ['string', false],
+            'nullable_ulid_type' => ['string', true],
+            'nullable_ulid_id' => ['string', true],
+        ], $columns);
+    }
+
     /** @return iterable<string, array{string}> */
     public static function enumCases(): iterable
     {
