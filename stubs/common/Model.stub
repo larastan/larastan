@@ -65,6 +65,22 @@ abstract class Model implements \JsonSerializable, \ArrayAccess
     public function update(array $attributes = [], array $options = []);
 
     /**
+     * Fill the model with an array of attributes.
+     *
+     * @param  array<model-property<static>, mixed>  $attributes
+     * @return $this
+     */
+    public function fill(array $attributes);
+
+    /**
+     * Fill the model with an array of attributes. Force mass assignment.
+     *
+     * @param  array<model-property<static>, mixed>  $attributes
+     * @return $this
+     */
+    public function forceFill(array $attributes);
+
+    /**
      * Increment a column's value by a given amount.
      *
      * Returns false when an "updating" listener cancels the update.
