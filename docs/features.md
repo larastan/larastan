@@ -93,6 +93,10 @@ $users = User::query()
         ->get();
 ```
 
+The builder class can also be set with the `#[UseEloquentBuilder]` attribute. On Laravel 13.31 and later
+it is also read from the model's traits and from parent models and their traits, the nearest one first.
+When the model overrides `newEloquentBuilder()`, the return type of that method is used instead.
+
 > [!NOTE]
 > The `HasBuilder` trait was introduced in Laravel 11, if you are using an older version of Laravel you can use the following:
 >
