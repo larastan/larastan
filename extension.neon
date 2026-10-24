@@ -583,6 +583,11 @@ services:
             - phpstan.rules.rule
 
     -
+        class: Larastan\Larastan\Rules\AggregateRelationCallbackKeyRule
+        tags:
+            - phpstan.rules.rule
+
+    -
         class: Larastan\Larastan\Rules\CheckDispatchArgumentTypesCompatibleWithClassConstructorRule
         arguments:
             dispatchableClass: Illuminate\Foundation\Bus\Dispatchable

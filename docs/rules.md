@@ -1155,3 +1155,17 @@ To enable, add the following to your `phpstan.neon` file:
 parameters:
     checkDispatchInTransactionAfterCommit: true
 ```
+
+## Aggregate relation callback key checking
+
+Larastan checks typed aggregate constraint callbacks in `withCount()`,
+`withSum()`, `loadCount()` and the related methods. For an inline associative
+array with at least two distinct, statically resolved relation keys, an additional
+rule verifies that each callback accepts the builder for **its own key**. This
+detects swapped callback types that PHPStan's shared template would allow.
+
+Unknown relationships are handled by the existing relation-existence rule.
+Dynamic keys, computed arrays, unions of possible parent models and other
+ambiguous receivers do not trigger extra callback-key diagnostics. The identifier
+is `larastan.aggregateCallbackType`.
+
