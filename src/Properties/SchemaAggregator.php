@@ -136,7 +136,8 @@ final class SchemaAggregator
 
         if (
             ! isset($call->args[1])
-            || ! $call->getArgs()[1]->value instanceof PhpParser\Node\Expr\Closure
+            || ! ($call->getArgs()[1]->value instanceof PhpParser\Node\Expr\Closure
+                || $call->getArgs()[1]->value instanceof PhpParser\Node\Expr\ArrowFunction)
             || count($call->getArgs()[1]->value->params) < 1
             || ($call->getArgs()[1]->value->params[0]->type instanceof PhpParser\Node\Name
                 && ! (new ObjectType('Illuminate\Database\Schema\Blueprint'))->isSuperTypeOf(new ObjectType($call->getArgs()[1]->value->params[0]->type->toCodeString()))->yes()
@@ -481,6 +482,10 @@ final class SchemaAggregator
     /** @return PhpParser\Node\Stmt\Expression[] */
     private function getUpdateStatements(PhpParser\Node\Expr $updateClosure): array
     {
+        if ($updateClosure instanceof PhpParser\Node\Expr\ArrowFunction) {
+            return [new PhpParser\Node\Stmt\Expression($updateClosure->expr)];
+        }
+
         if (! property_exists($updateClosure, 'stmts')) {
             return [];
         }
@@ -619,12 +624,16 @@ final class SchemaAggregator
 
             case 'after':
                 if (
-                    $secondArg instanceof PhpParser\Node\Expr\Closure
+                    ($secondArg instanceof PhpParser\Node\Expr\Closure || $secondArg instanceof PhpParser\Node\Expr\ArrowFunction)
+                    && count($secondArg->params) > 0
                     && $secondArg->params[0]->var instanceof PhpParser\Node\Expr\Variable
                     && ! ($secondArg->params[0]->var->name instanceof PhpParser\Node\Expr)
                 ) {
                     $argName = $secondArg->params[0]->var->name;
-                    $this->processColumnUpdates($tableName, $argName, $secondArg->stmts);
+                    $stmts   = $secondArg instanceof PhpParser\Node\Expr\ArrowFunction
+                        ? $this->getUpdateStatements($secondArg)
+                        : $secondArg->stmts;
+                    $this->processColumnUpdates($tableName, $argName, $stmts);
                 }
 
                 return;
