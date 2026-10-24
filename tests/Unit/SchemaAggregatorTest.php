@@ -370,6 +370,43 @@ PHP, $case));
         self::assertSame(['id'], array_keys($aggregator->tables['statuses']->columns));
     }
 
+    #[Test]
+    public function it_reads_arrow_function_migration_callbacks(): void
+    {
+        $aggregator = $this->aggregateMigration(<<<'PHP'
+            Schema::create('users', fn (Blueprint $table) => $table->id());
+
+            Schema::table('users', fn (Blueprint $table) => $table->string('kyc_status')->nullable());
+
+            Schema::table('users', function (Blueprint $table) {
+                $table->after('id', fn (Blueprint $table) => $table->integer('age'));
+            });
+        PHP);
+
+        self::assertSame(['id', 'kyc_status', 'age'], array_keys($aggregator->tables['users']->columns));
+        self::assertSame('string', $aggregator->tables['users']->columns['kyc_status']->readableType);
+        self::assertTrue($aggregator->tables['users']->columns['kyc_status']->nullable);
+        self::assertSame('int', $aggregator->tables['users']->columns['age']->readableType);
+    }
+
+    #[Test]
+    public function it_skips_arrow_function_callbacks_without_a_blueprint_parameter(): void
+    {
+        $aggregator = $this->aggregateMigration(<<<'PHP'
+            Schema::create('users', fn (Blueprint $table) => $table->id());
+
+            Schema::table('users', fn (NotABlueprint $table) => $table->string('name'));
+
+            Schema::table('users', fn () => null);
+
+            Schema::table('users', function (Blueprint $table) {
+                $table->after('id', fn () => null);
+            });
+        PHP);
+
+        self::assertSame(['id'], array_keys($aggregator->tables['users']->columns));
+    }
+
     private function aggregateMigration(string $body): SchemaAggregator
     {
         $parser     = self::getContainer()->getService('currentPhpVersionSimpleDirectParser');
