@@ -32,11 +32,13 @@ final class BuilderOfTypeNodeResolverExtension implements TypeNodeResolverExtens
             return null;
         }
 
-        if ($typeNode->type->name !== 'builder-of') {
+        $name = $typeNode->type->name;
+
+        if ($name !== 'builder-of' && $name !== 'aggregate-builder-of') {
             return null;
         }
 
-        if (count($typeNode->genericTypes) < 1 || count($typeNode->genericTypes) > 2) {
+        if (count($typeNode->genericTypes) < ($name === 'aggregate-builder-of' ? 2 : 1) || count($typeNode->genericTypes) > 2) {
             return null;
         }
 
@@ -58,7 +60,7 @@ final class BuilderOfTypeNodeResolverExtension implements TypeNodeResolverExtens
             return null;
         }
 
-        return new BuilderOfType($genericType, $this->builderHelper, $relationType);
+        return new BuilderOfType($genericType, $this->builderHelper, $relationType, $name === 'aggregate-builder-of');
     }
 
     public function setTypeNodeResolver(TypeNodeResolver $typeNodeResolver): void

@@ -125,11 +125,15 @@ function testNeverQuery(): void
  * @param builder-of<\App\User, 'accounts'> $accounts
  * @param builder-of<\App\User, 'posts'> $posts
  * @param builder-of<\App\User, 'posts.comments'> $comments
+ * @param builder-of<\App\User, 'posts as posts_total'> $ordinaryAlias
+ * @param aggregate-builder-of<\App\User, 'posts as posts_total'> $aliasedPosts
  * @param builder-of<\App\User, 'posts:id'> $postColumns
  * @param builder-of<\App\User, 'posts.comments:id,post_id'> $commentColumns
  */
-function testRelationshipBuilders($accounts, $posts, $comments, $postColumns, $commentColumns): void
+function testRelationshipBuilders($accounts, $posts, $comments, $ordinaryAlias, $aliasedPosts, $postColumns, $commentColumns): void
 {
+    assertType('Illuminate\\Database\\Eloquent\\Builder<App\\User>', $ordinaryAlias);
+    assertType('App\\PostBuilder<App\\Post>', $aliasedPosts);
     assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $accounts);
     assertType('App\PostBuilder<App\Post>', $posts);
     assertType('Illuminate\Database\Eloquent\Builder<App\Comment>', $comments);
@@ -330,4 +334,15 @@ function testRelationshipTemplates(string $relation, string $unknown): void
     assertType('App\PostBuilder<App\Post>', genericRelationshipBuilder(\App\User::class, $relation));
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', genericRelationshipBuilder(\App\User::class, 'missing'));
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', genericRelationshipBuilder(\App\User::class, $unknown));
+}
+
+/**
+ * @param aggregate-builder-of<\App\User, 'posts as published_posts'|'accounts AS total_accounts'> $aliasedUnion
+ * @param aggregate-builder-of<\App\User, 'posts  as published_posts'> $malformedAlias
+ */
+function testAggregateAliasSemantics($aliasedUnion, $malformedAlias): void
+{
+    assertType('(App\\PostBuilder<App\\Post>|Illuminate\\Database\\Eloquent\\Builder<App\\Account>)', $aliasedUnion);
+    // Laravel only recognizes exactly three space-delimited alias segments.
+    assertType('Illuminate\\Database\\Eloquent\\Builder<App\\User>', $malformedAlias);
 }
