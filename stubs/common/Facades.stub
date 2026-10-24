@@ -5,6 +5,9 @@ namespace Illuminate\Support\Facades;
 abstract class Facade {}
 
 /**
+ * @method static \Redis|array<mixed> pipeline(callable|null $callback = null)
+ * @method static \Redis|array<mixed> transaction(callable|null $callback = null)
+ *
  * @mixin \Illuminate\Redis\Connections\Connection
  * @mixin \Redis
  * @mixin \Illuminate\Redis\RedisManager
