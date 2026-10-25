@@ -50,6 +50,15 @@ class ModelPropertyHelper
     ) {
     }
 
+    public function hasDatabaseTable(string $tableName): bool
+    {
+        if (! $this->migrationsLoaded()) {
+            $this->loadMigrations();
+        }
+
+        return array_key_exists($tableName, $this->tables);
+    }
+
     /**
      * Determine if the model has a database property.
      */
