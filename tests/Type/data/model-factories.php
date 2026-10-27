@@ -8,8 +8,10 @@ use App\Shapes\Ellipse;
 use App\Shapes\Hexagon;
 use App\Shapes\Oval;
 use App\Shapes\Polygon;
+use App\Shapes\Rhombus;
 use App\Shapes\Shape;
 use App\Shapes\Square;
+use App\Shapes\Wedge;
 use App\User;
 
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -113,6 +115,8 @@ function test(?int $foo): void {
     assertType('Database\Factories\Shapes\HexagonFactory', Hexagon::factory());
     assertType('Database\Factories\Shapes\EllipseFactory', Ellipse::factory());
     assertType('Database\Factories\Shapes\OvalFactory', Oval::factory());
+    assertType('Database\Factories\Shapes\TriangleFactory', Wedge::factory());
+    assertType('Database\Factories\Shapes\ShapeFactory', Rhombus::factory());
 }
 
 class Comment extends Model
