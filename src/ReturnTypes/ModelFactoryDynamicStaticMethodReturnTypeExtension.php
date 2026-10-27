@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Larastan\Larastan\ReturnTypes;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Larastan\Larastan\Types\Factory\ModelFactoryType;
 use PhpParser\Node\Expr\StaticCall;
@@ -100,8 +101,9 @@ final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements Dynami
         }
 
         // TFactory is bound on the class that uses HasFactory. A subclass that inherits the trait
-        // gets the factory of its own conventional name, unless it inherits the $factory property.
-        if (! $this->isFactoryGenericBoundTo($modelReflection, $scope)) {
+        // gets the factory of its own conventional name, unless it inherits the $factory property
+        // or a factory() override.
+        if (! $this->isFactoryGenericBoundTo($modelReflection)) {
             return $this->getFactoryFromNamingConvention($modelReflection)
                 ?? $this->getFactoryFromMethodReturnType($modelReflection, 'factory', $scope);
         }
@@ -110,13 +112,16 @@ final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements Dynami
             ?? $this->getFactoryFromNamingConvention($modelReflection);
     }
 
-    private function isFactoryGenericBoundTo(ClassReflection $modelReflection, Scope $scope): bool
+    private function isFactoryGenericBoundTo(ClassReflection $modelReflection): bool
     {
-        if (! $modelReflection->hasMethod('factory')) {
+        if (! $modelReflection->hasNativeMethod('factory')) {
             return false;
         }
 
-        return $modelReflection->getMethod('factory', $scope)->getDeclaringClass()->getName() === $modelReflection->getName()
+        $factoryMethod = $modelReflection->getNativeReflection()->getMethod('factory');
+
+        return $factoryMethod->getDeclaringClass()->getName() === $modelReflection->getName()
+            || $factoryMethod->getFileName() !== $this->reflectionProvider->getClass(HasFactory::class)->getFileName()
             || ($modelReflection->hasNativeProperty('factory') && $modelReflection->getNativeProperty('factory')->isStatic());
     }
 

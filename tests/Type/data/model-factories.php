@@ -4,6 +4,7 @@ namespace ModelFactories;
 
 use App\Post;
 use App\Shapes\Circle;
+use App\Shapes\Cube;
 use App\Shapes\Ellipse;
 use App\Shapes\Hexagon;
 use App\Shapes\Oval;
@@ -117,6 +118,7 @@ function test(?int $foo): void {
     assertType('Database\Factories\Shapes\OvalFactory', Oval::factory());
     assertType('Database\Factories\Shapes\TriangleFactory', Wedge::factory());
     assertType('Database\Factories\Shapes\ShapeFactory', Rhombus::factory());
+    assertType('Database\Factories\Shapes\RectangleFactory', Cube::factory());
 }
 
 class Comment extends Model
