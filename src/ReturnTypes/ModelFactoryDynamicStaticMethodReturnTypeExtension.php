@@ -93,14 +93,35 @@ final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements Dynami
     ): ClassReflection|null {
         // An override of newFactory() is the most specific declaration. When the model does not
         // override it, factory() returns the HasFactory TFactory generic.
-        foreach (['newFactory', 'factory'] as $methodName) {
-            $factoryReflection = $this->getFactoryFromMethodReturnType($modelReflection, $methodName, $scope);
+        $factoryReflection = $this->getFactoryFromMethodReturnType($modelReflection, 'newFactory', $scope);
 
-            if ($factoryReflection !== null) {
-                return $factoryReflection;
-            }
+        if ($factoryReflection !== null) {
+            return $factoryReflection;
         }
 
+        // TFactory is bound on the class that uses HasFactory. A subclass that inherits the trait
+        // gets the factory of its own conventional name, unless it inherits the $factory property.
+        if (! $this->isFactoryGenericBoundTo($modelReflection, $scope)) {
+            return $this->getFactoryFromNamingConvention($modelReflection)
+                ?? $this->getFactoryFromMethodReturnType($modelReflection, 'factory', $scope);
+        }
+
+        return $this->getFactoryFromMethodReturnType($modelReflection, 'factory', $scope)
+            ?? $this->getFactoryFromNamingConvention($modelReflection);
+    }
+
+    private function isFactoryGenericBoundTo(ClassReflection $modelReflection, Scope $scope): bool
+    {
+        if (! $modelReflection->hasMethod('factory')) {
+            return false;
+        }
+
+        return $modelReflection->getMethod('factory', $scope)->getDeclaringClass()->getName() === $modelReflection->getName()
+            || ($modelReflection->hasNativeProperty('factory') && $modelReflection->getNativeProperty('factory')->isStatic());
+    }
+
+    private function getFactoryFromNamingConvention(ClassReflection $modelReflection): ClassReflection|null
+    {
         /** @phpstan-ignore argument.type (guaranteed to be model class-string) */
         $factoryClass = Factory::resolveFactoryName($modelReflection->getName());
 
