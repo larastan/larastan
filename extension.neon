@@ -41,6 +41,7 @@ parameters:
     checkBatchedJobIsBatchable: false
     checkBatchableJobChecksCancellation: false
     checkDispatchInTransactionAfterCommit: false
+    redisDriver: null
 
 parametersSchema:
     checkOctaneCompatibility: bool()
@@ -75,6 +76,7 @@ parametersSchema:
     checkBatchedJobIsBatchable: bool()
     checkBatchableJobChecksCancellation: bool()
     checkDispatchInTransactionAfterCommit: bool()
+    redisDriver: schema(anyOf('phpredis', 'predis'), nullable())
 
 conditionalTags:
     Larastan\Larastan\Rules\NoEnvCallsOutsideOfConfigRule:
@@ -600,6 +602,8 @@ services:
 
     -
         class: Larastan\Larastan\LarastanStubFilesExtension
+        arguments:
+            redisDriver: %redisDriver%
         tags:
             - phpstan.stubFilesExtension
 

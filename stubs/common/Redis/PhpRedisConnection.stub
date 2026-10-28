@@ -1,0 +1,19 @@
+<?php
+
+namespace Illuminate\Redis {
+    class RedisManager implements \Illuminate\Contracts\Redis\Factory
+    {
+        /**
+         * @param  string|null  $name
+         * @return \Illuminate\Redis\Connections\PhpRedisConnection
+         */
+        public function connection($name = null) {}
+    }
+}
+
+namespace Illuminate\Redis\Connections {
+    /**
+     * @mixin \Illuminate\Redis\Connections\PhpRedisConnection
+     */
+    abstract class Connection {}
+}
