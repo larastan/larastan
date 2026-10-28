@@ -15,7 +15,7 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\IdentifierRuleError;
-use PHPStan\Rules\Rule;
+use PHPStan\Rules\MultipleNodeTypesRule;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\TypeCombinator;
@@ -23,11 +23,17 @@ use PHPStan\Type\TypeCombinator;
 use function count;
 use function sprintf;
 
-/** @implements Rule<CallLike> */
-class NoImplicitQueryBuilderCallRule implements Rule
+/** @implements MultipleNodeTypesRule<CallLike> */
+class NoImplicitQueryBuilderCallRule implements MultipleNodeTypesRule
 {
     public function __construct(private ModelForwardsCallsExtension $modelForwardsCallsExtension)
     {
+    }
+
+    /** @inheritDoc */
+    public function getNodeTypes(): array
+    {
+        return [StaticCall::class, MethodCall::class, NullsafeMethodCall::class];
     }
 
     public function getNodeType(): string

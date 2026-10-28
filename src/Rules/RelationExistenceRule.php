@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
-use PHPStan\Rules\Rule;
+use PHPStan\Rules\MultipleNodeTypesRule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Type\ObjectType;
 
@@ -20,11 +20,17 @@ use function preg_match;
 use function str_starts_with;
 use function strtolower;
 
-/** @implements Rule<Node\Expr\CallLike> */
-class RelationExistenceRule implements Rule
+/** @implements MultipleNodeTypesRule<Node\Expr\CallLike> */
+class RelationExistenceRule implements MultipleNodeTypesRule
 {
     public function __construct(private RelationExistenceHelper $relationExistenceHelper)
     {
+    }
+
+    /** @inheritDoc */
+    public function getNodeTypes(): array
+    {
+        return [MethodCall::class, Node\Expr\StaticCall::class];
     }
 
     public function getNodeType(): string
