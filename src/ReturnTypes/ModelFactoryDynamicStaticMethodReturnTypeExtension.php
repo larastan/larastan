@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Larastan\Larastan\ReturnTypes;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Larastan\Larastan\Types\Factory\ModelFactoryType;
 use PhpParser\Node\Expr\StaticCall;
@@ -93,14 +94,39 @@ final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements Dynami
     ): ClassReflection|null {
         // An override of newFactory() is the most specific declaration. When the model does not
         // override it, factory() returns the HasFactory TFactory generic.
-        foreach (['newFactory', 'factory'] as $methodName) {
-            $factoryReflection = $this->getFactoryFromMethodReturnType($modelReflection, $methodName, $scope);
+        $factoryReflection = $this->getFactoryFromMethodReturnType($modelReflection, 'newFactory', $scope);
 
-            if ($factoryReflection !== null) {
-                return $factoryReflection;
-            }
+        if ($factoryReflection !== null) {
+            return $factoryReflection;
         }
 
+        // TFactory is bound on the class that uses HasFactory. A subclass that inherits the trait
+        // gets the factory of its own conventional name, unless it inherits the $factory property
+        // or a factory() override.
+        if (! $this->isFactoryGenericBoundTo($modelReflection)) {
+            return $this->getFactoryFromNamingConvention($modelReflection)
+                ?? $this->getFactoryFromMethodReturnType($modelReflection, 'factory', $scope);
+        }
+
+        return $this->getFactoryFromMethodReturnType($modelReflection, 'factory', $scope)
+            ?? $this->getFactoryFromNamingConvention($modelReflection);
+    }
+
+    private function isFactoryGenericBoundTo(ClassReflection $modelReflection): bool
+    {
+        if (! $modelReflection->hasNativeMethod('factory')) {
+            return false;
+        }
+
+        $factoryMethod = $modelReflection->getNativeReflection()->getMethod('factory');
+
+        return $factoryMethod->getDeclaringClass()->getName() === $modelReflection->getName()
+            || $factoryMethod->getFileName() !== $this->reflectionProvider->getClass(HasFactory::class)->getFileName()
+            || ($modelReflection->hasNativeProperty('factory') && $modelReflection->getNativeProperty('factory')->isStatic());
+    }
+
+    private function getFactoryFromNamingConvention(ClassReflection $modelReflection): ClassReflection|null
+    {
         /** @phpstan-ignore argument.type (guaranteed to be model class-string) */
         $factoryClass = Factory::resolveFactoryName($modelReflection->getName());
 

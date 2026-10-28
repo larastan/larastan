@@ -3,6 +3,16 @@
 namespace ModelFactories;
 
 use App\Post;
+use App\Shapes\Circle;
+use App\Shapes\Cube;
+use App\Shapes\Ellipse;
+use App\Shapes\Hexagon;
+use App\Shapes\Oval;
+use App\Shapes\Polygon;
+use App\Shapes\Rhombus;
+use App\Shapes\Shape;
+use App\Shapes\Square;
+use App\Shapes\Wedge;
 use App\User;
 
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -97,6 +107,18 @@ function test(?int $foo): void {
     assertType('ModelFactories\VideoFactory', Video::factory());
     assertType('ModelFactories\Video', Video::factory()->create());
     assertType('ModelFactories\ImageFactory', Image::factory());
+
+    assertType('Database\Factories\Shapes\ShapeFactory', Shape::factory());
+    assertType('Database\Factories\Shapes\CircleFactory', Circle::factory());
+    assertType('App\Shapes\Circle', Circle::factory()->create());
+    assertType('Database\Factories\Shapes\ShapeFactory', Square::factory());
+    assertType('Database\Factories\Shapes\PolygonFactory', Polygon::factory());
+    assertType('Database\Factories\Shapes\HexagonFactory', Hexagon::factory());
+    assertType('Database\Factories\Shapes\EllipseFactory', Ellipse::factory());
+    assertType('Database\Factories\Shapes\OvalFactory', Oval::factory());
+    assertType('Database\Factories\Shapes\TriangleFactory', Wedge::factory());
+    assertType('Database\Factories\Shapes\ShapeFactory', Rhombus::factory());
+    assertType('Database\Factories\Shapes\RectangleFactory', Cube::factory());
 }
 
 class Comment extends Model
