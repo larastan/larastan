@@ -1,0 +1,22 @@
+<?php
+
+namespace Illuminate\Redis {
+    class RedisManager implements \Illuminate\Contracts\Redis\Factory
+    {
+        /**
+         * @param  string|null  $name
+         * @return \Illuminate\Redis\Connections\PredisConnection
+         */
+        public function connection($name = null) {}
+    }
+}
+
+namespace Illuminate\Redis\Connections {
+    abstract class Connection {}
+
+    /**
+     * @method int hexists(string $key, string $field)
+     * @method string|null zscore(string $key, mixed $member)
+     */
+    class PredisConnection extends Connection {}
+}

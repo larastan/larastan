@@ -1,0 +1,55 @@
+<?php
+
+namespace Illuminate\Redis {
+    class RedisManager implements \Illuminate\Contracts\Redis\Factory
+    {
+        /**
+         * @param  string|null  $name
+         * @return \Illuminate\Redis\Connections\PhpRedisConnection
+         */
+        public function connection($name = null) {}
+    }
+}
+
+namespace Illuminate\Redis\Connections {
+    /**
+     * @mixin \Redis
+     */
+    abstract class Connection {}
+
+    /**
+     * @mixin \Redis
+     */
+    class PhpRedisConnection extends Connection
+    {
+        /**
+         * @param  string  $key
+         * @param  mixed  $value
+         * @param  string|null  $expireResolution
+         * @param  int|null  $expireTTL
+         * @param  string|null  $flag
+         * @return bool
+         */
+        public function set($key, $value, $expireResolution = null, $expireTTL = null, $flag = null) {}
+
+        /**
+         * @param  callable|null  $callback
+         * @return array<int, mixed>|\Redis
+         */
+        public function pipeline($callback = null) {}
+
+        /**
+         * @param  callable|null  $callback
+         * @return array<int, mixed>|\Redis
+         */
+        public function transaction($callback = null) {}
+
+        /**
+         * @param  string  $script
+         * @param  int  $numberOfKeys
+         * @param  mixed  ...$arguments
+         * @return mixed
+         */
+        public function eval($script, $numberOfKeys, ...$arguments) {}
+    }
+}

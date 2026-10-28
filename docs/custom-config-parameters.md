@@ -194,3 +194,19 @@ $foo = env('FOO', fn() => 'bar');
 will also dump `string` when the parameter is enabled.
 
 The reasoning behind it is that the default value is always used when the environment variable is not set. And for almost all the cases the default value should be the same type as the actual env variable. So it makes sense to generalize the return type to the type of the default value.
+
+## `redisDriver`
+**default**: `null`
+
+Chooses which Redis facade and connection stubs Larastan loads.
+
+| Value | Stubs |
+| --- | --- |
+| `null` | Resolve from Laravel config `database.redis.client`. Use `phpredis` or `predis` when that config matches; otherwise load the generic stubs. |
+| `phpredis` | `PhpRedisFacade` and `PhpRedisConnection` (Laravel `PhpRedisConnection` method signatures). |
+| `predis` | `PredisFacade` and `PredisConnection`. |
+
+```neon
+parameters:
+    redisDriver: phpredis
+```
