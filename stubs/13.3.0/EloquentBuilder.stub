@@ -524,6 +524,38 @@ class Builder
     public function upsert(array $values, $uniqueBy, $update = null);
 
     /**
+     * Insert into the database after merging the model's default attributes, setting timestamps, and casting values.
+     *
+     * @param  array<int, array<model-property<TModel>, mixed>>  $values
+     * @return bool
+     */
+    public function fillAndInsert(array $values);
+
+    /**
+     * Insert (ignoring errors) into the database after merging the model's default attributes, setting timestamps, and casting values.
+     *
+     * @param  array<int, array<model-property<TModel>, mixed>>  $values
+     * @return int
+     */
+    public function fillAndInsertOrIgnore(array $values);
+
+    /**
+     * Insert a record into the database and get its ID after merging the model's default attributes, setting timestamps, and casting values.
+     *
+     * @param  array<model-property<TModel>, mixed>  $values
+     * @return int
+     */
+    public function fillAndInsertGetId(array $values);
+
+    /**
+     * Enrich the given values by merging in the model's default attributes, adding timestamps, and casting values.
+     *
+     * @param  array<int, array<model-property<TModel>, mixed>>  $values
+     * @return array<int, array<string, mixed>>
+     */
+    public function fillForInsert(array $values);
+
+    /**
      * Execute the query and get the first result if it's the sole matching record.
      *
      * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
