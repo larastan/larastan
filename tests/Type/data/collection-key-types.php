@@ -3,11 +3,16 @@
 namespace CollectionKeyTypes;
 
 use App\User;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 
 use function PHPStan\Testing\assertType;
+
+class Apple {}
+
+class Orange {}
 
 /**
  * @param Collection<string, int>       $stringKeys
@@ -29,7 +34,7 @@ function test(
 ): void {
     assertType('Illuminate\Support\Collection<string, int>', $stringKeys->merge($map));
     assertType('Illuminate\Support\Collection<int, int>', $intKeys->merge([1]));
-    assertType('Illuminate\Support\Collection<(int|string), mixed>', $arrayKeys->merge([1]));
+    assertType('Illuminate\Support\Collection<int|string, mixed>', $arrayKeys->merge([1]));
     assertType('Illuminate\Support\Collection<string, int>', $stringKeys->mergeRecursive($map));
     assertType('Illuminate\Support\Collection<(int|string), mixed>', $arrayKeys->mergeRecursive([1]));
     assertType('Illuminate\Support\LazyCollection<string, int>', $lazy->merge($map));
@@ -95,4 +100,44 @@ function mutations(
 
     assertType('int|null', $put->getOrPut(1, null));
     assertType('Illuminate\Support\Collection<1|string, int|null>', $put);
+}
+
+/**
+ * @param Collection<int, int> $integers
+ * @param Collection<int, string> $strings
+ * @param Collection<string, string> $stringKeys
+ * @param array<string, bool> $flags
+ * @param Arrayable<string, bool> $arrayableFlags
+ * @param Collection<'source', int> $stringKeyed
+ * @param array{5: string} $numericLiteral
+ * @param Collection<int, Apple> $apples
+ * @param Collection<string, Orange> $oranges
+ * @param Collection<'apple', Apple> $appleCollection
+ * @param Arrayable<'orange', Orange> $arrayableOranges
+ * @param array{orange: Orange} $orangeArray
+ */
+function mergeValueTypes(
+    Collection $integers,
+    Collection $strings,
+    Collection $stringKeys,
+    array $flags,
+    Arrayable $arrayableFlags,
+    Collection $stringKeyed,
+    array $numericLiteral,
+    Collection $apples,
+    Collection $oranges,
+    Collection $appleCollection,
+    Arrayable $arrayableOranges,
+    array $orangeArray,
+): void
+{
+    assertType('Illuminate\\Support\\Collection<int, int|string>', $integers->merge($strings));
+    assertType('Illuminate\\Support\\Collection<int, int|string>', $integers->merge([1 => 'string']));
+    assertType('Illuminate\\Support\\Collection<int|string, bool|int>', $integers->merge($flags));
+    assertType('Illuminate\\Support\\Collection<int|string, bool|int>', $integers->merge($arrayableFlags));
+    assertType('Illuminate\\Support\\Collection<int|string, int|string>', $stringKeys->merge($integers));
+    assertType('Illuminate\\Support\\Collection<\'source\'|int, int|string>', $stringKeyed->merge($numericLiteral));
+    assertType('Illuminate\\Support\\Collection<int|string, CollectionKeyTypes\\Apple|CollectionKeyTypes\\Orange>', $apples->merge($oranges));
+    assertType('Illuminate\\Support\\Collection<string, CollectionKeyTypes\\Apple|CollectionKeyTypes\\Orange>', $appleCollection->merge($arrayableOranges));
+    assertType('Illuminate\\Support\\Collection<string, CollectionKeyTypes\\Apple|CollectionKeyTypes\\Orange>', $appleCollection->merge($orangeArray));
 }

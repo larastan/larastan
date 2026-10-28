@@ -168,10 +168,11 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      * Merge the collection with the given items.
      * Integer keys are renumbered, see \Illuminate\Support\Collection::shift().
      *
+     * @template TMergeKey of array-key
      * @template TMergeValue
      *
-     * @param  \Illuminate\Contracts\Support\Arrayable<TKey, TMergeValue>|iterable<TKey, TMergeValue>  $items
-     * @return static<(array<TKey, mixed> is array<int, mixed> ? int : TKey), TValue|TMergeValue>
+     * @param  \Illuminate\Contracts\Support\Arrayable<TMergeKey, TMergeValue>|iterable<TMergeKey, TMergeValue>  $items
+     * @return static<(array<TKey|TMergeKey, mixed> is array<int, mixed> ? int : TKey|TMergeKey), TValue|TMergeValue>
      */
     public function merge($items);
 
