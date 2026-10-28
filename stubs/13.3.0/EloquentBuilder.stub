@@ -672,7 +672,7 @@ class Builder
     /**
      * Paginate the given query.
      *
-     * @param  int|null  $perPage
+     * @param  (\Closure(int): (int|null))|int|null  $perPage
      * @param  array<int, (model-property<TModel>|'*')>  $columns
      * @param  string  $pageName
      * @param  int|null  $page
