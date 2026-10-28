@@ -9,12 +9,12 @@ use function PHPStan\Testing\assertType;
 function test(): void
 {
     // #2251 / #2622 — Laravel PhpRedisConnection pipeline/transaction
-    assertType('array|Redis', Redis::pipeline(function ($pipe): void {
+    assertType('array<int, mixed>|Redis', Redis::pipeline(function ($pipe): void {
         $pipe->set('foo', 'bar');
     }));
-    assertType('array|Redis', Redis::transaction(fn ($transaction) => $transaction->incr('foo')));
-    assertType('array|Redis', Redis::pipeline());
-    assertType('array|Redis', Redis::transaction());
+    assertType('array<int, mixed>|Redis', Redis::transaction(fn ($transaction) => $transaction->incr('foo')));
+    assertType('array<int, mixed>|Redis', Redis::pipeline());
+    assertType('array<int, mixed>|Redis', Redis::transaction());
 
     // #907 — Laravel set arity (not ext-redis's 2–3 arg set)
     assertType('bool', Redis::set('key', 'value', 'EX', 60));
@@ -35,7 +35,7 @@ function test(): void
 
     $connection = Redis::connection();
     assertType('Illuminate\Redis\Connections\PhpRedisConnection', $connection);
-    assertType('array|Redis', $connection->pipeline(function ($pipe): void {
+    assertType('array<int, mixed>|Redis', $connection->pipeline(function ($pipe): void {
         $pipe->get('foo');
     }));
 }

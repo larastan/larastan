@@ -12,8 +12,11 @@ namespace Illuminate\Redis {
 }
 
 namespace Illuminate\Redis\Connections {
-    /**
-     * @mixin \Illuminate\Redis\Connections\PredisConnection
-     */
     abstract class Connection {}
+
+    /**
+     * @method int hexists(string $key, string $field)
+     * @method string|null zscore(string $key, mixed $member)
+     */
+    class PredisConnection extends Connection {}
 }
