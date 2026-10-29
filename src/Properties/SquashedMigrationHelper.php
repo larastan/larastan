@@ -16,7 +16,6 @@ use SplFileInfo;
 use function array_key_exists;
 use function database_path;
 use function file_get_contents;
-use function glob;
 use function is_dir;
 use function iterator_to_array;
 use function ksort;
@@ -36,14 +35,6 @@ final class SquashedMigrationHelper
     /** @return SchemaTable[] */
     public function initializeTables(): array
     {
-        if ($this->disableSchemaScan) {
-            return [];
-        }
-
-        if (empty($this->schemaPaths)) {
-            $this->schemaPaths = [database_path('schema')];
-        }
-
         $filesArray = $this->getSchemaFiles();
 
         if (empty($filesArray)) {
@@ -97,23 +88,37 @@ final class SquashedMigrationHelper
         /** @var SplFileInfo[] $schemaFiles */
         $schemaFiles = [];
 
-        foreach ($this->schemaPaths as $additionalPathGlob) {
-            foreach ((glob($additionalPathGlob) ?: []) as $additionalPath) {
-                $absolutePath = $this->fileHelper->absolutizePath($additionalPath);
-
-                if (! is_dir($absolutePath)) {
-                    continue;
-                }
-
-                $schemaFiles += iterator_to_array(
-                    new RegexIterator(
-                        new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
-                        '/\.dump|\.sql/i',
-                    ),
-                );
+        foreach ($this->getSchemaDirectories() as $directory) {
+            if (! is_dir($directory)) {
+                continue;
             }
+
+            $schemaFiles += iterator_to_array(
+                new RegexIterator(
+                    new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)),
+                    '/\.dump|\.sql/i',
+                ),
+            );
         }
 
         return $schemaFiles;
+    }
+
+    /**
+     * The directories scanned for schema dumps, see DirectoryResolver::resolve().
+     *
+     * @return list<string>
+     */
+    public function getSchemaDirectories(): array
+    {
+        if ($this->disableSchemaScan) {
+            return [];
+        }
+
+        if (empty($this->schemaPaths)) {
+            $this->schemaPaths = [database_path('schema')];
+        }
+
+        return DirectoryResolver::resolve($this->schemaPaths, $this->fileHelper);
     }
 }

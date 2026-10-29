@@ -17,7 +17,6 @@ use SplFileInfo;
 
 use function count;
 use function database_path;
-use function glob;
 use function is_dir;
 use function iterator_to_array;
 use function uasort;
@@ -80,27 +79,37 @@ class MigrationHelper
         /** @var SplFileInfo[] $migrationFiles */
         $migrationFiles = [];
 
+        foreach ($this->getMigrationDirectories() as $directory) {
+            if (! is_dir($directory)) {
+                continue;
+            }
+
+            $migrationFiles += iterator_to_array(
+                new RegexIterator(
+                    new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)),
+                    '/\.php$/i',
+                ),
+            );
+        }
+
+        return $migrationFiles;
+    }
+
+    /**
+     * The directories scanned for migrations, see DirectoryResolver::resolve().
+     *
+     * @return list<string>
+     */
+    public function getMigrationDirectories(): array
+    {
+        if ($this->disableMigrationScan) {
+            return [];
+        }
+
         if (count($this->databaseMigrationPath) === 0) {
             $this->databaseMigrationPath = [database_path('migrations')];
         }
 
-        foreach ($this->databaseMigrationPath as $additionalPathGlob) {
-            foreach ((glob($additionalPathGlob) ?: []) as $additionalPath) {
-                $absolutePath = $this->fileHelper->absolutizePath($additionalPath);
-
-                if (! is_dir($absolutePath)) {
-                    continue;
-                }
-
-                $migrationFiles += iterator_to_array(
-                    new RegexIterator(
-                        new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
-                        '/\.php$/i',
-                    ),
-                );
-            }
-        }
-
-        return $migrationFiles;
+        return DirectoryResolver::resolve($this->databaseMigrationPath, $this->fileHelper);
     }
 }

@@ -6,6 +6,7 @@ namespace Larastan\Larastan\Internal;
 
 use Larastan\Larastan\Support\ConfigParser;
 use PhpParser\Node\Arg;
+use PHPStan\Analyser\DependencyTracker;
 use PHPStan\Analyser\Scope;
 use PHPStan\Type\GeneralizePrecision;
 use PHPStan\Type\Type;
@@ -26,7 +27,8 @@ final class ConfigHelper
     }
 
     /**
-     * @param  Arg[] $args
+     * @param  Arg[]                   $args
+     * @param  Scope&DependencyTracker $scope
      *
      * @return Type[]
      */

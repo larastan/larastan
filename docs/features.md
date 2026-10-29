@@ -267,6 +267,8 @@ DB::connection('mysql')->unprepared('CREATE TABLE `logs` (`id` int NOT NULL)');
 
 Only string literals are read. A variable or other expression is skipped, and a string the active parser cannot read does not change the schema.
 
+When a migration or a schema dump is created, changed or deleted, the result cache analyses the files using a model again. A directory that starts matching a glob in `databaseMigrationsPath` or `squashedMigrationsPath` is noticed only after the result cache is cleared.
+
 ## Model Relationships
 
 In order for Larastan to recognize Model relationships you are required to document the generic types of the relation class:
