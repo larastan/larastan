@@ -58,6 +58,11 @@
         "preferred-install": "dist",
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "policy": {
+            "advisories": {
+                "block": false
+            }
         }
     },
     "extra": {
