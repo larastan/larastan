@@ -222,7 +222,7 @@ class BelongsToMany extends Relation
      * @param  int|null  $perPage
      * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
      * @param  string  $cursorName
-     * @param  string|null  $cursor
+     * @param  \Illuminate\Pagination\Cursor|string|null  $cursor
      * @return \Illuminate\Contracts\Pagination\CursorPaginator<int, TRelatedModel&object{pivot: TPivotModel}>
      */
     public function cursorPaginate($perPage = null, $columns = ['*'], $cursorName = 'cursor', $cursor = null);

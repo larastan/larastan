@@ -57,6 +57,8 @@ class IntegrationTest extends PHPStanTestCase
             ],
         ];
 
+        yield 'relation-cursor-paginate' => [__DIR__ . '/data/relation-cursor-paginate.php'];
+
         yield [__DIR__ . '/data/custom-builder-return-this.php'];
         yield 'framework-docblock-types' => [__DIR__ . '/data/framework-docblock-types.php'];
 
