@@ -128,49 +128,55 @@ class ModelPropertyHelper
             $propertyName === $modelInstance->getKeyName()
             && (! array_key_exists($tableName, $this->tables) || ! array_key_exists($propertyName, $this->tables[$tableName]->columns))
         ) {
+            // Even without migration metadata, Laravel applies explicit id
+            // casts when reading or writing the primary-key attribute.
+            // Only fall back to Model::getKeyType() if no cast is present.
+            $keyType = $this->stringResolver->resolve($modelInstance->getKeyType());
+            $cast    = $this->modelCastHelper->getCastForProperty($classReflection, $propertyName);
+
+            if ($cast === null) {
+                return new ModelProperty($classReflection, $keyType, $keyType);
+            }
+
             return new ModelProperty(
                 $classReflection,
-                $this->stringResolver->resolve($modelInstance->getKeyType()),
-                $this->stringResolver->resolve($modelInstance->getKeyType()),
+                $this->modelCastHelper->getReadableType($cast, $keyType),
+                $this->modelCastHelper->getWriteableType($cast, $keyType),
             );
         }
 
         $column = $this->tables[$tableName]->columns[$propertyName];
 
-        if ($this->hasDate($modelInstance, $propertyName)) {
-            $cast = $this->modelCastHelper->getCastForProperty($classReflection, $propertyName);
+        // Eloquent applies explicit casts when reading date columns, but
+        // fromDateTime() still determines valid assignment types.
+        $cast = $this->modelCastHelper->getCastForProperty($classReflection, $propertyName);
 
+        if ($this->hasDate($modelInstance, $propertyName)) {
             $readableType = $cast !== null
                 ? $this->modelCastHelper->getReadableType($cast, $this->stringResolver->resolve($column->readableType))
                 : $this->modelCastHelper->getDateType();
-            // Eloquent runs fromDateTime() on date columns before applying any cast,
-            // so the cast's setter type does not apply to assignments.
             $writableType = TypeCombinator::union($this->modelCastHelper->getDateType(), new StringType());
-        } else {
-            $cast = $this->modelCastHelper->getCastForProperty($classReflection, $propertyName);
-
-            if ($cast !== null) {
-                $readableType = $this->modelCastHelper->getReadableType(
-                    $cast,
-                    $this->stringResolver->resolve($column->readableType),
-                );
-                $writableType = $this->modelCastHelper->getWriteableType(
-                    $cast,
-                    $this->stringResolver->resolve($column->writeableType),
-                );
-            } elseif (in_array($column->readableType, ['enum', 'set'], true)) {
-                if ($column->options === null || count($column->options) < 1) {
-                    $readableType = $writableType = new StringType();
-                } else {
-                    $readableType = $writableType = TypeCombinator::union(...array_map(
-                        static fn ($option) => new ConstantStringType($option),
-                        $column->options,
-                    ));
-                }
+        } elseif ($cast !== null) {
+            $readableType = $this->modelCastHelper->getReadableType(
+                $cast,
+                $this->stringResolver->resolve($column->readableType),
+            );
+            $writableType = $this->modelCastHelper->getWriteableType(
+                $cast,
+                $this->stringResolver->resolve($column->writeableType),
+            );
+        } elseif (in_array($column->readableType, ['enum', 'set'], true)) {
+            if ($column->options === null || count($column->options) < 1) {
+                $readableType = $writableType = new StringType();
             } else {
-                $readableType = $this->stringResolver->resolve($column->readableType);
-                $writableType = $this->stringResolver->resolve($column->writeableType);
+                $readableType = $writableType = TypeCombinator::union(...array_map(
+                    static fn ($option) => new ConstantStringType($option),
+                    $column->options,
+                ));
             }
+        } else {
+            $readableType = $this->stringResolver->resolve($column->readableType);
+            $writableType = $this->stringResolver->resolve($column->writeableType);
         }
 
         if ($column->nullable) {

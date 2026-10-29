@@ -1,0 +1,7 @@
+includes:
+    - ../../phpstan-tests.neon
+
+parameters:
+    parseModelCastsMethod: false
+    databaseMigrationsPath:
+        - %rootDir%/../../../tests/application/database/migrations
