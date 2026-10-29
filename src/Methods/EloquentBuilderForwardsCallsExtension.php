@@ -91,6 +91,16 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
 
         $ref = $this->builderHelper->searchOnEloquentBuilder($classReflection, $methodName, $modelType);
 
+        // Built from the builder's own templates: PHPStan resolves them against the receiver,
+        // whereas a resolved `static` or `$this` model type would be rebound to the builder itself.
+        if ($classReflection->isGeneric()) {
+            $returnType      = new GenericObjectType($classReflection->getName(), array_values($classReflection->getTemplateTypeMap()->getTypes()));
+            $returnModelType = $classReflection->getTemplateTypeMap()->getType('TModel') ?? $modelType;
+        } else {
+            $returnType      = new ObjectType($classReflection->getName());
+            $returnModelType = $modelType;
+        }
+
         if ($ref === null) {
             // Special case for `SoftDeletes` trait
             if (
@@ -114,7 +124,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
                         $methodName,
                         $classReflection,
                         $ref->getVariants()[0]->getParameters(),
-                        $modelType,
+                        $returnModelType,
                         $ref->getVariants()[0]->isVariadic(),
                     );
                 }
@@ -123,7 +133,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
                     $methodName,
                     $classReflection,
                     $ref->getVariants()[0]->getParameters(),
-                    $this->builderHelper->getBuilderType($classReflection->getName(), $modelType),
+                    $returnType,
                     $ref->getVariants()[0]->isVariadic(),
                 );
             }
@@ -137,12 +147,6 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
         }
 
         $parametersAcceptor = $ref->getVariants()[0];
-
-        if ($classReflection->isGeneric()) {
-            $returnType = new GenericObjectType($classReflection->getName(), array_values($classReflection->getTemplateTypeMap()->getTypes()));
-        } else {
-            $returnType = new ObjectType($classReflection->getName());
-        }
 
         $queryBuilderReflection = $this->builderHelper->resolveQueryBuilderReflection($classReflection);
 
