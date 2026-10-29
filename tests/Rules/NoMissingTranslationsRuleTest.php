@@ -13,9 +13,16 @@ use Larastan\Larastan\Rules\NoMissingTranslationsRule;
 use Larastan\Larastan\Support\ViewFileHelper;
 use Larastan\Larastan\Support\ViewParser;
 use PhpParser\Node\Expr\CallLike;
+use PHPStan\Analyser\DependencyTracker;
+use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
+use PHPStan\Node\CollectedDataNode;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
+
+use function array_map;
+use function lang_path;
+use function view;
 
 /** @extends RuleTestCase<NoMissingTranslationsRule> */
 class NoMissingTranslationsRuleTest extends RuleTestCase
@@ -25,7 +32,7 @@ class NoMissingTranslationsRuleTest extends RuleTestCase
         $viewParser     = new ViewParser($this->getContainer()->getService('currentPhpVersionSimpleDirectParser'));
         $viewFileHelper = new ViewFileHelper([], $this->getFileHelper());
 
-        return new NoMissingTranslationsRule(new UsedTranslationViewCollector($viewParser, $viewFileHelper), new Filesystem(), []);
+        return new NoMissingTranslationsRule(new UsedTranslationViewCollector($viewParser, $viewFileHelper), $viewFileHelper, new Filesystem(), []);
     }
 
     /** @return array<Collector<CallLike, mixed>> */
@@ -120,6 +127,22 @@ class NoMissingTranslationsRuleTest extends RuleTestCase
                 40,
             ],
         ]);
+    }
+
+    public function testTracksTranslationAndViewDirectories(): void
+    {
+        $tracked = [];
+        $scope   = $this->createStubForIntersectionOfInterfaces([Scope::class, DependencyTracker::class]);
+        $scope->method('trackDirectoryDependency')->willReturnCallback(static function (string $directory, string $pattern) use (&$tracked): void {
+            $tracked[] = [$directory, $pattern];
+        });
+
+        $this->getRule()->processNode(new CollectedDataNode([], false), $scope);
+
+        $this->assertSame([
+            [lang_path(), '*'],
+            ...array_map(static fn (string $path): array => [$path, '*.blade.php'], view()->getFinder()->getPaths()),
+        ], $tracked);
     }
 
     /** @return string[] */

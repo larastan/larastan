@@ -46,6 +46,9 @@ final class UnusedViewsRule implements Rule
     /** @return RuleError[] */
     public function processNode(Node $node, Scope $scope): array
     {
+        // the rule reads the view files, so the result cache can reuse its errors only while they stay the same
+        $this->viewFileHelper->trackAllViewDirectories($scope);
+
         if ($this->viewsUsedInOtherViews === null) {
             $this->viewsUsedInOtherViews = $this->usedViewInAnotherViewCollector->getUsedViews();
         }
