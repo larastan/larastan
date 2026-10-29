@@ -37,7 +37,7 @@ final class ModelPropertyTypeNodeResolverExtension implements TypeNodeResolverEx
             return null;
         }
 
-        if ($typeNode->type->name !== 'model-property') {
+        if ((string) $typeNode->type !== 'model-property') {
             return null;
         }
 
