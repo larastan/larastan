@@ -32,7 +32,7 @@ parameters:
     generalizeEnvReturnType: false
     checkConfigTypes: false
     checkAuthCallsWhenInRequestScope: false
-    parseModelCastsMethod: false
+    parseModelCastsMethod: true
     enableMigrationCache: true
     checkUniqueJobUniqueFor: false
     checkUniqueJobUniqueId: false
