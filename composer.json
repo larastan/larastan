@@ -61,7 +61,14 @@
         },
         "policy": {
             "advisories": {
-                "block": false
+                "ignore-id": [
+                    "PKSA-3r5d-mb8f-1qw9",
+                    "PKSA-4hy6-m98j-dz9f",
+                    "PKSA-b41t-wbzk-9q51",
+                    "PKSA-d5tc-s1qs-h781",
+                    "PKSA-m5cs-t1y6-qpcs",
+                    "PKSA-mdq4-51ck-6kdq"
+                ]
             }
         }
     },
