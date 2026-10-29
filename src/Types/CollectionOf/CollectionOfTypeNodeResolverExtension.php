@@ -36,7 +36,7 @@ final class CollectionOfTypeNodeResolverExtension implements TypeNodeResolverExt
             return null;
         }
 
-        if ($typeNode->type->name !== 'collection-of') {
+        if ((string) $typeNode->type !== 'collection-of') {
             return null;
         }
 

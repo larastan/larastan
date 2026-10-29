@@ -32,7 +32,7 @@ final class BuilderOfTypeNodeResolverExtension implements TypeNodeResolverExtens
             return null;
         }
 
-        if ($typeNode->type->name !== 'builder-of') {
+        if ((string) $typeNode->type !== 'builder-of') {
             return null;
         }
 

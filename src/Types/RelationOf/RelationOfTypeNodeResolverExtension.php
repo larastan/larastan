@@ -23,7 +23,7 @@ final class RelationOfTypeNodeResolverExtension implements TypeNodeResolverExten
 
     public function resolve(TypeNode $typeNode, NameScope $nameScope): Type|null
     {
-        if (! $typeNode instanceof GenericTypeNode || $typeNode->type->name !== 'relation-of' || count($typeNode->genericTypes) !== 2) {
+        if (! $typeNode instanceof GenericTypeNode || (string) $typeNode->type !== 'relation-of' || count($typeNode->genericTypes) !== 2) {
             return null;
         }
 
