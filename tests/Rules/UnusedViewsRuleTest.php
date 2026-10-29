@@ -16,7 +16,10 @@ use Larastan\Larastan\Rules\UnusedViewsRule;
 use Larastan\Larastan\Support\ViewFileHelper;
 use Larastan\Larastan\Support\ViewParser;
 use PhpParser\Node;
+use PHPStan\Analyser\DependencyTracker;
+use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
+use PHPStan\Node\CollectedDataNode;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
@@ -80,6 +83,22 @@ class UnusedViewsRuleTest extends RuleTestCase
                 00,
             ],
         ]);
+    }
+
+    public function testTracksViewDirectories(): void
+    {
+        $tracked = [];
+        $scope   = $this->createStubForIntersectionOfInterfaces([Scope::class, DependencyTracker::class]);
+        $scope->method('trackDirectoryDependency')->willReturnCallback(static function (string $directory, string $pattern) use (&$tracked): void {
+            $tracked[] = [$directory, $pattern];
+        });
+
+        $this->getRule()->processNode(new CollectedDataNode([], false), $scope);
+
+        $this->assertSame([
+            [__DIR__ . '/../application/resources/views/', '*.blade.php'],
+            [__DIR__ . '/../../vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/views', '*.blade.php'],
+        ], $tracked);
     }
 
     /** @return string[] */

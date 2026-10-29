@@ -10,6 +10,7 @@ use Larastan\Larastan\Collectors\UsedTranslationFacadeCollector;
 use Larastan\Larastan\Collectors\UsedTranslationFunctionCollector;
 use Larastan\Larastan\Collectors\UsedTranslationTranslatorCollector;
 use Larastan\Larastan\Collectors\UsedTranslationViewCollector;
+use Larastan\Larastan\Support\ViewFileHelper;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\CollectedDataNode;
@@ -38,6 +39,7 @@ final class NoMissingTranslationsRule implements Rule
     /** @param string[] $translationDirectories */
     public function __construct(
         private UsedTranslationViewCollector $usedTranslationViewCollector,
+        private ViewFileHelper $viewFileHelper,
         private Filesystem $filesystem,
         private array $translationDirectories,
     ) {
@@ -52,6 +54,13 @@ final class NoMissingTranslationsRule implements Rule
     public function processNode(Node $node, Scope $scope): array
     {
         $paths = $this->translationDirectories ?: [lang_path()];
+
+        // the rule reads the translation files and the views, so the result cache can reuse its errors only while they stay the same
+        foreach ($paths as $path) {
+            $scope->trackDirectoryDependency($path);
+        }
+
+        $this->viewFileHelper->trackRootViewDirectories($scope);
 
         /** @var array<string, array{0: string, 1: int}[]>[] $collectors */
         $collectors = [
