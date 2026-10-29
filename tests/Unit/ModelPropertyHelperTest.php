@@ -97,8 +97,13 @@ class ModelPropertyHelperTest extends PHPStanTestCase
     public function it_applies_attributes_that_disable_timestamps(): void
     {
         $modelPropertyHelper = $this->buildModelPropertyHelper([__DIR__ . '/data/basic_migration']);
+        $modelClasses        = [MemberWithoutTimestampsTable::class];
 
-        foreach ([MemberWithoutTimestampsTable::class, MemberWithoutTimestampsAttribute::class] as $modelClass) {
+        if (class_exists('Illuminate\Database\Eloquent\Attributes\WithoutTimestamps')) {
+            $modelClasses[] = MemberWithoutTimestampsAttribute::class;
+        }
+
+        foreach ($modelClasses as $modelClass) {
             $classReflection = $this->reflectionProvider->getClass($modelClass);
 
             self::assertTrue($modelPropertyHelper->hasDatabaseProperty($classReflection, 'created_at'));
