@@ -256,6 +256,21 @@ This inference follows the item type: manually supplying a Support collection of
 infers the model's Eloquent collection. It does not track changes to the collection class separately
 from the item type.
 
+## Multi-level collection grouping
+
+For a fixed list of grouping selectors, Larastan infers the nested collection
+levels and retains the original item type.
+
+```php
+/** @var \Illuminate\Support\Collection<int, array{region: string, city: string}> $rows */
+$groups = $rows->groupBy(['region', 'city']);
+// Collection<array-key, Collection<array-key, Collection<int, array{region: string, city: string}>>>
+```
+
+The `preserveKeys` argument controls the innermost keys. For Eloquent collections,
+the two innermost levels retain the receiver's class; remaining levels use Support
+collections. A selector list not known at analysis time receives a less precise type.
+
 ## Model Properties
 
 Larastan will automatically scan your application's migrations in order to infer the database schema and therefore it is able to infer the existence of magic properties on Eloquent model classes.
