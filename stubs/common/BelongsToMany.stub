@@ -195,6 +195,21 @@ class BelongsToMany extends Relation
     public function firstOr($columns = ['*'], ?Closure $callback = null);
 
     /**
+     * Get the results of the relationship.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel&object{TAccessor: TPivotModel}>
+     */
+    public function getResults();
+
+    /**
+     * Execute the query as a "select" statement.
+     *
+     * @param  array<int, model-property<TRelatedModel>>  $columns
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel&object{TAccessor: TPivotModel}>
+     */
+    public function get($columns = ['*']);
+
+    /**
      * Get a paginator for the "select" statement.
      *
      * @param  int|null  $perPage

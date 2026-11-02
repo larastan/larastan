@@ -143,7 +143,7 @@ parameters:
 
 Models loaded through a `BelongsToMany` or `MorphToMany` relation carry their pivot model, and Larastan types it on
 single results such as `$user->roles()->first()->pivot`. By default, collections of these models, like
-`$user->roles`, are typed with the plain model, so accessing the pivot on their items is
+`$user->roles` or `$user->roles()->get()`, are typed with the plain model, so accessing the pivot on their items is
 reported as an undefined property.
 
 When this option is enabled, these collections keep the pivot property, including a custom accessor name set with
