@@ -362,6 +362,6 @@ class MigrationHelperTest extends PHPStanTestCase
 
         $tables = $migrationHelper->initializeTables();
 
-        self::assertSame('string', $tables['articles']->columns['member_with_custom_key_id']->readableType);
+        self::assertSame('string', $tables['articles']->columns['member_with_custom_key_uuid']->readableType);
     }
 }
