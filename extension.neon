@@ -828,6 +828,7 @@ services:
         autowired: false
 
 rules:
+    - Larastan\Larastan\Rules\ArrKeyExistenceRule
     - Larastan\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule
     - Larastan\Larastan\Rules\UselessConstructs\NoUselessValueFunctionCallsRule
     - Larastan\Larastan\Rules\DeferrableServiceProviderMissingProvidesRule

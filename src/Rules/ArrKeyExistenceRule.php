@@ -1,0 +1,81 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Larastan\Larastan\Rules;
+
+use Illuminate\Support\Arr;
+use Larastan\Larastan\Support\ArrKeyLookup;
+use PhpParser\Node;
+use PhpParser\Node\Expr\StaticCall;
+use PhpParser\Node\Identifier;
+use PhpParser\Node\Name;
+use PHPStan\Analyser\NodeCallbackInvoker;
+use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\ReflectionProvider;
+use PHPStan\Rules\IdentifierRuleError;
+use PHPStan\Rules\Rule;
+
+use function in_array;
+use function strtolower;
+
+/**
+ * Reports Arr::get() and Arr::pull() keys that never exist, through PHPStan's own offset check.
+ *
+ * @implements Rule<StaticCall>
+ */
+final class ArrKeyExistenceRule implements Rule
+{
+    public function __construct(private ReflectionProvider $reflectionProvider)
+    {
+    }
+
+    public function getNodeType(): string
+    {
+        return StaticCall::class;
+    }
+
+    /**
+     * @param Scope&NodeCallbackInvoker $scope
+     *
+     * @return list<IdentifierRuleError>
+     */
+    public function processNode(Node $node, Scope $scope): array
+    {
+        if (! $node->name instanceof Identifier || ! $node->class instanceof Name) {
+            return [];
+        }
+
+        if (! in_array(strtolower($node->name->name), ['get', 'pull'], true)) {
+            return [];
+        }
+
+        $className = $scope->resolveName($node->class);
+
+        if (! $this->reflectionProvider->hasClass($className) || ! $this->reflectionProvider->getClass($className)->is(Arr::class)) {
+            return [];
+        }
+
+        $arrayArg = $node->getArg('array', 0);
+        $keyArg   = $node->getArg('key', 1);
+
+        if ($arrayArg === null || $keyArg === null) {
+            return [];
+        }
+
+        $lookups = ArrKeyLookup::find($scope, $arrayArg->value, $keyArg->value, $scope->getType($keyArg->value)) ?? [];
+
+        foreach ($lookups as [$exists]) {
+            if (! $exists->no()) {
+                return [];
+            }
+        }
+
+        foreach ($lookups as [, , $missing]) {
+            $missing->setAttributes($node->getAttributes());
+            $scope->invokeNodeCallback($missing);
+        }
+
+        return [];
+    }
+}

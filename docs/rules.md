@@ -295,6 +295,34 @@ Larastan will report two errors:
 Relation 'foo' is not found in App\User model.
 Relation 'foo' is not found in App\Transaction model.
 ```
+## ArrKeyExistenceRule
+
+This rule reports `Arr::get()` and `Arr::pull()` calls whose key never exists in the given array, so the call always returns the default value. Keys in "dot" notation are checked segment by segment.
+
+Only keys that are definitely missing are reported. Optional keys, general arrays such as `array<string, mixed>`, `ArrayAccess` objects, and non-constant keys are not reported.
+
+The key is checked by PHPStan's own offset check, as if the array were accessed directly, so the errors match those for `$array['key']`.
+
+This rule is not optional.
+
+### Examples
+
+For the following code:
+```php
+$array = ['foo' => '123', 'nested' => ['bar' => 1]];
+
+Arr::pull($array, 'bar');
+Arr::get($array, 'nested.baz', 0);
+```
+
+Larastan will report two errors:
+```
+Offset 'bar' does not exist on array{foo: '123', nested: array{bar: 1}}.
+Offset 'baz' does not exist on array{bar: 1}.
+```
+
+Error identifier: `offsetAccess.notFound`.
+
 ## CheckDispatchArgumentTypesCompatibleWithClassConstructorRule
 
 This rule will check if your job dispatch argument types are compatible with the constructor of the job class.
