@@ -54,6 +54,23 @@ $post->toArray();
 $post->attributesToArray();
 ```
 
+## Arr::get() and Arr::pull()
+
+`Arr::get()` and `Arr::pull()` return the type stored under the given key, including keys in "dot" notation. When the key may be missing, the default value's type is added. `Arr::pull()` also removes the key from the array it was passed, unless the key uses "dot" notation.
+
+```php
+/** @param array{name: string, email?: string, address: array{city: string}} $user */
+function example(array $user): void
+{
+    Arr::get($user, 'name');         // string
+    Arr::get($user, 'email', '');    // string
+    Arr::get($user, 'address.city'); // string
+
+    Arr::pull($user, 'name');        // string
+    $user;                           // array{email?: string, address: array{city: string}}
+}
+```
+
 ## Custom Model Builders
 
 Custom builders offer a better static analysis experience than using model scopes, and they help slim down the model class.
