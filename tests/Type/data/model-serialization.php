@@ -154,11 +154,11 @@ function boundaries(
     assertType('array<mixed>', $casts->attributesToArray()['collection']);
     assertType('array{modern_date?: string, legacy_date?: Carbon\\Carbon, tags?: array<int, string>, label?: string|null, ...<string, mixed>}', $appended->attributesToArray());
     assertType('array{custom: true}', $override->attributesToArray());
-    assertType('array<mixed>', $override->toArray());
+    assertType('array<string, mixed>', $override->toArray());
     assertType('array{custom: true}', $toArrayOverride->toArray());
     assertType('array{id?: int<0, max>, name?: string, email_verified_at?: string|null, label?: string, ...<string, mixed>}', $toArrayOverride->attributesToArray());
     assertType('array{year: int}|null', $dateOverride->attributesToArray()['email_verified_at']);
-    assertType('array<mixed>', $base->toArray());
+    assertType('array<string, mixed>', $base->toArray());
 
     $partial = SerializationModel::query()->select('id')->firstOrFail();
     assertType('array{id?: int<0, max>, name?: string, email_verified_at?: string|null, label?: string, ...<string, mixed>}', $partial->toArray());
