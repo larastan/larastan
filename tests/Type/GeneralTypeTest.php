@@ -23,6 +23,7 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/arrayable.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/auth.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/benchmark.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/belongs-to-many-pivot-accessor.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/builder-of-type.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1346.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1565.php');
