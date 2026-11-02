@@ -13,6 +13,7 @@ use IteratorAggregate;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\String_;
+use PHPStan\DependencyInjection\AutowiredParameter;
 use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
@@ -42,8 +43,11 @@ use function version_compare;
 #[AutowiredService]
 final class CollectionHelper
 {
-    public function __construct(private ReflectionProvider $reflectionProvider)
-    {
+    public function __construct(
+        private ReflectionProvider $reflectionProvider,
+        #[AutowiredParameter]
+        private bool $pivotTypesInCollections = false,
+    ) {
     }
 
     public function determineGenericCollectionTypeFromType(Type $type): GenericObjectType|null
@@ -192,13 +196,20 @@ final class CollectionHelper
                 return $traverse($type);
             }
 
-            $models = $type->getTemplateType(EloquentCollection::class, 'TModel')->getObjectClassNames();
+            $modelType = $type->getTemplateType(EloquentCollection::class, 'TModel');
+            $models    = $modelType->getObjectClassNames();
 
             if (count($models) === 0) {
                 return $type;
             }
 
-            return TypeCombinator::union(...array_map([$this, 'determineCollectionClass'], $models));
+            return TypeCombinator::union(...array_map(
+                fn (string $model): Type => $this->pivotTypesInCollections
+                    // Keeps what the model type adds to the class, such as a BelongsToMany pivot shape.
+                    ? $this->determineCollectionClass($model, TypeCombinator::intersect($modelType, new ObjectType($model)))
+                    : $this->determineCollectionClass($model),
+                $models,
+            ));
         });
     }
 
