@@ -7,7 +7,10 @@ namespace Larastan\Larastan\Support;
 use FilesystemIterator;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Array_;
-use PhpParser\NodeFinder;
+use PhpParser\Node\Stmt\Return_;
+use PhpParser\NodeTraverser;
+use PhpParser\NodeVisitor;
+use PhpParser\NodeVisitorAbstract;
 use PHPStan\Analyser\DependencyTracker;
 use PHPStan\Analyser\Scope;
 use PHPStan\DependencyInjection\AutowiredParameter;
@@ -28,6 +31,7 @@ use function count;
 use function explode;
 use function glob;
 use function implode;
+use function in_array;
 use function is_dir;
 use function is_numeric;
 use function property_exists;
@@ -61,7 +65,7 @@ final class ConfigParser
     /** @var array<string, Type> */
     private array $parsedConfigs = [];
 
-    /** @var array<string, Node\Stmt\Return_> */
+    /** @var array<string, Return_> */
     private array $parsedConfigFiles = [];
 
     /** @var array<string, true> */
@@ -308,7 +312,12 @@ final class ConfigParser
         return $this->configFileCandidates[$key] = $candidates;
     }
 
-    private function parseConfigFile(string $path): Node\Stmt\Return_|null
+    /**
+     * Finds the value the config file returns: its only return statement
+     * outside functions and classes, at the top level of the file or of its
+     * namespace, so it always runs once the statements before it do.
+     */
+    private function parseConfigFile(string $path): Return_|null
     {
         try {
             $stmts = $this->parser->parseFile($path);
@@ -316,10 +325,52 @@ final class ConfigParser
             return null;
         }
 
-        /** @var Node\Stmt\Return_|null $returnNode */
-        $returnNode = (new NodeFinder())->findFirstInstanceOf($stmts, Node\Stmt\Return_::class);
+        $visitor = new class extends NodeVisitorAbstract {
+            /** @var list<Return_> */
+            public array $returns = [];
 
-        return $returnNode;
+            public function enterNode(Node $node): int|null
+            {
+                if ($node instanceof Node\FunctionLike || $node instanceof Node\Stmt\ClassLike) {
+                    return NodeVisitor::DONT_TRAVERSE_CHILDREN;
+                }
+
+                if ($node instanceof Return_) {
+                    $this->returns[] = $node;
+                }
+
+                return null;
+            }
+        };
+
+        (new NodeTraverser($visitor))->traverse($stmts);
+
+        if (count($visitor->returns) !== 1) {
+            return null;
+        }
+
+        $return     = $visitor->returns[0];
+        $namespaced = false;
+        $statements = [];
+
+        foreach ($stmts as $stmt) {
+            if (! $stmt instanceof Node\Stmt\Namespace_) {
+                $statements[] = $stmt;
+                continue;
+            }
+
+            if ($namespaced) {
+                return null;
+            }
+
+            $namespaced = true;
+
+            foreach ($stmt->stmts as $namespacedStmt) {
+                $statements[] = $namespacedStmt;
+            }
+        }
+
+        return in_array($return, $statements, true) ? $return : null;
     }
 
     /** @return list<string> */
