@@ -178,22 +178,17 @@ final class ConfigParser
                 continue;
             }
 
-            $arrayNode = $cachedConfigFile->expr;
-
-            if ($configKeyParts === []) {
-                $type = $scope->getType($arrayNode);
-
-                $this->parsedConfigs[$key] = $type;
-                $returnTypes[]             = $type;
-
-                continue;
-            }
-
-            $ret   = null;
-            $items = $arrayNode->items;
+            $value = $cachedConfigFile->expr;
 
             foreach ($configKeyParts as $configKeyPart) {
-                foreach ($items as $item) {
+                // A key below a value that is not a literal array has no expression to type
+                if (! $value instanceof Array_) {
+                    continue 2;
+                }
+
+                $match = null;
+
+                foreach ($value->items as $item) {
                     if (! $item->key instanceof Node\Scalar) {
                         continue 3;
                     }
@@ -202,25 +197,22 @@ final class ConfigParser
                         continue;
                     }
 
-                    $itemKey = (string) $item->key->value;
-
-                    if ($itemKey !== $configKeyPart) {
+                    if ((string) $item->key->value !== $configKeyPart) {
                         continue;
                     }
 
-                    if ($item->value instanceof Array_) {
-                        $items = $item->value->items;
-                    }
-
-                    $ret = $item->value;
+                    // The last item with the key wins, as in PHP
+                    $match = $item->value;
                 }
+
+                if ($match === null) {
+                    continue 2;
+                }
+
+                $value = $match;
             }
 
-            if ($ret === null) {
-                continue;
-            }
-
-            $type = $scope->getType($ret);
+            $type = $scope->getType($value);
 
             $this->parsedConfigs[$key] = $type;
             $returnTypes[]             = $type;

@@ -11,6 +11,8 @@ function test(): void
 
     assertType('array{1, 2, 3}', config('test.bar'));
     assertType("'bar'", config('test.foo'));
+    assertType('mixed', config('test.foo.bar'));
+    assertType('mixed', config('auth.defaults.missing'));
     assertType('string', config('test.default'));
 
     assertType("'bar'|int", config('test.foo', 5));
