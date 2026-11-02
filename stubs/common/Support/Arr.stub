@@ -14,4 +14,16 @@ class Arr
      * @return array<TKey, TMapValue>
      */
     public static function map(array $array, callable $callback) {}
+
+    /**
+     * @template TKey of array-key
+     * @template TValue
+     * @template TMapWithKeysKey of array-key
+     * @template TMapWithKeysValue
+     *
+     * @param array<TKey, TValue> $array
+     * @param callable(TValue, TKey): array<TMapWithKeysKey, TMapWithKeysValue> $callback
+     * @return array<TMapWithKeysKey, TMapWithKeysValue>
+     */
+    public static function mapWithKeys(array $array, callable $callback) {}
 }
