@@ -149,11 +149,12 @@ final class ConfigParser
             $docComment = $cachedConfigFile->getDocComment();
 
             if ($docComment !== null && $this->treatPhpDocTypesAsCertain) {
+                // Names in the docblock are resolved with the config file's imports
                 $resolvedPhpDoc = $this->fileTypeMapper->getResolvedPhpDoc(
-                    $scope->getFile(),
-                    $scope->getClassReflection()?->getName(),
-                    $scope->getTraitReflection()?->getName(),
-                    $scope->getFunctionName(),
+                    $this->configFiles[$configFileKey],
+                    null,
+                    null,
+                    null,
                     $docComment->getText(),
                 );
 
