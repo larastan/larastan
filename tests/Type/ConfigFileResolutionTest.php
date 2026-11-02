@@ -10,6 +10,7 @@ use PHPStan\Testing\TypeInferenceTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 use function array_column;
+use function sprintf;
 
 class ConfigFileResolutionTest extends TypeInferenceTestCase
 {
@@ -53,6 +54,23 @@ class ConfigFileResolutionTest extends TypeInferenceTestCase
 
         foreach ($dependencyFiles as $dependencyFile) {
             $this->assertStringNotContainsString('*', $dependencyFile);
+        }
+    }
+
+    public function testConfigFilesReadByAConfigFileAreFileDependencies(): void
+    {
+        $collector = self::getContainer()->getByType(ValueDependencyCollector::class);
+        $file      = __DIR__ . '/data/config-file-scope-dependency.php';
+        $leaf      = self::getContainer()->getByType(FileHelper::class)
+            ->normalizePath(__DIR__ . '/data/config-file-resolution/config/scopeleaf.php');
+
+        // The second run reads the parsed config cache and must still declare the file the config file reads.
+        foreach ([1, 2] as $run) {
+            $collector->startFile($file);
+            self::processFile($file, static function (): void {
+            });
+
+            $this->assertContains($leaf, array_column($collector->finishFile()['values'], 1), sprintf('Run %d', $run));
         }
     }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Support;
 
 use FilesystemIterator;
+use Larastan\Larastan\Internal\RecursionGuard;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Stmt\Return_;
@@ -12,26 +13,35 @@ use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor;
 use PhpParser\NodeVisitorAbstract;
 use PHPStan\Analyser\DependencyTracker;
+use PHPStan\Analyser\NodeScopeResolver;
 use PHPStan\Analyser\Scope;
+use PHPStan\Analyser\ScopeContext;
+use PHPStan\Analyser\ScopeFactory;
+use PHPStan\Analyser\StatementContext;
 use PHPStan\DependencyInjection\AutowiredParameter;
 use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
 use PHPStan\Parser\ParserErrorsException;
 use PHPStan\Type\Constant\ConstantIntegerType;
 use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\ErrorType;
 use PHPStan\Type\FileTypeMapper;
+use PHPStan\Type\MixedType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeTraverser;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 
 use function array_key_exists;
+use function array_keys;
+use function array_pop;
+use function array_search;
 use function array_slice;
 use function config_path;
 use function count;
 use function explode;
 use function glob;
 use function implode;
-use function in_array;
 use function is_dir;
 use function is_numeric;
 use function property_exists;
@@ -65,8 +75,44 @@ final class ConfigParser
     /** @var array<string, Type> */
     private array $parsedConfigs = [];
 
-    /** @var array<string, Return_> */
+    /**
+     * Each config file's return statement, the statements before it and its namespace.
+     *
+     * @var array<string, array{Return_, list<Node\Stmt>, string|null}>
+     */
     private array $parsedConfigFiles = [];
+
+    /**
+     * The scope at each config file's return statement, or null when the
+     * statements before it always terminate.
+     *
+     * @var array<string, Scope|null>
+     */
+    private array $returnScopes = [];
+
+    /**
+     * Files the statements before a config file's return depend on, such as
+     * the config files they read.
+     *
+     * @var array<string, list<string>>
+     */
+    private array $configFileDependencies = [];
+
+    /**
+     * Files a config key's value depends on besides the files that can hold
+     * the key, such as config files its expression reads.
+     *
+     * @var array<string, list<string>>
+     */
+    private array $keyDependencies = [];
+
+    /**
+     * Dependencies collected for the config files and keys being typed, so
+     * a cached result can declare them again to every file reading it.
+     *
+     * @var list<array<string, true>>
+     */
+    private array $dependencyCollectors = [];
 
     /** @var array<string, true> */
     private array $unparsableConfigFiles = [];
@@ -79,6 +125,8 @@ final class ConfigParser
         private FileHelper $fileHelper,
         private Parser $parser,
         private FileTypeMapper $fileTypeMapper,
+        private ScopeFactory $scopeFactory,
+        private NodeScopeResolver $nodeScopeResolver,
         array $configPaths,
         #[AutowiredParameter]
         private bool $treatPhpDocTypesAsCertain,
@@ -109,11 +157,10 @@ final class ConfigParser
             $key = $constantString->getValue();
 
             // Every analysed file reading the key depends on the config files, parsed or served from the cache.
-            foreach ($this->getConfigFileCandidates($key) as $configFilePath) {
-                $scope->trackFileDependency($configFilePath);
-            }
+            $this->trackFileDependencies($scope, $this->getConfigFileCandidates($key));
 
             if (array_key_exists($key, $this->parsedConfigs)) {
+                $this->trackFileDependencies($scope, $this->keyDependencies[$key] ?? []);
                 $returnTypes[] = $this->parsedConfigs[$key];
                 continue;
             }
@@ -134,23 +181,23 @@ final class ConfigParser
                 return [];
             }
 
-            if (array_key_exists($configFileKey, $this->parsedConfigFiles)) {
-                $cachedConfigFile = $this->parsedConfigFiles[$configFileKey];
-            } else {
-                $cachedConfigFile = $this->parseConfigFile($this->configFiles[$configFileKey]);
+            if (! array_key_exists($configFileKey, $this->parsedConfigFiles)) {
+                $parsedConfigFile = $this->parseConfigFile($this->configFiles[$configFileKey]);
 
                 // We could not parse the file or couldn't find the return array
-                if ($cachedConfigFile === null) {
+                if ($parsedConfigFile === null) {
                     $this->unparsableConfigFiles[$configFileKey] = true;
 
                     return [];
                 }
 
-                $this->parsedConfigFiles[$configFileKey] = $cachedConfigFile;
+                $this->parsedConfigFiles[$configFileKey] = $parsedConfigFile;
             }
 
+            [$return] = $this->parsedConfigFiles[$configFileKey];
+
             // Check if we have a type from the docblock
-            $docComment = $cachedConfigFile->getDocComment();
+            $docComment = $return->getDocComment();
 
             if ($docComment !== null && $this->treatPhpDocTypesAsCertain) {
                 // Names in the docblock are resolved with the config file's imports
@@ -179,11 +226,11 @@ final class ConfigParser
                 }
             }
 
-            if (! $cachedConfigFile->expr instanceof Array_) {
+            if (! $return->expr instanceof Array_) {
                 continue;
             }
 
-            $value = $cachedConfigFile->expr;
+            $value = $return->expr;
 
             foreach ($configKeyParts as $configKeyPart) {
                 // A key below a value that is not a literal array has no expression to type
@@ -217,13 +264,131 @@ final class ConfigParser
                 $value = $match;
             }
 
-            $type = $scope->getType($value);
+            [$type, $dependencies] = $this->collectFileDependencies(function () use ($configFileKey, $value, $scope): Type|null {
+                $returnScope = $this->getReturnScope($configFileKey);
 
-            $this->parsedConfigs[$key] = $type;
-            $returnTypes[]             = $type;
+                if ($returnScope === null) {
+                    return null;
+                }
+
+                $this->trackFileDependencies($scope, $this->configFileDependencies[$configFileKey] ?? []);
+
+                return $returnScope->getType($value);
+            });
+
+            // The config file is being typed further up the call stack, or never reaches its return
+            if ($type === null) {
+                continue;
+            }
+
+            // An undefined variable, such as one an included file assigns, is unknown rather than an error
+            $type = TypeTraverser::map($type, static function (Type $type, callable $traverse): Type {
+                if ($type instanceof ErrorType) {
+                    return new MixedType();
+                }
+
+                return $traverse($type);
+            });
+
+            $this->trackFileDependencies($scope, $dependencies);
+
+            $this->keyDependencies[$key] = $dependencies;
+            $this->parsedConfigs[$key]   = $type;
+            $returnTypes[]               = $type;
         }
 
         return $returnTypes;
+    }
+
+    /**
+     * The scope at the config file's return statement, as the statements before
+     * it leave it. The file is typed on its own, never in the scope of a file
+     * reading it, so the variables, imports and magic constants are its own.
+     *
+     * Returns null when the statements before the return always terminate, or
+     * while the file's statements are being processed, when they read the file
+     * itself.
+     */
+    private function getReturnScope(string $configFileKey): Scope|null
+    {
+        if (array_key_exists($configFileKey, $this->returnScopes)) {
+            return $this->returnScopes[$configFileKey];
+        }
+
+        $path = $this->fileHelper->normalizePath($this->configFiles[$configFileKey]);
+
+        $result = RecursionGuard::run('larastan.configFile.' . $path, function () use ($configFileKey, $path): array {
+            [$return, $statements, $namespace] = $this->parsedConfigFiles[$configFileKey];
+
+            $scope = $this->scopeFactory->create(ScopeContext::create($path));
+
+            if ($namespace !== null) {
+                $scope = $scope->enterNamespace($namespace);
+            }
+
+            if ($statements === []) {
+                $this->configFileDependencies[$configFileKey] = [];
+
+                return [$scope];
+            }
+
+            [$statementResult, $dependencies] = $this->collectFileDependencies(fn () => $this->nodeScopeResolver->processStmtNodes(
+                $return,
+                $statements,
+                $scope,
+                static function (): void {
+                },
+                StatementContext::createTopLevel(),
+            ));
+
+            $this->configFileDependencies[$configFileKey] = $dependencies;
+
+            return [$statementResult->isAlwaysTerminating() ? null : $statementResult->getScope()];
+        });
+
+        if ($result === null) {
+            return null;
+        }
+
+        return $this->returnScopes[$configFileKey] = $result[0];
+    }
+
+    /**
+     * Declares the files on the scope and on the config files and keys being
+     * typed, whose cached results declare them again later.
+     *
+     * @param Scope&DependencyTracker $scope
+     * @param list<string>            $files
+     */
+    private function trackFileDependencies(Scope $scope, array $files): void
+    {
+        foreach ($files as $file) {
+            $scope->trackFileDependency($file);
+
+            foreach (array_keys($this->dependencyCollectors) as $index) {
+                $this->dependencyCollectors[$index][$file] = true;
+            }
+        }
+    }
+
+    /**
+     * @param callable(): T $callback
+     *
+     * @return array{T, list<string>} the callback's result and the files declared while it ran
+     *
+     * @template T
+     */
+    private function collectFileDependencies(callable $callback): array
+    {
+        $this->dependencyCollectors[] = [];
+
+        try {
+            $result = $callback();
+        } finally {
+            $dependencies = array_keys(array_pop($this->dependencyCollectors));
+        }
+
+        return [$result, $dependencies];
     }
 
     private function loadConfigFiles(): void
@@ -316,8 +481,10 @@ final class ConfigParser
      * Finds the value the config file returns: its only return statement
      * outside functions and classes, at the top level of the file or of its
      * namespace, so it always runs once the statements before it do.
+     *
+     * @return array{Return_, list<Node\Stmt>, string|null}|null the return statement, the statements before it and the file's namespace
      */
-    private function parseConfigFile(string $path): Return_|null
+    private function parseConfigFile(string $path): array|null
     {
         try {
             $stmts = $this->parser->parseFile($path);
@@ -350,7 +517,7 @@ final class ConfigParser
         }
 
         $return     = $visitor->returns[0];
-        $namespaced = false;
+        $namespace  = null;
         $statements = [];
 
         foreach ($stmts as $stmt) {
@@ -359,18 +526,24 @@ final class ConfigParser
                 continue;
             }
 
-            if ($namespaced) {
+            if ($namespace !== null) {
                 return null;
             }
 
-            $namespaced = true;
+            $namespace = $stmt->name?->toString() ?? '';
 
             foreach ($stmt->stmts as $namespacedStmt) {
                 $statements[] = $namespacedStmt;
             }
         }
 
-        return in_array($return, $statements, true) ? $return : null;
+        $returnIndex = array_search($return, $statements, true);
+
+        if ($returnIndex === false) {
+            return null;
+        }
+
+        return [$return, array_slice($statements, 0, $returnIndex), $namespace === '' ? null : $namespace];
     }
 
     /** @return list<string> */

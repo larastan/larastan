@@ -143,7 +143,7 @@ parameters:
 
 This config parameter enables the checks for `config` helper function return type and `\Illuminate\Config\Repository::get` method return type.
 
-A config file with more than one `return` outside functions and classes has no inferred types.
+Each config file is analysed on its own, so variables assigned before its `return` and its `use` imports are taken into account, whichever file reads the config. A config file with more than one `return` outside functions and classes has no inferred types.
 
 When a config file is created, changed or deleted, the result cache analyses the files reading its keys again.
 
