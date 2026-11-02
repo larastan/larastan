@@ -197,6 +197,8 @@ will also dump `string` when the parameter is enabled.
 
 The reasoning behind it is that the default value is always used when the environment variable is not set. And for almost all the cases the default value should be the same type as the actual env variable. So it makes sense to generalize the return type to the type of the default value.
 
+A `null` default says nothing about the variable's type, so `env('FOO', null)` keeps the return type of `env('FOO')`.
+
 ## `redisDriver`
 **default**: `null`
 
