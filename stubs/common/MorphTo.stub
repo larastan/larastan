@@ -1,0 +1,21 @@
+<?php
+
+namespace Illuminate\Database\Eloquent\Relations;
+
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * @template TRelatedModel of Model
+ * @template TDeclaringModel of Model
+ *
+ * @extends BelongsTo<TRelatedModel, TDeclaringModel>
+ */
+class MorphTo extends BelongsTo {}
+
+/**
+ * @template TRelatedModel of Model
+ * @template TDeclaringModel of Model
+ *
+ * @extends Relation<TRelatedModel, TDeclaringModel, ?TRelatedModel>
+ */
+class BelongsTo extends Relation {}

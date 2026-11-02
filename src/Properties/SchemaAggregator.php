@@ -5,10 +5,14 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Properties;
 
 use Exception;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Larastan\Larastan\Properties\Schema\MySqlDataTypeToPhpTypeConverter;
+use Larastan\Larastan\SQL\SqlParser;
+use Larastan\Larastan\SQL\SqlParserFailure;
 use PhpParser;
 use PhpParser\NodeFinder;
+use PHPStan\Reflection\InitializerExprContext;
+use PHPStan\Reflection\InitializerExprTypeResolver;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ObjectType;
 use ReflectionException;
@@ -17,16 +21,25 @@ use function array_key_exists;
 use function array_merge;
 use function class_basename;
 use function count;
+use function in_array;
 use function is_string;
+use function ltrim;
 use function property_exists;
 use function strtolower;
 
 /** @see https://github.com/psalm/laravel-psalm-plugin/blob/master/src/SchemaAggregator.php */
 final class SchemaAggregator
 {
+    private readonly MySqlDataTypeToPhpTypeConverter $mySqlDataTypeToPhpTypeConverter;
+
     /** @param array<string, SchemaTable> $tables */
-    public function __construct(private ReflectionProvider $reflectionProvider, public array $tables = [])
-    {
+    public function __construct(
+        private ReflectionProvider $reflectionProvider,
+        private InitializerExprTypeResolver $initializerExprTypeResolver,
+        private SqlParser $sqlParser,
+        public array $tables = [],
+    ) {
+        $this->mySqlDataTypeToPhpTypeConverter = new MySqlDataTypeToPhpTypeConverter();
     }
 
     /** @param  array<int, PhpParser\Node\Stmt> $stmts */
@@ -82,6 +95,12 @@ final class SchemaAggregator
             ) {
                 $statement = $stmt->expr;
             } else {
+                $sql = $this->literalDatabaseStatement($stmt->expr);
+
+                if ($sql !== null) {
+                    $this->applyLiteralSql($sql);
+                }
+
                 continue;
             }
 
@@ -89,36 +108,27 @@ final class SchemaAggregator
                 continue;
             }
 
-            switch ($statement->name->name) {
-                case 'create':
-                    $this->alterTable($statement, true);
-                    break;
-
-                case 'table':
-                    $this->alterTable($statement, false);
-                    break;
-
-                case 'drop':
-                case 'dropIfExists':
-                    $this->dropTable($statement);
-                    break;
-
-                case 'rename':
-                    $this->renameTableThroughStaticCall($statement);
-            }
+            match ($statement->name->name) {
+                'create' => $this->alterTable($statement, true),
+                'table' => $this->alterTable($statement, false),
+                'drop', 'dropIfExists' => $this->dropTable($statement),
+                'rename' => $this->renameTableThroughStaticCall($statement),
+                default => null,
+            };
         }
     }
 
     private function alterTable(PhpParser\Node\Expr\StaticCall|PhpParser\Node\Expr\MethodCall $call, bool $creating): void
     {
-        if (
-            ! isset($call->args[0])
-            || ! $call->getArgs()[0]->value instanceof PhpParser\Node\Scalar\String_
-        ) {
+        if (! isset($call->args[0])) {
             return;
         }
 
-        $tableName = $call->getArgs()[0]->value->value;
+        $tableName = $this->resolveName($call->getArgs()[0]->value);
+
+        if ($tableName === null) {
+            return;
+        }
 
         if ($creating) {
             $this->tables[$tableName] = new SchemaTable($tableName);
@@ -126,7 +136,8 @@ final class SchemaAggregator
 
         if (
             ! isset($call->args[1])
-            || ! $call->getArgs()[1]->value instanceof PhpParser\Node\Expr\Closure
+            || ! ($call->getArgs()[1]->value instanceof PhpParser\Node\Expr\Closure
+                || $call->getArgs()[1]->value instanceof PhpParser\Node\Expr\ArrowFunction)
             || count($call->getArgs()[1]->value->params) < 1
             || ($call->getArgs()[1]->value->params[0]->type instanceof PhpParser\Node\Name
                 && ! (new ObjectType('Illuminate\Database\Schema\Blueprint'))->isSuperTypeOf(new ObjectType($call->getArgs()[1]->value->params[0]->type->toCodeString()))->yes()
@@ -176,14 +187,18 @@ final class SchemaAggregator
             $firstMethodCall = $rootVar;
 
             $nullable = false;
+            $unsigned = false;
 
             while ($rootVar instanceof PhpParser\Node\Expr\MethodCall) {
-                if (
-                    $rootVar->name instanceof PhpParser\Node\Identifier
-                    && $rootVar->name->name === 'nullable'
-                    && $this->getNullableArgumentValue($rootVar) === true
-                ) {
-                    $nullable = true;
+                if ($rootVar->name instanceof PhpParser\Node\Identifier) {
+                    if (
+                        $rootVar->name->name === 'nullable'
+                        && $this->getNullableArgumentValue($rootVar) === true
+                    ) {
+                        $nullable = true;
+                    } elseif ($rootVar->name->name === 'unsigned') {
+                        $unsigned = true;
+                    }
                 }
 
                 $firstMethodCall = $rootVar;
@@ -214,17 +229,25 @@ final class SchemaAggregator
                 }
 
                 $columnName = Str::snake(class_basename($modelClass)) . '_id';
+
                 if ($secondArg instanceof PhpParser\Node\Scalar\String_) {
                     $columnName = $secondArg->value;
                 }
 
                 $type = $this->getModelReferenceType($modelClass);
+
+                if ($unsigned && ($type === null || $type === 'int')) {
+                    $type = 'non-negative-int';
+                }
+
                 $table->setColumn(new SchemaColumn($columnName, $type ?? 'int', $nullable));
 
                 continue;
             }
 
-            if (! $firstArg instanceof PhpParser\Node\Scalar\String_) {
+            $columnName = $firstArg === null ? null : $this->resolveName($firstArg);
+
+            if ($columnName === null) {
                 if ($firstArg instanceof PhpParser\Node\Expr\Array_ && $firstMethodCall->name->name === 'dropColumn') {
                     foreach ($firstArg->items as $arrayItem) {
                         if (! $arrayItem->value instanceof PhpParser\Node\Scalar\String_) {
@@ -235,37 +258,28 @@ final class SchemaAggregator
                     }
                 }
 
-                if (
-                    $firstMethodCall->name->name === 'timestamps'
-                    || $firstMethodCall->name->name === 'timestampsTz'
-                    || $firstMethodCall->name->name === 'nullableTimestamps'
-                    || $firstMethodCall->name->name === 'nullableTimestampsTz'
-                    || $firstMethodCall->name->name === 'rememberToken'
-                ) {
-                    switch (strtolower($firstMethodCall->name->name)) {
-                        case 'droptimestamps':
-                        case 'droptimestampstz':
-                            $table->dropColumn('created_at');
-                            $table->dropColumn('updated_at');
-                            break;
+                switch (strtolower($firstMethodCall->name->name)) {
+                    case 'remembertoken':
+                        $table->setColumn(new SchemaColumn('remember_token', 'string', true));
+                        continue 2;
 
-                        case 'remembertoken':
-                            $table->setColumn(new SchemaColumn('remember_token', 'string', $nullable));
-                            break;
+                    case 'dropremembertoken':
+                        $table->dropColumn('remember_token');
+                        continue 2;
 
-                        case 'dropremembertoken':
-                            $table->dropColumn('remember_token');
-                            break;
+                    case 'timestamps':
+                    case 'timestampstz':
+                    case 'nullabletimestamps':
+                    case 'nullabletimestampstz':
+                        $table->setColumn(new SchemaColumn('created_at', 'string', true));
+                        $table->setColumn(new SchemaColumn('updated_at', 'string', true));
+                        continue 2;
 
-                        case 'timestamps':
-                        case 'timestampstz':
-                        case 'nullabletimestamps':
-                            $table->setColumn(new SchemaColumn('created_at', 'string', true));
-                            $table->setColumn(new SchemaColumn('updated_at', 'string', true));
-                            break;
-                    }
-
-                    continue;
+                    case 'droptimestamps':
+                    case 'droptimestampstz':
+                        $table->dropColumn('created_at');
+                        $table->dropColumn('updated_at');
+                        continue 2;
                 }
 
                 $defaultsMap = [
@@ -280,13 +294,12 @@ final class SchemaAggregator
                     'ipAddress' => 'ip_address',
                     'macAddress' => 'mac_address',
                 ];
+
                 if (! array_key_exists($firstMethodCall->name->name, $defaultsMap)) {
                     continue;
                 }
 
                 $columnName = $defaultsMap[$firstMethodCall->name->name];
-            } else {
-                $columnName = $firstArg->value;
             }
 
             $secondArgArray = null;
@@ -309,6 +322,7 @@ final class SchemaAggregator
                 $table,
                 $columnName,
                 $nullable,
+                $unsigned,
                 $secondArg,
                 $argName,
                 $tableName,
@@ -316,6 +330,43 @@ final class SchemaAggregator
                 $stmt,
             );
         }
+    }
+
+    private function resolveName(PhpParser\Node\Expr $value): string|null
+    {
+        if ($value instanceof PhpParser\Node\Scalar\String_) {
+            return $value->value;
+        }
+
+        if (
+            ! $value instanceof PhpParser\Node\Expr\ClassConstFetch
+            || ! $value->class instanceof PhpParser\Node\Name\FullyQualified
+            || ! $value->name instanceof PhpParser\Node\Identifier
+            || ! $this->reflectionProvider->hasClass($value->class->name)
+        ) {
+            return null;
+        }
+
+        $class = $this->reflectionProvider->getClass($value->class->name);
+
+        if (
+            ! $class->hasConstant($value->name->toString())
+            || ($class->isEnum() && $class->hasEnumCase($value->name->toString()))
+        ) {
+            return null;
+        }
+
+        $constant          = $class->getConstant($value->name->toString());
+        $constantValueType = $this->initializerExprTypeResolver->getType(
+            $constant->getValueExpr(),
+            InitializerExprContext::fromClassReflection($constant->getDeclaringClass()),
+        );
+
+        if ($constantValueType->getConstantStrings() === []) {
+            return null;
+        }
+
+        return $constantValueType->getConstantStrings()[0]->getValue();
     }
 
     private function dropTable(PhpParser\Node\Expr\StaticCall|PhpParser\Node\Expr\MethodCall $call): void
@@ -384,9 +435,9 @@ final class SchemaAggregator
     private function getModelReferenceType(string $modelClass): string|null
     {
         $classReflection = $this->reflectionProvider->getClass($modelClass);
+
         try {
-            /** @var Model $modelInstance */
-            $modelInstance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
+            $modelInstance = ModelHelper::newInstanceWithoutConstructor($classReflection);
         } catch (ReflectionException) {
             return null;
         }
@@ -431,6 +482,10 @@ final class SchemaAggregator
     /** @return PhpParser\Node\Stmt\Expression[] */
     private function getUpdateStatements(PhpParser\Node\Expr $updateClosure): array
     {
+        if ($updateClosure instanceof PhpParser\Node\Expr\ArrowFunction) {
+            return [new PhpParser\Node\Stmt\Expression($updateClosure->expr)];
+        }
+
         if (! property_exists($updateClosure, 'stmts')) {
             return [];
         }
@@ -455,7 +510,7 @@ final class SchemaAggregator
     }
 
     /**
-     * @param array<int, mixed> $secondArgArray
+     * @param array<int, mixed>|null $secondArgArray
      *
      * @throws Exception
      */
@@ -465,6 +520,7 @@ final class SchemaAggregator
         SchemaTable $table,
         string $columnName,
         bool $nullable,
+        bool $unsigned,
         mixed $secondArg,
         PhpParser\Node\Expr|string $argName,
         string $tableName,
@@ -479,6 +535,7 @@ final class SchemaAggregator
                     $table,
                     $firstMethodCall->args[1]->value->value ?? '',
                     $nullable,
+                    $unsigned,
                     $secondArg,
                     $argName,
                     $tableName,
@@ -488,25 +545,30 @@ final class SchemaAggregator
 
                 return;
 
+            case 'integer':
+            case 'tinyinteger':
+            case 'smallinteger':
+            case 'mediuminteger':
             case 'biginteger':
+                $columnType = $unsigned ? 'non-negative-int' : 'int';
+                $table->setColumn(new SchemaColumn($columnName, $columnType, $nullable));
+
+                return;
+
             case 'increments':
             case 'id':
-            case 'integer':
-            case 'integerincrements':
-            case 'mediumincrements':
-            case 'mediuminteger':
-            case 'smallincrements':
-            case 'smallinteger':
-            case 'tinyincrements':
-            case 'tinyinteger':
             case 'unsignedbiginteger':
             case 'unsignedinteger':
             case 'unsignedmediuminteger':
             case 'unsignedsmallinteger':
             case 'unsignedtinyinteger':
+            case 'integerincrements':
+            case 'mediumincrements':
+            case 'smallincrements':
+            case 'tinyincrements':
             case 'bigincrements':
             case 'foreignid':
-                $table->setColumn(new SchemaColumn($columnName, 'int', $nullable));
+                $table->setColumn(new SchemaColumn($columnName, 'non-negative-int', $nullable));
 
                 return;
 
@@ -514,6 +576,8 @@ final class SchemaAggregator
             case 'datetimetz':
             case 'date':
             case 'datetime':
+            case 'foreignulid':
+            case 'foreignuuid':
             case 'ipaddress':
             case 'json':
             case 'jsonb':
@@ -560,12 +624,16 @@ final class SchemaAggregator
 
             case 'after':
                 if (
-                    $secondArg instanceof PhpParser\Node\Expr\Closure
+                    ($secondArg instanceof PhpParser\Node\Expr\Closure || $secondArg instanceof PhpParser\Node\Expr\ArrowFunction)
+                    && count($secondArg->params) > 0
                     && $secondArg->params[0]->var instanceof PhpParser\Node\Expr\Variable
                     && ! ($secondArg->params[0]->var->name instanceof PhpParser\Node\Expr)
                 ) {
                     $argName = $secondArg->params[0]->var->name;
-                    $this->processColumnUpdates($tableName, $argName, $secondArg->stmts);
+                    $stmts   = $secondArg instanceof PhpParser\Node\Expr\ArrowFunction
+                        ? $this->getUpdateStatements($secondArg)
+                        : $secondArg->stmts;
+                    $this->processColumnUpdates($tableName, $argName, $stmts);
                 }
 
                 return;
@@ -581,16 +649,20 @@ final class SchemaAggregator
                 return;
 
             case 'dropforeign':
+            case 'dropfulltext':
             case 'dropindex':
             case 'dropprimary':
             case 'dropunique':
             case 'foreign':
+            case 'fulltext':
             case 'index':
             case 'primary':
+            case 'rawindex':
             case 'renameindex':
-            case 'spatialIndex':
+            case 'spatialindex':
             case 'unique':
             case 'dropspatialindex':
+            case 'vectorindex':
                 return;
 
             case 'dropmorphs':
@@ -616,9 +688,22 @@ final class SchemaAggregator
 
                 return;
 
+            case 'nullablenumericmorphs':
+                $table->setColumn(new SchemaColumn($columnName . '_type', 'string', true));
+                $table->setColumn(new SchemaColumn($columnName . '_id', 'non-negative-int', true));
+
+                return;
+
+            case 'nullableulidmorphs':
             case 'nullableuuidmorphs':
                 $table->setColumn(new SchemaColumn($columnName . '_type', 'string', true));
                 $table->setColumn(new SchemaColumn($columnName . '_id', 'string', true));
+
+                return;
+
+            case 'numericmorphs':
+                $table->setColumn(new SchemaColumn($columnName . '_type', 'string', $nullable));
+                $table->setColumn(new SchemaColumn($columnName . '_id', 'non-negative-int', $nullable));
 
                 return;
 
@@ -650,6 +735,7 @@ final class SchemaAggregator
 
                 return;
 
+            case 'ulidmorphs':
             case 'uuidmorphs':
                 $table->setColumn(new SchemaColumn($columnName . '_type', 'string', $nullable));
                 $table->setColumn(new SchemaColumn($columnName . '_id', 'string', $nullable));
@@ -659,6 +745,90 @@ final class SchemaAggregator
             default:
                 // We know a property exists with a name, we just don't know its type.
                 $table->setColumn(new SchemaColumn($columnName, 'mixed', $nullable));
+        }
+    }
+
+    private function literalDatabaseStatement(PhpParser\Node\Expr $expr): string|null
+    {
+        if ($expr instanceof PhpParser\Node\Expr\StaticCall) {
+            return $this->literalFromDatabaseCall($expr->class, $expr->name, $expr);
+        }
+
+        if (
+            ! $expr instanceof PhpParser\Node\Expr\MethodCall
+            || ! $expr->var instanceof PhpParser\Node\Expr\StaticCall
+        ) {
+            return null;
+        }
+
+        $connection = $expr->var;
+
+        if (
+            ! $connection->name instanceof PhpParser\Node\Identifier
+            || ! in_array(strtolower($connection->name->toString()), ['connection', 'setconnection'], true)
+        ) {
+            return null;
+        }
+
+        return $this->literalFromDatabaseCall($connection->class, $expr->name, $expr);
+    }
+
+    private function literalFromDatabaseCall(
+        PhpParser\Node $class,
+        PhpParser\Node $name,
+        PhpParser\Node\Expr\StaticCall|PhpParser\Node\Expr\MethodCall $call,
+    ): string|null {
+        if (
+            ! $class instanceof PhpParser\Node\Name
+            || ! $name instanceof PhpParser\Node\Identifier
+            || ! in_array(strtolower($name->toString()), ['statement', 'unprepared'], true)
+            || ! $this->isDatabaseFacade($class)
+            || ! isset($call->args[0])
+            || ! $call->getArgs()[0]->value instanceof PhpParser\Node\Scalar\String_
+        ) {
+            return null;
+        }
+
+        return $call->getArgs()[0]->value->value;
+    }
+
+    private function isDatabaseFacade(PhpParser\Node\Name $class): bool
+    {
+        $code = $class->toCodeString();
+
+        if ($code === '\DB' || $code === 'DB' || $code === '\Illuminate\Support\Facades\DB') {
+            return true;
+        }
+
+        return (new ObjectType('Illuminate\Support\Facades\DB'))
+            ->isSuperTypeOf(new ObjectType(ltrim($code, '\\')))
+            ->yes();
+    }
+
+    private function applyLiteralSql(string $sql): void
+    {
+        try {
+            $definitions = $this->sqlParser->parseTables($sql);
+        } catch (SqlParserFailure) {
+            return;
+        }
+
+        foreach ($definitions as $definition) {
+            if (array_key_exists($definition->name, $this->tables)) {
+                continue;
+            }
+
+            $table = new SchemaTable($definition->name);
+
+            foreach ($definition->columns as $column) {
+                $table->setColumn(new SchemaColumn(
+                    $column->name,
+                    $this->mySqlDataTypeToPhpTypeConverter->convert($column->type, $column->typeOptions, $column->values),
+                    $column->nullable,
+                ));
+            }
+
+            $this->tables[$definition->name] = $table;
         }
     }
 }

@@ -11,6 +11,7 @@ use PHPStan\PhpDoc\TypeNodeResolver;
 use PHPStan\PhpDoc\TypeNodeResolverExtension;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\ObjectType;
@@ -28,6 +29,7 @@ final class ModelPropertyTypeNodeResolverExtension implements TypeNodeResolverEx
         protected TypeNodeResolver $baseResolver,
         protected bool $active,
         private ModelPropertyHelper $modelPropertyHelper,
+        private ReflectionProvider $reflectionProvider,
     ) {
     }
 
@@ -37,7 +39,7 @@ final class ModelPropertyTypeNodeResolverExtension implements TypeNodeResolverEx
             return null;
         }
 
-        if ($typeNode->type->name !== 'model-property') {
+        if ((string) $typeNode->type !== 'model-property') {
             return null;
         }
 
@@ -57,6 +59,13 @@ final class ModelPropertyTypeNodeResolverExtension implements TypeNodeResolverEx
 
         if ($genericType instanceof NeverType) {
             return new ErrorType();
+        }
+
+        // A file calling a method with such a parameter does not have to use a model itself
+        $className = $nameScope->getClassName();
+
+        if ($className !== null && $this->reflectionProvider->hasClass($className)) {
+            $this->modelPropertyHelper->trackSchemaDependency($this->reflectionProvider->getClass($className));
         }
 
         return new GenericModelPropertyType($genericType, $this->modelPropertyHelper);

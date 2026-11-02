@@ -2,11 +2,13 @@
 
 namespace ModelBuilder;
 
+use App\Account;
 use App\Post;
 use App\Team;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use function PHPStan\Testing\assertType;
 
 class User extends Model
 {
@@ -21,13 +23,13 @@ class User extends Model
         return static::query()->create();
     }
 
-    public static function testCreateSelf(): static
+    public static function testCreateSelf(): self
     {
         return self::query()->create();
     }
 }
 
-function test(): void
+function test(User|Account $userOrAccount): void
 {
     \App\User::query()->where(DB::raw('1'), 1)->get();
 
@@ -39,4 +41,9 @@ function test(): void
 
     /** @see https://github.com/larastan/larastan/issues/1952 */
     Team::query()->where('name', 'Team A')->orderBy('name')->get();
+
+    assertType('int|false', $userOrAccount->increment('counter'));
+    assertType('int|false', $userOrAccount->decrement('counter'));
+    assertType('int', $userOrAccount->incrementQuietly('counter'));
+    assertType('int', $userOrAccount->decrementQuietly('counter'));
 }

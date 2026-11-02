@@ -6,11 +6,16 @@ namespace Tests\Unit;
 
 use Larastan\Larastan\Properties\MigrationHelper;
 use Larastan\Larastan\Properties\SchemaTable;
+use Larastan\Larastan\SQL\IamcalSqlParser;
 use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
+use PHPStan\Reflection\InitializerExprTypeResolver;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Testing\PHPStanTestCase;
+use PHPUnit\Framework\Attributes\Test;
 
 use function array_keys;
+use function class_exists;
 
 class MigrationHelperTest extends PHPStanTestCase
 {
@@ -18,45 +23,67 @@ class MigrationHelperTest extends PHPStanTestCase
 
     private FileHelper $fileHelper;
 
+    private ReflectionProvider $reflectionProvider;
+
+    private InitializerExprTypeResolver $initializerExprTypeResolver;
+
     public function setUp(): void
     {
-        $this->parser             = self::getContainer()->getService('currentPhpVersionSimpleDirectParser');
-        $this->fileHelper         = self::getContainer()->getByType(FileHelper::class);
-        $this->reflectionProvider = $this->createReflectionProvider();
+        $this->parser                      = self::getContainer()->getService('currentPhpVersionSimpleDirectParser');
+        $this->fileHelper                  = self::getContainer()->getByType(FileHelper::class);
+        $this->reflectionProvider          = $this->createReflectionProvider();
+        $this->initializerExprTypeResolver = self::getContainer()->getByType(InitializerExprTypeResolver::class);
     }
 
-    /** @test */
+    #[Test]
+    public function it_keeps_a_migration_directory_that_does_not_exist(): void
+    {
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/missing'], $this->fileHelper, false, $this->reflectionProvider, $this->initializerExprTypeResolver, new IamcalSqlParser());
+
+        self::assertSame([$this->fileHelper->absolutizePath(__DIR__ . '/data/missing')], $migrationHelper->getMigrationDirectories());
+        self::assertSame([], $migrationHelper->getMigrationFiles());
+    }
+
+    #[Test]
+    public function it_has_no_migration_directories_when_the_migration_scan_is_disabled(): void
+    {
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/basic_migration'], $this->fileHelper, true, $this->reflectionProvider, $this->initializerExprTypeResolver, new IamcalSqlParser());
+
+        self::assertSame([], $migrationHelper->getMigrationDirectories());
+    }
+
+    #[Test]
     public function it_will_return_empty_array_if_migrations_path_is_not_a_directory(): void
     {
-        $migrationHelper = new MigrationHelper($this->parser, ['foobar'], $this->fileHelper, false, $this->reflectionProvider);
+        $migrationHelper = new MigrationHelper($this->parser, ['foobar'], $this->fileHelper, false, $this->reflectionProvider, $this->initializerExprTypeResolver, new IamcalSqlParser());
 
         self::assertSame([], $migrationHelper->initializeTables());
     }
 
-    /** @test */
+    #[Test]
     public function it_can_read_basic_migrations_and_create_table_structure(): void
     {
-        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/basic_migration'], $this->fileHelper, false, $this->reflectionProvider);
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/basic_migration'], $this->fileHelper, false, $this->reflectionProvider, $this->initializerExprTypeResolver, new IamcalSqlParser());
 
         $tables = $migrationHelper->initializeTables();
 
         $this->assertUsersTableSchema($tables);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_read_schema_definitions_from_any_method_in_class(): void
     {
-        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migrations_with_different_methods'], $this->fileHelper, false, $this->reflectionProvider);
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migrations_with_different_methods'], $this->fileHelper, false, $this->reflectionProvider, $this->initializerExprTypeResolver, new IamcalSqlParser());
 
         $tables = $migrationHelper->initializeTables();
 
         $this->assertUsersTableSchema($tables);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_read_schema_definitions_with_multiple_create_and_drop_methods_for_one_table(): void
     {
-        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/complex_migrations'], $this->fileHelper, false, $this->reflectionProvider);
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/complex_migrations'], $this->fileHelper, false, $this->reflectionProvider, $this->initializerExprTypeResolver, new IamcalSqlParser());
 
         $tables = $migrationHelper->initializeTables();
 
@@ -64,7 +91,7 @@ class MigrationHelperTest extends PHPStanTestCase
         self::assertArrayHasKey('users', $tables);
         self::assertCount(8, $tables['users']->columns);
         self::assertSame(['id', 'email', 'birthday', 'city', 'zip', 'created_at', 'updated_at', 'active'], array_keys($tables['users']->columns));
-        self::assertSame('int', $tables['users']->columns['id']->readableType);
+        self::assertSame('non-negative-int', $tables['users']->columns['id']->readableType);
         self::assertSame('string', $tables['users']->columns['email']->readableType);
         self::assertSame('string', $tables['users']->columns['birthday']->readableType);
         self::assertSame('string', $tables['users']->columns['city']->readableType);
@@ -76,13 +103,13 @@ class MigrationHelperTest extends PHPStanTestCase
         self::assertSame('int', $tables['users']->columns['active']->readableType);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_read_additional_directories(): void
     {
         $migrationHelper = new MigrationHelper($this->parser, [
             __DIR__ . '/data/basic_migration',
             __DIR__ . '/data/additional_migrations',
-        ], $this->fileHelper, false, $this->reflectionProvider);
+        ], $this->fileHelper, false, $this->reflectionProvider, $this->initializerExprTypeResolver, new IamcalSqlParser());
 
         $tables = $migrationHelper->initializeTables();
 
@@ -91,12 +118,12 @@ class MigrationHelperTest extends PHPStanTestCase
         self::assertArrayHasKey('teams', $tables);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_handle_use_of_after_method_in_migration(): void
     {
         $migrationHelper = new MigrationHelper($this->parser, [
             __DIR__ . '/data/migrations_using_after_method',
-        ], $this->fileHelper, false, $this->reflectionProvider);
+        ], $this->fileHelper, false, $this->reflectionProvider, $this->initializerExprTypeResolver, new IamcalSqlParser());
 
         $tables = $migrationHelper->initializeTables();
 
@@ -104,19 +131,19 @@ class MigrationHelperTest extends PHPStanTestCase
         self::assertArrayHasKey('users', $tables);
         self::assertCount(5, $tables['users']->columns);
         self::assertSame(['id', 'name', 'created_at', 'updated_at', 'email'], array_keys($tables['users']->columns));
-        self::assertSame('int', $tables['users']->columns['id']->readableType);
+        self::assertSame('non-negative-int', $tables['users']->columns['id']->readableType);
         self::assertSame('string', $tables['users']->columns['name']->readableType);
         self::assertSame('string', $tables['users']->columns['email']->readableType);
         self::assertSame('string', $tables['users']->columns['created_at']->readableType);
         self::assertSame('string', $tables['users']->columns['updated_at']->readableType);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_handle_alter_table_and_column_rename(): void
     {
         $migrationHelper = new MigrationHelper($this->parser, [
             __DIR__ . '/data/rename_migrations',
-        ], $this->fileHelper, false, $this->reflectionProvider);
+        ], $this->fileHelper, false, $this->reflectionProvider, $this->initializerExprTypeResolver, new IamcalSqlParser());
 
         $tables = $migrationHelper->initializeTables();
 
@@ -129,10 +156,10 @@ class MigrationHelperTest extends PHPStanTestCase
         self::assertSame('string', $columns['full_name']->readableType);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_handle_migrations_with_soft_deletes(): void
     {
-        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migrations_using_soft_deletes'], $this->fileHelper, false, $this->reflectionProvider);
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migrations_using_soft_deletes'], $this->fileHelper, false, $this->reflectionProvider, $this->initializerExprTypeResolver, new IamcalSqlParser());
 
         $tables = $migrationHelper->initializeTables();
 
@@ -142,10 +169,10 @@ class MigrationHelperTest extends PHPStanTestCase
         self::assertSame('string', $tables['users']->columns['deleted_at']->readableType);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_handle_migrations_with_soft_deletes_tz(): void
     {
-        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migrations_using_soft_deletes_tz'], $this->fileHelper, false, $this->reflectionProvider);
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migrations_using_soft_deletes_tz'], $this->fileHelper, false, $this->reflectionProvider, $this->initializerExprTypeResolver, new IamcalSqlParser());
 
         $tables = $migrationHelper->initializeTables();
 
@@ -155,17 +182,32 @@ class MigrationHelperTest extends PHPStanTestCase
         self::assertSame('string', $tables['users']->columns['deleted_at']->readableType);
     }
 
-    /** @test */
+    #[Test]
+    public function it_can_handle_migrations_with_nullable_timestamps_tz(): void
+    {
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migrations_using_nullable_timestamps_tz'], $this->fileHelper, false, $this->reflectionProvider, $this->initializerExprTypeResolver, new IamcalSqlParser());
+
+        $tables = $migrationHelper->initializeTables();
+
+        self::assertCount(1, $tables);
+        self::assertArrayHasKey('users', $tables);
+        self::assertCount(5, $tables['users']->columns);
+        self::assertSame(['id', 'name', 'email', 'created_at', 'updated_at'], array_keys($tables['users']->columns));
+        self::assertSame('string', $tables['users']->columns['created_at']->readableType);
+        self::assertSame('string', $tables['users']->columns['updated_at']->readableType);
+    }
+
+    #[Test]
     public function it_can_handle_migrations_with_default_arguments(): void
     {
-        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migration_with_default_arguments'], $this->fileHelper, false, $this->reflectionProvider);
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migration_with_default_arguments'], $this->fileHelper, false, $this->reflectionProvider, $this->initializerExprTypeResolver, new IamcalSqlParser());
 
         $tables = $migrationHelper->initializeTables();
 
         self::assertCount(1, $tables);
         self::assertArrayHasKey('users', $tables);
         self::assertCount(11, $tables['users']->columns);
-        self::assertSame('int', $tables['users']->columns['id']->readableType);
+        self::assertSame('non-negative-int', $tables['users']->columns['id']->readableType);
         self::assertSame('string', $tables['users']->columns['ip_address']->readableType);
         self::assertSame('string', $tables['users']->columns['custom_ip_address']->readableType);
         self::assertSame('string', $tables['users']->columns['mac_address']->readableType);
@@ -178,33 +220,33 @@ class MigrationHelperTest extends PHPStanTestCase
         self::assertSame('string', $tables['users']->columns['custom_soft_deletes']->readableType);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_handle_connection_before_schema_create(): void
     {
-        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migration_with_schema_connection'], $this->fileHelper, false, $this->reflectionProvider);
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migration_with_schema_connection'], $this->fileHelper, false, $this->reflectionProvider, $this->initializerExprTypeResolver, new IamcalSqlParser());
 
         $tables = $migrationHelper->initializeTables();
 
         $this->assertUsersTableSchema($tables);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_disable_migration_scanning(): void
     {
         $migrationHelper = new MigrationHelper($this->parser, [
             __DIR__ . '/data/basic_migration',
             __DIR__ . '/data/additional_migrations',
-        ], $this->fileHelper, true, $this->reflectionProvider);
+        ], $this->fileHelper, true, $this->reflectionProvider, $this->initializerExprTypeResolver, new IamcalSqlParser());
 
         $tables = $migrationHelper->initializeTables();
 
         self::assertSame([], $tables);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_handle_nullable_in_migrations(): void
     {
-        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migrations_using_nullable'], $this->fileHelper, false, $this->reflectionProvider);
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migrations_using_nullable'], $this->fileHelper, false, $this->reflectionProvider, $this->initializerExprTypeResolver, new IamcalSqlParser());
 
         $tables = $migrationHelper->initializeTables();
 
@@ -220,19 +262,19 @@ class MigrationHelperTest extends PHPStanTestCase
         self::assertArrayHasKey('users', $tables);
         self::assertCount(5, $tables['users']->columns);
         self::assertSame(['id', 'name', 'email', 'created_at', 'updated_at'], array_keys($tables['users']->columns));
-        self::assertSame('int', $tables['users']->columns['id']->readableType);
+        self::assertSame('non-negative-int', $tables['users']->columns['id']->readableType);
         self::assertSame('string', $tables['users']->columns['name']->readableType);
         self::assertSame('string', $tables['users']->columns['email']->readableType);
         self::assertSame('string', $tables['users']->columns['created_at']->readableType);
         self::assertSame('string', $tables['users']->columns['updated_at']->readableType);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_handle_migrations_with_array_passed_to_drop_column(): void
     {
         $migrationHelper = new MigrationHelper($this->parser, [
             __DIR__ . '/data/migrations_using_drop_column',
-        ], $this->fileHelper, false, $this->reflectionProvider);
+        ], $this->fileHelper, false, $this->reflectionProvider, $this->initializerExprTypeResolver, new IamcalSqlParser());
 
         $tables = $migrationHelper->initializeTables();
 
@@ -242,10 +284,40 @@ class MigrationHelperTest extends PHPStanTestCase
         self::assertSame(['id', 'name', 'email', 'created_at', 'updated_at'], array_keys($tables['users']->columns));
     }
 
-    /** @test */
+    #[Test]
+    public function it_can_handle_migrations_with_drop_timestamps(): void
+    {
+        $migrationHelper = new MigrationHelper($this->parser, [
+            __DIR__ . '/data/migrations_using_drop_timestamps',
+        ], $this->fileHelper, false, $this->reflectionProvider, $this->initializerExprTypeResolver, new IamcalSqlParser());
+
+        $tables = $migrationHelper->initializeTables();
+
+        self::assertCount(1, $tables);
+        self::assertArrayHasKey('users', $tables);
+        self::assertCount(3, $tables['users']->columns);
+        self::assertSame(['id', 'name', 'email'], array_keys($tables['users']->columns));
+    }
+
+    #[Test]
+    public function it_can_handle_migrations_with_drop_remember_token(): void
+    {
+        $migrationHelper = new MigrationHelper($this->parser, [
+            __DIR__ . '/data/migrations_using_drop_remember_token',
+        ], $this->fileHelper, false, $this->reflectionProvider, $this->initializerExprTypeResolver, new IamcalSqlParser());
+
+        $tables = $migrationHelper->initializeTables();
+
+        self::assertCount(1, $tables);
+        self::assertArrayHasKey('users', $tables);
+        self::assertCount(3, $tables['users']->columns);
+        self::assertSame(['id', 'name', 'email'], array_keys($tables['users']->columns));
+    }
+
+    #[Test]
     public function it_can_handle_migrations_with_if_statements(): void
     {
-        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/conditional_migrations'], $this->fileHelper, false, $this->reflectionProvider);
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/conditional_migrations'], $this->fileHelper, false, $this->reflectionProvider, $this->initializerExprTypeResolver, new IamcalSqlParser());
 
         $tables = $migrationHelper->initializeTables();
 
@@ -254,5 +326,42 @@ class MigrationHelperTest extends PHPStanTestCase
         self::assertArrayHasKey('email', $tables['users']->columns);
         self::assertArrayHasKey('address1', $tables['users']->columns);
         self::assertArrayHasKey('address2', $tables['users']->columns);
+    }
+
+    #[Test]
+    public function it_can_handle_migrations_with_const_as_table(): void
+    {
+        $migrationHelper = new MigrationHelper($this->parser, [__DIR__ . '/data/migration_with_const'], $this->fileHelper, false, $this->reflectionProvider, $this->initializerExprTypeResolver, new IamcalSqlParser());
+
+        $tables = $migrationHelper->initializeTables();
+
+        self::assertArrayHasKey('id', $tables['users']->columns);
+        self::assertArrayHasKey('name', $tables['users']->columns);
+        self::assertArrayHasKey('email', $tables['users']->columns);
+    }
+
+    #[Test]
+    public function it_resolves_foreign_id_for_column_type_using_table_php_attribute(): void
+    {
+        if (! class_exists('Illuminate\Database\Eloquent\Attributes\Table')) {
+            $this->markTestSkipped('Eloquent PHP attributes require Laravel 13+.');
+        }
+
+        $migrationHelper = new MigrationHelper(
+            $this->parser,
+            [
+                __DIR__ . '/data/basic_migration',
+                __DIR__ . '/data/migration_with_foreign_id_for',
+            ],
+            $this->fileHelper,
+            false,
+            $this->reflectionProvider,
+            $this->initializerExprTypeResolver,
+            new IamcalSqlParser(),
+        );
+
+        $tables = $migrationHelper->initializeTables();
+
+        self::assertSame('string', $tables['articles']->columns['member_with_custom_key_id']->readableType);
     }
 }

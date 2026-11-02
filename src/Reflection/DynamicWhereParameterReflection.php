@@ -13,7 +13,7 @@ class DynamicWhereParameterReflection implements ParameterReflection
 {
     public function getName(): string
     {
-        return 'dynamic-where-parameter';
+        return 'value';
     }
 
     public function isOptional(): bool

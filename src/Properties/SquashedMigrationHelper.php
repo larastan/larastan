@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Properties;
 
-use iamcal\SQLParser;
-use iamcal\SQLParserSyntaxException;
 use Larastan\Larastan\Properties\Schema\MySqlDataTypeToPhpTypeConverter;
+use Larastan\Larastan\SQL\SqlParser;
+use Larastan\Larastan\SQL\SqlParserFailure;
+use Larastan\Larastan\Support\RecursiveDirectoryIterator;
 use PHPStan\File\FileHelper;
-use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
 use SplFileInfo;
@@ -16,8 +16,6 @@ use SplFileInfo;
 use function array_key_exists;
 use function database_path;
 use function file_get_contents;
-use function is_array;
-use function is_bool;
 use function is_dir;
 use function iterator_to_array;
 use function ksort;
@@ -29,6 +27,7 @@ final class SquashedMigrationHelper
         private array $schemaPaths,
         private FileHelper $fileHelper,
         private MySqlDataTypeToPhpTypeConverter $converter,
+        private SqlParser $sqlParser,
         private bool $disableSchemaScan,
     ) {
     }
@@ -36,14 +35,6 @@ final class SquashedMigrationHelper
     /** @return SchemaTable[] */
     public function initializeTables(): array
     {
-        if ($this->disableSchemaScan) {
-            return [];
-        }
-
-        if (empty($this->schemaPaths)) {
-            $this->schemaPaths = [database_path('schema')];
-        }
-
         $filesArray = $this->getSchemaFiles();
 
         if (empty($filesArray)) {
@@ -63,37 +54,28 @@ final class SquashedMigrationHelper
             }
 
             try {
-                $parser                      = new SQLParser();
-                $parser->throw_on_bad_syntax = true; // @phpcs:ignore
-                $tableDefinitions            = $parser->parse($fileContents);
-            } catch (SQLParserSyntaxException) {
+                $tableDefinitions = $this->sqlParser->parseTables($fileContents);
+            } catch (SqlParserFailure) {
                 // TODO: re-throw the exception with a clear message?
                 continue;
             }
 
             foreach ($tableDefinitions as $definition) {
-                if (array_key_exists($definition['name'], $tables)) {
+                if (array_key_exists($definition->name, $tables)) {
                     continue;
                 }
 
-                if (! is_array($definition['fields'])) {
-                    continue;
-                }
+                $table = new SchemaTable($definition->name);
 
-                $table = new SchemaTable($definition['name']);
-                foreach ($definition['fields'] as $field) {
-                    if ($field['name'] === null || $field['type'] === null) {
-                        continue;
-                    }
-
+                foreach ($definition->columns as $column) {
                     $table->setColumn(new SchemaColumn(
-                        $field['name'],
-                        $this->converter->convert($field['type']),
-                        $this->isNullable($field),
+                        $column->name,
+                        $this->converter->convert($column->type, $column->typeOptions, $column->values),
+                        $column->nullable,
                     ));
                 }
 
-                $tables[$definition['name']] = $table;
+                $tables[$definition->name] = $table;
             }
         }
 
@@ -101,21 +83,19 @@ final class SquashedMigrationHelper
     }
 
     /** @return SplFileInfo[] */
-    private function getSchemaFiles(): array
+    public function getSchemaFiles(): array
     {
         /** @var SplFileInfo[] $schemaFiles */
         $schemaFiles = [];
 
-        foreach ($this->schemaPaths as $additionalPath) {
-            $absolutePath = $this->fileHelper->absolutizePath($additionalPath);
-
-            if (! is_dir($absolutePath)) {
+        foreach ($this->getSchemaDirectories() as $directory) {
+            if (! is_dir($directory)) {
                 continue;
             }
 
             $schemaFiles += iterator_to_array(
                 new RegexIterator(
-                    new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
+                    new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)),
                     '/\.dump|\.sql/i',
                 ),
             );
@@ -124,17 +104,21 @@ final class SquashedMigrationHelper
         return $schemaFiles;
     }
 
-    /** @param  array<string, string|bool|null> $definition */
-    private function isNullable(array $definition): bool
+    /**
+     * The directories scanned for schema dumps, see DirectoryResolver::resolve().
+     *
+     * @return list<string>
+     */
+    public function getSchemaDirectories(): array
     {
-        if (! array_key_exists('null', $definition)) {
-            return false;
+        if ($this->disableSchemaScan) {
+            return [];
         }
 
-        if (is_bool($definition['null'])) {
-            return $definition['null'];
+        if (empty($this->schemaPaths)) {
+            $this->schemaPaths = [database_path('schema')];
         }
 
-        return false;
+        return DirectoryResolver::resolve($this->schemaPaths, $this->fileHelper);
     }
 }

@@ -29,6 +29,8 @@ use PHPStan\Type\NullType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\UnionType;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 class ModelFactoryDynamicStaticMethodReturnTypeExtensionTest extends PHPStanTestCase
 {
@@ -41,13 +43,13 @@ class ModelFactoryDynamicStaticMethodReturnTypeExtensionTest extends PHPStanTest
         $this->reflectionProvider = $this->createReflectionProvider();
     }
 
-    /** @test */
+    #[Test]
     public function it_sets_the_is_single_model_flag_to_true_if_no_args_given(): void
     {
         $class = new Name(User::class);
 
         $scope = $this->createMock(Scope::class);
-        $scope->method('resolveName')->with($class)->willReturn(User::class);
+        $scope->expects($this->once())->method('resolveName')->with($class)->willReturn(User::class);
 
         $extension = new ModelFactoryDynamicStaticMethodReturnTypeExtension(
             $this->createReflectionProvider(),
@@ -63,16 +65,14 @@ class ModelFactoryDynamicStaticMethodReturnTypeExtensionTest extends PHPStanTest
         $this->assertTrue(TrinaryLogic::createYes()->equals($type->isSingleModel()));
     }
 
-    /**
-     * @test
-     * @dataProvider argumentProvider
-     */
+    #[Test]
+    #[DataProvider('argumentProvider')]
     public function it_sets_the_is_single_model_flag_correctly(Type $phpstanType, TrinaryLogic $expected): void
     {
         $class = new Name(User::class);
 
         $scope = $this->createMock(Scope::class);
-        $scope->method('resolveName')->with($class)->willReturn(User::class);
+        $scope->expects($this->once())->method('resolveName')->with($class)->willReturn(User::class);
         $scope->method('getType')->willReturn($phpstanType);
 
         $extension = new ModelFactoryDynamicStaticMethodReturnTypeExtension(

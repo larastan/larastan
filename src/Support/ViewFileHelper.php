@@ -5,16 +5,21 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Support;
 
 use Generator;
+use Illuminate\Contracts\View\Factory as ViewFactory;
+use Larastan\Larastan\Concerns\HasContainer;
+use PHPStan\Analyser\DependencyTracker;
 use PHPStan\File\FileHelper;
-use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RegexIterator;
+use SplFileInfo;
 
+use function array_merge;
+use function array_values;
 use function count;
 use function explode;
 use function is_dir;
 use function iterator_to_array;
-use function resource_path;
+use function rtrim;
 use function str_contains;
 use function str_replace;
 
@@ -22,6 +27,8 @@ use const DIRECTORY_SEPARATOR;
 
 final class ViewFileHelper
 {
+    use HasContainer;
+
     /** @param  list<non-empty-string> $viewDirectories */
     public function __construct(private array $viewDirectories, private FileHelper $fileHelper)
     {
@@ -29,56 +36,90 @@ final class ViewFileHelper
             return;
         }
 
-        $this->viewDirectories = [resource_path('views')]; // @phpstan-ignore-line
+        $finder = $this->resolve(ViewFactory::class)->getFinder();
+
+        $viewDirectories = array_merge(
+            $finder->getPaths(),
+            ...array_values($finder->getHints()),
+        );
+
+        $this->viewDirectories = $viewDirectories; // @phpstan-ignore-line
     }
 
-    public function getAllViewFilePaths(): Generator
+    /**
+     * The result cache runs the rule again when a view file in the root view directories changes.
+     */
+    public function trackRootViewDirectories(DependencyTracker $dependencyTracker): void
+    {
+        $finder = $this->resolve(ViewFactory::class)->getFinder();
+
+        foreach ($finder->getPaths() as $path) {
+            $dependencyTracker->trackDirectoryDependency($this->fileHelper->absolutizePath($path), '*.blade.php');
+        }
+    }
+
+    /**
+     * The result cache runs the rule again when a view file in any of the view directories changes.
+     */
+    public function trackAllViewDirectories(DependencyTracker $dependencyTracker): void
     {
         foreach ($this->viewDirectories as $viewDirectory) {
-            $absolutePath = $this->fileHelper->absolutizePath($viewDirectory);
+            $dependencyTracker->trackDirectoryDependency($this->fileHelper->absolutizePath($viewDirectory), '*.blade.php');
+        }
+    }
 
-            if (! is_dir($absolutePath)) {
-                continue;
-            }
+    /** @return Generator<int, string, void, void> */
+    public function getRootViewFilePaths(): Generator
+    {
+        $finder = $this->resolve(ViewFactory::class)->getFinder();
 
-            $views = iterator_to_array(
-                new RegexIterator(
-                    new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
-                    '/\.blade\.php$/i',
-                ),
-            );
-
-            foreach ($views as $view) {
+        foreach ($finder->getPaths() as $path) {
+            foreach ($this->getViews($path) as $view) {
                 yield $view->getPathname();
             }
         }
     }
 
+    /** @return Generator<int, string, void, void> */
+    public function getAllViewFilePaths(): Generator
+    {
+        foreach ($this->viewDirectories as $viewDirectory) {
+            foreach ($this->getViews($viewDirectory) as $view) {
+                yield $view->getPathname();
+            }
+        }
+    }
+
+    /** @return Generator<int, string, void, void> */
     public function getAllViewNames(): Generator
     {
         foreach ($this->viewDirectories as $viewDirectory) {
-            $absolutePath = $this->fileHelper->absolutizePath($viewDirectory);
-
-            if (! is_dir($absolutePath)) {
-                continue;
-            }
-
-            $views = iterator_to_array(
-                new RegexIterator(
-                    new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
-                    '/\.blade\.php$/i',
-                ),
-            );
-
-            foreach ($views as $view) {
+            foreach ($this->getViews($viewDirectory) as $view) {
                 if (str_contains($view->getPathname(), 'views' . DIRECTORY_SEPARATOR . 'vendor') || str_contains($view->getPathname(), 'views' . DIRECTORY_SEPARATOR . 'errors')) {
                     continue;
                 }
 
-                $viewName = explode($viewDirectory . DIRECTORY_SEPARATOR, $view->getPathname());
+                $viewName = explode(rtrim($viewDirectory, '/\\') . DIRECTORY_SEPARATOR, $view->getPathname());
 
                 yield str_replace([DIRECTORY_SEPARATOR, '.blade.php'], ['.', ''], $viewName[1]);
             }
         }
+    }
+
+    /** @return SplFileInfo[] */
+    protected function getViews(string $path): array
+    {
+        $absolutePath = $this->fileHelper->absolutizePath($path);
+
+        if (! is_dir($absolutePath)) {
+            return [];
+        }
+
+        return iterator_to_array(
+            new RegexIterator(
+                new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
+                '/\.blade\.php$/i',
+            ),
+        );
     }
 }

@@ -23,6 +23,11 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+
+        'passport' => [
+            'driver' => 'passport',
+            'provider' => 'users',
+        ],
     ],
 
     'providers' => [

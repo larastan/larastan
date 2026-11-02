@@ -1,0 +1,7 @@
+<?php
+
+namespace Illuminate\Support\Testing\Fakes;
+
+interface Fake {}
+
+class EventFake implements \Illuminate\Contracts\Events\Dispatcher, Fake {}

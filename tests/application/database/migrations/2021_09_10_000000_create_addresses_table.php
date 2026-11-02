@@ -26,6 +26,10 @@ class CreateAddressesTable extends Migration
             $table->foreignIdFor(Address::class, 'nullable_address_id')->nullable();
             $table->foreignId('foreign_id_constrained')->constrained('users');
             $table->foreignId('nullable_foreign_id_constrained')->nullable()->constrained('users');
+            $table->foreignUlid('foreign_ulid')->constrained('addresses');
+            $table->foreignUlid('nullable_foreign_ulid')->nullable()->constrained('addresses');
+            $table->foreignUuid('foreign_uuid')->constrained('addresses');
+            $table->foreignUuid('nullable_foreign_uuid')->nullable()->constrained('addresses');
         });
     }
 }

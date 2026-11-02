@@ -11,6 +11,6 @@ use function PHPStan\Testing\assertType;
 function test(FormRequest $request): void
 {
     assertType('Illuminate\Support\ValidatedInput', $request->safe());
-    assertType('array<string, mixed>', $request->safe(['key']));
+    assertType('array{key: mixed}', $request->safe(['key']));
     assertType('array<string, mixed>', $request->validated());
 }

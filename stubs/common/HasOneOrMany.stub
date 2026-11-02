@@ -69,10 +69,58 @@ abstract class HasOneOrMany extends Relation
     public function create(array $attributes = []);
 
     /**
+     * @param array<model-property<TRelatedModel>, mixed> $attributes
+     * @return TRelatedModel
+     */
+    public function createQuietly(array $attributes = []);
+
+    /**
+     * @param array<model-property<TRelatedModel>, mixed> $attributes
+     * @return TRelatedModel
+     */
+    public function forceCreate(array $attributes = []);
+
+    /**
+     * @param array<model-property<TRelatedModel>, mixed> $attributes
+     * @return TRelatedModel
+     */
+    public function forceCreateQuietly(array $attributes = []);
+
+    /**
      * Create a Collection of new instances of the related model.
      *
      * @param  iterable<array<model-property<TRelatedModel>, mixed>>  $records
      * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
      */
     public function createMany(iterable $records);
+
+    /**
+     * @param  iterable<array<model-property<TRelatedModel>, mixed>>  $records
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
+     */
+    public function createManyQuietly(iterable $records);
+
+    /**
+     * Create a Collection of new instances of the related model, allowing mass-assignment.
+     *
+     * @param  iterable<array<model-property<TRelatedModel>, mixed>>  $records
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
+     */
+    public function forceCreateMany(iterable $records);
+
+    /**
+     * @param  iterable<array<model-property<TRelatedModel>, mixed>>  $records
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
+     */
+    public function forceCreateManyQuietly(iterable $records);
+
+    /**
+     * Insert new records or update the existing ones.
+     *
+     * @param  array<model-property<TRelatedModel>, scalar|object|null>|array<int, array<model-property<TRelatedModel>, mixed>>  $values
+     * @param  model-property<TRelatedModel>|array<int, model-property<TRelatedModel>>  $uniqueBy
+     * @param  array<int|model-property<TRelatedModel>, mixed>|null  $update
+     * @return int
+     */
+    public function upsert(array $values, $uniqueBy, $update = null);
 }

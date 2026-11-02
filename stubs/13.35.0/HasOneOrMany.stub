@@ -1,0 +1,138 @@
+<?php
+
+namespace Illuminate\Database\Eloquent\Relations;
+
+/**
+ * @template TRelatedModel of \Illuminate\Database\Eloquent\Model
+ * @template TDeclaringModel of \Illuminate\Database\Eloquent\Model
+ * @template TResult
+ *
+ * @extends \Illuminate\Database\Eloquent\Relations\Relation<TRelatedModel, TDeclaringModel, TResult>
+ */
+abstract class HasOneOrMany extends Relation
+{
+    /**
+     * @param array<model-property<TRelatedModel>, mixed> $attributes
+     * @phpstan-return TRelatedModel
+     */
+    public function make(array $attributes = []);
+
+    /**
+     * Find a model by its primary key or return new instance of the related model.
+     *
+     * @param  mixed  $id
+     * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
+     * @return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> : TRelatedModel)
+     */
+    public function findOrNew($id, $columns = ['*']);
+
+    /**
+     * Get the first related model record matching the attributes or instantiate it.
+     *
+     * @param  array<model-property<TRelatedModel>, mixed>  $attributes
+     * @param  array<model-property<TRelatedModel>, mixed>  $values
+     * @return TRelatedModel
+     */
+    public function firstOrNew(array $attributes = [], array $values = []);
+
+    /**
+     * Get the first related record matching the attributes or create it.
+     *
+     * @param  array<model-property<TRelatedModel>, mixed>  $attributes
+     * @param  array<model-property<TRelatedModel>, mixed>  $values
+     * @return TRelatedModel
+     */
+    public function firstOrCreate(array $attributes = [], array $values = []);
+
+    /**
+     * Attempt to create the record. If a unique constraint violation occurs, attempt to find the matching record.
+     *
+     * @param  array<model-property<TRelatedModel>, mixed>  $attributes
+     * @param  array<model-property<TRelatedModel>, mixed>  $values
+     * @return TRelatedModel
+     */
+    public function createOrFirst(array $attributes = [], array $values = []);
+
+    /**
+     * Create or update a related record matching the attributes, and fill it with values.
+     *
+     * @param  array<model-property<TRelatedModel>, mixed>  $attributes
+     * @param  array<model-property<TRelatedModel>, mixed>  $values
+     * @return TRelatedModel
+     */
+    public function updateOrCreate(array $attributes = [], array $values = []);
+
+    /**
+     * Create a related record matching the attributes, or increment the existing record.
+     *
+     * @param  array<model-property<TRelatedModel>, mixed>  $attributes
+     * @param  model-property<TRelatedModel>  $column
+     * @param  float|int  $default
+     * @param  float|int  $step
+     * @param  array<model-property<TRelatedModel>, mixed>  $extra
+     * @return TRelatedModel
+     */
+    public function incrementOrCreate(array $attributes, string $column = 'count', $default = 1, $step = 1, array $extra = []);
+
+    /**
+     * @param array<model-property<TRelatedModel>, mixed> $attributes
+     * @return TRelatedModel
+     */
+    public function create(array $attributes = []);
+
+    /**
+     * @param array<model-property<TRelatedModel>, mixed> $attributes
+     * @return TRelatedModel
+     */
+    public function createQuietly(array $attributes = []);
+
+    /**
+     * @param array<model-property<TRelatedModel>, mixed> $attributes
+     * @return TRelatedModel
+     */
+    public function forceCreate(array $attributes = []);
+
+    /**
+     * @param array<model-property<TRelatedModel>, mixed> $attributes
+     * @return TRelatedModel
+     */
+    public function forceCreateQuietly(array $attributes = []);
+
+    /**
+     * Create a Collection of new instances of the related model.
+     *
+     * @param  iterable<array<model-property<TRelatedModel>, mixed>>  $records
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
+     */
+    public function createMany(iterable $records);
+
+    /**
+     * @param  iterable<array<model-property<TRelatedModel>, mixed>>  $records
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
+     */
+    public function createManyQuietly(iterable $records);
+
+    /**
+     * Create a Collection of new instances of the related model, allowing mass-assignment.
+     *
+     * @param  iterable<array<model-property<TRelatedModel>, mixed>>  $records
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
+     */
+    public function forceCreateMany(iterable $records);
+
+    /**
+     * @param  iterable<array<model-property<TRelatedModel>, mixed>>  $records
+     * @return \Illuminate\Database\Eloquent\Collection<int, TRelatedModel>
+     */
+    public function forceCreateManyQuietly(iterable $records);
+
+    /**
+     * Insert new records or update the existing ones.
+     *
+     * @param  array<model-property<TRelatedModel>, scalar|object|null>|array<int, array<model-property<TRelatedModel>, mixed>>  $values
+     * @param  model-property<TRelatedModel>|array<int, model-property<TRelatedModel>>  $uniqueBy
+     * @param  array<int|model-property<TRelatedModel>, mixed>|null  $update
+     * @return int
+     */
+    public function upsert(array $values, $uniqueBy, $update = null);
+}

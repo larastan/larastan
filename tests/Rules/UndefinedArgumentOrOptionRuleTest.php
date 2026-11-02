@@ -23,15 +23,19 @@ class UndefinedArgumentOrOptionRuleTest extends RuleTestCase
             __DIR__ . '/../application/app/Console/Commands/FooCommand.php',
             __DIR__ . '/../application/app/Console/Commands/BarCommand.php',
             __DIR__ . '/../application/app/Console/Commands/BazCommand.php',
+        ], []);
+    }
+
+    public function testRuleWithCommandsRegisteredByTheConsoleKernel(): void
+    {
+        $this->analyse([
+            __DIR__ . '/../application/app/Console/Commands/RegisteredInKernelCommand.php',
+            __DIR__ . '/../application/app/Console/LoadedCommands/LoadedByKernelCommand.php',
         ], [
-            [
-                'Command "foo" does not have argument "foobar".',
-                22,
-            ],
-            [
-                'Command "foo" does not have option "foobar".',
-                36,
-            ],
+            ['Command "registered-in-kernel" does not have argument "undefinedArgument".', 28],
+            ['Command "registered-in-kernel" does not have option "undefinedOption".', 29],
+            ['Command "loaded-by-kernel" does not have argument "undefinedArgument".', 28],
+            ['Command "loaded-by-kernel" does not have option "undefinedOption".', 29],
         ]);
     }
 

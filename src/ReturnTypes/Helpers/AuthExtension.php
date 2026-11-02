@@ -23,6 +23,10 @@ final class AuthExtension implements DynamicFunctionReturnTypeExtension
 {
     use Concerns\HasContainer;
 
+    private ObjectType|null $factoryType = null;
+
+    private Type|null $guardType = null;
+
     public function isFunctionSupported(FunctionReflection $functionReflection): bool
     {
         return $functionReflection->getName() === 'auth';
@@ -38,12 +42,12 @@ final class AuthExtension implements DynamicFunctionReturnTypeExtension
             $class = $this->resolve(Factory::class);
 
             if ($class === null) {
-                return new ObjectType(Factory::class);
+                return $this->factoryType ??= new ObjectType(Factory::class);
             }
 
             return new ObjectType($class::class);
         }
 
-        return TypeCombinator::intersect(new ObjectType(Guard::class), new ObjectType(StatefulGuard::class));
+        return $this->guardType ??= TypeCombinator::intersect(new ObjectType(Guard::class), new ObjectType(StatefulGuard::class));
     }
 }

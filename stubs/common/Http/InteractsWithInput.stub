@@ -1,0 +1,36 @@
+<?php
+
+namespace Illuminate\Http\Concerns;
+
+trait InteractsWithInput
+{
+    /**
+     * Retrieve a query string item from the request.
+     *
+     * @template TDefault
+     * @param  string|null  $key
+     * @param  TDefault  $default
+     * @return ($key is null ? array : __benevolent<string|array|TDefault>)
+     */
+    public function query($key = null, $default = null);
+
+    /**
+     * Retrieve a request payload item from the request.
+     *
+     * @template TDefault
+     * @param  string|null  $key
+     * @param  TDefault  $default
+     * @return ($key is null ? array : __benevolent<string|array|TDefault>)
+     */
+    public function post($key = null, $default = null);
+
+    /**
+     * Retrieve a server variable from the request.
+     *
+     * @template TDefault
+     * @param  string|null  $key
+     * @param  TDefault  $default
+     * @return ($key is null ? array<string, float|int|list<string>|string> : float|int|list<string>|string|TDefault)
+     */
+    public function server($key = null, $default = null);
+}

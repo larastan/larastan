@@ -5,11 +5,10 @@ namespace Illuminate\Support\Facades;
 abstract class Facade {}
 
 /**
- * @mixin \Redis
- * @mixin \Illuminate\Redis\RedisManager
- * @mixin \Illuminate\Contracts\Redis\Factory
+ * @mixin \Illuminate\Cache\CacheManager
+ * @mixin \Illuminate\Cache\Repository
  */
-class Redis {}
+class Cache extends Facade {}
 
 /**
  * @mixin \Illuminate\Database\DatabaseManager
@@ -19,8 +18,20 @@ class Redis {}
 class DB extends Facade {}
 
 /**
+ * @mixin \Illuminate\Database\Schema\Builder
+ */
+class Schema extends Facade {}
+
+/**
+ * @mixin \Illuminate\Contracts\Events\Dispatcher
+ * @mixin \Illuminate\Support\Testing\Fakes\EventFake
+ */
+class Event extends Facade {}
+
+/**
  * @mixin \Illuminate\Queue\QueueManager
  * @mixin \Illuminate\Queue\Queue
+ * @mixin \Illuminate\Support\Testing\Fakes\QueueFake
  */
 class Queue extends Facade {}
 
@@ -38,3 +49,47 @@ class Request extends Facade {}
  * @mixin \Illuminate\Foundation\Console\Kernel
  */
 class Artisan extends Facade {}
+
+/**
+ * @mixin \Illuminate\Cookie\CookieJar
+ */
+class Cookie extends Facade {
+    /**
+     * Retrieve a cookie from the request.
+     *
+     * @template TDefault
+     * @param  string|null  $key
+     * @param  TDefault  $default
+     * @return ($key is null ? array<string, string> : string|TDefault)
+     */
+    public static function get($key = null, $default = null);
+}
+
+/**
+ * @mixin \Illuminate\Config\Repository
+ */
+class Config extends Facade {}
+
+/**
+ * @mixin \Illuminate\Http\Client\Factory
+ */
+class Http extends Facade {}
+
+/**
+ * @mixin \Illuminate\View\Factory
+ */
+class View extends Facade {}
+
+/**
+ * @mixin \Illuminate\Routing\Router
+ */
+class Route extends Facade {
+    /**
+     * @param  string  $uri
+     * @param  view-string  $view
+     * @param  array<string, mixed>  $data
+     * @param  array<string, string>  $headers
+     * @return \Illuminate\Routing\Route
+     */
+    public static function view($uri, $view, $data = [], int $status = 200, array $headers = []);
+}

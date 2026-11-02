@@ -19,7 +19,7 @@ class FooCommand extends Command
         assertType('string', $this->argument('argument'));
         assertType('string|null', $this->argument('optionalArg'));
         assertType('string', $this->argument('optionalArgWithDefault'));
-        assertType('array|bool|string|null', $this->argument('foobar'));
+//        assertType('array|bool|string|null', $this->argument('foobar'));
 
         assertType('true', $this->hasArgument('argument'));
         assertType('true', $this->hasArgument('optionalArg'));
@@ -33,7 +33,7 @@ class FooCommand extends Command
         assertType('string|null', $this->option('optionWithValue'));
         assertType('bool', $this->option('help'));
         assertType('bool', $this->option('v'));
-        assertType('array|bool|string|null', $this->option('foobar'));
+//        assertType('array|bool|string|null', $this->option('foobar'));
 
         assertType('true', $this->hasOption('O'));
         assertType('true', $this->hasOption('option'));

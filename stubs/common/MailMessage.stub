@@ -1,0 +1,45 @@
+<?php
+
+namespace Illuminate\Notifications\Messages;
+
+class MailMessage
+{
+    /** @var array<array-key, mixed>|string|null */
+    public $view;
+
+    /** @var array{}|array{0: string|array<array-key, mixed>, 1?: string|null, ...} */
+    public $from;
+
+    /** @var array<array-key, array{0: string|array<array-key, mixed>, 1?: string|null, ...}> */
+    public $replyTo;
+
+    /** @var array<array-key, array{file: string|\Illuminate\Contracts\Mail\Attachable|\Illuminate\Mail\Attachment, options: array<array-key, mixed>, ...}> */
+    public $attachments;
+
+    /** @var array<array-key, array{data: string|resource, name: string, options: array<array-key, mixed>, ...}> */
+    public $rawAttachments;
+
+    /** @return \Illuminate\Support\HtmlString|string */
+    public function render();
+
+    /**
+     * @param  view-string  $view
+     * @param  array<string, mixed>  $data
+     * @return $this
+     */
+    public function markdown($view, array $data = []);
+
+    /**
+     * @param  view-string[]|view-string  $view
+     * @param  array<string, mixed>  $data
+     * @return $this
+     */
+    public function view($view, array $data = []);
+
+    /**
+     * @param  view-string  $textView
+     * @param  array<string, mixed>  $data
+     * @return $this
+     */
+    public function text($textView, array $data = []);
+}

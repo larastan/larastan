@@ -1,0 +1,12 @@
+<?php
+
+namespace Illuminate\Support\Facades;
+
+/**
+ * @method static int hexists(string $key, string $field)
+ * @method static string|null zscore(string $key, mixed $member)
+ *
+ * @mixin \Illuminate\Redis\Connections\PredisConnection
+ * @mixin \Illuminate\Redis\RedisManager
+ */
+class Redis extends Facade {}

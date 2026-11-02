@@ -17,6 +17,8 @@ use function count;
 
 class AppExtension implements DynamicFunctionReturnTypeExtension
 {
+    private ObjectType|null $applicationType = null;
+
     public function __construct(
         private AppMakeHelper $appMakeHelper,
     ) {
@@ -33,7 +35,7 @@ class AppExtension implements DynamicFunctionReturnTypeExtension
         Scope $scope,
     ): Type {
         if (count($functionCall->getArgs()) === 0) {
-            return new ObjectType(Application::class);
+            return $this->applicationType ??= new ObjectType(Application::class);
         }
 
         return $this->appMakeHelper->resolveTypeFromCall($functionCall, $scope);

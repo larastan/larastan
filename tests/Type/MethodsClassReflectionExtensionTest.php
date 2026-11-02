@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Type;
+namespace Tests\Type;
 
 use PHPStan\Testing\TypeInferenceTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 use function version_compare;
 
@@ -25,7 +26,7 @@ class MethodsClassReflectionExtensionTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/macros-php-81.php');
     }
 
-    /** @dataProvider dataFileAsserts */
+    #[DataProvider('dataFileAsserts')]
     public function testFileAsserts(
         string $assertType,
         string $file,

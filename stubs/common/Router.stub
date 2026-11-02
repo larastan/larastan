@@ -1,0 +1,17 @@
+<?php
+
+namespace Illuminate\Routing;
+
+class Router
+{
+    /**
+     * Register a new route that returns a view.
+     *
+     * @param  string  $uri
+     * @param  view-string  $view
+     * @param  array<string, mixed>  $data
+     * @param  array<string, string>  $headers
+     * @return \Illuminate\Routing\Route
+     */
+    public function view($uri, $view, $data = [], int $status = 200, array $headers = []);
+}

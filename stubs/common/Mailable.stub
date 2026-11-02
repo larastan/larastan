@@ -2,6 +2,8 @@
 
 namespace Illuminate\Mail;
 
+class Attachment {}
+
 class Mailable
 {
     /**
@@ -17,4 +19,11 @@ class Mailable
      * @return $this
      */
     public function view($view, array $data = []);
+
+    /**
+     * @param  view-string  $textView
+     * @param  array<string, mixed>  $data
+     * @return $this
+     */
+    public function text($textView, array $data = []);
 }

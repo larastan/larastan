@@ -1,0 +1,11 @@
+<?php
+
+namespace Illuminate\Contracts\Cache;
+
+interface Factory {}
+
+interface LockProvider {}
+
+interface Store {}
+
+interface Repository {}

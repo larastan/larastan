@@ -6,3 +6,7 @@ namespace Illuminate\View;
 class View implements \ArrayAccess, \Illuminate\Contracts\Support\Htmlable, \Illuminate\Contracts\View\View
 {
 }
+
+class Factory implements \Illuminate\Contracts\View\Factory
+{
+}

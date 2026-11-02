@@ -5,11 +5,12 @@ namespace CustomEloquentBuilder;
 use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 use function PHPStan\Testing\assertType;
 
-function test(FooModel $foo, NonGenericBuilder $nonGenericBuilder): void
+function test(FooModel $foo, NonGenericBuilder $nonGenericBuilder, ModelWithNonGenericBuilder $nonGenericModel): void
 {
     assertType('CustomEloquentBuilder\ModelWithCustomBuilder|null', ModelWithCustomBuilder::where('email', 'bar')->first());
     assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::where('email', 'bar'));
@@ -20,7 +21,7 @@ function test(FooModel $foo, NonGenericBuilder $nonGenericBuilder): void
     assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::whereEmail(['bar'])->categories(['foo'])->whereType(['bar']));
     assertType('CustomEloquentBuilder\ModelWithCustomBuilder|null', ModelWithCustomBuilder::whereEmail(['bar'])->type('foo')->first());
     assertType('CustomEloquentBuilder\ModelWithCustomBuilder|null', ModelWithCustomBuilder::whereEmail(['bar'])->type('foo')->first());
-    assertType('int', $foo->customModels()->count());
+    assertType('int<0, max>', $foo->customModels()->count());
     assertType('bool', $foo->customModels()->exists());
     assertType('Illuminate\Database\Eloquent\Collection<int, CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::get());
     assertType('CustomEloquentBuilder\ModelWithCustomBuilder', ModelWithCustomBuilder::firstOrFail());
@@ -52,7 +53,45 @@ function test(FooModel $foo, NonGenericBuilder $nonGenericBuilder): void
 
     assertType('CustomEloquentBuilder\ModelWithNonGenericBuilder|null', ModelWithNonGenericBuilder::where('email', 'bar')->first());
     assertType('CustomEloquentBuilder\ChildNonGenericBuilder', ModelWithNonGenericBuilder::where('email', 'bar')->orderBy('email'));
+    assertType('CustomEloquentBuilder\ChildNonGenericBuilder', ModelWithNonGenericBuilder::whereEmail('bar'));
+    assertType('CustomEloquentBuilder\ChildNonGenericBuilder', ModelWithNonGenericBuilder::query());
+    assertType('list<string>', ModelWithNonGenericBuilder::query()->getColumns());
+    assertType('CustomEloquentBuilder\ChildNonGenericBuilder', $nonGenericModel->newQuery());
+    assertType('CustomEloquentBuilder\ChildNonGenericBuilder', ModelWithNonGenericBuilder::withTrashed());
+    assertType('Illuminate\Database\Eloquent\Relations\HasMany<CustomEloquentBuilder\ModelWithNonGenericBuilder, CustomEloquentBuilder\FooModel>', $foo->nonGenericModels()->wherePublishable());
     assertType('Illuminate\Database\Eloquent\Collection<int, CustomEloquentBuilder\ModelWithNonGenericBuilder>', ModelWithNonGenericBuilder::get());
+
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->whereNotIn('id', [1]));
+    assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::whereNotIn('id', [1]));
+    assertType('string', ModelWithCustomBuilder::query()->getColumns());
+    assertType('CustomEloquentBuilder\ChildNonGenericBuilder', ModelWithNonGenericBuilder::query()->whereNotIn('id', [1]));
+    assertType('int<0, max>', ModelWithCustomBuilder::query()->count());
+
+    // A method that only exists on the custom query builder returned by toBase(), forwarded
+    // via __call. Resolving this requires reading the actual query builder class off the
+    // Eloquent builder's own `toBase()` return type, instead of assuming
+    // Illuminate\Database\Query\Builder.
+    assertType('CustomEloquentBuilder\ModelWithCustomQueryBuilder|null', ModelWithCustomQueryBuilder::onlyOnCustomQueryBuilder()->first());
+
+    // exists() is in BuilderHelper::$passthru and is overridden on the custom query builder
+    // (not on Illuminate\Database\Query\Builder itself). Forwarding it must still return its
+    // own declared scalar return type, not fall back to assuming the Eloquent builder itself
+    // (i.e. treating it as chainable) just because it isn't declared on Laravel's native
+    // query builder.
+    assertType('bool', ModelWithCustomQueryBuilder::where('email', 'bar')->exists());
+
+    // count() is also passthru, but unlike exists() it is NOT overridden on the custom query
+    // builder - it is only inherited from Illuminate\Database\Query\Builder. The declaring
+    // class comparison must account for this (the custom query builder "is" its parent),
+    // not require an exact class name match, or this would wrongly fall back to the
+    // chainable Eloquent builder type instead of the real passthru return type.
+    assertType('int<0, max>', ModelWithCustomQueryBuilder::query()->count());
+}
+
+/** @param ChildNonGenericBuilder|ModelWithNonGenericBuilder $builder */
+function testNonGenericBuilderDocBlock($builder): void
+{
+    assertType('CustomEloquentBuilder\ChildNonGenericBuilder', $builder);
 }
 
 /**
@@ -79,6 +118,12 @@ class ModelWithCustomBuilder extends Model
         return $query->where(['email' => $foo]);
     }
 
+    /** @param CustomEloquentBuilder<ModelWithCustomBuilder> $query */
+    public function scopeLockForUpdate(CustomEloquentBuilder $query): CustomEloquentBuilder
+    {
+        return $query;
+    }
+
     /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
     public function testCustomBuilderReturnType(): CustomEloquentBuilder
     {
@@ -102,10 +147,29 @@ class ModelWithCustomBuilder extends Model
  */
 class CustomEloquentBuilder extends Builder
 {
+    public function testScopeCollision(): void
+    {
+        assertType('CustomEloquentBuilder\CustomEloquentBuilder<TModel of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>', $this->lockForUpdate());
+    }
+
+    public function wherePublishable(): static
+    {
+        assertType('$this(CustomEloquentBuilder\CustomEloquentBuilder<TModel of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->whereNotIn('status', ['draft', 'archived']));
+
+        return $this->whereNotIn('status', ['draft', 'archived']);
+    }
+
+    public function wherePublished(): static
+    {
+        assertType('$this(CustomEloquentBuilder\CustomEloquentBuilder<TModel of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->where('status', 'published'));
+
+        return $this->where('status', 'published');
+    }
+
     /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
     public function category(string $category): CustomEloquentBuilder
     {
-        assertType('static(CustomEloquentBuilder\CustomEloquentBuilder<TModel of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->where('category', $category));
+        assertType('$this(CustomEloquentBuilder\CustomEloquentBuilder<TModel of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->where('category', $category));
 
         return $this->where('category', $category);
     }
@@ -113,7 +177,7 @@ class CustomEloquentBuilder extends Builder
     /** @phpstan-return CustomEloquentBuilder<ModelWithCustomBuilder> */
     public function type(string $type): CustomEloquentBuilder
     {
-        assertType('static(CustomEloquentBuilder\CustomEloquentBuilder<TModel of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->where(['type' => $type]));
+        assertType('$this(CustomEloquentBuilder\CustomEloquentBuilder<TModel of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->where(['type' => $type]));
 
         return $this->where(['type' => $type]);
     }
@@ -125,7 +189,7 @@ class CustomEloquentBuilder extends Builder
      */
     public function categories(array $categories): CustomEloquentBuilder
     {
-        assertType('CustomEloquentBuilder\CustomEloquentBuilder<TModel of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>', $this->whereIn('category', $categories));
+        assertType('$this(CustomEloquentBuilder\CustomEloquentBuilder<TModel of CustomEloquentBuilder\ModelWithCustomBuilder (class CustomEloquentBuilder\CustomEloquentBuilder, argument)>)', $this->whereIn('category', $categories));
 
         return $this->whereIn('category', $categories);
     }
@@ -137,6 +201,12 @@ class FooModel extends Model
     public function customModels(): HasMany
     {
         return $this->hasMany(ModelWithCustomBuilder::class);
+    }
+
+    /** @return HasMany<ModelWithNonGenericBuilder, $this> */
+    public function nonGenericModels(): HasMany
+    {
+        return $this->hasMany(ModelWithNonGenericBuilder::class);
     }
 }
 
@@ -168,6 +238,8 @@ class CustomBuilder2 extends Builder
 
 class ModelWithNonGenericBuilder extends Model
 {
+    use SoftDeletes;
+
     /**
      * @param  \Illuminate\Database\Query\Builder  $query
      * @return ChildNonGenericBuilder
@@ -183,8 +255,60 @@ class ModelWithNonGenericBuilder extends Model
  */
 class NonGenericBuilder extends Builder
 {
+    public function wherePublishable(): static
+    {
+        assertType('$this(CustomEloquentBuilder\NonGenericBuilder)', $this->whereNotIn('status', ['draft', 'archived']));
+
+        return $this->whereNotIn('status', ['draft', 'archived']);
+    }
 }
 
 class ChildNonGenericBuilder extends NonGenericBuilder
 {
+    /** @return list<string> */
+    public function getColumns(): array
+    {
+        return [];
+    }
+}
+
+/**
+ * A query builder with a method that does not exist on Illuminate\Database\Query\Builder.
+ * Mirrors packages (e.g. mongodb/laravel-mongodb) that replace the query layer entirely.
+ */
+class CustomQueryBuilder extends \Illuminate\Database\Query\Builder
+{
+    public function onlyOnCustomQueryBuilder(): static
+    {
+        return $this;
+    }
+
+    /** Overridden here, like mongodb/laravel-mongodb's own Query\Builder::exists() does. */
+    public function exists(): bool
+    {
+        return true;
+    }
+}
+
+/**
+ * @template TModel of ModelWithCustomQueryBuilder
+ *
+ * @extends Builder<TModel>
+ *
+ * @method CustomQueryBuilder toBase()
+ */
+class EloquentBuilderWithCustomQueryBuilder extends Builder
+{
+}
+
+class ModelWithCustomQueryBuilder extends Model
+{
+    /**
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @return EloquentBuilderWithCustomQueryBuilder<ModelWithCustomQueryBuilder>
+     */
+    public function newEloquentBuilder($query): EloquentBuilderWithCustomQueryBuilder
+    {
+        return new EloquentBuilderWithCustomQueryBuilder($query);
+    }
 }

@@ -14,6 +14,10 @@ Builder::macro('globalCustomMacro', static function (string $arg = 'foobar', int
     return $arg;
 });
 
+Builder::macro('getColumns', static function (): string {
+    return 'macro';
+});
+
 \Illuminate\Database\Query\Builder::macro('globalCustomDatabaseQueryMacro', static function (string $arg = 'foobar', int $b = 5): string {
     return $arg;
 });

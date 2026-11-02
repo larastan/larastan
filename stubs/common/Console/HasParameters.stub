@@ -1,0 +1,20 @@
+<?php
+
+namespace Illuminate\Console\Concerns;
+
+trait HasParameters
+{
+    /**
+     * Get the console command options.
+     *
+     * @return (\Symfony\Component\Console\Input\InputOption|array{
+     *    0: non-empty-string,
+     *    1?: string|non-empty-array<string>|null,
+     *    2?: int-mask-of<\Symfony\Component\Console\Input\InputOption::VALUE_*>,
+     *    3?: string,
+     *    4?: mixed,
+     *    5?: list<string|\Symfony\Component\Console\Completion\Suggestion>|\Closure(\Symfony\Component\Console\Completion\CompletionInput, \Symfony\Component\Console\Completion\CompletionSuggestions): list<string|\Symfony\Component\Console\Completion\Suggestion>
+     * })[]
+     */
+    protected function getOptions();
+}

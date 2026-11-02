@@ -1,0 +1,9 @@
+<?php
+
+namespace Illuminate\Notifications;
+
+class Notification
+{
+    /** @var string|null */
+    public $id;
+}

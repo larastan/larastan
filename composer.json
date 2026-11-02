@@ -1,44 +1,40 @@
 {
     "name": "larastan/larastan",
     "type": "phpstan-extension",
-    "description": "Larastan - Discover bugs in your code without running it. A phpstan/phpstan wrapper for Laravel",
+    "description": "Larastan - Discover bugs in your code without running it. A phpstan/phpstan extension for Laravel",
     "keywords": ["laravel", "larastan", "phpstan", "php", "package", "static analysis", "code analysis", "code analyse"],
     "license": "MIT",
     "authors": [
         {
             "name": "Can Vural",
             "email": "can9119@gmail.com"
-        },
-        {
-            "name": "Nuno Maduro",
-            "email": "enunomaduro@gmail.com"
         }
     ],
     "require": {
         "php": "^8.2",
-        "ext-json": "*",
-        "iamcal/sql-parser": "^0.5.0",
-        "illuminate/console": "^11.42.2 || ^12.0",
-        "illuminate/container": "^11.42.2 || ^12.0",
-        "illuminate/contracts": "^11.42.2 || ^12.0",
-        "illuminate/database": "^11.42.2 || ^12.0",
-        "illuminate/http": "^11.42.2 || ^12.0",
-        "illuminate/pipeline": "^11.42.2 || ^12.0",
-        "illuminate/support": "^11.42.2 || ^12.0",
-        "phpstan/phpstan": "^2.1.8"
+        "iamcal/sql-parser": "^0.7.0",
+        "illuminate/console": "^11.44.2 || ^12.4.1 || ^13",
+        "illuminate/container": "^11.44.2 || ^12.4.1 || ^13",
+        "illuminate/contracts": "^11.44.2 || ^12.4.1 || ^13",
+        "illuminate/database": "^11.44.2 || ^12.4.1 || ^13",
+        "illuminate/http": "^11.44.2 || ^12.4.1 || ^13",
+        "illuminate/pipeline": "^11.44.2 || ^12.4.1 || ^13",
+        "illuminate/support": "^11.44.2 || ^12.4.1 || ^13",
+        "phpstan/phpstan": "^2.3.0"
     },
     "require-dev": {
-        "doctrine/coding-standard": "^12.0",
-        "nikic/php-parser": "^5.3",
-        "laravel/framework": "^11.42.2 || ^12.0",
-        "mockery/mockery": "^1.6",
-        "orchestra/canvas": "^v9.1.3 || ^10.0",
-        "orchestra/testbench-core": "^9.5.2 || ^10.0",
-        "phpstan/phpstan-deprecation-rules": "^2.0.0",
-        "phpunit/phpunit": "^10.5.35 || ^11.3.6"
+        "doctrine/coding-standard": "^14",
+        "nikic/php-parser": "^5.4",
+        "laravel/framework": "^11.44.2 || ^12.7.2 || ^13",
+        "mockery/mockery": "^1.6.12",
+        "orchestra/canvas": "^v9.2.2 || ^10.0.1 || ^11",
+        "orchestra/testbench-core": "^9.12.0 || ^10.1 || ^11",
+        "phpstan/phpstan-deprecation-rules": "^2.0.1",
+        "phpunit/phpunit": "^10.5.35 || ^11.5.15 || ^12.5.8 || ^13.3.0"
     },
     "suggest": {
-        "orchestra/testbench": "Using Larastan for analysing a package needs Testbench"
+        "orchestra/testbench": "Using Larastan for analysing a package needs Testbench",
+        "phpmyadmin/sql-parser": "Install to enable Larastan's optional phpMyAdmin-based SQL parser automatically"
     },
     "autoload-dev": {
         "psr-4": {
@@ -62,6 +58,18 @@
         "preferred-install": "dist",
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "policy": {
+            "advisories": {
+                "ignore-id": [
+                    "PKSA-3r5d-mb8f-1qw9",
+                    "PKSA-4hy6-m98j-dz9f",
+                    "PKSA-b41t-wbzk-9q51",
+                    "PKSA-d5tc-s1qs-h781",
+                    "PKSA-m5cs-t1y6-qpcs",
+                    "PKSA-mdq4-51ck-6kdq"
+                ]
+            }
         }
     },
     "extra": {
@@ -76,7 +84,7 @@
     },
     "scripts": {
         "test:cs": "phpcs",
-        "test:types": "phpstan analyse --ansi --memory-limit 256M",
+        "test:types": "phpstan analyse --ansi --memory-limit 300M",
         "test:unit": "phpunit --colors=always -d memory_limit=1408M",
         "test": [
             "@test:types",

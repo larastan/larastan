@@ -1,0 +1,61 @@
+<?php
+
+namespace Illuminate\Support;
+
+/**
+ * @template TKey of array-key
+ * @template TValue
+ *
+ * @extends \IteratorAggregate<TKey, TValue>
+ * @extends \Illuminate\Contracts\Support\Arrayable<TKey, TValue>
+ */
+interface Enumerable extends \Countable, \IteratorAggregate, \JsonSerializable, \Illuminate\Contracts\Support\Arrayable
+{
+    /**
+     * Search the collection for a given value and return the corresponding key if successful.
+     *
+     * @param  TValue|callable(TValue,TKey): bool  $value
+     * @param  bool  $strict
+     * @return (TKey is int ? int|false : string|false)
+     */
+    public function search($value, $strict = false);
+
+    /**
+    * Get one or a specified number of items randomly from the collection.
+    *
+    * @param  (callable(TValue): int)|int|null  $number
+    * @return ($number is null ? TValue : static<int, TValue>)
+    *
+    * @throws \InvalidArgumentException
+    */
+   public function random($number = null);
+
+   /**
+    * Create a collection by using this collection for keys and another for its values.
+    *
+    * @template TCombineValue
+    *
+    * @param  \Illuminate\Contracts\Support\Arrayable<array-key, TCombineValue>|iterable<array-key, TCombineValue>  $values
+    * @return static<array-key, TCombineValue>
+    */
+   public function combine($values);
+
+   /**
+    * Chunk the collection into chunks with a callback.
+    *
+    * @param  callable(TValue, TKey, static<int, TValue>): bool  $callback
+    * @return static<int, static<TKey, TValue>>
+    */
+   public function chunkWhile(callable $callback);
+
+   /**
+    * Get an array with the values of a given key.
+    *
+    * @template TPluckValueReturn
+    * @template TPluckKeyReturn of array-key
+    * @param  int|string|array<array-key, string>|(\Closure(TValue): TPluckValueReturn)|null  $value
+    * @param  string|(\Closure(TValue): TPluckKeyReturn)|null  $key
+    * @return ($value is \Closure ? ($key is \Closure ? \Illuminate\Support\Collection<TPluckKeyReturn, TPluckValueReturn> : \Illuminate\Support\Collection<array-key, TPluckValueReturn>) : ($key is \Closure ? \Illuminate\Support\Collection<TPluckKeyReturn, mixed> : \Illuminate\Support\Collection<array-key, mixed>))
+    */
+   public function pluck($value, $key = null);
+}

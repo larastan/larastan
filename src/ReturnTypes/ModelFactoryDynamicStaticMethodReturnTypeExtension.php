@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Larastan\Larastan\ReturnTypes;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Larastan\Larastan\Types\Factory\ModelFactoryType;
 use PhpParser\Node\Expr\StaticCall;
@@ -19,12 +20,10 @@ use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\FloatType;
 use PHPStan\Type\IntegerType;
-use PHPStan\Type\IntersectionType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\UnionType;
 
 use function array_map;
 use function class_exists;
@@ -63,16 +62,16 @@ final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements Dynami
         } else {
             $argType = $scope->getType($methodCall->getArgs()[0]->value);
 
-            $numericTypes = [
+            $numericType = TypeCombinator::union(
                 new IntegerType(),
                 new FloatType(),
-                new IntersectionType([
+                TypeCombinator::intersect(
                     new StringType(),
                     new AccessoryNumericStringType(),
-                ]),
-            ];
+                ),
+            );
 
-            $isSingleModel = (new UnionType($numericTypes))->isSuperTypeOf($argType)->negate()->result;
+            $isSingleModel = $numericType->isSuperTypeOf($argType)->negate()->result;
         }
 
         return TypeCombinator::union(...array_map(
@@ -93,12 +92,41 @@ final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements Dynami
         ClassReflection $modelReflection,
         Scope $scope,
     ): ClassReflection|null {
-        $factoryReflection = $this->getFactoryFromNewFactoryMethod($modelReflection, $scope);
+        // An override of newFactory() is the most specific declaration. When the model does not
+        // override it, factory() returns the HasFactory TFactory generic.
+        $factoryReflection = $this->getFactoryFromMethodReturnType($modelReflection, 'newFactory', $scope);
 
         if ($factoryReflection !== null) {
             return $factoryReflection;
         }
 
+        // TFactory is bound on the class that uses HasFactory. A subclass that inherits the trait
+        // gets the factory of its own conventional name, unless it inherits the $factory property
+        // or a factory() override.
+        if (! $this->isFactoryGenericBoundTo($modelReflection)) {
+            return $this->getFactoryFromNamingConvention($modelReflection)
+                ?? $this->getFactoryFromMethodReturnType($modelReflection, 'factory', $scope);
+        }
+
+        return $this->getFactoryFromMethodReturnType($modelReflection, 'factory', $scope)
+            ?? $this->getFactoryFromNamingConvention($modelReflection);
+    }
+
+    private function isFactoryGenericBoundTo(ClassReflection $modelReflection): bool
+    {
+        if (! $modelReflection->hasNativeMethod('factory')) {
+            return false;
+        }
+
+        $factoryMethod = $modelReflection->getNativeReflection()->getMethod('factory');
+
+        return $factoryMethod->getDeclaringClass()->getName() === $modelReflection->getName()
+            || $factoryMethod->getFileName() !== $this->reflectionProvider->getClass(HasFactory::class)->getFileName()
+            || ($modelReflection->hasNativeProperty('factory') && $modelReflection->getNativeProperty('factory')->isStatic());
+    }
+
+    private function getFactoryFromNamingConvention(ClassReflection $modelReflection): ClassReflection|null
+    {
         /** @phpstan-ignore argument.type (guaranteed to be model class-string) */
         $factoryClass = Factory::resolveFactoryName($modelReflection->getName());
 
@@ -109,15 +137,16 @@ final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements Dynami
         return null;
     }
 
-    private function getFactoryFromNewFactoryMethod(
+    private function getFactoryFromMethodReturnType(
         ClassReflection $modelReflection,
+        string $methodName,
         Scope $scope,
     ): ClassReflection|null {
-        if (! $modelReflection->hasMethod('newFactory')) {
+        if (! $modelReflection->hasMethod($methodName)) {
             return null;
         }
 
-        $factoryReflections = $modelReflection->getMethod('newFactory', $scope)
+        $factoryReflections = $modelReflection->getMethod($methodName, $scope)
             ->getVariants()[0]
             ->getReturnType()
             ->getObjectClassReflections();

@@ -4,6 +4,7 @@
 # https://git-scm.com/docs/gitattributes
 #
 /.github              export-ignore
+/assets               export-ignore
 /docs                 export-ignore
 /e2e                  export-ignore
 /tests                export-ignore

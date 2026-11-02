@@ -17,10 +17,20 @@ use PHPStan\Type\ObjectType;
 use function array_map;
 use function count;
 use function in_array;
+use function is_string;
+use function ltrim;
 
 /** @implements Rule<MethodCall> */
 class OctaneCompatibilityRule implements Rule
 {
+    private const FORBIDDEN_SERVICES = [
+        'request',
+        'config',
+        'Illuminate\Http\Request',
+        'Illuminate\Contracts\Config\Repository',
+        'Illuminate\Config\Repository',
+    ];
+
     public function getNodeType(): string
     {
         return MethodCall::class;
@@ -62,11 +72,17 @@ class OctaneCompatibilityRule implements Rule
             return [];
         }
 
-        if (! $args[1]->value instanceof Node\Expr\Closure) {
+        // An arrow function is not a subclass of Closure in PHP-Parser, the two
+        // are siblings under Expr, so the arrow form of the same binding has to
+        // be matched explicitly. Both carry getParams() and getStmts().
+        if (
+            ! $args[1]->value instanceof Node\Expr\Closure &&
+            ! $args[1]->value instanceof Node\Expr\ArrowFunction
+        ) {
             return [];
         }
 
-        /** @var Node\Expr\Closure $closure */
+        /** @var Node\Expr\ArrowFunction|Node\Expr\Closure $closure */
         $closure = $args[1]->value;
 
         /** @var Node\Param[] $closureParams */
@@ -76,7 +92,7 @@ class OctaneCompatibilityRule implements Rule
         // is container, second is parameters. If no parameter
         // is given we will check for the usage of `$this->app`
         if (count($closureParams) < 1) {
-            return $this->checkForThisAppUsage($scope, $closure);
+            return $this->checkForThisAppUsage($closure);
         }
 
         // Using `$app` with `bind` is ok, so we return early
@@ -88,41 +104,24 @@ class OctaneCompatibilityRule implements Rule
             return [];
         }
 
+        if (! is_string($closureParams[0]->var->name)) {
+            return [];
+        }
+
         $containerParameterName = $closureParams[0]->var->name;
 
-        $nodes = (new NodeFinder())->find($closure->getStmts(), static function (Node $node) use ($containerParameterName): bool {
+        $nodes = (new NodeFinder())->find($closure->getStmts(), function (Node $node) use ($containerParameterName, $scope): bool {
             if (! $node instanceof Node\Expr\New_) {
                 return false;
             }
 
-            if (count($node->getArgs()) < 1) {
-                return false;
+            foreach ($node->getArgs() as $arg) {
+                if ($this->isForbiddenInjection($arg->value, $containerParameterName, $scope)) {
+                    return true;
+                }
             }
 
-            if (! $node->getArgs()[0]->value instanceof Node\Expr\Variable && ! $node->getArgs()[0]->value instanceof Node\Expr\ArrayDimFetch) {
-                return false;
-            }
-
-            if ($node->getArgs()[0]->value instanceof Node\Expr\ArrayDimFetch) {
-                /** @var Node\Expr\Variable $var */
-                $var = $node->getArgs()[0]->value->var;
-
-                if ($var->name !== $containerParameterName) {
-                    return false;
-                }
-
-                if ($node->getArgs()[0]->value->dim === null) {
-                    return false;
-                }
-
-                if (! $node->getArgs()[0]->value->dim instanceof Node\Scalar\String_) {
-                    return false;
-                }
-
-                return in_array($node->getArgs()[0]->value->dim->value, ['request', 'config'], true);
-            }
-
-            return $node->getArgs()[0]->value->name === $containerParameterName;
+            return false;
         });
 
         if (count($nodes) > 0) {
@@ -132,8 +131,62 @@ class OctaneCompatibilityRule implements Rule
         return [];
     }
 
-    /** @return RuleError[] */
-    private function checkForThisAppUsage(Scope $scope, Node\Expr\Closure $closure): array
+    private function isForbiddenInjection(Node\Expr $expr, string $containerParameterName, Scope $scope): bool
+    {
+        if ($expr instanceof Node\Expr\Variable && $expr->name === $containerParameterName) {
+            return true;
+        }
+
+        if ($expr instanceof Node\Expr\ArrayDimFetch) {
+            if (! $expr->var instanceof Node\Expr\Variable || $expr->var->name !== $containerParameterName) {
+                return false;
+            }
+
+            if ($expr->dim === null) {
+                return false;
+            }
+
+            return $this->isForbiddenServiceKey($expr->dim, $scope);
+        }
+
+        if ($expr instanceof Node\Expr\MethodCall) {
+            if (! $expr->var instanceof Node\Expr\Variable || $expr->var->name !== $containerParameterName) {
+                return false;
+            }
+
+            if (! $expr->name instanceof Node\Identifier || ! in_array($expr->name->name, ['make', 'get', 'makeWith'], true)) {
+                return false;
+            }
+
+            $args = $expr->getArgs();
+
+            if (count($args) < 1) {
+                return false;
+            }
+
+            return $this->isForbiddenServiceKey($args[0]->value, $scope);
+        }
+
+        return false;
+    }
+
+    private function isForbiddenServiceKey(Node\Expr $dim, Scope $scope): bool
+    {
+        foreach ($scope->getType($dim)->getConstantStrings() as $constantString) {
+            if (in_array(ltrim($constantString->getValue(), '\\'), self::FORBIDDEN_SERVICES, true)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param Node\Expr\ArrowFunction|Node\Expr\Closure $closure
+     *
+     * @return RuleError[]
+     */
+    private function checkForThisAppUsage(Node\Expr $closure): array
     {
         $nodes = (new NodeFinder())->find($closure->getStmts(), static function (Node $node): bool {
             return $node instanceof Node\Expr\PropertyFetch &&

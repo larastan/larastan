@@ -51,7 +51,7 @@ abstract class Model implements \ArrayAccess, \Illuminate\Contracts\Support\Arra
     /**
      * Update the model in the database.
      *
-     * @param  array<model-property<static>, mixed>  $options
+     * @param  array{touch?: bool|null}  $options
      * @return bool
      */
     public function save(array $options = []);
@@ -66,10 +66,78 @@ abstract class Model implements \ArrayAccess, \Illuminate\Contracts\Support\Arra
     public function update(array $attributes = [], array $options = []);
 
     /**
+     * Fill the model with an array of attributes.
+     *
+     * @param  array<model-property<static>, mixed>  $attributes
+     * @return $this
+     */
+    public function fill(array $attributes);
+
+    /**
+     * Fill the model with an array of attributes. Force mass assignment.
+     *
+     * @param  array<model-property<static>, mixed>  $attributes
+     * @return $this
+     */
+    public function forceFill(array $attributes);
+
+    /**
+     * Increment a column's value by a given amount.
+     *
+     * Returns false when an "updating" listener cancels the update.
+     *
+     * @param  string  $column
+     * @param  float|int  $amount
+     * @param  array<string, mixed>  $extra
+     * @return int|false
+     */
+    protected function increment($column, $amount = 1, array $extra = []);
+
+    /**
+     * Decrement a column's value by a given amount.
+     *
+     * Returns false when an "updating" listener cancels the update.
+     *
+     * @param  string  $column
+     * @param  float|int  $amount
+     * @param  array<string, mixed>  $extra
+     * @return int|false
+     */
+    protected function decrement($column, $amount = 1, array $extra = []);
+
+    /** @return builder-of<static> */
+    public static function query();
+
+    /** @return builder-of<static> */
+    public function newQuery();
+
+    /** @return builder-of<static> */
+    public function newModelQuery();
+
+    /** @return builder-of<static> */
+    public function newQueryWithoutRelationships();
+
+    /** @return builder-of<static> */
+    public function newQueryWithoutScopes();
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Scope|string $scope
+     * @return builder-of<static>
+     */
+    public function newQueryWithoutScope($scope);
+
+    /**
+     * @param array<mixed>|int|string $ids
+     * @return builder-of<static>
+     */
+    public function newQueryForRestoration($ids);
+
+    /**
      * Begin querying a model with eager loading.
      *
-     * @param  string|array<int|string, (\Closure)|string|array<int|string, string>>  $relations
-     * @return \Illuminate\Database\Eloquent\Builder<static>
+     * @template TRelation of string
+     * @param  string|array<int|TRelation, (\Closure(relation-of<static, TRelation>): mixed)|string|array<mixed>>  $relations
+     * @return builder-of<static>
      */
     public static function with($relations);
 
@@ -79,6 +147,24 @@ abstract class Model implements \ArrayAccess, \Illuminate\Contracts\Support\Arra
      * @return array<string, mixed>
      */
     public function toArray();
+
+    /**
+     * Eager load relations on the model.
+     *
+     * @template TRelation of string
+     * @param  string|array<int|TRelation, (\Closure(relation-of<static, TRelation>): mixed)|string|array<mixed>>  $relations
+     * @return $this
+     */
+    public function load($relations);
+
+    /**
+     * Eager load relations on the model if they are not already eager loaded.
+     *
+     * @template TRelation of string
+     * @param  string|array<int|TRelation, (\Closure(relation-of<static, TRelation>): mixed)|string|array<mixed>>  $relations
+     * @return $this
+     */
+    public function loadMissing($relations);
 }
 
 /**

@@ -1,0 +1,23 @@
+<?php
+
+namespace Illuminate\Database\Eloquent\Concerns;
+
+/** @phpstan-require-extends \Illuminate\Database\Eloquent\Model */
+trait HasEvents
+{
+    /**
+     * The event map for the model.
+     *
+     * Allows for object-based events for native Eloquent events.
+     *
+     * @var array<string, class-string>
+     */
+    protected $dispatchesEvents = [];
+
+    /**
+     * Get the event map for the model.
+     *
+     * @return array<string, class-string>
+     */
+    public function dispatchesEvents();
+}

@@ -9,6 +9,8 @@ use Larastan\Larastan\Methods\RedirectResponseMethodsClassReflectionExtension;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Testing\PHPStanTestCase;
 use PHPStan\Type\VerbosityLevel;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 class RedirectResponseMethodsClassReflectionExtensionTest extends PHPStanTestCase
 {
@@ -24,10 +26,8 @@ class RedirectResponseMethodsClassReflectionExtensionTest extends PHPStanTestCas
         $this->reflectionExtension = new RedirectResponseMethodsClassReflectionExtension();
     }
 
-    /**
-     * @test
-     * @dataProvider greenMethodProvider
-     */
+    #[Test]
+    #[DataProvider('greenMethodProvider')]
     public function it_will_find_methods_starting_with_with(string $methodName): void
     {
         $requestClass = $this->reflectionProvider->getClass(RedirectResponse::class);
@@ -35,10 +35,8 @@ class RedirectResponseMethodsClassReflectionExtensionTest extends PHPStanTestCas
         $this->assertTrue($this->reflectionExtension->hasMethod($requestClass, $methodName));
     }
 
-    /**
-     * @test
-     * @dataProvider redMethodProvider
-     */
+    #[Test]
+    #[DataProvider('redMethodProvider')]
     public function it_will_not_find_methods(string $methodName): void
     {
         $requestClass = $this->reflectionProvider->getClass(RedirectResponse::class);
@@ -46,10 +44,8 @@ class RedirectResponseMethodsClassReflectionExtensionTest extends PHPStanTestCas
         $this->assertFalse($this->reflectionExtension->hasMethod($requestClass, $methodName));
     }
 
-    /**
-     * @test
-     * @dataProvider greenMethodProvider
-     */
+    #[Test]
+    #[DataProvider('greenMethodProvider')]
     public function it_will_have_correct_method_reflection(string $methodName): void
     {
         $requestClass       = $this->reflectionProvider->getClass(RedirectResponse::class);

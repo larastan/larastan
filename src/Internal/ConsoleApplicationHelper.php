@@ -16,7 +16,6 @@ use PHPStan\Type\NullType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\UnionType;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 
@@ -78,6 +77,7 @@ final class ConsoleApplicationHelper
             try {
                 $options = $command->getDefinition()->getOptions();
                 $builder = ConstantArrayTypeBuilder::createEmpty();
+
                 foreach ($options as $name => $option) {
                     $argumentType = $this->getOptionType($scope, $option);
                     $builder->setOffsetValueType(new ConstantStringType($name), $argumentType);
@@ -96,7 +96,7 @@ final class ConsoleApplicationHelper
     {
         if (! $option->acceptValue()) {
             if ($option->isNegatable()) {
-                return new UnionType([new BooleanType(), new NullType()]);
+                return TypeCombinator::addNull(new BooleanType());
             }
 
             return new BooleanType();

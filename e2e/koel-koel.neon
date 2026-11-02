@@ -1,3 +1,0 @@
-includes:
-	- ../../e2e/phpstan.neon.dist
-	- koel-koel.baseline.neon

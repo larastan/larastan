@@ -2,6 +2,10 @@
 
 set -e
 
+# Laravel versions that are past their security support window have unpatched
+# security advisories, which Composer >= 2.9 refuses to install by default.
+export COMPOSER_NO_SECURITY_BLOCKING=1
+
 LARAVEL_VERSION_CONSTRAINT="${1:-^11.0}"
 
 echo "Install Laravel ${LARAVEL_VERSION_CONSTRAINT}"

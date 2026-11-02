@@ -8,8 +8,10 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Larastan\Larastan\Reflection\ReflectionHelper;
+use PHPStan\Analyser\DeclarationDependencyTracker;
 use PHPStan\PhpDoc\TypeStringResolver;
 use PHPStan\Reflection\ClassReflection;
+use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\Generic\GenericObjectType;
@@ -20,6 +22,7 @@ use PHPStan\Type\TypeCombinator;
 use ReflectionException;
 
 use function array_key_exists;
+use function array_keys;
 use function array_map;
 use function count;
 use function in_array;
@@ -31,11 +34,23 @@ class ModelPropertyHelper
     /** @var array<string, SchemaTable> */
     private array $tables = [];
 
+    private bool $migrationsLoaded = false;
+
+    /** @var array<string, bool> */
+    private array $accessorCache = [];
+
+    private ObjectType|null $attributeType = null;
+
+    private GenericObjectType|null $genericAttributeType = null;
+
     public function __construct(
         private TypeStringResolver $stringResolver,
         private MigrationHelper $migrationHelper,
         private SquashedMigrationHelper $squashedMigrationHelper,
         private ModelCastHelper $modelCastHelper,
+        private MigrationCache $migrationCache,
+        private DeclarationDependencyTracker $declarationDependencyTracker,
+        private ReflectionProvider $reflectionProvider,
     ) {
     }
 
@@ -69,8 +84,7 @@ class ModelPropertyHelper
         }
 
         try {
-            /** @var Model $modelInstance */
-            $modelInstance = $classReflectionOrTable->getNativeReflection()->newInstanceWithoutConstructor();
+            $modelInstance = ModelHelper::newInstanceWithoutConstructor($classReflectionOrTable);
         } catch (ReflectionException) {
             return false;
         }
@@ -88,11 +102,26 @@ class ModelPropertyHelper
         return array_key_exists($propertyName, $this->tables[$tableName]->columns);
     }
 
+    /** @return list<string> */
+    public function getDatabasePropertyNames(ClassReflection $classReflection): array
+    {
+        if (! $this->migrationsLoaded()) {
+            $this->loadMigrations();
+        }
+
+        try {
+            $model = ModelHelper::newInstanceWithoutConstructor($classReflection);
+        } catch (ReflectionException) {
+            return [];
+        }
+
+        return array_keys($this->tables[$model->getTable()]->columns ?? []);
+    }
+
     public function getDatabaseProperty(ClassReflection $classReflection, string $propertyName): ModelProperty
     {
         try {
-            /** @var Model $modelInstance */
-            $modelInstance = $classReflection->getNativeReflection()->newInstanceWithoutConstructor();
+            $modelInstance = ModelHelper::newInstanceWithoutConstructor($classReflection);
         } catch (ReflectionException) {
             throw new ShouldNotHappenException();
         }
@@ -113,7 +142,13 @@ class ModelPropertyHelper
         $column = $this->tables[$tableName]->columns[$propertyName];
 
         if ($this->hasDate($modelInstance, $propertyName)) {
-            $readableType = $this->modelCastHelper->getDateType();
+            $cast = $this->modelCastHelper->getCastForProperty($classReflection, $propertyName);
+
+            $readableType = $cast !== null
+                ? $this->modelCastHelper->getReadableType($cast, $this->stringResolver->resolve($column->readableType))
+                : $this->modelCastHelper->getDateType();
+            // Eloquent runs fromDateTime() on date columns before applying any cast,
+            // so the cast's setter type does not apply to assignments.
             $writableType = TypeCombinator::union($this->modelCastHelper->getDateType(), new StringType());
         } else {
             $cast = $this->modelCastHelper->getCastForProperty($classReflection, $propertyName);
@@ -165,6 +200,17 @@ class ModelPropertyHelper
             return false;
         }
 
+        $cacheKey = $classReflection->getCacheKey() . '-' . $propertyName . '-' . ($strictGenerics ? '1' : '0');
+
+        if (array_key_exists($cacheKey, $this->accessorCache)) {
+            return $this->accessorCache[$cacheKey];
+        }
+
+        return $this->accessorCache[$cacheKey] = $this->resolveHasAccessor($classReflection, $propertyName, $strictGenerics);
+    }
+
+    private function resolveHasAccessor(ClassReflection $classReflection, string $propertyName, bool $strictGenerics): bool
+    {
         $camelCase = Str::camel($propertyName);
 
         if (! $classReflection->hasNativeMethod($camelCase)) {
@@ -179,31 +225,41 @@ class ModelPropertyHelper
 
         $returnType = $methodReflection->getVariants()[0]->getReturnType();
 
+        $this->attributeType ??= new ObjectType(Attribute::class);
+
         if (! $strictGenerics) {
-            return (new ObjectType(Attribute::class))->isSuperTypeOf($returnType)->yes();
+            return $this->attributeType->isSuperTypeOf($returnType)->yes();
         }
 
         if ($returnType->getObjectClassReflections() === [] || ! $returnType->getObjectClassReflections()[0]->isGeneric()) {
             return false;
         }
 
-        return (new GenericObjectType(Attribute::class, [new MixedType(), new MixedType()]))->isSuperTypeOf($returnType)->yes();
+        $this->genericAttributeType ??= new GenericObjectType(Attribute::class, [new MixedType(), new MixedType()]);
+
+        return $this->genericAttributeType->isSuperTypeOf($returnType)->yes();
     }
 
     public function getAccessor(ClassReflection $classReflection, string $propertyName): ModelProperty
     {
-        $studlyName = Str::studly($propertyName);
+        $camelCase = Str::camel($propertyName);
 
-        if ($classReflection->hasNativeMethod($studlyName)) {
-            $methodReflection = $classReflection->getNativeMethod($studlyName);
+        if ($classReflection->hasNativeMethod($camelCase)) {
+            $methodReflection = $classReflection->getNativeMethod($camelCase);
 
-            $returnType = $methodReflection->getVariants()[0]->getReturnType();
+            if (! $methodReflection->isPublic() && ! $methodReflection->isPrivate()) {
+                $returnType = $methodReflection->getVariants()[0]->getReturnType();
 
-            return new ModelProperty(
-                $classReflection,
-                $returnType->getTemplateType(Attribute::class, 'TGet'),
-                $returnType->getTemplateType(Attribute::class, 'TSet'),
-            );
+                $this->attributeType ??= new ObjectType(Attribute::class);
+
+                if ($this->attributeType->isSuperTypeOf($returnType)->yes()) {
+                    return new ModelProperty(
+                        $classReflection,
+                        $returnType->getTemplateType(Attribute::class, 'TGet'),
+                        $returnType->getTemplateType(Attribute::class, 'TSet'),
+                    );
+                }
+            }
         }
 
         $method = $classReflection->getNativeMethod('get' . Str::studly($propertyName) . 'Attribute');
@@ -217,16 +273,47 @@ class ModelPropertyHelper
 
     private function migrationsLoaded(): bool
     {
-        return count($this->tables) > 0;
+        return $this->migrationsLoaded;
     }
 
     private function loadMigrations(): void
     {
-        // First try to create tables from squashed migrations, if there are any
-        // Then scan the normal migration files for further changes to tables.
-        $tables = $this->squashedMigrationHelper->initializeTables();
+        $this->migrationsLoaded = true;
 
-        $this->tables = $this->migrationHelper->initializeTables($tables);
+        // Every file using a model depends on Model, so the dependency is declared once, on Model itself
+        $this->trackSchemaDependency($this->reflectionProvider->getClass(Model::class));
+
+        $migrationFiles = $this->migrationHelper->getMigrationFiles();
+        $schemaFiles    = $this->squashedMigrationHelper->getSchemaFiles();
+
+        $this->tables = $this->migrationCache->remember(
+            $migrationFiles,
+            $schemaFiles,
+            function () {
+                // First try to create tables from squashed migrations, if there are any
+                // Then scan the normal migration files for further changes to tables.
+                $tables = $this->squashedMigrationHelper->initializeTables();
+
+                return $this->migrationHelper->initializeTables($tables);
+            },
+        );
+    }
+
+    /**
+     * What the class declares depends on the database schema, which comes from
+     * the migrations and the schema dumps. Each file depending on the class is
+     * analysed again when one of them is created, changed or deleted.
+     */
+    public function trackSchemaDependency(ClassReflection $classReflection): void
+    {
+        foreach ($this->migrationHelper->getMigrationDirectories() as $directory) {
+            // The pattern is matched case-sensitively, the migrations are scanned case-insensitively
+            $this->declarationDependencyTracker->trackDirectoryDependency($classReflection, $directory, '*.[pP][hH][pP]');
+        }
+
+        foreach ($this->squashedMigrationHelper->getSchemaDirectories() as $directory) {
+            $this->declarationDependencyTracker->trackDirectoryDependency($classReflection, $directory);
+        }
     }
 
     private function hasDate(Model $modelInstance, string $propertyName): bool

@@ -8,6 +8,8 @@ use App\User;
 
 class ModelMake
 {
+    use ModelMakeTrait;
+
     public function make(): User
     {
         return User::make();
@@ -18,5 +20,10 @@ class ModelMake
         $class = User::class;
 
         return $class::make();
+    }
+
+    public function makeFromTrait(): User
+    {
+        return $this->makeInTrait();
     }
 }

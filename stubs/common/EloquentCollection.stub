@@ -14,6 +14,31 @@ use Illuminate\Support\Collection as BaseCollection;
 class Collection extends BaseCollection implements QueueableCollection
 {
     /**
+     * Get the Eloquent query builder from the collection.
+     *
+     * @return builder-of<TModel>
+     */
+    public function toQuery();
+
+    /**
+     * Load a set of relationships onto the collection.
+     *
+     * @template TRelation of string
+     * @param  string|array<int|TRelation, (callable(relation-of<TModel, TRelation>): mixed)|string|array<mixed>>  $relations
+     * @return $this
+     */
+    public function load($relations);
+
+    /**
+     * Load a set of relationships onto the collection if they are not already eager loaded.
+     *
+     * @template TRelation of string
+     * @param  string|array<int|TRelation, (callable(relation-of<TModel, TRelation>): mixed)|string|array<mixed>>  $relations
+     * @return $this
+     */
+    public function loadMissing($relations);
+
+    /**
      * Find a model in the collection by key.
      *
      * @template TFindDefault
@@ -25,25 +50,54 @@ class Collection extends BaseCollection implements QueueableCollection
     public function find($key, $default = null);
 
     /**
+     * Determine if a key exists in the collection.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TModel|(callable(TModel, TKey): bool)|string|int  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return bool
+     */
+    public function contains($key, $operator = null, $value = null);
+
+    /**
+     * Merge the collection with the given items.
+     * Integer keys are renumbered, see \Illuminate\Support\Collection::shift().
+     *
+     * @param  iterable<array-key, TModel>  $items
+     * @return static<(array<TKey, mixed> is array<int, mixed> ? int : TKey), TModel>
+     */
+    public function merge($items);
+
+    /**
+     * Partition the collection into two arrays using the given callback or key.
+     * The value type is listed before the callable on purpose, see \Illuminate\Support\Collection::contains().
+     *
+     * @param  TModel|(callable(TModel, TKey): bool)|string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return \Illuminate\Support\Collection<int<0, 1>, static<TKey, TModel>>
+     */
+    public function partition($key, $operator = null, $value = null);
+
+    /**
      * Run a map over each of the items.
      *
      * @template TMapValue
      *
      * @param  callable(TModel, TKey): TMapValue  $callback
-     * @return (TMapValue is \Illuminate\Database\Eloquent\Model ? static<TKey, TMapValue> : \Illuminate\Support\Collection<TKey, TMapValue>)
+     * @return (array{TMapValue} is array{\Illuminate\Database\Eloquent\Model} ? static<TKey, TMapValue&\Illuminate\Database\Eloquent\Model> : \Illuminate\Support\Collection<TKey, TMapValue>)
      */
     public function map(callable $callback);
 
     /**
      * Run an associative map over each of the items.
      *
-     * The callback should return an associative array with a single key / value pair.
-     *
      * @template TMapWithKeysKey of array-key
      * @template TMapWithKeysValue
      *
      * @param  callable(TModel, TKey): array<TMapWithKeysKey, TMapWithKeysValue>  $callback
-     * @return (TMapWithKeysValue is \Illuminate\Database\Eloquent\Model ? static<TMapWithKeysKey, TMapWithKeysValue> : \Illuminate\Support\Collection<TMapWithKeysKey, TMapWithKeysValue>)
+     * @return (array{TMapWithKeysValue} is array{\Illuminate\Database\Eloquent\Model} ? static<TMapWithKeysKey, TMapWithKeysValue&\Illuminate\Database\Eloquent\Model> : \Illuminate\Support\Collection<TMapWithKeysKey, TMapWithKeysValue>)
      */
     public function mapWithKeys(callable $callback);
 }

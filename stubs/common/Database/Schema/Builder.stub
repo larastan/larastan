@@ -1,0 +1,12 @@
+<?php
+
+namespace Illuminate\Database\Schema;
+
+class Builder
+{
+    /**
+     * @param string $table
+     * @return list<string>
+     */
+    public function getColumnListing($table);
+}

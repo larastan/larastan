@@ -1,0 +1,14 @@
+<?php
+
+namespace Illuminate\Database\Migrations;
+
+class Migrator
+{
+    /**
+     * @template TReturn
+     * @param string|null $name
+     * @param callable(): TReturn $callback
+     * @return TReturn
+     */
+    public function usingConnection($name, callable $callback);
+}

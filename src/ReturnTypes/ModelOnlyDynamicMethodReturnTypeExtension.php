@@ -72,8 +72,8 @@ final class ModelOnlyDynamicMethodReturnTypeExtension implements DynamicMethodRe
         $array = array_reduce($keys, static function ($array, $key) use ($model, $scope) {
             $name = $key->getValue();
 
-            $valueType = $model->hasProperty($name)->yes()
-                ? $model->getProperty($name, $scope)->getReadableType()
+            $valueType = $model->hasInstanceProperty($name)->yes()
+                ? $model->getInstanceProperty($name, $scope)->getReadableType()
                 : new NullType();
 
             $array->setOffsetValueType($key, $valueType);

@@ -10,7 +10,14 @@ use Throwable;
 
 use function PHPStan\Testing\assertType;
 
-function test(?int $value = 0): void
+/**
+ * @param int|null     $value
+ * @param int|(\Closure(mixed): string) $intOrClosure
+ *
+ * @return void
+ * @throws Throwable
+ */
+function test(?int $value = 0, int|\Closure $intOrClosure = 0, int|\Closure $intOrClosureWithNoDocBlock = 0): void
 {
     assertType('Illuminate\Foundation\Application', app());
     assertType('Larastan\Larastan\ApplicationResolver', app(ApplicationResolver::class));
@@ -123,13 +130,13 @@ function test(?int $value = 0): void
 
     assertType('Illuminate\Support\HigherOrderTapProxy<App\User>', tap(new User()));
     assertType('App\User', tap(new User())->update(['name' => 'Taylor Otwell']));
-    assertType('Illuminate\Contracts\Validation\Validator&Illuminate\Validation\Validator', tap(validator([], []))->addReplacers());
+    assertType('Illuminate\Validation\Validator', tap(validator([], []))->addReplacers());
 
     assertType('string', url('/path'));
     assertType('Illuminate\Contracts\Routing\UrlGenerator', url());
 
     assertType('Illuminate\Contracts\Validation\Factory', validator());
-    assertType('Illuminate\Contracts\Validation\Validator&Illuminate\Validation\Validator', validator(['foo' => 'bar'], ['foo' => 'required']));
+    assertType('Illuminate\Validation\Validator', validator(['foo' => 'bar'], ['foo' => 'required']));
     assertType('array', validator(['foo' => 'bar'], ['foo' => 'required'])->valid());
 
     assertType('App\User|null', value(function (): ?User {
@@ -137,9 +144,16 @@ function test(?int $value = 0): void
     }));
 
     assertType('5', value(5));
+    assertType('int|string', value($intOrClosure));
+    assertType('mixed', value($intOrClosureWithNoDocBlock));
+    assertType('Helpers\InvokableValue', value(new InvokableValue()));
+    assertType("'strtoupper'", value('strtoupper'));
+    assertType("array{Helpers\InvokableValue, '__invoke'}", value([new InvokableValue(), '__invoke']));
+    assertType('array{Closure(): 1}', value([fn () => 1]));
+    assertType('Illuminate\Support\Collection<int, Closure(): 1>', value(collect([fn () => 1])));
 
-    assertType('array<string, mixed>|null', transform(User::first(), fn (User $user) => $user->toArray()));
-    assertType('array<string, mixed>', transform(User::sole(), fn (User $user) => $user->toArray()));
+    assertType('array<string, mixed>|null', transform(User::first(), fn (User $user) => $user->getAttributes()));
+    assertType('array<string, mixed>', transform(User::sole(), fn (User $user) => $user->getAttributes()));
 
     // falls back to default if provided
     assertType("1|'default'", transform(optional(), fn () => 1, 'default'));
@@ -169,9 +183,12 @@ function test(?int $value = 0): void
     }
 
     assertType('bool|string|null', env('foo'));
+    assertType('bool|string|null', env('foo'));
+    assertType('int', env('foo', 120));
+    assertType('string', env('foo', ''));
+    assertType('int', env('foo', fn () => 120));
     assertType('bool|string|null', env('foo', null));
-    assertType('120|bool|string', env('foo', 120));
-    assertType('bool|string', env('foo', ''));
+    assertType('bool|string|null', env('foo', fn () => null));
 
     assertType('true', literal(true));
     assertType('int<0, 10>', literal(random_int(0,10)));
@@ -183,4 +200,32 @@ function test(?int $value = 0): void
     assertType("object{0: 'bar', 1: 'foo'}&stdClass", literal('bar', 'foo'));
     assertType("object{0: 4, bar: 'foo'}&stdClass", literal(4, bar:'foo'));
     assertType("App\User", literal(new User()));
+    assertType("array{foo: 22, bar: 'bar'}", literal(['foo' => 22, 'bar' => "bar"]));
+    assertType("object{0: 5, 1: 7}&stdClass", literal(...[5,7]));
+    assertType("object{foo: 22, bar: 'bar'}&stdClass", literal(...['foo' => 22, 'bar' => "bar"]));
+}
+
+/**
+ * @param array{loo:'loo'}|array{foo:'foo',bar:'baa'} $parameter
+ */
+function testUnion($parameter): int {
+    assertType("(object{foo: 'foo', bar: 'baa'}&stdClass)|(object{loo: 'loo'}&stdClass)", literal(...$parameter));
+
+    return 0;
+};
+
+/**
+ * @param callable(): int $intCallable
+ */
+function testCallable(callable $intCallable): void
+{
+    assertType('(callable(): int)|int', value($intCallable));
+}
+
+class InvokableValue
+{
+    public function __invoke(): int
+    {
+        return 1;
+    }
 }

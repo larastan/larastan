@@ -26,39 +26,27 @@ jobs:
       matrix:
         include:
           - repository: monicahq/monica
-            ref: a809ecb85d929e5c0d14ecc02b881e5132906337
-            php-version: "8.2"
+            ref: 6e6ec217457e946e330ba7cd3b28107f4332c7b1
+            php-version: "8.3"
             config: monicahq-monica.neon
             baseline: monicahq-monica
 
-          - repository: koel/koel
-            ref: d900c9cb26afb226f995ac63abfaf499eb85c56a
-            php-version: "8.1"
-            config: koel-koel.neon
-            baseline: koel-koel
-
-          - repository: canvural/larastan-test
-            ref: f6dddbd4916f199adc35419c6a1bd2c63ba6f734
-            php-version: "8.1"
-            config: canvural-larastan-test.neon
-            baseline: canvural-larastan-test
-
           - repository: canvural/larastan-strict-rules
-            ref: 4f658a8f9ca5334de22f733bdba1d24cbe9303a6
-            php-version: "8.1"
+            ref: d9a615fdab8fd4f70513fd8be1266b2d856d586d
+            php-version: "8.2"
             config: canvural-larastan-strict-rules.neon
             baseline: canvural-larastan-strict-rules
 
           - repository: filamentphp/filament
-            ref: 68a731e657bad430336a8cdc51f20fbe2e176254
-            php-version: "8.2"
+            ref: 4fb16cd2bb0446609312b1037dfe03fffc9abf70
+            php-version: "8.4"
             config: filamentphp-filament.neon
             baseline: filamentphp-filament
             force-phpstan-version: true
 
     steps:
       - name: "Checkout"
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v7"
         with:
           path: "larastan"
 
@@ -69,7 +57,7 @@ jobs:
           php-version: "${{ matrix.php-version }}"
 
       - name: "Checkout dependent repo"
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v7"
         with:
           repository: "${{ matrix.repository }}"
           ref: "${{ matrix.ref }}"
@@ -78,13 +66,15 @@ jobs:
       - name: "Install dependencies"
         run: |
           cd e2e/
-          composer install --no-scripts --no-interaction
-          composer config repositories.0 '{ "type": "path", "url": "../larastan" }'
+          composer config repositories.0 '{ "type": "path", "url": "../larastan", "options": { "symlink": true } }'
           composer config minimum-stability dev
+          if [ "${{ matrix.repository }}" = "monicahq/monica" ]; then
+            composer remove --dev -n tomasvotruba/bladestan
+          fi
           if [ "${{ matrix.force-phpstan-version }}" = "true" ]; then
-            composer require --dev --update-with-all-dependencies "larastan/larastan:*" "phpstan/phpstan:*"
+            composer require --dev --no-progress --update-with-all-dependencies "larastan/larastan:*" "phpstan/phpstan:*"
           else
-            composer require --dev --update-with-all-dependencies "larastan/larastan:*"
+            composer require --dev --no-progress --update-with-all-dependencies "larastan/larastan:*"
           fi
 
       - name: "Perform static analysis"
@@ -96,7 +86,7 @@ jobs:
         working-directory: e2e
         run: composer exec phpstan analyse -- -c ../larastan/e2e/${{ matrix.config }} -b ../larastan/e2e/${{ matrix.baseline }}.baseline.neon
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: ${{ failure() }}
         with:
           name: "baseline-${{ matrix.baseline }}"
@@ -108,7 +98,7 @@ jobs:
     if: ${{ always() && needs.integration-tests.result == 'failure' }}
     steps:
       - name: Merge Artifacts
-        uses: actions/upload-artifact/merge@v4
+        uses: actions/upload-artifact/merge@v7
         with:
           name: baselines
           pattern: baseline-*

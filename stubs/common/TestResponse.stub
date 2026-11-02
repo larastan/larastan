@@ -1,0 +1,14 @@
+<?php
+
+namespace Illuminate\Testing;
+
+class TestResponse
+{
+    /**
+     * Assert that the response view equals the given value.
+     *
+     * @param  view-string  $value
+     * @return $this
+     */
+    public function assertViewIs($value);
+}

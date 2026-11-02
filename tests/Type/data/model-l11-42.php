@@ -3,6 +3,7 @@
 namespace Model;
 
 use App\Account;
+use App\Comment;
 use App\Post;
 use App\PostBuilder;
 use App\Thread;
@@ -21,9 +22,29 @@ class AbstractModel extends Model
         assertType('static(Model\AbstractModel)', static::query()->create());
         return static::query()->create();
     }
+
+    public function newQueryKeepsStatic(): void
+    {
+        assertType('Illuminate\Database\Eloquent\Builder<static(Model\AbstractModel)>', $this->newQuery());
+        assertType('Illuminate\Database\Eloquent\Builder<static(Model\AbstractModel)>', $this->newModelQuery());
+        assertType('Illuminate\Database\Eloquent\Builder<static(Model\AbstractModel)>', $this->newQueryWithoutRelationships());
+        assertType('Illuminate\Database\Eloquent\Builder<static(Model\AbstractModel)>', $this->newQueryWithoutScopes());
+        assertType('Illuminate\Database\Eloquent\Builder<static(Model\AbstractModel)>', $this->newQueryWithoutScope('foo'));
+        assertType('Illuminate\Database\Eloquent\Builder<static(Model\AbstractModel)>', $this->newQueryForRestoration([1]));
+    }
 }
 
 class Child extends AbstractModel {}
+
+final class FinalModel extends Model
+{
+    public function newQueryOnFinalModel(): void
+    {
+        // `static` and the class name are the same type here, so the plain object type stays.
+        assertType('Illuminate\Database\Eloquent\Builder<Model\FinalModel>', $this->newQuery());
+        assertType('Illuminate\Database\Eloquent\Builder<Model\FinalModel>', $this->newModelQuery());
+    }
+}
 
 class Foo
 {
@@ -39,10 +60,10 @@ class Bar extends Model
 
     public function test(): void
     {
-        assertType('Illuminate\Database\Eloquent\Builder<$this(Model\Bar)>', self::query());
+        assertType('Illuminate\Database\Eloquent\Builder<Model\Bar>', self::query());
         assertType('Illuminate\Database\Eloquent\Builder<static(Model\Bar)>', static::query());
 
-        assertType('$this(Model\Bar)|null', self::query()->first());
+        assertType('Model\Bar|null', self::query()->first());
         assertType('static(Model\Bar)|null', static::query()->first());
         assertType('Illuminate\Database\Eloquent\Builder<static(Model\Bar)>', static::query()->orWhere('foo', 'bar'));
         assertType('Illuminate\Database\Eloquent\Builder<static(Model\Bar)>', static::query()->select('foo'));
@@ -114,8 +135,10 @@ function test(
         return $query->where('active', true);
     }));
 
-    assertType('int', $user->increment('counter'));
-    assertType('int', $user->decrement('counter'));
+    assertType('int|false', $user->increment('counter'));
+    assertType('int|false', $user->decrement('counter'));
+    assertType('int', $user->incrementQuietly('counter'));
+    assertType('int', $user->decrementQuietly('counter'));
 
     assertType('App\User|null', User::first());
     assertType('App\User', User::make([]));
@@ -133,8 +156,18 @@ function test(
     assertType('Illuminate\Database\Eloquent\Builder<App\Thread>', Thread::valid()->orWhereNot->valid());
     assertType('Illuminate\Database\Eloquent\Builder<App\Thread>', Thread::valid()->whereNot->valid());
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::with(['accounts' => function ($relation) {
+        assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account, App\User>', $relation);
+
         return $relation->where('active', true);
     }]));
+    $user->with([
+        'accounts' => function ($relation) {
+            assertType('(Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\User>|Illuminate\Database\Eloquent\Relations\HasMany<App\Account, App\User>)', $relation);
+        },
+        'group' => function ($relation) {
+            assertType('(Illuminate\Database\Eloquent\Relations\BelongsTo<App\Group, App\User>|Illuminate\Database\Eloquent\Relations\HasMany<App\Account, App\User>)', $relation);
+        },
+    ]);
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', (new User)->withGlobalScope('test', function () {
     }));
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', (new User)->withoutGlobalScope('test'));
@@ -148,8 +181,7 @@ function test(
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->with('accounts'));
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->with('accounts')->with('group'));
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', $user->with(['accounts' => function (Relation $relation) {
-        // TODO: fix this once we have closure parameter type changing extensions implemented
-        // assertType('Illuminate\Database\Eloquent\Relations\Relation<Illuminate\Database\Eloquent\Model>', $relation->orderBy('id'));
+        assertType('Illuminate\Database\Eloquent\Relations\HasMany<App\Account, App\User>', $relation->orderBy('id'));
     }]));
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::lockForUpdate());
     assertType('Illuminate\Database\Eloquent\Builder<App\User>', User::sharedLock());
@@ -175,23 +207,19 @@ function test(
     assertType('Illuminate\Database\Eloquent\Builder<App\Thread>', Thread::valid()->dumpRawSql());
 
     User::has('accounts', '=', 1, 'and', function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
+        assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
     });
 
     Post::has('users', '=', 1, 'and', function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
+        assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
     });
 
     User::doesntHave('accounts', 'and', function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
+        assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
     });
 
     Post::doesntHave('users', 'and', function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
+        assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
     });
 
     User::where(function (Builder $query) {
@@ -211,113 +239,91 @@ function test(
     });
 
     User::whereHas('accounts', function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
+        assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
     });
 
     Post::whereHas('users', function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
+        assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
     });
 
-    User::withWhereHas('accounts', function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<*>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
+    User::withWhereHas('accounts', function (Builder|Relation $query) {
+        assertType('Illuminate\Database\Eloquent\Builder<App\Account>|Illuminate\Database\Eloquent\Relations\HasMany<App\Account, App\User>', $query);
     });
 
-    Post::withWhereHas('users', function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<*>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
+    Post::withWhereHas('users', function (Builder|Relation $query) {
+        assertType('Illuminate\Database\Eloquent\Builder<App\User>|Illuminate\Database\Eloquent\Relations\BelongsToMany<App\User, App\Post, Illuminate\Database\Eloquent\Relations\Pivot, \'pivot\'>', $query);
     });
 
     User::orWhereHas('accounts', function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
+        assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
     });
 
     Post::orWhereHas('users', function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
+        assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
     });
 
-    User::hasMorph('accounts', [], '=', 1, 'and', function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
+    Comment::hasMorph('commentable', [Account::class], '=', 1, 'and', function (Builder $query) {
+        assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
     });
 
-    Post::hasMorph('users', [], '=', 1, 'and', function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
+    Comment::hasMorph('commentable', [User::class], '=', 1, 'and', function (Builder $query) {
+        assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
     });
 
-    User::doesntHaveMorph('accounts', [], 'and', function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
+    Comment::doesntHaveMorph('commentable', [Account::class], 'and', function (Builder $query) {
+        assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
     });
 
-    Post::doesntHaveMorph('users', [], 'and', function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
+    Comment::doesntHaveMorph('commentable', [User::class], 'and', function (Builder $query) {
+        assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
     });
 
-    User::whereHasMorph('accounts', [], function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
+    Comment::whereHasMorph('commentable', [Account::class], function (Builder $query) {
+        assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
     });
 
-    Post::whereHasMorph('users', [], function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
+    Comment::whereHasMorph('commentable', [User::class], function (Builder $query) {
+        assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
     });
 
-    User::orWhereHasMorph('accounts', [], function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
+    Comment::orWhereHasMorph('commentable', [Account::class], function (Builder $query) {
+        assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
     });
 
-    Post::orWhereHasMorph('users', [], function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
+    Comment::orWhereHasMorph('commentable', [User::class], function (Builder $query) {
+        assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
     });
 
-    User::whereDoesntHaveMorph('accounts', [], function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
+    Comment::whereDoesntHaveMorph('commentable', [Account::class], function (Builder $query) {
+        assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
     });
 
-    Post::whereDoesntHaveMorph('users', [], function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
+    Comment::whereDoesntHaveMorph('commentable', [User::class], function (Builder $query) {
+        assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
     });
 
-    User::orWhereDoesntHaveMorph('accounts', [], function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
+    Comment::orWhereDoesntHaveMorph('commentable', [Account::class], function (Builder $query) {
+        assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
     });
 
-    Post::orWhereDoesntHaveMorph('users', [], function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
+    Comment::orWhereDoesntHaveMorph('commentable', [User::class], function (Builder $query) {
+        assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
     });
 
     User::whereDoesntHave('accounts', function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
+        assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
     });
 
     Post::whereDoesntHave('users', function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
+        assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
     });
 
     User::orWhereDoesntHave('accounts', function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
+        assertType('Illuminate\Database\Eloquent\Builder<App\Account>', $query);
     });
 
     Post::orWhereDoesntHave('users', function (Builder $query) {
-        assertType('Illuminate\Database\Eloquent\Builder<Illuminate\Database\Eloquent\Model>', $query);
-        //assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
+        assertType('Illuminate\Database\Eloquent\Builder<App\User>', $query);
     });
 
     User::firstWhere(function (Builder $query) {

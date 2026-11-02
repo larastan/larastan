@@ -3,4 +3,12 @@
 namespace Illuminate\Database\Eloquent\Concerns;
 
 /** @phpstan-require-extends \Illuminate\Database\Eloquent\Model */
-trait HasRelationships {}
+trait HasRelationships
+{
+    /**
+     * Get the relationships that are touched on save.
+     *
+     * @return list<string>
+     */
+    public function getTouchedRelations();
+}

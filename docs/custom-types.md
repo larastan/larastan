@@ -22,13 +22,25 @@ public function renderView(string $view): View
     return view($view);
 }
 ```
-Now, whenever you call `renderView`, Larastan will try to check whether 
+Now, whenever you call `renderView`, Larastan will try to check whether
 the given string is a valid blade view.
 
 
 If the string is not an existing blade view, the following error will be displayed by Larastan.
 ```
-Parameter #1 $view of method TestClass::renderView() expects view-string, string given.  
+Parameter #1 $view of method TestClass::renderView() expects view-string, string given.
+```
+
+Larastan also checks the `view`, `html`, `text`, and `markdown` constructor arguments of
+`Illuminate\Mail\Mailables\Content`, including named arguments. These arguments accept a
+view name or `null`. The `htmlString` argument contains rendered HTML and is not checked
+as a view name.
+
+When working with packages, all vendor-prefixed paths like `acme::example` may fail. As packages don't contain a Laravel app, the default skeleton from `orchestra/testbench` is used. This instance doesn't know about the package so views are not registered. Create a `testbench.yaml` file to [register](https://packages.tools/testbench#package-service-providers) your service provider to solve this issue.
+
+```yaml
+providers:
+    - Acme\AcmeServiceProvider
 ```
 
 ## model-property
@@ -38,3 +50,213 @@ All of the Laravel core methods have this type thanks to the stubs. So whenever 
 
 The actual check is done by the `ModelPropertyRule`. You can read the details [here](rules.md#ModelPropertyRule).
 
+## collection-of
+
+The `collection-of<Model>` type resolves to the appropriate collection class for a given Eloquent model. This is useful when you want to type-hint that a method returns or accepts a collection of specific model instances.
+
+Larastan automatically determines the correct collection type:
+- If the model has a custom collection (via `newCollection()` method or `CollectedBy` attribute), it resolves to that collection
+- Otherwise, it resolves to `Illuminate\Database\Eloquent\Collection<(int|string), Model>`
+
+**Example:**
+
+```php
+use App\User;
+use App\Post;
+use Illuminate\Database\Eloquent\Collection;
+
+/**
+ * @phpstan-return collection-of<User>
+ */
+function getActiveUsers(): Collection
+{
+    return User::where('active', true)->get();
+}
+
+/**
+ * @phpstan-param collection-of<Post> $posts
+ */
+function publishPosts(Collection $posts): void
+{
+    $posts->each(fn ($post) => $post->publish());
+}
+```
+
+If `User` has a custom `UserCollection`, `collection-of<User>` will resolve to `UserCollection<(int|string), User>`.
+If `Post` uses the standard Eloquent collection, `collection-of<Post>` will resolve to `Illuminate\Database\Eloquent\Collection<(int|string), Post>`.
+
+Generic collection keys use a benevolent `int|string` union, allowing compatibility with integer
+and string keys. Collections with fixed key or model types retain their declared types.
+
+Like `array<TKey, TValue>`, an optional key type can be given first: `collection-of<string, User>`
+resolves to `Illuminate\Database\Eloquent\Collection<string, User>`.
+
+**Template Support:**
+
+The `collection-of` type also works with generic templates:
+
+```php
+/**
+ * @template TModel of \Illuminate\Database\Eloquent\Model
+ */
+class ModelRepository
+{
+    /**
+     * @phpstan-param class-string<TModel> $modelClass
+     * @phpstan-return collection-of<TModel>
+     */
+    public function findAll(string $modelClass): Collection
+    {
+        return $modelClass::all();
+    }
+}
+```
+
+## builder-of
+
+The `builder-of<Model>` type resolves to the appropriate Eloquent builder class for a given Eloquent model.
+
+Larastan automatically determines the correct builder type:
+- If the model has a custom builder (via `newEloquentBuilder()` method or `UseEloquentBuilder` attribute), it resolves to that builder class
+- Otherwise, it resolves to `Illuminate\Database\Eloquent\Builder<Model>`
+
+**Example:**
+
+```php
+use App\User;
+use App\Post;
+use Illuminate\Database\Eloquent\Builder;
+
+/**
+ * @phpstan-return builder-of<User>
+ */
+function getActiveUsers(): Builder
+{
+    return User::query()->where('active', true);
+}
+
+/**
+ * @phpstan-param builder-of<Post> $postQuery
+ */
+function publishPosts(Builder $postQuery): void
+{
+    $postQuery->where('foo', 'bar')->get()->each(fn ($post) => $post->publish());
+}
+```
+
+**Template Support:**
+
+The `builder-of` type preserves `static`, `$this`, generic model arguments, and intersections. For a union of models, it produces a union of their builder types.
+
+Larastan uses it for model query methods, `Collection::toQuery()`, and relation query builders, so these methods retain custom builders.
+
+The `builder-of` type also works with generic templates:
+
+```php
+
+use Illuminate\Database\Eloquent\Builder;
+
+/**
+ * @template TModel of \Illuminate\Database\Eloquent\Model
+ */
+class ModelRepository
+{
+    /**
+     * @phpstan-param class-string<TModel> $modelClass
+     * @phpstan-return builder-of<TModel>
+     */
+    public function getQuery(string $modelClass): Builder
+    {
+        return $modelClass::query();
+    }
+}
+```
+
+**Relationship Builders:**
+
+An optional second argument selects a relationship on the first model:
+
+```php
+/** @param builder-of<User, 'accounts'> $query */
+function filterAccounts(Builder $query): void
+{
+    $query->where('active', true);
+}
+```
+
+If `User::accounts()` relates to `Account`, this resolves to `builder-of<Account>`, including any custom builder. Dotted paths such as `builder-of<User, 'posts.comments'>` resolve to the final related model's builder. Relationship methods must have a reflected return type that is an Eloquent `Relation`; Larastan uses its declared related-model type, including generic and polymorphic model types.
+
+Both model unions and relationship-name unions are supported. For example, `builder-of<User, 'posts'|'accounts'>` produces a union of the related builders. Alternatives that cannot resolve the complete path are discarded. If none resolve, the type falls back to `builder-of<User>`. A known relationship whose related-model type is only `Model` resolves to `Builder<Model>`.
+
+That fallback applies to names that are absent from a model Larastan knows. A path can also fail because it cannot be followed rather than because it is wrong: a relationship declared without generic annotations, such as a bare `public function posts(): HasMany`, only exposes the `Model` bound, so the next name in the path cannot be looked up. The model the rest of the path runs against is unknown, so the type is `Builder<Model>` instead of a builder of the first model.
+
+The second argument must be a string type. Literal names must be quoted. Relationship names, dotted paths, and eager-loading column syntax such as `'posts:id'` are supported; the column suffix does not affect the builder type. A nonconstant string falls back to the first model's builder.
+
+The relationship argument can also be a template bounded by `string`:
+
+```php
+/**
+ * @template TModel of \Illuminate\Database\Eloquent\Model
+ * @template TRelation of string
+ * @param class-string<TModel> $modelClass
+ * @param TRelation $relationship
+ * @return builder-of<TModel, TRelation>
+ */
+```
+
+Once the template resolves to a constant string or a union of constant strings, Larastan resolves the relationships. While it remains unresolved, the type falls back to `builder-of<TModel>`.
+
+## relation-of
+
+`relation-of<Model, Relationship>` resolves to the concrete Eloquent relationship
+type declared by a model's relationship method, including its generic arguments.
+
+```php
+/** @param relation-of<User, 'posts'> $relation */
+function constrainPosts($relation): void
+{
+    // HasMany<Post, User>, if User::posts() declares that relationship.
+    $relation->where('published', true);
+}
+```
+
+Both arguments can be templates. The model argument also supports model unions,
+intersections, and generic models. Relationship names support dotted paths and
+column selections: `relation-of<User, 'posts.comments:id,post_id'>` resolves the
+relationship returned by `Post::comments()`.
+
+Resolution describes a relationship created on a fresh model instance, as in eager
+loading. A relationship's declaring-model `$this` or `static` type is converted to
+its corresponding object type.
+
+If several relationships resolve, the result is a **benevolent union**. For example,
+`relation-of<User, 'posts'|'group'>` can resolve to a benevolent union of
+`HasMany<Post, User>` and `BelongsTo<Group, User>`. A closure expecting either member
+is accepted where this union is used as a callback parameter.
+
+Larastan uses this in `Model::with()`:
+
+```php
+User::with([
+    'posts' => function (HasMany $posts) {
+        $posts->where('published', true);
+    },
+    'group' => function (BelongsTo $group) {
+        $group->where('active', true);
+    },
+]);
+```
+
+Array keys share one template, so each untyped callback receives the same union.
+The association between individual keys and callbacks is not preserved; swapping
+these two callbacks between keys would also pass analysis.
+
+Dynamic names such as `string` fall back to `Relation<*, *, *>`. Explicitly typed
+callbacks for narrower subclasses are rejected in that case. A dynamic key in an
+otherwise literal array widens the shared key template for every callback.
+
+For constant names, alternatives that cannot resolve a complete relationship path
+are discarded. If none resolve, the type falls back to `Relation<*, *, *>`. Existing
+rules can still report missing relationships independently. Missing methods,
+non-relationship return types, and nullable relationship declarations do not
+establish a relationship type.

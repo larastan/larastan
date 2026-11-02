@@ -13,6 +13,14 @@ namespace Illuminate\Database\Eloquent\Relations;
 abstract class HasOneOrManyThrough extends Relation
 {
     /**
+     * Prepare the query builder for query execution.
+     *
+     * @param array<mixed> $columns
+     * @return builder-of<TRelatedModel>
+     */
+    protected function prepareQueryBuilder($columns = ['*']);
+
+    /**
      * Get a paginator for the "select" statement.
      *
      * @param  int|null  $perPage
@@ -40,7 +48,7 @@ abstract class HasOneOrManyThrough extends Relation
      * @param  int|null  $perPage
      * @param  array<int, (model-property<TRelatedModel>|'*')>  $columns
      * @param  string  $cursorName
-     * @param  string|null  $cursor
+     * @param  \Illuminate\Pagination\Cursor|string|null  $cursor
      * @return \Illuminate\Pagination\CursorPaginator<int, TRelatedModel>
      */
     public function cursorPaginate($perPage = null, $columns = ['*'], $cursorName = 'cursor', $cursor = null);
@@ -62,4 +70,54 @@ abstract class HasOneOrManyThrough extends Relation
      * @return ($id is (\Illuminate\Contracts\Support\Arrayable<array-key, mixed>|array<mixed>) ? \Illuminate\Database\Eloquent\Collection<int, TRelatedModel> : TRelatedModel)
      */
     public function findOrFail($id, $columns = ['*']);
+
+    /**
+     * Chunk the results of the query.
+     *
+     * @param  int  $count
+     * @param  callable(collection-of<int, TRelatedModel>, int): mixed  $callback
+     * @return bool
+     */
+    public function chunk($count, callable $callback);
+
+    /**
+     * Chunk the results of a query by comparing numeric IDs.
+     *
+     * @param  int  $count
+     * @param  callable(collection-of<int, TRelatedModel>, int): mixed  $callback
+     * @param  string|null  $column
+     * @param  string|null  $alias
+     * @return bool
+     */
+    public function chunkById($count, callable $callback, $column = null, $alias = null);
+
+    /**
+     * Chunk the results of a query by comparing IDs in descending order.
+     *
+     * @param  int  $count
+     * @param  callable(collection-of<int, TRelatedModel>, int): mixed  $callback
+     * @param  string|null  $column
+     * @param  string|null  $alias
+     * @return bool
+     */
+    public function chunkByIdDesc($count, callable $callback, $column = null, $alias = null);
+
+    /**
+     * Execute a callback over each item while chunking by ID.
+     *
+     * @param  callable(TRelatedModel, int): mixed  $callback
+     * @param  int  $count
+     * @param  string|null  $column
+     * @param  string|null  $alias
+     * @return bool
+     */
+    public function eachById(callable $callback, $count = 1000, $column = null, $alias = null);
+    /**
+     * Execute a callback over each item while chunking.
+     *
+     * @param  callable(TRelatedModel, int): mixed  $callback
+     * @param  int  $count
+     * @return bool
+     */
+    public function each(callable $callback, $count = 1000);
 }

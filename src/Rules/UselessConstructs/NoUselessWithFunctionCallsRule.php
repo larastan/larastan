@@ -44,6 +44,9 @@ class NoUselessWithFunctionCallsRule implements Rule
                 RuleErrorBuilder::message("Calling the helper function 'with()' with only one argument simply returns the value itself. If you want to chain methods on a construct, use '(new ClassName())->foo()' instead")
                     ->line($node->getStartLine())
                     ->identifier('larastan.uselessConstructs.with')
+                    ->fixNode($node, static function () use ($args) {
+                        return $args[0]->value;
+                    })
                     ->build(),
             ];
         }
@@ -58,6 +61,9 @@ class NoUselessWithFunctionCallsRule implements Rule
             RuleErrorBuilder::message("Calling the helper function 'with()' without a callable as the second argument simply returns the value without doing anything")
                 ->line($node->getStartLine())
                 ->identifier('larastan.uselessConstructs.with')
+                ->fixNode($node, static function () use ($args) {
+                    return $args[0]->value;
+                })
                 ->build(),
         ];
     }

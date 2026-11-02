@@ -16,7 +16,6 @@ use PHPStan\Rules\FunctionCallParametersCheck;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\TrinaryLogic;
-use PHPStan\Type\BooleanType;
 
 use function array_shift;
 use function count;
@@ -92,7 +91,8 @@ class CheckDispatchArgumentTypesCompatibleWithClassConstructorRule implements Ru
             }
 
             $firstArgType = $scope->getType($node->getArgs()[0]->value);
-            if (! (new BooleanType())->isSuperTypeOf($firstArgType)->yes()) {
+
+            if (! $firstArgType->isBoolean()->yes()) {
                 return []; // Handled by other rules
             }
         }
@@ -135,6 +135,11 @@ class CheckDispatchArgumentTypesCompatibleWithClassConstructorRule implements Ru
             'Return type of call to ' . $classDisplayName . ' constructor contains unresolvable type.',
             '',
             '', // no named arguments
+            '',
+            '',
+            '',
+            null,
+            null, // no callee reflection for parameter closure type extensions
         );
     }
 

@@ -60,7 +60,7 @@ class NoModelMakeRule implements Rule
             RuleErrorBuilder::message("Called 'Model::make()' which performs unnecessary work, use 'new Model()'.")
                 ->identifier('larastan.noModelMake')
                 ->line($node->getStartLine())
-                ->file($scope->getFile())
+                ->file($scope->getFile(), $scope->getFileDescription())
                 ->build(),
         ];
     }
@@ -71,6 +71,7 @@ class NoModelMakeRule implements Rule
     protected function isCalledOnModel(StaticCall $call, Scope $scope): bool
     {
         $class = $call->class;
+
         if ($class instanceof FullyQualified) {
             $type = new ObjectType($class->toString());
         } elseif ($class instanceof Expr) {
@@ -80,8 +81,8 @@ class NoModelMakeRule implements Rule
                 $type = new ObjectType($type->getConstantStrings()[0]->getValue());
             }
         } else {
-            // TODO can we handle relative names, do they even occur here?
-            return false;
+            // self, static and parent are left unresolved by the name resolver
+            $type = new ObjectType($scope->resolveName($class));
         }
 
         return (new ObjectType(Model::class))

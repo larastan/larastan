@@ -39,7 +39,7 @@ final class HigherOrderCollectionProxyPropertyExtension implements PropertiesCla
         /** @var Type\Type $collectionType */
         $collectionType = $activeTemplateTypeMap->getType('TCollection');
 
-        $propertyType = $modelType->getProperty($propertyName, new OutOfClassScope())->getReadableType();
+        $propertyType = $modelType->getInstanceProperty($propertyName, new OutOfClassScope())->getReadableType();
 
         if ($collectionType->getObjectClassNames() !== []) {
             $collectionClassName = $collectionType->getObjectClassNames()[0];

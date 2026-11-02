@@ -23,11 +23,12 @@ use function array_key_exists;
 use function array_map;
 use function array_merge;
 use function array_values;
+use function assert;
 use function in_array;
 
 final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflectionExtension
 {
-    /** @var array<string, MethodReflection> */
+    /** @var array<string, MethodReflection|null> */
     private array $cache = [];
 
     public function __construct(private BuilderHelper $builderHelper, private ReflectionProvider $reflectionProvider)
@@ -40,24 +41,22 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
      */
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
     {
-        if (array_key_exists($classReflection->getCacheKey() . '-' . $methodName, $this->cache)) {
-            return true;
+        $cacheKey = $classReflection->getCacheKey() . '-' . $methodName;
+
+        if (array_key_exists($cacheKey, $this->cache)) {
+            return $this->cache[$cacheKey] !== null;
         }
 
-        $methodReflection = $this->findMethod($classReflection, $methodName);
-
-        if ($methodReflection !== null) {
-            $this->cache[$classReflection->getCacheKey() . '-' . $methodName] = $methodReflection;
-
-            return true;
-        }
-
-        return false;
+        return ($this->cache[$cacheKey] = $this->findMethod($classReflection, $methodName)) !== null;
     }
 
     public function getMethod(ClassReflection $classReflection, string $methodName): MethodReflection
     {
-        return $this->cache[$classReflection->getCacheKey() . '-' . $methodName];
+        $method = $this->cache[$classReflection->getCacheKey() . '-' . $methodName];
+
+        assert($method !== null);
+
+        return $method;
     }
 
     /**
@@ -124,7 +123,7 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
                     $methodName,
                     $classReflection,
                     $ref->getVariants()[0]->getParameters(),
-                    new GenericObjectType($classReflection->getName(), [$modelType]),
+                    $this->builderHelper->getBuilderType($classReflection->getName(), $modelType),
                     $ref->getVariants()[0]->isVariadic(),
                 );
             }
@@ -139,12 +138,30 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
 
         $parametersAcceptor = $ref->getVariants()[0];
 
-        if (in_array($methodName, $this->builderHelper->passthru, true)) {
-            $returnType = $parametersAcceptor->getReturnType();
-        } elseif ($classReflection->isGeneric()) {
+        if ($classReflection->isGeneric()) {
             $returnType = new GenericObjectType($classReflection->getName(), array_values($classReflection->getTemplateTypeMap()->getTypes()));
         } else {
             $returnType = new ObjectType($classReflection->getName());
+        }
+
+        $queryBuilderReflection = $this->builderHelper->resolveQueryBuilderReflection($classReflection);
+
+        if (
+            $queryBuilderReflection->is($ref->getDeclaringClass()->getName())
+            && $queryBuilderReflection->hasNativeMethod($methodName)
+        ) {
+            if (! in_array($methodName, $this->builderHelper->getPassthru(), true)) {
+                return new EloquentBuilderMethodReflection(
+                    $methodName,
+                    $classReflection,
+                    $parametersAcceptor->getParameters(),
+                    $returnType,
+                    $parametersAcceptor->isVariadic(),
+                    true,
+                );
+            }
+
+            $returnType = $parametersAcceptor->getReturnType();
         }
 
         // Returning custom reflection

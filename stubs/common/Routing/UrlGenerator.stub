@@ -1,0 +1,33 @@
+<?php
+
+namespace Illuminate\Routing;
+
+class UrlGenerator
+{
+    /** @var string|null */
+    protected $assetRoot;
+
+    /** @var string|null */
+    protected $forcedRoot;
+
+    /** @var string|null */
+    protected $forceScheme;
+
+    /** @var string|null */
+    protected $rootNamespace;
+
+    /** @var callable|null */
+    protected $sessionResolver;
+
+    /** @var callable|null */
+    protected $keyResolver;
+
+    /** @var callable|null */
+    protected $missingNamedRouteResolver;
+
+    /** @var \Closure|null */
+    protected $formatHostUsing;
+
+    /** @var \Closure|null */
+    protected $formatPathUsing;
+}

@@ -8,7 +8,6 @@ use App\ModelWithNonGenericCollection;
 use App\ModelWithOnlyValueGenericCollection;
 use App\Role;
 use App\User;
-
 use function PHPStan\Testing\assertType;
 
 function test(): void
@@ -62,6 +61,14 @@ function test(): void
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::findOrFail([1, 2]));
     assertType('App\NonGenericCollection', ModelWithNonGenericCollection::findOrFail([1, 2]));
     assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', ModelWithOnlyValueGenericCollection::findOrFail([1, 2]));
+
+    assertType('App\AccountCollection<int, App\Account>', Account::query()->findOr([1, 2], fn () => 42));
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::query()->findOr([1, 2], fn () => 42));
+    assertType('App\NonGenericCollection', ModelWithNonGenericCollection::query()->findOr([1, 2], fn () => 42));
+    assertType('App\OnlyValueGenericCollection<App\ModelWithOnlyValueGenericCollection>', ModelWithOnlyValueGenericCollection::query()->findOr([1, 2], fn () => 42));
+
+    assertType('App\AccountCollection<int, App\Account>', Account::findOr([1, 2], fn () => 42));
+    assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::findOr([1, 2], fn () => 42));
 
     assertType('App\AccountCollection<int, App\Account>', Account::query()->get());
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', User::query()->get());
@@ -132,4 +139,18 @@ function test(): void
     assertType('App\AccountCollection<int, App\Account>', (new User)->accounts->where('active', true));
     assertType('App\AccountCollection<int, App\Account>', (new User)->accounts->filterByActive());
     assertType('Illuminate\Database\Eloquent\Collection<int, App\User>', (new User)->children->where('active', true));
+}
+
+/**
+ * @param \Illuminate\Database\Eloquent\Collection<int, \App\Post> $posts
+ * @param \Illuminate\Database\Eloquent\Collection<int, \App\Team> $teams
+ * @param \Illuminate\Database\Eloquent\Collection<int, User> $users
+ * @param \Illuminate\Database\Eloquent\Collection<int, \App\Post|\App\Team> $union
+ */
+function testToQuery($posts, $teams, $users, $union): void
+{
+    assertType('App\PostBuilder<App\Post>', $posts->toQuery());
+    assertType('App\ChildTeamBuilder', $teams->toQuery());
+    assertType('Illuminate\Database\Eloquent\Builder<App\User>', $users->toQuery());
+    assertType('App\ChildTeamBuilder|App\PostBuilder<App\Post>', $union->toQuery());
 }

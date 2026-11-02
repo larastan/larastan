@@ -47,8 +47,6 @@ class OptionDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtensi
 
         $args = $methodCall->getArgs();
 
-        $defaultReturnType = ParametersAcceptorSelector::selectFromArgs($scope, $methodCall->getArgs(), $methodReflection->getVariants())->getReturnType();
-
         if ($args === [] || $methodReflection->getName() === 'options') {
             return $this->consoleApplicationHelper->getOptions($classReflection, $scope);
         }
@@ -58,6 +56,8 @@ class OptionDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtensi
         if (count($argStrings) === 0) {
             return null;
         }
+
+        $defaultReturnType = ParametersAcceptorSelector::selectFromArgs($scope, $args, $methodReflection->getVariants())->getReturnType();
 
         $returnTypes = [];
 

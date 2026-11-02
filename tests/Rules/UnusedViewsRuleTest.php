@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Rules;
 
+use Larastan\Larastan\Collectors\UsedEmailAlternativeSyntaxViewCollector;
+use Larastan\Larastan\Collectors\UsedEmailSendViewCollector;
 use Larastan\Larastan\Collectors\UsedEmailViewCollector;
 use Larastan\Larastan\Collectors\UsedRouteFacadeViewCollector;
 use Larastan\Larastan\Collectors\UsedViewFacadeMakeCollector;
@@ -12,8 +14,12 @@ use Larastan\Larastan\Collectors\UsedViewInAnotherViewCollector;
 use Larastan\Larastan\Collectors\UsedViewMakeCollector;
 use Larastan\Larastan\Rules\UnusedViewsRule;
 use Larastan\Larastan\Support\ViewFileHelper;
+use Larastan\Larastan\Support\ViewParser;
 use PhpParser\Node;
+use PHPStan\Analyser\DependencyTracker;
+use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
+use PHPStan\Node\CollectedDataNode;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
@@ -22,20 +28,23 @@ class UnusedViewsRuleTest extends RuleTestCase
 {
     protected function getRule(): Rule
     {
-        $viewFileHelper = new ViewFileHelper([__DIR__ . '/../application/resources/views'], $this->getFileHelper());
+        $viewParser     = new ViewParser($this->getContainer()->getService('currentPhpVersionSimpleDirectParser'));
+        $viewFileHelper = new ViewFileHelper([
+            __DIR__ . '/../application/resources/views/',
+            __DIR__ . '/../../vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/views',
+        ], $this->getFileHelper());
 
-        return new UnusedViewsRule(new UsedViewInAnotherViewCollector(
-            $this->getContainer()->getService('currentPhpVersionSimpleDirectParser'),
-            $viewFileHelper,
-        ), $viewFileHelper);
+        return new UnusedViewsRule(new UsedViewInAnotherViewCollector($viewParser, $viewFileHelper), $viewFileHelper);
     }
 
     /** @return array<Collector<Node, mixed>> */
     protected function getCollectors(): array
     {
         return [
-            new UsedViewFunctionCollector(),
+            new UsedViewFunctionCollector($this->createReflectionProvider()),
             new UsedEmailViewCollector(),
+            new UsedEmailAlternativeSyntaxViewCollector(),
+            new UsedEmailSendViewCollector(),
             new UsedViewMakeCollector(),
             new UsedViewFacadeMakeCollector(),
             new UsedRouteFacadeViewCollector(),
@@ -44,12 +53,52 @@ class UnusedViewsRuleTest extends RuleTestCase
 
     public function testRule(): void
     {
+        // `unused.blade.php` and `components/orphan.blade.php` are referenced nowhere. The
+        // `components/alert.blade.php` view IS used, but only through the `<x-alert>` Blade component tag
+        // in `index.blade.php` — so it must not be reported (regression guard for component-tag detection).
         $this->analyse([__DIR__ . '/data/FooController.php'], [
             [
                 'This view is not used in the project.',
                 00,
             ],
+            [
+                'This view is not used in the project.',
+                00,
+            ],
         ]);
+    }
+
+    public function testNamespacedViewFunctionIsNotLaravelView(): void
+    {
+        $this->analyse([
+            __DIR__ . '/data/FooController.php',
+            __DIR__ . '/data/NamespacedViewFunction.php',
+        ], [
+            [
+                'This view is not used in the project.',
+                00,
+            ],
+            [
+                'This view is not used in the project.',
+                00,
+            ],
+        ]);
+    }
+
+    public function testTracksViewDirectories(): void
+    {
+        $tracked = [];
+        $scope   = $this->createStubForIntersectionOfInterfaces([Scope::class, DependencyTracker::class]);
+        $scope->method('trackDirectoryDependency')->willReturnCallback(static function (string $directory, string $pattern) use (&$tracked): void {
+            $tracked[] = [$directory, $pattern];
+        });
+
+        $this->getRule()->processNode(new CollectedDataNode([], false), $scope);
+
+        $this->assertSame([
+            [__DIR__ . '/../application/resources/views/', '*.blade.php'],
+            [__DIR__ . '/../../vendor/laravel/framework/src/Illuminate/Foundation/Exceptions/views', '*.blade.php'],
+        ], $tracked);
     }
 
     /** @return string[] */

@@ -1,0 +1,10 @@
+<?php
+
+namespace Illuminate\Support\Facades;
+
+/**
+ * @mixin \Illuminate\Redis\Connections\Connection
+ * @mixin \Redis
+ * @mixin \Illuminate\Redis\RedisManager
+ */
+class Redis extends Facade {}

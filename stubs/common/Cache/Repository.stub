@@ -1,0 +1,9 @@
+<?php
+
+namespace Illuminate\Cache;
+
+/**
+ * @mixin \Illuminate\Contracts\Cache\Store
+ * @implements \ArrayAccess<string, mixed>
+ */
+class Repository implements \ArrayAccess, \Illuminate\Contracts\Cache\Store {}

@@ -34,6 +34,11 @@ class NoUselessWithFunctionCallsRuleTest extends RuleTestCase
         );
     }
 
+    public function testFix(): void
+    {
+        $this->fix(__DIR__ . '/data/UselessWithFunctionCall.php', __DIR__ . '/data/UselessWithFunctionCallFixed.php');
+    }
+
     protected function getRule(): Rule
     {
         return new NoUselessWithFunctionCallsRule();

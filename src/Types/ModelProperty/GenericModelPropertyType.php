@@ -50,6 +50,11 @@ class GenericModelPropertyType extends StringType
         return $this->type;
     }
 
+    public function equals(Type $type): bool
+    {
+        return $type instanceof self && $this->type->equals($type->type);
+    }
+
     public function accepts(Type $type, bool $strictTypes): AcceptsResult
     {
         if ($type instanceof CompoundType) {
@@ -90,11 +95,11 @@ class GenericModelPropertyType extends StringType
 
             $reasons = [];
 
-            if (! $genericType->hasProperty($givenString)->yes()) {
+            if (! $genericType->hasInstanceProperty($givenString)->yes()) {
                 $reasons[] = sprintf('The given string should be a property of %s, %s given.', $this->type->describe(VerbosityLevel::value()), $givenString);
             }
 
-            return new AcceptsResult($genericType->hasProperty($givenString), $reasons);
+            return new AcceptsResult($genericType->hasInstanceProperty($givenString), $reasons);
         }
 
         if ($type instanceof self) {
@@ -115,7 +120,7 @@ class GenericModelPropertyType extends StringType
         $constantStrings = $type->getConstantStrings();
 
         if (count($constantStrings) === 1) {
-            if (! $this->getGenericType()->hasProperty($constantStrings[0]->getValue())->yes()) {
+            if (! $this->getGenericType()->hasInstanceProperty($constantStrings[0]->getValue())->yes()) {
                 return IsSuperTypeOfResult::createNo();
             }
 
@@ -181,6 +186,11 @@ class GenericModelPropertyType extends StringType
         $variance = $positionVariance->compose(TemplateTypeVariance::createCovariant());
 
         return $this->getGenericType()->getReferencedTemplateTypes($variance);
+    }
+
+    public function hasTemplateOrLateResolvableType(): bool
+    {
+        return true;
     }
 
     /** @param  mixed[] $properties */

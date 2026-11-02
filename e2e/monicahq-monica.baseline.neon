@@ -1,16 +1,61 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Parameter \\#1 \\$address of static method App\\\\Helpers\\\\MapHelper\\:\\:getMapLink\\(\\) expects App\\\\Models\\\\Address, Illuminate\\\\Database\\\\Eloquent\\\\Model given\\.$#"
+			message: '#^Method App\\Domains\\Contact\\Dav\\Web\\Backend\\CardDAV\\CardDAVBackend\:\:getDeletedObjects\(\) should return Illuminate\\Support\\Collection\<\(int\|string\), App\\Domains\\Contact\\Dav\\IDavResource\> but returns Illuminate\\Support\\Collection\<int\|TKey of \(int\|string\), TValue\>\.$#'
+			identifier: return.type
 			count: 1
-			path: ../../e2e/app/Domains/Contact/ManageContactFeed/Web/ViewHelpers/Actions/ActionFeedAddress.php
+			path: ../../e2e/app/Domains/Contact/Dav/Web/Backend/CardDAV/CardDAVBackend.php
 
 		-
-			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany\\<App\\\\Models\\\\Contact, App\\\\Models\\\\Vault\\>\\:\\:unsearchable\\(\\)\\.$#"
+			message: '#^Method App\\Domains\\Contact\\Dav\\Web\\Backend\\CardDAV\\CardDAVBackend\:\:getObjects\(\) should return Illuminate\\Support\\Collection\<\(int\|string\), App\\Domains\\Contact\\Dav\\IDavResource\> but returns Illuminate\\Support\\Collection\<int\|TKey of \(int\|string\), TValue\>\.$#'
+			identifier: return.type
 			count: 1
-			path: ../../e2e/app/Models/Vault.php
+			path: ../../e2e/app/Domains/Contact/Dav/Web/Backend/CardDAV/CardDAVBackend.php
 
 		-
-			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany\\<App\\\\Models\\\\Note, App\\\\Models\\\\Contact\\>\\:\\:unsearchable\\(\\)\\.$#"
+			message: '#^Call to static method route\(\) on an unknown class Redirect\.$#'
+			identifier: class.notFound
 			count: 1
-			path: ../../e2e/app/Models/Vault.php
+			path: ../../e2e/app/Domains/Contact/ManageContact/Web/Controllers/ContactMoveController.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\ContactTask, App\\Models\\Contact\>\:\:completed\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: ../../e2e/app/Domains/Contact/ManageTasks/Web/ViewHelpers/ModuleContactTasksViewHelper.php
+
+		-
+			message: '#^Call to an undefined method Illuminate\\Database\\Eloquent\\Relations\\HasMany\<App\\Models\\ContactTask, App\\Models\\Contact\>\:\:notCompleted\(\)\.$#'
+			identifier: method.notFound
+			count: 1
+			path: ../../e2e/app/Domains/Contact/ManageTasks/Web/ViewHelpers/ModuleContactTasksViewHelper.php
+
+		-
+			message: '#^Method App\\Domains\\Settings\\ManageNotificationChannels\\Web\\Controllers\\TelegramWebhookController\:\:store\(\) should return Illuminate\\Http\\Response but returns Illuminate\\Http\\JsonResponse\.$#'
+			identifier: return.type
+			count: 1
+			path: ../../e2e/app/Domains/Settings/ManageNotificationChannels/Web/Controllers/TelegramWebhookController.php
+
+		-
+			message: '#^Call to static method route\(\) on an unknown class Redirect\.$#'
+			identifier: class.notFound
+			count: 3
+			path: ../../e2e/app/Domains/Vault/ManageJournals/Web/Controllers/JournalController.php
+
+		-
+			message: '#^Call to static method route\(\) on an unknown class Redirect\.$#'
+			identifier: class.notFound
+			count: 1
+			path: ../../e2e/app/Domains/Vault/ManageJournals/Web/Controllers/PostController.php
+
+		-
+			message: '#^Call to static method route\(\) on an unknown class Redirect\.$#'
+			identifier: class.notFound
+			count: 2
+			path: ../../e2e/app/Domains/Vault/ManageJournals/Web/Controllers/SliceOfLifeController.php
+
+		-
+			message: '#^PHPDoc type array of property App\\Models\\File\:\:\$dispatchesEvents is not covariant with PHPDoc type array\<string, class\-string\> of overridden property Illuminate\\Database\\Eloquent\\Model\:\:\$dispatchesEvents\.$#'
+			identifier: property.phpDocType
+			count: 1
+			path: ../../e2e/app/Models/File.php

@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <ruleset>
+    <config name="php_version" value="80200"/>
+
     <arg name="basepath" value="."/>
     <arg name="extensions" value="php"/>
     <arg name="parallel" value="80"/>
@@ -21,6 +23,14 @@
     <!-- Include full Doctrine Coding Standard -->
     <rule ref="Doctrine">
       <exclude name="SlevomatCodingStandard.PHP.RequireExplicitAssertion"/>
+    </rule>
+
+    <rule ref="SlevomatCodingStandard.ControlStructures.BlockControlStructureSpacing.IncorrectLinesCountBeforeControlStructure">
+        <severity>5</severity>
+    </rule>
+
+    <rule ref="SlevomatCodingStandard.ControlStructures.BlockControlStructureSpacing.IncorrectLinesCountBeforeFirstControlStructure">
+        <severity>5</severity>
     </rule>
 
     <rule ref="PSR1.Methods.CamelCapsMethodName.NotCamelCaps">
@@ -58,4 +68,3 @@
         </properties>
     </rule>
 </ruleset>
-

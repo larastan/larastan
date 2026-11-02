@@ -17,6 +17,10 @@ use function count;
 
 class StrExtension implements DynamicFunctionReturnTypeExtension
 {
+    private ObjectType|null $stringableType = null;
+
+    private MixedType|null $mixedType = null;
+
     public function isFunctionSupported(FunctionReflection $functionReflection): bool
     {
         return $functionReflection->getName() === 'str';
@@ -25,9 +29,9 @@ class StrExtension implements DynamicFunctionReturnTypeExtension
     public function getTypeFromFunctionCall(FunctionReflection $functionReflection, FuncCall $functionCall, Scope $scope): Type|null
     {
         if (count($functionCall->getArgs()) === 1) {
-            return new ObjectType(Stringable::class);
+            return $this->stringableType ??= new ObjectType(Stringable::class);
         }
 
-        return new MixedType();
+        return $this->mixedType ??= new MixedType();
     }
 }

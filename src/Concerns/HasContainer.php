@@ -11,7 +11,7 @@ use Throwable;
 /** @internal */
 trait HasContainer
 {
-    protected \Illuminate\Contracts\Container\Container|null $container = null;
+    protected ContainerContract|null $container = null;
 
     public function setContainer(ContainerContract $container): void
     {

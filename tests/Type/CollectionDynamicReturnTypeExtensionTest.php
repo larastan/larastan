@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Type;
 
 use PHPStan\Testing\TypeInferenceTestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class CollectionDynamicReturnTypeExtensionTest extends TypeInferenceTestCase
 {
@@ -13,10 +14,12 @@ class CollectionDynamicReturnTypeExtensionTest extends TypeInferenceTestCase
     {
         yield from self::gatherAssertTypes(__DIR__ . '/data/collection-filter.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/collection-reject.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/collection-where.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/collection-where-not-null.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/collection-nullsafe-chain.php');
     }
 
-    /** @dataProvider dataFileAsserts */
+    #[DataProvider('dataFileAsserts')]
     public function testFileAsserts(
         string $assertType,
         string $file,

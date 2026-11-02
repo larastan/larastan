@@ -12,6 +12,8 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Testing\PHPStanTestCase;
 use PHPStan\Type\ClosureTypeFactory;
 use PHPStan\Type\ObjectType;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 
 class MacroMethodsClassReflectionExtensionTest extends PHPStanTestCase
 {
@@ -27,10 +29,8 @@ class MacroMethodsClassReflectionExtensionTest extends PHPStanTestCase
         $this->reflectionExtension = new MacroMethodsClassReflectionExtension($this->reflectionProvider, self::getContainer()->getByType(ClosureTypeFactory::class));
     }
 
-    /**
-     * @test
-     * @dataProvider methodAndClassProvider
-     */
+    #[Test]
+    #[DataProvider('methodAndClassProvider')]
     public function it_can_find_macros_on_a_class(string $class, string $methodName): void
     {
         $requestClass = $this->reflectionProvider->getClass($class);
@@ -38,10 +38,8 @@ class MacroMethodsClassReflectionExtensionTest extends PHPStanTestCase
         $this->assertTrue($this->reflectionExtension->hasMethod($requestClass, $methodName));
     }
 
-    /**
-     * @test
-     * @dataProvider methodAndThrowTypeProvider
-     */
+    #[Test]
+    #[DataProvider('methodAndThrowTypeProvider')]
     public function it_can_set_throw_type_for_macros(string $class, string $methodName, string $exceptionClass): void
     {
         $requestClass = $this->reflectionProvider->getClass($class);

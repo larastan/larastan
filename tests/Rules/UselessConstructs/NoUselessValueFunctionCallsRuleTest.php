@@ -33,6 +33,11 @@ class NoUselessValueFunctionCallsRuleTest extends RuleTestCase
         );
     }
 
+    public function testFix(): void
+    {
+        $this->fix(__DIR__ . '/data/UselessValueFunctionCall.php', __DIR__ . '/data/UselessValueFunctionCallFixed.php');
+    }
+
     protected function getRule(): Rule
     {
         return new NoUselessValueFunctionCallsRule();

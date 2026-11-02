@@ -1,0 +1,253 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Tests\Unit;
+
+use App\Member;
+use App\MemberWithCustomKey;
+use App\MemberWithNonIncrementingStringKey;
+use App\MemberWithoutTimestampsAttribute;
+use App\MemberWithoutTimestampsTable;
+use Larastan\Larastan\Properties\MigrationCache;
+use Larastan\Larastan\Properties\MigrationHelper;
+use Larastan\Larastan\Properties\ModelCastHelper;
+use Larastan\Larastan\Properties\ModelPropertyHelper;
+use Larastan\Larastan\Properties\Schema\MySqlDataTypeToPhpTypeConverter;
+use Larastan\Larastan\Properties\SquashedMigrationHelper;
+use Larastan\Larastan\SQL\IamcalSqlParser;
+use PHPStan\Analyser\DeclarationDependencyTracker;
+use PHPStan\Analyser\FileAnalyser;
+use PHPStan\Analyser\ResultCache\DirectoryResultCacheValueExtension;
+use PHPStan\Analyser\ScopeFactory;
+use PHPStan\Analyser\ValueDependencyCollector;
+use PHPStan\Collectors\Registry as CollectorRegistry;
+use PHPStan\File\FileHelper;
+use PHPStan\Parser\Parser;
+use PHPStan\PhpDoc\TypeStringResolver;
+use PHPStan\Reflection\InitializerExprTypeResolver;
+use PHPStan\Reflection\ReflectionProvider;
+use PHPStan\Rules\DirectRegistry as DirectRuleRegistry;
+use PHPStan\Testing\PHPStanTestCase;
+use PHPStan\Type\StringType;
+use PHPStan\Type\TypeCombinator;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Test;
+use SplFileInfo;
+
+use function class_exists;
+use function sys_get_temp_dir;
+
+#[CoversClass(ModelPropertyHelper::class)]
+class ModelPropertyHelperTest extends PHPStanTestCase
+{
+    private ReflectionProvider $reflectionProvider;
+
+    private Parser $parser;
+
+    private FileHelper $fileHelper;
+
+    public function setUp(): void
+    {
+        if (! class_exists('Illuminate\Database\Eloquent\Attributes\Table')) {
+            $this->markTestSkipped('Eloquent PHP attributes require Laravel 13+.');
+        }
+
+        $this->reflectionProvider = $this->createReflectionProvider();
+        $this->parser             = self::getContainer()->getService('currentPhpVersionSimpleDirectParser');
+        $this->fileHelper         = self::getContainer()->getByType(FileHelper::class);
+    }
+
+    #[Test]
+    public function it_uses_custom_table_name_from_table_php_attribute_when_checking_database_property(): void
+    {
+        $modelPropertyHelper = $this->buildModelPropertyHelper(
+            [__DIR__ . '/data/basic_migration'],
+        );
+
+        $classReflection = $this->reflectionProvider->getClass(Member::class);
+
+        // The model uses #[Table(name: 'users')], not the default 'members' derived from
+        // the class name. The fix ensures initializeModelAttributes() is called so the correct
+        // table is resolved and columns from the users table are found.
+        self::assertTrue($modelPropertyHelper->hasDatabaseProperty($classReflection, 'email'));
+        self::assertFalse($modelPropertyHelper->hasDatabaseProperty($classReflection, 'nonexistent_column'));
+    }
+
+    #[Test]
+    public function it_uses_custom_key_metadata_from_table_php_attribute(): void
+    {
+        $modelPropertyHelper = $this->buildModelPropertyHelper([__DIR__ . '/data/basic_migration']);
+        $classReflection     = $this->reflectionProvider->getClass(MemberWithCustomKey::class);
+
+        self::assertTrue($modelPropertyHelper->hasDatabaseProperty($classReflection, 'uuid'));
+        self::assertInstanceOf(
+            StringType::class,
+            $modelPropertyHelper->getDatabaseProperty($classReflection, 'uuid')->getReadableType(),
+        );
+    }
+
+    #[Test]
+    public function it_applies_non_incrementing_string_key_metadata(): void
+    {
+        $modelPropertyHelper = $this->buildModelPropertyHelper([__DIR__ . '/data/basic_migration']);
+        $classReflection     = $this->reflectionProvider->getClass(MemberWithNonIncrementingStringKey::class);
+
+        self::assertInstanceOf(
+            StringType::class,
+            $modelPropertyHelper->getDatabaseProperty($classReflection, 'id')->getReadableType(),
+        );
+    }
+
+    #[Test]
+    public function it_applies_attributes_that_disable_timestamps(): void
+    {
+        $modelPropertyHelper = $this->buildModelPropertyHelper([__DIR__ . '/data/basic_migration']);
+        $modelClasses        = [MemberWithoutTimestampsTable::class];
+
+        if (class_exists('Illuminate\Database\Eloquent\Attributes\WithoutTimestamps')) {
+            $modelClasses[] = MemberWithoutTimestampsAttribute::class;
+        }
+
+        foreach ($modelClasses as $modelClass) {
+            $classReflection = $this->reflectionProvider->getClass($modelClass);
+
+            self::assertTrue($modelPropertyHelper->hasDatabaseProperty($classReflection, 'created_at'));
+            self::assertInstanceOf(
+                StringType::class,
+                TypeCombinator::removeNull(
+                    $modelPropertyHelper->getDatabaseProperty($classReflection, 'created_at')->getReadableType(),
+                ),
+            );
+        }
+    }
+
+    #[Test]
+    public function it_loads_migrations_only_once_when_no_tables_are_found(): void
+    {
+        $migrationHelper = new class (
+            $this->parser,
+            ['foobar'],
+            $this->fileHelper,
+            false,
+            $this->reflectionProvider,
+            self::getContainer()->getByType(InitializerExprTypeResolver::class),
+            new IamcalSqlParser(),
+        ) extends MigrationHelper {
+            public int $migrationFileLookups = 0;
+
+            /** @return SplFileInfo[] */
+            public function getMigrationFiles(): array
+            {
+                $this->migrationFileLookups++;
+
+                return parent::getMigrationFiles();
+            }
+        };
+
+        $modelPropertyHelper = $this->buildModelPropertyHelper([], $migrationHelper, ['foobar']);
+
+        self::assertFalse($modelPropertyHelper->hasDatabaseProperty('users', 'email'));
+        $lookupsAfterFirstLoad = $migrationHelper->migrationFileLookups;
+
+        // An empty result still counts as loaded, so later lookups must not scan again.
+        self::assertFalse($modelPropertyHelper->hasDatabaseProperty('users', 'name'));
+        self::assertFalse($modelPropertyHelper->hasDatabaseProperty('posts', 'title'));
+        self::assertSame($lookupsAfterFirstLoad, $migrationHelper->migrationFileLookups);
+    }
+
+    #[Test]
+    public function it_tracks_the_schema_directories_for_files_using_a_model(): void
+    {
+        $container = self::getContainer();
+        $collector = $container->getByType(ValueDependencyCollector::class);
+
+        $expected = [];
+
+        foreach ($container->getByType(MigrationHelper::class)->getMigrationDirectories() as $directory) {
+            $expected[] = ValueDependencyCollector::getId(DirectoryResultCacheValueExtension::class, $collector->getDirectoryKey($directory, '*.[pP][hH][pP]'));
+        }
+
+        foreach ($container->getByType(SquashedMigrationHelper::class)->getSchemaDirectories() as $directory) {
+            $expected[] = ValueDependencyCollector::getId(DirectoryResultCacheValueExtension::class, $collector->getDirectoryKey($directory, '*'));
+        }
+
+        self::assertCount(2, $expected);
+
+        $usingModel = $this->analyseValueDependencies(__DIR__ . '/data/model-schema-dependency.php');
+
+        foreach ($expected as $id) {
+            self::assertContains($id, $usingModel);
+        }
+
+        self::assertSame([], $this->analyseValueDependencies(__DIR__ . '/data/no-model-schema-dependency.php'));
+    }
+
+    /** @return list<string> the ids of the values the analysis of the file depends on */
+    private function analyseValueDependencies(string $file): array
+    {
+        $file   = $this->fileHelper->normalizePath($file);
+        $result = self::getContainer()->getByType(FileAnalyser::class)->analyseFile(
+            $file,
+            [$file => true],
+            new DirectRuleRegistry([]),
+            new CollectorRegistry([]),
+            null,
+        );
+
+        self::assertSame([], $result->getErrors());
+
+        return $result->getValueDependencies()['dependents'][$file]['analysis'];
+    }
+
+    /**
+     * @param string[] $migrationPaths
+     * @param string[] $schemaPaths
+     */
+    private function buildModelPropertyHelper(
+        array $migrationPaths,
+        MigrationHelper|null $migrationHelper = null,
+        array $schemaPaths = [],
+    ): ModelPropertyHelper {
+        $migrationHelper ??= new MigrationHelper(
+            $this->parser,
+            $migrationPaths,
+            $this->fileHelper,
+            false,
+            $this->reflectionProvider,
+            self::getContainer()->getByType(InitializerExprTypeResolver::class),
+            new IamcalSqlParser(),
+        );
+
+        $squashedMigrationHelper = new SquashedMigrationHelper(
+            $schemaPaths,
+            $this->fileHelper,
+            new MySqlDataTypeToPhpTypeConverter(),
+            self::getContainer()->getService('sqlParser'),
+            false,
+        );
+
+        $modelCastHelper = new ModelCastHelper(
+            $this->reflectionProvider,
+            $this->parser,
+            false,
+            self::getContainer()->getByType(ScopeFactory::class),
+        );
+
+        return new ModelPropertyHelper(
+            self::getContainer()->getByType(TypeStringResolver::class),
+            $migrationHelper,
+            $squashedMigrationHelper,
+            $modelCastHelper,
+            new MigrationCache(sys_get_temp_dir(), false),
+            self::getContainer()->getByType(DeclarationDependencyTracker::class),
+            $this->reflectionProvider,
+        );
+    }
+
+    /** @return string[] */
+    public static function getAdditionalConfigFiles(): array
+    {
+        return [__DIR__ . '/../phpstan-tests.neon'];
+    }
+}
