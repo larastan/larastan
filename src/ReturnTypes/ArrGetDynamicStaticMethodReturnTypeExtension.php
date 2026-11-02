@@ -12,6 +12,7 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name\FullyQualified;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
+use PHPStan\TrinaryLogic;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\NullType;
 use PHPStan\Type\Type;
@@ -53,9 +54,15 @@ final class ArrGetDynamicStaticMethodReturnTypeExtension implements DynamicStati
         $types   = [];
         $mayMiss = false;
 
-        foreach ($lookups as [$exists, $accesses]) {
-            foreach ($accesses as $access) {
-                $types[] = $scope->getType($access);
+        foreach ($lookups as $candidates) {
+            $exists = TrinaryLogic::createNo();
+
+            foreach ($candidates as [$found, $access]) {
+                if (! $found->no()) {
+                    $types[] = $scope->getType($access);
+                }
+
+                $exists = $exists->or($found);
             }
 
             $mayMiss = $mayMiss || ! $exists->yes();

@@ -8,6 +8,28 @@ use Illuminate\Support\Collection;
 
 use function PHPStan\Testing\assertType;
 
+/** @implements \ArrayAccess<string, int> */
+class ArrGetPullAccess implements \ArrayAccess
+{
+    public function offsetExists(mixed $offset): bool
+    {
+        return true;
+    }
+
+    public function offsetGet(mixed $offset): int
+    {
+        return 1;
+    }
+
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+    }
+
+    public function offsetUnset(mixed $offset): void
+    {
+    }
+}
+
 /**
  * @param array{foo: string, bar?: int, nullable: string|null, nested: array{deep: bool, maybe?: int}, word: string} $shape
  * @param list<array{name: string}> $rows
@@ -61,6 +83,21 @@ function get(
 }
 
 /**
+ * @param array{'a.b': int, a: array{b: string}} $dotKey
+ * @param array{'a.b'?: int, a: array{b: string}} $maybeDotKey
+ * @param array{foo: string}|ArrGetPullAccess $shapeOrAccess
+ */
+function getLiteralDotKeysAndArrayAccess(array $dotKey, array $maybeDotKey, array|ArrGetPullAccess $shapeOrAccess, ArrGetPullAccess $access): void
+{
+    // A literal key wins over the "dot" path
+    assertType('int', Arr::get($dotKey, 'a.b'));
+    assertType('int|string', Arr::get($maybeDotKey, 'a.b'));
+
+    assertType('int|null', Arr::get($access, 'key'));
+    assertType('int|string|null', Arr::get($shapeOrAccess, 'foo'));
+}
+
+/**
  * @param array{foo: string, bar?: int, nested: array{deep: bool, keep: int}, optional?: array{deep: bool}, nullable: array{deep: bool}|null, 'dot.key': int} $shape
  * @param list<int> $list
  * @param array<string, int> $map
@@ -94,4 +131,23 @@ function pull(array $shape, array $list, array $map, string $anyKey, string $foo
 
     assertType('mixed', Arr::pull($map, $anyKey));
     assertType('array', $map);
+}
+
+/**
+ * @param list<string> $list
+ * @param '0'|'1' $zeroOrOne
+ */
+function pullNumericStringKeys(array $list, string $zeroOrOne): void
+{
+    $array = $list;
+    Arr::pull($array, '0');
+    assertType('array<int<1, max>, string>', $array);
+
+    $array = $list;
+    Arr::pull($array, '1');
+    assertType('array<0|int<2, max>, string>', $array);
+
+    $array = $list;
+    Arr::pull($array, $zeroOrOne);
+    assertType('array<int<0, max>, string>', $array);
 }

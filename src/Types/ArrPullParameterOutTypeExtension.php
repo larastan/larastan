@@ -50,11 +50,7 @@ final class ArrPullParameterOutTypeExtension implements StaticMethodParameterOut
             return null;
         }
 
-        if ($keyType->isInteger()->yes()) {
-            return $arrayType->unsetOffset($keyType);
-        }
-
-        if (! $keyType->isString()->yes() || ! $keyType->isConstantScalarValue()->yes()) {
+        if (! $keyType->isInteger()->yes() && $keyType->getConstantStrings() === []) {
             return null;
         }
 
@@ -64,6 +60,7 @@ final class ArrPullParameterOutTypeExtension implements StaticMethodParameterOut
             }
         }
 
-        return $arrayType->unsetOffset($keyType);
+        // unset() on a list mishandles numeric strings like '0', so pass the integer key instead.
+        return $arrayType->unsetOffset($keyType->toArrayKey());
     }
 }

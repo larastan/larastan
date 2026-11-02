@@ -16,6 +16,7 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 
+use function count;
 use function in_array;
 use function strtolower;
 
@@ -65,13 +66,17 @@ final class ArrKeyExistenceRule implements Rule
 
         $lookups = ArrKeyLookup::find($scope, $arrayArg->value, $keyArg->value, $scope->getType($keyArg->value)) ?? [];
 
-        foreach ($lookups as [$exists]) {
-            if (! $exists->no()) {
-                return [];
+        foreach ($lookups as $candidates) {
+            foreach ($candidates as [$found]) {
+                if (! $found->no()) {
+                    return [];
+                }
             }
         }
 
-        foreach ($lookups as [, , $missing]) {
+        foreach ($lookups as $candidates) {
+            // The last candidate is the "dot" path when there is one.
+            [, $missing] = $candidates[count($candidates) - 1];
             $missing->setAttributes($node->getAttributes());
             $scope->invokeNodeCallback($missing);
         }

@@ -51,3 +51,16 @@ function test(array $shape, array $map, Collection $collection, ?array $nullable
     CustomArr::get($shape, 'missing');
     Arr::pull($shape, 'missing');
 }
+
+/** @param array{foo: string}|ArrKeyExistenceAccess $shapeOrAccess */
+function literalDotKeysAndArrayAccess(array|ArrKeyExistenceAccess $shapeOrAccess, ArrKeyExistenceAccess $access): void
+{
+    Arr::get(['a.b' => 1], 'a.b');
+    Arr::get($shapeOrAccess, 'missing');
+    Arr::get($access, 'missing');
+}
+
+/** @implements \ArrayAccess<string, int> */
+abstract class ArrKeyExistenceAccess implements \ArrayAccess
+{
+}
