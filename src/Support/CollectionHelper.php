@@ -203,13 +203,33 @@ final class CollectionHelper
                 return $type;
             }
 
+            if (! $this->pivotTypesInCollections) {
+                $modelType = $this->removeObjectShapes($modelType);
+            }
+
             return TypeCombinator::union(...array_map(
-                fn (string $model): Type => $this->pivotTypesInCollections
-                    // Keeps what the model type adds to the class, such as a BelongsToMany pivot shape.
-                    ? $this->determineCollectionClass($model, TypeCombinator::intersect($modelType, new ObjectType($model)))
-                    : $this->determineCollectionClass($model),
+                fn (string $model): Type => $this->determineCollectionClass($model, TypeCombinator::intersect($modelType, new ObjectType($model))),
                 $models,
             ));
+        });
+    }
+
+    /**
+     * Removes class-less object types, such as the pivot shape of BelongsToMany results, while keeping the model type
+     * itself, including its template types.
+     */
+    private function removeObjectShapes(Type $type): Type
+    {
+        return TypeTraverser::map($type, static function (Type $type, callable $traverse): Type {
+            if ($type instanceof UnionType || $type instanceof IntersectionType) {
+                return $traverse($type);
+            }
+
+            if ($type->isObject()->yes() && $type->getObjectClassNames() === []) {
+                return new MixedType();
+            }
+
+            return $type;
         });
     }
 

@@ -44,3 +44,13 @@ function test(User $user, Post $post, Member $member, User|Account $union): void
     // Relations without a pivot are unaffected.
     assertType('App\AccountCollection<int, App\Account>', $user->accounts);
 }
+
+/**
+ * @template TModel of Model
+ * @param  BelongsToMany<TModel, Member>  $relation
+ */
+function testTemplate(BelongsToMany $relation): void
+{
+    assertType('Illuminate\Database\Eloquent\Collection<int, object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}&TModel of Illuminate\Database\Eloquent\Model (function PivotTypesInCollections\testTemplate(), argument)>', $relation->getResults());
+    assertType('Illuminate\Database\Eloquent\Collection<int, object{pivot: Illuminate\Database\Eloquent\Relations\Pivot}&TModel of Illuminate\Database\Eloquent\Model (function PivotTypesInCollections\testTemplate(), argument)>', $relation->findMany([1, 2]));
+}

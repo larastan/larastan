@@ -68,3 +68,14 @@ function test(Member $member, string $name, bool $condition): void
     assertType('BelongsToManyPivotAccessor\Podcast|null', $member->belongsToMany(Podcast::class, 'c')->as($name)->first());
     assertType('BelongsToManyPivotAccessor\Podcast|null', $member->belongsToMany(Podcast::class, 'd')->as($condition ? 'a' : 'b')->first());
 }
+
+/**
+ * @template TModel of Model
+ * @param  BelongsToMany<TModel, Member>  $relation
+ */
+function testTemplate(BelongsToMany $relation): void
+{
+    assertType('Illuminate\Database\Eloquent\Collection<int, TModel of Illuminate\Database\Eloquent\Model (function BelongsToManyPivotAccessor\testTemplate(), argument)>', $relation->get());
+    assertType('Illuminate\Database\Eloquent\Collection<int, TModel of Illuminate\Database\Eloquent\Model (function BelongsToManyPivotAccessor\testTemplate(), argument)>', $relation->getResults());
+    assertType('Illuminate\Database\Eloquent\Collection<int, TModel of Illuminate\Database\Eloquent\Model (function BelongsToManyPivotAccessor\testTemplate(), argument)>', $relation->findMany([1, 2]));
+}
