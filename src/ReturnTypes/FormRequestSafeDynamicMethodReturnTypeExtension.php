@@ -8,13 +8,12 @@ use Illuminate\Foundation\Http\FormRequest;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
-use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantArrayTypeBuilder;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
 
-use function assert;
 use function count;
 
 class FormRequestSafeDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
@@ -46,16 +45,20 @@ class FormRequestSafeDynamicMethodReturnTypeExtension implements DynamicMethodRe
             return null;
         }
 
-        assert($argType instanceof ConstantArrayType); // @phpstan-ignore-line
+        $types = [];
 
-        $builder = ConstantArrayTypeBuilder::createEmpty();
+        foreach ($argType->getConstantArrays() as $constantArray) {
+            $builder = ConstantArrayTypeBuilder::createEmpty();
 
-        foreach ($argType->getValueTypes() as $keyType) {
-            foreach ($keyType->getConstantStrings() as $constantString) {
-                $builder->setOffsetValueType($constantString, new MixedType());
+            foreach ($constantArray->getValueTypes() as $keyType) {
+                foreach ($keyType->getConstantStrings() as $constantString) {
+                    $builder->setOffsetValueType($constantString, new MixedType());
+                }
             }
+
+            $types[] = $builder->getArray();
         }
 
-        return $builder->getArray();
+        return TypeCombinator::union(...$types);
     }
 }
