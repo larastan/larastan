@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Properties;
 
 use Exception;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Larastan\Larastan\Properties\Schema\MySqlDataTypeToPhpTypeConverter;
 use Larastan\Larastan\SQL\SqlParser;
@@ -216,7 +217,7 @@ final class SchemaAggregator
             $firstArg  = $firstMethodCall->getArgs()[0]->value ?? null;
             $secondArg = $firstMethodCall->getArgs()[1]->value ?? null;
 
-            if ($firstMethodCall->name->name === 'foreignIdFor') {
+            if (in_array($firstMethodCall->name->name, ['foreignIdFor', 'foreignUuidFor', 'foreignUlidFor'], true)) {
                 if (
                     $firstArg instanceof PhpParser\Node\Expr\ClassConstFetch
                     && $firstArg->class instanceof PhpParser\Node\Name
@@ -228,16 +229,21 @@ final class SchemaAggregator
                     continue;
                 }
 
-                $columnName = Str::snake(class_basename($modelClass)) . '_id';
+                $modelInstance = $this->getModelInstance($modelClass);
+                $columnName    = $modelInstance?->getForeignKey() ?? Str::snake(class_basename($modelClass)) . '_id';
 
                 if ($secondArg instanceof PhpParser\Node\Scalar\String_) {
                     $columnName = $secondArg->value;
                 }
 
-                $type = $this->getModelReferenceType($modelClass);
+                if ($firstMethodCall->name->name === 'foreignIdFor') {
+                    $type = $modelInstance === null ? null : $this->getModelReferenceType($modelInstance);
 
-                if ($unsigned && ($type === null || $type === 'int')) {
-                    $type = 'non-negative-int';
+                    if ($unsigned && ($type === null || $type === 'int')) {
+                        $type = 'non-negative-int';
+                    }
+                } else {
+                    $type = 'string';
                 }
 
                 $table->setColumn(new SchemaColumn($columnName, $type ?? 'int', $nullable));
@@ -432,16 +438,27 @@ final class SchemaAggregator
         $this->tables[$newTableName] = $table;
     }
 
-    private function getModelReferenceType(string $modelClass): string|null
+    private function getModelInstance(string $modelClass): Model|null
     {
-        $classReflection = $this->reflectionProvider->getClass($modelClass);
-
-        try {
-            $modelInstance = ModelHelper::newInstanceWithoutConstructor($classReflection);
-        } catch (ReflectionException) {
+        if (! $this->reflectionProvider->hasClass($modelClass)) {
             return null;
         }
 
+        $classReflection = $this->reflectionProvider->getClass($modelClass);
+
+        if (! $classReflection->is(Model::class)) {
+            return null;
+        }
+
+        try {
+            return ModelHelper::newInstanceWithoutConstructor($classReflection);
+        } catch (ReflectionException) {
+            return null;
+        }
+    }
+
+    private function getModelReferenceType(Model $modelInstance): string|null
+    {
         $tableName = $modelInstance->getTable();
 
         if (! array_key_exists($tableName, $this->tables)) {
