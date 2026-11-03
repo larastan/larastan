@@ -8,6 +8,7 @@ use Illuminate\Contracts\Validation\Factory;
 use Illuminate\Validation\Validator;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
 use PHPStan\Type\ObjectType;
@@ -17,6 +18,7 @@ use PHPStan\Type\TypeCombinator;
 use function count;
 
 /** @internal */
+#[AutowiredService]
 final class ValidatorExtension implements DynamicFunctionReturnTypeExtension
 {
     private ObjectType|null $factoryType = null;

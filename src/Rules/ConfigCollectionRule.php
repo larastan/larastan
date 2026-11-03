@@ -12,6 +12,8 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\DependencyTracker;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
+use PHPStan\DependencyInjection\Conditional;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -20,6 +22,7 @@ use PHPStan\Type\TypeCombinator;
 use function sprintf;
 
 /** @implements Rule<StaticCall> */
+#[Conditional(attribute: new AutowiredService(), if: '%checkConfigTypes%')]
 final class ConfigCollectionRule implements Rule
 {
     public function __construct(private ConfigHelper $configHelper)

@@ -12,6 +12,7 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\NodeCallbackInvoker;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 
@@ -24,6 +25,7 @@ use function strtolower;
  *
  * @implements Rule<StaticCall>
  */
+#[AutowiredService]
 final class ArrKeyExistenceRule implements Rule
 {
     public function getNodeType(): string

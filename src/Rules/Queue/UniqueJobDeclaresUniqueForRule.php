@@ -8,6 +8,8 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Larastan\Larastan\Concerns\InspectsQueuedJobs;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
+use PHPStan\DependencyInjection\Conditional;
 use PHPStan\Node\InClassNode;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
@@ -27,6 +29,7 @@ use function sprintf;
  *
  * @implements Rule<InClassNode>
  */
+#[Conditional(attribute: new AutowiredService(), if: '%checkUniqueJobUniqueFor%')]
 class UniqueJobDeclaresUniqueForRule implements Rule
 {
     use InspectsQueuedJobs;

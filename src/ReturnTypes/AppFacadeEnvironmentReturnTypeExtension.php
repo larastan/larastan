@@ -7,6 +7,7 @@ namespace Larastan\Larastan\ReturnTypes;
 use Illuminate\Support\Facades\App;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\BooleanType;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
@@ -15,6 +16,7 @@ use PHPStan\Type\Type;
 
 use function count;
 
+#[AutowiredService]
 class AppFacadeEnvironmentReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
 {
     public function getClass(): string

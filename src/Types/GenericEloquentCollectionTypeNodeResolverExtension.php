@@ -6,6 +6,7 @@ namespace Larastan\Larastan\Types;
 
 use Illuminate\Database\Eloquent\Collection;
 use PHPStan\Analyser\NameScope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\PhpDoc\TypeNodeResolver;
 use PHPStan\PhpDoc\TypeNodeResolverExtension;
 use PHPStan\PhpDocParser\Ast\Type\ArrayTypeNode;
@@ -32,6 +33,7 @@ use function count;
  *
  * Now IDE's can benefit from auto-completion, and we can benefit from the correct type passed to the generic collection
  */
+#[AutowiredService]
 class GenericEloquentCollectionTypeNodeResolverExtension implements TypeNodeResolverExtension
 {
     public function __construct(private TypeNodeResolver $typeNodeResolver)

@@ -20,6 +20,8 @@ use PhpParser\Node\Expr\NullsafeMethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
+use PHPStan\DependencyInjection\Conditional;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\IdentifierRuleError;
@@ -71,6 +73,7 @@ use function version_compare;
  *
  * @implements Rule<StaticCall>
  */
+#[Conditional(attribute: new AutowiredService(), if: '%checkDispatchInTransactionAfterCommit%')]
 class JobDispatchedInTransactionUsesAfterCommitRule implements Rule
 {
     use InspectsQueuedJobs;

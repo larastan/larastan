@@ -11,6 +11,7 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Larastan\Larastan\Support\CollectionHelper;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
@@ -22,6 +23,7 @@ use PHPStan\Type\TypeCombinator;
 use function in_array;
 
 /** @internal */
+#[AutowiredService]
 final class RelationCollectionExtension implements DynamicMethodReturnTypeExtension
 {
     public function __construct(

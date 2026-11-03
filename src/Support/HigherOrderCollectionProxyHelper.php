@@ -6,6 +6,7 @@ namespace Larastan\Larastan\Support;
 
 use Illuminate\Support\Collection as SupportCollection;
 use Illuminate\Support\HigherOrderCollectionProxy;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type;
@@ -17,6 +18,7 @@ use PHPStan\Type\StringType;
 
 use function count;
 
+#[AutowiredService]
 class HigherOrderCollectionProxyHelper
 {
     public function __construct(private ReflectionProvider $reflectionProvider)

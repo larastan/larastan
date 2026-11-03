@@ -6,6 +6,7 @@ namespace Larastan\Larastan\Internal;
 
 use InvalidArgumentException;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\BooleanType;
@@ -21,6 +22,7 @@ use Symfony\Component\Console\Input\InputOption;
 
 use function count;
 
+#[AutowiredService]
 final class ConsoleApplicationHelper
 {
     public function __construct(private ConsoleApplicationResolver $consoleApplicationResolver)

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Larastan\Larastan;
 
 use Larastan\Larastan\Concerns\HasContainer;
+use PHPStan\DependencyInjection\AutowiredParameter;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\PhpDoc\StubFilesExtension;
 use SplFileInfo;
 use Symfony\Component\Finder\Finder;
@@ -16,6 +18,7 @@ use function in_array;
 use function iterator_to_array;
 use function version_compare;
 
+#[AutowiredService]
 final class LarastanStubFilesExtension implements StubFilesExtension
 {
     use HasContainer;
@@ -30,8 +33,10 @@ final class LarastanStubFilesExtension implements StubFilesExtension
     ];
 
     /** @param 'phpredis'|'predis'|null $redisDriver */
-    public function __construct(private string|null $redisDriver)
-    {
+    public function __construct(
+        #[AutowiredParameter]
+        private string|null $redisDriver,
+    ) {
     }
 
     /** @inheritDoc */

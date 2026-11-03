@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\BetterReflection\Reflection\Adapter\ReflectionProperty;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Node\InClassNode;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\InitializerExprContext;
@@ -19,6 +20,7 @@ use PHPStan\Type\ObjectType;
 use function array_merge;
 
 /** @implements Rule<InClassNode> */
+#[AutowiredService]
 final class ModelRelationDefaultsRule implements Rule
 {
     public function __construct(

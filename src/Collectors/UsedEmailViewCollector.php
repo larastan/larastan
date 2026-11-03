@@ -12,12 +12,14 @@ use PhpParser\Node;
 use PhpParser\Node\Identifier;
 use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Type\ObjectType;
 
 use function count;
 use function in_array;
 
 /** @implements Collector<Node\Expr\MethodCall, string> */
+#[AutowiredService]
 final class UsedEmailViewCollector implements Collector
 {
     private const VIEW_METHOD_NAMES = ['view', 'html', 'text', 'markdown'];

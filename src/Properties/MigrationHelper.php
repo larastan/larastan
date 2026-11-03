@@ -6,6 +6,8 @@ namespace Larastan\Larastan\Properties;
 
 use Larastan\Larastan\SQL\SqlParser;
 use Larastan\Larastan\Support\RecursiveDirectoryIterator;
+use PHPStan\DependencyInjection\AutowiredParameter;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
 use PHPStan\Parser\ParserErrorsException;
@@ -21,16 +23,22 @@ use function is_dir;
 use function iterator_to_array;
 use function uasort;
 
+#[AutowiredService]
 class MigrationHelper
 {
     public function __construct(
+        #[AutowiredParameter(ref: '@migrationsParser')]
         private Parser $parser,
         /** @var string[] */
+        #[AutowiredParameter(ref: '%databaseMigrationsPath%')]
         private array $databaseMigrationPath,
         private FileHelper $fileHelper,
+        #[AutowiredParameter]
         private bool $disableMigrationScan,
+        #[AutowiredParameter(ref: '@reflectionProvider')]
         private ReflectionProvider $reflectionProvider,
         private InitializerExprTypeResolver $initializerExprTypeResolver,
+        #[AutowiredParameter(ref: '@sqlParser')]
         private SqlParser $sqlParser,
     ) {
     }

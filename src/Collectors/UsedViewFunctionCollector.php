@@ -8,11 +8,13 @@ use Illuminate\View\ViewName;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ReflectionProvider;
 
 use function count;
 
 /** @implements Collector<Node\Expr\FuncCall, string> */
+#[AutowiredService]
 final class UsedViewFunctionCollector implements Collector
 {
     public function __construct(private ReflectionProvider $reflectionProvider)

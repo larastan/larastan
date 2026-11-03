@@ -14,6 +14,8 @@ use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
+use PHPStan\DependencyInjection\Conditional;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\MultipleNodeTypesRule;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -24,6 +26,7 @@ use function count;
 use function sprintf;
 
 /** @implements MultipleNodeTypesRule<CallLike> */
+#[Conditional(attribute: new AutowiredService(), if: '%noImplicitQueryBuilderCall%')]
 class NoImplicitQueryBuilderCallRule implements MultipleNodeTypesRule
 {
     public function __construct(private ModelForwardsCallsExtension $modelForwardsCallsExtension)

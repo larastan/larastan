@@ -7,6 +7,7 @@ namespace Larastan\Larastan\Methods;
 use Illuminate\Database\Eloquent\Collection;
 use Larastan\Larastan\Support\HigherOrderCollectionProxyHelper;
 use PHPStan\Analyser\OutOfClassScope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ClassMemberReflection;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\FunctionVariant;
@@ -17,6 +18,7 @@ use PHPStan\Type;
 
 use function count;
 
+#[AutowiredService]
 final class HigherOrderCollectionProxyExtension implements MethodsClassReflectionExtension
 {
     public function __construct(private HigherOrderCollectionProxyHelper $higherOrderCollectionProxyHelper)

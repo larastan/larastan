@@ -9,6 +9,7 @@ use Larastan\Larastan\Concerns\HasContainer;
 use Larastan\Larastan\Concerns\LoadsAuthModel;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\ObjectType;
@@ -19,6 +20,7 @@ use function array_map;
 use function count;
 
 /** @internal */
+#[AutowiredService]
 final class RequestUserExtension implements DynamicMethodReturnTypeExtension
 {
     use HasContainer;

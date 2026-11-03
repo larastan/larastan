@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\StatefulGuard;
 use Larastan\Larastan\Concerns;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
 use PHPStan\Type\ObjectType;
@@ -19,6 +20,7 @@ use PHPStan\Type\TypeCombinator;
 use function count;
 
 /** @internal */
+#[AutowiredService]
 final class AuthExtension implements DynamicFunctionReturnTypeExtension
 {
     use Concerns\HasContainer;

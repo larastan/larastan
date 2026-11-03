@@ -6,6 +6,8 @@ namespace Larastan\Larastan\ReturnTypes\Helpers;
 
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
+use PHPStan\DependencyInjection\Conditional;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\BooleanType;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
@@ -17,6 +19,7 @@ use PHPStan\Type\TypeTraverser;
 
 use function count;
 
+#[Conditional(attribute: new AutowiredService(), if: '%generalizeEnvReturnType%')]
 class EnvFunctionDynamicFunctionReturnTypeExtension implements DynamicFunctionReturnTypeExtension
 {
     public function isFunctionSupported(FunctionReflection $functionReflection): bool

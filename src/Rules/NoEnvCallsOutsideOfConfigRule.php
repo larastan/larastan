@@ -9,6 +9,9 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredParameter;
+use PHPStan\DependencyInjection\AutowiredService;
+use PHPStan\DependencyInjection\Conditional;
 use PHPStan\File\FileHelper;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
@@ -25,6 +28,7 @@ use function str_starts_with;
  *
  * @implements Rule<FuncCall>
  */
+#[Conditional(attribute: new AutowiredService(), if: '%noEnvCallsOutsideOfConfig%')]
 class NoEnvCallsOutsideOfConfigRule implements Rule
 {
     use HasContainer;
@@ -39,9 +43,12 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
      * @param  list<non-empty-string> $configDirectories
      */
     public function __construct(
+        #[AutowiredParameter]
         array $configDirectories,
         private FileHelper $fileHelper,
+        #[AutowiredParameter]
         private string|null $singleReflectionFile = null,
+        #[AutowiredParameter]
         private string|null $singleReflectionInsteadOfFile = null,
     ) {
         if (count($configDirectories) !== 0) {

@@ -16,6 +16,8 @@ use Larastan\Larastan\Collectors\UsedViewMakeCollector;
 use Larastan\Larastan\Support\ViewFileHelper;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
+use PHPStan\DependencyInjection\Conditional;
 use PHPStan\Node\CollectedDataNode;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
@@ -29,6 +31,7 @@ use function iterator_to_array;
 use function view;
 
 /** @implements Rule<CollectedDataNode> */
+#[Conditional(attribute: new AutowiredService(), if: '%checkUnusedViews%')]
 final class UnusedViewsRule implements Rule
 {
     /** @var list<string>|null */

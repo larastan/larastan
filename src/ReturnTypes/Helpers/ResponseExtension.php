@@ -8,6 +8,7 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
 use PHPStan\Type\ObjectType;
@@ -16,6 +17,7 @@ use PHPStan\Type\Type;
 use function count;
 
 /** @internal */
+#[AutowiredService]
 final class ResponseExtension implements DynamicFunctionReturnTypeExtension
 {
     private ObjectType|null $responseFactoryType = null;

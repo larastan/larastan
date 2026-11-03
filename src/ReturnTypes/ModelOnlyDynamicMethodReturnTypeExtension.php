@@ -7,6 +7,7 @@ namespace Larastan\Larastan\ReturnTypes;
 use Illuminate\Database\Eloquent\Model;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\Constant\ConstantArrayTypeBuilder;
@@ -21,6 +22,7 @@ use function array_push;
 use function array_reduce;
 use function count;
 
+#[AutowiredService]
 final class ModelOnlyDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
     public function getClass(): string

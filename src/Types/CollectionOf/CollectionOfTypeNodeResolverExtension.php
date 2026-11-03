@@ -7,6 +7,7 @@ namespace Larastan\Larastan\Types\CollectionOf;
 use Illuminate\Database\Eloquent\Model;
 use Larastan\Larastan\Support\CollectionHelper;
 use PHPStan\Analyser\NameScope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\PhpDoc\TypeNodeResolver;
 use PHPStan\PhpDoc\TypeNodeResolverAwareExtension;
 use PHPStan\PhpDoc\TypeNodeResolverExtension;
@@ -21,6 +22,7 @@ use PHPStan\Type\UnionType;
 
 use function count;
 
+#[AutowiredService]
 final class CollectionOfTypeNodeResolverExtension implements TypeNodeResolverExtension, TypeNodeResolverAwareExtension
 {
     private TypeNodeResolver $typeNodeResolver;

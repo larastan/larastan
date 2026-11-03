@@ -7,6 +7,7 @@ namespace Larastan\Larastan\ReturnTypes;
 use Illuminate\Support\Enumerable;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\BooleanType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
@@ -19,6 +20,7 @@ use PHPStan\Type\TypeCombinator;
 
 use function count;
 
+#[AutowiredService]
 class CollectionWhereNotNullDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
     public function getClass(): string

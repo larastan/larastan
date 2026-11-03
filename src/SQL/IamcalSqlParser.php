@@ -6,11 +6,13 @@ namespace Larastan\Larastan\SQL;
 
 use iamcal\SQLParser as VendorIamcalSqlParser;
 use iamcal\SQLParserSyntaxException;
+use PHPStan\DependencyInjection\NonAutowiredService;
 
 use function array_key_exists;
 use function is_array;
 use function is_string;
 
+#[NonAutowiredService(name: 'iamcalSqlParser')]
 final class IamcalSqlParser implements SqlParser
 {
     /** @inheritDoc */

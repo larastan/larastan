@@ -11,6 +11,7 @@ use Larastan\Larastan\Types\Factory\ModelFactoryType;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ReflectionProvider;
@@ -29,6 +30,7 @@ use function array_map;
 use function class_exists;
 use function count;
 
+#[AutowiredService]
 final class ModelFactoryDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
 {
     public function __construct(

@@ -7,6 +7,7 @@ namespace Larastan\Larastan\ReturnTypes;
 use Illuminate\Contracts\Translation\Translator;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\BenevolentUnionType;
@@ -19,6 +20,7 @@ use PHPStan\Type\Type;
 use function count;
 
 /** @internal */
+#[AutowiredService]
 final class TransHelperReturnTypeExtension implements DynamicFunctionReturnTypeExtension
 {
     public function isFunctionSupported(FunctionReflection $functionReflection): bool

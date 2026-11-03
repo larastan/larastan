@@ -8,12 +8,14 @@ use Illuminate\Support\Str;
 use Larastan\Larastan\Concerns;
 use Larastan\Larastan\Reflection\StaticMethodReflection;
 use PHPStan\Analyser\OutOfClassScope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\ReflectionProvider;
 
 /** @internal */
+#[AutowiredService]
 final class ContractsMethodsExtension implements MethodsClassReflectionExtension
 {
     use Concerns\HasContainer;

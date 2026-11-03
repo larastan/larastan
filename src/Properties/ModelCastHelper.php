@@ -29,6 +29,8 @@ use PhpParser\NodeFinder;
 use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Analyser\ScopeContext;
 use PHPStan\Analyser\ScopeFactory;
+use PHPStan\DependencyInjection\AutowiredParameter;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Parser\Parser;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
@@ -65,6 +67,7 @@ use function explode;
 use function str_contains;
 use function str_replace;
 
+#[AutowiredService]
 class ModelCastHelper
 {
     /** @var array<string, array<string, string>> */
@@ -72,7 +75,9 @@ class ModelCastHelper
 
     public function __construct(
         private ReflectionProvider $reflectionProvider,
+        #[AutowiredParameter(ref: '@currentPhpVersionSimpleDirectParser')]
         private Parser $parser,
+        #[AutowiredParameter]
         private bool $parseModelCastsMethod,
         private ScopeFactory $scopeFactory,
     ) {

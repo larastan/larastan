@@ -13,6 +13,7 @@ use IteratorAggregate;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\String_;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
 use PHPStan\Reflection\ReflectionProvider;
@@ -38,6 +39,7 @@ use function in_array;
 use function ltrim;
 use function version_compare;
 
+#[AutowiredService]
 final class CollectionHelper
 {
     public function __construct(private ReflectionProvider $reflectionProvider)

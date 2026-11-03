@@ -7,6 +7,7 @@ namespace Larastan\Larastan\ReturnTypes\ConsoleCommand;
 use Larastan\Larastan\Internal\ConsoleApplicationResolver;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
@@ -15,6 +16,7 @@ use PHPStan\Type\Type;
 use function array_unique;
 use function count;
 
+#[AutowiredService]
 class HasOptionDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
     public function __construct(private ConsoleApplicationResolver $consoleApplicationResolver)
