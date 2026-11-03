@@ -58,6 +58,7 @@ function literalDotKeysAndArrayAccess(array|ArrKeyExistenceAccess $shapeOrAccess
     Arr::get(['a.b' => 1], 'a.b');
     Arr::get($shapeOrAccess, 'missing');
     Arr::get($access, 'missing');
+    Arr::get($access, '0');
 }
 
 /** @implements \ArrayAccess<string, int> */

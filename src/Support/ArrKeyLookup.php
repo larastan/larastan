@@ -80,11 +80,13 @@ final class ArrKeyLookup
         return [$exists, $value];
     }
 
-    /** Arr::get() only reads arrays and ArrayAccess objects, never string offsets. */
+    /**
+     * Arr::get() only reads arrays and ArrayAccess objects, never string offsets. Arrays cast
+     * numeric-string keys like '0' to integers; offsetExists() receives them unchanged.
+     */
     private static function keyExists(Type $type, Type $keyType): TrinaryLogic
     {
-        return $type->isArray()
-            ->or((new ObjectType(ArrayAccess::class))->isSuperTypeOf($type)->result)
-            ->and($type->hasOffsetValueType($keyType->toArrayKey()));
+        return $type->isArray()->and($type->hasOffsetValueType($keyType->toArrayKey()))
+            ->or((new ObjectType(ArrayAccess::class))->isSuperTypeOf($type)->result->and($type->hasOffsetValueType($keyType)));
     }
 }

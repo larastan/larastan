@@ -94,6 +94,7 @@ function getLiteralDotKeysAndArrayAccess(array $dotKey, array $maybeDotKey, arra
     assertType('int|string', Arr::get($maybeDotKey, 'a.b'));
 
     assertType('int|null', Arr::get($access, 'key'));
+    assertType('int|null', Arr::get($access, '0'));
     assertType('int|string|null', Arr::get($shapeOrAccess, 'foo'));
 }
 
