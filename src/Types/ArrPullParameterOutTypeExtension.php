@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Types;
 
 use Illuminate\Support\Arr;
+use Larastan\Larastan\Support\ArrKeyLookup;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\MethodReflection;
@@ -12,12 +13,12 @@ use PHPStan\Reflection\ParameterReflection;
 use PHPStan\Type\StaticMethodParameterOutTypeExtension;
 use PHPStan\Type\Type;
 
-use function str_contains;
+use function count;
 
 /**
  * Removes the pulled key from the array passed by reference to Arr::pull().
  *
- * Keys in "dot" notation keep the declared type.
+ * Keys in "dot" notation keep the declared type unless the literal key always exists.
  *
  * @internal
  */
@@ -44,23 +45,25 @@ final class ArrPullParameterOutTypeExtension implements StaticMethodParameterOut
         }
 
         $arrayType = $scope->getType($arrayArg->value);
-        $keyType   = $scope->getType($keyArg->value);
 
         if (! $arrayType->isArray()->yes()) {
             return null;
         }
 
-        if (! $keyType->isInteger()->yes() && $keyType->getConstantStrings() === []) {
+        $lookups = ArrKeyLookup::find($scope, $arrayArg->value, $keyArg->value);
+
+        if ($lookups === null) {
             return null;
         }
 
-        foreach ($keyType->getConstantStrings() as $constantString) {
-            if (str_contains($constantString->getValue(), '.')) {
+        foreach ($lookups as $candidates) {
+            // Arr::forget() may remove a "dot" path instead of the literal key.
+            if (count($candidates) > 1) {
                 return null;
             }
         }
 
         // unset() on a list mishandles numeric strings like '0', so pass the integer key instead.
-        return $arrayType->unsetOffset($keyType->toArrayKey());
+        return $arrayType->unsetOffset($scope->getType($keyArg->value)->toArrayKey());
     }
 }

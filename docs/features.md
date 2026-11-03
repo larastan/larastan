@@ -56,7 +56,7 @@ $post->attributesToArray();
 
 ## Arr::get() and Arr::pull()
 
-`Arr::get()` and `Arr::pull()` return the type stored under the given key, including keys in "dot" notation. When the key may be missing, the default value's type is added. `Arr::pull()` also removes the key from the array it was passed, unless the key uses "dot" notation.
+`Arr::get()` and `Arr::pull()` return the type stored under the given key, including keys in "dot" notation. When the key may be missing, the default value's type is added. `Arr::pull()` also removes the key from the array it was passed, unless the key uses "dot" notation and the array may lack that exact key.
 
 ```php
 /** @param array{name: string, email?: string, address: array{city: string}} $user */

@@ -47,7 +47,7 @@ final class ArrGetDynamicStaticMethodReturnTypeExtension implements DynamicStati
             return null;
         }
 
-        $lookups = ArrKeyLookup::find($scope, $arrayArg->value, $keyArg->value, $scope->getType($keyArg->value));
+        $lookups = ArrKeyLookup::find($scope, $arrayArg->value, $keyArg->value);
 
         if ($lookups === null) {
             return null;

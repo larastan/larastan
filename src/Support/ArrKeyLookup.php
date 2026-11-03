@@ -32,8 +32,10 @@ final class ArrKeyLookup
      * @return list<non-empty-list<array{TrinaryLogic, ArrayDimFetch}>>|null null when the key isn't
      *                                                                        an integer or constant string
      */
-    public static function find(Scope $scope, Expr $array, Expr $key, Type $keyType): array|null
+    public static function find(Scope $scope, Expr $array, Expr $key): array|null
     {
+        $keyType = $scope->getType($key);
+
         if ($keyType->isInteger()->yes()) {
             return [[self::lookup($scope, $array, [$key])]];
         }

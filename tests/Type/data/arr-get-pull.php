@@ -153,6 +153,13 @@ function pullNumericStringKeys(array $list, string $zeroOrOne): void
     assertType('array<int<0, max>, string>', $array);
 }
 
+/** @param array{'a.b': int, a: array{b: string}, c: int} $dotKey */
+function pullLiteralDotKey(array $dotKey): void
+{
+    assertType('int', Arr::pull($dotKey, 'a.b'));
+    assertType('array{a: array{b: string}, c: int}', $dotKey);
+}
+
 class ArrGetPullOverridingArr extends Arr
 {
     /** @return 'overridden' */

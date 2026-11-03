@@ -60,7 +60,7 @@ final class ArrKeyExistenceRule implements Rule
             return [];
         }
 
-        $lookups = ArrKeyLookup::find($scope, $arrayArg->value, $keyArg->value, $scope->getType($keyArg->value)) ?? [];
+        $lookups = ArrKeyLookup::find($scope, $arrayArg->value, $keyArg->value) ?? [];
 
         foreach ($lookups as $candidates) {
             foreach ($candidates as [$found]) {
