@@ -6,6 +6,7 @@ namespace Larastan\Larastan\Types\RelationOf;
 
 use Illuminate\Database\Eloquent\Model;
 use PHPStan\Analyser\NameScope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\PhpDoc\TypeNodeResolver;
 use PHPStan\PhpDoc\TypeNodeResolverAwareExtension;
 use PHPStan\PhpDoc\TypeNodeResolverExtension;
@@ -17,6 +18,7 @@ use PHPStan\Type\Type;
 
 use function count;
 
+#[AutowiredService]
 final class RelationOfTypeNodeResolverExtension implements TypeNodeResolverExtension, TypeNodeResolverAwareExtension
 {
     private TypeNodeResolver $typeNodeResolver;

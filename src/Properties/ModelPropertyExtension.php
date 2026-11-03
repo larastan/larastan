@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Properties;
 
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
 
 /** @internal */
+#[AutowiredService]
 final class ModelPropertyExtension implements PropertiesClassReflectionExtension
 {
     public function __construct(

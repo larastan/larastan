@@ -10,6 +10,8 @@ use Illuminate\Queue\SerializesModels;
 use Larastan\Larastan\Concerns\InspectsQueuedJobs;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
+use PHPStan\DependencyInjection\Conditional;
 use PHPStan\Node\InClassNode;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Rules\IdentifierRuleError;
@@ -45,6 +47,7 @@ use function sprintf;
  *
  * @implements Rule<InClassNode>
  */
+#[Conditional(attribute: new AutowiredService(), if: '%checkJobSerializesModels%')]
 class JobWithModelPropertyDeclaresSerializesModelsRule implements Rule
 {
     use InspectsQueuedJobs;

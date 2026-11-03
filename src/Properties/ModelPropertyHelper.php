@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Larastan\Larastan\Reflection\ReflectionHelper;
 use PHPStan\Analyser\DeclarationDependencyTracker;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\PhpDoc\TypeStringResolver;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
@@ -29,6 +30,7 @@ use function in_array;
 use function is_string;
 use function method_exists;
 
+#[AutowiredService]
 class ModelPropertyHelper
 {
     /** @var array<string, SchemaTable> */

@@ -12,6 +12,7 @@ use Larastan\Larastan\Types\BuilderOf\BuilderOfType;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParameterReflection;
 use PHPStan\Type\ClosureType;
@@ -25,6 +26,7 @@ use PHPStan\Type\TypeUtils;
 
 use function in_array;
 
+#[AutowiredService]
 final class RelationshipQueryCallbackExtension implements MethodParameterClosureTypeExtension, StaticMethodParameterClosureTypeExtension
 {
     public function __construct(private BuilderHelper $builderHelper)

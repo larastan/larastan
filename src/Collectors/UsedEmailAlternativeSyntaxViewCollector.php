@@ -9,11 +9,13 @@ use Illuminate\View\ViewName;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
+use PHPStan\DependencyInjection\AutowiredService;
 
 use function count;
 use function in_array;
 
 /** @implements Collector<Node\Expr\New_, list<string>> */
+#[AutowiredService]
 final class UsedEmailAlternativeSyntaxViewCollector implements Collector
 {
     private const VIEW_PARAM_NAMES = ['view', 'html', 'text', 'markdown'];

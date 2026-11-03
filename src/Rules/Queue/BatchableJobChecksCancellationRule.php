@@ -14,6 +14,9 @@ use PhpParser\Node\Expr\NullsafeMethodCall;
 use PhpParser\Node\Name;
 use PhpParser\NodeFinder;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredParameter;
+use PHPStan\DependencyInjection\AutowiredService;
+use PHPStan\DependencyInjection\Conditional;
 use PHPStan\Node\InClassNode;
 use PHPStan\Parser\Parser;
 use PHPStan\Reflection\ClassReflection;
@@ -42,14 +45,17 @@ use function sprintf;
  *
  * @implements Rule<InClassNode>
  */
+#[Conditional(attribute: new AutowiredService(), if: '%checkBatchableJobChecksCancellation%')]
 class BatchableJobChecksCancellationRule implements Rule
 {
     use InspectsQueuedJobs;
 
     private const SKIP_MIDDLEWARE_SHORT_NAME = 'SkipIfBatchCancelled';
 
-    public function __construct(private Parser $parser)
-    {
+    public function __construct(
+        #[AutowiredParameter(ref: '@currentPhpVersionSimpleDirectParser')]
+        private Parser $parser,
+    ) {
     }
 
     public function getNodeType(): string

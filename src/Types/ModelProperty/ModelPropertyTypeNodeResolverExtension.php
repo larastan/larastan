@@ -7,6 +7,8 @@ namespace Larastan\Larastan\Types\ModelProperty;
 use Illuminate\Database\Eloquent\Model;
 use Larastan\Larastan\Properties\ModelPropertyHelper;
 use PHPStan\Analyser\NameScope;
+use PHPStan\DependencyInjection\AutowiredParameter;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\PhpDoc\TypeNodeResolver;
 use PHPStan\PhpDoc\TypeNodeResolverExtension;
 use PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
@@ -23,10 +25,12 @@ use function count;
 /**
  * Ensures a 'model-property' type in PHPDoc is recognised to be of type ModelPropertyType.
  */
+#[AutowiredService]
 final class ModelPropertyTypeNodeResolverExtension implements TypeNodeResolverExtension
 {
     public function __construct(
         protected TypeNodeResolver $baseResolver,
+        #[AutowiredParameter(ref: '%checkModelProperties%')]
         protected bool $active,
         private ModelPropertyHelper $modelPropertyHelper,
         private ReflectionProvider $reflectionProvider,

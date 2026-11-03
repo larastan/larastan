@@ -20,6 +20,7 @@ use Larastan\Larastan\Properties\ModelCastHelper;
 use Larastan\Larastan\Properties\ModelPropertyHelper;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ReflectionProvider;
@@ -47,6 +48,7 @@ use function is_string;
 use function lcfirst;
 use function str_contains;
 
+#[AutowiredService]
 final class ModelSerializationDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
     public function __construct(private ModelPropertyHelper $properties, private ModelCastHelper $casts, private ReflectionProvider $reflectionProvider)

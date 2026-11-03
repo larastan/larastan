@@ -9,6 +9,8 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\NodeFinder;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
+use PHPStan\DependencyInjection\Conditional;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -21,6 +23,7 @@ use function is_string;
 use function ltrim;
 
 /** @implements Rule<MethodCall> */
+#[Conditional(attribute: new AutowiredService(), if: '%checkOctaneCompatibility%')]
 class OctaneCompatibilityRule implements Rule
 {
     private const FORBIDDEN_SERVICES = [

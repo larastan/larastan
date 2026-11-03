@@ -8,6 +8,8 @@ use Larastan\Larastan\Properties\Schema\MySqlDataTypeToPhpTypeConverter;
 use Larastan\Larastan\SQL\SqlParser;
 use Larastan\Larastan\SQL\SqlParserFailure;
 use Larastan\Larastan\Support\RecursiveDirectoryIterator;
+use PHPStan\DependencyInjection\AutowiredParameter;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\File\FileHelper;
 use RecursiveIteratorIterator;
 use RegexIterator;
@@ -20,14 +22,17 @@ use function is_dir;
 use function iterator_to_array;
 use function ksort;
 
+#[AutowiredService]
 final class SquashedMigrationHelper
 {
     /** @param  string[] $schemaPaths */
     public function __construct(
+        #[AutowiredParameter(ref: '%squashedMigrationsPath%')]
         private array $schemaPaths,
         private FileHelper $fileHelper,
         private MySqlDataTypeToPhpTypeConverter $converter,
         private SqlParser $sqlParser,
+        #[AutowiredParameter]
         private bool $disableSchemaScan,
     ) {
     }

@@ -7,10 +7,12 @@ namespace Larastan\Larastan\ReturnTypes;
 use Illuminate\Support\Facades\App;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\Type;
 
+#[AutowiredService]
 final class AppMakeDynamicReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
 {
     public function __construct(

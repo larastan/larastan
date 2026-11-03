@@ -19,6 +19,7 @@ use PHPStan\Analyser\ScopeContext;
 use PHPStan\Analyser\ScopeFactory;
 use PHPStan\Analyser\StatementContext;
 use PHPStan\DependencyInjection\AutowiredParameter;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
 use PHPStan\Parser\ParserErrorsException;
@@ -51,6 +52,7 @@ use function substr;
 
 use const DIRECTORY_SEPARATOR;
 
+#[AutowiredService]
 final class ConfigParser
 {
     /** @var list<string> */
@@ -123,10 +125,12 @@ final class ConfigParser
     /** @param list<non-empty-string> $configPaths */
     public function __construct(
         private FileHelper $fileHelper,
+        #[AutowiredParameter(ref: '@currentPhpVersionRichParser')]
         private Parser $parser,
         private FileTypeMapper $fileTypeMapper,
         private ScopeFactory $scopeFactory,
         private NodeScopeResolver $nodeScopeResolver,
+        #[AutowiredParameter(ref: '%configDirectories%')]
         array $configPaths,
         #[AutowiredParameter]
         private bool $treatPhpDocTypesAsCertain,

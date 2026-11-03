@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Larastan\Larastan\Concerns;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\ObjectType;
@@ -18,6 +19,7 @@ use function array_map;
 use function count;
 
 /** @internal */
+#[AutowiredService]
 final class AuthExtension implements DynamicStaticMethodReturnTypeExtension
 {
     use Concerns\HasContainer;

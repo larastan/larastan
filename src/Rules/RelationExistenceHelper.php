@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -22,6 +23,7 @@ use function explode;
 use function sprintf;
 use function strtolower;
 
+#[AutowiredService]
 final class RelationExistenceHelper
 {
     public function __construct(private ModelRuleHelper $modelRuleHelper)

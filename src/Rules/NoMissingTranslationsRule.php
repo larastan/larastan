@@ -13,6 +13,9 @@ use Larastan\Larastan\Collectors\UsedTranslationViewCollector;
 use Larastan\Larastan\Support\ViewFileHelper;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredParameter;
+use PHPStan\DependencyInjection\AutowiredService;
+use PHPStan\DependencyInjection\Conditional;
 use PHPStan\Node\CollectedDataNode;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
@@ -34,6 +37,7 @@ use function strlen;
 use const DIRECTORY_SEPARATOR;
 
 /** @implements Rule<CollectedDataNode> */
+#[Conditional(attribute: new AutowiredService(), if: '%checkMissingTranslations%')]
 final class NoMissingTranslationsRule implements Rule
 {
     /** @param string[] $translationDirectories */
@@ -41,6 +45,7 @@ final class NoMissingTranslationsRule implements Rule
         private UsedTranslationViewCollector $usedTranslationViewCollector,
         private ViewFileHelper $viewFileHelper,
         private Filesystem $filesystem,
+        #[AutowiredParameter]
         private array $translationDirectories,
     ) {
     }

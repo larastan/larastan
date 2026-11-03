@@ -7,6 +7,7 @@ namespace Larastan\Larastan\Types;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use PHPStan\Analyser\NameScope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\PhpDoc\TypeNodeResolverExtension;
 use PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
 use PHPStan\PhpDocParser\Ast\Type\TypeNode;
@@ -19,6 +20,7 @@ use PHPStan\Type\Type;
 use function array_key_exists;
 use function count;
 
+#[AutowiredService]
 class GenericEloquentBuilderTypeNodeResolverExtension implements TypeNodeResolverExtension
 {
     private const KIND_MODEL = 1;

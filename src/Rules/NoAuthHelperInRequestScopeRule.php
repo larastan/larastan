@@ -12,6 +12,8 @@ use PhpParser\Node\Expr\BinaryOp\NotIdentical;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
+use PHPStan\DependencyInjection\Conditional;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -22,6 +24,7 @@ use function in_array;
 use function sprintf;
 
 /** @implements Rule<MethodCall> */
+#[Conditional(attribute: new AutowiredService(), if: '%checkAuthCallsWhenInRequestScope%')]
 class NoAuthHelperInRequestScopeRule implements Rule
 {
     public function getNodeType(): string

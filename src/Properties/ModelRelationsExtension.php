@@ -11,6 +11,7 @@ use Larastan\Larastan\Concerns;
 use Larastan\Larastan\Reflection\ReflectionHelper;
 use Larastan\Larastan\Support\CollectionHelper;
 use PHPStan\Analyser\OutOfClassScope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
@@ -26,6 +27,7 @@ use function array_key_exists;
 use function str_ends_with;
 
 /** @internal */
+#[AutowiredService]
 final class ModelRelationsExtension implements PropertiesClassReflectionExtension
 {
     use Concerns\HasContainer;

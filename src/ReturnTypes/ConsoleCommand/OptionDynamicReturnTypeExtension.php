@@ -9,6 +9,7 @@ use Larastan\Larastan\Internal\ConsoleApplicationHelper;
 use Larastan\Larastan\Internal\ConsoleApplicationResolver;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
@@ -18,6 +19,7 @@ use PHPStan\Type\TypeCombinator;
 use function count;
 use function in_array;
 
+#[AutowiredService]
 class OptionDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
     public function __construct(private ConsoleApplicationResolver $consoleApplicationResolver, private ConsoleApplicationHelper $consoleApplicationHelper)

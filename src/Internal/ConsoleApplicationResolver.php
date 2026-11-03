@@ -10,6 +10,7 @@ use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Events\Dispatcher;
 use Larastan\Larastan\Concerns\HasContainer;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ClassReflection;
 use Throwable;
 
@@ -18,6 +19,7 @@ use function array_key_exists;
 use function is_a;
 
 /** @internal */
+#[AutowiredService]
 final class ConsoleApplicationResolver
 {
     use HasContainer;

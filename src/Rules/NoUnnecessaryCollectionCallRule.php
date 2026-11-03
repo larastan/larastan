@@ -17,6 +17,9 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Scalar\String_;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredParameter;
+use PHPStan\DependencyInjection\AutowiredService;
+use PHPStan\DependencyInjection\Conditional;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
@@ -48,6 +51,7 @@ use function sprintf;
  *
  * @implements Rule<MethodCall>
  */
+#[Conditional(attribute: new AutowiredService(), if: '%noUnnecessaryCollectionCall%')]
 class NoUnnecessaryCollectionCallRule implements Rule
 {
     /**
@@ -96,7 +100,9 @@ class NoUnnecessaryCollectionCallRule implements Rule
     public function __construct(
         protected ReflectionProvider $reflectionProvider,
         protected ModelPropertyExtension $propertyExtension,
+        #[AutowiredParameter(ref: '%noUnnecessaryCollectionCallOnly%')]
         array $onlyMethods,
+        #[AutowiredParameter(ref: '%noUnnecessaryCollectionCallExcept%')]
         array $excludeMethods,
     ) {
         $allMethods = array_merge(

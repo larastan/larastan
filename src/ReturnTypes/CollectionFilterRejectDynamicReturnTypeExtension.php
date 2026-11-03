@@ -11,6 +11,7 @@ use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Stmt\Return_;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
@@ -24,6 +25,7 @@ use function count;
 use function in_array;
 use function is_string;
 
+#[AutowiredService]
 class CollectionFilterRejectDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
     private const SUPPORTED_METHOD_NAMES = ['filter', 'reject', 'where'];

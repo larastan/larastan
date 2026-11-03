@@ -8,12 +8,14 @@ use Illuminate\Translation\Translator;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Type\ObjectType;
 
 use function count;
 use function in_array;
 
 /** @implements Collector<Node\Expr\MethodCall, string> */
+#[AutowiredService]
 final class UsedTranslationTranslatorCollector implements Collector
 {
     public function getNodeType(): string

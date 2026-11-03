@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Rules\MultipleNodeTypesRule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Type\ObjectType;
@@ -21,6 +22,7 @@ use function str_starts_with;
 use function strtolower;
 
 /** @implements MultipleNodeTypesRule<Node\Expr\CallLike> */
+#[AutowiredService]
 class RelationExistenceRule implements MultipleNodeTypesRule
 {
     public function __construct(private RelationExistenceHelper $relationExistenceHelper)

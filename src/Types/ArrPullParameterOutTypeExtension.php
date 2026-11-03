@@ -8,6 +8,7 @@ use Illuminate\Support\Arr;
 use Larastan\Larastan\Support\ArrKeyLookup;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParameterReflection;
 use PHPStan\Type\StaticMethodParameterOutTypeExtension;
@@ -22,6 +23,7 @@ use function count;
  *
  * @internal
  */
+#[AutowiredService]
 final class ArrPullParameterOutTypeExtension implements StaticMethodParameterOutTypeExtension
 {
     public function isStaticMethodSupported(MethodReflection $methodReflection, ParameterReflection $parameter): bool

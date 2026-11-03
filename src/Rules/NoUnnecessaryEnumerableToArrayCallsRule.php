@@ -10,6 +10,8 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Identifier;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
+use PHPStan\DependencyInjection\Conditional;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -28,6 +30,7 @@ use PHPStan\Type\ObjectType;
  *
  * @implements Rule<MethodCall>
  */
+#[Conditional(attribute: new AutowiredService(), if: '%noUnnecessaryEnumerableToArrayCalls%')]
 final class NoUnnecessaryEnumerableToArrayCallsRule implements Rule
 {
     public function getNodeType(): string

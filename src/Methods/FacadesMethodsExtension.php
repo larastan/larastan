@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Facade;
 use Larastan\Larastan\Internal\RecursionGuard;
 use Larastan\Larastan\Reflection\ReflectionHelper;
 use Larastan\Larastan\Reflection\StaticMethodReflection;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
@@ -18,6 +19,7 @@ use function array_key_exists;
 use function assert;
 
 /** @internal */
+#[AutowiredService]
 final class FacadesMethodsExtension implements MethodsClassReflectionExtension
 {
     /** @var array<string, MethodReflection|false> */

@@ -7,6 +7,7 @@ namespace Larastan\Larastan\ReturnTypes;
 use Illuminate\Contracts\Translation\Translator;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\BenevolentUnionType;
@@ -16,6 +17,7 @@ use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 
 /** @internal */
+#[AutowiredService]
 final class TranslatorGetReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
     public function getClass(): string

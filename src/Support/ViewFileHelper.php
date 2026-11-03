@@ -8,6 +8,8 @@ use Generator;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Larastan\Larastan\Concerns\HasContainer;
 use PHPStan\Analyser\DependencyTracker;
+use PHPStan\DependencyInjection\AutowiredParameter;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\File\FileHelper;
 use RecursiveIteratorIterator;
 use RegexIterator;
@@ -25,13 +27,17 @@ use function str_replace;
 
 use const DIRECTORY_SEPARATOR;
 
+#[AutowiredService]
 final class ViewFileHelper
 {
     use HasContainer;
 
     /** @param  list<non-empty-string> $viewDirectories */
-    public function __construct(private array $viewDirectories, private FileHelper $fileHelper)
-    {
+    public function __construct(
+        #[AutowiredParameter]
+        private array $viewDirectories,
+        private FileHelper $fileHelper,
+    ) {
         if (count($viewDirectories) !== 0) {
             return;
         }
