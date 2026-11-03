@@ -251,6 +251,16 @@ services:
             - phpstan.broker.dynamicMethodReturnTypeExtension
 
     -
+        class: Larastan\Larastan\ReturnTypes\ArrGetDynamicStaticMethodReturnTypeExtension
+        tags:
+            - phpstan.broker.dynamicStaticMethodReturnTypeExtension
+
+    -
+        class: Larastan\Larastan\Types\ArrPullParameterOutTypeExtension
+        tags:
+            - phpstan.staticMethodParameterOutTypeExtension
+
+    -
         class: Larastan\Larastan\ReturnTypes\ModelFactoryDynamicStaticMethodReturnTypeExtension
         tags:
             - phpstan.broker.dynamicStaticMethodReturnTypeExtension
@@ -818,6 +828,7 @@ services:
         autowired: false
 
 rules:
+    - Larastan\Larastan\Rules\ArrKeyExistenceRule
     - Larastan\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule
     - Larastan\Larastan\Rules\UselessConstructs\NoUselessValueFunctionCallsRule
     - Larastan\Larastan\Rules\DeferrableServiceProviderMissingProvidesRule
