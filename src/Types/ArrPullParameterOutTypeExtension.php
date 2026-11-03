@@ -27,7 +27,7 @@ final class ArrPullParameterOutTypeExtension implements StaticMethodParameterOut
     {
         return $methodReflection->getName() === 'pull'
             && $parameter->getName() === 'array'
-            && $methodReflection->getDeclaringClass()->is(Arr::class);
+            && $methodReflection->getDeclaringClass()->getName() === Arr::class;
     }
 
     public function getParameterOutTypeFromStaticMethodCall(

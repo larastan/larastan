@@ -30,7 +30,9 @@ final class ArrGetDynamicStaticMethodReturnTypeExtension implements DynamicStati
 
     public function isStaticMethodSupported(MethodReflection $methodReflection): bool
     {
-        return in_array($methodReflection->getName(), ['get', 'pull'], true);
+        // A subclass may override the method.
+        return $methodReflection->getDeclaringClass()->getName() === Arr::class
+            && in_array($methodReflection->getName(), ['get', 'pull'], true);
     }
 
     public function getTypeFromStaticMethodCall(

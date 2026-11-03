@@ -12,7 +12,6 @@ use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\NodeCallbackInvoker;
 use PHPStan\Analyser\Scope;
-use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 
@@ -27,10 +26,6 @@ use function strtolower;
  */
 final class ArrKeyExistenceRule implements Rule
 {
-    public function __construct(private ReflectionProvider $reflectionProvider)
-    {
-    }
-
     public function getNodeType(): string
     {
         return StaticCall::class;
@@ -51,9 +46,10 @@ final class ArrKeyExistenceRule implements Rule
             return [];
         }
 
-        $className = $scope->resolveName($node->class);
+        $method = $scope->getMethodReflection($scope->resolveTypeByName($node->class), $node->name->name);
 
-        if (! $this->reflectionProvider->hasClass($className) || ! $this->reflectionProvider->getClass($className)->is(Arr::class)) {
+        // A subclass may override the method.
+        if ($method === null || $method->getDeclaringClass()->getName() !== Arr::class) {
             return [];
         }
 

@@ -61,6 +61,20 @@ function literalDotKeysAndArrayAccess(array|ArrKeyExistenceAccess $shapeOrAccess
     Arr::get($access, '0');
 }
 
+class OverridingArr extends Arr
+{
+    public static function get($array, $key, $default = null)
+    {
+        return 'overridden';
+    }
+}
+
+/** @param array{foo: string} $shape */
+function overriddenGet(array $shape): void
+{
+    OverridingArr::get($shape, 'missing');
+}
+
 /** @implements \ArrayAccess<string, int> */
 abstract class ArrKeyExistenceAccess implements \ArrayAccess
 {

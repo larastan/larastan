@@ -152,3 +152,18 @@ function pullNumericStringKeys(array $list, string $zeroOrOne): void
     Arr::pull($array, $zeroOrOne);
     assertType('array<int<0, max>, string>', $array);
 }
+
+class ArrGetPullOverridingArr extends Arr
+{
+    /** @return 'overridden' */
+    public static function get($array, $key, $default = null)
+    {
+        return 'overridden';
+    }
+}
+
+/** @param array{foo: string} $shape */
+function overriddenGet(array $shape): void
+{
+    assertType("'overridden'", ArrGetPullOverridingArr::get($shape, 'missing'));
+}

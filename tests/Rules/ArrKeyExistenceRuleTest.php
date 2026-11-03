@@ -16,7 +16,7 @@ class ArrKeyExistenceRuleTest extends RuleTestCase
     protected function getRule(): Rule
     {
         return new CompositeRule([
-            new ArrKeyExistenceRule($this->createReflectionProvider()),
+            new ArrKeyExistenceRule(),
             self::getContainer()->getByType(NonexistentOffsetInArrayDimFetchRule::class),
         ]);
     }
