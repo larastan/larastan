@@ -19,3 +19,19 @@ function test(ModelWithDateColumnCasts $model): void
     $model->deleted_at = '2024-01-01 00:00:00';
     $model->deleted_at = null;
 }
+
+class NativeDateCastModel extends ModelWithDateColumnCasts
+{
+    protected function casts(): array
+    {
+        return ['created_at' => 'string'];
+    }
+}
+
+function testNativeDateCastWrites(NativeDateCastModel $model): void
+{
+    // Native casts() changes read types, not date assignment types.
+    $model->created_at = Carbon::now();
+    $model->created_at = '2024-01-01 00:00:00';
+    $model->created_at = null;
+}
