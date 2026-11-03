@@ -138,6 +138,36 @@ parameters:
     parseModelCastsMethod: true
 ```
 
+## `pivotTypesInCollections`
+**default**: `false`
+
+Models loaded through a `BelongsToMany` or `MorphToMany` relation carry their pivot model, and Larastan types it on
+single results such as `$user->roles()->first()->pivot`. By default, collections of these models, like
+`$user->roles` or `$user->roles()->get()`, are typed with the plain model, so accessing the pivot on their items is
+reported as an undefined property.
+
+When this option is enabled, these collections keep the pivot property, including a custom accessor name set with
+`as()`:
+
+```php
+/** @return BelongsToMany<Podcast, $this, Subscription, 'subscription'> */
+public function podcasts(): BelongsToMany
+{
+    return $this->belongsToMany(Podcast::class)->as('subscription')->using(Subscription::class);
+}
+
+$user->podcasts->first()?->subscription; // Subscription|null
+```
+
+Collection value types are invariant, so a collection with the pivot property is not accepted where a collection of
+the plain model is declared. After enabling this option, change declarations such as `Collection<int, Podcast>` that
+receive these collections to `Collection<int, Podcast&object{subscription: Subscription}>`.
+
+```neon
+parameters:
+    pivotTypesInCollections: true
+```
+
 ## `checkConfigTypes`
 **default**: `false`
 
