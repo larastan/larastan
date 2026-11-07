@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\DB;
 
 use function PHPStan\Testing\assertType;
 
-function test(): void
+function test(float $float): void
 {
     assertType('1', DB::transaction(fn () => 1));
     assertType('\'lorem\'', DB::transaction(fn () => 'lorem'));
@@ -17,13 +17,13 @@ function test(): void
     assertType('null', DB::transaction(function () {
         echo 'ipsum';
     }));
-    assertType('float|null', DB::transaction(function () {
+    assertType('float|null', DB::transaction(function () use ($float) {
         $number = rand();
 
         if ($number % 2 === 0) {
             return null;
         }
 
-        return sqrt($number);
+        return $float;
     }));
 }
