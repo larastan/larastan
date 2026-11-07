@@ -13,6 +13,7 @@ use IteratorAggregate;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\String_;
+use PHPStan\DependencyInjection\AutowiredParameter;
 use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
@@ -42,8 +43,11 @@ use function version_compare;
 #[AutowiredService]
 final class CollectionHelper
 {
-    public function __construct(private ReflectionProvider $reflectionProvider)
-    {
+    public function __construct(
+        private ReflectionProvider $reflectionProvider,
+        #[AutowiredParameter]
+        private bool $pivotTypesInCollections = false,
+    ) {
     }
 
     public function determineGenericCollectionTypeFromType(Type $type): GenericObjectType|null
@@ -192,13 +196,40 @@ final class CollectionHelper
                 return $traverse($type);
             }
 
-            $models = $type->getTemplateType(EloquentCollection::class, 'TModel')->getObjectClassNames();
+            $modelType = $type->getTemplateType(EloquentCollection::class, 'TModel');
+            $models    = $modelType->getObjectClassNames();
 
             if (count($models) === 0) {
                 return $type;
             }
 
-            return TypeCombinator::union(...array_map([$this, 'determineCollectionClass'], $models));
+            if (! $this->pivotTypesInCollections) {
+                $modelType = $this->removeObjectShapes($modelType);
+            }
+
+            return TypeCombinator::union(...array_map(
+                fn (string $model): Type => $this->determineCollectionClass($model, TypeCombinator::intersect($modelType, new ObjectType($model))),
+                $models,
+            ));
+        });
+    }
+
+    /**
+     * Removes class-less object types, such as the pivot shape of BelongsToMany results, while keeping the model type
+     * itself, including its template types.
+     */
+    private function removeObjectShapes(Type $type): Type
+    {
+        return TypeTraverser::map($type, static function (Type $type, callable $traverse): Type {
+            if ($type instanceof UnionType || $type instanceof IntersectionType) {
+                return $traverse($type);
+            }
+
+            if ($type->isObject()->yes() && $type->getObjectClassNames() === []) {
+                return new MixedType();
+            }
+
+            return $type;
         });
     }
 
