@@ -287,6 +287,8 @@ The same flag also enables [FormRequest diagnostics](rules.md#formrequest-diagno
 for unknown validated keys, premature validated-data access, and simple
 validation-rule pairs.
 
+When the file declaring a request's `rules()` method changes, the result cache analyses the files using the request again.
+
 After validation succeeds, Larastan uses `rules()` as the source of truth for:
 
 - magic properties such as `$request->name`;

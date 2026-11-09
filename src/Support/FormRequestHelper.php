@@ -14,6 +14,7 @@ use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassLike;
 use PhpParser\Node\Stmt\Return_;
 use PhpParser\NodeFinder;
+use PHPStan\Analyser\DeclarationDependencyTracker;
 use PHPStan\Analyser\NodeScopeResolver;
 use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\Analyser\Scope;
@@ -68,6 +69,7 @@ final class FormRequestHelper
         private Parser $parser,
         private ScopeFactory $scopeFactory,
         private NodeScopeResolver $nodeScopeResolver,
+        private DeclarationDependencyTracker $declarationDependencyTracker,
     ) {
     }
 
@@ -146,6 +148,9 @@ final class FormRequestHelper
             if ($file === null || $method === null) {
                 continue;
             }
+
+            // The shapes come from the method's body, which PHPStan does not count as part of what the class declares.
+            $this->declarationDependencyTracker->trackFileDependency($class, $file);
 
             $scope     = $this->scopeFactory->create(ScopeContext::create($file));
             $namespace = $owner->getNativeReflection()->getNamespaceName();
