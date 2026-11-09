@@ -61,9 +61,10 @@ general `ValidatedInput` variables, mutation chains, and `except()` are not chec
 Identifier: `larastan.formRequest.prematureValidatedAccess`.
 
 Reports direct `$this->validated()` and `$this->safe()` calls in
-`prepareForValidation()`, `authorize()`, `rules()`, `validationData()`, `messages()`,
-`attributes()`, `withValidator()`, and the `after()` registration method. Laravel
-normally initializes the request validator later. Use `input()` for unvalidated
+`authorize()`, `prepareForValidation()`, `rules()`, `validationData()`, `messages()`,
+`attributes()`, `withValidator()`, the `after()` registration method,
+`isPrecognitive()`, and `filterPrecognitiveRules()`. Laravel normally initializes
+the request validator later. Use `input()` for unvalidated
 data, or move work requiring validated data to `passedValidation()` or the controller.
 
 This is lexical guidance about the normal lifecycle, not initialization tracking.

@@ -67,6 +67,18 @@ class EarlyRequest extends FormRequest
         return [function () { $this->safe(); }];
     }
 
+    public function isPrecognitive(): bool
+    {
+        $this->validated();
+        return false;
+    }
+
+    public function filterPrecognitiveRules($rules): array
+    {
+        $this->safe();
+        return $rules;
+    }
+
     protected function passedValidation(): void
     {
         $this->validated();

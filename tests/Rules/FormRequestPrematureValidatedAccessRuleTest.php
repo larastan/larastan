@@ -32,6 +32,8 @@ class FormRequestPrematureValidatedAccessRuleTest extends RuleTestCase
                 [57, 'validated', 'withValidator'],
                 [59, 'safe', 'withValidator'],
                 [66, 'validated', 'after'],
+                [72, 'validated', 'isPrecognitive'],
+                [78, 'safe', 'filterPrecognitiveRules'],
             ] as [$line, $method, $hook]
         ) {
             $errors[] = [
