@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Rules;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Concerns\ValidatesAttributes;
 use Larastan\Larastan\Support\Validation\RuleParser;
-use Larastan\Larastan\Support\Validation\RuleTypes;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\Return_;
 use PHPStan\Analyser\Scope;
@@ -20,7 +20,8 @@ use function array_filter;
 use function array_keys;
 use function count;
 use function implode;
-use function in_array;
+use function method_exists;
+use function preg_match;
 use function sprintf;
 use function str_contains;
 use function str_starts_with;
@@ -33,8 +34,8 @@ use function str_starts_with;
 #[Conditional(attribute: new AutowiredService(), if: '%checkFormRequestTypes%')]
 final class FormRequestValidationRulePairsRule implements Rule
 {
-    /** Rules without a value type that still never change what `required` does. */
-    private const UNCONDITIONAL = ['Bail', 'Required', 'Nullable', 'Missing'];
+    /** Built-in rules under which a field is validated, required or absent only some of the time. */
+    private const CONDITIONAL = '/^(Sometimes|Exclude|(Accepted|Declined|Missing|Present|Prohibited|Required)(If|Unless|With))/';
 
     public function __construct(private ReflectionProvider $reflectionProvider)
     {
@@ -80,7 +81,8 @@ final class FormRequestValidationRulePairsRule implements Rule
             }
 
             foreach (array_keys($rules) as $rule) {
-                if (! in_array($rule, self::UNCONDITIONAL, true) && RuleTypes::valueType($rule) === null) {
+                // Rule objects Larastan does not read are kept under their class name, which no built-in rule has.
+                if (! method_exists(ValidatesAttributes::class, 'validate' . $rule) || preg_match(self::CONDITIONAL, $rule) === 1) {
                     continue 2;
                 }
             }

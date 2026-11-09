@@ -78,8 +78,10 @@ A premature call with an unknown key can report both diagnostics independently.
 ### Simple validation-rule pairs
 
 These checks inspect statically known returned rule maps in FormRequest `rules()`
-methods. They cover plain top-level fields with known built-in string rules, in
-pipe-delimited strings or rule arrays.
+methods. They cover plain top-level fields whose rules are all built into the
+installed Laravel version, in pipe-delimited strings or rule arrays. Other
+built-in rules next to the pair, such as `string`, `max:255`, or `unique:users`,
+do not prevent a report.
 
 - `larastan.formRequest.requiredNullable`: `required|nullable` still rejects null.
   Decide whether null should be valid for the field. This is guidance, not advice
@@ -89,9 +91,15 @@ pipe-delimited strings or rule arrays.
   be both present and absent. Choose one. If `nullable` is also present, only this
   contradiction is reported.
 
-Dynamic or optional declarations, custom rules, objects, closures, conditional
-presence rules, `sometimes`, and exclusion rules are skipped. Dotted, escaped,
-and numeric field names are not checked, nor are parents with child rules. A
+A field is skipped when any of its rules is a custom rule, a closure, or a rule
+object, or when it has `sometimes`, an exclusion rule, or a conditional rule
+such as `required_if`, `missing_with`, `present_unless`, `prohibited_if`, or
+`accepted_if`. The only rule objects that are checked are the ones FormRequest
+type inference reads as a built-in string rule, such as `Rule::in()`, `Rule::array()`,
+`Rule::email()`, or `Rule::file()`. Dynamic or optional declarations are skipped
+too, but a built-in rule with a dynamic parameter, such as `'max:' . $limit`, is
+still checked. Dotted, escaped, and numeric field names are not checked, nor are
+parents with child rules. A
 wildcard anywhere in the returned map skips these pair checks for that map.
 Separate return sites are checked independently; alternative rule values are not
 combined into a conflict.

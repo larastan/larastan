@@ -89,3 +89,25 @@ class NumericSiblingRequest extends FormRequest
         return [0 => 'required|nullable', 'email' => 'required|nullable'];
     }
 }
+
+class BuiltInRulesRequest extends FormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'name' => 'required|nullable|string|max:255',
+            'slug' => 'required|nullable|unique:posts',
+            'status' => 'required|missing|in:draft,published',
+            'limit' => ['required', 'nullable', 'max:' . $this->integer('limit')],
+            'starts' => 'required|nullable|date|after:today',
+            'filled' => 'required|nullable|filled',
+            'unread' => ['required', 'nullable', Rule::unique('posts')],
+            'closure' => ['required', 'nullable', function () {}],
+            'accepted' => 'required|nullable|accepted_if:other,true',
+            'present' => 'required|nullable|present_unless:other,true',
+            'prohibited' => 'required|nullable|prohibited_if:other,true',
+            'missing' => 'required|missing|missing_with:other',
+            'excluded' => 'required|nullable|exclude_unless:other,true',
+        ];
+    }
+}
