@@ -96,12 +96,12 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
         // Built from the builder's own templates: PHPStan resolves them against the receiver,
         // whereas a resolved `static` or `$this` model type would be rebound to the builder itself.
         if ($classReflection->isGeneric()) {
-            $returnType      = new GenericObjectType($classReflection->getName(), array_values($classReflection->getTemplateTypeMap()->getTypes()));
-            $returnModelType = $classReflection->getTemplateTypeMap()->getType('TModel') ?? $modelType;
+            $returnType = new GenericObjectType($classReflection->getName(), array_values($classReflection->getTemplateTypeMap()->getTypes()));
         } else {
-            $returnType      = new ObjectType($classReflection->getName());
-            $returnModelType = $modelType;
+            $returnType = new ObjectType($classReflection->getName());
         }
+
+        $returnModelType = $returnType->getTemplateType(EloquentBuilder::class, 'TModel');
 
         if ($ref === null) {
             // Special case for `SoftDeletes` trait
