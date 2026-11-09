@@ -323,6 +323,47 @@ PHP);
         ], $columns);
     }
 
+    #[Test]
+    public function it_reads_columns_from_foreign_id_for_methods(): void
+    {
+        $aggregator = $this->aggregateMigration(<<<'PHP'
+            Schema::create('countries', function (Blueprint $table) {
+                $table->string('code', 2)->primary();
+            });
+
+            Schema::create('cities', function (Blueprint $table) {
+                $table->foreignIdFor(Country::class);
+                $table->foreignUuidFor(\App\UuidModel::class);
+                $table->foreignUlidFor(\App\UlidModel::class, 'custom_foreign_ulid_for_name')->nullable();
+            });
+        PHP);
+
+        $columns = [];
+
+        foreach ($aggregator->tables['cities']->columns as $name => $column) {
+            $columns[$name] = [$column->readableType, $column->nullable];
+        }
+
+        self::assertSame([
+            'country_code' => ['string', false],
+            'uuid_model_id' => ['string', false],
+            'custom_foreign_ulid_for_name' => ['string', true],
+        ], $columns);
+    }
+
+    #[Test]
+    public function it_reads_foreign_id_for_columns_of_unknown_models(): void
+    {
+        $aggregator = $this->aggregateMigration(<<<'PHP'
+            Schema::create('cities', function (Blueprint $table) {
+                $table->foreignIdFor(MissingModel::class);
+            });
+        PHP);
+
+        self::assertSame(['missing_model_id'], array_keys($aggregator->tables['cities']->columns));
+        self::assertSame('int', $aggregator->tables['cities']->columns['missing_model_id']->readableType);
+    }
+
     /** @return iterable<string, array{string}> */
     public static function enumCases(): iterable
     {
