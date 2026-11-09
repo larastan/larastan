@@ -46,7 +46,7 @@ parameters:
     checkBatchableJobChecksCancellation: false
     checkDispatchInTransactionAfterCommit: false
     redisDriver: null
-    checkFormRequestTypes: false
+    checkFormRequestTypes: true
 
 parametersSchema:
     checkOctaneCompatibility: bool()
