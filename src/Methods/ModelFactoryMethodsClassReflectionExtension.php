@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use PHPStan\Analyser\OutOfClassScope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ClassMemberReflection;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\FunctionVariant;
@@ -23,6 +24,7 @@ use PHPStan\Type\Type;
 
 use function array_key_exists;
 
+#[AutowiredService]
 class ModelFactoryMethodsClassReflectionExtension implements MethodsClassReflectionExtension
 {
     public function __construct(

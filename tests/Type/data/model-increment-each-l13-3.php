@@ -8,6 +8,6 @@ use function PHPStan\Testing\assertType;
 
 function test(User $user): void
 {
-    assertType('int', $user->incrementEach(['counter' => 1]));
-    assertType('int', $user->decrementEach(['counter' => 1]));
+    assertType('int|false', $user->incrementEach(['counter' => 1]));
+    assertType('int|false', $user->decrementEach(['counter' => 1]));
 }

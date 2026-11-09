@@ -8,7 +8,10 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Config;
 use Larastan\Larastan\Internal\ConfigHelper;
 use PhpParser\Node\Expr\StaticCall;
+use PHPStan\Analyser\DependencyTracker;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
+use PHPStan\DependencyInjection\Conditional;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
 use PHPStan\Type\ErrorType;
@@ -18,6 +21,7 @@ use PHPStan\Type\TypeCombinator;
 
 use function count;
 
+#[Conditional(attribute: new AutowiredService(), if: '%checkConfigTypes%')]
 class ConfigFacadeCollectionDynamicStaticMethodReturnTypeExtension implements DynamicStaticMethodReturnTypeExtension
 {
     public function __construct(private ConfigHelper $configHelper)
@@ -38,6 +42,7 @@ class ConfigFacadeCollectionDynamicStaticMethodReturnTypeExtension implements Dy
         return $methodReflection->getName() === 'collection';
     }
 
+    /** @param Scope&DependencyTracker $scope */
     public function getTypeFromStaticMethodCall(
         MethodReflection $methodReflection,
         StaticCall $methodCall,

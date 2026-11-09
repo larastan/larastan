@@ -6,7 +6,10 @@ namespace Larastan\Larastan\ReturnTypes\Helpers;
 
 use Larastan\Larastan\Internal\ConfigHelper;
 use PhpParser\Node\Expr\FuncCall;
+use PHPStan\Analyser\DependencyTracker;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
+use PHPStan\DependencyInjection\Conditional;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
 use PHPStan\Type\Type;
@@ -14,6 +17,7 @@ use PHPStan\Type\TypeCombinator;
 
 use function count;
 
+#[Conditional(attribute: new AutowiredService(), if: '%checkConfigTypes%')]
 class ConfigFunctionDynamicFunctionReturnTypeExtension implements DynamicFunctionReturnTypeExtension
 {
     public function __construct(private ConfigHelper $configHelper)
@@ -29,6 +33,7 @@ class ConfigFunctionDynamicFunctionReturnTypeExtension implements DynamicFunctio
         return $functionReflection->getName() === 'config';
     }
 
+    /** @param Scope&DependencyTracker $scope */
     public function getTypeFromFunctionCall(
         FunctionReflection $functionReflection,
         FuncCall $functionCall,

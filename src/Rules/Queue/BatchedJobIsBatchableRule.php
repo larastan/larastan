@@ -13,6 +13,8 @@ use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
+use PHPStan\DependencyInjection\Conditional;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -40,6 +42,7 @@ use function sprintf;
  *
  * @implements Rule<StaticCall>
  */
+#[Conditional(attribute: new AutowiredService(), if: '%checkBatchedJobIsBatchable%')]
 class BatchedJobIsBatchableRule implements Rule
 {
     use InspectsQueuedJobs;

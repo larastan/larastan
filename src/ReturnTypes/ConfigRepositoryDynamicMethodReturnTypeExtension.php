@@ -8,7 +8,10 @@ use Illuminate\Config\Repository;
 use Illuminate\Support\Collection;
 use Larastan\Larastan\Internal\ConfigHelper;
 use PhpParser\Node\Expr\MethodCall;
+use PHPStan\Analyser\DependencyTracker;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
+use PHPStan\DependencyInjection\Conditional;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\ErrorType;
@@ -19,6 +22,7 @@ use PHPStan\Type\TypeCombinator;
 use function count;
 use function in_array;
 
+#[Conditional(attribute: new AutowiredService(), if: '%checkConfigTypes%')]
 class ConfigRepositoryDynamicMethodReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
     public function __construct(private ConfigHelper $configHelper)
@@ -39,6 +43,7 @@ class ConfigRepositoryDynamicMethodReturnTypeExtension implements DynamicMethodR
         return in_array($methodReflection->getName(), ['get', 'collection'], true);
     }
 
+    /** @param Scope&DependencyTracker $scope */
     public function getTypeFromMethodCall(
         MethodReflection $methodReflection,
         MethodCall $methodCall,

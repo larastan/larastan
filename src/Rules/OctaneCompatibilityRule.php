@@ -9,6 +9,8 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\NodeFinder;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
+use PHPStan\DependencyInjection\Conditional;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -17,10 +19,21 @@ use PHPStan\Type\ObjectType;
 use function array_map;
 use function count;
 use function in_array;
+use function is_string;
+use function ltrim;
 
 /** @implements Rule<MethodCall> */
+#[Conditional(attribute: new AutowiredService(), if: '%checkOctaneCompatibility%')]
 class OctaneCompatibilityRule implements Rule
 {
+    private const FORBIDDEN_SERVICES = [
+        'request',
+        'config',
+        'Illuminate\Http\Request',
+        'Illuminate\Contracts\Config\Repository',
+        'Illuminate\Config\Repository',
+    ];
+
     public function getNodeType(): string
     {
         return MethodCall::class;
@@ -94,41 +107,24 @@ class OctaneCompatibilityRule implements Rule
             return [];
         }
 
+        if (! is_string($closureParams[0]->var->name)) {
+            return [];
+        }
+
         $containerParameterName = $closureParams[0]->var->name;
 
-        $nodes = (new NodeFinder())->find($closure->getStmts(), static function (Node $node) use ($containerParameterName): bool {
+        $nodes = (new NodeFinder())->find($closure->getStmts(), function (Node $node) use ($containerParameterName, $scope): bool {
             if (! $node instanceof Node\Expr\New_) {
                 return false;
             }
 
-            if (count($node->getArgs()) < 1) {
-                return false;
+            foreach ($node->getArgs() as $arg) {
+                if ($this->isForbiddenInjection($arg->value, $containerParameterName, $scope)) {
+                    return true;
+                }
             }
 
-            if (! $node->getArgs()[0]->value instanceof Node\Expr\Variable && ! $node->getArgs()[0]->value instanceof Node\Expr\ArrayDimFetch) {
-                return false;
-            }
-
-            if ($node->getArgs()[0]->value instanceof Node\Expr\ArrayDimFetch) {
-                /** @var Node\Expr\Variable $var */
-                $var = $node->getArgs()[0]->value->var;
-
-                if ($var->name !== $containerParameterName) {
-                    return false;
-                }
-
-                if ($node->getArgs()[0]->value->dim === null) {
-                    return false;
-                }
-
-                if (! $node->getArgs()[0]->value->dim instanceof Node\Scalar\String_) {
-                    return false;
-                }
-
-                return in_array($node->getArgs()[0]->value->dim->value, ['request', 'config'], true);
-            }
-
-            return $node->getArgs()[0]->value->name === $containerParameterName;
+            return false;
         });
 
         if (count($nodes) > 0) {
@@ -136,6 +132,56 @@ class OctaneCompatibilityRule implements Rule
         }
 
         return [];
+    }
+
+    private function isForbiddenInjection(Node\Expr $expr, string $containerParameterName, Scope $scope): bool
+    {
+        if ($expr instanceof Node\Expr\Variable && $expr->name === $containerParameterName) {
+            return true;
+        }
+
+        if ($expr instanceof Node\Expr\ArrayDimFetch) {
+            if (! $expr->var instanceof Node\Expr\Variable || $expr->var->name !== $containerParameterName) {
+                return false;
+            }
+
+            if ($expr->dim === null) {
+                return false;
+            }
+
+            return $this->isForbiddenServiceKey($expr->dim, $scope);
+        }
+
+        if ($expr instanceof Node\Expr\MethodCall) {
+            if (! $expr->var instanceof Node\Expr\Variable || $expr->var->name !== $containerParameterName) {
+                return false;
+            }
+
+            if (! $expr->name instanceof Node\Identifier || ! in_array($expr->name->name, ['make', 'get', 'makeWith'], true)) {
+                return false;
+            }
+
+            $args = $expr->getArgs();
+
+            if (count($args) < 1) {
+                return false;
+            }
+
+            return $this->isForbiddenServiceKey($args[0]->value, $scope);
+        }
+
+        return false;
+    }
+
+    private function isForbiddenServiceKey(Node\Expr $dim, Scope $scope): bool
+    {
+        foreach ($scope->getType($dim)->getConstantStrings() as $constantString) {
+            if (in_array(ltrim($constantString->getValue(), '\\'), self::FORBIDDEN_SERVICES, true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

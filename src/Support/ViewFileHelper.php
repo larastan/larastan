@@ -7,6 +7,9 @@ namespace Larastan\Larastan\Support;
 use Generator;
 use Illuminate\Contracts\View\Factory as ViewFactory;
 use Larastan\Larastan\Concerns\HasContainer;
+use PHPStan\Analyser\DependencyTracker;
+use PHPStan\DependencyInjection\AutowiredParameter;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\File\FileHelper;
 use RecursiveIteratorIterator;
 use RegexIterator;
@@ -24,13 +27,17 @@ use function str_replace;
 
 use const DIRECTORY_SEPARATOR;
 
+#[AutowiredService]
 final class ViewFileHelper
 {
     use HasContainer;
 
     /** @param  list<non-empty-string> $viewDirectories */
-    public function __construct(private array $viewDirectories, private FileHelper $fileHelper)
-    {
+    public function __construct(
+        #[AutowiredParameter]
+        private array $viewDirectories,
+        private FileHelper $fileHelper,
+    ) {
         if (count($viewDirectories) !== 0) {
             return;
         }
@@ -43,6 +50,28 @@ final class ViewFileHelper
         );
 
         $this->viewDirectories = $viewDirectories; // @phpstan-ignore-line
+    }
+
+    /**
+     * The result cache runs the rule again when a view file in the root view directories changes.
+     */
+    public function trackRootViewDirectories(DependencyTracker $dependencyTracker): void
+    {
+        $finder = $this->resolve(ViewFactory::class)->getFinder();
+
+        foreach ($finder->getPaths() as $path) {
+            $dependencyTracker->trackDirectoryDependency($this->fileHelper->absolutizePath($path), '*.blade.php');
+        }
+    }
+
+    /**
+     * The result cache runs the rule again when a view file in any of the view directories changes.
+     */
+    public function trackAllViewDirectories(DependencyTracker $dependencyTracker): void
+    {
+        foreach ($this->viewDirectories as $viewDirectory) {
+            $dependencyTracker->trackDirectoryDependency($this->fileHelper->absolutizePath($viewDirectory), '*.blade.php');
+        }
     }
 
     /** @return Generator<int, string, void, void> */

@@ -6,6 +6,8 @@ namespace Larastan\Larastan\Properties;
 
 use Composer\InstalledVersions;
 use OutOfBoundsException;
+use PHPStan\DependencyInjection\AutowiredParameter;
+use PHPStan\DependencyInjection\AutowiredService;
 use SplFileInfo;
 
 use function array_filter;
@@ -34,6 +36,7 @@ use const LOCK_EX;
 use const LOCK_UN;
 use const PHP_VERSION;
 
+#[AutowiredService]
 final class MigrationCache
 {
     private const CACHE_PREFIX = 'larastan_migrations_';
@@ -42,7 +45,9 @@ final class MigrationCache
     private const CACHE_FORMAT_VERSION = '1';
 
     public function __construct(
+        #[AutowiredParameter(ref: '%tmpDir%')]
         private string $cacheDirectory,
+        #[AutowiredParameter(ref: '%enableMigrationCache%')]
         private bool $enabled = false,
     ) {
     }

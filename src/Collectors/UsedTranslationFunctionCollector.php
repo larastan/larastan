@@ -7,11 +7,13 @@ namespace Larastan\Larastan\Collectors;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
+use PHPStan\DependencyInjection\AutowiredService;
 
 use function count;
 use function in_array;
 
 /** @implements Collector<Node\Expr\FuncCall, string> */
+#[AutowiredService]
 final class UsedTranslationFunctionCollector implements Collector
 {
     public function getNodeType(): string

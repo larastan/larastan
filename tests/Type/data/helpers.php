@@ -146,6 +146,11 @@ function test(?int $value = 0, int|\Closure $intOrClosure = 0, int|\Closure $int
     assertType('5', value(5));
     assertType('int|string', value($intOrClosure));
     assertType('mixed', value($intOrClosureWithNoDocBlock));
+    assertType('Helpers\InvokableValue', value(new InvokableValue()));
+    assertType("'strtoupper'", value('strtoupper'));
+    assertType("array{Helpers\InvokableValue, '__invoke'}", value([new InvokableValue(), '__invoke']));
+    assertType('array{Closure(): 1}', value([fn () => 1]));
+    assertType('Illuminate\Support\Collection<int, Closure(): 1>', value(collect([fn () => 1])));
 
     assertType('array<string, mixed>|null', transform(User::first(), fn (User $user) => $user->getAttributes()));
     assertType('array<string, mixed>', transform(User::sole(), fn (User $user) => $user->getAttributes()));
@@ -182,6 +187,8 @@ function test(?int $value = 0, int|\Closure $intOrClosure = 0, int|\Closure $int
     assertType('int', env('foo', 120));
     assertType('string', env('foo', ''));
     assertType('int', env('foo', fn () => 120));
+    assertType('bool|string|null', env('foo', null));
+    assertType('bool|string|null', env('foo', fn () => null));
 
     assertType('true', literal(true));
     assertType('int<0, 10>', literal(random_int(0,10)));
@@ -206,3 +213,19 @@ function testUnion($parameter): int {
 
     return 0;
 };
+
+/**
+ * @param callable(): int $intCallable
+ */
+function testCallable(callable $intCallable): void
+{
+    assertType('(callable(): int)|int', value($intCallable));
+}
+
+class InvokableValue
+{
+    public function __invoke(): int
+    {
+        return 1;
+    }
+}

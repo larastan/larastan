@@ -8,6 +8,7 @@ use Illuminate\Foundation\Application;
 use Larastan\Larastan\ReturnTypes\AppMakeHelper;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
 use PHPStan\Type\ObjectType;
@@ -15,6 +16,7 @@ use PHPStan\Type\Type;
 
 use function count;
 
+#[AutowiredService]
 class AppExtension implements DynamicFunctionReturnTypeExtension
 {
     private ObjectType|null $applicationType = null;

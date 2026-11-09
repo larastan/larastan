@@ -11,6 +11,8 @@ use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Scalar\String_;
 use PhpParser\Node\Stmt\Property;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
+use PHPStan\DependencyInjection\Conditional;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -28,6 +30,7 @@ use function sprintf;
  *
  * @implements Rule<Property>
  */
+#[Conditional(attribute: new AutowiredService(), if: '%checkModelAppends%')]
 class ModelAppendsRule implements Rule
 {
     public function __construct(

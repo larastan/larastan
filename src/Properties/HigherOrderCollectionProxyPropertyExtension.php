@@ -7,12 +7,14 @@ namespace Larastan\Larastan\Properties;
 use Illuminate\Database\Eloquent\Collection;
 use Larastan\Larastan\Support\HigherOrderCollectionProxyHelper;
 use PHPStan\Analyser\OutOfClassScope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\TrinaryLogic;
 use PHPStan\Type;
 
+#[AutowiredService]
 final class HigherOrderCollectionProxyPropertyExtension implements PropertiesClassReflectionExtension
 {
     public function __construct(private HigherOrderCollectionProxyHelper $higherOrderCollectionProxyHelper)

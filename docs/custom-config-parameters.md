@@ -23,6 +23,8 @@ parameters:
 
 **Note:** If your migrations are using `if` statements to conditionally alter database structure (ex: create table only if it's not there, add column only if table exists and column does not etc...) Larastan will assume those if statements evaluate to true and will consider everything from the `if` body.
 
+**Note:** Literal `DB::statement()` and `DB::unprepared()` calls are parsed with the same SQL parsers as schema dumps. See [Model Properties](features.md#model-properties).
+
 ## `disableMigrationScan`
 **default**: `false`
 
@@ -67,7 +69,7 @@ parameters:
 The default package used to parse the schema dumps, [iamcal/sql-parser](https://github.com/iamcal/sql-parser), is primarily focused on the MySQL dialect.
 It can read (or rather, try to read) PostgreSQL dumps provided they are in the *plain text (and not the 'custom') format*, but the mileage may vary as problems have been noted with timestamp columns and lengthy parse time on more complicated dumps.
 
-If you install [phpmyadmin/sql-parser](https://github.com/phpmyadmin/sql-parser) (tested with `^5.9`), Larastan will automatically switch to that parser at runtime with no additional configuration. When the package is missing or cannot be loaded, Larastan silently falls back to the bundled parser. If the switch does not occur, verify that Composer autoloads have been regenerated (`composer dump-autoload`) and that only one version of `phpmyadmin/sql-parser` is present in your dependency tree.
+If you install [phpmyadmin/sql-parser](https://github.com/phpmyadmin/sql-parser) (tested with `^5.9`), Larastan will automatically switch to that parser at runtime with no additional configuration. When the package is missing or cannot be loaded, Larastan silently falls back to the bundled parser. A schema file that phpmyadmin/sql-parser cannot parse is also read with the bundled parser. If the switch does not occur, verify that Composer autoloads have been regenerated (`composer dump-autoload`) and that only one version of `phpmyadmin/sql-parser` is present in your dependency tree.
 
 The viable options for PostgreSQL at the moment are:
 1. Use the [laravel-ide-helper](https://github.com/barryvdh/laravel-ide-helper) package to write PHPDocs directly to the Models. 
@@ -136,10 +138,44 @@ parameters:
     parseModelCastsMethod: true
 ```
 
+## `pivotTypesInCollections`
+**default**: `false`
+
+Models loaded through a `BelongsToMany` or `MorphToMany` relation carry their pivot model, and Larastan types it on
+single results such as `$user->roles()->first()->pivot`. By default, collections of these models, like
+`$user->roles` or `$user->roles()->get()`, are typed with the plain model, so accessing the pivot on their items is
+reported as an undefined property.
+
+When this option is enabled, these collections keep the pivot property, including a custom accessor name set with
+`as()`:
+
+```php
+/** @return BelongsToMany<Podcast, $this, Subscription, 'subscription'> */
+public function podcasts(): BelongsToMany
+{
+    return $this->belongsToMany(Podcast::class)->as('subscription')->using(Subscription::class);
+}
+
+$user->podcasts->first()?->subscription; // Subscription|null
+```
+
+Collection value types are invariant, so a collection with the pivot property is not accepted where a collection of
+the plain model is declared. After enabling this option, change declarations such as `Collection<int, Podcast>` that
+receive these collections to `Collection<int, Podcast&object{subscription: Subscription}>`.
+
+```neon
+parameters:
+    pivotTypesInCollections: true
+```
+
 ## `checkConfigTypes`
 **default**: `false`
 
 This config parameter enables the checks for `config` helper function return type and `\Illuminate\Config\Repository::get` method return type.
+
+Each config file is analysed on its own, so variables assigned before its `return` and its `use` imports are taken into account, whichever file reads the config. A config file with more than one `return` outside functions and classes has no inferred types.
+
+When a config file is created, changed or deleted, the result cache analyses the files reading its keys again.
 
 By default, Larastan assumes your config files are under `/config` directory. It uses `config_path` function from Laravel to determine this. But if you have unconventional config file structure, you can use `configDirectories` config parameter to tell Larastan where your config files are stored.
 
@@ -192,3 +228,21 @@ $foo = env('FOO', fn() => 'bar');
 will also dump `string` when the parameter is enabled.
 
 The reasoning behind it is that the default value is always used when the environment variable is not set. And for almost all the cases the default value should be the same type as the actual env variable. So it makes sense to generalize the return type to the type of the default value.
+
+A `null` default says nothing about the variable's type, so `env('FOO', null)` keeps the return type of `env('FOO')`.
+
+## `redisDriver`
+**default**: `null`
+
+Chooses which Redis facade and connection stubs Larastan loads.
+
+| Value | Stubs |
+| --- | --- |
+| `null` | Resolve from Laravel config `database.redis.client`. Use `phpredis` or `predis` when that config matches; otherwise load the generic stubs. |
+| `phpredis` | `PhpRedisFacade` and `PhpRedisConnection` (Laravel `PhpRedisConnection` method signatures). |
+| `predis` | `PredisFacade` and `PredisConnection`. |
+
+```neon
+parameters:
+    redisDriver: phpredis
+```

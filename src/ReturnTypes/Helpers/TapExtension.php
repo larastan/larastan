@@ -7,6 +7,7 @@ namespace Larastan\Larastan\ReturnTypes\Helpers;
 use Illuminate\Support\HigherOrderTapProxy;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
 use PHPStan\Type\Generic\GenericObjectType;
@@ -16,6 +17,7 @@ use PHPStan\Type\Type;
 
 use function count;
 
+#[AutowiredService]
 class TapExtension implements DynamicFunctionReturnTypeExtension
 {
     public function isFunctionSupported(FunctionReflection $functionReflection): bool

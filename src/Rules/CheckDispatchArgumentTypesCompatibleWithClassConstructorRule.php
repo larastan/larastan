@@ -139,6 +139,7 @@ class CheckDispatchArgumentTypesCompatibleWithClassConstructorRule implements Ru
             '',
             '',
             null,
+            null, // no callee reflection for parameter closure type extensions
         );
     }
 

@@ -24,7 +24,7 @@ class Collection extends BaseCollection implements QueueableCollection
      * Load a set of relationships onto the collection.
      *
      * @template TRelation of string
-     * @param  string|array<int|TRelation, (callable(relation-of<TModel, TRelation>): mixed)|string|array<int|string, string>>  $relations
+     * @param  string|array<int|TRelation, (callable(relation-of<TModel, TRelation>): mixed)|string|array<mixed>>  $relations
      * @return $this
      */
     public function load($relations);
@@ -33,7 +33,7 @@ class Collection extends BaseCollection implements QueueableCollection
      * Load a set of relationships onto the collection if they are not already eager loaded.
      *
      * @template TRelation of string
-     * @param  string|array<int|TRelation, (callable(relation-of<TModel, TRelation>): mixed)|string|array<int|string, string>>  $relations
+     * @param  string|array<int|TRelation, (callable(relation-of<TModel, TRelation>): mixed)|string|array<mixed>>  $relations
      * @return $this
      */
     public function loadMissing($relations);

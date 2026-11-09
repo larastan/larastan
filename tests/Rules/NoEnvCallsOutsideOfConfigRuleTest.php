@@ -15,6 +15,10 @@ use const DIRECTORY_SEPARATOR;
 /** @extends RuleTestCase<NoEnvCallsOutsideOfConfigRule> */
 class NoEnvCallsOutsideOfConfigRuleTest extends RuleTestCase
 {
+    private string|null $singleReflectionFile = null;
+
+    private string|null $singleReflectionInsteadOfFile = null;
+
     protected function setUp(): void
     {
         $this->overrideConfigPath(__DIR__ . '/data/config');
@@ -25,7 +29,13 @@ class NoEnvCallsOutsideOfConfigRuleTest extends RuleTestCase
         return new NoEnvCallsOutsideOfConfigRule([
             __DIR__ . '/data/config',
             __DIR__ . '/data/module/*/config',
-        ], $this->getFileHelper());
+        ], $this->getFileHelper(), $this->singleReflectionFile, $this->singleReflectionInsteadOfFile);
+    }
+
+    private function setSingleReflectionFiles(string|null $file, string|null $insteadOfFile): void
+    {
+        $this->singleReflectionFile          = $file;
+        $this->singleReflectionInsteadOfFile = $insteadOfFile;
     }
 
     #[Test]
@@ -86,6 +96,36 @@ class NoEnvCallsOutsideOfConfigRuleTest extends RuleTestCase
             $actualErrors[1]->getFile(),
         );
         $this->assertSame(18, $actualErrors[1]->getLine());
+    }
+
+    #[Test]
+    public function itDoesNotReportInEditorModeWhenInsteadOfPointsAtConfigFile(): void
+    {
+        $this->setSingleReflectionFiles(__DIR__ . '/data/env-calls.php', __DIR__ . '/data/config/env-calls.php');
+
+        $this->analyse([__DIR__ . '/data/env-calls.php'], []);
+    }
+
+    #[Test]
+    public function itReportsInEditorModeWhenInsteadOfIsOutsideConfig(): void
+    {
+        $this->setSingleReflectionFiles(__DIR__ . '/data/env-calls.php', __DIR__ . '/data/some-non-config-file.php');
+
+        $this->analyse([__DIR__ . '/data/env-calls.php'], [
+            ["Called 'env' outside of the config directory which returns null when the config is cached, use 'config'.", 7],
+            ["Called 'env' outside of the config directory which returns null when the config is cached, use 'config'.", 8],
+        ]);
+    }
+
+    #[Test]
+    public function itUsesNormalLogicWhenAnalysedFileDiffersFromTmpFile(): void
+    {
+        $this->setSingleReflectionFiles('/some/other/buffer.php', __DIR__ . '/data/config/env-calls.php');
+
+        $this->analyse([__DIR__ . '/data/env-calls.php'], [
+            ["Called 'env' outside of the config directory which returns null when the config is cached, use 'config'.", 7],
+            ["Called 'env' outside of the config directory which returns null when the config is cached, use 'config'.", 8],
+        ]);
     }
 
     protected function overrideConfigPath(string $path): void

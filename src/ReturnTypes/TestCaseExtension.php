@@ -7,6 +7,7 @@ namespace Larastan\Larastan\ReturnTypes;
 use Illuminate\Foundation\Testing\TestCase;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\ErrorType;
@@ -18,6 +19,7 @@ use function count;
 use function in_array;
 
 /** @internal */
+#[AutowiredService]
 final class TestCaseExtension implements DynamicMethodReturnTypeExtension
 {
     public function getClass(): string

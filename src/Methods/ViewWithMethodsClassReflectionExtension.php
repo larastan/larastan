@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Methods;
 
 use Larastan\Larastan\Reflection\DynamicWhereMethodReflection;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
@@ -12,6 +13,7 @@ use PHPStan\Reflection\MethodsClassReflectionExtension;
 use function in_array;
 use function str_starts_with;
 
+#[AutowiredService]
 class ViewWithMethodsClassReflectionExtension implements MethodsClassReflectionExtension
 {
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool

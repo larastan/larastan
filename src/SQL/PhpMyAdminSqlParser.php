@@ -6,6 +6,7 @@ namespace Larastan\Larastan\SQL;
 
 use PhpMyAdmin\SqlParser\Components\CreateDefinition;
 use PhpMyAdmin\SqlParser\Components\OptionsArray;
+use PhpMyAdmin\SqlParser\Exceptions\LexerException;
 use PhpMyAdmin\SqlParser\Exceptions\ParserException;
 use PhpMyAdmin\SqlParser\Parser;
 use PhpMyAdmin\SqlParser\Statements\CreateStatement;
@@ -15,12 +16,20 @@ use function strtolower;
 
 final class PhpMyAdminSqlParser implements SqlParser
 {
+    public function __construct(private readonly SqlParser|null $fallbackParser = null)
+    {
+    }
+
     /** @inheritDoc */
     public function parseTables(string $sql): array
     {
         try {
             $parser = new Parser($sql, true);
-        } catch (ParserException $exception) {
+        } catch (LexerException | ParserException $exception) {
+            if ($this->fallbackParser !== null) {
+                return $this->fallbackParser->parseTables($sql);
+            }
+
             throw SqlParserFailure::create('Failed to parse SQL schema with phpmyadmin/sql-parser.', $exception);
         }
 

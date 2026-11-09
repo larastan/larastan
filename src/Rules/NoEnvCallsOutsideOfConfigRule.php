@@ -9,6 +9,9 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Name;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredParameter;
+use PHPStan\DependencyInjection\AutowiredService;
+use PHPStan\DependencyInjection\Conditional;
 use PHPStan\File\FileHelper;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
@@ -25,6 +28,7 @@ use function str_starts_with;
  *
  * @implements Rule<FuncCall>
  */
+#[Conditional(attribute: new AutowiredService(), if: '%noEnvCallsOutsideOfConfig%')]
 class NoEnvCallsOutsideOfConfigRule implements Rule
 {
     use HasContainer;
@@ -32,9 +36,21 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
     /** @var list<string> */
     private array $configDirectories = [];
 
-    /** @param  list<non-empty-string> $configDirectories */
-    public function __construct(array $configDirectories, private FileHelper $fileHelper)
-    {
+    /**
+     * The single reflection files are PHPStan's normalized `--tmp-file` and
+     * `--instead-of` paths, which are set in editor mode.
+     *
+     * @param  list<non-empty-string> $configDirectories
+     */
+    public function __construct(
+        #[AutowiredParameter]
+        array $configDirectories,
+        private FileHelper $fileHelper,
+        #[AutowiredParameter]
+        private string|null $singleReflectionFile = null,
+        #[AutowiredParameter]
+        private string|null $singleReflectionInsteadOfFile = null,
+    ) {
         if (count($configDirectories) !== 0) {
             foreach ($configDirectories as $directory) {
                 $this->configDirectories[] = $this->fileHelper->normalizePath($directory);
@@ -79,6 +95,8 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
 
     protected function isCalledOutsideOfConfig(FuncCall $call, Scope $scope): bool
     {
+        $file = $this->resolveAnalysedFile($scope->getFile());
+
         foreach ($this->configDirectories as $configDirectoryGlob) {
             foreach ((glob($configDirectoryGlob) ?: []) as $configDirectory) {
                 $absolutePath = $this->fileHelper->absolutizePath($configDirectory);
@@ -87,12 +105,29 @@ class NoEnvCallsOutsideOfConfigRule implements Rule
                     continue;
                 }
 
-                if (str_starts_with($scope->getFile(), $absolutePath)) {
+                if (str_starts_with($file, $absolutePath)) {
                     return false;
                 }
             }
         }
 
         return true;
+    }
+
+    /**
+     * In editor mode PHPStan analyses the temporary file, so map it back to
+     * the file it stands in for.
+     */
+    private function resolveAnalysedFile(string $scopeFile): string
+    {
+        if ($this->singleReflectionFile === null) {
+            return $scopeFile;
+        }
+
+        if ($this->fileHelper->normalizePath($scopeFile) !== $this->singleReflectionFile) {
+            return $scopeFile;
+        }
+
+        return $this->singleReflectionInsteadOfFile ?? $scopeFile;
     }
 }

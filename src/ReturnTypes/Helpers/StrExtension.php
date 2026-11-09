@@ -7,6 +7,7 @@ namespace Larastan\Larastan\ReturnTypes\Helpers;
 use Illuminate\Support\Stringable;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
 use PHPStan\Type\MixedType;
@@ -15,6 +16,7 @@ use PHPStan\Type\Type;
 
 use function count;
 
+#[AutowiredService]
 class StrExtension implements DynamicFunctionReturnTypeExtension
 {
     private ObjectType|null $stringableType = null;

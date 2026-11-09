@@ -6,7 +6,9 @@ implementation and follow its complete pattern before adding a new one.
 ## Sources of truth
 
 - `composer.json` defines supported PHP, Laravel, PHPStan, and PHPUnit versions.
-- `extension.neon` defines services, extension tags, parameters, and defaults.
+- `extension.neon` defines parameters, defaults, and the services that PHP
+  attributes cannot express. Other services are registered with PHPStan DI
+  attributes on their classes in `src/`.
 - `CONTRIBUTING.md` documents setup and contribution expectations.
 - `.github/workflows/` defines the complete CI matrix.
 
@@ -90,9 +92,14 @@ Check sibling extensions for the full set of files a change requires.
   releases. Respect `@api-do-not-implement` on interfaces. Inject PHPStan
   services rather than constructing internal implementations whose
   constructors are outside the compatibility promise.
-- Register extensions in `extension.neon` with the tag required by their
-  PHPStan interface. For feature-gated tags or explicit `active` arguments,
-  follow the nearest existing registration pattern.
+- Register extensions with `#[AutowiredService]`; PHPStan adds the extension
+  tag from the implemented interface. Use it for rules too, not
+  `#[RegisteredRule]`, so they also run when no rule level is configured. Gate
+  optional extensions with `#[Conditional]` and supply parameters or named
+  services with `#[AutowiredParameter]`, following the nearest existing
+  pattern. Keep in `extension.neon` only what attributes cannot express, such
+  as a class registered several times with different arguments. See
+  [attribute services](https://phpstan.org/developing-extensions/dependency-injection-configuration#attribute-services).
 - Add every Larastan-owned public configuration parameter to both `parameters`
   and `parametersSchema`, then document it in
   `docs/custom-config-parameters.md` or, for rule-specific settings, alongside

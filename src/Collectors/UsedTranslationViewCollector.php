@@ -7,6 +7,7 @@ namespace Larastan\Larastan\Collectors;
 use Larastan\Larastan\Support\ViewFileHelper;
 use Larastan\Larastan\Support\ViewParser;
 use PhpParser\Node;
+use PHPStan\DependencyInjection\AutowiredService;
 
 use function array_filter;
 use function array_map;
@@ -21,6 +22,7 @@ use function substr_count;
 use const PREG_OFFSET_CAPTURE;
 use const PREG_SET_ORDER;
 
+#[AutowiredService]
 final class UsedTranslationViewCollector
 {
     /** @see https://regex101.com/r/xFN4fv/1 */

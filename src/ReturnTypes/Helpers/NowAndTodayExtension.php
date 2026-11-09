@@ -6,6 +6,7 @@ namespace Larastan\Larastan\ReturnTypes\Helpers;
 
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
 use PHPStan\Type\ObjectType;
@@ -15,6 +16,7 @@ use function get_class;
 use function now;
 
 /** @internal */
+#[AutowiredService]
 final class NowAndTodayExtension implements DynamicFunctionReturnTypeExtension
 {
     public function isFunctionSupported(FunctionReflection $functionReflection): bool

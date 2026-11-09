@@ -7,6 +7,7 @@ namespace Larastan\Larastan\Methods;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Larastan\Larastan\Reflection\EloquentBuilderMethodReflection;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ClassMemberReflection;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\FunctionVariant;
@@ -30,6 +31,7 @@ use function array_map;
 use function assert;
 use function in_array;
 
+#[AutowiredService]
 final class ModelForwardsCallsExtension implements MethodsClassReflectionExtension
 {
     private const MODEL_CALL_FORWARDED_METHODS = [

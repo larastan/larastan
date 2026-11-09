@@ -6,11 +6,13 @@ namespace Larastan\Larastan\Methods;
 
 use Illuminate\Support\HigherOrderTapProxy;
 use PHPStan\Analyser\OutOfClassScope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\ShouldNotHappenException;
 
+#[AutowiredService]
 final class HigherOrderTapProxyExtension implements MethodsClassReflectionExtension
 {
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool

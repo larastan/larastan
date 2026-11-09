@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Properties;
 
+use Larastan\Larastan\SQL\SqlParser;
 use Larastan\Larastan\Support\RecursiveDirectoryIterator;
+use PHPStan\DependencyInjection\AutowiredParameter;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\File\FileHelper;
 use PHPStan\Parser\Parser;
 use PHPStan\Parser\ParserErrorsException;
@@ -16,21 +19,27 @@ use SplFileInfo;
 
 use function count;
 use function database_path;
-use function glob;
 use function is_dir;
 use function iterator_to_array;
 use function uasort;
 
+#[AutowiredService]
 class MigrationHelper
 {
     public function __construct(
+        #[AutowiredParameter(ref: '@migrationsParser')]
         private Parser $parser,
         /** @var string[] */
+        #[AutowiredParameter(ref: '%databaseMigrationsPath%')]
         private array $databaseMigrationPath,
         private FileHelper $fileHelper,
+        #[AutowiredParameter]
         private bool $disableMigrationScan,
+        #[AutowiredParameter(ref: '@reflectionProvider')]
         private ReflectionProvider $reflectionProvider,
         private InitializerExprTypeResolver $initializerExprTypeResolver,
+        #[AutowiredParameter(ref: '@sqlParser')]
+        private SqlParser $sqlParser,
     ) {
     }
 
@@ -45,7 +54,12 @@ class MigrationHelper
             return $tables;
         }
 
-        $schemaAggregator = new SchemaAggregator($this->reflectionProvider, $this->initializerExprTypeResolver, $tables);
+        $schemaAggregator = new SchemaAggregator(
+            $this->reflectionProvider,
+            $this->initializerExprTypeResolver,
+            $this->sqlParser,
+            $tables,
+        );
         $filesArray       = $this->getMigrationFiles();
 
         if (empty($filesArray)) {
@@ -73,27 +87,37 @@ class MigrationHelper
         /** @var SplFileInfo[] $migrationFiles */
         $migrationFiles = [];
 
+        foreach ($this->getMigrationDirectories() as $directory) {
+            if (! is_dir($directory)) {
+                continue;
+            }
+
+            $migrationFiles += iterator_to_array(
+                new RegexIterator(
+                    new RecursiveIteratorIterator(new RecursiveDirectoryIterator($directory)),
+                    '/\.php$/i',
+                ),
+            );
+        }
+
+        return $migrationFiles;
+    }
+
+    /**
+     * The directories scanned for migrations, see DirectoryResolver::resolve().
+     *
+     * @return list<string>
+     */
+    public function getMigrationDirectories(): array
+    {
+        if ($this->disableMigrationScan) {
+            return [];
+        }
+
         if (count($this->databaseMigrationPath) === 0) {
             $this->databaseMigrationPath = [database_path('migrations')];
         }
 
-        foreach ($this->databaseMigrationPath as $additionalPathGlob) {
-            foreach ((glob($additionalPathGlob) ?: []) as $additionalPath) {
-                $absolutePath = $this->fileHelper->absolutizePath($additionalPath);
-
-                if (! is_dir($absolutePath)) {
-                    continue;
-                }
-
-                $migrationFiles += iterator_to_array(
-                    new RegexIterator(
-                        new RecursiveIteratorIterator(new RecursiveDirectoryIterator($absolutePath)),
-                        '/\.php$/i',
-                    ),
-                );
-            }
-        }
-
-        return $migrationFiles;
+        return DirectoryResolver::resolve($this->databaseMigrationPath, $this->fileHelper);
     }
 }

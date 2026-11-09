@@ -279,7 +279,7 @@ class Builder
     /**
      * @template TRelation of string
      *
-     * @param  TRelation|array<int|TRelation, (\Closure(relation-of<TModel, TRelation>): mixed)|string|array<int|string, string>>  $relations
+     * @param  TRelation|array<int|TRelation, (\Closure(relation-of<TModel, TRelation>): mixed)|string|array<mixed>>  $relations
      * @param  (\Closure(relation-of<TModel, TRelation>): mixed)|string|null  $callback
      * @return $this
      */
@@ -288,7 +288,7 @@ class Builder
     /**
      * @template TRelation of string
      *
-     * @param  string|array<int|TRelation, (\Closure(relation-of<TModel, TRelation>): mixed)|string|array<int|string, string>>  $relations
+     * @param  string|array<int|TRelation, (\Closure(relation-of<TModel, TRelation>): mixed)|string|array<mixed>>  $relations
      * @return $this
      */
     public function withOnly($relations);
@@ -524,6 +524,38 @@ class Builder
     public function upsert(array $values, $uniqueBy, $update = null);
 
     /**
+     * Insert into the database after merging the model's default attributes, setting timestamps, and casting values.
+     *
+     * @param  array<int, array<model-property<TModel>, mixed>>  $values
+     * @return bool
+     */
+    public function fillAndInsert(array $values);
+
+    /**
+     * Insert (ignoring errors) into the database after merging the model's default attributes, setting timestamps, and casting values.
+     *
+     * @param  array<int, array<model-property<TModel>, mixed>>  $values
+     * @return int
+     */
+    public function fillAndInsertOrIgnore(array $values);
+
+    /**
+     * Insert a record into the database and get its ID after merging the model's default attributes, setting timestamps, and casting values.
+     *
+     * @param  array<model-property<TModel>, mixed>  $values
+     * @return int
+     */
+    public function fillAndInsertGetId(array $values);
+
+    /**
+     * Enrich the given values by merging in the model's default attributes, adding timestamps, and casting values.
+     *
+     * @param  array<int, array<model-property<TModel>, mixed>>  $values
+     * @return array<int, array<string, mixed>>
+     */
+    public function fillForInsert(array $values);
+
+    /**
      * Execute the query and get the first result if it's the sole matching record.
      *
      * @param  array<int, (model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*')>|model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression|'*'  $columns
@@ -588,6 +620,18 @@ class Builder
      * @return $this
      */
     public function orWhereNot($column, $operator = null, $value = null);
+
+    /**
+     * Specify attributes that should be added to any new models created by this builder.
+     *
+     * The given key / value pairs will also be added as where conditions to the query.
+     *
+     * @param  \Illuminate\Contracts\Database\Query\Expression|array<model-property<TModel>, mixed>|model-property<TModel>  $attributes
+     * @param  mixed  $value
+     * @param  bool  $asConditions
+     * @return $this
+     */
+    public function withAttributes($attributes, $value = null, $asConditions = true);
 
     /**
      * Add an "order by" clause for a timestamp to the query.
@@ -660,7 +704,7 @@ class Builder
     /**
      * Paginate the given query.
      *
-     * @param  int|null  $perPage
+     * @param  (\Closure(int): (int|null))|int|null  $perPage
      * @param  array<int, (model-property<TModel>|'*')>  $columns
      * @param  string  $pageName
      * @param  int|null  $page

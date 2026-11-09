@@ -14,7 +14,10 @@ use Larastan\Larastan\Reflection\DynamicWhereParameterReflection;
 use Larastan\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Name;
+use PhpParser\Node\Scalar\String_;
 use PHPStan\Analyser\OutOfClassScope;
+use PHPStan\DependencyInjection\AutowiredParameter;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
@@ -31,6 +34,7 @@ use function array_shift;
 use function count;
 use function defined;
 use function in_array;
+use function ltrim;
 use function preg_split;
 use function substr;
 use function ucfirst;
@@ -38,6 +42,7 @@ use function version_compare;
 
 use const PREG_SPLIT_DELIM_CAPTURE;
 
+#[AutowiredService]
 class BuilderHelper
 {
     public const MODEL_RETRIEVAL_METHODS = ['first', 'find', 'findMany', 'findOrFail', 'firstOrFail', 'sole'];
@@ -88,6 +93,7 @@ class BuilderHelper
 
     public function __construct(
         private ReflectionProvider $reflectionProvider,
+        #[AutowiredParameter(ref: '%checkModelProperties%')]
         private bool $checkProperties,
         private MacroMethodsClassReflectionExtension $macroMethodsClassReflectionExtension,
     ) {
@@ -330,14 +336,11 @@ class BuilderHelper
         $method = $modelReflection->getNativeMethod('newEloquentBuilder');
 
         if ($method->getDeclaringClass()->getName() === Model::class) {
-            $attrs = $modelReflection->getNativeReflection()->getAttributes('Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder'); //@phpstan-ignore argument.type (Attribute class might not exist)
+            $builderClassName = $this->findUseEloquentBuilderClassName($modelReflection);
 
-            if ($attrs !== []) {
-                $expr =  $attrs[0]->getArgumentsExpressions()[0];
-
-                if ($expr instanceof ClassConstFetch && $expr->class instanceof Name) {
-                    return $this->builderNameCache[$modelClassName] = $expr->class->toString();
-                }
+            // Like Model::newEloquentBuilder(), ignore a class that is not an Eloquent builder.
+            if ($builderClassName !== null && $this->reflectionProvider->hasClass($builderClassName) && $this->reflectionProvider->getClass($builderClassName)->is(EloquentBuilder::class)) {
+                return $this->builderNameCache[$modelClassName] = $builderClassName;
             }
         }
 
@@ -354,6 +357,51 @@ class BuilderHelper
         }
 
         return $this->builderNameCache[$modelClassName] = $returnType->describe(VerbosityLevel::value());
+    }
+
+    /**
+     * Mirrors Model::resolveCustomBuilderClass(). It instantiates the attribute, so the argument may also be named.
+     * Since Laravel 13.31, it also reads the model's traits, then each parent class and its traits, nearest first.
+     */
+    private function findUseEloquentBuilderClassName(ClassReflection $modelReflection): string|null
+    {
+        $classReflections = [$modelReflection];
+
+        // @phpstan-ignore if.alwaysTrue, if.alwaysFalse
+        if (version_compare(LARAVEL_VERSION, '13.31.0', '>=')) {
+            $classReflections = [];
+
+            foreach ([$modelReflection, ...$modelReflection->getParents()] as $classReflection) {
+                $classReflections[] = $classReflection;
+
+                foreach ($classReflection->getTraits() as $traitReflection) {
+                    $classReflections[] = $traitReflection;
+                }
+            }
+        }
+
+        foreach ($classReflections as $classReflection) {
+            $attributes = $classReflection->getNativeReflection()->getAttributes('Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder'); //@phpstan-ignore argument.type (Attribute class might not exist)
+
+            if ($attributes === []) {
+                continue;
+            }
+
+            $arguments = $attributes[0]->getArgumentsExpressions();
+            $expr      = $arguments[0] ?? $arguments['builderClass'] ?? null;
+
+            if ($expr instanceof ClassConstFetch && $expr->class instanceof Name) {
+                return $expr->class->toString();
+            }
+
+            if ($expr instanceof String_) {
+                return ltrim($expr->value, '\\');
+            }
+
+            return null;
+        }
+
+        return null;
     }
 
     public function determineBuilderClass(string $modelClassName, Type $modelType): Type|null

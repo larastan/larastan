@@ -54,6 +54,23 @@ $post->toArray();
 $post->attributesToArray();
 ```
 
+## Arr::get() and Arr::pull()
+
+`Arr::get()` and `Arr::pull()` return the type stored under the given key, including keys in "dot" notation. When the key may be missing, the default value's type is added. `Arr::pull()` also removes the key from the array it was passed, unless the key uses "dot" notation and the array may lack that exact key.
+
+```php
+/** @param array{name: string, email?: string, address: array{city: string}} $user */
+function example(array $user): void
+{
+    Arr::get($user, 'name');         // string
+    Arr::get($user, 'email', '');    // string
+    Arr::get($user, 'address.city'); // string
+
+    Arr::pull($user, 'name');        // string
+    $user;                           // array{email?: string, address: array{city: string}}
+}
+```
+
 ## Custom Model Builders
 
 Custom builders offer a better static analysis experience than using model scopes, and they help slim down the model class.
@@ -92,6 +109,10 @@ $users = User::query()
         ->active()
         ->get();
 ```
+
+The builder class can also be set with the `#[UseEloquentBuilder]` attribute. On Laravel 13.31 and later
+it is also read from the model's traits and from parent models and their traits, the nearest one first.
+When the model overrides `newEloquentBuilder()`, the return type of that method is used instead.
 
 > [!NOTE]
 > The `HasBuilder` trait was introduced in Laravel 11, if you are using an older version of Laravel you can use the following:
@@ -220,6 +241,10 @@ class User extends Model
 }
 ```
 
+The collection class can also be set with the `#[CollectedBy]` attribute. As in Laravel, the
+attribute has no effect when the model overrides `newCollection()`, and on Laravel 13.4 and later
+it is also read from parent models, the nearest one first.
+
 > [!NOTE]
 > The `HasCollection` trait was introduced in Laravel 11, if you are using an older version of Laravel you can use the `newCollection` method to override the collection class:
 >
@@ -253,6 +278,17 @@ from the item type.
 Larastan will automatically scan your application's migrations in order to infer the database schema and therefore it is able to infer the existence of magic properties on Eloquent model classes.
 
 Various parameters can be set to [configure this behavior](custom-config-parameters.md#databasemigrationspath).
+
+String literals passed to `DB::statement()` and `DB::unprepared()` are read with the same SQL parsers used for schema dumps. `CREATE TABLE` statements those parsers understand are added to the schema. A table the schema builder already recorded is left as-is. Other SQL is left unchanged.
+
+```php
+DB::statement('CREATE TABLE `reports` (`id` int unsigned NOT NULL, `title` varchar(255) NULL)');
+DB::connection('mysql')->unprepared('CREATE TABLE `logs` (`id` int NOT NULL)');
+```
+
+Only string literals are read. A variable or other expression is skipped, and a string the active parser cannot read does not change the schema.
+
+When a migration or a schema dump is created, changed or deleted, the result cache analyses the files using a model again. A directory that starts matching a glob in `databaseMigrationsPath` or `squashedMigrationsPath` is noticed only after the result cache is cleared.
 
 ## Model Relationships
 

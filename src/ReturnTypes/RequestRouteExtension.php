@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\NullType;
@@ -21,6 +22,7 @@ use PHPStan\Type\TypeUtils;
 use function count;
 
 /** @internal */
+#[AutowiredService]
 final class RequestRouteExtension implements DynamicMethodReturnTypeExtension
 {
     public function getClass(): string

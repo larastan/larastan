@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Larastan\Larastan\SQL;
 
 use Closure;
+use PHPStan\DependencyInjection\AutowiredParameter;
+use PHPStan\DependencyInjection\AutowiredService;
 
 use function class_exists;
 
+#[AutowiredService(name: 'sqlParserFactory')]
 final class SqlParserFactory
 {
     private SqlParser|null $cachedParser = null;
@@ -16,6 +19,7 @@ final class SqlParserFactory
     private Closure $phpMyAdminDetector;
 
     public function __construct(
+        #[AutowiredParameter(ref: '@iamcalSqlParser')]
         private readonly IamcalSqlParser $iamcalSqlParser,
         callable|null $phpMyAdminDetector = null,
     ) {
@@ -33,7 +37,7 @@ final class SqlParserFactory
         }
 
         if ($this->isPhpMyAdminParserAvailable()) {
-            $this->cachedParser = new PhpMyAdminSqlParser();
+            $this->cachedParser = new PhpMyAdminSqlParser($this->iamcalSqlParser);
         } else {
             $this->cachedParser = $this->iamcalSqlParser;
         }

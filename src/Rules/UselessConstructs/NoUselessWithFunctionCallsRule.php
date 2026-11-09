@@ -7,6 +7,7 @@ namespace Larastan\Larastan\Rules\UselessConstructs;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleError;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -15,6 +16,7 @@ use function count;
 use function strtolower;
 
 /** @implements Rule<FuncCall> */
+#[AutowiredService]
 class NoUselessWithFunctionCallsRule implements Rule
 {
     public function getNodeType(): string

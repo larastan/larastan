@@ -11,15 +11,19 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Larastan\Larastan\Support\CollectionHelper;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
+use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
+use PHPStan\Type\TypeCombinator;
 
 use function in_array;
 
 /** @internal */
+#[AutowiredService]
 final class RelationCollectionExtension implements DynamicMethodReturnTypeExtension
 {
     public function __construct(
@@ -56,6 +60,15 @@ final class RelationCollectionExtension implements DynamicMethodReturnTypeExtens
         Scope $scope,
     ): Type|null {
         $returnType = ParametersAcceptorSelector::selectFromArgs($scope, $methodCall->getArgs(), $methodReflection->getVariants())->getReturnType();
+
+        if (! $methodReflection->getDeclaringClass()->is(Relation::class) && (new ObjectType(Builder::class))->isSuperTypeOf($returnType)->yes()) {
+            $relationType = TypeCombinator::intersect($scope->getType($methodCall->var), new ObjectType(Relation::class));
+
+            // Relation::__call() returns the relation when the call it forwarded returns the query builder of the relation.
+            if ($relationType->getTemplateType(Relation::class, 'TRelatedModel')->isSuperTypeOf($returnType->getTemplateType(Builder::class, 'TModel'))->yes()) {
+                return $relationType;
+            }
+        }
 
         if (! in_array(Collection::class, $returnType->getReferencedClasses(), true)) {
             return null;

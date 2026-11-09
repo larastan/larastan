@@ -115,3 +115,12 @@ function collectionValueTypes(LengthAwarePaginator $arrays, Paginator $integers,
     assertType('App\AccountCollection<int, App\Account>|Illuminate\Database\Eloquent\Collection<int, App\User>', $union->getCollection());
     assertType('App\AccountCollection<string, App\Account&Countable>', $intersection->getCollection());
 }
+
+function perPageCallback(): void
+{
+    assertType('Illuminate\Pagination\LengthAwarePaginator<int, App\User>', User::query()->paginate(static function ($total) {
+        assertType('int', $total);
+
+        return 15;
+    }));
+}

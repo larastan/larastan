@@ -6,7 +6,9 @@ namespace Larastan\Larastan\Internal;
 
 use Larastan\Larastan\Support\ConfigParser;
 use PhpParser\Node\Arg;
+use PHPStan\Analyser\DependencyTracker;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Type\GeneralizePrecision;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeTraverser;
@@ -14,6 +16,7 @@ use PHPStan\Type\TypeTraverser;
 use function count;
 
 /** @internal */
+#[AutowiredService]
 final class ConfigHelper
 {
     public function __construct(private ConfigParser $configParser)
@@ -26,7 +29,8 @@ final class ConfigHelper
     }
 
     /**
-     * @param  Arg[] $args
+     * @param  Arg[]                   $args
+     * @param  Scope&DependencyTracker $scope
      *
      * @return Type[]
      */

@@ -10,7 +10,10 @@ use PhpParser\Node;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
+use PHPStan\Analyser\DependencyTracker;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
+use PHPStan\DependencyInjection\Conditional;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
@@ -19,6 +22,7 @@ use PHPStan\Type\TypeCombinator;
 use function sprintf;
 
 /** @implements Rule<StaticCall> */
+#[Conditional(attribute: new AutowiredService(), if: '%checkConfigTypes%')]
 final class ConfigCollectionRule implements Rule
 {
     public function __construct(private ConfigHelper $configHelper)
@@ -31,7 +35,8 @@ final class ConfigCollectionRule implements Rule
     }
 
     /**
-     * @param StaticCall $node
+     * @param StaticCall              $node
+     * @param Scope&DependencyTracker $scope
      *
      * @return list<IdentifierRuleError>
      */

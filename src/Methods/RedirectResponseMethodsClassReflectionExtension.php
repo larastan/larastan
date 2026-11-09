@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Methods;
 
 use Larastan\Larastan\Reflection\DynamicWhereMethodReflection;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection;
 
 use function str_starts_with;
 
+#[AutowiredService]
 class RedirectResponseMethodsClassReflectionExtension implements Reflection\MethodsClassReflectionExtension
 {
     public function hasMethod(Reflection\ClassReflection $classReflection, string $methodName): bool

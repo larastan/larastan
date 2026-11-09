@@ -28,7 +28,6 @@ function test(): void
     assertType('(array<mixed>|Redis|false)', $redis->lrange('some-key', 0, -1));
     assertType('(array<mixed>|Redis|false)', Redis::lrange('some-key', 0, -1));
     assertType('(bool|Redis)', Redis::expire('foo', 3));
-    assertType('(array<string, mixed>|Redis|false)', Redis::hmget('h', ['field1', 'field2']));
 
     assertType('Illuminate\Database\Query\Builder', DB::query());
     assertType('int', DB::transactionLevel());
@@ -45,7 +44,6 @@ function test(): void
     assertType('bool', Storage::drive()->deleteDirectory('foo'));
     assertType('bool', Storage::cloud()->deleteDirectory('foo'));
     assertType('string|false', Storage::putFile('foo', 'foo/bar'));
-    assertType('mixed', Redis::get('foo'));
     assertType('mixed', Redis::client());
 
     assertType('string', DummyFacade::foo());

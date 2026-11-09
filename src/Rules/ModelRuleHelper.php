@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\ObjectType;
@@ -16,6 +17,7 @@ use PHPStan\Type\TypeCombinator;
 
 use function count;
 
+#[AutowiredService]
 final class ModelRuleHelper
 {
     public function findModelReflectionFromType(Type $type): ClassReflection|null

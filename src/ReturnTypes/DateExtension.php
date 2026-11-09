@@ -7,6 +7,7 @@ namespace Larastan\Larastan\ReturnTypes;
 use Illuminate\Support\Facades\Date;
 use PhpParser\Node\Expr\StaticCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Type\Constant\ConstantBooleanType;
 use PHPStan\Type\DynamicStaticMethodReturnTypeExtension;
@@ -19,6 +20,7 @@ use function in_array;
 use function now;
 use function version_compare;
 
+#[AutowiredService]
 class DateExtension implements DynamicStaticMethodReturnTypeExtension
 {
     public function getClass(): string

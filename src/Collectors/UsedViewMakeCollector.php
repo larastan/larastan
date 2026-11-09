@@ -9,11 +9,13 @@ use Illuminate\View\ViewName;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Type\ObjectType;
 
 use function count;
 
 /** @implements Collector<Node\Expr\MethodCall, string> */
+#[AutowiredService]
 final class UsedViewMakeCollector implements Collector
 {
     public function getNodeType(): string

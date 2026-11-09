@@ -6,6 +6,7 @@ namespace Larastan\Larastan\ReturnTypes\Helpers;
 
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
@@ -19,6 +20,7 @@ use stdClass;
 use function count;
 use function in_array;
 
+#[AutowiredService]
 class LiteralExtension implements DynamicFunctionReturnTypeExtension
 {
     public function isFunctionSupported(FunctionReflection $functionReflection): bool

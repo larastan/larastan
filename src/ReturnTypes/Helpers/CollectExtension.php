@@ -8,6 +8,8 @@ use Illuminate\Support\Collection;
 use Larastan\Larastan\Support\CollectionHelper;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
+use PHPStan\DependencyInjection\AutowiredParameter;
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\FunctionReflection;
 use PHPStan\Type\BenevolentUnionType;
 use PHPStan\Type\DynamicFunctionReturnTypeExtension;
@@ -19,6 +21,7 @@ use PHPStan\Type\Type;
 
 use function count;
 
+#[AutowiredService]
 final class CollectExtension implements DynamicFunctionReturnTypeExtension
 {
     private Type|null $emptyCollectionType = null;
@@ -27,8 +30,11 @@ final class CollectExtension implements DynamicFunctionReturnTypeExtension
      * With PHPStan's unresolvedTemplateArguments feature toggle, the template arguments of an
      * empty collection are inferred from how it is used, so the extension must not fix them.
      */
-    public function __construct(private CollectionHelper $collectionHelper, private bool $inferFromUsage)
-    {
+    public function __construct(
+        private CollectionHelper $collectionHelper,
+        #[AutowiredParameter(ref: '%featureToggles.unresolvedTemplateArguments%')]
+        private bool $inferFromUsage,
+    ) {
     }
 
     public function isFunctionSupported(FunctionReflection $functionReflection): bool

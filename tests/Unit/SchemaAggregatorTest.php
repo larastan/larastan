@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Unit;
 
 use Larastan\Larastan\Properties\SchemaAggregator;
+use Larastan\Larastan\SQL\IamcalSqlParser;
 use PHPStan\Reflection\InitializerExprTypeResolver;
 use PHPStan\Testing\PHPStanTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -40,6 +41,7 @@ class SchemaAggregatorTest extends PHPStanTestCase
         $aggregator = new SchemaAggregator(
             $this->createReflectionProvider(),
             self::getContainer()->getByType(InitializerExprTypeResolver::class),
+            new IamcalSqlParser(),
         );
         $statements = $parser->parseString(sprintf(<<<'PHP'
 <?php
@@ -72,6 +74,97 @@ PHP, $constant));
         self::assertTrue($aggregator->tables['users']->columns['email']->nullable);
     }
 
+    #[Test]
+    public function it_applies_create_table_sql_from_statement_calls(): void
+    {
+        $aggregator = $this->aggregateMigration(<<<'PHP'
+            DB::statement('CREATE TABLE `users` (
+                `id` int unsigned NOT NULL,
+                `email` varchar(255) DEFAULT NULL
+            )');
+
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('name');
+            });
+
+            DB::connection('mysql')->statement('CREATE TABLE `reports` (`id` int unsigned NOT NULL)');
+
+            \Illuminate\Support\Facades\DB::unprepared(<<<'SQL'
+                CREATE TABLE `posts` (`id` int NOT NULL);
+                CREATE TABLE `comments` (`id` int NOT NULL, `body` varchar(255) NULL);
+            SQL);
+        PHP);
+
+        self::assertSame(['id', 'email', 'name'], array_keys($aggregator->tables['users']->columns));
+        self::assertSame('non-negative-int', $aggregator->tables['users']->columns['id']->readableType);
+        self::assertFalse($aggregator->tables['users']->columns['id']->nullable);
+        self::assertSame('string', $aggregator->tables['users']->columns['email']->readableType);
+        self::assertTrue($aggregator->tables['users']->columns['email']->nullable);
+        self::assertSame('string', $aggregator->tables['users']->columns['name']->readableType);
+
+        self::assertSame(['id'], array_keys($aggregator->tables['reports']->columns));
+        self::assertSame('non-negative-int', $aggregator->tables['reports']->columns['id']->readableType);
+        self::assertFalse($aggregator->tables['reports']->columns['id']->nullable);
+
+        self::assertSame(['id'], array_keys($aggregator->tables['posts']->columns));
+        self::assertSame('int', $aggregator->tables['posts']->columns['id']->readableType);
+        self::assertSame(['id', 'body'], array_keys($aggregator->tables['comments']->columns));
+        self::assertTrue($aggregator->tables['comments']->columns['body']->nullable);
+    }
+
+    #[Test]
+    public function it_ignores_sql_the_parser_does_not_apply(): void
+    {
+        $aggregator = $this->aggregateMigration(<<<'PHP'
+            Schema::create('users', function (Blueprint $table) {
+                $table->string('name');
+            });
+
+            DB::statement('ALTER TABLE users RENAME COLUMN name TO full_name');
+            DB::statement('ALTER TABLE public.etapas_censo SET SCHEMA censo');
+            DB::statement('INSERT INTO users (name) VALUES (1)');
+            DB::unprepared('CREATE SCHEMA IF NOT EXISTS censo');
+            DB::statement('CREATE TABLE `users` (`id` int unsigned NOT NULL)');
+
+            $sql = 'CREATE TABLE `skipped` (`id` int NOT NULL)';
+            DB::statement($sql);
+        PHP);
+
+        self::assertSame(['users'], array_keys($aggregator->tables));
+        self::assertArrayHasKey('name', $aggregator->tables['users']->columns);
+        self::assertArrayNotHasKey('id', $aggregator->tables['users']->columns);
+        self::assertArrayNotHasKey('full_name', $aggregator->tables['users']->columns);
+    }
+
+    #[Test]
+    public function it_keeps_columns_recorded_by_the_schema_builder(): void
+    {
+        $aggregator = $this->aggregateMigration(<<<'PHP'
+            Schema::create('users', function (Blueprint $table) {
+                $table->string('name');
+            });
+
+            DB::statement('CREATE TABLE `users` (`id` int NOT NULL)');
+        PHP);
+
+        self::assertSame(['name'], array_keys($aggregator->tables['users']->columns));
+        self::assertSame('string', $aggregator->tables['users']->columns['name']->readableType);
+    }
+
+    #[Test]
+    public function it_ignores_sql_the_parser_rejects(): void
+    {
+        $aggregator = $this->aggregateMigration(<<<'PHP'
+            Schema::create('users', function (Blueprint $table) {
+                $table->string('name');
+            });
+
+            DB::statement('CREATE TABLE `broken (id INT)');
+        PHP);
+
+        self::assertSame(['name'], array_keys($aggregator->tables['users']->columns));
+    }
+
     /** @return iterable<string, array{string}> */
     public static function indexMethodCalls(): iterable
     {
@@ -91,6 +184,7 @@ PHP, $constant));
         $aggregator = new SchemaAggregator(
             $this->createReflectionProvider(),
             self::getContainer()->getByType(InitializerExprTypeResolver::class),
+            new IamcalSqlParser(),
         );
         $statements = $parser->parseString(sprintf(<<<'PHP'
 <?php
@@ -141,6 +235,7 @@ PHP, $indexMethodCall));
         $aggregator = new SchemaAggregator(
             $this->createReflectionProvider(),
             self::getContainer()->getByType(InitializerExprTypeResolver::class),
+            new IamcalSqlParser(),
         );
         $statements = $parser->parseString(<<<'PHP'
 <?php
@@ -171,6 +266,104 @@ PHP);
         self::assertTrue($aggregator->tables['compensations']->columns['amount']->nullable);
     }
 
+    #[Test]
+    public function it_reads_columns_from_morph_methods(): void
+    {
+        $parser     = self::getContainer()->getService('currentPhpVersionSimpleDirectParser');
+        $aggregator = new SchemaAggregator(
+            $this->createReflectionProvider(),
+            self::getContainer()->getByType(InitializerExprTypeResolver::class),
+            new IamcalSqlParser(),
+        );
+        $statements = $parser->parseString(<<<'PHP'
+<?php
+
+namespace Tests\Unit\SchemaAggregatorMorphs;
+
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateAttachmentsTable
+{
+    public function up(): void
+    {
+        Schema::create('attachments', function (Blueprint $table) {
+            $table->numericMorphs('numeric');
+            $table->nullableNumericMorphs('nullable_numeric');
+            $table->uuidMorphs('uuid');
+            $table->nullableUuidMorphs('nullable_uuid');
+            $table->ulidMorphs('ulid');
+            $table->nullableUlidMorphs('nullable_ulid');
+        });
+    }
+}
+PHP);
+
+        $aggregator->addStatements($statements);
+
+        $columns = [];
+
+        foreach ($aggregator->tables['attachments']->columns as $name => $column) {
+            $columns[$name] = [$column->readableType, $column->nullable];
+        }
+
+        self::assertSame([
+            'numeric_type' => ['string', false],
+            'numeric_id' => ['non-negative-int', false],
+            'nullable_numeric_type' => ['string', true],
+            'nullable_numeric_id' => ['non-negative-int', true],
+            'uuid_type' => ['string', false],
+            'uuid_id' => ['string', false],
+            'nullable_uuid_type' => ['string', true],
+            'nullable_uuid_id' => ['string', true],
+            'ulid_type' => ['string', false],
+            'ulid_id' => ['string', false],
+            'nullable_ulid_type' => ['string', true],
+            'nullable_ulid_id' => ['string', true],
+        ], $columns);
+    }
+
+    #[Test]
+    public function it_reads_columns_from_foreign_id_for_methods(): void
+    {
+        $aggregator = $this->aggregateMigration(<<<'PHP'
+            Schema::create('countries', function (Blueprint $table) {
+                $table->string('code', 2)->primary();
+            });
+
+            Schema::create('cities', function (Blueprint $table) {
+                $table->foreignIdFor(Country::class);
+                $table->foreignUuidFor(\App\UuidModel::class);
+                $table->foreignUlidFor(\App\UlidModel::class, 'custom_foreign_ulid_for_name')->nullable();
+            });
+        PHP);
+
+        $columns = [];
+
+        foreach ($aggregator->tables['cities']->columns as $name => $column) {
+            $columns[$name] = [$column->readableType, $column->nullable];
+        }
+
+        self::assertSame([
+            'country_code' => ['string', false],
+            'uuid_model_id' => ['string', false],
+            'custom_foreign_ulid_for_name' => ['string', true],
+        ], $columns);
+    }
+
+    #[Test]
+    public function it_reads_foreign_id_for_columns_of_unknown_models(): void
+    {
+        $aggregator = $this->aggregateMigration(<<<'PHP'
+            Schema::create('cities', function (Blueprint $table) {
+                $table->foreignIdFor(MissingModel::class);
+            });
+        PHP);
+
+        self::assertSame(['missing_model_id'], array_keys($aggregator->tables['cities']->columns));
+        self::assertSame('int', $aggregator->tables['cities']->columns['missing_model_id']->readableType);
+    }
+
     /** @return iterable<string, array{string}> */
     public static function enumCases(): iterable
     {
@@ -186,6 +379,7 @@ PHP);
         $aggregator = new SchemaAggregator(
             $this->createReflectionProvider(),
             self::getContainer()->getByType(InitializerExprTypeResolver::class),
+            new IamcalSqlParser(),
         );
         $statements = $parser->parseString(sprintf(<<<'PHP'
 <?php
@@ -215,5 +409,72 @@ PHP, $case));
 
         self::assertSame(['statuses'], array_keys($aggregator->tables));
         self::assertSame(['id'], array_keys($aggregator->tables['statuses']->columns));
+    }
+
+    #[Test]
+    public function it_reads_arrow_function_migration_callbacks(): void
+    {
+        $aggregator = $this->aggregateMigration(<<<'PHP'
+            Schema::create('users', fn (Blueprint $table) => $table->id());
+
+            Schema::table('users', fn (Blueprint $table) => $table->string('kyc_status')->nullable());
+
+            Schema::table('users', function (Blueprint $table) {
+                $table->after('id', fn (Blueprint $table) => $table->integer('age'));
+            });
+        PHP);
+
+        self::assertSame(['id', 'kyc_status', 'age'], array_keys($aggregator->tables['users']->columns));
+        self::assertSame('string', $aggregator->tables['users']->columns['kyc_status']->readableType);
+        self::assertTrue($aggregator->tables['users']->columns['kyc_status']->nullable);
+        self::assertSame('int', $aggregator->tables['users']->columns['age']->readableType);
+    }
+
+    #[Test]
+    public function it_skips_arrow_function_callbacks_without_a_blueprint_parameter(): void
+    {
+        $aggregator = $this->aggregateMigration(<<<'PHP'
+            Schema::create('users', fn (Blueprint $table) => $table->id());
+
+            Schema::table('users', fn (NotABlueprint $table) => $table->string('name'));
+
+            Schema::table('users', fn () => null);
+
+            Schema::table('users', function (Blueprint $table) {
+                $table->after('id', fn () => null);
+            });
+        PHP);
+
+        self::assertSame(['id'], array_keys($aggregator->tables['users']->columns));
+    }
+
+    private function aggregateMigration(string $body): SchemaAggregator
+    {
+        $parser     = self::getContainer()->getService('currentPhpVersionSimpleDirectParser');
+        $aggregator = new SchemaAggregator(
+            $this->createReflectionProvider(),
+            self::getContainer()->getByType(InitializerExprTypeResolver::class),
+            new IamcalSqlParser(),
+        );
+
+        $aggregator->addStatements($parser->parseString(<<<PHP
+            <?php
+
+            namespace Tests\Unit\SchemaAggregatorConstants;
+
+            use Illuminate\Database\Schema\Blueprint;
+            use Illuminate\Support\Facades\DB;
+            use Illuminate\Support\Facades\Schema;
+
+            class MoveTable
+            {
+                public function up(): void
+                {
+            $body
+                }
+            }
+            PHP));
+
+        return $aggregator;
     }
 }

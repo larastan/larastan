@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Properties\Schema;
 
+use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\TypeCombinator;
 use PHPStan\Type\VerbosityLevel;
@@ -11,6 +12,7 @@ use PHPStan\Type\VerbosityLevel;
 use function array_map;
 use function in_array;
 
+#[AutowiredService]
 final class MySqlDataTypeToPhpTypeConverter
 {
     /**

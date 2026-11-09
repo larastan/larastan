@@ -3,8 +3,19 @@
 namespace ModelFactories;
 
 use App\Post;
+use App\Shapes\Circle;
+use App\Shapes\Cube;
+use App\Shapes\Ellipse;
+use App\Shapes\Hexagon;
+use App\Shapes\Oval;
+use App\Shapes\Polygon;
+use App\Shapes\Rhombus;
+use App\Shapes\Shape;
+use App\Shapes\Square;
+use App\Shapes\Wedge;
 use App\User;
 
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Factories\Sequence;
@@ -88,6 +99,26 @@ function test(?int $foo): void {
 
     assertType('Database\Factories\UserFactory', User::factory()->trashed());
     assertType('*ERROR*', Post::factory()->trashed());
+
+    assertType('ModelFactories\TagFactory', Tag::factory());
+    assertType('ModelFactories\Tag', Tag::factory()->create());
+    assertType('Illuminate\Database\Eloquent\Collection<int, ModelFactories\Tag>', Tag::factory(3)->create());
+    assertType('ModelFactories\TagFactory', SpecialTag::factory());
+    assertType('ModelFactories\VideoFactory', Video::factory());
+    assertType('ModelFactories\Video', Video::factory()->create());
+    assertType('ModelFactories\ImageFactory', Image::factory());
+
+    assertType('Database\Factories\Shapes\ShapeFactory', Shape::factory());
+    assertType('Database\Factories\Shapes\CircleFactory', Circle::factory());
+    assertType('App\Shapes\Circle', Circle::factory()->create());
+    assertType('Database\Factories\Shapes\ShapeFactory', Square::factory());
+    assertType('Database\Factories\Shapes\PolygonFactory', Polygon::factory());
+    assertType('Database\Factories\Shapes\HexagonFactory', Hexagon::factory());
+    assertType('Database\Factories\Shapes\EllipseFactory', Ellipse::factory());
+    assertType('Database\Factories\Shapes\OvalFactory', Oval::factory());
+    assertType('Database\Factories\Shapes\TriangleFactory', Wedge::factory());
+    assertType('Database\Factories\Shapes\ShapeFactory', Rhombus::factory());
+    assertType('Database\Factories\Shapes\RectangleFactory', Cube::factory());
 }
 
 class Comment extends Model
@@ -109,6 +140,69 @@ class Comment extends Model
 /** @extends Factory<Comment> */
 class CommentFactory extends Factory
 {
+    public function definition(): array
+    {
+        return [];
+    }
+}
+
+class Tag extends Model
+{
+    /** @use HasFactory<TagFactory> */
+    use HasFactory;
+
+    protected static string $factory = TagFactory::class;
+}
+
+class SpecialTag extends Tag
+{
+}
+
+/** @extends Factory<Tag> */
+class TagFactory extends Factory
+{
+    protected $model = Tag::class;
+
+    public function definition(): array
+    {
+        return [];
+    }
+}
+
+#[UseFactory(VideoFactory::class)]
+class Video extends Model
+{
+    /** @use HasFactory<VideoFactory> */
+    use HasFactory;
+}
+
+/** @extends Factory<Video> */
+class VideoFactory extends Factory
+{
+    protected $model = Video::class;
+
+    public function definition(): array
+    {
+        return [];
+    }
+}
+
+class Image extends Model
+{
+    /** @use HasFactory<ImageFactory> */
+    use HasFactory;
+
+    protected static function newFactory(): ImageFactory|null
+    {
+        return null;
+    }
+}
+
+/** @extends Factory<Image> */
+class ImageFactory extends Factory
+{
+    protected $model = Image::class;
+
     public function definition(): array
     {
         return [];
