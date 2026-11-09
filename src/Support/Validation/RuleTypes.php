@@ -251,9 +251,7 @@ final class RuleTypes
 
         if ($type->isString()->yes()) {
             // Laravel versions that compare loosely let any spelling of a number pass.
-            $loose = ! self::comparesInStrictly(LARAVEL_VERSION);
-
-            return ! $loose ? $strings : TypeCombinator::union(...array_map(
+            return self::comparesInStrictly(LARAVEL_VERSION) ? $strings : TypeCombinator::union(...array_map(
                 static fn (string $value): Type => is_numeric($value) ? TypeCombinator::intersect(new StringType(), new AccessoryNumericStringType()) : self::constants($value),
                 $values,
             ));

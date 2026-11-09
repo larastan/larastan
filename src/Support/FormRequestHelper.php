@@ -68,7 +68,6 @@ final class FormRequestHelper
         private Parser $parser,
         private ScopeFactory $scopeFactory,
         private NodeScopeResolver $nodeScopeResolver,
-        private RuleParser $ruleParser,
     ) {
     }
 
@@ -154,7 +153,7 @@ final class FormRequestHelper
             $this->nodeScopeResolver->processNodes(
                 [$method],
                 ($namespace === '' ? $scope : $scope->enterNamespace($namespace))->enterClass($class),
-                function (Node $node, Scope $scope) use ($class, &$returns): void {
+                static function (Node $node, Scope $scope) use ($class, &$returns): void {
                     if (
                         ! $node instanceof Return_
                         || $node->expr === null
@@ -165,7 +164,7 @@ final class FormRequestHelper
                         return;
                     }
 
-                    $returns = [...$returns, ...$this->ruleParser->returns($node->expr, $scope)];
+                    $returns = [...$returns, ...RuleParser::returns($node->expr, $scope)];
                 },
             );
 

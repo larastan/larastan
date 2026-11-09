@@ -4,19 +4,19 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Support\Validation;
 
-use Illuminate\Support\Str;
 use Illuminate\Validation\ConditionalRules;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\ValidationRuleParser;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\BinaryOp\Concat;
 use PhpParser\Node\InterpolatedStringPart;
 use PhpParser\Node\Scalar\InterpolatedString;
 use PHPStan\Analyser\Scope;
-use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Type\Accessory\AccessoryNumericStringType;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\BooleanType;
+use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\ConstantScalarType;
 use PHPStan\Type\IntegerType;
@@ -30,6 +30,7 @@ use PHPStan\Type\TypeUtils;
 use function array_keys;
 use function array_map;
 use function array_merge;
+use function array_reduce;
 use function array_values;
 use function count;
 use function explode;
@@ -37,10 +38,9 @@ use function implode;
 use function in_array;
 use function preg_split;
 use function str_contains;
-use function str_getcsv;
 use function str_replace;
 use function strstr;
-use function trim;
+use function strval;
 
 /**
  * Reads the rules of a `rules()` array into rule names and parameters.
@@ -49,7 +49,6 @@ use function trim;
  *
  * @internal
  */
-#[AutowiredService]
 final class RuleParser
 {
     /** The most readings of one field that are still told apart. */
@@ -84,9 +83,9 @@ final class RuleParser
      * @return array{array<string, non-empty-list<FieldRules>|null>, bool} The readings of each field, null when its rules
      *                                                                     are unknown, and whether other fields may exist.
      */
-    public function fields(Expr $rules, Scope $scope): array
+    public static function fields(Expr $rules, Scope $scope): array
     {
-        return $this->fieldsOf($this->entries($rules, $scope), $scope);
+        return self::fieldsOf(self::entries($rules, $scope), $scope);
     }
 
     /**
@@ -94,16 +93,16 @@ final class RuleParser
      *
      * @return non-empty-list<array{array<string, non-empty-list<FieldRules>|null>, bool}>
      */
-    public function returns(Expr $rules, Scope $scope): array
+    public static function returns(Expr $rules, Scope $scope): array
     {
         $type   = $scope->getType($rules);
         $arrays = $type->getConstantArrays();
 
         if ($rules instanceof Array_ || count($arrays) < 2 || ! $type->isConstantArray()->yes()) {
-            return [$this->fields($rules, $scope)];
+            return [self::fields($rules, $scope)];
         }
 
-        return array_map(fn (Type $array): array => $this->fieldsOf($this->typeEntries($array), $scope), $arrays);
+        return array_map(static fn (Type $array): array => self::fieldsOf(self::typeEntries($array), $scope), $arrays);
     }
 
     /**
@@ -111,7 +110,7 @@ final class RuleParser
      *
      * @return array{array<string, non-empty-list<FieldRules>|null>, bool}
      */
-    private function fieldsOf(iterable $entries, Scope $scope): array
+    private static function fieldsOf(iterable $entries, Scope $scope): array
     {
         $fields        = $uncertainRoots = $settledRoots = [];
         $open          = false;
@@ -152,7 +151,7 @@ final class RuleParser
                 }
 
                 unset($fields[$name]);
-                $fields[$name] = $value instanceof Type ? $this->fromType($value) : $this->fromExpr($value, $scope);
+                $fields[$name] = $value instanceof Type ? self::fromType($value) : self::fromExpr($value, $scope);
 
                 if (count(self::segments($name)) > 1) {
                     continue;
@@ -181,65 +180,59 @@ final class RuleParser
      *
      * @return non-empty-list<FieldRules>|null
      */
-    public function fromType(Type $rules): array|null
+    public static function fromType(Type $rules): array|null
     {
         $strings = $rules->getConstantStrings();
 
         // Each of several possible rule strings is a reading of its own.
         if ($strings !== [] && $rules->isConstantScalarValue()->yes() && $rules->isString()->yes()) {
-            $readings = array_map(
-                fn (ConstantStringType $string): array|null => $this->combine(array_map(static fn (string $rule): array => [self::parse($rule)], explode('|', $string->getValue()))),
+            return count($strings) > self::MAX_READINGS ? null : array_map(
+                static fn (ConstantStringType $string): FieldRules => array_reduce(
+                    explode('|', $string->getValue()),
+                    static fn (FieldRules $rules, string $rule): FieldRules => $rules->with(self::parse($rule)),
+                    new FieldRules(),
+                ),
                 $strings,
             );
-
-            return in_array(null, $readings, true) || count($readings) > self::MAX_READINGS ? null : array_merge(...$readings);
         }
 
-        $arrays = $rules->getConstantArrays();
+        $array = self::constantArray($rules);
 
-        if (count($arrays) === 1 && $rules->isConstantArray()->yes()) {
-            return $arrays[0]->isList()->yes() && $arrays[0]->getOptionalKeys() === []
-                ? $this->combine(array_values(array_map($this->element(...), $arrays[0]->getValueTypes())))
+        if ($array !== null) {
+            return $array->isList()->yes() && $array->getOptionalKeys() === []
+                ? self::combine(array_values(array_map(self::element(...), $array->getValueTypes())))
                 : null;
         }
 
-        return $rules->isObject()->yes() ? $this->element($rules) : null;
+        return $rules->isObject()->yes() ? self::element($rules) : null;
     }
 
     public static function parse(string $rule): FieldRules
     {
-        $parts      = explode(':', $rule, 2);
-        $parameter  = $parts[1] ?? null;
-        $name       = self::name($parts[0]);
-        $parameters = match (true) {
-            $parameter === null => [],
-            in_array($name, ['Regex', 'NotRegex'], true) => [$parameter],
-            default => array_map(static fn (string|null $value): string => (string) $value, str_getcsv($parameter, escape: '\\')),
-        };
+        [$name, $parameters] = ValidationRuleParser::parse($rule);
 
-        return new FieldRules([$name => [$parameters]]);
+        // `str_getcsv()` reads an empty parameter as null.
+        return new FieldRules([$name => [array_values(array_map(strval(...), $parameters))]]);
     }
 
     /** The name Laravel looks a rule up by. */
     private static function name(string $rule): string
     {
-        $name = Str::studly(trim($rule));
-
-        return ['Int' => 'Integer', 'Bool' => 'Boolean'][$name] ?? $name;
+        return ValidationRuleParser::parse($rule)[0];
     }
 
     /** @return iterable<array{Type, Expr|Type, bool}> The key, the rules, and whether the key is certain to exist. */
-    private function entries(Expr $rules, Scope $scope): iterable
+    private static function entries(Expr $rules, Scope $scope): iterable
     {
         if (! $rules instanceof Array_) {
-            yield from $this->typeEntries($scope->getType($rules));
+            yield from self::typeEntries($scope->getType($rules));
 
             return;
         }
 
         foreach ($rules->items as $item) {
             if ($item->unpack) {
-                yield from $this->typeEntries($scope->getType($item->value));
+                yield from self::typeEntries($scope->getType($item->value));
             } else {
                 yield [$item->key === null ? new IntegerType() : $scope->getType($item->key), $item->value, true];
             }
@@ -247,26 +240,26 @@ final class RuleParser
     }
 
     /** @return iterable<array{Type, Type, bool}> */
-    private function typeEntries(Type $rules): iterable
+    private static function typeEntries(Type $rules): iterable
     {
-        $arrays = $rules->getConstantArrays();
+        $array = self::constantArray($rules);
 
-        if (count($arrays) !== 1 || ! $rules->isConstantArray()->yes()) {
+        if ($array === null) {
             yield [$rules->getIterableKeyType(), $rules->getIterableValueType(), false];
 
             return;
         }
 
-        foreach ($arrays[0]->getKeyTypes() as $i => $keyType) {
-            yield [$keyType, $arrays[0]->getValueTypes()[$i], ! $arrays[0]->isOptionalKey($i)];
+        foreach ($array->getKeyTypes() as $i => $keyType) {
+            yield [$keyType, $array->getValueTypes()[$i], ! $array->isOptionalKey($i)];
         }
     }
 
     /** @return non-empty-list<FieldRules>|null */
-    private function fromExpr(Expr $rules, Scope $scope): array|null
+    private static function fromExpr(Expr $rules, Scope $scope): array|null
     {
         if (! $rules instanceof Array_) {
-            return $this->fromType($scope->getType($rules));
+            return self::fromType($scope->getType($rules));
         }
 
         $elements = [];
@@ -276,10 +269,10 @@ final class RuleParser
                 return null;
             }
 
-            $elements[] = $this->element($scope->getType($item->value)) ?? $this->prefixed($item->value, $scope);
+            $elements[] = self::element($scope->getType($item->value)) ?? self::prefixed($item->value, $scope);
         }
 
-        return $this->combine($elements);
+        return self::combine($elements);
     }
 
     /**
@@ -289,7 +282,7 @@ final class RuleParser
      *
      * @return non-empty-list<FieldRules>|null
      */
-    private function combine(array $elements): array|null
+    private static function combine(array $elements): array|null
     {
         $readings = [new FieldRules()];
 
@@ -312,7 +305,7 @@ final class RuleParser
      *
      * @return non-empty-list<FieldRules>|null
      */
-    private function element(Type $rule): array|null
+    private static function element(Type $rule): array|null
     {
         $string = self::constantString($rule);
 
@@ -336,22 +329,22 @@ final class RuleParser
         $none     = [new FieldRules()];
 
         return match ($name) {
-            Rules\In::class => [$this->rendered('in', $argument('TValues'), '"')],
-            Rules\ArrayRule::class => $this->arrayRule($argument('TKeys')),
-            'Illuminate\Validation\Rules\ArrayKeys' => [$this->rendered('array_keys', $argument('TKeys'))],
-            Rules\Enum::class => [new FieldRules(types: [$this->enum($argument('TEnum'))])],
+            Rules\In::class => [self::rendered('in', $argument('TValues'), '"')],
+            Rules\ArrayRule::class => self::arrayRule($argument('TKeys')),
+            'Illuminate\Validation\Rules\ArrayKeys' => [self::rendered('array_keys', $argument('TKeys'))],
+            Rules\Enum::class => [new FieldRules(types: [self::enum($argument('TEnum'))])],
             Rules\Numeric::class, Rules\Date::class, 'Illuminate\Validation\Rules\StringRule' => [new FieldRules(types: [$argument('TValue')])],
-            'Illuminate\Validation\Rules\AnyOf' => [new FieldRules(types: [$this->anyOf($argument('TRules'))])],
+            'Illuminate\Validation\Rules\AnyOf' => [new FieldRules(types: [self::anyOf($argument('TRules'))])],
             ConditionalRules::class => self::conditional(
                 $argument('TCondition'),
-                $this->fromType(ValidatedData::value($argument('TRules'))),
-                $this->fromType(ValidatedData::value($argument('TDefaultRules'))),
+                self::fromType(ValidatedData::value($argument('TRules'))),
+                self::fromType(ValidatedData::value($argument('TDefaultRules'))),
             ),
             Rules\RequiredIf::class => self::conditional($argument('TCondition'), $required, $none),
             'Illuminate\Validation\Rules\RequiredUnless' => self::conditional($argument('TCondition'), $none, $required),
             Rules\ExcludeIf::class => self::conditional($argument('TCondition'), $exclude, $none, $maybe),
             'Illuminate\Validation\Rules\ExcludeUnless' => self::conditional($argument('TCondition'), $none, $exclude, $maybe),
-            default => [$this->opaque($rule, $class)],
+            default => [self::opaque($rule, $class)],
         };
     }
 
@@ -360,7 +353,7 @@ final class RuleParser
      *
      * @return non-empty-list<FieldRules>|null
      */
-    private function prefixed(Expr $rule, Scope $scope): array|null
+    private static function prefixed(Expr $rule, Scope $scope): array|null
     {
         $prefix = '';
 
@@ -394,12 +387,11 @@ final class RuleParser
      *
      * @param ''|'"' $quote
      */
-    private function rendered(string $rule, Type $list, string $quote = ''): FieldRules
+    private static function rendered(string $rule, Type $list, string $quote = ''): FieldRules
     {
         $values = [];
-        $arrays = $list->getConstantArrays();
 
-        foreach (count($arrays) === 1 && $list->isConstantArray()->yes() ? $arrays[0]->getValueTypes() : [new MixedType()] as $type) {
+        foreach (self::constantArray($list)?->getValueTypes() ?? [new MixedType()] as $type) {
             $case    = $type->getEnumCaseObject();
             $scalars = ($case?->getBackingValueType() ?? $type)->getConstantScalarValues();
             $value   = match (true) {
@@ -420,19 +412,19 @@ final class RuleParser
     }
 
     /** @return non-empty-list<FieldRules> */
-    private function arrayRule(Type $keys): array
+    private static function arrayRule(Type $keys): array
     {
         $unknown = new FieldRules([self::name('array') => [null]]);
 
         return match (true) {
-            $keys->isConstantArray()->yes() => [$this->rendered('array', $keys)],
+            $keys->isConstantArray()->yes() => [self::rendered('array', $keys)],
             $keys->isIterableAtLeastOnce()->yes() => [$unknown],
             // Without keys the rule renders to a bare `array`.
             default => [self::parse('array'), $unknown],
         };
     }
 
-    private function enum(Type $class): Type
+    private static function enum(Type $class): Type
     {
         $cases = $class->getClassStringObjectType()->getEnumCases();
 
@@ -448,19 +440,19 @@ final class RuleParser
             : $values;
     }
 
-    private function anyOf(Type $alternatives): Type
+    private static function anyOf(Type $alternatives): Type
     {
-        $arrays = $alternatives->getConstantArrays();
+        $array = self::constantArray($alternatives);
 
-        if (count($arrays) !== 1 || ! $alternatives->isConstantArray()->yes() || ! $arrays[0]->isList()->yes()) {
+        if ($array === null || ! $array->isList()->yes()) {
             return new MixedType(true);
         }
 
         // An associative array is validated key by key, so it passes any alternative that requires nothing.
         $types = [new ArrayType(new MixedType(), new MixedType())];
 
-        foreach ($arrays[0]->getValueTypes() as $alternative) {
-            $field = RuleTypes::field($this->fromType($alternative));
+        foreach ($array->getValueTypes() as $alternative) {
+            $field = RuleTypes::field(self::fromType($alternative));
 
             if ($field === null || $field->unknown || ! $field->excluded->no() || $field->valueType() instanceof MixedType) {
                 return new MixedType(true);
@@ -492,7 +484,7 @@ final class RuleParser
     }
 
     /** Reads a rule object whose parameters are of no interest. Unknown objects are kept under their class name. */
-    private function opaque(Type $rule, string $class): FieldRules
+    private static function opaque(Type $rule, string $class): FieldRules
     {
         foreach (self::RENDERED as $ruleClass => $rendered) {
             if ((new ObjectType($ruleClass))->isSuperTypeOf($rule)->yes()) {
@@ -508,5 +500,12 @@ final class RuleParser
         $strings = $type->getConstantStrings();
 
         return count($strings) === 1 && $type->isConstantScalarValue()->yes() ? $strings[0]->getValue() : null;
+    }
+
+    private static function constantArray(Type $type): ConstantArrayType|null
+    {
+        $arrays = $type->getConstantArrays();
+
+        return count($arrays) === 1 && $type->isConstantArray()->yes() ? $arrays[0] : null;
     }
 }

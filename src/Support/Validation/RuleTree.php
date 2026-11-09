@@ -167,7 +167,7 @@ final class RuleTree
                 continue;
             }
 
-            $builder->setOffsetValueType((new ConstantStringType((string) $segment))->toArrayKey(), $member[0], $member[1]);
+            $builder->setOffsetValueType(new ConstantStringType((string) $segment), $member[0], $member[1]);
             $required = $required || ! $member[1];
         }
 
@@ -176,7 +176,7 @@ final class RuleTree
                 continue;
             }
 
-            $builder->setOffsetValueType((new ConstantStringType($key))->toArrayKey(), new MixedType(true), true);
+            $builder->setOffsetValueType(new ConstantStringType($key), new MixedType(true), true);
         }
 
         if ($keys === null) {
@@ -192,7 +192,7 @@ final class RuleTree
         $builder = ConstantArrayTypeBuilder::createEmpty();
 
         foreach ($keys as $key) {
-            $builder->setOffsetValueType((new ConstantStringType($key))->toArrayKey(), $value, true);
+            $builder->setOffsetValueType(new ConstantStringType($key), $value, true);
         }
 
         return $builder->getArray();

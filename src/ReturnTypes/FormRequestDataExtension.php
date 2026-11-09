@@ -32,7 +32,7 @@ use PHPStan\Type\NeverType;
 use PHPStan\Type\NullType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use PHPStan\Type\UnionType;
+use PHPStan\Type\TypeUtils;
 
 use function count;
 use function in_array;
@@ -190,7 +190,7 @@ final class FormRequestDataExtension implements DynamicMethodReturnTypeExtension
 
         // Size rules narrow the integers of a numeric value on behalf of its floats and strings.
         if (! $integers instanceof NeverType && RuleTypes::numeric()->isSuperTypeOf($value)->yes()) {
-            return $integers instanceof UnionType ? TypeCombinator::union(...$integers->getTypes()) : $integers;
+            return TypeUtils::toStrictUnion($integers);
         }
 
         $integer = $value->toInteger();

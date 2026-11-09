@@ -52,15 +52,15 @@ final class FormRequestValidationRulePairsRule implements Rule
 
         if (
             $node->expr === null
-            || $class === null
-            || ! $class->isSubclassOfClass($this->reflectionProvider->getClass(FormRequest::class))
             || $scope->getFunctionName() !== 'rules'
             || $scope->isInAnonymousFunction()
+            || $class === null
+            || ! $class->isSubclassOfClass($this->reflectionProvider->getClass(FormRequest::class))
         ) {
             return [];
         }
 
-        [$fields] = (new RuleParser())->fields($node->expr, $scope);
+        [$fields] = RuleParser::fields($node->expr, $scope);
         $names    = array_keys($fields);
         $errors   = [];
 
@@ -72,9 +72,9 @@ final class FormRequestValidationRulePairsRule implements Rule
                 $readings === null
                 || count($readings) !== 1
                 || $readings[0]->types !== []
+                || ! isset($rules['Required'])
                 || str_contains($field, '.')
                 || array_filter($names, static fn (string $name): bool => str_starts_with($name, $field . '.')) !== []
-                || ! isset($rules['Required'])
             ) {
                 continue;
             }

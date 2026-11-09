@@ -37,7 +37,7 @@ final class LarastanStubFilesExtension implements StubFilesExtension
         #[AutowiredParameter]
         private string|null $redisDriver,
         #[AutowiredParameter]
-        private bool $checkFormRequestTypes = false,
+        private bool $checkFormRequestTypes,
     ) {
     }
 

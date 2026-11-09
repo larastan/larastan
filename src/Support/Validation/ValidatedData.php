@@ -96,7 +96,7 @@ final class ValidatedData
             $key    = (new ConstantStringType($segment))->toArrayKey();
             $exists = $arrays instanceof NeverType
                 ? TrinaryLogic::createNo()
-                : $exists->and($arrays->hasOffsetValueType($key), TrinaryLogic::createFromBoolean($data->isArray()->yes())->or(TrinaryLogic::createMaybe()));
+                : $exists->and($arrays->hasOffsetValueType($key), $data->isArray());
 
             if ($exists->no()) {
                 break;
