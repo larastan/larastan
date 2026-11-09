@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Properties;
 
+use Illuminate\Foundation\Http\FormRequest;
 use Larastan\Larastan\Reflection\ReflectionHelper;
 use Larastan\Larastan\Support\FormRequestHelper;
 use PhpParser\Node\Expr;
@@ -30,21 +31,17 @@ final class FormRequestPropertyTypeExtension implements ExpressionTypeResolverEx
 
     public function getType(Expr $expr, Scope $scope): Type|null
     {
-        if (
-            ! $expr instanceof PropertyFetch
-            || ! $expr->name instanceof Identifier
-            || $scope->hasExpressionType($expr)->yes()
-            || ! $this->helper->isBeforeValidation($scope->getType($expr->var), $scope)
-        ) {
-            return null;
-        }
-
         $classReflection = $scope->getClassReflection();
 
         if (
-            $classReflection === null
+            ! $expr instanceof PropertyFetch
+            || ! $expr->name instanceof Identifier
+            || $classReflection === null
+            || ! $classReflection->is(FormRequest::class)
             || $classReflection->hasNativeProperty($expr->name->name)
             || ReflectionHelper::hasPropertyTag($classReflection, $expr->name->name)
+            || $scope->hasExpressionType($expr)->yes()
+            || ! $this->helper->isBeforeValidation($scope->getType($expr->var), $scope)
         ) {
             return null;
         }
