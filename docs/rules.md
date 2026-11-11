@@ -88,6 +88,7 @@ subclasses. If the same result could have been determined
 directly with a query then this rule will produce an error.
 This rule exists to reduce unnecessarily heavy queries on the database
 and to prevent unneeded loops over Collections.
+Columns that are additionally described with `@property` tags on the model are recognized as well.
 
 ### Examples
 
