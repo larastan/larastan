@@ -145,6 +145,10 @@ class GeneralTypeTest extends TypeInferenceTestCase
             yield from self::gatherAssertTypes(__DIR__ . '/data/passthru.php');
         }
 
+        if (laravel_version_compare('13.30.1', '>=')) {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/passthru-l13-30-1.php');
+        }
+
         if (laravel_version_compare('12.41.0', '>=')) {
             yield from self::gatherAssertTypes(__DIR__ . '/data/facades-l12-41.php');
         } elseif (laravel_version_compare('12.20.0', '>=')) {

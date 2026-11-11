@@ -99,17 +99,31 @@ class BuilderHelper
     ) {
     }
 
+    /**
+     * Methods added to the Eloquent builder's $passthru later, with the first Laravel version that has them.
+     */
+    private const VERSIONED_PASSTHRU = [
+        'getCountForPagination' => '12.15.0',
+        'insertOrIgnoreReturning' => '13.30.1',
+    ];
+
     /** @return string[] */
     public function getPassthru(): array
     {
-        // @phpstan-ignore-next-line
-        if (! defined('LARAVEL_VERSION') || version_compare(LARAVEL_VERSION, '12.15.0', '<')) {
-            return $this->passthru;
+        $passthru = $this->passthru;
+
+        if (! defined('LARAVEL_VERSION')) {
+            return $passthru;
         }
 
-        // @phpstan-ignore-next-line
-        $passthru   = $this->passthru;
-        $passthru[] = 'getCountForPagination';
+        foreach (self::VERSIONED_PASSTHRU as $method => $version) {
+            // @phpstan-ignore if.alwaysFalse, if.alwaysTrue (LARAVEL_VERSION is the analysing installation's constant)
+            if (version_compare(LARAVEL_VERSION, $version, '<')) {
+                continue;
+            }
+
+            $passthru[] = $method;
+        }
 
         return $passthru;
     }
