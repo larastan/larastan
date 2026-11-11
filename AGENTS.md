@@ -210,11 +210,15 @@ Check sibling extensions for the full set of files a change requires.
   `getVariants()[0]` bypasses overload selection and call-site template inference;
   reserve it for inspecting a known single declaration. See the
   [reflection guide](https://phpstan.org/developing-extensions/reflection).
-- Raw call arguments in rules may be named or unpacked. Before indexing by
-  parameter position, use the selected signature with `ArgumentsNormalizer`
-  and handle its `null` result. PHPStan already normalizes calls passed to
-  dynamic return type extensions; check the calling contract before adding
-  another normalization step. Still handle missing arguments and unpacking.
+- Dynamic return type extensions receive a call whose named arguments PHPStan
+  already reordered into parameter order, so `getArgs()[0]` is the first
+  parameter. Do not normalize it again. For other extension types, check the
+  calling contract first.
+- Rules and collectors receive the call as written, so `getArgs()[0]` is the
+  first argument in the source, whichever parameter it is bound to. Before
+  indexing by parameter position, reorder the call with the selected signature
+  and `ArgumentsNormalizer::reorder*Arguments()`, and handle its `null` result.
+- In both cases, still handle missing arguments and unpacking.
 - For arbitrary callables, establish `isCallable()->yes()` and use
   `getCallableParametersAcceptors($scope)`. A callable can be a closure, string,
   array, or invokable object; select its signature using the actual arguments.
