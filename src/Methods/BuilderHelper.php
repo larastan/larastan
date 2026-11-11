@@ -29,7 +29,10 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\VerbosityLevel;
 
+use function array_filter;
 use function array_key_exists;
+use function array_keys;
+use function array_merge;
 use function array_shift;
 use function count;
 use function defined;
@@ -110,22 +113,16 @@ class BuilderHelper
     /** @return string[] */
     public function getPassthru(): array
     {
-        $passthru = $this->passthru;
-
         if (! defined('LARAVEL_VERSION')) {
-            return $passthru;
+            return $this->passthru;
         }
 
-        foreach (self::VERSIONED_PASSTHRU as $method => $version) {
-            // @phpstan-ignore if.alwaysFalse, if.alwaysTrue (LARAVEL_VERSION is the analysing installation's constant)
-            if (version_compare(LARAVEL_VERSION, $version, '<')) {
-                continue;
-            }
+        $added = array_filter(
+            self::VERSIONED_PASSTHRU,
+            static fn (string $version): bool => version_compare(LARAVEL_VERSION, $version, '>='),
+        );
 
-            $passthru[] = $method;
-        }
-
-        return $passthru;
+        return array_merge($this->passthru, array_keys($added));
     }
 
     public function dynamicWhere(
