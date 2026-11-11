@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Rules;
 
 use Illuminate\Contracts\Foundation\Application;
+use Larastan\Larastan\Support\CallArgumentsHelper;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\NodeFinder;
@@ -26,6 +27,10 @@ use function ltrim;
 #[Conditional(attribute: new AutowiredService(), if: '%checkOctaneCompatibility%')]
 class OctaneCompatibilityRule implements Rule
 {
+    public function __construct(private CallArgumentsHelper $callArgumentsHelper)
+    {
+    }
+
     private const FORBIDDEN_SERVICES = [
         'request',
         'config',
@@ -54,7 +59,7 @@ class OctaneCompatibilityRule implements Rule
             return [];
         }
 
-        $args = $node->getArgs();
+        $args = $this->callArgumentsHelper->ofMethodCall($node, $scope) ?? [];
 
         if (count($args) < 2) {
             return [];
@@ -161,7 +166,8 @@ class OctaneCompatibilityRule implements Rule
                 return false;
             }
 
-            $args = $expr->getArgs();
+            // The container is only known by the name of the closure's parameter.
+            $args = $this->callArgumentsHelper->ofMethodCall($expr, $scope, new ObjectType(Application::class)) ?? [];
 
             if (count($args) < 1) {
                 return false;

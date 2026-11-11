@@ -39,6 +39,10 @@ class NoBatchedUniqueJobRuleTest extends RuleTestCase
                 "Unique job Tests\\Rules\\Queue\\Data\\UniqueJobWithUniqueForProperty is dispatched via batch().\n    💡 Dispatch unique jobs individually to preserve uniqueness.",
                 43,
             ],
+            [
+                "Unique job Tests\\Rules\\Queue\\Data\\UniqueJobWithUniqueForProperty is dispatched via bulk().\n    💡 Dispatch unique jobs individually to preserve uniqueness.",
+                47,
+            ],
         ]);
     }
 

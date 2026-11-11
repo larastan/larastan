@@ -11,6 +11,7 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Larastan\Larastan\Properties\ModelPropertyExtension;
+use Larastan\Larastan\Support\CallArgumentsHelper;
 use PhpParser\Node;
 use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\MethodCall;
@@ -104,6 +105,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
         array $onlyMethods,
         #[AutowiredParameter(ref: '%noUnnecessaryCollectionCallExcept%')]
         array $excludeMethods,
+        private CallArgumentsHelper $callArgumentsHelper,
     ) {
         $allMethods = array_merge(
             self::RISKY_METHODS,
@@ -212,8 +214,7 @@ class NoUnnecessaryCollectionCallRule implements Rule
      */
     protected function firstArgIsDatabaseColumn(Node\Expr\StaticCall|MethodCall $node, Scope $scope): bool
     {
-        /** @var Arg[] $args */
-        $args = $node->args;
+        $args = $this->callArgumentsHelper->ofMethodCall($node, $scope) ?? [];
 
         if (count($args) === 0 || ! ($args[0]->value instanceof Node\Scalar\String_)) {
             return false;

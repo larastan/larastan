@@ -8,8 +8,11 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Events\Dispatchable as EventDispatchable;
 use PhpParser\BuilderFactory;
 use PhpParser\Node;
+use PhpParser\Node\Arg;
 use PhpParser\Node\Expr\StaticCall;
+use PHPStan\Analyser\ArgumentsNormalizer;
 use PHPStan\Analyser\Scope;
+use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\FunctionCallParametersCheck;
@@ -17,7 +20,8 @@ use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\TrinaryLogic;
 
-use function array_shift;
+use function array_filter;
+use function array_values;
 use function count;
 use function in_array;
 use function sprintf;
@@ -85,14 +89,12 @@ class CheckDispatchArgumentTypesCompatibleWithClassConstructorRule implements Ru
             return [];
         }
 
+        $condition = null;
+
         if (in_array($methodName, ['dispatchIf', 'dispatchUnless'], true)) {
-            if ($node->getArgs() === []) {
-                return []; // Handled by other rules
-            }
+            $condition = $this->conditionArgument($node, $jobClassReflection, $methodName, $scope);
 
-            $firstArgType = $scope->getType($node->getArgs()[0]->value);
-
-            if (! $firstArgType->isBoolean()->yes()) {
+            if ($condition === null || ! $scope->getType($condition->value)->isBoolean()->yes()) {
                 return []; // Handled by other rules
             }
         }
@@ -101,10 +103,9 @@ class CheckDispatchArgumentTypesCompatibleWithClassConstructorRule implements Ru
 
         $classDisplayName = str_replace('%', '%%', $jobClassReflection->getDisplayName());
 
-        // Special case because these methods have another parameter as first argument.
-        if (in_array($methodName, ['dispatchIf', 'dispatchUnless'], true)) {
-            $args = $node->getArgs();
-            array_shift($args);
+        // Special case because these methods have another parameter besides the constructor arguments.
+        if ($condition !== null) {
+            $args = array_values(array_filter($node->getArgs(), static fn (Arg $arg): bool => $arg !== $condition));
             $node = (new BuilderFactory())->staticCall($node->class, $node->name, $args);
         }
 
@@ -141,6 +142,27 @@ class CheckDispatchArgumentTypesCompatibleWithClassConstructorRule implements Ru
             null,
             null, // no callee reflection for parameter closure type extensions
         );
+    }
+
+    /** The argument that decides whether to dispatch, which is the only one not passed to the constructor. */
+    private function conditionArgument(StaticCall $node, ClassReflection $class, string $methodName, Scope $scope): Arg|null
+    {
+        if (! $class->hasMethod($methodName)) {
+            return null;
+        }
+
+        $args      = $node->getArgs();
+        $method    = $class->getMethod($methodName, $scope);
+        $reordered = ArgumentsNormalizer::reorderArgs(
+            ParametersAcceptorSelector::selectFromArgs($scope, $args, $method->getVariants(), $method->getNamedArgumentsVariants()),
+            $args,
+        );
+        $condition = $reordered[0] ?? null;
+
+        // The constructor arguments keep their names only in the call as written.
+        $original = $condition?->getAttribute(ArgumentsNormalizer::ORIGINAL_ARG_ATTRIBUTE);
+
+        return $original instanceof Arg ? $original : $condition;
     }
 
     /** @return non-empty-string[] */

@@ -23,6 +23,10 @@ class ConfigCollectionRuleTest extends RuleTestCase
                 "Config key 'test.foo' is not an array.",
                 11,
             ],
+            [
+                "Config key 'test.foo' is not an array.",
+                19,
+            ],
         ]);
     }
 

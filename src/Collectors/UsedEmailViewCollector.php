@@ -8,6 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\View\ViewName;
+use Larastan\Larastan\Support\CallArgumentsHelper;
 use PhpParser\Node;
 use PhpParser\Node\Identifier;
 use PHPStan\Analyser\Scope;
@@ -15,13 +16,16 @@ use PHPStan\Collectors\Collector;
 use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Type\ObjectType;
 
-use function count;
 use function in_array;
 
 /** @implements Collector<Node\Expr\MethodCall, string> */
 #[AutowiredService]
 final class UsedEmailViewCollector implements Collector
 {
+    public function __construct(private CallArgumentsHelper $callArgumentsHelper)
+    {
+    }
+
     private const VIEW_METHOD_NAMES = ['view', 'html', 'text', 'markdown'];
 
     public function getNodeType(): string
@@ -42,10 +46,6 @@ final class UsedEmailViewCollector implements Collector
             return null;
         }
 
-        if (count($node->getArgs()) === 0) {
-            return null;
-        }
-
         $class = $node->var;
 
         $type = $scope->getType($class);
@@ -62,7 +62,13 @@ final class UsedEmailViewCollector implements Collector
             return null;
         }
 
-        $template = $node->getArgs()[0]->value;
+        $args = $this->callArgumentsHelper->ofMethodCall($node, $scope);
+
+        if (! isset($args[0])) {
+            return null;
+        }
+
+        $template = $args[0]->value;
 
         if (! $template instanceof Node\Scalar\String_) {
             return null;

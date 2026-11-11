@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rules\UselessConstructs;
 
 use Larastan\Larastan\Rules\UselessConstructs\NoUselessValueFunctionCallsRule;
+use Larastan\Larastan\Support\CallArgumentsHelper;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
@@ -29,6 +30,7 @@ class NoUselessValueFunctionCallsRuleTest extends RuleTestCase
             ],
             [
                 ["Calling the helper function 'value()' without a closure as the first argument simply returns the first argument without doing anything", 11],
+                ["Calling the helper function 'value()' without a closure as the first argument simply returns the first argument without doing anything", 16],
             ],
         );
     }
@@ -40,6 +42,6 @@ class NoUselessValueFunctionCallsRuleTest extends RuleTestCase
 
     protected function getRule(): Rule
     {
-        return new NoUselessValueFunctionCallsRule();
+        return new NoUselessValueFunctionCallsRule(new CallArgumentsHelper($this->createReflectionProvider()));
     }
 }

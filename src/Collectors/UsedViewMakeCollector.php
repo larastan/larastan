@@ -6,18 +6,21 @@ namespace Larastan\Larastan\Collectors;
 
 use Illuminate\Contracts\View\Factory;
 use Illuminate\View\ViewName;
+use Larastan\Larastan\Support\CallArgumentsHelper;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
 use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Type\ObjectType;
 
-use function count;
-
 /** @implements Collector<Node\Expr\MethodCall, string> */
 #[AutowiredService]
 final class UsedViewMakeCollector implements Collector
 {
+    public function __construct(private CallArgumentsHelper $callArgumentsHelper)
+    {
+    }
+
     public function getNodeType(): string
     {
         return Node\Expr\MethodCall::class;
@@ -36,17 +39,19 @@ final class UsedViewMakeCollector implements Collector
             return null;
         }
 
-        if (count($node->getArgs()) < 1) {
-            return null;
-        }
-
         $class = $node->var;
 
         if (! (new ObjectType(Factory::class))->isSuperTypeOf($scope->getType($class))->yes()) {
             return null;
         }
 
-        $template = $node->getArgs()[0]->value;
+        $args = $this->callArgumentsHelper->ofMethodCall($node, $scope);
+
+        if (! isset($args[0])) {
+            return null;
+        }
+
+        $template = $args[0]->value;
 
         if (! $template instanceof Node\Scalar\String_) {
             return null;

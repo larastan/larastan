@@ -6,18 +6,21 @@ namespace Larastan\Larastan\Collectors;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\View\ViewName;
+use Larastan\Larastan\Support\CallArgumentsHelper;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
 use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Type\ObjectType;
 
-use function count;
-
 /** @implements Collector<Node\Expr\StaticCall, string> */
 #[AutowiredService]
 final class UsedRouteFacadeViewCollector implements Collector
 {
+    public function __construct(private CallArgumentsHelper $callArgumentsHelper)
+    {
+    }
+
     public function getNodeType(): string
     {
         return Node\Expr\StaticCall::class;
@@ -36,10 +39,6 @@ final class UsedRouteFacadeViewCollector implements Collector
             return null;
         }
 
-        if (count($node->getArgs()) < 2) {
-            return null;
-        }
-
         $class = $node->class;
 
         if (! $class instanceof Node\Name) {
@@ -52,7 +51,13 @@ final class UsedRouteFacadeViewCollector implements Collector
             return null;
         }
 
-        $template = $node->getArgs()[1]->value;
+        $args = $this->callArgumentsHelper->ofMethodCall($node, $scope);
+
+        if (! isset($args[1])) {
+            return null;
+        }
+
+        $template = $args[1]->value;
 
         if (! $template instanceof Node\Scalar\String_) {
             return null;

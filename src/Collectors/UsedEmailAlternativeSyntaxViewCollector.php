@@ -6,19 +6,24 @@ namespace Larastan\Larastan\Collectors;
 
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\View\ViewName;
+use Larastan\Larastan\Support\CallArgumentsHelper;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
 use PHPStan\DependencyInjection\AutowiredService;
 
-use function count;
-use function in_array;
+use function array_slice;
 
 /** @implements Collector<Node\Expr\New_, list<string>> */
 #[AutowiredService]
 final class UsedEmailAlternativeSyntaxViewCollector implements Collector
 {
-    private const VIEW_PARAM_NAMES = ['view', 'html', 'text', 'markdown'];
+    public function __construct(private CallArgumentsHelper $callArgumentsHelper)
+    {
+    }
+
+    /** The constructor takes the view, html, text and markdown views first. */
+    private const VIEW_PARAMETERS = 4;
 
     public function getNodeType(): string
     {
@@ -34,10 +39,6 @@ final class UsedEmailAlternativeSyntaxViewCollector implements Collector
             return null;
         }
 
-        if (count($node->getArgs()) < 1) {
-            return null;
-        }
-
         $class = $scope->resolveName($class);
 
         if ($class !== Content::class) {
@@ -46,17 +47,7 @@ final class UsedEmailAlternativeSyntaxViewCollector implements Collector
 
         $views = [];
 
-        foreach ($node->getArgs() as $index => $arg) {
-            if ($arg->name !== null) {
-                $paramName = $arg->name->name;
-            } else {
-                $paramName = self::VIEW_PARAM_NAMES[$index] ?? null;
-            }
-
-            if ($paramName === null || ! in_array($paramName, self::VIEW_PARAM_NAMES, true)) {
-                continue;
-            }
-
+        foreach (array_slice($this->callArgumentsHelper->ofNew($node, $scope) ?? [], 0, self::VIEW_PARAMETERS) as $arg) {
             if (! $arg->value instanceof Node\Scalar\String_) {
                 continue;
             }

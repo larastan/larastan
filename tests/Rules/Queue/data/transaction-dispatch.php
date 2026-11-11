@@ -109,3 +109,7 @@ DB::transaction(static function (): void {
     QueueableNotifyOwnerAfterCommit::dispatch()->beforeCommit();
     QueueableNotifyOwnerAfterCommit::dispatch();
 });
+
+DB::transaction(attempts: 2, callback: static function (): void {
+    NotifyOwner::dispatch(1);
+});

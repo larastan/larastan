@@ -7,6 +7,7 @@ namespace Tests\Rules;
 use Larastan\Larastan\Rules\ModelRuleHelper;
 use Larastan\Larastan\Rules\RelationExistenceHelper;
 use Larastan\Larastan\Rules\RelationExistenceRule;
+use Larastan\Larastan\Support\CallArgumentsHelper;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
@@ -15,7 +16,7 @@ class RelationExistenceRuleTest extends RuleTestCase
 {
     protected function getRule(): Rule
     {
-        return new RelationExistenceRule(new RelationExistenceHelper(new ModelRuleHelper()));
+        return new RelationExistenceRule(new RelationExistenceHelper(new ModelRuleHelper()), new CallArgumentsHelper($this->createReflectionProvider()));
     }
 
     public function testRule(): void

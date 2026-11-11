@@ -102,4 +102,9 @@ class UnnecessaryCollectionCallsEloquent
     {
         return User::pluck('id')->sum();
     }
+
+    public function testContainsNamedArguments(): bool
+    {
+        return User::query()->get()->contains(value: 1, operator: '=', key: 'id');
+    }
 }

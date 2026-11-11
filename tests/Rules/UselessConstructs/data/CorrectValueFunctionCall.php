@@ -12,4 +12,11 @@ class CorrectValueFunctionCall
             return 'foo';
         });
     }
+
+    public function namedArguments(): string
+    {
+        return value(foo: 1, value: static function (int $foo) {
+            return 'foo';
+        });
+    }
 }

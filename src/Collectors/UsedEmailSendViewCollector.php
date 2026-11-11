@@ -7,18 +7,21 @@ namespace Larastan\Larastan\Collectors;
 use Illuminate\Contracts\Mail\Mailer as MailerContract;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\View\ViewName;
+use Larastan\Larastan\Support\CallArgumentsHelper;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
 use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Type\ObjectType;
 
-use function count;
-
 /** @implements Collector<Node\Expr\CallLike, string> */
 #[AutowiredService]
 final class UsedEmailSendViewCollector implements Collector
 {
+    public function __construct(private CallArgumentsHelper $callArgumentsHelper)
+    {
+    }
+
     public function getNodeType(): string
     {
         return Node\Expr\CallLike::class;
@@ -37,10 +40,6 @@ final class UsedEmailSendViewCollector implements Collector
         $name = $node->name;
 
         if (! $name instanceof Node\Identifier || $name->name !== 'send') {
-            return null;
-        }
-
-        if (count($node->getArgs()) < 1) {
             return null;
         }
 
@@ -64,16 +63,10 @@ final class UsedEmailSendViewCollector implements Collector
             }
         }
 
-        foreach ($node->getArgs() as $index => $arg) {
-            if ($arg->name !== null ? $arg->name->name !== 'view' : $index !== 0) {
-                continue;
-            }
+        $view = $this->callArgumentsHelper->ofMethodCall($node, $scope)[0] ?? null;
 
-            return ! $arg->unpack && $arg->value instanceof Node\Scalar\String_
-                ? ViewName::normalize($arg->value->value)
-                : null;
-        }
-
-        return null;
+        return $view !== null && ! $view->unpack && $view->value instanceof Node\Scalar\String_
+            ? ViewName::normalize($view->value->value)
+            : null;
     }
 }

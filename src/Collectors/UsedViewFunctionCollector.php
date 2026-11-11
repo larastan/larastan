@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Collectors;
 
 use Illuminate\View\ViewName;
+use Larastan\Larastan\Support\CallArgumentsHelper;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
@@ -17,7 +18,7 @@ use function count;
 #[AutowiredService]
 final class UsedViewFunctionCollector implements Collector
 {
-    public function __construct(private ReflectionProvider $reflectionProvider)
+    public function __construct(private ReflectionProvider $reflectionProvider, private CallArgumentsHelper $callArgumentsHelper)
     {
     }
 
@@ -39,11 +40,13 @@ final class UsedViewFunctionCollector implements Collector
             return null;
         }
 
-        if (count($node->getArgs()) < 1) {
+        $args = $this->callArgumentsHelper->ofFunctionCall($node, $scope);
+
+        if (! isset($args[0])) {
             return null;
         }
 
-        $template = $node->getArgs()[0]->value;
+        $template = $args[0]->value;
 
         if ($template instanceof Node\Scalar\String_) {
             return ViewName::normalize($template->value);

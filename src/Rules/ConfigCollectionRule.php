@@ -6,6 +6,7 @@ namespace Larastan\Larastan\Rules;
 
 use Illuminate\Support\Facades\Config;
 use Larastan\Larastan\Internal\ConfigHelper;
+use Larastan\Larastan\Support\CallArgumentsHelper;
 use PhpParser\Node;
 use PhpParser\Node\Expr\StaticCall;
 use PhpParser\Node\Identifier;
@@ -25,7 +26,7 @@ use function sprintf;
 #[Conditional(attribute: new AutowiredService(), if: '%checkConfigTypes%')]
 final class ConfigCollectionRule implements Rule
 {
-    public function __construct(private ConfigHelper $configHelper)
+    public function __construct(private ConfigHelper $configHelper, private CallArgumentsHelper $callArgumentsHelper)
     {
     }
 
@@ -54,7 +55,7 @@ final class ConfigCollectionRule implements Rule
             return [];
         }
 
-        $args = $node->getArgs();
+        $args = $this->callArgumentsHelper->ofMethodCall($node, $scope) ?? [];
 
         if ($args === []) {
             return [];

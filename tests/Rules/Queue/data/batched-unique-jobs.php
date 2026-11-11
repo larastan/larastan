@@ -41,3 +41,8 @@ UniqueJobWithUniqueForProperty::dispatch();
 $jobs = [];
 
 Bus::batch($jobs);
+
+// Named arguments in a different order than the parameters.
+Queue::bulk(queue: 'default', jobs: [
+    new UniqueJobWithUniqueForProperty(),
+]);

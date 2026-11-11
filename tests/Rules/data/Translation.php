@@ -45,4 +45,21 @@ class Translation
 
         __('messages.A.Key.With.Dots.');
     }
+
+    public function namedArguments(Translator $translator): void
+    {
+        __(replace: [], key: 'messages.named');
+        trans(replace: [], key: 'messages.named');
+        trans_choice(number: 1, key: 'messages.named');
+
+        $translator->get(replace: [], key: 'messages.named');
+        $translator->choice(number: 1, key: 'messages.named');
+
+        Lang::get(replace: [], key: 'messages.named');
+        Lang::choice(number: 1, key: 'messages.named');
+
+        __(replace: [], key: 'messages.foo');
+        $translator->get(replace: [], key: 'messages.bar');
+        Lang::get(replace: [], key: 'messages.baz');
+    }
 }

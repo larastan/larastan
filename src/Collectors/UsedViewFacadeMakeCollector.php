@@ -6,18 +6,21 @@ namespace Larastan\Larastan\Collectors;
 
 use Illuminate\Support\Facades\View;
 use Illuminate\View\ViewName;
+use Larastan\Larastan\Support\CallArgumentsHelper;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
 use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Type\ObjectType;
 
-use function count;
-
 /** @implements Collector<Node\Expr\StaticCall, string> */
 #[AutowiredService]
 final class UsedViewFacadeMakeCollector implements Collector
 {
+    public function __construct(private CallArgumentsHelper $callArgumentsHelper)
+    {
+    }
+
     public function getNodeType(): string
     {
         return Node\Expr\StaticCall::class;
@@ -36,10 +39,6 @@ final class UsedViewFacadeMakeCollector implements Collector
             return null;
         }
 
-        if (count($node->getArgs()) < 1) {
-            return null;
-        }
-
         $class = $node->class;
 
         if (! $class instanceof Node\Name) {
@@ -52,7 +51,13 @@ final class UsedViewFacadeMakeCollector implements Collector
             return null;
         }
 
-        $template = $node->getArgs()[0]->value;
+        $args = $this->callArgumentsHelper->ofMethodCall($node, $scope);
+
+        if (! isset($args[0])) {
+            return null;
+        }
+
+        $template = $args[0]->value;
 
         if (! $template instanceof Node\Scalar\String_) {
             return null;

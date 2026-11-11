@@ -4,18 +4,22 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Collectors;
 
+use Larastan\Larastan\Support\CallArgumentsHelper;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
 use PHPStan\DependencyInjection\AutowiredService;
 
-use function count;
 use function in_array;
 
 /** @implements Collector<Node\Expr\FuncCall, string> */
 #[AutowiredService]
 final class UsedTranslationFunctionCollector implements Collector
 {
+    public function __construct(private CallArgumentsHelper $callArgumentsHelper)
+    {
+    }
+
     public function getNodeType(): string
     {
         return Node\Expr\FuncCall::class;
@@ -36,11 +40,13 @@ final class UsedTranslationFunctionCollector implements Collector
             return null;
         }
 
-        if (count($node->getArgs()) === 0) {
+        $args = $this->callArgumentsHelper->ofFunctionCall($node, $scope);
+
+        if (! isset($args[0])) {
             return null;
         }
 
-        $template = $node->getArgs()[0]->value;
+        $template = $args[0]->value;
 
         if (! $template instanceof Node\Scalar\String_) {
             return null;

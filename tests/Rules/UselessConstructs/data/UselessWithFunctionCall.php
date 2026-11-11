@@ -15,4 +15,9 @@ class UselessWithFunctionCall
     {
         return with('bar', null);
     }
+
+    public function namedArguments(): string
+    {
+        return with(callback: null, value: 'baz');
+    }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\Rules\UselessConstructs;
 
+use Larastan\Larastan\Support\CallArgumentsHelper;
 use PhpParser\Node;
 use PhpParser\Node\Expr\FuncCall;
 use PHPStan\Analyser\Scope;
@@ -19,6 +20,10 @@ use function strtolower;
 #[AutowiredService]
 class NoUselessWithFunctionCallsRule implements Rule
 {
+    public function __construct(private CallArgumentsHelper $callArgumentsHelper)
+    {
+    }
+
     public function getNodeType(): string
     {
         return FuncCall::class;
@@ -35,7 +40,7 @@ class NoUselessWithFunctionCallsRule implements Rule
             return [];
         }
 
-        $args = $node->getArgs();
+        $args = $this->callArgumentsHelper->ofFunctionCall($node, $scope) ?? [];
 
         if (count($args) < 1) {
             return [];

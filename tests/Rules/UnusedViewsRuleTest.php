@@ -13,6 +13,7 @@ use Larastan\Larastan\Collectors\UsedViewFunctionCollector;
 use Larastan\Larastan\Collectors\UsedViewInAnotherViewCollector;
 use Larastan\Larastan\Collectors\UsedViewMakeCollector;
 use Larastan\Larastan\Rules\UnusedViewsRule;
+use Larastan\Larastan\Support\CallArgumentsHelper;
 use Larastan\Larastan\Support\ViewFileHelper;
 use Larastan\Larastan\Support\ViewParser;
 use PhpParser\Node;
@@ -40,14 +41,16 @@ class UnusedViewsRuleTest extends RuleTestCase
     /** @return array<Collector<Node, mixed>> */
     protected function getCollectors(): array
     {
+        $callArgumentsHelper = new CallArgumentsHelper($this->createReflectionProvider());
+
         return [
-            new UsedViewFunctionCollector($this->createReflectionProvider()),
-            new UsedEmailViewCollector(),
-            new UsedEmailAlternativeSyntaxViewCollector(),
-            new UsedEmailSendViewCollector(),
-            new UsedViewMakeCollector(),
-            new UsedViewFacadeMakeCollector(),
-            new UsedRouteFacadeViewCollector(),
+            new UsedViewFunctionCollector($this->createReflectionProvider(), $callArgumentsHelper),
+            new UsedEmailViewCollector($callArgumentsHelper),
+            new UsedEmailAlternativeSyntaxViewCollector($callArgumentsHelper),
+            new UsedEmailSendViewCollector($callArgumentsHelper),
+            new UsedViewMakeCollector($callArgumentsHelper),
+            new UsedViewFacadeMakeCollector($callArgumentsHelper),
+            new UsedRouteFacadeViewCollector($callArgumentsHelper),
         ];
     }
 

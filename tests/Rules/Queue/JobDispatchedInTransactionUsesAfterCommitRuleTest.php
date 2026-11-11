@@ -31,6 +31,7 @@ class JobDispatchedInTransactionUsesAfterCommitRuleTest extends RuleTestCase
             [$message, 51],
             [str_replace('NotifyOwner', 'QueueableNotifyOwner', $message), 107],
             [str_replace('NotifyOwner', 'QueueableNotifyOwnerAfterCommit', $message), 109],
+            [$message, 114],
         ]);
     }
 

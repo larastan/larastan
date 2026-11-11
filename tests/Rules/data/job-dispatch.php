@@ -37,3 +37,5 @@ LaravelJobWithoutConstructor::dispatchAfterResponse('foo');
 
 LaravelJobWithoutConstructor::dispatchIf(true);
 LaravelJobWithoutConstructor::dispatchUnless(true, 'foo');
+
+LaravelJob::dispatchIf(foo: 1, bar: 'foo', boolean: true);

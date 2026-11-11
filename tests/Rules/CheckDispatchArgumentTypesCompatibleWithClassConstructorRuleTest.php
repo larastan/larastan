@@ -64,6 +64,8 @@ class CheckDispatchArgumentTypesCompatibleWithClassConstructorRuleTest extends R
             ['Job class Tests\Rules\Data\LaravelJobWithoutConstructor does not have a constructor and must be dispatched without any parameters.', 34],
             ['Job class Tests\Rules\Data\LaravelJobWithoutConstructor does not have a constructor and must be dispatched without any parameters.', 36],
             ['Job class Tests\Rules\Data\LaravelJobWithoutConstructor does not have a constructor and must be dispatched without any parameters.', 39],
+            ['Parameter $foo of job class Tests\Rules\Data\LaravelJob constructor expects string in Tests\Rules\Data\LaravelJob::dispatchIf(), int given.', 41],
+            ['Parameter $bar of job class Tests\Rules\Data\LaravelJob constructor expects int in Tests\Rules\Data\LaravelJob::dispatchIf(), string given.', 41],
         ]);
     }
 

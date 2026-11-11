@@ -6,6 +6,7 @@ namespace Tests\Rules;
 
 use Larastan\Larastan\Properties\ModelPropertyExtension;
 use Larastan\Larastan\Rules\NoUnnecessaryCollectionCallRule;
+use Larastan\Larastan\Support\CallArgumentsHelper;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
@@ -14,7 +15,7 @@ class NoUnnecessaryCollectionCallRuleTest extends RuleTestCase
 {
     protected function getRule(): Rule
     {
-        return new NoUnnecessaryCollectionCallRule($this->createReflectionProvider(), self::getContainer()->getByType(ModelPropertyExtension::class), [], []);
+        return new NoUnnecessaryCollectionCallRule($this->createReflectionProvider(), self::getContainer()->getByType(ModelPropertyExtension::class), [], [], new CallArgumentsHelper($this->createReflectionProvider()));
     }
 
     public function testNoFalsePositives(): void
@@ -41,6 +42,7 @@ class NoUnnecessaryCollectionCallRuleTest extends RuleTestCase
             ['Called \'modelKeys\' on Laravel collection, but could have been retrieved as a query.', 92],
             ['Called \'containsStrict\' on Laravel collection, but could have been retrieved as a query.', 97],
             ['Called \'sum\' on Laravel collection, but could have been retrieved as a query.', 103],
+            ['Called \'contains\' on Laravel collection, but could have been retrieved as a query.', 108],
         ]);
     }
 

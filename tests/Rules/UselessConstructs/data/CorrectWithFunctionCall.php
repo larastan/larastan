@@ -17,4 +17,9 @@ class CorrectWithFunctionCall
     {
         return with('foo', 'strtoupper');
     }
+
+    public function namedArguments(): string
+    {
+        return with(callback: 'strtoupper', value: 'foo');
+    }
 }

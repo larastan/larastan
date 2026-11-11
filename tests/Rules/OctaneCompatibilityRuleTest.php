@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Tests\Rules;
 
 use Larastan\Larastan\Rules\OctaneCompatibilityRule;
+use Larastan\Larastan\Support\CallArgumentsHelper;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
@@ -13,7 +14,7 @@ class OctaneCompatibilityRuleTest extends RuleTestCase
 {
     protected function getRule(): Rule
     {
-        return new OctaneCompatibilityRule();
+        return new OctaneCompatibilityRule(new CallArgumentsHelper($this->createReflectionProvider()));
     }
 
     public function testNoContainerInjection(): void
@@ -46,6 +47,10 @@ class OctaneCompatibilityRuleTest extends RuleTestCase
             ['Consider using bind method instead or pass a closure.', 154, 'See: https://laravel.com/docs/octane#dependency-injection-and-octane'],
             ['Consider using bind method instead or pass a closure.', 155, 'See: https://laravel.com/docs/octane#dependency-injection-and-octane'],
             ['Consider using bind method instead or pass a closure.', 156, 'See: https://laravel.com/docs/octane#dependency-injection-and-octane'],
+            // Named arguments in a different order than the parameters
+            ['Consider using bind method instead or pass a closure.', 168, 'See: https://laravel.com/docs/octane#dependency-injection-and-octane'],
+            ['Consider using bind method instead or pass a closure.', 169, 'See: https://laravel.com/docs/octane#dependency-injection-and-octane'],
+            ['Consider using bind method instead or pass a closure.', 170, 'See: https://laravel.com/docs/octane#dependency-injection-and-octane'],
         ]);
     }
 

@@ -10,6 +10,7 @@ use Larastan\Larastan\Collectors\UsedTranslationFunctionCollector;
 use Larastan\Larastan\Collectors\UsedTranslationTranslatorCollector;
 use Larastan\Larastan\Collectors\UsedTranslationViewCollector;
 use Larastan\Larastan\Rules\NoMissingTranslationsRule;
+use Larastan\Larastan\Support\CallArgumentsHelper;
 use Larastan\Larastan\Support\ViewFileHelper;
 use Larastan\Larastan\Support\ViewParser;
 use PhpParser\Node\Expr\CallLike;
@@ -38,10 +39,12 @@ class NoMissingTranslationsRuleTest extends RuleTestCase
     /** @return array<Collector<CallLike, mixed>> */
     protected function getCollectors(): array
     {
+        $callArgumentsHelper = new CallArgumentsHelper($this->createReflectionProvider());
+
         return [
-            new UsedTranslationFunctionCollector(),
-            new UsedTranslationTranslatorCollector(),
-            new UsedTranslationFacadeCollector(),
+            new UsedTranslationFunctionCollector($callArgumentsHelper),
+            new UsedTranslationTranslatorCollector($callArgumentsHelper),
+            new UsedTranslationFacadeCollector($callArgumentsHelper),
         ];
     }
 
@@ -125,6 +128,34 @@ class NoMissingTranslationsRuleTest extends RuleTestCase
             [
                 'Translation "sub/lines.farewell" has not been found.',
                 40,
+            ],
+            [
+                'Translation "messages.named" has not been found.',
+                51,
+            ],
+            [
+                'Translation "messages.named" has not been found.',
+                52,
+            ],
+            [
+                'Translation "messages.named" has not been found.',
+                53,
+            ],
+            [
+                'Translation "messages.named" has not been found.',
+                55,
+            ],
+            [
+                'Translation "messages.named" has not been found.',
+                56,
+            ],
+            [
+                'Translation "messages.named" has not been found.',
+                58,
+            ],
+            [
+                'Translation "messages.named" has not been found.',
+                59,
             ],
         ]);
     }

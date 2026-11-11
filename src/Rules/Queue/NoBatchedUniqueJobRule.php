@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Queue;
 use Larastan\Larastan\Concerns\InspectsQueuedJobs;
+use Larastan\Larastan\Support\CallArgumentsHelper;
 use PhpParser\Node;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\StaticCall;
@@ -48,6 +49,10 @@ class NoBatchedUniqueJobRule implements Rule
 {
     use InspectsQueuedJobs;
 
+    public function __construct(private CallArgumentsHelper $callArgumentsHelper)
+    {
+    }
+
     private const BULK_METHODS = ['batch', 'bulk'];
 
     public function getNodeType(): string
@@ -66,7 +71,7 @@ class NoBatchedUniqueJobRule implements Rule
             return [];
         }
 
-        $jobsArg = $node->getArgs()[0] ?? null;
+        $jobsArg = $this->callArgumentsHelper->ofMethodCall($node, $scope)[0] ?? null;
 
         if ($jobsArg === null) {
             return [];

@@ -7,6 +7,7 @@ namespace Larastan\Larastan\Rules;
 use Closure;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Larastan\Larastan\Support\CallArgumentsHelper;
 use PhpParser\Node;
 use PhpParser\Node\Expr\MethodCall;
 use PHPStan\Analyser\Scope;
@@ -25,7 +26,7 @@ use function strtolower;
 #[AutowiredService]
 class RelationExistenceRule implements MultipleNodeTypesRule
 {
-    public function __construct(private RelationExistenceHelper $relationExistenceHelper)
+    public function __construct(private RelationExistenceHelper $relationExistenceHelper, private CallArgumentsHelper $callArgumentsHelper)
     {
     }
 
@@ -87,31 +88,16 @@ class RelationExistenceRule implements MultipleNodeTypesRule
             return [];
         }
 
-        $args = $node->getArgs();
+        $args = $this->callArgumentsHelper->ofMethodCall($node, $scope) ?? [];
 
         if ($args === [] || $args[0]->unpack) {
             return [];
         }
 
         // Laravel does not parse a column selection such as `posts:id` when the name is paired with a callback.
-        $constrained = false;
-
-        if (in_array($method, ['with', 'withwherehas'], true)) {
-            foreach ($args as $position => $arg) {
-                if ($arg->name === null ? $position !== 1 : $arg->name->toString() !== 'callback') {
-                    continue;
-                }
-
-                $constrained = (new ObjectType(Closure::class))->isSuperTypeOf($scope->getType($arg->value))->yes();
-            }
-        }
-
-        foreach ($args as $arg) {
-            if ($arg->name !== null && in_array($arg->name->toString(), ['relation', 'relations'], true)) {
-                $args = [$arg];
-                break;
-            }
-        }
+        $constrained = in_array($method, ['with', 'withwherehas'], true)
+            && isset($args[1])
+            && (new ObjectType(Closure::class))->isSuperTypeOf($scope->getType($args[1]->value))->yes();
 
         $receiver = $node instanceof Node\Expr\StaticCall ? $node->class : $node->var;
         $type     = $receiver instanceof Node\Name ? $scope->resolveTypeByName($receiver) : $scope->getType($receiver);

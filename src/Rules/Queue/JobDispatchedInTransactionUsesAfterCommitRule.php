@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Larastan\Larastan\Concerns\InspectsQueuedJobs;
+use Larastan\Larastan\Support\CallArgumentsHelper;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\ArrowFunction;
@@ -27,6 +28,7 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\IdentifierRuleError;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
+use PHPStan\Type\ObjectType;
 
 use function array_values;
 use function in_array;
@@ -91,7 +93,7 @@ class JobDispatchedInTransactionUsesAfterCommitRule implements Rule
 
     private string $laravelVersion;
 
-    public function __construct(private ReflectionProvider $reflectionProvider)
+    public function __construct(private ReflectionProvider $reflectionProvider, private CallArgumentsHelper $callArgumentsHelper)
     {
         $this->laravelVersion = LARAVEL_VERSION;
     }
@@ -112,7 +114,7 @@ class JobDispatchedInTransactionUsesAfterCommitRule implements Rule
             return [];
         }
 
-        $callback = $node->getArgs()[0] ?? null;
+        $callback = $this->callArgumentsHelper->ofMethodCall($node, $scope, new ObjectType(DB::class))[0] ?? null;
 
         if ($callback === null) {
             return [];

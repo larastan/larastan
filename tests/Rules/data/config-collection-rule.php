@@ -13,3 +13,9 @@ class Foo
         Config::collection('test.bar', 5);
     }
 }
+
+function namedArguments(): void
+{
+    Config::collection(default: null, key: 'test.foo');
+    Config::collection(default: null, key: 'test.bar');
+}

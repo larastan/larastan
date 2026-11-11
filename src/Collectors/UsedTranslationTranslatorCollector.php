@@ -5,19 +5,23 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Collectors;
 
 use Illuminate\Translation\Translator;
+use Larastan\Larastan\Support\CallArgumentsHelper;
 use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Collectors\Collector;
 use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Type\ObjectType;
 
-use function count;
 use function in_array;
 
 /** @implements Collector<Node\Expr\MethodCall, string> */
 #[AutowiredService]
 final class UsedTranslationTranslatorCollector implements Collector
 {
+    public function __construct(private CallArgumentsHelper $callArgumentsHelper)
+    {
+    }
+
     public function getNodeType(): string
     {
         return Node\Expr\MethodCall::class;
@@ -40,17 +44,19 @@ final class UsedTranslationTranslatorCollector implements Collector
             return null;
         }
 
-        if (count($node->getArgs()) === 0) {
-            return null;
-        }
-
         $class = $node->var;
 
         if (! (new ObjectType(Translator::class))->isSuperTypeOf($scope->getType($class))->yes()) {
             return null;
         }
 
-        $template = $node->getArgs()[0]->value;
+        $args = $this->callArgumentsHelper->ofMethodCall($node, $scope);
+
+        if (! isset($args[0])) {
+            return null;
+        }
+
+        $template = $args[0]->value;
 
         if (! $template instanceof Node\Scalar\String_) {
             return null;

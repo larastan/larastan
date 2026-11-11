@@ -160,3 +160,16 @@ class ArrowFunctionInjectionServiceProvider extends \Illuminate\Support\ServiceP
         $this->app->singleton(Service::class, fn ($app) => new Service($app->make('config')->get('app.name')));
     }
 }
+
+class NamedArgumentsServiceProvider extends \Illuminate\Support\ServiceProvider
+{
+    public function register()
+    {
+        $this->app->singleton(concrete: fn ($app) => new Service($app['request']), abstract: Service::class);
+        $this->app->singleton(Service::class, fn ($app) => new Service($app->make(parameters: [], abstract: 'request')));
+        $this->app->singleton(Service::class, fn ($app) => new Service($app->makeWith(parameters: [], abstract: 'request')));
+
+        // This is fine: bind resolves the closure again for every instance
+        $this->app->bind(shared: false, concrete: fn ($app) => new Service($app['request']), abstract: Service::class);
+    }
+}

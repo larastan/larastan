@@ -119,3 +119,27 @@ class SomeClass {
         view('modals/' . __FUNCTION__);
     }
 }
+
+class NamedArgumentsMailable extends Mailable
+{
+    public function build(): self
+    {
+        return $this->view(data: [], view: 'named-arguments.mailable-view');
+    }
+}
+
+class NamedArgumentsMailMessage extends MailMessage
+{
+    public function build(): self
+    {
+        return $this->markdown(data: [], view: 'named-arguments.mail-message-markdown');
+    }
+}
+
+function namedArguments(Factory $factory): void
+{
+    view(data: [], view: 'named-arguments.view-function');
+    $factory->make(data: [], view: 'named-arguments.view-factory-make');
+    \Illuminate\Support\Facades\View::make(data: [], view: 'named-arguments.view-static-make');
+    Route::view(view: 'named-arguments.route-view', uri: '/named');
+}

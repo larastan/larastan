@@ -10,4 +10,9 @@ class UselessValueFunctionCall
     {
         return value('foo');
     }
+
+    public function namedArguments(): string
+    {
+        return value(foo: 1, value: 'bar');
+    }
 }

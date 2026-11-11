@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Rules\UselessConstructs;
 
 use Larastan\Larastan\Rules\UselessConstructs\NoUselessWithFunctionCallsRule;
+use Larastan\Larastan\Support\CallArgumentsHelper;
 use PHPStan\Rules\Rule;
 use PHPStan\Testing\RuleTestCase;
 
@@ -30,6 +31,7 @@ class NoUselessWithFunctionCallsRuleTest extends RuleTestCase
             [
                 ["Calling the helper function 'with()' with only one argument simply returns the value itself. If you want to chain methods on a construct, use '(new ClassName())->foo()' instead", 11],
                 ["Calling the helper function 'with()' without a callable as the second argument simply returns the value without doing anything", 16],
+                ["Calling the helper function 'with()' without a callable as the second argument simply returns the value without doing anything", 21],
             ],
         );
     }
@@ -41,6 +43,6 @@ class NoUselessWithFunctionCallsRuleTest extends RuleTestCase
 
     protected function getRule(): Rule
     {
-        return new NoUselessWithFunctionCallsRule();
+        return new NoUselessWithFunctionCallsRule(new CallArgumentsHelper($this->createReflectionProvider()));
     }
 }
