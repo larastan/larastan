@@ -270,6 +270,22 @@ class IntegrationTest extends PHPStanTestCase
             ],
         ];
 
+        yield 'model-scope-static-parameters' => [
+            __DIR__ . '/data/model-scope-static-parameters.php',
+            [
+                79 => ['Parameter #1 $filter of method Illuminate\Database\Eloquent\Builder<ModelScopeStaticParameters\Post>::filtered() expects ModelScopeStaticParameters\Filter<ModelScopeStaticParameters\Post>, ModelScopeStaticParameters\CommentFilter given.'],
+            ],
+        ];
+
+        if (laravel_version_compare('12.0.0', '>=')) {
+            yield 'model-scope-attribute-static-parameters' => [
+                __DIR__ . '/data/model-scope-attribute-static-parameters-l12.php',
+                [
+                    45 => ['Parameter #1 $filter of method Illuminate\Database\Eloquent\Builder<ModelScopeAttributeStaticParameters\Post>::filtered() expects ModelScopeAttributeStaticParameters\Filter<ModelScopeAttributeStaticParameters\Post>, ModelScopeAttributeStaticParameters\CommentFilter given.'],
+                ],
+            ];
+        }
+
         if (laravel_version_compare('12.4.0', '>=')) {
             yield 'with-attributes-as-conditions' => [
                 __DIR__ . '/data/model-property-with-attributes-l12-4.php',
