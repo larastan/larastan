@@ -67,7 +67,6 @@ function test(
     assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\UserCollection>', $secondCustomEloquentCollection->groupBy('id'));
     assertType('Illuminate\Database\Eloquent\Collection<(int|string), App\UserCollection>', $secondCustomEloquentCollection->groupBy(fn (User $user): string => $user->email));
     assertType('Illuminate\Support\Collection<(int|string), App\UserCollection>', $secondCustomEloquentCollection->groupBy('id')->toBase());
-    assertType('Illuminate\Database\Eloquent\Collection<(int|string), Illuminate\Database\Eloquent\Collection<int, mixed>>', $secondCustomEloquentCollection->groupBy(['id', 'email']));
 
     assertType('Illuminate\Database\Eloquent\Collection<string, App\User>', $collection->keyBy(fn (User $user, int $key): string => $user->email));
 

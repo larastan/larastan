@@ -39,7 +39,10 @@ class CollectionGroupByDynamicReturnTypeExtension implements DynamicMethodReturn
         MethodCall $methodCall,
         Scope $scope,
     ): Type|null {
-        if ($methodCall->getArgs() === []) {
+        $args = $methodCall->getArgs();
+
+        // Grouping by several keys nests further levels, so it is left to the stub.
+        if ($args === [] || $args[0]->unpack || ! $scope->getType($args[0]->value)->isArray()->no()) {
             return null;
         }
 
@@ -62,24 +65,23 @@ class CollectionGroupByDynamicReturnTypeExtension implements DynamicMethodReturn
             ],
         );
 
+        if (! $baseCollectionType->hasMethod('groupBy')->yes()) {
+            return null;
+        }
+
         $baseMethodReflection = $baseCollectionType->getMethod('groupBy', $scope);
 
         $groupedType = ParametersAcceptorSelector::selectFromArgs(
             $scope,
-            $methodCall->getArgs(),
+            $args,
             $baseMethodReflection->getVariants(),
             $baseMethodReflection->getNamedArgumentsVariants(),
         )->getReturnType();
 
-        // Grouping by several keys nests further levels, so the groups are not instances of the receiver.
-        if (! $scope->getType($methodCall->getArgs()[0]->value)->isArray()->no()) {
-            return $groupedType;
-        }
-
         // Without templates, the stub's static<...> resolves to the receiver itself, which is the type of each group.
         $groupType = ParametersAcceptorSelector::selectFromArgs(
             $scope,
-            $methodCall->getArgs(),
+            $args,
             $methodReflection->getVariants(),
         )->getReturnType();
 
