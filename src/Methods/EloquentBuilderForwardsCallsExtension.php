@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Larastan\Larastan\Methods;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Larastan\Larastan\Reflection\AnnotationScopeMethodParameterReflection;
 use Larastan\Larastan\Reflection\EloquentBuilderMethodReflection;
 use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\DependencyInjection\AutowiredService;
@@ -13,12 +15,16 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\MissingMethodFromReflectionException;
+use PHPStan\Reflection\ParameterReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Generic\GenericObjectType;
 use PHPStan\Type\Generic\TemplateObjectType;
 use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
+use PHPStan\Type\StaticType;
+use PHPStan\Type\Type;
+use PHPStan\Type\TypeTraverser;
 
 use function array_key_exists;
 use function array_map;
@@ -170,14 +176,43 @@ final class EloquentBuilderForwardsCallsExtension implements MethodsClassReflect
             $returnType = $parametersAcceptor->getReturnType();
         }
 
+        $parameters = $parametersAcceptor->getParameters();
+
+        if ($ref->getDeclaringClass()->is(Model::class)) {
+            $parameters = $this->bindStaticParametersToModel($parameters, $returnModelType);
+        }
+
         // Returning custom reflection
         // to ensure return type is always `EloquentBuilder<Model>`
         return new EloquentBuilderMethodReflection(
             $methodName,
             $classReflection,
-            $parametersAcceptor->getParameters(),
+            $parameters,
             $returnType,
             $parametersAcceptor->isVariadic(),
         );
+    }
+
+    /**
+     * In a scope, `static` and `$this` refer to the model. Left as is, PHPStan would resolve them
+     * against the receiver, which is the builder itself.
+     *
+     * @param list<ParameterReflection> $parameters
+     *
+     * @return list<ParameterReflection>
+     */
+    private function bindStaticParametersToModel(array $parameters, Type $modelType): array
+    {
+        return array_map(static fn (ParameterReflection $parameter): ParameterReflection => new AnnotationScopeMethodParameterReflection(
+            $parameter->getName(),
+            TypeTraverser::map(
+                $parameter->getType(),
+                static fn (Type $type, callable $traverse): Type => $type instanceof StaticType ? $modelType : $traverse($type),
+            ),
+            $parameter->passedByReference(),
+            $parameter->isOptional(),
+            $parameter->isVariadic(),
+            $parameter->getDefaultValue(),
+        ), $parameters);
     }
 }
