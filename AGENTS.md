@@ -9,7 +9,8 @@ implementation and follow its complete pattern before adding a new one.
 - `extension.neon` defines parameters, defaults, and the services that PHP
   attributes cannot express. Other services are registered with PHPStan DI
   attributes on their classes in `src/`.
-- `CONTRIBUTING.md` documents setup and contribution expectations.
+- `CONTRIBUTING.md` documents setup, contribution expectations, and which
+  branch a change targets.
 - `.github/workflows/` defines the complete CI matrix.
 
 Do not copy version numbers or CI matrices into documentation. Link to their
