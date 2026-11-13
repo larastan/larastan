@@ -54,6 +54,15 @@ $post->toArray();
 $post->attributesToArray();
 ```
 
+## Model original values
+
+`Model::getOriginal()` with a constant key returns the type of the property with that name, because Laravel applies the same accessors and casts to original values. Relations, unknown keys and calls with a default value keep the `mixed` return type.
+
+```php
+$post->getOriginal('published_at'); // Carbon\Carbon|null
+$post->getOriginal('author');       // mixed, because author is a relation
+```
+
 ## Arr::get() and Arr::pull()
 
 `Arr::get()` and `Arr::pull()` return the type stored under the given key, including keys in "dot" notation. When the key may be missing, the default value's type is added. `Arr::pull()` also removes the key from the array it was passed, unless the key uses "dot" notation and the array may lack that exact key.
