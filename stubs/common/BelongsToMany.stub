@@ -102,6 +102,18 @@ class BelongsToMany extends Relation
     public function updateOrCreate(array $attributes, array $values = [], array $joining = [], $touch = true);
 
     /**
+     * Create a related record matching the attributes, or increment the existing record.
+     *
+     * @param  array<model-property<TRelatedModel>, mixed>  $attributes
+     * @param  model-property<TRelatedModel>  $column
+     * @param  float|int  $default
+     * @param  float|int  $step
+     * @param  array<model-property<TRelatedModel>, mixed>  $extra
+     * @return TRelatedModel&object{TAccessor: TPivotModel}
+     */
+    public function incrementOrCreate(array $attributes, string $column = 'count', $default = 1, $step = 1, array $extra = []);
+
+    /**
      * Find a related model by its primary key.
      *
      * @param  mixed  $id

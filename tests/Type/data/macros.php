@@ -67,3 +67,8 @@ class Foo
 {
     use Macroable;
 }
+
+function enumDefaultValue(): void
+{
+    assertType('string', Builder::macroWithEnumDefaultValue());
+}

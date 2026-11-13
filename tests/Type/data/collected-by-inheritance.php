@@ -1,6 +1,6 @@
 <?php
 
-namespace ModelCollectionsL134;
+namespace CollectedByInheritance;
 
 use Illuminate\Database\Eloquent\Attributes\CollectedBy;
 use Illuminate\Database\Eloquent\Collection;
@@ -10,16 +10,16 @@ use function PHPStan\Testing\assertType;
 
 function test(): void
 {
-    assertType('ModelCollectionsL134\BaseCollection<int, ModelCollectionsL134\User>', User::all());
-    assertType('ModelCollectionsL134\BaseCollection<int, ModelCollectionsL134\User>', User::query()->where('id', '>', 1)->get());
-    assertType('ModelCollectionsL134\BaseCollection<int, ModelCollectionsL134\Admin>', Admin::all());
-    assertType('ModelCollectionsL134\TeamCollection', Team::all());
-    assertType('ModelCollectionsL134\BaseCollection<int, ModelCollectionsL134\NamedArgumentParent>', NamedArgumentParent::all());
-    assertType('ModelCollectionsL134\BaseCollection<int, ModelCollectionsL134\NamedArgumentChild>', NamedArgumentChild::all());
-    assertType('ModelCollectionsL134\StringCollection<int, ModelCollectionsL134\StringChild>', StringChild::all());
-    assertType('ModelCollectionsL134\StringCollection<int, ModelCollectionsL134\LeadingBackslashString>', LeadingBackslashString::all());
-    assertType('ModelCollectionsL134\BaseCollection<int, ModelCollectionsL134\TraitParentChild>', TraitParentChild::all());
-    assertType('ModelCollectionsL134\BaseCollection<int, ModelCollectionsL134\TraitChild>', TraitChild::all());
+    assertType('CollectedByInheritance\BaseCollection<int, CollectedByInheritance\User>', User::all());
+    assertType('CollectedByInheritance\BaseCollection<int, CollectedByInheritance\User>', User::query()->where('id', '>', 1)->get());
+    assertType('CollectedByInheritance\BaseCollection<int, CollectedByInheritance\Admin>', Admin::all());
+    assertType('CollectedByInheritance\TeamCollection', Team::all());
+    assertType('CollectedByInheritance\BaseCollection<int, CollectedByInheritance\NamedArgumentParent>', NamedArgumentParent::all());
+    assertType('CollectedByInheritance\BaseCollection<int, CollectedByInheritance\NamedArgumentChild>', NamedArgumentChild::all());
+    assertType('CollectedByInheritance\StringCollection<int, CollectedByInheritance\StringChild>', StringChild::all());
+    assertType('CollectedByInheritance\StringCollection<int, CollectedByInheritance\LeadingBackslashString>', LeadingBackslashString::all());
+    assertType('CollectedByInheritance\BaseCollection<int, CollectedByInheritance\TraitParentChild>', TraitParentChild::all());
+    assertType('CollectedByInheritance\BaseCollection<int, CollectedByInheritance\TraitChild>', TraitChild::all());
 }
 
 #[CollectedBy(BaseCollection::class)]
@@ -59,7 +59,7 @@ class NamedArgumentChild extends NamedArgumentParent
 
 }
 
-#[CollectedBy('ModelCollectionsL134\StringCollection')]
+#[CollectedBy('CollectedByInheritance\StringCollection')]
 class StringParent extends Model
 {
 
@@ -70,7 +70,7 @@ class StringChild extends StringParent
 
 }
 
-#[CollectedBy('\ModelCollectionsL134\StringCollection')]
+#[CollectedBy('\CollectedByInheritance\StringCollection')]
 class LeadingBackslashString extends Model
 {
 

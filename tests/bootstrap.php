@@ -61,6 +61,4 @@ class CustomCollectionMacro
 
 (new CustomCollectionMacro())->registerMacro();
 
-if (version_compare(PHP_VERSION, '8.1.0', '>=')) {
-    include_once 'enum-definition.php';
-}
+include_once 'enum-definition.php';

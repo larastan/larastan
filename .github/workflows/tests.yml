@@ -26,7 +26,7 @@ jobs:
       fail-fast: false
       matrix:
         php: ["8.3", "8.4", "8.5"]
-        laravel: ["^13.34"]
+        laravel: ["^13.42"]
         dependencies:
           - "lowest"
           - "highest"

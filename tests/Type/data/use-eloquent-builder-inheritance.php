@@ -1,6 +1,6 @@
 <?php
 
-namespace EloquentBuilderL1331;
+namespace UseEloquentBuilderInheritance;
 
 use Illuminate\Database\Eloquent\Attributes\UseEloquentBuilder;
 use Illuminate\Database\Eloquent\Builder;
@@ -9,16 +9,16 @@ use function PHPStan\Testing\assertType;
 
 function test(): void
 {
-    assertType('EloquentBuilderL1331\BaseBuilder<EloquentBuilderL1331\Post>', Post::query());
-    assertType('EloquentBuilderL1331\BaseBuilder<EloquentBuilderL1331\Post>', Post::where('id', 1));
-    assertType('EloquentBuilderL1331\BaseBuilder<EloquentBuilderL1331\Comment>', Comment::query());
-    assertType('EloquentBuilderL1331\VideoBuilder<EloquentBuilderL1331\Video>', Video::query());
-    assertType('Illuminate\Database\Eloquent\Builder<EloquentBuilderL1331\Image>', Image::query());
-    assertType('EloquentBuilderL1331\BaseBuilder<EloquentBuilderL1331\Tag>', Tag::query());
-    assertType('EloquentBuilderL1331\BaseBuilder<EloquentBuilderL1331\TraitParentChild>', TraitParentChild::query());
-    assertType('EloquentBuilderL1331\VideoBuilder<EloquentBuilderL1331\TraitChild>', TraitChild::query());
-    assertType('Illuminate\Database\Eloquent\Builder<EloquentBuilderL1331\NestedTraitModel>', NestedTraitModel::query());
-    assertType('Illuminate\Database\Eloquent\Builder<EloquentBuilderL1331\InvalidBuilderChild>', InvalidBuilderChild::query());
+    assertType('UseEloquentBuilderInheritance\BaseBuilder<UseEloquentBuilderInheritance\Post>', Post::query());
+    assertType('UseEloquentBuilderInheritance\BaseBuilder<UseEloquentBuilderInheritance\Post>', Post::where('id', 1));
+    assertType('UseEloquentBuilderInheritance\BaseBuilder<UseEloquentBuilderInheritance\Comment>', Comment::query());
+    assertType('UseEloquentBuilderInheritance\VideoBuilder<UseEloquentBuilderInheritance\Video>', Video::query());
+    assertType('Illuminate\Database\Eloquent\Builder<UseEloquentBuilderInheritance\Image>', Image::query());
+    assertType('UseEloquentBuilderInheritance\BaseBuilder<UseEloquentBuilderInheritance\Tag>', Tag::query());
+    assertType('UseEloquentBuilderInheritance\BaseBuilder<UseEloquentBuilderInheritance\TraitParentChild>', TraitParentChild::query());
+    assertType('UseEloquentBuilderInheritance\VideoBuilder<UseEloquentBuilderInheritance\TraitChild>', TraitChild::query());
+    assertType('Illuminate\Database\Eloquent\Builder<UseEloquentBuilderInheritance\NestedTraitModel>', NestedTraitModel::query());
+    assertType('Illuminate\Database\Eloquent\Builder<UseEloquentBuilderInheritance\InvalidBuilderChild>', InvalidBuilderChild::query());
 }
 
 #[UseEloquentBuilder(BaseBuilder::class)]

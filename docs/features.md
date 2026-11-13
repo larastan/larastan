@@ -128,8 +128,8 @@ $users = User::query()
         ->get();
 ```
 
-The builder class can also be set with the `#[UseEloquentBuilder]` attribute. On Laravel 13.31 and later
-it is also read from the model's traits and from parent models and their traits, the nearest one first.
+The builder class can also be set with the `#[UseEloquentBuilder]` attribute. It is also read from the
+model's traits and from parent models and their traits, the nearest one first.
 When the model overrides `newEloquentBuilder()`, the return type of that method is used instead.
 
 ## Model Factories
@@ -216,9 +216,9 @@ class User extends Model
 }
 ```
 
-The collection class can also be set with the `#[CollectedBy]` attribute. As in Laravel, the
-attribute has no effect when the model overrides `newCollection()`, and on Laravel 13.4 and later
-it is also read from parent models, the nearest one first.
+The collection class can also be set with the `#[CollectedBy]` attribute. It is also read from
+parent models, the nearest one first. As in Laravel, the attribute has no effect when the model
+overrides `newCollection()`.
 
 `getCollection()` on length-aware, simple, and cursor paginators resolves to the model's
 custom collection. Non-model items resolve to a Support collection. `setCollection()` updates

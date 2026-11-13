@@ -40,7 +40,6 @@ use function array_values;
 use function count;
 use function in_array;
 use function ltrim;
-use function version_compare;
 
 #[AutowiredService]
 final class CollectionHelper
@@ -113,17 +112,12 @@ final class CollectionHelper
     }
 
     /**
-     * Mirrors HasCollection::resolveCollectionFromAttribute(), which only reads a positional argument.
-     * Since Laravel 13.4, the parent classes are searched too, nearest first.
+     * Mirrors HasCollection::resolveCollectionFromAttribute(), which reads the model, then each parent class,
+     * nearest first, and only reads a positional argument.
      */
     private function findCollectedByClassName(ClassReflection $modelReflection): string|null
     {
-        // @phpstan-ignore ternary.alwaysTrue, ternary.alwaysFalse
-        $classReflections = version_compare(LARAVEL_VERSION, '13.4.0', '>=')
-            ? [$modelReflection, ...$modelReflection->getParents()]
-            : [$modelReflection];
-
-        foreach ($classReflections as $classReflection) {
+        foreach ([$modelReflection, ...$modelReflection->getParents()] as $classReflection) {
             $attributes = $classReflection->getNativeReflection()->getAttributes(CollectedBy::class);
             $expr       = ($attributes[0] ?? null)?->getArgumentsExpressions()[0] ?? null;
 

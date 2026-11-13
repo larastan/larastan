@@ -8,7 +8,6 @@ use PHPStan\Testing\TypeInferenceTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionFunction;
 
-use function Orchestra\Testbench\laravel_version_compare;
 use function str_contains;
 
 class GeneralTypeTest extends TypeInferenceTestCase
@@ -69,10 +68,6 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/model-properties-relations.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/model-properties.php');
 
-        if (laravel_version_compare('13.2.0', '>=')) {
-            yield from self::gatherAssertTypes(__DIR__ . '/data/model-properties-l13-2.php');
-        }
-
         yield from self::gatherAssertTypes(__DIR__ . '/data/model-relations.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/migrator.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/model-scopes.php');
@@ -106,21 +101,8 @@ class GeneralTypeTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1997.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/bug-1819.php');
 
-        if (laravel_version_compare('13.4.0', '>=')) {
-            yield from self::gatherAssertTypes(__DIR__ . '/data/model-collections-l13-4.php');
-        }
-
-        if (laravel_version_compare('13.31.0', '>=')) {
-            yield from self::gatherAssertTypes(__DIR__ . '/data/eloquent-builder-l13-31.php');
-        }
-
-        if (laravel_version_compare('13.30.1', '>=')) {
-            yield from self::gatherAssertTypes(__DIR__ . '/data/passthru-l13-30-1.php');
-        }
-
-        if (laravel_version_compare('11.42.0', '>=') && laravel_version_compare('12.0.0', '<')) {
-            yield from self::gatherAssertTypes(__DIR__ . '/data/facades-l11-42.php');
-        }
+        yield from self::gatherAssertTypes(__DIR__ . '/data/collected-by-inheritance.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/use-eloquent-builder-inheritance.php');
 
         //##############################################################################################################
 

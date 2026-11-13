@@ -105,6 +105,28 @@ abstract class Model implements \ArrayAccess, \Illuminate\Contracts\Support\Arra
      */
     protected function decrement($column, $amount = 1, array $extra = []);
 
+    /**
+     * Increment each given column's value by the given amounts.
+     *
+     * Returns false when an "updating" listener cancels the update.
+     *
+     * @param  array<string, float|int>  $columns
+     * @param  array<string, mixed>  $extra
+     * @return int|false
+     */
+    protected function incrementEach(array $columns, array $extra = []);
+
+    /**
+     * Decrement each given column's value by the given amounts.
+     *
+     * Returns false when an "updating" listener cancels the update.
+     *
+     * @param  array<string, float|int>  $columns
+     * @param  array<string, mixed>  $extra
+     * @return int|false
+     */
+    protected function decrementEach(array $columns, array $extra = []);
+
     /** @return builder-of<static> */
     public static function query();
 

@@ -831,6 +831,24 @@ class Builder
     public function decrement($column, $amount = 1, array $extra = []);
 
     /**
+     * Increment the given column's values by the given amounts.
+     *
+     * @param  array<model-property<TModel>, float|int|numeric-string>  $columns
+     * @param  array<model-property<TModel>, mixed>  $extra
+     * @return int
+     */
+    public function incrementEach(array $columns, array $extra = []);
+
+    /**
+     * Decrement the given column's values by the given amounts.
+     *
+     * @param  array<model-property<TModel>, float|int|numeric-string>  $columns
+     * @param  array<model-property<TModel>, mixed>  $extra
+     * @return int
+     */
+    public function decrementEach(array $columns, array $extra = []);
+
+    /**
      * Qualify the given column name by the model's table.
      *
      * @param  model-property<TModel>|\Illuminate\Contracts\Database\Query\Expression  $column

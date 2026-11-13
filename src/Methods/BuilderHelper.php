@@ -31,19 +31,14 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\VerbosityLevel;
 
-use function array_filter;
 use function array_key_exists;
-use function array_keys;
-use function array_merge;
 use function array_shift;
 use function count;
-use function defined;
 use function in_array;
 use function ltrim;
 use function preg_split;
 use function substr;
 use function ucfirst;
-use function version_compare;
 
 use const PREG_SPLIT_DELIM_CAPTURE;
 
@@ -80,6 +75,7 @@ class BuilderHelper
         'insert',
         'insertGetId',
         'insertOrIgnore',
+        'insertOrIgnoreReturning',
         'insertOrIgnoreUsing',
         'insertUsing',
         'max',
@@ -105,24 +101,10 @@ class BuilderHelper
     ) {
     }
 
-    /**
-     * Methods added to the Eloquent builder's $passthru later, with the first Laravel version that has them.
-     */
-    private const VERSIONED_PASSTHRU = ['insertOrIgnoreReturning' => '13.30.1'];
-
     /** @return string[] */
     public function getPassthru(): array
     {
-        if (! defined('LARAVEL_VERSION')) {
-            return $this->passthru;
-        }
-
-        $added = array_filter(
-            self::VERSIONED_PASSTHRU,
-            static fn (string $version): bool => version_compare(LARAVEL_VERSION, $version, '>='),
-        );
-
-        return array_merge($this->passthru, array_keys($added));
+        return $this->passthru;
     }
 
     public function dynamicWhere(
@@ -370,23 +352,18 @@ class BuilderHelper
     }
 
     /**
-     * Mirrors Model::resolveCustomBuilderClass(). It instantiates the attribute, so the argument may also be named.
-     * Since Laravel 13.31, it also reads the model's traits, then each parent class and its traits, nearest first.
+     * Mirrors Model::resolveCustomBuilderClass(), which reads the model and its traits, then each parent class
+     * and its traits, nearest first. It instantiates the attribute, so the argument may also be named.
      */
     private function findUseEloquentBuilderClassName(ClassReflection $modelReflection): string|null
     {
-        $classReflections = [$modelReflection];
+        $classReflections = [];
 
-        // @phpstan-ignore if.alwaysTrue, if.alwaysFalse
-        if (version_compare(LARAVEL_VERSION, '13.31.0', '>=')) {
-            $classReflections = [];
+        foreach ([$modelReflection, ...$modelReflection->getParents()] as $classReflection) {
+            $classReflections[] = $classReflection;
 
-            foreach ([$modelReflection, ...$modelReflection->getParents()] as $classReflection) {
-                $classReflections[] = $classReflection;
-
-                foreach ($classReflection->getTraits() as $traitReflection) {
-                    $classReflections[] = $traitReflection;
-                }
+            foreach ($classReflection->getTraits() as $traitReflection) {
+                $classReflections[] = $traitReflection;
             }
         }
 

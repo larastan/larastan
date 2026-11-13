@@ -35,7 +35,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Test;
 use SplFileInfo;
 
-use function class_exists;
 use function sys_get_temp_dir;
 
 #[CoversClass(ModelPropertyHelper::class)]
@@ -99,13 +98,8 @@ class ModelPropertyHelperTest extends PHPStanTestCase
     public function it_applies_attributes_that_disable_timestamps(): void
     {
         $modelPropertyHelper = $this->buildModelPropertyHelper([__DIR__ . '/data/basic_migration']);
-        $modelClasses        = [MemberWithoutTimestampsTable::class];
 
-        if (class_exists('Illuminate\Database\Eloquent\Attributes\WithoutTimestamps')) {
-            $modelClasses[] = MemberWithoutTimestampsAttribute::class;
-        }
-
-        foreach ($modelClasses as $modelClass) {
+        foreach ([MemberWithoutTimestampsTable::class, MemberWithoutTimestampsAttribute::class] as $modelClass) {
             $classReflection = $this->reflectionProvider->getClass($modelClass);
 
             self::assertTrue($modelPropertyHelper->hasDatabaseProperty($classReflection, 'created_at'));

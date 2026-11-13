@@ -72,6 +72,18 @@ abstract class HasOneOrManyThrough extends Relation
     public function findOrFail($id, $columns = ['*']);
 
     /**
+     * Create a related record matching the attributes, or increment the existing record.
+     *
+     * @param  array<model-property<TRelatedModel>, mixed>  $attributes
+     * @param  model-property<TRelatedModel>  $column
+     * @param  float|int  $default
+     * @param  float|int  $step
+     * @param  array<model-property<TRelatedModel>, mixed>  $extra
+     * @return TRelatedModel
+     */
+    public function incrementOrCreate(array $attributes, string $column = 'count', $default = 1, $step = 1, array $extra = []);
+
+    /**
      * Chunk the results of the query.
      *
      * @param  int  $count

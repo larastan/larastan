@@ -59,8 +59,8 @@ final class ConsoleApplicationResolver
     }
 
     /**
-     * Commands registered through the console kernel (its `$commands` property and, since Laravel 13.36,
-     * `load()` and `command()`) are only added to the kernel's own Artisan application, so ask the kernel.
+     * Commands registered through the console kernel (its `$commands` property, `load()` and `command()`)
+     * are only added to the kernel's own Artisan application, so ask the kernel.
      *
      * @return array<mixed>
      */
