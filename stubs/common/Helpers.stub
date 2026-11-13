@@ -86,6 +86,14 @@ function session($key = null, $default = null) {}
 function url($path = null, $parameters = [], $secure = null) {}
 
 /**
+ * Get the path to the base of the install.
+ *
+ * @param  string  $path
+ * @return ($path is non-empty-string ? non-empty-string : string)
+ */
+function base_path($path = '') {}
+
+/**
  * @template TValue
  * @template TDefault
  *
