@@ -4,7 +4,7 @@
 
 ### Laravel and PHP requirements
 
-Laravel 11, Laravel 12, and PHP 8.2 are no longer supported. Upgrade your application to the Laravel and PHP versions required by [composer.json](composer.json) before upgrading Larastan. Applications that cannot upgrade can continue using Larastan 3.x.
+Laravel 11, Laravel 12, Laravel 13 releases older than the minimum version, and PHP 8.2 are no longer supported. Upgrade your application to the Laravel and PHP versions required by [composer.json](composer.json) before upgrading Larastan. Applications that cannot upgrade can continue using Larastan 3.x.
 
 Laravel's `dev-master` branch is also supported and tested with matching Testbench and Canvas development dependencies. See the [test workflow](.github/workflows/tests.yml) for the tested combinations.
 
@@ -16,6 +16,8 @@ Laravel's `dev-master` branch is also supported and tested with matching Testben
 ### Arrayable templates
 
 Both `Arrayable<TKey, TValue>` and `Arrayable<TReturn>` are supported on all supported Laravel versions. Legacy annotations are normalized to `Arrayable<array<TKey, TValue>>`, using Laravel 14's covariant array-return contract. Diagnostics therefore display the single-template form. Array shapes and lists retain their structure in `toArray()` results.
+
+`Arrayable` is now covariant, so `Arrayable<string, int>` is accepted where `Arrayable<string, mixed>` is expected, and a bare `Arrayable` no longer requires generic types. Remove baseline entries for these errors. The `TKey` and `TValue` templates are replaced by `TReturn`, which affects code and extensions that read `Arrayable`'s templates by name.
 
 ### Translation helper
 
