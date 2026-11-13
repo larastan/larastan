@@ -13,3 +13,13 @@ function test(User $user): void
     assertType('list<string>', $user->getAppends());
     assertType('list<string>', $user->getMutatedAttributes());
 }
+
+class UserWithArrayableAttributes extends User
+{
+    protected function getArrayableAttributes(): array
+    {
+        assertType('array<string, mixed>', parent::getArrayableAttributes());
+
+        return parent::getArrayableAttributes();
+    }
+}
