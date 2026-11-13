@@ -16,6 +16,7 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
 use PHPStan\Type\IntegerRangeType;
+use PHPStan\Type\IntegerType;
 use PHPStan\Type\IntersectionType;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\ObjectType;
@@ -86,9 +87,7 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
     public function getProperty(ClassReflection $classReflection, string $propertyName): PropertyReflection
     {
         if (str_ends_with($propertyName, '_count')) {
-            $countType = IntegerRangeType::createAllGreaterThanOrEqualTo(0);
-
-            return new ModelProperty($classReflection, $countType, $countType);
+            return new ModelProperty($classReflection, IntegerRangeType::createAllGreaterThanOrEqualTo(0), new IntegerType());
         }
 
         $returnType = $classReflection->getMethod($propertyName, new OutOfClassScope())
