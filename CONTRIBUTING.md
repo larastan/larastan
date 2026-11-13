@@ -10,6 +10,11 @@ Please review these guidelines before submitting any pull requests.
 3. Code, test, commit and push
 4. Open a pull request detailing your changes. Make sure to follow the [template](.github/PULL_REQUEST_TEMPLATE.md)
 
+## Target branch
+
+* Bug fixes and backward-compatible changes target `3.x`. They are merged into `4.x` regularly, so they don't need a separate pull request.
+* Breaking changes target `4.x`. Describe the required upgrade steps in [UPGRADE.md](UPGRADE.md).
+
 ## Guidelines
 
 * Please follow the coding standards enforced by [Doctrine Coding Standard](https://github.com/doctrine/coding-standard/). You can check the code style by running `composer test:cs` and automatically format it using `./vendor/bin/phpcbf`.
