@@ -86,7 +86,9 @@ final class ModelRelationsExtension implements PropertiesClassReflectionExtensio
     public function getProperty(ClassReflection $classReflection, string $propertyName): PropertyReflection
     {
         if (str_ends_with($propertyName, '_count')) {
-            return new ModelProperty($classReflection, IntegerRangeType::createAllGreaterThanOrEqualTo(0), new NeverType(), false);
+            $countType = IntegerRangeType::createAllGreaterThanOrEqualTo(0);
+
+            return new ModelProperty($classReflection, $countType, $countType);
         }
 
         $returnType = $classReflection->getMethod($propertyName, new OutOfClassScope())
