@@ -20,6 +20,14 @@ class Collection implements ArrayAccess, CanBeEscapedWhenCastToString, Enumerabl
      */
     use EnumeratesValues;
 
+    /**
+     * Get an item at a given offset.
+     *
+     * @param  TKey  $key
+     * @return TValue
+     */
+    public function offsetGet($key): mixed;
+
    /**
     * Get one or a specified number of items randomly from the collection.
     *
