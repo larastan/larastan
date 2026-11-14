@@ -3,6 +3,108 @@
 All rules that are specific to Laravel applications
 are listed here with their configurable options.
 
+## FormRequest diagnostics
+
+These rules are enabled together with [FormRequest type inference](features.md#formrequest-type-inference):
+
+```neon
+parameters:
+    checkFormRequestTypes: true
+```
+
+The existing parameter defaults to `false`. There are no separate rule switches.
+Each diagnostic can be suppressed using its identifier, for example:
+
+```php
+// @phpstan-ignore larastan.formRequest.prematureValidatedAccess
+$this->validated();
+```
+
+### Unknown validated keys
+
+Identifier: `larastan.formRequest.unknownValidatedKey`.
+
+Reports a constant key that cannot occur in the request's inferred validated data:
+
+```php
+// The request validates 'email', not 'emali'.
+$request->validated('emali', false);
+$request->safe(['emali']);
+$request->safe()->only(['emali']);
+```
+
+An explicit default does not suppress the diagnostic. Optional fields are valid
+keys; a missing validation rule is different from an optional input value.
+Ordinary dotted paths and numeric array indices are supported. Named arguments
+and positional string selectors in `safe()->only('email', 'profile.name')` are
+also supported.
+
+For request unions, PHPStan's existing `checkUnionTypes` setting controls whether
+a key absent from only some request types is reported. When it is `false`, every
+member must prove absence. Unknown shapes and application overrides never count
+as proof of absence.
+
+The rule uses the existing validated-data projection and its assumptions about
+ordinary FormRequest validation and Laravel's default validated-array filtering.
+It does not model custom validation pipelines or `includeUnvalidatedArrayKeys()`.
+Dynamic or multi-valued keys, partially known selector lists, wildcard and
+`{first}` / `{last}` selectors, array-form `validated()` paths, and unpacked
+arguments are skipped. Open or unknown data stays conservative, although a known
+nested subtree can still prove a missing child.
+
+Only Laravel's original `validated()` and `safe()` methods provide evidence.
+The `only()` check is limited to an immediate `safe()` or `safe(null)` result:
+general `ValidatedInput` variables, mutation chains, and `except()` are not checked.
+
+### Premature validated-data access
+
+Identifier: `larastan.formRequest.prematureValidatedAccess`.
+
+Reports direct `$this->validated()` and `$this->safe()` calls in
+`authorize()`, `prepareForValidation()`, `rules()`, `validationData()`, `messages()`,
+`attributes()`, `withValidator()`, the `after()` registration method,
+`isPrecognitive()`, and `filterPrecognitiveRules()`. Laravel normally initializes
+the request validator later. Use `input()` for unvalidated
+data, or move work requiring validated data to `passedValidation()` or the controller.
+
+This is lexical guidance about the normal lifecycle, not initialization tracking.
+Custom validator setup and guards do not exempt a call; use the identifier when
+deliberate custom initialization makes the warning inapplicable. Aliases, other
+receivers, helper methods, closures (including immediately invoked closures),
+arrow functions, static calls, and application method overrides are not checked.
+Skipping a callback does not guarantee that accessing validated data there is safe.
+
+A premature call with an unknown key can report both diagnostics independently.
+
+### Simple validation-rule pairs
+
+These checks inspect statically known returned rule maps in FormRequest `rules()`
+methods. They cover plain top-level fields whose rules are all built into the
+installed Laravel version, in pipe-delimited strings or rule arrays. Other
+built-in rules next to the pair, such as `string`, `max:255`, or `unique:users`,
+do not prevent a report.
+
+- `larastan.formRequest.requiredNullable`: `required|nullable` still rejects null.
+  Decide whether null should be valid for the field. This is guidance, not advice
+  to remove `nullable` automatically: it can affect other validation errors and
+  callbacks.
+- `larastan.formRequest.requiredMissing`: `required|missing` requires the field to
+  be both present and absent. Choose one. If `nullable` is also present, only this
+  contradiction is reported.
+
+A field is skipped when any of its rules is a custom rule, a closure, or a rule
+object, or when it has `sometimes`, an exclusion rule, or a conditional rule
+such as `required_if`, `missing_with`, `present_unless`, `prohibited_if`, or
+`accepted_if`. The only rule objects that are checked are the ones FormRequest
+type inference reads as a built-in string rule, such as `Rule::in()`, `Rule::array()`,
+`Rule::email()`, or `Rule::file()`. Dynamic or optional declarations are skipped
+too, but a built-in rule with a dynamic parameter, such as `'max:' . $limit`, is
+still checked. Dotted, escaped, and numeric field names are not checked, nor are
+parents with child rules. A
+wildcard anywhere in the returned map skips these pair checks for that map.
+Separate return sites are checked independently; alternative rule values are not
+combined into a conflict.
+
 ## NoModelMake
 
 Checks for calls to the static method `make()` on subclasses of `Illuminate\Database\Eloquent\Model`.
