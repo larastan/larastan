@@ -221,7 +221,7 @@ class ModelPropertyHelper
 
         $methodReflection = $classReflection->getNativeMethod($camelCase);
 
-        if ($methodReflection->isPublic() || $methodReflection->isPrivate()) {
+        if ($methodReflection->isPrivate()) {
             return false;
         }
 
@@ -229,7 +229,7 @@ class ModelPropertyHelper
 
         $this->attributeType ??= new ObjectType(Attribute::class);
 
-        if (! $strictGenerics) {
+        if (! $strictGenerics && ! $methodReflection->isPublic()) {
             return $this->attributeType->isSuperTypeOf($returnType)->yes();
         }
 
@@ -249,7 +249,7 @@ class ModelPropertyHelper
         if ($classReflection->hasNativeMethod($camelCase)) {
             $methodReflection = $classReflection->getNativeMethod($camelCase);
 
-            if (! $methodReflection->isPublic() && ! $methodReflection->isPrivate()) {
+            if (! $methodReflection->isPrivate()) {
                 $returnType = $methodReflection->getVariants()[0]->getReturnType();
 
                 $this->attributeType ??= new ObjectType(Attribute::class);
