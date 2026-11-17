@@ -31,6 +31,7 @@ function test(): void
     assertType('string', Post::globalCustomMacro(b: 99));
     assertType('string', PostBuilder::globalCustomMacro(b: 99));
     assertType('string', User::first()->accounts()->globalCustomMacro(b: 99));
+    assertType('Illuminate\\Database\\Eloquent\\Relations\\HasMany<App\\Account, App\\User>', User::first()->accounts()->latestFirst('id'));
 
     assertType('string', \Illuminate\Database\Query\Builder::globalCustomDatabaseQueryMacro(b: 99));
     assertType('string', Post::globalCustomDatabaseQueryMacro(b: 99));

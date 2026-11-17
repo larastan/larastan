@@ -110,6 +110,11 @@ services:
             className: Illuminate\Contracts\Foundation\Application
 
     -
+        class: Larastan\Larastan\Methods\MacroMethodsClassReflectionExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+
+    -
         class: Larastan\Larastan\Types\AbortIfFunctionTypeSpecifyingExtension
         tags:
             - phpstan.typeSpecifier.functionTypeSpecifyingExtension

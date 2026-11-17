@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Auth\RequestGuard;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
@@ -16,6 +17,14 @@ Builder::macro('globalCustomMacro', static function (string $arg = 'foobar', int
 
 Builder::macro('getColumns', static function (): string {
     return 'macro';
+});
+
+Builder::macro('latestFirst', function (string $column): Builder {
+    return $this->orderBy($column, 'desc');
+});
+
+Relation::macro('latestFirst', function (string $column): Relation {
+    return $this->orderBy($column, 'desc');
 });
 
 \Illuminate\Database\Query\Builder::macro('globalCustomDatabaseQueryMacro', static function (string $arg = 'foobar', int $b = 5): string {
