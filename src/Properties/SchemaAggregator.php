@@ -28,7 +28,7 @@ use function ltrim;
 use function property_exists;
 use function strtolower;
 
-/** @see https://github.com/psalm/laravel-psalm-plugin/blob/master/src/SchemaAggregator.php */
+/** @see https://github.com/psalm/psalm-plugin-laravel/blob/master/src/Handlers/Eloquent/Schema/SchemaAggregator.php */
 final class SchemaAggregator
 {
     private readonly MySqlDataTypeToPhpTypeConverter $mySqlDataTypeToPhpTypeConverter;
