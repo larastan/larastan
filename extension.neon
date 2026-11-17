@@ -115,6 +115,11 @@ services:
             - phpstan.broker.methodsClassReflectionExtension
 
     -
+        class: Larastan\Larastan\Methods\ViewWithMethodsClassReflectionExtension
+        tags:
+            - phpstan.broker.methodsClassReflectionExtension
+
+    -
         class: Larastan\Larastan\Types\AbortIfFunctionTypeSpecifyingExtension
         tags:
             - phpstan.typeSpecifier.functionTypeSpecifyingExtension
