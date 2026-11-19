@@ -63,7 +63,7 @@ function test(FooModel $foo, NonGenericBuilder $nonGenericBuilder, ModelWithNonG
 
     assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::query()->whereNotIn('id', [1]));
     assertType('CustomEloquentBuilder\CustomEloquentBuilder<CustomEloquentBuilder\ModelWithCustomBuilder>', ModelWithCustomBuilder::whereNotIn('id', [1]));
-    assertType('string', ModelWithCustomBuilder::query()->getColumns());
+    assertType("'macro'", ModelWithCustomBuilder::query()->getColumns());
     assertType('CustomEloquentBuilder\ChildNonGenericBuilder', ModelWithNonGenericBuilder::query()->whereNotIn('id', [1]));
     assertType('int<0, max>', ModelWithCustomBuilder::query()->count());
 

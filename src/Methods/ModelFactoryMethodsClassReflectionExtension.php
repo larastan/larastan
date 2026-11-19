@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Larastan\Larastan\Support\MacroHelper;
 use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ClassMemberReflection;
@@ -29,6 +30,7 @@ class ModelFactoryMethodsClassReflectionExtension implements MethodsClassReflect
 {
     public function __construct(
         private ReflectionProvider $reflectionProvider,
+        private MacroHelper $macroHelper,
     ) {
     }
 
@@ -36,6 +38,10 @@ class ModelFactoryMethodsClassReflectionExtension implements MethodsClassReflect
     {
         if (! $classReflection->is(Factory::class)) {
             return false;
+        }
+
+        if ($this->macroHelper->findMacro($classReflection, $methodName) !== null) {
+            return true;
         }
 
         $modelType = $classReflection->getActiveTemplateTypeMap()->getType('TModel');
@@ -74,6 +80,10 @@ class ModelFactoryMethodsClassReflectionExtension implements MethodsClassReflect
         ClassReflection $classReflection,
         string $methodName,
     ): MethodReflection {
+        if ($this->macroHelper->findMacro($classReflection, $methodName) !== null) {
+            return $this->macroHelper->findMacro($classReflection, $methodName);
+        }
+
         return new class ($classReflection, $methodName) implements MethodReflection
         {
             public function __construct(private ClassReflection $classReflection, private string $methodName)

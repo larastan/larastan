@@ -2,4 +2,15 @@
 
 namespace Illuminate\Support;
 
-class Optional {}
+/**
+ * @template TValue = mixed
+ *
+ * @implements \ArrayAccess<array-key, mixed>
+ */
+class Optional implements \ArrayAccess
+{
+    /**
+     * @param  TValue  $value
+     */
+    public function __construct($value);
+}

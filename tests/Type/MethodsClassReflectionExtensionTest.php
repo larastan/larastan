@@ -7,6 +7,7 @@ namespace Tests\Type;
 use PHPStan\Testing\TypeInferenceTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
+use function Orchestra\Testbench\laravel_version_compare;
 use function version_compare;
 
 use const PHP_VERSION;
@@ -17,7 +18,18 @@ class MethodsClassReflectionExtensionTest extends TypeInferenceTestCase
     public static function dataFileAsserts(): iterable
     {
         yield from self::gatherAssertTypes(__DIR__ . '/data/macros.php');
-        yield from self::gatherAssertTypes(__DIR__ . '/data/redirect-response.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/dynamic-with-methods.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/fluent-methods.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/optional-methods.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/query-builder-methods.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/test-component.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/macroable-forwards-calls.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/macros-probe.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/bug-2657.php');
+
+        if (laravel_version_compare('12.29.0', '>=')) {
+            yield from self::gatherAssertTypes(__DIR__ . '/data/macros-route-registrar.php');
+        }
 
         if (! version_compare(PHP_VERSION, '8.1.0', '>=')) {
             return;

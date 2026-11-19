@@ -1,0 +1,10 @@
+<?php
+
+namespace Illuminate\Process;
+
+class PendingProcess {}
+
+/**
+ * @mixin \Illuminate\Process\PendingProcess
+ */
+class Factory {}
