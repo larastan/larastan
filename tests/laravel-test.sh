@@ -13,6 +13,8 @@ composer show --direct
 echo "Add Larastan from source"
 composer config minimum-stability dev
 if [ "$LARAVEL_VERSION_CONSTRAINT" = "dev-master" ]; then
+    # No laravel/tinker release supports the Laravel development version yet.
+    composer remove laravel/tinker --no-update --no-interaction
     composer require laravel/framework:dev-master --with-all-dependencies --no-interaction --no-progress
 fi
 composer config repositories.0 '{ "type": "path", "url": "../larastan", "options": { "symlink": false } }'
