@@ -4,6 +4,7 @@ includes:
     - extension.neon
     - phpstan-baseline.neon
 parameters:
+    checkFormRequestTypes: true
     level: 8
     phpVersion: 80200
     paths:

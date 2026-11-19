@@ -1,5 +1,6 @@
 includes:
     - ../../phpstan-tests.neon
 parameters:
+    checkFormRequestTypes: true
     databaseMigrationsPath:
         - %rootDir%/../../../tests/application/database/migrations

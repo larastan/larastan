@@ -1,0 +1,104 @@
+<?php
+
+declare(strict_types=1);
+
+namespace FormRequestFeatureEnabled;
+
+use App\Http\Requests\RequestPriority;
+use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\In;
+
+
+/** @implements Arrayable<int, string> */
+class AllowedKeys implements Arrayable
+{
+    /** @return array<int, string> */
+    public function toArray(): array
+    {
+        return ['name'];
+    }
+}
+
+class EnabledRequest extends FormRequest
+{
+    /** @return array<string, mixed> */
+    public function rules(): array
+    {
+        return [
+            'name' => 'required|string',
+            'integer' => 'required|integer',
+            'numeric' => 'required|numeric',
+        ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $alias = $this;
+
+        if (is_int($alias->name)) {
+            $this->merge(['name' => (string) $alias->name]);
+        }
+    }
+}
+
+class NumericEnumRequest extends FormRequest
+{
+    /** @return array<string, mixed> */
+    public function rules(): array
+    {
+        return ['priority' => ['required', Rule::enum(RequestPriority::class)]];
+    }
+}
+
+function acceptsInteger(int $value): void
+{
+}
+
+function hasNoncanonicalPriority(NumericEnumRequest $request): bool
+{
+    $priority = $request->validated('priority');
+    acceptsInteger($priority);
+
+    return $priority === '01';
+}
+
+function acceptsString(string $value): void
+{
+}
+
+/** @param In<array{'enabled'}> $rule */
+function acceptsIn(In $rule): void
+{
+}
+
+function test(EnabledRequest $request): void
+{
+
+    acceptsString($request->name);
+    acceptsString($request->validated('missing', 'time'));
+    acceptsIn(Rule::in(['enabled']));
+    Rule::array(new AllowedKeys());
+
+    acceptsInteger($request->integer);
+    acceptsInteger($request->validated('numeric'));
+
+    if (is_int($request->integer)) {
+        acceptsInteger($request->integer);
+    }
+}
+
+class DocumentedRuleObjectsRequest extends FormRequest
+{
+    /** @return array<string, string|list<string|\Illuminate\Validation\ConditionalRules|\Illuminate\Validation\Rules\In|\Illuminate\Validation\Rules\Enum|\Illuminate\Validation\Rules\RequiredIf|\Illuminate\Validation\Rules\ExcludeIf|\Illuminate\Validation\Rules\Numeric|\Illuminate\Validation\Rules\Date|\Illuminate\Validation\Rules\ArrayRule>> */
+    public function rules(): array
+    {
+        return ['name' => ['required', 'string']];
+    }
+
+    public function accept(\Illuminate\Support\ValidatedInput $input): void
+    {
+    }
+}
+
