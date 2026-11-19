@@ -119,6 +119,10 @@ Builder::macro('probeTypedBuilder', function (): Builder {
 });
 Builder::macro('probeTypedModel', fn (): ?\Illuminate\Database\Eloquent\Model => $this->first());
 
+\App\MacroableWithOwnCall::macro('ownCallMacro', function (): int {
+    return 5;
+});
+
 // Classes that use Macroable but define their own __call.
 CacheRepository::macro('cacheRepositoryMacro', function () {
     return $this->getStore();

@@ -2,6 +2,7 @@
 
 namespace Macros;
 
+use App\MacroableWithOwnCall;
 use App\Post;
 use App\PostBuilder;
 use App\User;
@@ -129,6 +130,8 @@ function testClassesOverridingMacroableCall(
     assertType('Illuminate\Testing\TestComponent', $testComponent->testComponentMacro());
     assertType('Illuminate\Testing\TestResponse', $testResponse->testResponseMacro());
     assertType('Illuminate\View\View', $view->viewMacro());
+
+    assertType('5', (new MacroableWithOwnCall())->ownCallMacro());
 
     assertType('Database\Factories\UserFactory', User::factory()->eloquentFactoryMacro());
     assertType('App\Account', (new User())->accounts()->relationMacro());

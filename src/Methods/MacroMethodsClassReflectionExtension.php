@@ -28,6 +28,8 @@ use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\ShouldNotHappenException;
 use ReflectionException;
 
+use function str_starts_with;
+
 #[AutowiredService]
 class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExtension
 {
@@ -65,6 +67,7 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
     {
         if (
             $classReflection->hasNativeMethod('__call')
+            && $this->frameworkDeclaresCall($classReflection)
             && ! $this->usesMacroableCall($classReflection)
             && ! $this->forwardsCallsAfterMacros($classReflection)
         ) {
@@ -99,6 +102,18 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
     public function findMacro(ClassReflection $classReflection, string $methodName): MethodReflection|null
     {
         return $this->macroHelper->findMacro($classReflection, $methodName);
+    }
+
+    /**
+     * Framework classes with their own __call are left to their dedicated
+     * extensions; classes outside the framework are assumed to consult
+     * their macros first, as Macroable's own __call does.
+     */
+    private function frameworkDeclaresCall(ClassReflection $classReflection): bool
+    {
+        $declaringClass = $classReflection->getNativeReflection()->getMethod('__call')->getDeclaringClass()->getName();
+
+        return str_starts_with($declaringClass, 'Illuminate\\');
     }
 
     private function usesMacroableCall(ClassReflection $classReflection): bool
