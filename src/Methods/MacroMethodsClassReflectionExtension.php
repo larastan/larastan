@@ -89,6 +89,18 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
         return $this->methods[$classReflection->getName() . '-' . $methodName];
     }
 
+    /**
+     * Looks up a macro without considering how the class dispatches __call.
+     *
+     * @throws ReflectionException
+     * @throws ShouldNotHappenException
+     * @throws MissingMethodFromReflectionException
+     */
+    public function findMacro(ClassReflection $classReflection, string $methodName): MethodReflection|null
+    {
+        return $this->macroHelper->findMacro($classReflection, $methodName);
+    }
+
     private function usesMacroableCall(ClassReflection $classReflection): bool
     {
         $this->macroableFileName ??= $this->reflectionProvider->getClass(Macroable::class)->getFileName();

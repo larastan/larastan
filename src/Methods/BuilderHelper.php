@@ -12,7 +12,6 @@ use InvalidArgumentException;
 use Larastan\Larastan\Reflection\AnnotationScopeMethodParameterReflection;
 use Larastan\Larastan\Reflection\DynamicWhereParameterReflection;
 use Larastan\Larastan\Reflection\EloquentBuilderMethodReflection;
-use Larastan\Larastan\Support\MacroHelper;
 use PhpParser\Node\Expr\ClassConstFetch;
 use PhpParser\Node\Name;
 use PhpParser\Node\Scalar\String_;
@@ -99,7 +98,7 @@ class BuilderHelper
         private ReflectionProvider $reflectionProvider,
         #[AutowiredParameter(ref: '%checkModelProperties%')]
         private bool $checkProperties,
-        private MacroHelper $macroHelper,
+        private MacroMethodsClassReflectionExtension $macroMethodsClassReflectionExtension,
     ) {
     }
 
@@ -187,7 +186,7 @@ class BuilderHelper
     public function searchOnEloquentBuilder(ClassReflection $eloquentBuilder, string $methodName, Type $modelType): MethodReflection|null
     {
         // Check for macros first
-        $macroReflection = $this->macroHelper->findMacro($eloquentBuilder, $methodName);
+        $macroReflection = $this->macroMethodsClassReflectionExtension->findMacro($eloquentBuilder, $methodName);
 
         if ($macroReflection !== null) {
             return $macroReflection;
@@ -290,7 +289,7 @@ class BuilderHelper
         }
 
         // Check for query builder macros
-        $macroReflection = $this->macroHelper->findMacro($queryBuilderReflection, $methodName);
+        $macroReflection = $this->macroMethodsClassReflectionExtension->findMacro($queryBuilderReflection, $methodName);
 
         if ($macroReflection !== null) {
             return $macroReflection;
