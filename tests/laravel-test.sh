@@ -13,8 +13,9 @@ composer show --direct
 echo "Add Larastan from source"
 composer config minimum-stability dev
 if [ "$LARAVEL_VERSION_CONSTRAINT" = "dev-master" ]; then
-    # No laravel/tinker release supports the Laravel development version yet.
-    composer remove laravel/tinker --no-update --no-interaction
+    # The skeleton's other packages lag behind the Laravel development version
+    # and block its installation; the analysis needs only the framework.
+    php -r '$c = json_decode(file_get_contents("composer.json"), true); $c["require"] = array_intersect_key($c["require"], ["php" => true, "laravel/framework" => true]); unset($c["require-dev"]); file_put_contents("composer.json", json_encode($c, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");'
     composer require laravel/framework:dev-master --with-all-dependencies --no-interaction --no-progress
 fi
 composer config repositories.0 '{ "type": "path", "url": "../larastan", "options": { "symlink": false } }'
