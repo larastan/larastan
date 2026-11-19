@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Larastan\Larastan\Reflection\EloquentBuilderMethodReflection;
+use Larastan\Larastan\Support\MacroHelper;
 use PHPStan\Analyser\OutOfClassScope;
 use PHPStan\DependencyInjection\AutowiredService;
 use PHPStan\Reflection\ClassReflection;
@@ -28,8 +29,11 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
     /** @var array<string, MethodReflection|null> */
     private array $cache = [];
 
-    public function __construct(private BuilderHelper $builderHelper, private ReflectionProvider $reflectionProvider)
-    {
+    public function __construct(
+        private BuilderHelper $builderHelper,
+        private ReflectionProvider $reflectionProvider,
+        private MacroHelper $macroHelper,
+    ) {
     }
 
     public function hasMethod(ClassReflection $classReflection, string $methodName): bool
@@ -62,6 +66,12 @@ final class RelationForwardsCallsExtension implements MethodsClassReflectionExte
     {
         if (! $classReflection->is(Relation::class)) {
             return null;
+        }
+
+        $macroReflection = $this->macroHelper->findMacro($classReflection, $methodName);
+
+        if ($macroReflection !== null) {
+            return $macroReflection;
         }
 
         $relatedModel = $classReflection->getActiveTemplateTypeMap()->getType('TRelatedModel');

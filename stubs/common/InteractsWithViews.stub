@@ -12,4 +12,15 @@ trait InteractsWithViews
      * @return \Illuminate\Testing\TestView
      */
     protected function view(string $view, $data = []);
+
+    /**
+     * Render the given view component.
+     *
+     * @template TComponent of \Illuminate\View\Component
+     *
+     * @param  class-string<TComponent>  $componentClass
+     * @param  \Illuminate\Contracts\Support\Arrayable|array<string, mixed>  $data
+     * @return \Illuminate\Testing\TestComponent<TComponent>
+     */
+    protected function component(string $componentClass, $data = []);
 }

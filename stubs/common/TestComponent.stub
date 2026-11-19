@@ -1,0 +1,28 @@
+<?php
+
+namespace Illuminate\View {
+    abstract class Component {}
+}
+
+namespace Illuminate\Testing {
+    /**
+     * @template TComponent of \Illuminate\View\Component = \Illuminate\View\Component
+     *
+     * @mixin TComponent
+     */
+    class TestComponent
+    {
+        /**
+         * The original component.
+         *
+         * @var TComponent
+         */
+        public $component;
+
+        /**
+         * @param  TComponent  $component
+         * @param  \Illuminate\View\View  $view
+         */
+        public function __construct($component, $view);
+    }
+}

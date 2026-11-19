@@ -13,7 +13,15 @@ class MethodsClassReflectionExtensionTest extends TypeInferenceTestCase
     public static function dataFileAsserts(): iterable
     {
         yield from self::gatherAssertTypes(__DIR__ . '/data/macros.php');
-        yield from self::gatherAssertTypes(__DIR__ . '/data/redirect-response.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/dynamic-with-methods.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/fluent-methods.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/optional-methods.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/query-builder-methods.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/test-component.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/macroable-forwards-calls.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/macros-probe.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/bug-2657.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/macros-route-registrar.php');
     }
 
     #[DataProvider('dataFileAsserts')]

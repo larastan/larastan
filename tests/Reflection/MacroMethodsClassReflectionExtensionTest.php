@@ -8,9 +8,9 @@ use Generator;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Larastan\Larastan\Methods\MacroMethodsClassReflectionExtension;
+use Larastan\Larastan\Support\MacroHelper;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Testing\PHPStanTestCase;
-use PHPStan\Type\ClosureTypeFactory;
 use PHPStan\Type\ObjectType;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Test;
@@ -26,7 +26,7 @@ class MacroMethodsClassReflectionExtensionTest extends PHPStanTestCase
         parent::setUp();
 
         $this->reflectionProvider  = $this->createReflectionProvider();
-        $this->reflectionExtension = new MacroMethodsClassReflectionExtension($this->reflectionProvider, self::getContainer()->getByType(ClosureTypeFactory::class));
+        $this->reflectionExtension = new MacroMethodsClassReflectionExtension(self::getContainer()->getByType(MacroHelper::class), $this->reflectionProvider);
     }
 
     #[Test]
