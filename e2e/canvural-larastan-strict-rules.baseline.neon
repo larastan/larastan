@@ -1,0 +1,7 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Parameter \#3 \$macroHelper of class Larastan\\Larastan\\Methods\\BuilderHelper constructor expects Larastan\\Larastan\\Support\\MacroHelper, Larastan\\Larastan\\Methods\\MacroMethodsClassReflectionExtension given\.$#'
+			identifier: argument.type
+			count: 1
+			path: ../../e2e/tests/Rules/NoDynamicWhereRuleTest.php
