@@ -93,18 +93,6 @@ class MacroMethodsClassReflectionExtension implements MethodsClassReflectionExte
     }
 
     /**
-     * Looks up a macro without considering how the class dispatches __call.
-     *
-     * @throws ReflectionException
-     * @throws ShouldNotHappenException
-     * @throws MissingMethodFromReflectionException
-     */
-    public function findMacro(ClassReflection $classReflection, string $methodName): MethodReflection|null
-    {
-        return $this->macroHelper->findMacro($classReflection, $methodName);
-    }
-
-    /**
      * Framework classes with their own __call are left to their dedicated
      * extensions; classes outside the framework are assumed to consult
      * their macros first, as Macroable's own __call does.
