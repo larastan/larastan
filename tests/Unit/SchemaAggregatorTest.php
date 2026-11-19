@@ -229,6 +229,34 @@ PHP, $indexMethodCall));
     }
 
     #[Test]
+    public function it_reads_the_nullability_of_time_zone_year_and_soft_delete_columns(): void
+    {
+        $aggregator = $this->aggregateMigration(<<<'PHP'
+            Schema::create('events', function (Blueprint $table) {
+                $table->timestampTz('starts_at');
+                $table->timeTz('opens_at');
+                $table->year('founded_in');
+                $table->timestampTz('published_at')->nullable();
+                $table->softDeletesDatetime();
+            });
+        PHP);
+
+        $columns = [];
+
+        foreach ($aggregator->tables['events']->columns as $name => $column) {
+            $columns[$name] = [$column->readableType, $column->nullable];
+        }
+
+        self::assertSame([
+            'starts_at' => ['string', false],
+            'opens_at' => ['string', false],
+            'founded_in' => ['string', false],
+            'published_at' => ['string', true],
+            'deleted_at' => ['string', true],
+        ], $columns);
+    }
+
+    #[Test]
     public function it_resolves_column_name_constants(): void
     {
         $parser     = self::getContainer()->getService('currentPhpVersionSimpleDirectParser');
