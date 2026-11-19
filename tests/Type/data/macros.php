@@ -115,7 +115,7 @@ function testClassesOverridingMacroableCall(
     assertType('Illuminate\Database\Eloquent\Factories\Factory', $eloquentFactory->eloquentFactoryMacro());
     assertType('Illuminate\Database\Eloquent\Model', $relation->relationMacro());
     assertType('Illuminate\Database\Query\Builder', $queryBuilder->queryBuilderMacro());
-    assertType('array<string>', $filesystemAdapter->filesystemAdapterMacro());
+    assertType('string', $filesystemAdapter->filesystemAdapterMacro());
     assertType('Illuminate\Http\Client\PendingRequest', $httpClientFactory->httpClientFactoryMacro());
     assertType('Illuminate\Support\Collection', $httpClientResponse->httpClientResponseMacro());
     assertType('Illuminate\Http\RedirectResponse', $redirectResponse->redirectResponseMacro());

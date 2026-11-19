@@ -144,8 +144,8 @@ QueryBuilder::macro('queryBuilderMacro', function () {
     return $this->where('active', true);
 });
 
-FilesystemAdapter::macro('filesystemAdapterMacro', function (): array {
-    return $this->files('exports');
+FilesystemAdapter::macro('filesystemAdapterMacro', function () {
+    return $this->path('exports');
 });
 
 HttpClientFactory::macro('httpClientFactoryMacro', function () {
