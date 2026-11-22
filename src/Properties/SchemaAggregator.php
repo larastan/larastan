@@ -275,6 +275,7 @@ final class SchemaAggregator
 
                     case 'timestamps':
                     case 'timestampstz':
+                    case 'datetimes':
                     case 'nullabletimestamps':
                     case 'nullabletimestampstz':
                         $table->setColumn(new SchemaColumn('created_at', 'string', true));

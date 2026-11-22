@@ -257,6 +257,27 @@ PHP, $indexMethodCall));
     }
 
     #[Test]
+    public function it_reads_the_columns_of_datetimes(): void
+    {
+        $aggregator = $this->aggregateMigration(<<<'PHP'
+            Schema::create('events', function (Blueprint $table) {
+                $table->datetimes();
+            });
+        PHP);
+
+        $columns = [];
+
+        foreach ($aggregator->tables['events']->columns as $name => $column) {
+            $columns[$name] = [$column->readableType, $column->nullable];
+        }
+
+        self::assertSame([
+            'created_at' => ['string', true],
+            'updated_at' => ['string', true],
+        ], $columns);
+    }
+
+    #[Test]
     public function it_resolves_column_name_constants(): void
     {
         $parser     = self::getContainer()->getService('currentPhpVersionSimpleDirectParser');
