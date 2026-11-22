@@ -250,7 +250,7 @@ PHP, $indexMethodCall));
         self::assertSame([
             'starts_at' => ['string', false],
             'opens_at' => ['string', false],
-            'founded_in' => ['string', false],
+            'founded_in' => ['int', false],
             'published_at' => ['string', true],
             'deleted_at' => ['string', true],
         ], $columns);

@@ -567,6 +567,7 @@ final class SchemaAggregator
             case 'smallinteger':
             case 'mediuminteger':
             case 'biginteger':
+            case 'year':
                 $columnType = $unsigned ? 'non-negative-int' : 'int';
                 $table->setColumn(new SchemaColumn($columnName, $columnType, $nullable));
 
@@ -609,7 +610,6 @@ final class SchemaAggregator
             case 'timestamp':
             case 'timestamptz':
             case 'timetz':
-            case 'year':
             case 'ulid':
             case 'uuid':
             case 'binary':
