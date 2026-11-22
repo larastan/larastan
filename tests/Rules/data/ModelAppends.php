@@ -27,3 +27,24 @@ class User extends Model
         return Attribute::get(fn ($value) => ucwords($value));
     }
 }
+
+/**
+ * @property string $email
+ * @property string $display_name
+ */
+class UserWithPropertyTags extends Model
+{
+    protected $table = 'users';
+
+    /** @var array<int, string> */
+    protected $appends = [
+        'computed_property',
+        'email', // A database column described by a @property tag, should not be appended
+        'display_name', // Only a @property tag, no accessor: nothing to append
+    ];
+
+    protected function computedProperty(): Attribute
+    {
+        return Attribute::get(fn () => 'foo');
+    }
+}
