@@ -607,6 +607,9 @@ final class SchemaAggregator
             case 'text':
             case 'time':
             case 'timestamp':
+            case 'timestamptz':
+            case 'timetz':
+            case 'year':
             case 'ulid':
             case 'uuid':
             case 'binary':
@@ -744,9 +747,7 @@ final class SchemaAggregator
                 return;
 
             case 'softdeletestz':
-            case 'timestamptz':
-            case 'timetz':
-            case 'year':
+            case 'softdeletesdatetime':
             case 'softdeletes':
                 $table->setColumn(new SchemaColumn($columnName, 'string', true));
 
