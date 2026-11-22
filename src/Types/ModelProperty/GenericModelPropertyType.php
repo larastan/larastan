@@ -86,6 +86,11 @@ class GenericModelPropertyType extends StringType
 
                 [$tableName, $propertyName] = $parts;
 
+                // The prefix can be a join alias or a table that is not in the migrations.
+                if (! $this->modelPropertyHelper->hasDatabaseTable($tableName)) {
+                    return AcceptsResult::createYes();
+                }
+
                 if (! $this->modelPropertyHelper->hasDatabaseProperty($tableName, $propertyName)) {
                     return AcceptsResult::createNo([sprintf('Database table "%s" does not have column "%s"', $tableName, $propertyName)]);
                 }
