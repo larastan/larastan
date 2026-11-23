@@ -290,6 +290,10 @@ Only string literals are read. A variable or other expression is skipped, and a 
 
 When a migration or a schema dump is created, changed or deleted, the result cache analyses the files using a model again. A directory that starts matching a glob in `databaseMigrationsPath` or `squashedMigrationsPath` is noticed only after the result cache is cleared.
 
+## Environment file
+
+Larastan boots your application and resolves services from its container, so the types of a file can depend on the environment file the application loads, for example when `APP_KEY` decides which services are registered. When that file (`$app->environmentFilePath()`) is created, changed or deleted, the result cache analyses the files again.
+
 ## Model Relationships
 
 In order for Larastan to recognize Model relationships you are required to document the generic types of the relation class:
