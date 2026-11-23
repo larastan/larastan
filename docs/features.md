@@ -4,7 +4,7 @@ All features that are specific to Laravel applications are listed here.
 
 ## Laravel 9 Attributes
 
-In order for [Laravel 9 Attributes](https://laravel.com/docs/9.x/eloquent-mutators#accessors-and-mutators) to be recognized as model properties, they must be `protected` methods annotated with the `Attribute` Generic Types.
+In order for [Laravel 9 Attributes](https://laravel.com/docs/9.x/eloquent-mutators#accessors-and-mutators) to be recognized as model properties, they must be `protected` or `public` methods annotated with the `Attribute` Generic Types. `private` methods are not recognized, because Laravel cannot call them.
 
 The first generic type is the getter return type, and the second is the setter argument type.
 

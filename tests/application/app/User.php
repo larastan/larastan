@@ -316,4 +316,12 @@ class User extends Authenticatable
             fn ($value) => 5,
         );
     }
+
+    /** @return Attribute<bool, never> */
+    public function publicComputed(): Attribute
+    {
+        return Attribute::get(
+            fn ($value) => true,
+        );
+    }
 }
