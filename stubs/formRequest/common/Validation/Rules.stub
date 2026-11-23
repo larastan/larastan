@@ -1,0 +1,33 @@
+<?php
+
+namespace Illuminate\Validation;
+
+/**
+ * @template TCondition = mixed
+ * @template TRules = mixed
+ * @template TDefaultRules = mixed
+ */
+class ConditionalRules {}
+
+namespace Illuminate\Validation\Rules;
+
+/** @template TValues of array<int, mixed> = array<int, mixed> */
+class In {}
+
+/** @template TKeys of array<int, mixed> = array<int, mixed> */
+class ArrayRule {}
+
+/** @template TEnum = mixed */
+class Enum {}
+
+/** @template TValue = float|int|numeric-string */
+class Numeric {}
+
+/** @template TValue = float|int|string */
+class Date {}
+
+/** @template TCondition = mixed */
+class RequiredIf {}
+
+/** @template TCondition = mixed */
+class ExcludeIf {}

@@ -1,0 +1,16 @@
+<?php
+
+namespace Illuminate\Validation\Rules;
+
+/** @template TValue of string = string */
+class StringRule
+{
+    /** @return static<TValue&lowercase-string> */
+    public function lowercase(): static;
+
+    /** @return static<TValue&uppercase-string> */
+    public function uppercase(): static;
+
+    /** @return ($value is int<1, max> ? static<TValue&non-empty-string> : static<TValue>) */
+    public function min(int $value): static;
+}

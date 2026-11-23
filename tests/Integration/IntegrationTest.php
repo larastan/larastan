@@ -178,6 +178,18 @@ class IntegrationTest extends PHPStanTestCase
 
         yield [__DIR__ . '/data/helpers.php'];
         yield [__DIR__ . '/data/facades.php'];
+        yield [
+            __DIR__ . '/data/form-request-feature-enabled.php',
+            [
+                80 => ["Key 'missing' does not exist in validated data of FormRequestFeatureEnabled\\EnabledRequest."],
+                84 => ['Parameter #1 $value of function FormRequestFeatureEnabled\\acceptsInteger expects int, float|int|string given.'],
+                85 => ['Parameter #1 $value of function FormRequestFeatureEnabled\\acceptsInteger expects int, float|int|string given.'],
+            ],
+        ];
+
+        if (laravel_version_compare('12.8.0', '>=')) {
+            yield [__DIR__ . '/data/form-request-any-of.php'];
+        }
 
         yield [
             __DIR__ . '/data/model-property-builder.php',

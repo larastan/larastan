@@ -1,0 +1,6 @@
+includes:
+    - ../../phpstan-tests.neon
+parameters:
+    checkFormRequestTypes: true
+    checkUnionTypes: true
+    reportUnmatchedIgnoredErrors: false
