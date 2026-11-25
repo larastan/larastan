@@ -66,6 +66,26 @@ abstract class Model implements \ArrayAccess, \Illuminate\Contracts\Support\Arra
     public function update(array $attributes = [], array $options = []);
 
     /**
+     * Update the model in the database within a transaction.
+     *
+     * @param  array<model-property<static>, mixed>  $attributes
+     * @param  array<int|string, mixed>  $options
+     * @return bool
+     *
+     * @throws \Throwable
+     */
+    public function updateOrFail(array $attributes = [], array $options = []);
+
+    /**
+     * Update the model in the database without raising any events.
+     *
+     * @param  array<model-property<static>, mixed>  $attributes
+     * @param  array<int|string, mixed>  $options
+     * @return bool
+     */
+    public function updateQuietly(array $attributes = [], array $options = []);
+
+    /**
      * Fill the model with an array of attributes.
      *
      * @param  array<model-property<static>, mixed>  $attributes
