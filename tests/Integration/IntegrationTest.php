@@ -369,6 +369,18 @@ class IntegrationTest extends PHPStanTestCase
             ],
         ];
 
+        yield 'update-variants' => [
+            __DIR__ . '/data/model-property-update-variants.php',
+            [
+                11 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::updateOrFail() expects array<model property of App\User, mixed>, array<string, string> given.'],
+                12 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::updateQuietly() expects array<model property of App\User, mixed>, array<string, string> given.'],
+                35 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::updateOrFail() expects array<model property of static(ModelPropertyUpdateVariants\UpdateVariantsOnModel), mixed>, array<string, string> given.'],
+                36 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::updateQuietly() expects array<model property of static(ModelPropertyUpdateVariants\UpdateVariantsOnModel), mixed>, array<string, string> given.'],
+                41 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::updateOrFail() expects array<model property of App\Account|model property of App\User, mixed>, array<string, string> given.'],
+                42 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::updateQuietly() expects array<model property of App\Account|model property of App\User, mixed>, array<string, string> given.'],
+            ],
+        ];
+
         yield [
             __DIR__ . '/data/model-property-model-factory.php',
             [
