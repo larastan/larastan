@@ -71,6 +71,24 @@ function example(array $user): void
 }
 ```
 
+## Collection values()
+
+`all()` returns a list when it is called directly on `values()`:
+
+```php
+/** @param Collection<string, User> $users */
+function example(Collection $users): void
+{
+    $users->all();           // array<string, User>
+    $users->values()->all(); // list<User>
+
+    $values = $users->values();
+    $values->all();          // array<int, User>
+}
+```
+
+A collection type cannot say that its keys are sequential, so the list is only inferred while `values()` is the receiver of the call. This applies to every `Illuminate\Support\Enumerable`, custom collection classes included. A class that overrides `values()` or `all()` is trusted to reset the keys as the framework's own methods do.
+
 ## Custom Model Builders
 
 Custom builders offer a better static analysis experience than using model scopes, and they help slim down the model class.
