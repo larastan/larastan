@@ -87,7 +87,7 @@ function example(Collection $users): void
 }
 ```
 
-A collection type cannot say that its keys are sequential, so the list is only inferred while `values()` is the receiver of the call. This applies to every `Illuminate\Support\Enumerable`, custom collection classes included. A class that overrides `values()` is trusted to reset the keys as the framework's own `values()` does.
+A collection type cannot say that its keys are sequential, so the list is only inferred while `values()` is the receiver of the call. This applies to every `Illuminate\Support\Enumerable`, custom collection classes included. A class that overrides `values()` or `all()` is trusted to reset the keys as the framework's own methods do.
 
 ## Custom Model Builders
 
