@@ -348,6 +348,25 @@ class IntegrationTest extends PHPStanTestCase
 
         yield 'model-property-intersection-arrays' => [__DIR__ . '/data/model-property-intersection-arrays.php'];
 
+        yield 'dirty' => [
+            __DIR__ . '/data/model-property-dirty.php',
+            [
+                11 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::isDirty() expects array<model property of App\User>|model property of App\User|null, string given.'],
+                12 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::isClean() expects array<model property of App\User>|model property of App\User|null, string given.'],
+                13 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::wasChanged() expects array<model property of App\User>|model property of App\User|null, string given.'],
+                14 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::isDirty() expects array<model property of App\User>|model property of App\User|null, array<int, string> given.'],
+                15 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::isClean() expects array<model property of App\User>|model property of App\User|null, array<int, string> given.'],
+                16 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::wasChanged() expects array<model property of App\User>|model property of App\User|null, array<int, string> given.'],
+                46 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::isDirty() expects array<model property of App\Account|model property of App\User>|model property of App\Account|model property of App\User|null, string given.'],
+                54 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::isDirty() expects array<model property of static(ModelPropertyDirty\DirtyOnModel)>|model property of static(ModelPropertyDirty\DirtyOnModel)|null, string given.'],
+                55 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::isClean() expects array<model property of static(ModelPropertyDirty\DirtyOnModel)>|model property of static(ModelPropertyDirty\DirtyOnModel)|null, string given.'],
+                56 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::wasChanged() expects array<model property of static(ModelPropertyDirty\DirtyOnModel)>|model property of static(ModelPropertyDirty\DirtyOnModel)|null, string given.'],
+                62 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::isDirty() expects array<model property of Illuminate\Database\Eloquent\Model>|model property of Illuminate\Database\Eloquent\Model|null, string given.'],
+                72 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::isDirty() expects array<model property of TModel of Illuminate\Database\Eloquent\Model>|model property of TModel of Illuminate\Database\Eloquent\Model|null, string given.'],
+                81 => ['Parameter #1 $attributes of method Illuminate\Database\Eloquent\Model::isDirty() expects array<model property of static(ModelPropertyDirty\DirtyOnAbstractModel)>|model property of static(ModelPropertyDirty\DirtyOnAbstractModel)|null, string given.'],
+            ],
+        ];
+
         yield [
             __DIR__ . '/data/model-property-model.php',
             [
