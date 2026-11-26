@@ -346,6 +346,8 @@ class IntegrationTest extends PHPStanTestCase
             ],
         ];
 
+        yield 'model-property-intersection-arrays' => [__DIR__ . '/data/model-property-intersection-arrays.php'];
+
         yield [
             __DIR__ . '/data/model-property-model.php',
             [
