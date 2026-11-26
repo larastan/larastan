@@ -71,6 +71,25 @@ function example(array $user): void
 }
 ```
 
+## Collection values()
+
+`all()` and `toArray()` return a list when they are called directly on `values()`:
+
+```php
+/** @param Collection<string, User> $users */
+function example(Collection $users): void
+{
+    $users->all();               // array<string, User>
+    $users->values()->all();     // list<User>
+    $users->values()->toArray(); // list<mixed>
+
+    $values = $users->values();
+    $values->all();              // array<int, User>
+}
+```
+
+A collection type cannot say that its keys are sequential, so the list is only inferred while `values()` is the receiver of the call. It is not inferred for a collection class that overrides `values()`, `all()` or `toArray()`, because the override may keep the keys.
+
 ## Custom Model Builders
 
 Custom builders offer a better static analysis experience than using model scopes, and they help slim down the model class.
