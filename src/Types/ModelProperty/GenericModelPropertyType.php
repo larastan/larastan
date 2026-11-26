@@ -135,6 +135,11 @@ class GenericModelPropertyType extends StringType
             return $type->isSubTypeOf($this);
         }
 
+        if ($type->isString()->yes()) {
+            // A string that is not a single constant may or may not be a model property.
+            return IsSuperTypeOfResult::createMaybe();
+        }
+
         return IsSuperTypeOfResult::createNo();
     }
 

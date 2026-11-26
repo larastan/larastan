@@ -9,7 +9,10 @@ use App\User;
 use Larastan\Larastan\Properties\ModelPropertyHelper;
 use Larastan\Larastan\Types\ModelProperty\GenericModelPropertyType;
 use PHPStan\Testing\PHPStanTestCase;
+use PHPStan\TrinaryLogic;
+use PHPStan\Type\Accessory\AccessoryNonEmptyStringType;
 use PHPStan\Type\Constant\ConstantStringType;
+use PHPStan\Type\IntegerType;
 use PHPStan\Type\NeverType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
@@ -48,6 +51,64 @@ class GenericModelPropertyTypeTest extends PHPStanTestCase
             new GenericModelPropertyType(new ObjectType(User::class), $modelPropertyHelper),
             new GenericModelPropertyType(new ObjectType(Account::class), $modelPropertyHelper),
             false,
+        ];
+    }
+
+    #[DataProvider('dataIsSuperTypeOf')]
+    public function testIsSuperTypeOf(callable $types, TrinaryLogic $expected): void
+    {
+        [$modelPropertyType, $type] = $types(static::getContainer());
+
+        $actual = $modelPropertyType->isSuperTypeOf($type);
+
+        $this->assertSame(
+            $expected->describe(),
+            $actual->describe(),
+            sprintf('%s->isSuperTypeOf(%s)', $modelPropertyType->describe(VerbosityLevel::precise()), $type->describe(VerbosityLevel::precise())),
+        );
+    }
+
+    /** @return iterable<array{callable(mixed): array{GenericModelPropertyType, Type}, TrinaryLogic}> */
+    public static function dataIsSuperTypeOf(): iterable
+    {
+        yield 'existing column' => [
+            static fn ($container) => [
+                new GenericModelPropertyType(new ObjectType(User::class), $container->getByType(ModelPropertyHelper::class)),
+                new ConstantStringType('email'),
+            ],
+            TrinaryLogic::createYes(),
+        ];
+
+        yield 'unknown column' => [
+            static fn ($container) => [
+                new GenericModelPropertyType(new ObjectType(User::class), $container->getByType(ModelPropertyHelper::class)),
+                new ConstantStringType('foo'),
+            ],
+            TrinaryLogic::createNo(),
+        ];
+
+        yield 'arbitrary string' => [
+            static fn ($container) => [
+                new GenericModelPropertyType(new ObjectType(User::class), $container->getByType(ModelPropertyHelper::class)),
+                new StringType(),
+            ],
+            TrinaryLogic::createMaybe(),
+        ];
+
+        yield 'non-empty string' => [
+            static fn ($container) => [
+                new GenericModelPropertyType(new ObjectType(User::class), $container->getByType(ModelPropertyHelper::class)),
+                TypeCombinator::intersect(new StringType(), new AccessoryNonEmptyStringType()),
+            ],
+            TrinaryLogic::createMaybe(),
+        ];
+
+        yield 'integer' => [
+            static fn ($container) => [
+                new GenericModelPropertyType(new ObjectType(User::class), $container->getByType(ModelPropertyHelper::class)),
+                new IntegerType(),
+            ],
+            TrinaryLogic::createNo(),
         ];
     }
 

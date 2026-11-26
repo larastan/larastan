@@ -82,6 +82,30 @@ abstract class Model implements \ArrayAccess, \Illuminate\Contracts\Support\Arra
     public function forceFill(array $attributes);
 
     /**
+     * Determine if the model or any of the given attribute(s) have been modified.
+     *
+     * @param  array<model-property<static>>|model-property<static>|null  $attributes
+     * @return bool
+     */
+    public function isDirty($attributes = null);
+
+    /**
+     * Determine if the model or all the given attribute(s) have remained the same.
+     *
+     * @param  array<model-property<static>>|model-property<static>|null  $attributes
+     * @return bool
+     */
+    public function isClean($attributes = null);
+
+    /**
+     * Determine if the model or any of the given attribute(s) were changed when the model was last saved.
+     *
+     * @param  array<model-property<static>>|model-property<static>|null  $attributes
+     * @return bool
+     */
+    public function wasChanged($attributes = null);
+
+    /**
      * Increment a column's value by a given amount.
      *
      * Returns false when an "updating" listener cancels the update.
