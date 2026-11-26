@@ -17,6 +17,7 @@ class CollectionDynamicReturnTypeExtensionTest extends TypeInferenceTestCase
         yield from self::gatherAssertTypes(__DIR__ . '/data/collection-where.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/collection-where-not-null.php');
         yield from self::gatherAssertTypes(__DIR__ . '/data/collection-nullsafe-chain.php');
+        yield from self::gatherAssertTypes(__DIR__ . '/data/collection-values-list.php');
     }
 
     #[DataProvider('dataFileAsserts')]
