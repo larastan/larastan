@@ -67,8 +67,13 @@ class CollectionValuesListDynamicReturnTypeExtension implements DynamicMethodRet
             return null;
         }
 
+        // Enumerable::all() is declared as a bare array before Laravel 13.7,
+        // so we will take the value type from what values() is called on,
+        // which values() keeps by contract, rather than from its all().
+        $valueType = $valuesCalledOnType->getTemplateType(Enumerable::class, 'TValue');
+
         return TypeCombinator::intersect(
-            new ArrayType(IntegerRangeType::createAllGreaterThanOrEqualTo(0), $returnType->getIterableValueType()),
+            new ArrayType(IntegerRangeType::createAllGreaterThanOrEqualTo(0), $valueType),
             new AccessoryArrayListType(),
         );
     }
