@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace Larastan\Larastan\ReturnTypes;
 
-use Illuminate\Support\Collection;
 use Illuminate\Support\Enumerable;
-use Illuminate\Support\LazyCollection;
 use PhpParser\Node\Expr\MethodCall;
 use PhpParser\Node\Expr\NullsafeMethodCall;
 use PhpParser\Node\Identifier;
@@ -18,22 +16,20 @@ use PHPStan\Type\Accessory\AccessoryArrayListType;
 use PHPStan\Type\ArrayType;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\IntegerRangeType;
+use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-
-use function in_array;
 
 /**
  * Infers a list for `all()` called directly on `values()`.
  *
  * A collection type cannot say that its keys are sequential, so the list is
- * only known while `values()` is the receiver of the call.
+ * only known while `values()` is the receiver of the call. Every enumerable is
+ * trusted to follow the contract of `Enumerable::values()` and reset its keys.
  */
 #[AutowiredService]
 class CollectionValuesListDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
-    private const FRAMEWORK_CLASS_NAMES = [Collection::class, Enumerable::class, LazyCollection::class];
-
     public function getClass(): string
     {
         return Enumerable::class;
@@ -59,11 +55,9 @@ class CollectionValuesListDynamicReturnTypeExtension implements DynamicMethodRet
             return null;
         }
 
-        if (! $this->isDeclaredByFramework($scope->getType($valuesCall->var), 'values')) {
-            return null;
-        }
+        $valuesCalledOnType = TypeCombinator::removeNull($scope->getType($valuesCall->var));
 
-        if (! $this->isDeclaredByFramework($scope->getType($valuesCall), 'all')) {
+        if (! (new ObjectType(Enumerable::class))->isSuperTypeOf($valuesCalledOnType)->yes()) {
             return null;
         }
 
@@ -77,32 +71,5 @@ class CollectionValuesListDynamicReturnTypeExtension implements DynamicMethodRet
             new ArrayType(IntegerRangeType::createAllGreaterThanOrEqualTo(0), $returnType->getIterableValueType()),
             new AccessoryArrayListType(),
         );
-    }
-
-    /**
-     * A subclass may override the method and keep the keys, so only the
-     * framework's own implementations are known to return sequential keys.
-     */
-    private function isDeclaredByFramework(Type $calledOnType, string $methodName): bool
-    {
-        $classReflections = TypeCombinator::removeNull($calledOnType)->getObjectClassReflections();
-
-        if ($classReflections === []) {
-            return false;
-        }
-
-        foreach ($classReflections as $classReflection) {
-            if (! $classReflection->hasNativeMethod($methodName)) {
-                return false;
-            }
-
-            $declaringClassName = $classReflection->getNativeMethod($methodName)->getDeclaringClass()->getName();
-
-            if (! in_array($declaringClassName, self::FRAMEWORK_CLASS_NAMES, true)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 }

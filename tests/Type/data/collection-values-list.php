@@ -3,6 +3,7 @@
 namespace CollectionValuesList;
 
 use App\User;
+use ArrayObject;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Enumerable;
@@ -18,6 +19,11 @@ use function PHPStan\Testing\assertType;
  */
 class InheritingCollection extends Collection
 {
+    public function test(): void
+    {
+        assertType('list<TValue (class CollectionValuesList\InheritingCollection, argument)>', $this->values()->all());
+        assertType('array<TKey of (int|string) (class CollectionValuesList\InheritingCollection, argument), TValue (class CollectionValuesList\InheritingCollection, argument)>', $this->all());
+    }
 }
 
 /**
@@ -41,18 +47,31 @@ class ValuesOverridingCollection extends Collection
  *
  * @extends Collection<TKey, TValue>
  */
-class AllOverridingCollection extends Collection
+class ArrayObjectCollection extends Collection
 {
-    /** @return array<TKey, TValue> */
+    /** @return ArrayObject<TKey, TValue> */
     public function all()
     {
-        return ['first' => $this->first()];
+        return new ArrayObject($this->items);
     }
 }
 
 /** @extends Collection<string, User> */
 class StringKeyedCollection extends Collection
 {
+}
+
+interface Marker
+{
+}
+
+class Team
+{
+    /** @return Collection<string, User> */
+    public function values(): Collection
+    {
+        return new Collection();
+    }
 }
 
 class Holder
@@ -71,6 +90,11 @@ class Holder
  * @param Collection<string, int>|LazyCollection<int, string> $union
  * @param Collection<string, User>|null                       $nullable
  * @param InheritingCollection<string, User>                  $inheriting
+ * @param ValuesOverridingCollection<string, User>            $valuesOverriding
+ * @param Collection<string, User>&Marker                     $intersection
+ * @param TCollection                                         $template
+ *
+ * @template TCollection of Collection<string, User>
  */
 function test(
     Collection $collection,
@@ -81,6 +105,9 @@ function test(
     Collection|null $nullable,
     InheritingCollection $inheriting,
     StringKeyedCollection $stringKeyed,
+    ValuesOverridingCollection $valuesOverriding,
+    Collection $intersection,
+    Collection $template,
     Holder|null $holder,
 ): void {
     assertType('list<App\User>', $collection->values()->all());
@@ -89,28 +116,31 @@ function test(
     assertType('list<App\User>', $enumerable->values()->all());
     assertType('list<App\User>', $inheriting->values()->all());
     assertType('list<App\User>', $stringKeyed->values()->all());
+    assertType('list<App\User>', $valuesOverriding->values()->all());
+    assertType('list<App\User>', $intersection->values()->all());
+    assertType('list<App\User>', $template->values()->all());
     assertType('list<App\User>', $collection->filter()->values()->all());
     assertType('list<App\User>', $collection->VALUES()->ALL());
     assertType('list<int|string>', $union->values()->all());
     assertType('list<int|string>', collect([1, 2, 'three'])->values()->all());
+    assertType('list', collect([])->values()->all());
 
     assertType('list<App\User>|null', $nullable?->values()->all());
+    assertType('list<App\User>|null', $nullable?->values()?->all());
     assertType('list<App\User>|null', $holder?->users->values()->all());
 }
 
 /**
- * @param Collection<string, User>                                              $collection
- * @param Collection<int, User>                                                 $intKeyed
- * @param ValuesOverridingCollection<string, User>                              $valuesOverriding
- * @param AllOverridingCollection<string, User>                                 $allOverriding
- * @param LazyCollection<string, User>|ValuesOverridingCollection<string, User> $union
+ * @param Collection<string, User>            $collection
+ * @param Collection<int, User>               $intKeyed
+ * @param ArrayObjectCollection<string, User> $arrayObject
  */
 function testKeysAreKept(
     Collection $collection,
     Collection $intKeyed,
-    ValuesOverridingCollection $valuesOverriding,
-    AllOverridingCollection $allOverriding,
-    LazyCollection|ValuesOverridingCollection $union,
+    ArrayObjectCollection $arrayObject,
+    Team $team,
+    mixed $mixed,
 ): void {
     assertType('array<string, App\User>', $collection->all());
     assertType('array<int, App\User>', $intKeyed->all());
@@ -121,7 +151,8 @@ function testKeysAreKept(
     $values = $collection->values();
     assertType('array<int, App\User>', $values->all());
 
-    assertType('array<int, App\User>', $valuesOverriding->values()->all());
-    assertType('array<int, App\User>', $allOverriding->values()->all());
-    assertType('array<int, App\User>', $union->values()->all());
+    assertType('ArrayObject<int, App\User>', $arrayObject->values()->all());
+    assertType('array<string, App\User>', $team->values()->all());
+    assertType('mixed', $mixed->values()->all());
+    assertType('Closure(): array<int, App\User>', $collection->values()->all(...));
 }
