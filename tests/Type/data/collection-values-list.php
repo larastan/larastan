@@ -48,12 +48,6 @@ class AllOverridingCollection extends Collection
     {
         return ['first' => $this->first()];
     }
-
-    /** @return array<TKey, mixed> */
-    public function toArray()
-    {
-        return ['first' => $this->first()];
-    }
 }
 
 /** @extends Collection<string, User> */
@@ -100,14 +94,8 @@ function test(
     assertType('list<int|string>', $union->values()->all());
     assertType('list<int|string>', collect([1, 2, 'three'])->values()->all());
 
-    assertType('list<mixed>', $collection->values()->toArray());
-    assertType('list<mixed>', $eloquentCollection->values()->toArray());
-    assertType('list<mixed>', $lazyCollection->values()->toArray());
-    assertType('list<mixed>', $enumerable->values()->toArray());
-
     assertType('list<App\User>|null', $nullable?->values()->all());
     assertType('list<App\User>|null', $holder?->users->values()->all());
-    assertType('list<mixed>|null', $nullable?->values()->toArray());
 }
 
 /**
@@ -128,14 +116,12 @@ function testKeysAreKept(
     assertType('array<int, App\User>', $intKeyed->all());
     assertType('array<string, mixed>', $collection->toArray());
     assertType('array<int, App\User>', $collection->values()->filter()->all());
+    assertType('array<int, mixed>', $collection->values()->toArray());
 
     $values = $collection->values();
     assertType('array<int, App\User>', $values->all());
-    assertType('array<int, mixed>', $values->toArray());
 
     assertType('array<int, App\User>', $valuesOverriding->values()->all());
-    assertType('array<int, mixed>', $valuesOverriding->values()->toArray());
     assertType('array<int, App\User>', $allOverriding->values()->all());
-    assertType('array<int, mixed>', $allOverriding->values()->toArray());
     assertType('array<int, App\User>', $union->values()->all());
 }

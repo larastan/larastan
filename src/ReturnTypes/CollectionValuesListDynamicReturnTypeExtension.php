@@ -24,7 +24,7 @@ use PHPStan\Type\TypeCombinator;
 use function in_array;
 
 /**
- * Infers a list for `all()` and `toArray()` called directly on `values()`.
+ * Infers a list for `all()` called directly on `values()`.
  *
  * A collection type cannot say that its keys are sequential, so the list is
  * only known while `values()` is the receiver of the call.
@@ -32,8 +32,6 @@ use function in_array;
 #[AutowiredService]
 class CollectionValuesListDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
-    private const SUPPORTED_METHOD_NAMES = ['all', 'toArray'];
-
     private const FRAMEWORK_CLASS_NAMES = [Collection::class, Enumerable::class, LazyCollection::class];
 
     public function getClass(): string
@@ -43,7 +41,7 @@ class CollectionValuesListDynamicReturnTypeExtension implements DynamicMethodRet
 
     public function isMethodSupported(MethodReflection $methodReflection): bool
     {
-        return in_array($methodReflection->getName(), self::SUPPORTED_METHOD_NAMES, true);
+        return $methodReflection->getName() === 'all';
     }
 
     public function getTypeFromMethodCall(
@@ -65,7 +63,7 @@ class CollectionValuesListDynamicReturnTypeExtension implements DynamicMethodRet
             return null;
         }
 
-        if (! $this->isDeclaredByFramework($scope->getType($valuesCall), $methodReflection->getName())) {
+        if (! $this->isDeclaredByFramework($scope->getType($valuesCall), 'all')) {
             return null;
         }
 
